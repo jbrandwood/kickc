@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LabelRef;
 
 import java.util.*;
@@ -49,20 +50,19 @@ public class Pass3PhiLifting {
                      Variable newVar;
                      if(phiVariable.getVariable().isVersion()) {
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
-                        newVar = lValVar.getVersionOf().createVersion();
+                        newVar = lValVar.getPhiMaster().createVersion();
                      } else {
                         Variable lValVar = program.getScope().getVariable(phiVariable.getVariable());
                         newVar = lValVar.getScope().addVariableIntermediate();
                      }
                      Symbol phiLValue = programScope.getSymbol(phiVariable.getVariable());
                      newVar.setType(phiLValue.getType());
-                     newVar.setInferredType(true);
                      List<Statement> predecessorStatements = predecessorBlock.getStatements();
                      Statement lastPredecessorStatement = null;
                      if(predecessorStatements.size() > 0) {
                         lastPredecessorStatement = predecessorStatements.get(predecessorStatements.size() - 1);
                      }
-                     StatementAssignment newAssignment = new StatementAssignment(newVar.getRef(), phiRValue.getrValue(), phiBlock.getSource(), Comment.NO_COMMENTS);
+                     StatementAssignment newAssignment = new StatementAssignment((LValue) newVar.getRef(), phiRValue.getrValue(), false, phiBlock.getSource(), Comment.NO_COMMENTS);
                      if(lastPredecessorStatement instanceof StatementConditionalJump) {
                         // Use or Create a new block between the predecessor and this one - replace labels where appropriate
                         ControlFlowBlock newBlock;

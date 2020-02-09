@@ -9,16 +9,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte*~) main::$0 ← (byte*) main::SCREEN + (number) $27
-  (byte*) main::sc#0 ← (byte*~) main::$0
-  (byte) main::i#0 ← (number) 0
+  (byte*) main::sc#0 ← (const byte*) main::SCREEN+(number) $27
+  (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte*) main::sc#3 ← phi( main/(byte*) main::sc#0 main::@2/(byte*) main::sc#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$1 ← (byte) main::i#2 < (number) $28
-  if((bool~) main::$1) goto main::@2
+  (bool~) main::$0 ← (byte) main::i#2 < (number) $28
+  if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte*) main::sc#2 ← phi( main::@1/(byte*) main::sc#3 )
@@ -43,12 +41,11 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
-(bool~) main::$1
+(bool~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -60,37 +57,26 @@ SYMBOL TABLE SSA
 (byte*) main::sc#2
 (byte*) main::sc#3
 
-Adding number conversion cast (unumber) $27 in (byte*~) main::$0 ← (byte*) main::SCREEN + (number) $27
-Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) $28 in (bool~) main::$1 ← (byte) main::i#2 < (number) $28
+Adding number conversion cast (unumber) $27 in (byte*) main::sc#0 ← (const byte*) main::SCREEN+(number) $27
+Adding number conversion cast (unumber) $28 in (bool~) main::$0 ← (byte) main::i#2 < (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $27
-Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $27
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) main::sc#0 = (byte*~) main::$0 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte*) main::sc#2 = (byte*) main::sc#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [6] if((byte) main::i#2<(byte) $28) goto main::@2
+Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) $28) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
+Constant (const byte*) main::sc#0 = main::SCREEN+$27
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] (byte*) main::sc#0 ← (const byte*) main::SCREEN + (byte) $27
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::sc#0 = main::SCREEN+$27
-Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) main::sc#0
+Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::sc#0 = (const byte*) main::SCREEN+(byte) $27
 Successful SSA optimization Pass2ConstantInlining
@@ -157,8 +143,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::sc#2 main::sc#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:3 [ main::sc#2 main::sc#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:3 [ main::sc#2 main::sc#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -237,21 +223,21 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] *((byte*) main::sc#2) ← (byte) main::i#2 [ main::i#2 main::sc#2 ] ( main:2 [ main::i#2 main::sc#2 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [10] (byte*) main::sc#1 ← -- (byte*) main::sc#2 [ main::i#1 main::sc#1 ] ( main:2 [ main::i#1 main::sc#1 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [8] *((byte*) main::sc#2) ← (byte) main::i#2 [ main::i#2 main::sc#2 ] ( main:2 [ main::i#2 main::sc#2 ] ) always clobbers reg byte a reg byte y 
 Statement [10] (byte*) main::sc#1 ← -- (byte*) main::sc#2 [ main::i#1 main::sc#1 ] ( main:2 [ main::i#1 main::sc#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers zp ZP_WORD:3 [ main::sc#2 main::sc#1 ] : zp ZP_WORD:3 , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[2]:3 [ main::sc#2 main::sc#1 ] : zp[2]:3 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 30.25: zp ZP_WORD:3 [ main::sc#2 main::sc#1 ] 25.67: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 30.25: zp[2]:3 [ main::sc#2 main::sc#1 ] 25.67: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 548 combination zp ZP_WORD:3 [ main::sc#2 main::sc#1 ] reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [main] best 548 combination zp[2]:3 [ main::sc#2 main::sc#1 ] reg byte x [ main::i#2 main::i#1 ] 
 Uplifting [] best 548 combination 
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::sc#2 main::sc#1 ]
+Allocated (was zp[2]:3) zp[2]:2 [ main::sc#2 main::sc#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -355,16 +341,16 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 11.0
 (byte) main::i#2 reg byte x 14.666666666666666
 (byte*) main::sc
-(byte*) main::sc#1 sc zp ZP_WORD:2 22.0
-(byte*) main::sc#2 sc zp ZP_WORD:2 8.25
+(byte*) main::sc#1 sc zp[2]:2 22.0
+(byte*) main::sc#2 sc zp[2]:2 8.25
 
 reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:2 [ main::sc#2 main::sc#1 ]
+zp[2]:2 [ main::sc#2 main::sc#1 ]
 
 
 FINAL ASSEMBLER

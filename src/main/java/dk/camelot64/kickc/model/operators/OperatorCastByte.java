@@ -3,10 +3,7 @@ package dk.camelot64.kickc.model.operators;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.ConstantChar;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.ConstantLiteral;
-import dk.camelot64.kickc.model.values.ConstantPointer;
+import dk.camelot64.kickc.model.values.*;
 
 /** Unary Cast to byte operator ( (byte) x ) */
 public class OperatorCastByte extends OperatorCast {
@@ -22,9 +19,11 @@ public class OperatorCastByte extends OperatorCast {
       } else if(value instanceof ConstantPointer) {
          return new ConstantInteger(0xff & ((ConstantPointer) value).getLocation(), SymbolType.BYTE);
       } else if(value instanceof ConstantChar) {
-         return new ConstantInteger(((ConstantChar) value).getIntValue(), SymbolType.BYTE);
-      }
-      throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
+         return new ConstantInteger(((ConstantChar) value).getInteger(), SymbolType.BYTE);
+      } else if(value instanceof ConstantBool) {
+         return new ConstantInteger(((ConstantBool) value).getBool() ? 0xffL : 0x00L, SymbolType.BYTE);
+      } else
+         throw new CompileError("Calculation not implemented " + getOperator() + " " + value);
    }
 
    @Override

@@ -8,10 +8,7 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.Label;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
@@ -137,6 +134,10 @@ public class AsmFragmentInstanceSpecFactory {
    }
 
    private String assignmentRightSideSignature(RValue rValue1, Operator operator, RValue rValue2) {
+
+      final SymbolType rValue1Type = rValue1==null?null:SymbolTypeInference.inferType(program.getScope(), rValue1);
+      final SymbolType rValue2Type = rValue2==null?null:SymbolTypeInference.inferType(program.getScope(), rValue2);
+
       StringBuilder signature = new StringBuilder();
       if(rValue1 != null) {
          signature.append(bind(rValue1));
@@ -154,7 +155,9 @@ public class AsmFragmentInstanceSpecFactory {
             rValue2 instanceof ConstantInteger &&
                   ((ConstantInteger) rValue2).getValue() == 2 &&
                   operator != null &&
-                  (operator.getOperator().equals("-") || operator.getOperator().equals("+"))) {
+                  (operator.getOperator().equals("-") || operator.getOperator().equals("+")) &&
+                  (SymbolType.BYTE.equals(rValue1Type) || SymbolType.SBYTE.equals(rValue1Type))
+      ) {
          signature.append("2");
       } else if(
             rValue2 instanceof ConstantInteger &&
@@ -370,6 +373,22 @@ public class AsmFragmentInstanceSpecFactory {
          SymbolType type = ((StackPullValue) value).getType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
          return "_stackpull" + typeShortName + "_";
+      } else if(value instanceof MemsetValue) {
+         MemsetValue memsetValue = (MemsetValue) value;
+         ConstantValue sizeConst = memsetValue.getSize();
+         if(sizeConst.getType(program.getScope()).equals(SymbolType.NUMBER)) {
+            SymbolType fixedIntegerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(sizeConst, program.getScope());
+            sizeConst = new ConstantCastValue(fixedIntegerType, sizeConst);
+         }
+         return "_memset_" + bind(sizeConst);
+      } else if(value instanceof MemcpyValue) {
+         MemcpyValue memcpyValue = (MemcpyValue) value;
+         ConstantValue sizeConst = memcpyValue.getSize();
+         if(sizeConst.getType(program.getScope()).equals(SymbolType.NUMBER)) {
+            SymbolType fixedIntegerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(sizeConst, program.getScope());
+            sizeConst = new ConstantCastValue(fixedIntegerType, sizeConst);
+         }
+         return bind(memcpyValue.getSource()) + "_memcpy_" + bind(sizeConst);
       }
       throw new RuntimeException("Binding of value type not supported " + value.toString(program));
    }
@@ -403,8 +422,6 @@ public class AsmFragmentInstanceSpecFactory {
          return "vdu";
       } else if(SymbolType.SDWORD.equals(type)) {
          return "vds";
-      } else if(SymbolType.STRING.equals(type)) {
-         return "pbu";
       } else if(SymbolType.BOOLEAN.equals(type)) {
          return "vbo";
       } else if(type instanceof SymbolTypeStruct) {
@@ -449,22 +466,17 @@ public class AsmFragmentInstanceSpecFactory {
     * @return The register part of the binding name.
     */
    private String getRegisterName(Registers.Register register) {
-      if(
-            Registers.RegisterType.ZP_BOOL.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_BYTE.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_WORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_DWORD.equals(register.getType()) ||
-                  Registers.RegisterType.ZP_STRUCT.equals(register.getType())
-      ) {
+      if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
          // Examine if the ZP register is already bound
-         Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
+         Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
          String zpNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
-            if(boundValue instanceof Variable) {
-               Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
-               if(boundRegister != null && boundRegister.isZp()) {
-                  Registers.RegisterZp boundRegisterZp = (Registers.RegisterZp) boundRegister;
+            if(boundValue instanceof Variable && ((Variable) boundValue).isVariable()) {
+               Variable boundVariable = (Variable) boundValue;
+               Registers.Register boundRegister = boundVariable.getAllocation();
+               if(boundRegister != null && Registers.RegisterType.ZP_MEM.equals(boundRegister.getType())) {
+                  Registers.RegisterZpMem boundRegisterZp = (Registers.RegisterZpMem) boundRegister;
                   if(registerZp.getZp() == boundRegisterZp.getZp()) {
                      // Found other register with same ZP address!
                      zpNameIdx = boundName.substring(boundName.length() - 1);
@@ -478,13 +490,14 @@ public class AsmFragmentInstanceSpecFactory {
             zpNameIdx = Integer.toString(nextZpIdx++);
          }
          return "z" + zpNameIdx;
-      } else if(Registers.RegisterType.MEMORY.equals(register.getType())) {
+      } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType())) {
          String memNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
-            if(boundValue instanceof Variable) {
-               Registers.Register boundRegister = ((Variable) boundValue).getAllocation();
-               if(boundRegister instanceof Registers.RegisterMemory) {
+            if(boundValue instanceof Variable && ((Variable) boundValue).isVariable()) {
+               Variable boundVariable = (Variable) boundValue;
+               Registers.Register boundRegister = boundVariable.getAllocation();
+               if(boundRegister instanceof Registers.RegisterMainMem) {
                   if(boundRegister.equals(register)) {
                      memNameIdx = boundName.substring(boundName.length() - 1);
                      break;
@@ -493,14 +506,14 @@ public class AsmFragmentInstanceSpecFactory {
             }
          }
          if(memNameIdx == null) {
-            memNameIdx = Integer.toString(nextMemIdx++);
+            memNameIdx = Integer.toString(nextZpIdx++);
          }
          return "m" + memNameIdx;
-      } else if(Registers.RegisterType.REG_A_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_A.equals(register.getType())) {
          return "aa";
-      } else if(Registers.RegisterType.REG_X_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_X.equals(register.getType())) {
          return "xx";
-      } else if(Registers.RegisterType.REG_Y_BYTE.equals(register.getType())) {
+      } else if(Registers.RegisterType.REG_Y.equals(register.getType())) {
          return "yy";
       } else if(Registers.RegisterType.REG_ALU.equals(register.getType())) {
          throw new AsmFragmentInstance.AluNotApplicableException();
@@ -513,7 +526,7 @@ public class AsmFragmentInstanceSpecFactory {
       // If the constant is already bound - reuse the index
       for(String boundName : bindings.keySet()) {
          Value boundValue = bindings.get(boundName);
-         if(boundValue instanceof ConstantValue || boundValue instanceof ConstantVar) {
+         if(boundValue instanceof ConstantValue || (boundValue instanceof Variable && ((Variable) boundValue).isKindConstant())) {
             if(boundValue.equals(constant)) {
                return "c" + boundName.substring(boundName.length() - 1);
             }

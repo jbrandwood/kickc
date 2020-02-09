@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
 import java.util.List;
 
@@ -22,10 +22,19 @@ public class ConstantArrayKickAsm implements ConstantArray {
    /** Variables/constants used by the kickasm code. */
    private List<SymbolRef> uses;
 
-   public ConstantArrayKickAsm(SymbolType elementType, String kickAsmCode, List<SymbolRef> uses) {
+   /** Array size (from declaration) */
+   private ConstantValue size;
+
+   public ConstantArrayKickAsm(SymbolType elementType, String kickAsmCode, List<SymbolRef> uses, ConstantValue size) {
       this.elementType = elementType;
       this.kickAsmCode = kickAsmCode;
       this.uses = uses;
+      this.size = size;
+   }
+
+   @Override
+   public ConstantValue getSize() {
+      return size;
    }
 
    public List<SymbolRef> getUses() {
@@ -38,7 +47,7 @@ public class ConstantArrayKickAsm implements ConstantArray {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return new SymbolTypeArray(elementType);
+      return new SymbolTypePointer(elementType);
    }
 
    public SymbolType getElementType() {

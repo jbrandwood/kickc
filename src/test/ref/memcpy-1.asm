@@ -4,6 +4,7 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
+    // Working memory copy of string
     .label sc = 6
     .label camelot = 4
     .label sc2 = 2
@@ -37,9 +38,9 @@ main: {
     sta.z sc2
     lda #>SCREEN+$28
     sta.z sc2+1
-    lda #<reigns_0
+    lda #<reigns_1
     sta.z reigns
-    lda #>reigns_0
+    lda #>reigns_1
     sta.z reigns+1
   __b2:
     ldy #0
@@ -77,20 +78,20 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN+$32
     sta.z memcpy.destination+1
-    lda #<__8
+    lda #<__5
     sta.z memcpy.source
-    lda #>__8
+    lda #>__5
     sta.z memcpy.source+1
     jsr memcpy
     rts
-    __8: .text "rules"
+    __5: .text "rules"
     .byte 0
-    reigns_0: .text "reigns"
+    reigns_1: .text "reigns"
     .byte 0
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zeropage(6) destination, void* zeropage(4) source, word zeropage(8) num)
+// memcpy(void* zp(6) destination, void* zp(4) source, word zp(8) num)
 memcpy: {
     .label src_end = 8
     .label dst = 6

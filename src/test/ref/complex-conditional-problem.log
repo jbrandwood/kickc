@@ -5,8 +5,6 @@ Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -16,7 +14,7 @@ main::@1: scope:[main]  from main main::@4
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::key#0 ← *((byte*) RASTER)
+  (byte) main::key#0 ← *((const byte*) RASTER)
   (bool~) main::$0 ← (byte) main::key#0 > (number) $20
   (bool~) main::$1 ← (byte) main::key#0 < (number) $40
   (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
@@ -25,7 +23,7 @@ main::@2: scope:[main]  from main::@1
   to:main::@7
 main::@4: scope:[main]  from main::@2 main::@7
   (byte) main::key#2 ← phi( main::@2/(byte) main::key#0 main::@7/(byte) main::key#1 )
-  *((byte*) SCREEN) ← (byte) main::key#2
+  *((const byte*) SCREEN) ← (byte) main::key#2
   to:main::@1
 main::@7: scope:[main]  from main::@2
   (byte) main::key#1 ← (number) 0
@@ -45,8 +43,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) RASTER
-(byte*) SCREEN
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -66,8 +64,6 @@ Adding number conversion cast (unumber) $20 in (bool~) main::$0 ← (byte) main:
 Adding number conversion cast (unumber) $40 in (bool~) main::$1 ← (byte) main::key#0 < (number) $40
 Adding number conversion cast (unumber) 0 in (byte) main::key#1 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::key#1 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
@@ -80,14 +76,12 @@ Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) $40
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting ! if()-condition to reversed if() [7] (bool~) main::$3 ← ! (bool~) main::$2
-Rewriting || if()-condition to two if()s [6] (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
+Rewriting ! if()-condition to reversed if() [5] (bool~) main::$3 ← ! (bool~) main::$2
+Rewriting || if()-condition to two if()s [4] (bool~) main::$2 ← (bool~) main::$0 || (bool~) main::$1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::key#1 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [2] if(true) goto main::@2
+if() condition always true - replacing block destination [0] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -176,7 +170,7 @@ Initial phi equivalence classes
 [ main::key#2 main::key#0 ]
 Complete equivalence classes
 [ main::key#2 main::key#0 ]
-Allocated zp ZP_BYTE:2 [ main::key#2 main::key#0 ]
+Allocated zp[1]:2 [ main::key#2 main::key#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -251,10 +245,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::key#2 main::key#0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::key#2 main::key#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 33: zp ZP_BYTE:2 [ main::key#2 main::key#0 ] 
+Uplift Scope [main] 33: zp[1]:2 [ main::key#2 main::key#0 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 382 combination reg byte a [ main::key#2 main::key#0 ] 
@@ -362,8 +356,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) RASTER RASTER = (byte*) 53266
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) RASTER = (byte*) 53266
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2

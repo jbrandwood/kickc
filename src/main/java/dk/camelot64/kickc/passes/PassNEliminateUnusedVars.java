@@ -4,10 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.EnumDefinition;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.StructUnwoundPlaceholder;
@@ -47,10 +44,10 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   if(variable == null) {
                      // Already deleted
                      eliminate = true;
-                  } else if(!variable.isVolatile() && !variable.isDeclaredExport()) {
+                  } else if(!variable.isVolatile() && !variable.isExport()) {
                      // Not volatile
                      eliminate = true;
-                  } else if(variable.isVolatile() && variable.getType() instanceof SymbolTypeStruct) {
+                  } else if(variable.isStruct()) {
                      if(assignment.getOperator()==null && assignment.getrValue2() instanceof StructUnwoundPlaceholder) {
                         eliminate = true;
                      }
@@ -142,11 +139,11 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
          }
       }
 
-      Collection<ConstantVar> allConstants = getScope().getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
-         if(!(constant.getScope() instanceof EnumDefinition)) {
+      Collection<Variable> allConstants = getScope().getAllConstants(true);
+      for(Variable constant : allConstants) {
+         if(!(constant.getScope() instanceof EnumDefinition) && !(constant.getScope() instanceof StructDefinition)) {
             if(referenceInfos.isUnused(constant.getRef())) {
-               if(constant.isDeclaredExport()) {
+               if(constant.isExport()) {
                   // Do not eliminate constants declared as export
                   continue;
                }

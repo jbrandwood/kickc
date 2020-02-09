@@ -2,19 +2,19 @@ Identified constant variable (byte*) SCREEN
 Identified constant variable (byte) cc
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@4
+Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@1
+  to:@3
 
 (void()) main()
 main: scope:[main]  from @3
   if((number) 1==(number) 1) goto main::@1
   to:main::@3
 main::@1: scope:[main]  from main
-  *((byte*) SCREEN + (number) 0) ← (byte) 'a'
+  *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
   to:main::@return
 main::@3: scope:[main]  from main
   call doit 
@@ -24,13 +24,10 @@ main::@5: scope:[main]  from main::@3
 main::@return: scope:[main]  from main::@1 main::@5
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte) cc ← (byte) 'b'
-  to:@3
 
 (void()) doit()
 doit: scope:[doit]  from main::@3
-  *((byte*) SCREEN + (number) 1) ← (byte) cc
+  *((const byte*) SCREEN + (number) 1) ← (const byte) cc
   call doit2 
   to:doit::@1
 doit::@1: scope:[doit]  from doit
@@ -41,12 +38,12 @@ doit::@return: scope:[doit]  from doit::@1
 
 (void()) doit2()
 doit2: scope:[doit2]  from doit
-  *((byte*) SCREEN + (number) 2) ← (byte) cc
+  *((const byte*) SCREEN + (number) 2) ← (const byte) cc
   to:doit2::@return
 doit2::@return: scope:[doit2]  from doit2
   return 
   to:@return
-@3: scope:[]  from @1
+@3: scope:[]  from @begin
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -54,13 +51,12 @@ doit2::@return: scope:[doit2]  from doit2
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @3
 (label) @4
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte) cc
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) cc = (byte) 'b'
 (void()) doit()
 (label) doit::@1
 (label) doit::@return
@@ -72,12 +68,10 @@ SYMBOL TABLE SSA
 (label) main::@5
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) 'a'
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte) cc
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (number) 2) ← (byte) cc
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (const byte) cc
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← (const byte) cc
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -87,12 +81,9 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte) cc = 'b'
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if((number) 1==(number) 1) goto main::@1
+if() condition always true - replacing block destination [0] if((number) 1==(number) 1) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@3
 Removing unused block main::@5
@@ -107,17 +98,15 @@ Successful SSA optimization Pass2EliminateUnusedBlocks
 Eliminating unused constant (const byte) cc
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @1
 Culled Empty Block (label) @4
 Renumbering block @3 to @1
 Adding NOP phi() at start of @begin
@@ -273,7 +262,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return

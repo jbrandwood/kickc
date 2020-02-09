@@ -2,31 +2,29 @@ Culled Empty Block (label) main::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[8]) ball_active ← { (number) 0, (number) 1, (number) 0, (number) 1, (number) 0, (number) 1, (number) 1, (number) 1 }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::temp#0 ← (byte) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@2
 main::@2: scope:[main]  from main main::@3
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
-  (bool~) main::$2 ← *((byte[8]) ball_active + (byte) main::i#2) < (number) 0
+  (bool~) main::$2 ← *((const byte*) ball_active + (byte) main::i#2) < (number) 0
   (bool~) main::$3 ← ! (bool~) main::$2
   if((bool~) main::$3) goto main::@3
   to:main::@4
 main::@3: scope:[main]  from main::@2 main::@4
   (byte) main::i#3 ← phi( main::@2/(byte) main::i#2 main::@4/(byte) main::i#4 )
-  (byte) main::temp#1 ← *((byte[8]) ball_active + (byte) main::i#3)
+  (byte) main::temp#1 ← *((const byte*) ball_active + (byte) main::i#3)
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,7)
   (bool~) main::$4 ← (byte) main::i#1 != rangelast(0,7)
   if((bool~) main::$4) goto main::@2
   to:main::@5
 main::@4: scope:[main]  from main::@2
   (byte) main::i#4 ← phi( main::@2/(byte) main::i#2 )
-  *((byte*) main::screen + (byte) main::i#4) ← (byte) '-'
+  *((const byte*) main::screen + (byte) main::i#4) ← (byte) '-'
   to:main::@3
 main::@5: scope:[main]  from main::@3
   (byte) main::temp#2 ← phi( main::@3/(byte) main::temp#1 )
@@ -36,7 +34,7 @@ main::@5: scope:[main]  from main::@3
   to:main::@6
 main::@6: scope:[main]  from main::@5
   (byte) main::temp#3 ← phi( main::@5/(byte) main::temp#2 )
-  *((byte*) main::screen + (number) $28) ← (byte) main::temp#3
+  *((const byte*) main::screen + (number) $28) ← (byte) main::temp#3
   to:main::@return
 main::@return: scope:[main]  from main::@5 main::@6
   return 
@@ -53,7 +51,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte[8]) ball_active
+(const byte*) ball_active[(number) 8]  = { (byte) 0, (byte) 1, (byte) 0, (byte) 1, (byte) 0, (byte) 1, (byte) 1, (byte) 1 }
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -72,29 +70,17 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (byte) main::i#3
 (byte) main::i#4
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 (byte) main::temp
 (byte) main::temp#0
 (byte) main::temp#1
 (byte) main::temp#2
 (byte) main::temp#3
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← *((byte[8]) ball_active + (byte) main::i#2) < (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← *((const byte*) ball_active + (byte) main::i#2) < (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (byte) main::temp#2 < (number) 0
-Adding number conversion cast (unumber) $28 in *((byte*) main::screen + (number) $28) ← (byte) main::temp#3
+Adding number conversion cast (unumber) $28 in *((const byte*) main::screen + (number) $28) ← (byte) main::temp#3
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[8]) ball_active ← (byte[8]){ (byte)(number) 0, (byte)(number) 1, (byte)(number) 0, (byte)(number) 1, (byte)(number) 0, (byte)(number) 1, (byte)(number) 1, (byte)(number) 1 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -104,30 +90,26 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [6] (bool~) main::$3 ← *((byte[8]) ball_active + (byte) main::i#2) >= (byte) 0 from [5] (bool~) main::$2 ← *((byte[8]) ball_active + (byte) main::i#2) < (byte) 0
-Inversing boolean not [17] (bool~) main::$1 ← (byte) main::temp#2 >= (byte) 0 from [16] (bool~) main::$0 ← (byte) main::temp#2 < (byte) 0
+Inversing boolean not [4] (bool~) main::$3 ← *((const byte*) ball_active + (byte) main::i#2) >= (byte) 0 from [3] (bool~) main::$2 ← *((const byte*) ball_active + (byte) main::i#2) < (byte) 0
+Inversing boolean not [15] (bool~) main::$1 ← (byte) main::temp#2 >= (byte) 0 from [14] (bool~) main::$0 ← (byte) main::temp#2 < (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#2 = (byte) main::i#4 
 Alias (byte) main::temp#1 = (byte) main::temp#2 (byte) main::temp#3 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$3 [7] if(*((byte[8]) ball_active + (byte) main::i#2)>=(byte) 0) goto main::@3
-Simple Condition (bool~) main::$4 [12] if((byte) main::i#1!=rangelast(0,7)) goto main::@2
-Simple Condition (bool~) main::$1 [18] if((byte) main::temp#1>=(byte) 0) goto main::@return
+Simple Condition (bool~) main::$3 [5] if(*((const byte*) ball_active + (byte) main::i#2)>=(byte) 0) goto main::@3
+Simple Condition (bool~) main::$4 [10] if((byte) main::i#1!=rangelast(0,7)) goto main::@2
+Simple Condition (bool~) main::$1 [16] if((byte) main::temp#1>=(byte) 0) goto main::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (byte[8]) { (byte) 0, (byte) 1, (byte) 0, (byte) 1, (byte) 0, (byte) 1, (byte) 1, (byte) 1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[8]) ball_active = { 0, 1, 0, 1, 0, 1, 1, 1 }
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::temp#0 = 0
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [7] if(*((const byte[8]) ball_active + (byte) main::i#2)>=(byte) 0) goto main::@3
-if() condition always true - replacing block destination [18] if((byte) main::temp#1>=(byte) 0) goto main::@return
+if() condition always true - replacing block destination [5] if(*((const byte*) ball_active + (byte) main::i#2)>=(byte) 0) goto main::@3
+if() condition always true - replacing block destination [16] if((byte) main::temp#1>=(byte) 0) goto main::@return
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [10] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [12] if(main::i#1!=rangelast(0,7)) goto main::@2 to (number) 8
+Resolved ranged next value [8] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [10] if(main::i#1!=rangelast(0,7)) goto main::@2 to (number) 8
 Eliminating unused constant (const byte) main::temp#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@4
@@ -139,10 +121,10 @@ Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Eliminating unused variable (byte) main::temp#1 and assignment [1] (byte) main::temp#1 ← *((const byte[8]) ball_active + (byte) main::i#2)
+Eliminating unused variable (byte) main::temp#1 and assignment [1] (byte) main::temp#1 ← *((const byte*) ball_active + (byte) main::i#2)
 Eliminating unused constant (const byte*) main::screen
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const byte[8]) ball_active
+Eliminating unused constant (const byte*) ball_active
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
@@ -208,7 +190,7 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -269,10 +251,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 223 combination reg byte x [ main::i#2 main::i#1 ] 

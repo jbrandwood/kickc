@@ -28,7 +28,7 @@ main: {
   !:
     jmp __b1
 }
-// PrintName(struct fileentry* zeropage(2) file)
+// PrintName(struct fileentry* zp(2) file)
 PrintName: {
     .label file = 2
     lda.z file+1

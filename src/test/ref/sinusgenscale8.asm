@@ -21,7 +21,7 @@ main: {
 // tabsize - the number of sinus points (the size of the table)
 // min - the minimal value
 // max - the maximal value
-// sin8u_table(byte* zeropage($11) sintab)
+// sin8u_table(byte* zp($11) sintab)
 sin8u_table: {
     .const min = $a
     .const max = $ff
@@ -32,6 +32,7 @@ sin8u_table: {
     .label sinx = $13
     .label sinx_sc = 9
     .label sintab = $11
+    // Iterate over the table
     .label x = $d
     .label i = $b
     jsr div16u
@@ -217,7 +218,7 @@ print_ln: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(8) b)
+// print_byte(byte zp(8) b)
 print_byte: {
     .label b = 8
     lda.z b
@@ -247,7 +248,7 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(4) str)
+// print_str(byte* zp(4) str)
 print_str: {
     .label str = 4
   __b1:
@@ -271,7 +272,7 @@ print_str: {
     jmp __b1
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage(4) w)
+// print_sword(signed word zp(4) w)
 print_sword: {
     .label w = 4
     lda.z w+1
@@ -294,7 +295,7 @@ print_sword: {
     jmp __b2
 }
 // Print a word as HEX
-// print_word(word zeropage(4) w)
+// print_word(word zp(4) w)
 print_word: {
     .label w = 4
     lda.z w+1
@@ -306,7 +307,7 @@ print_word: {
     rts
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zeropage(8) b)
+// print_sbyte(signed byte zp(8) b)
 print_sbyte: {
     .label b = 8
     lda.z b
@@ -334,10 +335,7 @@ mul8su: {
     .label m = 9
     tya
     tax
-    lda #<b
-    sta.z mul8u.mb
-    lda #>b
-    sta.z mul8u.mb+1
+    lda #b
     jsr mul8u
     cpy #0
     bpl __b1
@@ -354,7 +352,9 @@ mul8u: {
     .label mb = 6
     .label res = 9
     .label return = 9
-    lda #<0
+    sta.z mb
+    lda #0
+    sta.z mb+1
     sta.z res
     sta.z res+1
   __b1:
@@ -384,7 +384,7 @@ mul8u: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zeropage(9) x)
+// sin8s(word zp(9) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -393,6 +393,7 @@ sin8s: {
     .label x1 = $14
     .label x3 = $15
     .label usinx = $16
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = 8
     lda.z x+1
     cmp #>PI_u4f12
@@ -495,15 +496,12 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage($13) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($13) select)
 mulu8_sel: {
     .label __0 = 9
     .label __1 = 9
     .label select = $13
     tya
-    sta.z mul8u.mb
-    lda #0
-    sta.z mul8u.mb+1
     jsr mul8u
     ldy.z select
     beq !e+
@@ -529,7 +527,7 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($d) dividend, word zeropage($b) rem)
+// divr16u(word zp($d) dividend, word zp($b) rem)
 divr16u: {
     .label rem = $b
     .label dividend = $d

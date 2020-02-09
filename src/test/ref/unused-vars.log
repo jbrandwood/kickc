@@ -9,15 +9,12 @@ Culled Empty Block (label) s::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte) b#0 ← (number) 2/(number) 2
+  (byte) b#0 ← (byte)(number) 2/(number) 2
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) b#13 ← phi( @2/(byte) b#14 )
-  (byte) main::col ← (number) 2
-  (byte*) main::COLS ← ((byte*)) (number) $d800
   call s 
   (byte) s::return#0 ← (byte) s::return#2
   to:main::@3
@@ -30,8 +27,8 @@ main::@3: scope:[main]  from main
 main::@1: scope:[main]  from main::@1 main::@3
   (byte) b#8 ← phi( main::@1/(byte) b#8 main::@3/(byte) b#2 )
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#1 main::@3/(byte) main::i#0 )
-  *((byte*) main::COLS + (byte) main::i#2) ← (byte) main::col
-  *((byte*) SCREEN + (byte) main::i#2) ← (byte) b#8
+  *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col
+  *((const byte*) SCREEN + (byte) main::i#2) ← (byte) b#8
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$64)
   (bool~) main::$4 ← (byte) main::i#1 != rangelast(0,$64)
   if((bool~) main::$4) goto main::@1
@@ -70,7 +67,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) b
 (byte) b#0
 (byte) b#1
@@ -92,8 +89,8 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@3
 (label) main::@return
-(byte*) main::COLS
-(byte) main::col
+(const byte*) main::COLS = (byte*)(number) $d800
+(const byte) main::col = (byte) 2
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -106,22 +103,14 @@ SYMBOL TABLE SSA
 (byte) s::return#2
 (byte) s::return#3
 
-Adding number conversion cast (unumber) 2/2 in (byte) b#0 ← (number) 2/(number) 2
-Adding number conversion cast (unumber) 2 in (byte) main::col ← (number) 2
 Adding number conversion cast (unumber) 2 in (byte) s::return#1 ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte) b#0 ← (unumber)(number) 2/(number) 2
-Inlining cast (byte) main::col ← (unumber)(number) 2
-Inlining cast (byte*) main::COLS ← (byte*)(number) $d800
 Inlining cast (byte) s::return#1 ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 2
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) b#1 = (byte) b#7 
@@ -137,21 +126,16 @@ Identical Phi Values (byte) b#3 (byte) b#2
 Identical Phi Values (byte) b#10 (byte) b#13
 Identical Phi Values (byte) b#12 (byte) b#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$4 [16] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
+Simple Condition (bool~) main::$4 [13] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (byte) b#0 ← (unumber)(number) 2/(number) 2
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte) b#0 = (unumber)2/2
-Constant (const byte) main::col = 2
-Constant (const byte*) main::COLS = (byte*) 55296
+Constant (const byte) b#0 = (byte)2/2
 Constant (const byte) main::i#0 = 0
 Constant (const byte) s::return#1 = 2
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) s::return#0 = s::return#1
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [14] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [16] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
+Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
 Eliminating unused constant (const byte) s::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const byte) s::return#1
@@ -253,7 +237,7 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -335,14 +319,14 @@ s: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← ++++(byte)(number) 2/(number) 2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) main::COLS + (byte) main::i#2) ← (const byte) main::col [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← ++++(byte)(number) 2/(number) 2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 31.17: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 31.17: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [s] 
 Uplift Scope [] 
 
@@ -455,13 +439,13 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (byte) b
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte*) main::COLS COLS = (byte*) 55296
-(const byte) main::col col = (byte) 2
+(const byte*) main::COLS = (byte*) 55296
+(const byte) main::col = (byte) 2
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 14.666666666666666

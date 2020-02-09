@@ -6,8 +6,8 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.model.values.Value;
-import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +36,7 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
 
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value value = programValue.get();
-         if(value instanceof VariableRef) {
+         if(value instanceof SymbolVariableRef) {
             SymbolRef unwound = unwoundSymbols.get(value);
             if(unwound != null) {
                programValue.set(unwound);
@@ -73,21 +73,15 @@ public class Pass1UnwindBlockScopes extends Pass1Base {
                }
             } else if(symbol instanceof Variable) {
                Variable variable = (Variable) symbol;
-               if(variable.isStoragePhiMaster() || variable.isStorageConstant()) {
+               if(variable.isKindPhiMaster() || variable.isKindConstant() || variable.isKindLoadStore()) {
                   String name = findLocalName(procedure, symbol);
-                  Variable var = (Variable) symbol;
-                  Variable unwound = procedure.addVariablePhiMaster(name, symbol.getType(), var.getDataSegment());
-                  unwound.setDeclaredAlignment(var.getDeclaredAlignment());
-                  unwound.setDeclaredConstant(var.isDeclaredConstant());
-                  unwound.setDeclaredVolatile(var.isDeclaredVolatile());
-                  unwound.setInferedVolatile(var.isInferedVolatile());
-                  unwound.setDeclaredRegister((var.getDeclaredRegister()));
-                  unwound.setDeclaredExport(var.isDeclaredExport());
+                  Variable unwound = Variable.createCopy(name, procedure, (Variable) symbol);
+                  procedure.add(unwound);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
-                  unwound.setStorageStrategy(var.getStorageStrategy());
-               } else if(variable.isStorageIntermediate()) {
-                  Variable unwound = procedure.addVariableIntermediate();
-                  unwound.setStorageStrategy(variable.getStorageStrategy());
+               } else if(variable.isKindIntermediate()) {
+                  String name = procedure.allocateIntermediateVariableName();
+                  Variable unwound = Variable.createCopy(name, procedure, (Variable) symbol);
+                  procedure.add(unwound);
                   unwoundSymbols.put(symbol.getRef(), unwound.getRef());
                } else {
                   throw new CompileError("ERROR! Unexpected symbol encountered in block scope " + symbol.toString(getProgram()));

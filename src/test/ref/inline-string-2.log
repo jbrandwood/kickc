@@ -42,11 +42,11 @@ print_msg: scope:[print_msg]  from main main::@1
   to:print_msg::@3
 print_msg::@1: scope:[print_msg]  from print_msg
   (byte*) screen#21 ← phi( print_msg/(byte*) screen#24 )
-  (byte*) print_msg::msg#1 ← (const string) print_msg::$2
+  (byte*) print_msg::msg#1 ← (const byte*) print_msg::$2
   to:print_msg::@2
 print_msg::@3: scope:[print_msg]  from print_msg
   (byte*) screen#22 ← phi( print_msg/(byte*) screen#24 )
-  (byte*) print_msg::msg#2 ← (const string) print_msg::$3
+  (byte*) print_msg::msg#2 ← (const byte*) print_msg::$3
   to:print_msg::@2
 print_msg::@2: scope:[print_msg]  from print_msg::@1 print_msg::@3
   (byte*) screen#18 ← phi( print_msg::@1/(byte*) screen#21 print_msg::@3/(byte*) screen#22 )
@@ -64,7 +64,7 @@ print_msg::@return: scope:[print_msg]  from print_msg::@5
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte*) screen#5 ← ((byte*)) (number) $400
+  (byte*) screen#5 ← (byte*)(number) $400
   to:@3
 
 (void()) print((byte*) print::msg)
@@ -123,8 +123,8 @@ SYMBOL TABLE SSA
 (byte*) print::msg#4
 (void()) print_msg((byte) print_msg::idx)
 (bool~) print_msg::$0
-(const string) print_msg::$2 = (string) "Hello "
-(const string) print_msg::$3 = (string) "World!"
+(const byte*) print_msg::$2[(byte) 7]  = (byte*) "Hello "
+(const byte*) print_msg::$3[(byte) 7]  = (byte*) "World!"
 (label) print_msg::@1
 (label) print_msg::@2
 (label) print_msg::@3
@@ -173,7 +173,6 @@ Adding number conversion cast (unumber) 0 in (bool~) print::$0 ← (number) 0 !=
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) print_msg::idx#0 ← (unumber)(number) 1
 Inlining cast (byte) print_msg::idx#1 ← (unumber)(number) 2
-Inlining cast (byte*) screen#5 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
@@ -356,10 +355,10 @@ Complete equivalence classes
 [ screen#18 screen#14 screen#6 ]
 [ print_msg::msg#3 ]
 [ print::msg#2 print::msg#0 print::msg#1 ]
-Allocated zp ZP_BYTE:2 [ print_msg::idx#2 ]
-Allocated zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ]
-Allocated zp ZP_WORD:5 [ print_msg::msg#3 ]
-Allocated zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ]
+Allocated zp[1]:2 [ print_msg::idx#2 ]
+Allocated zp[2]:3 [ screen#18 screen#14 screen#6 ]
+Allocated zp[2]:5 [ print_msg::msg#3 ]
+Allocated zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -421,7 +420,7 @@ main: {
     rts
 }
   // print_msg
-// print_msg(byte zeropage(2) idx)
+// print_msg(byte zp(2) idx)
 print_msg: {
     .label idx = 2
     .label msg = 5
@@ -472,7 +471,7 @@ print_msg: {
     .byte 0
 }
   // print
-// print(byte* zeropage(7) msg)
+// print(byte* zp(7) msg)
 print: {
     .label msg = 7
     // [17] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
@@ -518,24 +517,24 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [13] (byte*) print::msg#0 ← (byte*) print_msg::msg#3 [ screen#18 print::msg#0 ] ( main:2::print_msg:5 [ screen#18 print::msg#0 ] main:2::print_msg:7 [ screen#18 print::msg#0 ] ) always clobbers reg byte a 
 Statement [18] if((byte) 0!=*((byte*) print::msg#2)) goto print::@2 [ screen#14 print::msg#2 ] ( main:2::print_msg:5::print:14 [ screen#14 print::msg#2 ] main:2::print_msg:7::print:14 [ screen#14 print::msg#2 ] ) always clobbers reg byte a reg byte y 
 Statement [20] *((byte*) screen#14) ← *((byte*) print::msg#2) [ screen#14 print::msg#2 ] ( main:2::print_msg:5::print:14 [ screen#14 print::msg#2 ] main:2::print_msg:7::print:14 [ screen#14 print::msg#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_BYTE:2 [ print_msg::idx#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_WORD:5 [ print_msg::msg#3 ] : zp ZP_WORD:5 , 
-Potential registers zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] : zp ZP_WORD:7 , 
+Potential registers zp[1]:2 [ print_msg::idx#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:3 [ screen#18 screen#14 screen#6 ] : zp[2]:3 , 
+Potential registers zp[2]:5 [ print_msg::msg#3 ] : zp[2]:5 , 
+Potential registers zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] : zp[2]:7 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print] 35.5: zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
-Uplift Scope [] 16.29: zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ] 
-Uplift Scope [print_msg] 2: zp ZP_BYTE:2 [ print_msg::idx#2 ] 2: zp ZP_WORD:5 [ print_msg::msg#3 ] 
+Uplift Scope [print] 35.5: zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
+Uplift Scope [] 16.29: zp[2]:3 [ screen#18 screen#14 screen#6 ] 
+Uplift Scope [print_msg] 2: zp[1]:2 [ print_msg::idx#2 ] 2: zp[2]:5 [ print_msg::msg#3 ] 
 Uplift Scope [main] 
 
-Uplifting [print] best 740 combination zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
-Uplifting [] best 740 combination zp ZP_WORD:3 [ screen#18 screen#14 screen#6 ] 
-Uplifting [print_msg] best 731 combination reg byte x [ print_msg::idx#2 ] zp ZP_WORD:5 [ print_msg::msg#3 ] 
+Uplifting [print] best 740 combination zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] 
+Uplifting [] best 740 combination zp[2]:3 [ screen#18 screen#14 screen#6 ] 
+Uplifting [print_msg] best 731 combination reg byte x [ print_msg::idx#2 ] zp[2]:5 [ print_msg::msg#3 ] 
 Uplifting [main] best 731 combination 
-Coalescing zero page register [ zp ZP_WORD:5 [ print_msg::msg#3 ] ] with [ zp ZP_WORD:7 [ print::msg#2 print::msg#0 print::msg#1 ] ] - score: 1
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ screen#18 screen#14 screen#6 ]
-Allocated (was zp ZP_WORD:5) zp ZP_WORD:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
+Coalescing zero page register [ zp[2]:5 [ print_msg::msg#3 ] ] with [ zp[2]:7 [ print::msg#2 print::msg#0 print::msg#1 ] ] - score: 1
+Allocated (was zp[2]:3) zp[2]:2 [ screen#18 screen#14 screen#6 ]
+Allocated (was zp[2]:5) zp[2]:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -639,7 +638,7 @@ print_msg: {
     .byte 0
 }
   // print
-// print(byte* zeropage(4) msg)
+// print(byte* zp(4) msg)
 print: {
     .label msg = 4
     // [17] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]
@@ -735,9 +734,9 @@ FINAL SYMBOL TABLE
 (label) print::@2
 (label) print::@return
 (byte*) print::msg
-(byte*) print::msg#0 msg zp ZP_WORD:4 2.0
-(byte*) print::msg#1 msg zp ZP_WORD:4 22.0
-(byte*) print::msg#2 msg zp ZP_WORD:4 11.5
+(byte*) print::msg#0 msg zp[2]:4 2.0
+(byte*) print::msg#1 msg zp[2]:4 22.0
+(byte*) print::msg#2 msg zp[2]:4 11.5
 (void()) print_msg((byte) print_msg::idx)
 (label) print_msg::@1
 (label) print_msg::@2
@@ -745,17 +744,17 @@ FINAL SYMBOL TABLE
 (byte) print_msg::idx
 (byte) print_msg::idx#2 reg byte x 2.0
 (byte*) print_msg::msg
-(const byte*) print_msg::msg#1 msg#1 = (string) "Hello "
-(const byte*) print_msg::msg#2 msg#2 = (string) "World!"
-(byte*) print_msg::msg#3 msg zp ZP_WORD:4 2.0
+(const byte*) print_msg::msg#1 msg_1 = (byte*) "Hello "
+(const byte*) print_msg::msg#2 msg_2 = (byte*) "World!"
+(byte*) print_msg::msg#3 msg zp[2]:4 2.0
 (byte*) screen
-(byte*) screen#14 screen zp ZP_WORD:2 4.625
-(byte*) screen#18 screen zp ZP_WORD:2 0.6666666666666666
-(byte*) screen#6 screen zp ZP_WORD:2 11.0
+(byte*) screen#14 screen zp[2]:2 4.625
+(byte*) screen#18 screen zp[2]:2 0.6666666666666666
+(byte*) screen#6 screen zp[2]:2 11.0
 
 reg byte x [ print_msg::idx#2 ]
-zp ZP_WORD:2 [ screen#18 screen#14 screen#6 ]
-zp ZP_WORD:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
+zp[2]:2 [ screen#18 screen#14 screen#6 ]
+zp[2]:4 [ print_msg::msg#3 print::msg#2 print::msg#0 print::msg#1 ]
 
 
 FINAL ASSEMBLER
@@ -844,7 +843,7 @@ print_msg: {
     .byte 0
 }
   // print
-// print(byte* zeropage(4) msg)
+// print(byte* zp(4) msg)
 print: {
     .label msg = 4
     // [17] phi from print print::@2 to print::@1 [phi:print/print::@2->print::@1]

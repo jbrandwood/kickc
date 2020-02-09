@@ -1,16 +1,15 @@
-Fixing pointer array-indexing *((word[$100]) CHAR_COUNTS + *((byte*) main::screen))
-Fixing pointer array-indexing *((word[$100]) CHAR_COUNTS + *((byte*) main::screen))
-Fixing pointer array-indexing *((word[$100]) CHAR_COUNTS + *((byte*) main::screen))
+Fixing pointer array-indexing *((const word*) CHAR_COUNTS + *((byte*) main::screen))
+Fixing pointer array-indexing *((const word*) CHAR_COUNTS + *((byte*) main::screen))
+Fixing pointer array-indexing *((const word*) CHAR_COUNTS + *((byte*) main::screen))
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (word[$100]) CHAR_COUNTS ← { fill( $100, 0) }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte*) main::screen#0 ← (byte*)(number) $400
   (word) main::i#0 ← (word) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -18,7 +17,7 @@ main::@1: scope:[main]  from main main::@1
   (byte*) main::screen#2 ← phi( main/(byte*) main::screen#0 main::@1/(byte*) main::screen#1 )
   (byte~) main::$3 ← *((byte*) main::screen#2) * (const byte) SIZEOF_WORD
   (byte~) main::$4 ← *((byte*) main::screen#2) * (const byte) SIZEOF_WORD
-  *((word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((word[$100]) CHAR_COUNTS + (byte~) main::$3)
+  *((const word*) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word*) CHAR_COUNTS + (byte~) main::$3)
   (byte*) main::screen#1 ← ++ (byte*) main::screen#2
   (word) main::i#1 ← (word) main::i#2 + rangenext(0,$3e7)
   (bool~) main::$1 ← (word) main::i#1 != rangelast(0,$3e7)
@@ -39,7 +38,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(word[$100]) CHAR_COUNTS
+(const word*) CHAR_COUNTS[(number) $100]  = { fill( $100, 0) }
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (bool~) main::$1
@@ -56,20 +55,15 @@ SYMBOL TABLE SSA
 (byte*) main::screen#1
 (byte*) main::screen#2
 
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$1 [10] if((word) main::i#1!=rangelast(0,$3e7)) goto main::@1
+Simple Condition (bool~) main::$1 [9] if((word) main::i#1!=rangelast(0,$3e7)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (word[$100]) CHAR_COUNTS ← { fill( $100, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word[$100]) CHAR_COUNTS = { fill( $100, 0) }
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const word) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [8] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [10] if(main::i#1!=rangelast(0,$3e7)) goto main::@1 to (number) $3e8
+Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [9] if(main::i#1!=rangelast(0,$3e7)) goto main::@1 to (number) $3e8
 Adding number conversion cast (unumber) $3e8 in if((word) main::i#1!=(number) $3e8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $3e8
@@ -126,7 +120,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte*) main::screen#2 ← phi( main/(byte*) 1024 main::@1/(byte*) main::screen#1 )
   [6] (byte~) main::$3 ← *((byte*) main::screen#2) << (byte) 1
   [7] (byte~) main::$4 ← *((byte*) main::screen#2) << (byte) 1
-  [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3)
+  [8] *((const word*) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word*) CHAR_COUNTS + (byte~) main::$3)
   [9] (byte*) main::screen#1 ← ++ (byte*) main::screen#2
   [10] (word) main::i#1 ← ++ (word) main::i#2
   [11] if((word) main::i#1!=(word) $3e8) goto main::@1
@@ -150,17 +144,17 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::screen#2 main::screen#1 ]
 [ main::i#2 main::i#1 ]
-Added variable main::$3 to zero page equivalence class [ main::$3 ]
-Added variable main::$4 to zero page equivalence class [ main::$4 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable main::$4 to live range equivalence class [ main::$4 ]
 Complete equivalence classes
 [ main::screen#2 main::screen#1 ]
 [ main::i#2 main::i#1 ]
 [ main::$3 ]
 [ main::$4 ]
-Allocated zp ZP_WORD:2 [ main::screen#2 main::screen#1 ]
-Allocated zp ZP_WORD:4 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:6 [ main::$3 ]
-Allocated zp ZP_BYTE:7 [ main::$4 ]
+Allocated zp[2]:2 [ main::screen#2 main::screen#1 ]
+Allocated zp[2]:4 [ main::i#2 main::i#1 ]
+Allocated zp[1]:6 [ main::$3 ]
+Allocated zp[1]:7 [ main::$4 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -191,6 +185,7 @@ __bend:
 main: {
     .label __3 = 6
     .label __4 = 7
+    // Count the number of the different chars on the screen
     .label screen = 2
     .label i = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -223,7 +218,7 @@ main: {
     lda (screen),y
     asl
     sta.z __4
-    // [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuz1=_inc_pwuc1_derefidx_vbuz2 
+    // [8] *((const word*) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word*) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuz1=_inc_pwuc1_derefidx_vbuz2 
     ldx.z __4
     ldy.z __3
     clc
@@ -264,22 +259,22 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (byte~) main::$3 ← *((byte*) main::screen#2) << (byte) 1 [ main::screen#2 main::i#2 main::$3 ] ( main:2 [ main::screen#2 main::i#2 main::$3 ] ) always clobbers reg byte a reg byte y 
 Statement [7] (byte~) main::$4 ← *((byte*) main::screen#2) << (byte) 1 [ main::screen#2 main::i#2 main::$3 main::$4 ] ( main:2 [ main::screen#2 main::i#2 main::$3 main::$4 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ main::$3 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ main::$3 ]
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::$3 ]
+Removing always clobbered register reg byte y as potential for zp[1]:6 [ main::$3 ]
 Statement [11] if((word) main::i#1!=(word) $3e8) goto main::@1 [ main::screen#1 main::i#1 ] ( main:2 [ main::screen#1 main::i#1 ] ) always clobbers reg byte a 
 Statement [6] (byte~) main::$3 ← *((byte*) main::screen#2) << (byte) 1 [ main::screen#2 main::i#2 main::$3 ] ( main:2 [ main::screen#2 main::i#2 main::$3 ] ) always clobbers reg byte a reg byte y 
 Statement [7] (byte~) main::$4 ← *((byte*) main::screen#2) << (byte) 1 [ main::screen#2 main::i#2 main::$3 main::$4 ] ( main:2 [ main::screen#2 main::i#2 main::$3 main::$4 ] ) always clobbers reg byte a reg byte y 
 Statement [11] if((word) main::i#1!=(word) $3e8) goto main::@1 [ main::screen#1 main::i#1 ] ( main:2 [ main::screen#1 main::i#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::screen#2 main::screen#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ main::i#2 main::i#1 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_BYTE:6 [ main::$3 ] : zp ZP_BYTE:6 , reg byte x , 
-Potential registers zp ZP_BYTE:7 [ main::$4 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ main::screen#2 main::screen#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::i#2 main::i#1 ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ main::$3 ] : zp[1]:6 , reg byte x , 
+Potential registers zp[1]:7 [ main::$4 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp ZP_BYTE:7 [ main::$4 ] 20.9: zp ZP_WORD:4 [ main::i#2 main::i#1 ] 18.33: zp ZP_WORD:2 [ main::screen#2 main::screen#1 ] 11: zp ZP_BYTE:6 [ main::$3 ] 
+Uplift Scope [main] 22: zp[1]:7 [ main::$4 ] 20.9: zp[2]:4 [ main::i#2 main::i#1 ] 18.33: zp[2]:2 [ main::screen#2 main::screen#1 ] 11: zp[1]:6 [ main::$3 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1213 combination reg byte a [ main::$4 ] zp ZP_WORD:4 [ main::i#2 main::i#1 ] zp ZP_WORD:2 [ main::screen#2 main::screen#1 ] reg byte x [ main::$3 ] 
+Uplifting [main] best 1213 combination reg byte a [ main::$4 ] zp[2]:4 [ main::i#2 main::i#1 ] zp[2]:2 [ main::screen#2 main::screen#1 ] reg byte x [ main::$3 ] 
 Uplifting [] best 1213 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -308,6 +303,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    // Count the number of the different chars on the screen
     .label screen = 2
     .label i = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -339,7 +335,7 @@ main: {
     ldy #0
     lda (screen),y
     asl
-    // [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
+    // [8] *((const word*) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word*) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
     tay
     clc
     lda CHAR_COUNTS,x
@@ -410,21 +406,21 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const word[$100]) CHAR_COUNTS CHAR_COUNTS = { fill( $100, 0) }
+(const word*) CHAR_COUNTS[(number) $100]  = { fill( $100, 0) }
 (void()) main()
 (byte~) main::$3 reg byte x 11.0
 (byte~) main::$4 reg byte a 22.0
 (label) main::@1
 (label) main::@return
 (word) main::i
-(word) main::i#1 i zp ZP_WORD:4 16.5
-(word) main::i#2 i zp ZP_WORD:4 4.4
+(word) main::i#1 i zp[2]:4 16.5
+(word) main::i#2 i zp[2]:4 4.4
 (byte*) main::screen
-(byte*) main::screen#1 screen zp ZP_WORD:2 7.333333333333333
-(byte*) main::screen#2 screen zp ZP_WORD:2 11.0
+(byte*) main::screen#1 screen zp[2]:2 7.333333333333333
+(byte*) main::screen#2 screen zp[2]:2 11.0
 
-zp ZP_WORD:2 [ main::screen#2 main::screen#1 ]
-zp ZP_WORD:4 [ main::i#2 main::i#1 ]
+zp[2]:2 [ main::screen#2 main::screen#1 ]
+zp[2]:4 [ main::i#2 main::i#1 ]
 reg byte x [ main::$3 ]
 reg byte a [ main::$4 ]
 
@@ -448,6 +444,7 @@ Score: 1071
   // @end
   // main
 main: {
+    // Count the number of the different chars on the screen
     .label screen = 2
     .label i = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -474,7 +471,7 @@ main: {
     // [7] (byte~) main::$4 ← *((byte*) main::screen#2) << (byte) 1 -- vbuaa=_deref_pbuz1_rol_1 
     lda (screen),y
     asl
-    // [8] *((const word[$100]) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word[$100]) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
+    // [8] *((const word*) CHAR_COUNTS + (byte~) main::$4) ← ++ *((const word*) CHAR_COUNTS + (byte~) main::$3) -- pwuc1_derefidx_vbuaa=_inc_pwuc1_derefidx_vbuxx 
     tay
     clc
     lda CHAR_COUNTS,x

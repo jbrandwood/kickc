@@ -5,34 +5,27 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) x#0 ← (number) $c
+  (byte) x ← (byte) $c
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) x#8 ← phi( @1/(byte) x#9 )
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte) x#5 ← phi( main/(byte) x#8 main::@1/(byte) x#1 )
-  (byte) x#1 ← ++ (byte) x#5
-  (bool~) main::$0 ← (byte) x#1 < (number) $32
+  (byte) x ← ++ (byte) x
+  (bool~) main::$0 ← (byte) x < (number) $32
   if((bool~) main::$0) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  (byte) x#2 ← (number) 0
+  (byte) x ← (number) 0
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  (byte) x#6 ← phi( main::@3/(byte) x#2 )
-  (byte) x#3 ← (byte) x#6
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte) x#9 ← phi( @begin/(byte) x#0 )
   call main 
   to:@2
 @2: scope:[]  from @1
-  (byte) x#7 ← phi( @1/(byte) x#3 )
-  (byte) x#4 ← (byte) x#7
   to:@end
 @end: scope:[]  from @2
 
@@ -46,55 +39,31 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@3
 (label) main::@return
-(byte) x
-(byte) x#0
-(byte) x#1
-(byte) x#2
-(byte) x#3
-(byte) x#4
-(byte) x#5
-(byte) x#6
-(byte) x#7
-(byte) x#8
-(byte) x#9
+(byte) x loadstore
 
-Adding number conversion cast (unumber) $c in (byte) x#0 ← (number) $c
-Adding number conversion cast (unumber) $32 in (bool~) main::$0 ← (byte) x#1 < (number) $32
-Adding number conversion cast (unumber) 0 in (byte) x#2 ← (number) 0
+Adding number conversion cast (unumber) $32 in (bool~) main::$0 ← (byte) x < (number) $32
+Adding number conversion cast (unumber) 0 in (byte) x ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) x#0 ← (unumber)(number) $c
-Inlining cast (byte) x#2 ← (unumber)(number) 0
+Inlining cast (byte) x ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $c
 Simplifying constant integer cast $32
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $c
 Finalized unsigned number type (byte) $32
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte) x#2 = (byte) x#6 (byte) x#3 
-Alias (byte) x#0 = (byte) x#9 
-Alias (byte) x#4 = (byte) x#7 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) x#8 (byte) x#0
-Identical Phi Values (byte) x#4 (byte) x#2
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [5] if((byte) x#1<(byte) $32) goto main::@1
+Simple Condition (bool~) main::$0 [3] if((byte) x<(byte) $32) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Added new block during phi lifting main::@7(between main::@1 and main::@1)
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
 
-Created 1 initial phi equivalence classes
-Coalesced [5] x#10 ← x#0
-Coalesced [11] x#11 ← x#1
-Coalesced down to 1 phi equivalence classes
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @2
-Culled Empty Block (label) main::@7
 Renumbering block main::@3 to main::@2
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -102,7 +71,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) x#0 ← (byte) $c
+  [0] (byte) x ← (byte) $c
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -116,32 +85,26 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte) x#5 ← phi( main/(byte) x#0 main::@1/(byte) x#1 )
-  [6] (byte) x#1 ← ++ (byte) x#5
-  [7] if((byte) x#1<(byte) $32) goto main::@1
+  [5] (byte) x ← ++ (byte) x
+  [6] if((byte) x<(byte) $32) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] (byte) x#2 ← (byte) 0
+  [7] (byte) x ← (byte) 0
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [9] return 
+  [8] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) x
-(byte) x#0 1.3333333333333333
-(byte) x#1 16.5
-(byte) x#2 20.0
-(byte) x#5 24.0
+(byte) x loadstore 37.0
 
 Initial phi equivalence classes
-[ x#5 x#0 x#1 ]
-Coalescing volatile variable equivalence classes [ x#5 x#0 x#1 ] and [ x#2 ]
+Added variable x to live range equivalence class [ x ]
 Complete equivalence classes
-[ x#5 x#0 x#1 x#2 ]
-Allocated zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
+[ x ]
+Allocated zp[1]:2 [ x ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -155,7 +118,7 @@ Target platform is c64basic / MOS6502X
   .label x = 2
   // @begin
 __bbegin:
-  // [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
+  // [0] (byte) x ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -174,47 +137,43 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  __b1_from_main:
-  __b1_from___b1:
-    // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
+    // [5] (byte) x ← ++ (byte) x -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
-    bcc __b1_from___b1
+    bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (byte) x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [8] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) x#0 ← (byte) $c [ x#0 ] (  [ x#0 ] ) always clobbers reg byte a 
-Statement [7] if((byte) x#1<(byte) $32) goto main::@1 [ x#1 ] ( main:2 [ x#1 ] ) always clobbers reg byte a 
-Statement [8] (byte) x#2 ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] : zp ZP_BYTE:2 , 
+Statement [0] (byte) x ← (byte) $c [ ] (  [ ] ) always clobbers reg byte a 
+Statement [6] if((byte) x<(byte) $32) goto main::@1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] (byte) x ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ x ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 61.83: zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] 
+Uplift Scope [] 37: zp[1]:2 [ x ] 
 Uplift Scope [main] 
 
-Uplifting [] best 216 combination zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] 
+Uplifting [] best 216 combination zp[1]:2 [ x ] 
 Uplifting [main] best 216 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
-Uplifting [] best 216 combination zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ] 
+Attempting to uplift remaining variables inzp[1]:2 [ x ]
+Uplifting [] best 216 combination zp[1]:2 [ x ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -227,7 +186,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label x = 2
   // @begin
 __bbegin:
-  // [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
+  // [0] (byte) x ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -246,29 +205,25 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  __b1_from_main:
-  __b1_from___b1:
-    // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
+    // [5] (byte) x ← ++ (byte) x -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
-    bcc __b1_from___b1
+    bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (byte) x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [8] return 
     rts
 }
   // File Data
@@ -280,12 +235,9 @@ Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label __b1_from___b1 with __b1
 Removing instruction __b1_from___bbegin:
 Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
-Removing instruction __b1_from_main:
-Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b1:
 Removing instruction __bend:
@@ -303,13 +255,9 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte) x
-(byte) x#0 x zp ZP_BYTE:2 1.3333333333333333
-(byte) x#1 x zp ZP_BYTE:2 16.5
-(byte) x#2 x zp ZP_BYTE:2 20.0
-(byte) x#5 x zp ZP_BYTE:2 24.0
+(byte) x loadstore zp[1]:2 37.0
 
-zp ZP_BYTE:2 [ x#5 x#0 x#1 x#2 ]
+zp[1]:2 [ x ]
 
 
 FINAL ASSEMBLER
@@ -326,7 +274,7 @@ Score: 153
   // @begin
 __bbegin:
   // x = 12
-  // [0] (byte) x#0 ← (byte) $c -- vbuz1=vbuc1 
+  // [0] (byte) x ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -339,25 +287,23 @@ __bbegin:
   // @end
   // main
 main: {
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-    // [5] phi (byte) x#5 = (byte) x#0 [phi:main/main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // while(++x<50)
-    // [6] (byte) x#1 ← ++ (byte) x#5 -- vbuz1=_inc_vbuz1 
+    // [5] (byte) x ← ++ (byte) x -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [7] if((byte) x#1<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
     bcc __b1
     // main::@2
     // x = 0
-    // [8] (byte) x#2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (byte) x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
     // main::@return
     // }
-    // [9] return 
+    // [8] return 
     rts
 }
   // File Data

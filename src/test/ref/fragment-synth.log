@@ -8,11 +8,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::screen ← ((byte*)) (number) $400
-  (byte*) main::z#0 ← ((byte*)) (number) $450
+  (byte*) main::z#0 ← (byte*)(number) $450
   *((byte*) main::z#0 + (number) 2) ← (number) $f0
   *((byte*) main::z#0 + (number) 3) ← (number) $f
-  (byte) main::x#0 ← (number) $aa
+  (byte) main::x#0 ← (byte) $aa
   (byte) fct::x#0 ← (byte) main::x#0
   (byte*) fct::z#0 ← (byte*) main::z#0
   call fct 
@@ -23,7 +22,7 @@ main::@1: scope:[main]  from main
   (byte) fct::return#4 ← phi( main/(byte) fct::return#0 )
   (byte~) main::$0 ← (byte) fct::return#4
   (byte) main::a1#0 ← (byte~) main::$0
-  *((byte*) main::screen + (number) 0) ← (byte) main::a1#0
+  *((const byte*) main::screen + (number) 0) ← (byte) main::a1#0
   (byte*) main::z#1 ← ++ (byte*) main::z#2
   (byte) main::x#1 ← (number) $55
   (byte) fct::x#1 ← (byte) main::x#1
@@ -35,7 +34,7 @@ main::@2: scope:[main]  from main::@1
   (byte) fct::return#5 ← phi( main::@1/(byte) fct::return#1 )
   (byte~) main::$1 ← (byte) fct::return#5
   (byte) main::a2#0 ← (byte~) main::$1
-  *((byte*) main::screen + (number) 1) ← (byte) main::a2#0
+  *((const byte*) main::screen + (number) 1) ← (byte) main::a2#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -97,7 +96,7 @@ SYMBOL TABLE SSA
 (byte) main::a1#0
 (byte) main::a2
 (byte) main::a2#0
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 (byte) main::x
 (byte) main::x#0
 (byte) main::x#1
@@ -110,17 +109,13 @@ Adding number conversion cast (unumber) $f0 in *((byte*) main::z#0 + (number) 2)
 Adding number conversion cast (unumber) 2 in *((byte*) main::z#0 + (number) 2) ← ((unumber)) (number) $f0
 Adding number conversion cast (unumber) $f in *((byte*) main::z#0 + (number) 3) ← (number) $f
 Adding number conversion cast (unumber) 3 in *((byte*) main::z#0 + (number) 3) ← ((unumber)) (number) $f
-Adding number conversion cast (unumber) $aa in (byte) main::x#0 ← (number) $aa
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::a1#0
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::a1#0
 Adding number conversion cast (unumber) $55 in (byte) main::x#1 ← (number) $55
-Adding number conversion cast (unumber) 1 in *((byte*) main::screen + (number) 1) ← (byte) main::a2#0
+Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte) main::a2#0
 Adding number conversion cast (unumber) 2 in (byte~) fct::$0 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (number) 2)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Inlining cast (byte*) main::z#0 ← (byte*)(number) $450
 Inlining cast *((byte*) main::z#0 + (unumber)(number) 2) ← (unumber)(number) $f0
 Inlining cast *((byte*) main::z#0 + (unumber)(number) 3) ← (unumber)(number) $f
-Inlining cast (byte) main::x#0 ← (unumber)(number) $aa
 Inlining cast (byte) main::x#1 ← (unumber)(number) $55
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -129,7 +124,6 @@ Simplifying constant integer cast $f0
 Simplifying constant integer cast 2
 Simplifying constant integer cast $f
 Simplifying constant integer cast 3
-Simplifying constant integer cast $aa
 Simplifying constant integer cast 0
 Simplifying constant integer cast $55
 Simplifying constant integer cast 1
@@ -139,7 +133,6 @@ Finalized unsigned number type (byte) $f0
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) $aa
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $55
 Finalized unsigned number type (byte) 1
@@ -152,7 +145,6 @@ Alias (byte) fct::return#1 = (byte) fct::return#5
 Alias (byte) main::a2#0 = (byte~) main::$1 
 Alias (byte) fct::return#2 = (byte) fct::a#0 (byte~) fct::$0 (byte) fct::return#6 (byte) fct::return#3 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte*) main::z#0 = (byte*) 1104
 Constant (const byte) main::x#0 = $aa
 Constant (const byte) main::x#1 = $55
@@ -161,7 +153,7 @@ Constant (const byte) fct::x#0 = main::x#0
 Constant (const byte*) fct::z#0 = main::z#0
 Constant (const byte) fct::x#1 = main::x#1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [12] *((const byte*) main::screen + (byte) 0) ← (byte) main::a1#0
+Simplifying expression containing zero main::screen in [11] *((const byte*) main::screen + (byte) 0) ← (byte) main::a1#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [6] (byte*) main::z#1 ← ++ (const byte*) main::z#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -271,11 +263,11 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ fct::x#2 ]
 [ fct::z#2 ]
-Added variable fct::return#0 to zero page equivalence class [ fct::return#0 ]
-Added variable main::a1#0 to zero page equivalence class [ main::a1#0 ]
-Added variable fct::return#1 to zero page equivalence class [ fct::return#1 ]
-Added variable main::a2#0 to zero page equivalence class [ main::a2#0 ]
-Added variable fct::return#2 to zero page equivalence class [ fct::return#2 ]
+Added variable fct::return#0 to live range equivalence class [ fct::return#0 ]
+Added variable main::a1#0 to live range equivalence class [ main::a1#0 ]
+Added variable fct::return#1 to live range equivalence class [ fct::return#1 ]
+Added variable main::a2#0 to live range equivalence class [ main::a2#0 ]
+Added variable fct::return#2 to live range equivalence class [ fct::return#2 ]
 Complete equivalence classes
 [ fct::x#2 ]
 [ fct::z#2 ]
@@ -284,12 +276,12 @@ Complete equivalence classes
 [ fct::return#1 ]
 [ main::a2#0 ]
 [ fct::return#2 ]
-Allocated zp ZP_WORD:2 [ fct::z#2 ]
-Allocated zp ZP_BYTE:4 [ fct::return#0 ]
-Allocated zp ZP_BYTE:5 [ main::a1#0 ]
-Allocated zp ZP_BYTE:6 [ fct::return#1 ]
-Allocated zp ZP_BYTE:7 [ main::a2#0 ]
-Allocated zp ZP_BYTE:8 [ fct::return#2 ]
+Allocated zp[2]:2 [ fct::z#2 ]
+Allocated zp[1]:4 [ fct::return#0 ]
+Allocated zp[1]:5 [ main::a1#0 ]
+Allocated zp[1]:6 [ fct::return#1 ]
+Allocated zp[1]:7 [ main::a2#0 ]
+Allocated zp[1]:8 [ fct::return#2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -379,7 +371,7 @@ main: {
     rts
 }
   // fct
-// fct(byte register(X) x, byte* zeropage(2) z)
+// fct(byte register(X) x, byte* zp(2) z)
 fct: {
     .label return = 4
     .label return_1 = 6
@@ -403,19 +395,19 @@ Statement [4] *((byte*) 1104+(byte) 2) ← (byte) $f0 [ ] ( main:2 [ ] ) always 
 Statement [5] *((byte*) 1104+(byte) 3) ← (byte) $f [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [16] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte) 2) [ fct::return#2 ] ( main:2::fct:6 [ fct::return#2 ] main:2::fct:10 [ fct::return#2 ] ) always clobbers reg byte a reg byte y 
 Potential registers reg byte x [ fct::x#2 ] : reg byte x , 
-Potential registers zp ZP_WORD:2 [ fct::z#2 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ fct::return#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ main::a1#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ fct::return#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ main::a2#0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:8 [ fct::return#2 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ fct::z#2 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ fct::return#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::a1#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ fct::return#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::a2#0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ fct::return#2 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [fct] 4: zp ZP_BYTE:4 [ fct::return#0 ] 4: zp ZP_BYTE:6 [ fct::return#1 ] 2: reg byte x [ fct::x#2 ] 2: zp ZP_WORD:2 [ fct::z#2 ] 1.5: zp ZP_BYTE:8 [ fct::return#2 ] 
-Uplift Scope [main] 4: zp ZP_BYTE:5 [ main::a1#0 ] 4: zp ZP_BYTE:7 [ main::a2#0 ] 
+Uplift Scope [fct] 4: zp[1]:4 [ fct::return#0 ] 4: zp[1]:6 [ fct::return#1 ] 2: reg byte x [ fct::x#2 ] 2: zp[2]:2 [ fct::z#2 ] 1.5: zp[1]:8 [ fct::return#2 ] 
+Uplift Scope [main] 4: zp[1]:5 [ main::a1#0 ] 4: zp[1]:7 [ main::a2#0 ] 
 Uplift Scope [] 
 
-Uplifting [fct] best 113 combination reg byte a [ fct::return#0 ] reg byte a [ fct::return#1 ] reg byte x [ fct::x#2 ] zp ZP_WORD:2 [ fct::z#2 ] reg byte a [ fct::return#2 ] 
+Uplifting [fct] best 113 combination reg byte a [ fct::return#0 ] reg byte a [ fct::return#1 ] reg byte x [ fct::x#2 ] zp[2]:2 [ fct::z#2 ] reg byte a [ fct::return#2 ] 
 Uplifting [main] best 101 combination reg byte a [ main::a1#0 ] reg byte a [ main::a2#0 ] 
 Uplifting [] best 101 combination 
 
@@ -494,7 +486,7 @@ main: {
     rts
 }
   // fct
-// fct(byte register(X) x, byte* zeropage(2) z)
+// fct(byte register(X) x, byte* zp(2) z)
 fct: {
     .label z = 2
     // [16] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte) 2) -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
@@ -550,7 +542,7 @@ FINAL SYMBOL TABLE
 (byte) fct::x !reg byte x
 (byte) fct::x#2 !reg byte x 2.0
 (byte*) fct::z
-(byte*) fct::z#2 z zp ZP_WORD:2 2.0
+(byte*) fct::z#2 z zp[2]:2 2.0
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -559,12 +551,12 @@ FINAL SYMBOL TABLE
 (byte) main::a1#0 reg byte a 4.0
 (byte) main::a2
 (byte) main::a2#0 reg byte a 4.0
-(const byte*) main::screen screen = (byte*) 1024
+(const byte*) main::screen = (byte*) 1024
 (byte) main::x
 (byte*) main::z
 
 reg byte x [ fct::x#2 ]
-zp ZP_WORD:2 [ fct::z#2 ]
+zp[2]:2 [ fct::z#2 ]
 reg byte a [ fct::return#0 ]
 reg byte a [ main::a1#0 ]
 reg byte a [ fct::return#1 ]
@@ -644,7 +636,7 @@ main: {
     rts
 }
   // fct
-// fct(byte register(X) x, byte* zeropage(2) z)
+// fct(byte register(X) x, byte* zp(2) z)
 fct: {
     .label z = 2
     // x & z[2]

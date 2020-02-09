@@ -11,6 +11,7 @@
   .label SCREEN = $2800
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
+    // Clear the screen by modifying the charset
     .label clear_char = 2
     jsr init_font_hex
     lda #toD0181_return
@@ -139,7 +140,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($13) x, signed word zeropage($15) y)
+// atan2_16(signed word zp($13) x, signed word zp($15) y)
 atan2_16: {
     .label __2 = $d
     .label __7 = $f
@@ -326,7 +327,7 @@ atan2_16: {
     jmp __b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($d) charset)
+// init_font_hex(byte* zp($d) charset)
 init_font_hex: {
     .label __0 = $17
     .label idx = $12

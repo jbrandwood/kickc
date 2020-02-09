@@ -13,9 +13,8 @@ main: {
     .label sieve_i = $a
     .label j = 4
     .label s = 6
-    .label i_3 = 2
-    .label i_10 = 2
-    .label __19 = $c
+    .label i_1 = 2
+    .label __16 = $c
     jsr memset
     lda #<sieve+2
     sta.z sieve_i
@@ -39,15 +38,15 @@ main: {
     lda #>$400
     sta.z print_char_cursor+1
     lda #<2
-    sta.z i_10
+    sta.z i_1
     lda #>2
-    sta.z i_10+1
+    sta.z i_1+1
   __b7:
-    lda.z i_10+1
+    lda.z i_1+1
     cmp #>$4c7
     bcc __b8
     bne !+
-    lda.z i_10
+    lda.z i_1
     cmp #<$4c7
     bcc __b8
   !:
@@ -55,24 +54,24 @@ main: {
     inc SCREEN+$3e7
     jmp __b11
   __b8:
-    lda.z i_10
+    lda.z i_1
     clc
     adc #<sieve
-    sta.z __19
-    lda.z i_10+1
+    sta.z __16
+    lda.z i_1+1
     adc #>sieve
-    sta.z __19+1
+    sta.z __16+1
     ldy #0
-    lda (__19),y
+    lda (__16),y
     cmp #0
     bne __b9
     jsr print_word
     lda #' '
     jsr print_char
   __b9:
-    inc.z i_3
+    inc.z i_1
     bne !+
-    inc.z i_3+1
+    inc.z i_1+1
   !:
     jmp __b7
   __b2:
@@ -144,7 +143,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     lda.z w+1
@@ -174,8 +173,8 @@ print_byte: {
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
-    .const c = 0
     .label str = sieve
+    .const c = 0
     .label end = str+COUNT
     .label dst = $a
     lda #<str

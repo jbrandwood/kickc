@@ -15,19 +15,20 @@ public class SymbolTypeInference {
 
    public static SymbolType inferType(ProgramScope symbols, RValue rValue) {
       SymbolType type = null;
-      if(rValue instanceof VariableRef) {
-         Variable variable = symbols.getVariable((VariableRef) rValue);
+      if(rValue instanceof SymbolVariableRef) {
+         Variable variable = symbols.getVar((SymbolVariableRef) rValue);
+         if(variable==null)
+            throw new CompileError("Unknown variable "+rValue.toString());
          type = variable.getType();
-      } else if(rValue instanceof ConstantRef) {
-         ConstantVar constVar = symbols.getConstant((ConstantRef) rValue);
-         type = constVar.getType();
       } else if(rValue instanceof Symbol) {
          Symbol rSymbol = (Symbol) rValue;
          type = rSymbol.getType();
+      } else if(rValue instanceof LvalueIntermediate) {
+         return inferType(symbols, ((LvalueIntermediate) rValue).getVariable());
       } else if(rValue instanceof ConstantInteger) {
          return ((ConstantInteger) rValue).getType(symbols);
       } else if(rValue instanceof ConstantString) {
-         type = SymbolType.STRING;
+         type = new SymbolTypePointer(SymbolType.BYTE);
       } else if(rValue instanceof ConstantChar) {
          type = SymbolType.BYTE;
       } else if(rValue instanceof ConstantBool) {
@@ -47,19 +48,15 @@ public class SymbolTypeInference {
          SymbolType pointerType = inferType(symbols, ((PointerDereference) rValue).getPointer());
          if(pointerType instanceof SymbolTypePointer) {
             return ((SymbolTypePointer) pointerType).getElementType();
-         } else if(pointerType.equals(SymbolType.STRING)) {
-            return SymbolType.BYTE;
          } else {
-            throw new CompileError("Cannot infer pointer element type from type: " + pointerType);
+            return SymbolType.VAR;
          }
       } else if(rValue instanceof ConstantArrayList) {
-         return new SymbolTypeArray(((ConstantArrayList) rValue).getElementType());
+         return new SymbolTypePointer(((ConstantArrayList) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayKickAsm) {
-         return new SymbolTypeArray(((ConstantArrayKickAsm) rValue).getElementType());
-      } else if(rValue instanceof ArrayFilled) {
-         return new SymbolTypeArray(((ArrayFilled) rValue).getElementType(), ((ArrayFilled) rValue).getSize());
+         return new SymbolTypePointer(((ConstantArrayKickAsm) rValue).getElementType());
       } else if(rValue instanceof ConstantArrayFilled) {
-         return new SymbolTypeArray(((ConstantArrayFilled) rValue).getElementType(), ((ConstantArrayFilled) rValue).getSize());
+         return new SymbolTypePointer(((ConstantArrayFilled) rValue).getElementType());
       } else if(rValue instanceof ConstantSymbolPointer) {
          return ((ConstantSymbolPointer) rValue).getType(symbols);
       } else if(rValue instanceof CastValue) {
@@ -107,7 +104,7 @@ public class SymbolTypeInference {
          if(structType instanceof SymbolTypeStruct) {
             String typeName = ((SymbolTypeStruct) structType).getStructTypeName();
             StructDefinition structDefinition = symbols.getStructDefinition(typeName);
-            Variable structMember = structDefinition.getVariable(structMemberRef.getMemberName());
+            Variable structMember = structDefinition.getVar(structMemberRef.getMemberName());
             return structMember.getType();
          } else {
             throw new CompileError("Dot applied to non-struct "+ structMemberRef.getStruct().toString());
@@ -118,8 +115,16 @@ public class SymbolTypeInference {
          return inferType(symbols, ((ParamValue) rValue).getParameter());
       } else if(rValue instanceof StackIdxValue) {
          return SymbolType.BYTE;
+      } else if(rValue instanceof MemsetValue) {
+         return ((MemsetValue) rValue).getType();
+      } else if(rValue instanceof MemcpyValue) {
+         return ((MemcpyValue) rValue).getType();
       } else if(rValue instanceof StructUnwoundPlaceholder) {
          return ((StructUnwoundPlaceholder) rValue).getTypeStruct();
+      } else if(rValue instanceof ConstantStructValue) {
+         return ((ConstantStructValue) rValue).getStructType();
+      } else if(rValue instanceof StackPullValue) {
+         return ((StackPullValue) rValue).getType();
       }
       if(type == null) {
          throw new InternalError("Cannot infer type for " + rValue.toString());

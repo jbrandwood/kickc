@@ -1,4 +1,5 @@
-Setting inferred volatile on symbol affected by address-of (dword*~) main::$0 ← & (dword) main::t
+Setting inferred volatile on symbol affected by address-of (byte*) main::c ← (byte*)&(dword) main::t
+Identified constant variable (byte*) main::c
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -6,12 +7,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (dword) main::t#0 ← (dword) 0
-  (dword*~) main::$0 ← & (dword) main::t#0
-  (byte*~) main::$1 ← ((byte*)) (dword*~) main::$0
-  (byte*) main::c#0 ← (byte*~) main::$1
-  (byte*~) main::$2 ← ((byte*)) (number) $400
-  *((byte*~) main::$2) ← *((byte*) main::c#0 + (number) 0)
+  (dword) main::t ← (dword) 0
+  *((byte*)(number) $400) ← *((const byte*) main::c + (number) 0)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,41 +26,19 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(dword*~) main::$0
-(byte*~) main::$1
-(byte*~) main::$2
 (label) main::@return
-(byte*) main::c
-(byte*) main::c#0
-(dword) main::t
-(dword) main::t#0
+(const byte*) main::c = (byte*)&(dword) main::t
+(dword) main::t loadstore
 
-Adding number conversion cast (unumber) 0 in *((byte*~) main::$2) ← *((byte*) main::c#0 + (number) 0)
+Adding number conversion cast (unumber) 0 in *((byte*)(number) $400) ← *((const byte*) main::c + (number) 0)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) main::$1 ← (byte*)(dword*~) main::$0
-Inlining cast (byte*~) main::$2 ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) main::c#0 = (byte*~) main::$1 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [1] (dword*~) main::$0 ← & (dword) main::t#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const dword*) main::$0 = &main::t#0
-Constant (const byte*) main::$2 = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::$0 in [2] (byte*) main::c#0 ← (byte*)(const dword*) main::$0
-Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero main::c#0 in [5] *((const byte*) main::$2) ← *((byte*) main::c#0 + (byte) 0)
+Simplifying expression containing zero main::c in [1] *((byte*) 1024) ← *((const byte*) main::c + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant (const byte*) main::c#0 = (byte*)main::$0
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$2 = (byte*) 1024
-Constant inlined main::$0 = &(dword) main::t#0
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -91,8 +66,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (dword) main::t#0 ← (dword) 0
-  [5] *((byte*) 1024) ← *((const byte*) main::c#0)
+  [4] (dword) main::t ← (dword) 0
+  [5] *((byte*) 1024) ← *((const byte*) main::c)
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -101,14 +76,13 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::c
-(dword) main::t
-(dword) main::t#0 20.0
+(dword) main::t loadstore 20.0
 
 Initial phi equivalence classes
+Added variable main::t to live range equivalence class [ main::t ]
 Complete equivalence classes
-[ main::t#0 ]
-Allocated zp ZP_DWORD:2 [ main::t#0 ]
+[ main::t ]
+Allocated zp[4]:2 [ main::t ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -138,7 +112,7 @@ __bend:
 main: {
     .label c = t
     .label t = 2
-    // [4] (dword) main::t#0 ← (dword) 0 -- vduz1=vduc1 
+    // [4] (dword) main::t ← (dword) 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     lda #>0
@@ -147,7 +121,7 @@ main: {
     sta.z t+2
     lda #>0>>$10
     sta.z t+3
-    // [5] *((byte*) 1024) ← *((const byte*) main::c#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((byte*) 1024) ← *((const byte*) main::c) -- _deref_pbuc1=_deref_pbuc2 
     lda.z c
     sta $400
     jmp __breturn
@@ -159,15 +133,15 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (dword) main::t#0 ← (dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *((byte*) 1024) ← *((const byte*) main::c#0) [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_DWORD:2 [ main::t#0 ] : zp ZP_DWORD:2 , 
+Statement [4] (dword) main::t ← (dword) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *((byte*) 1024) ← *((const byte*) main::c) [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Potential registers zp[4]:2 [ main::t ] : zp[4]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp ZP_DWORD:2 [ main::t#0 ] 
+Uplift Scope [main] 20: zp[4]:2 [ main::t ] 
 Uplift Scope [] 
 
-Uplifting [main] best 48 combination zp ZP_DWORD:2 [ main::t#0 ] 
+Uplifting [main] best 48 combination zp[4]:2 [ main::t ] 
 Uplifting [] best 48 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -197,7 +171,7 @@ __bend:
 main: {
     .label c = t
     .label t = 2
-    // [4] (dword) main::t#0 ← (dword) 0 -- vduz1=vduc1 
+    // [4] (dword) main::t ← (dword) 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     lda #>0
@@ -206,7 +180,7 @@ main: {
     sta.z t+2
     lda #>0>>$10
     sta.z t+3
-    // [5] *((byte*) 1024) ← *((const byte*) main::c#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((byte*) 1024) ← *((const byte*) main::c) -- _deref_pbuc1=_deref_pbuc2 
     lda.z c
     sta $400
     jmp __breturn
@@ -244,12 +218,10 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(byte*) main::c
-(const byte*) main::c#0 c = (byte*)&(dword) main::t#0
-(dword) main::t
-(dword) main::t#0 t zp ZP_DWORD:2 20.0
+(const byte*) main::c = (byte*)&(dword) main::t
+(dword) main::t loadstore zp[4]:2 20.0
 
-zp ZP_DWORD:2 [ main::t#0 ]
+zp[4]:2 [ main::t ]
 
 
 FINAL ASSEMBLER
@@ -274,7 +246,7 @@ main: {
     .label c = t
     .label t = 2
     // t
-    // [4] (dword) main::t#0 ← (dword) 0 -- vduz1=vduc1 
+    // [4] (dword) main::t ← (dword) 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     sta.z t+1
@@ -283,7 +255,7 @@ main: {
     lda #>0>>$10
     sta.z t+3
     // *(unsigned char *)0x0400 = c[0]
-    // [5] *((byte*) 1024) ← *((const byte*) main::c#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((byte*) 1024) ← *((const byte*) main::c) -- _deref_pbuc1=_deref_pbuc2 
     lda.z c
     sta $400
     // main::@return

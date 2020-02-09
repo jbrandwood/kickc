@@ -17,7 +17,7 @@ main: {
     jsr fill
     rts
 }
-// fill(byte* zeropage(2) screen, byte register(X) ch)
+// fill(byte* zp(2) screen, byte register(X) ch)
 fill: {
     .label screen = 2
     .label __5 = 4

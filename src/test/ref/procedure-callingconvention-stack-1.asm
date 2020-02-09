@@ -15,7 +15,7 @@ main: {
     sta SCREEN
     rts
 }
-// plus(byte zeropage(2) a, byte register(A) b)
+// plus(byte zp(2) a, byte register(A) b)
 plus: {
     .const OFFSET_STACK_A = 0
     .const OFFSET_STACK_B = 1

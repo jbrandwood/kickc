@@ -94,6 +94,8 @@
   .const KEY_MODIFIER_CTRL = 4
   // Commodore is pressed
   .const KEY_MODIFIER_COMMODORE = 8
+  // Any shift is pressed
+  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
   // VIC Screens
   .label VIC_SCREEN0 = $4000
   .label VIC_SCREEN1 = $4400
@@ -124,16 +126,53 @@
   .label FORM_SCREEN = $400
   // Charset used for the FORM
   .label FORM_CHARSET = $1800
-  // Number of form fields
-  .const form_fields_cnt = $24
+  .label form_ctrl_bmm = form_fields_val+1
+  .label form_ctrl_mcm = form_fields_val+2
+  .label form_ctrl_ecm = form_fields_val+3
+  .label form_ctrl_hicol = form_fields_val+4
+  .label form_ctrl_line = form_fields_val+5
+  .label form_ctrl_colof = form_fields_val+6
+  .label form_ctrl_chunk = form_fields_val+7
+  .label form_ctrl_borof = form_fields_val+8
+  .label form_ctrl_overs = form_fields_val+9
+  .label form_a_pattern = form_fields_val+$a
+  .label form_a_start_hi = form_fields_val+$b
+  .label form_a_start_lo = form_fields_val+$c
+  .label form_a_step_hi = form_fields_val+$d
+  .label form_a_step_lo = form_fields_val+$e
+  .label form_a_mod_hi = form_fields_val+$f
+  .label form_a_mod_lo = form_fields_val+$10
+  .label form_b_pattern = form_fields_val+$11
+  .label form_b_start_hi = form_fields_val+$12
+  .label form_b_start_lo = form_fields_val+$13
+  .label form_b_step_hi = form_fields_val+$14
+  .label form_b_step_lo = form_fields_val+$15
+  .label form_b_mod_hi = form_fields_val+$16
+  .label form_b_mod_lo = form_fields_val+$17
+  .label form_vic_screen = form_fields_val+$18
+  .label form_vic_gfx = form_fields_val+$19
+  .label form_vic_cols = form_fields_val+$1a
+  .label form_dtv_palet = form_fields_val+$1b
+  .label form_vic_bg0_hi = form_fields_val+$1c
+  .label form_vic_bg0_lo = form_fields_val+$1d
+  .label form_vic_bg1_hi = form_fields_val+$1e
+  .label form_vic_bg1_lo = form_fields_val+$1f
+  .label form_vic_bg2_hi = form_fields_val+$20
+  .label form_vic_bg2_lo = form_fields_val+$21
+  .label form_vic_bg3_hi = form_fields_val+$22
+  .label form_vic_bg3_lo = form_fields_val+$23
   // The number of frames to use for a full blink cycle
   .const FORM_CURSOR_BLINK = $28
-  // Any shift is pressed
-  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
+  // Number of form fields
+  .const form_fields_cnt = $24
   .label print_char_cursor = $b
   .label print_line_cursor = $e
+  // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = 8
+  // Counts down to blink for form cursor (it is inversed in the lower half)
+  // Always blink cursor in new field
   .label form_cursor_count = $10
+  // Current selected field in the form
   .label form_field_idx = 9
 main: {
     sei
@@ -160,24 +199,24 @@ main: {
 }
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
-    .label __22 = 2
-    .label __26 = $1a
-    .label __28 = $1c
-    .label __36 = 2
-    .label __40 = $16
-    .label __42 = $18
-    .label __53 = 6
-    .label __54 = 6
-    .label __55 = 6
-    .label __56 = $1f
-    .label __58 = $e
-    .label __59 = $e
+    .label __20 = 2
+    .label __24 = $1a
+    .label __26 = $1c
+    .label __34 = 2
+    .label __38 = $16
+    .label __40 = $18
+    .label __47 = 6
+    .label __48 = 6
+    .label __49 = 6
+    .label __50 = $1f
+    .label __52 = $e
+    .label __53 = $e
     .label plane_a = 2
     .label plane_b = 2
     .label vic_colors = 6
     .label col = $b
     .label cy = $a
-    lda form_fields_val+5
+    lda form_ctrl_line
     cmp #0
     beq b1
     ldx #DTV_LINEAR
@@ -185,35 +224,35 @@ gfx_mode: {
   b1:
     ldx #0
   __b1:
-    lda form_fields_val+8
+    lda form_ctrl_borof
     cmp #0
     beq __b2
     txa
     ora #DTV_BORDER_OFF
     tax
   __b2:
-    lda form_fields_val+4
+    lda form_ctrl_hicol
     cmp #0
     beq __b3
     txa
     ora #DTV_HIGHCOLOR
     tax
   __b3:
-    lda form_fields_val+9
+    lda form_ctrl_overs
     cmp #0
     beq __b4
     txa
     ora #DTV_OVERSCAN
     tax
   __b4:
-    lda form_fields_val+6
+    lda form_ctrl_colof
     cmp #0
     beq __b5
     txa
     ora #DTV_COLORRAM_OFF
     tax
   __b5:
-    lda form_fields_val+7
+    lda form_ctrl_chunk
     cmp #0
     beq __b6
     txa
@@ -221,7 +260,7 @@ gfx_mode: {
     tax
   __b6:
     stx DTV_CONTROL
-    lda form_fields_val+3
+    lda form_ctrl_ecm
     cmp #0
     beq b2
     ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
@@ -229,7 +268,7 @@ gfx_mode: {
   b2:
     ldx #VIC_DEN|VIC_RSEL|3
   __b7:
-    lda form_fields_val+1
+    lda form_ctrl_bmm
     cmp #0
     beq __b8
     txa
@@ -237,7 +276,7 @@ gfx_mode: {
     tax
   __b8:
     stx VIC_CONTROL
-    lda form_fields_val+2
+    lda form_ctrl_mcm
     cmp #0
     beq b3
     lda #VIC_CSEL|VIC_MCM
@@ -246,14 +285,14 @@ gfx_mode: {
     lda #VIC_CSEL
   __b9:
     sta VIC_CONTROL2
-    lda form_fields_val+$b
+    lda form_a_start_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$c
+    ora form_a_start_lo
     tax
-    lda form_fields_val+$a
+    lda form_a_pattern
     jsr get_plane
     txa
     clc
@@ -269,43 +308,43 @@ gfx_mode: {
     adc #0
     sta.z plane_a+3
     lda.z plane_a
-    sta.z __26
+    sta.z __24
     lda.z plane_a+1
-    sta.z __26+1
-    lda.z __26
+    sta.z __24+1
+    lda.z __24
     sta DTV_PLANEA_START_LO
-    lda.z __26+1
+    lda.z __24+1
     sta DTV_PLANEA_START_MI
     lda.z plane_a+2
-    sta.z __28
+    sta.z __26
     lda.z plane_a+3
-    sta.z __28+1
-    lda.z __28
+    sta.z __26+1
+    lda.z __26
     sta DTV_PLANEA_START_HI
-    lda form_fields_val+$d
+    lda form_a_step_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$e
+    ora form_a_step_lo
     sta DTV_PLANEA_STEP
-    lda form_fields_val+$f
+    lda form_a_mod_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$10
+    ora form_a_mod_lo
     sta DTV_PLANEA_MODULO_LO
     lda #0
     sta DTV_PLANEA_MODULO_HI
-    lda form_fields_val+$12
+    lda form_b_start_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$13
+    ora form_b_start_lo
     tax
-    lda form_fields_val+$11
+    lda form_b_pattern
     jsr get_plane
     txa
     clc
@@ -321,32 +360,32 @@ gfx_mode: {
     adc #0
     sta.z plane_b+3
     lda.z plane_b
-    sta.z __40
+    sta.z __38
     lda.z plane_b+1
-    sta.z __40+1
-    lda.z __40
+    sta.z __38+1
+    lda.z __38
     sta DTV_PLANEB_START_LO
-    lda.z __40+1
+    lda.z __38+1
     sta DTV_PLANEB_START_MI
     lda.z plane_b+2
-    sta.z __42
+    sta.z __40
     lda.z plane_b+3
-    sta.z __42+1
-    lda.z __42
+    sta.z __40+1
+    lda.z __40
     sta DTV_PLANEB_START_HI
-    lda form_fields_val+$14
+    lda form_b_step_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$15
+    ora form_b_step_lo
     sta DTV_PLANEB_STEP
-    lda form_fields_val+$16
+    lda form_b_mod_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$17
+    ora form_b_mod_lo
     sta DTV_PLANEB_MODULO_LO
     lda #0
     sta DTV_PLANEB_MODULO_HI
@@ -356,37 +395,37 @@ gfx_mode: {
     // Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
     sta CIA2_PORT_A
-    lda form_fields_val+$18
+    lda form_vic_screen
     jsr get_vic_screen
-    lda.z __54
+    lda.z __48
     and #<$3fff
-    sta.z __54
-    lda.z __54+1
+    sta.z __48
+    lda.z __48+1
     and #>$3fff
-    sta.z __54+1
+    sta.z __48+1
     ldy #6
   !:
-    lsr.z __55+1
-    ror.z __55
+    lsr.z __49+1
+    ror.z __49
     dey
     bne !-
-    lda.z __55
-    sta.z __56
-    lda form_fields_val+$19
+    lda.z __49
+    sta.z __50
+    lda form_vic_gfx
     jsr get_vic_charset
-    lda.z __59
+    lda.z __53
     and #<$3fff
-    sta.z __59
-    lda.z __59+1
+    sta.z __53
+    lda.z __53+1
     and #>$3fff
-    sta.z __59+1
+    sta.z __53+1
     lsr
     lsr
-    ora.z __56
+    ora.z __50
     // Set VIC Bank
     // VIC memory
     sta VIC_MEMORY
-    lda form_fields_val+$1a
+    lda form_vic_cols
     jsr get_vic_screen
     lda #0
     sta.z cy
@@ -418,36 +457,36 @@ gfx_mode: {
     // Background colors
     lda #0
     sta BORDERCOL
-    lda form_fields_val+$1c
+    lda form_vic_bg0_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$1d
+    ora form_vic_bg0_lo
     sta BGCOL1
-    lda form_fields_val+$1e
+    lda form_vic_bg1_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$1f
+    ora form_vic_bg1_lo
     sta BGCOL2
-    lda form_fields_val+$20
+    lda form_vic_bg2_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$21
+    ora form_vic_bg2_lo
     sta BGCOL3
-    lda form_fields_val+$22
+    lda form_vic_bg3_hi
     asl
     asl
     asl
     asl
-    ora form_fields_val+$23
+    ora form_vic_bg3_lo
     sta BGCOL4
     // DTV Palette
-    lda form_fields_val+$1b
+    lda form_dtv_palet
     cmp #0
     beq b4
     ldx #0
@@ -602,7 +641,7 @@ keyboard_event_scan: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zeropage($d) keycode)
+// keyboard_event_pressed(byte zp($d) keycode)
 keyboard_event_pressed: {
     .label row_bits = $1f
     .label keycode = $d
@@ -1112,7 +1151,7 @@ render_preset_name: {
     .byte 0
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage(6) str, byte* zeropage($b) at)
+// print_str_at(byte* zp(6) str, byte* zp($b) at)
 print_str_at: {
     .label at = $b
     .label str = 6
@@ -1410,7 +1449,7 @@ form_set_screen: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zeropage(6) str)
+// print_str_lines(byte* zp(6) str)
 print_str_lines: {
     .label str = 6
     lda.z print_set_screen.screen
@@ -1478,7 +1517,7 @@ print_cls: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($b) str)
+// memset(void* zp($b) str)
 memset: {
     .const c = ' '
     .const num = $3e8
@@ -1511,7 +1550,7 @@ memset: {
     jmp __b2
 }
 // Set the screen to print on. Also resets current line/char cursor.
-// print_set_screen(byte* zeropage($e) screen)
+// print_set_screen(byte* zp($e) screen)
 print_set_screen: {
     .label screen = $e
     rts
@@ -1551,7 +1590,7 @@ gfx_init_plane_full: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// gfx_init_plane_fill(dword zeropage(2) plane_addr, byte zeropage(8) fill)
+// gfx_init_plane_fill(dword zp(2) plane_addr, byte zp(8) fill)
 gfx_init_plane_fill: {
     .label __0 = $12
     .label __1 = $16
@@ -1562,17 +1601,17 @@ gfx_init_plane_fill: {
     .label plane_addr = 2
     .label fill = 8
     lda.z plane_addr
+    asl
     sta.z __0
     lda.z plane_addr+1
+    rol
     sta.z __0+1
     lda.z plane_addr+2
+    rol
     sta.z __0+2
     lda.z plane_addr+3
+    rol
     sta.z __0+3
-    asl.z __0
-    rol.z __0+1
-    rol.z __0+2
-    rol.z __0+3
     asl.z __0
     rol.z __0+1
     rol.z __0+2
@@ -1789,6 +1828,7 @@ gfx_init_plane_horisontal: {
 }
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
+    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = 8
     .label chargen = 6
@@ -1860,7 +1900,7 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label __8 = $18
+    .label __5 = $18
     .label gfxb = $e
     .label x = $b
     .label y = $d
@@ -1895,11 +1935,11 @@ gfx_init_plane_8bppchunky: {
     lda.z y
     clc
     adc.z x
-    sta.z __8
+    sta.z __5
     lda #0
     adc.z x+1
-    sta.z __8+1
-    lda.z __8
+    sta.z __5+1
+    lda.z __5
     ldy #0
     sta (gfxb),y
     inc.z gfxb
@@ -1953,7 +1993,7 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(9) x0, byte register(X) x1, byte zeropage($d) y0, byte zeropage($11) y1)
+// bitmap_line(byte zp(9) x0, byte register(X) x1, byte zp($d) y0, byte zp($11) y1)
 bitmap_line: {
     .label xd = $1f
     .label x0 = 9
@@ -2059,7 +2099,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zeropage($a) x, byte zeropage($d) y, byte zeropage(9) x1, byte zeropage($1f) xd, byte zeropage($10) yd)
+// bitmap_line_xdyi(byte zp($a) x, byte zp($d) y, byte zp(9) x1, byte zp($1f) xd, byte zp($10) yd)
 bitmap_line_xdyi: {
     .label x = $a
     .label y = $d
@@ -2120,7 +2160,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage($a) y, byte register(X) x, byte zeropage($11) y1, byte zeropage(9) yd, byte zeropage($1f) xd)
+// bitmap_line_ydxi(byte zp($a) y, byte register(X) x, byte zp($11) y1, byte zp(9) yd, byte zp($1f) xd)
 bitmap_line_ydxi: {
     .label y = $a
     .label y1 = $11
@@ -2154,7 +2194,7 @@ bitmap_line_ydxi: {
     bne __b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage($10) x, byte zeropage($d) y, byte zeropage(9) x1, byte zeropage($1f) xd, byte zeropage($a) yd)
+// bitmap_line_xdyd(byte zp($10) x, byte zp($d) y, byte zp(9) x1, byte zp($1f) xd, byte zp($a) yd)
 bitmap_line_xdyd: {
     .label x = $10
     .label y = $d
@@ -2189,7 +2229,7 @@ bitmap_line_xdyd: {
     bne __b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage($10) y, byte register(X) x, byte zeropage($d) y1, byte zeropage($a) yd, byte zeropage($1f) xd)
+// bitmap_line_ydxd(byte zp($10) y, byte register(X) x, byte zp($d) y1, byte zp($a) yd, byte zp($1f) xd)
 bitmap_line_ydxd: {
     .label y = $10
     .label y1 = $d

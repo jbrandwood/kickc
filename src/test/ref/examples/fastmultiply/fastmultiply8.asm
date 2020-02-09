@@ -8,20 +8,18 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_screen = $400
   // Pointers to a, b and c=a*b
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
+  .label print_screen = $400
 main: {
     .label at = $a
-    .label at_2 = $c
-    .label at_3 = 3
+    .label at_1 = $c
+    .label at_2 = 3
     .label j = 5
     .label i = 2
     .label at_line = $c
-    .label at_6 = 3
-    .label at_12 = 3
     jsr init_screen
     lda #<$400+4
     sta.z at
@@ -55,6 +53,28 @@ main: {
   __b2:
     lda #$28
     clc
+    adc.z at_1
+    sta.z at_1
+    bcc !+
+    inc.z at_1+1
+  !:
+    ldy.z i
+    lda vals,y
+    sta.z print_sbyte_at.b
+    lda.z at_1
+    sta.z print_sbyte_at.at
+    lda.z at_1+1
+    sta.z print_sbyte_at.at+1
+    jsr print_sbyte_at
+    lda.z at_1
+    sta.z at_2
+    lda.z at_1+1
+    sta.z at_2+1
+    lda #0
+    sta.z j
+  __b3:
+    lda #4
+    clc
     adc.z at_2
     sta.z at_2
     bcc !+
@@ -62,35 +82,13 @@ main: {
   !:
     ldy.z i
     lda vals,y
-    sta.z print_sbyte_at.b
-    lda.z at_2
-    sta.z print_sbyte_at.at
-    lda.z at_2+1
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    lda.z at_2
-    sta.z at_12
-    lda.z at_2+1
-    sta.z at_12+1
-    lda #0
-    sta.z j
-  __b3:
-    lda #4
-    clc
-    adc.z at_3
-    sta.z at_3
-    bcc !+
-    inc.z at_3+1
-  !:
-    ldy.z i
-    lda vals,y
     ldy.z j
     ldx vals,y
     jsr fmul8
     sta.z print_sbyte_at.b
-    lda.z at_3
+    lda.z at_2
     sta.z print_sbyte_at.at
-    lda.z at_3+1
+    lda.z at_2+1
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     inc.z j
@@ -103,7 +101,7 @@ main: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte zeropage(8) b, byte* zeropage(6) at)
+// print_sbyte_at(signed byte zp(8) b, byte* zp(6) at)
 print_sbyte_at: {
     .label b = 8
     .label at = 6
@@ -131,7 +129,7 @@ print_sbyte_at: {
     jmp __b2
 }
 // Print a single char
-// print_char_at(byte zeropage(9) ch, byte* zeropage(6) at)
+// print_char_at(byte zp(9) ch, byte* zp(6) at)
 print_char_at: {
     .label at = 6
     .label ch = 9
@@ -141,7 +139,7 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage(8) b, byte* zeropage(6) at)
+// print_byte_at(byte zp(8) b, byte* zp(6) at)
 print_byte_at: {
     .label b = 8
     .label at = 6

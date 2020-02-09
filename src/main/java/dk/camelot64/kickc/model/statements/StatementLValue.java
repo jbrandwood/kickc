@@ -11,4 +11,6 @@ public interface StatementLValue extends Statement {
 
    void setlValue(LValue lValue);
 
+   boolean isInitialAssignment();
+
 }

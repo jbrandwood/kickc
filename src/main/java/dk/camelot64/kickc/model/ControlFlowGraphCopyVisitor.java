@@ -139,7 +139,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
 
    @Override
    public StatementAssignment visitAssignment(StatementAssignment orig) {
-      return new StatementAssignment(orig.getlValue(), orig.getrValue1(), orig.getOperator(), orig.getrValue2(), orig.getSource(), orig.getComments());
+      return new StatementAssignment(orig.getlValue(), orig.getrValue1(), orig.getOperator(), orig.getrValue2(), orig.isInitialAssignment(), orig.getSource(), orig.getComments());
    }
 
    @Override

@@ -1,0 +1,311 @@
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) main::@3
+Culled Empty Block (label) main::@5
+Culled Empty Block (label) main::@6
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+
+(void()) main()
+main: scope:[main]  from @1
+  (byte) main::i ← (byte) 3
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (bool~) main::$0 ← (byte) main::i < (number) 7
+  if((bool~) main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  *((const byte*) SCREEN + (byte) main::i) ← (byte) main::i
+  (byte) main::i ← ++ (byte) main::i
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*)(number) $400
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::i loadstore !zp[-1]:2
+
+Adding number conversion cast (unumber) 7 in (bool~) main::$0 ← (byte) main::i < (number) 7
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 7
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 7
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simple Condition (bool~) main::$0 [2] if((byte) main::i<(byte) 7) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] (byte) main::i ← (byte) 3
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [5] if((byte) main::i<(byte) 7) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [6] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [7] *((const byte*) SCREEN + (byte) main::i) ← (byte) main::i
+  [8] (byte) main::i ← ++ (byte) main::i
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte) main::i loadstore !zp[-1]:2 19.0
+
+Initial phi equivalence classes
+Added variable main::i to live range equivalence class [ main::i ]
+Complete equivalence classes
+[ main::i ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test that address vars are turned into load/store and located at hardcoded addresses
+// Hard-coded zero-page address - local variable
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    .label i = 2
+    // [4] (byte) main::i ← (byte) 3 -- vbuz1=vbuc1 
+    lda #3
+    sta.z i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [5] if((byte) main::i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #7
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+    // main::@2
+  __b2:
+    // [7] *((const byte*) SCREEN + (byte) main::i) ← (byte) main::i -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy.z i
+    tya
+    sta SCREEN,y
+    // [8] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    jmp __b1
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] (byte) main::i ← (byte) 3 [ main::i ] ( main:2 [ main::i ] ) always clobbers reg byte a 
+Statement [5] if((byte) main::i<(byte) 7) goto main::@2 [ main::i ] ( main:2 [ main::i ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN + (byte) main::i) ← (byte) main::i [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Potential registers zp[1]:2 [ main::i ] : zp[1]:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 19: zp[1]:2 [ main::i ] 
+Uplift Scope [] 
+
+Uplifting [main] best 311 combination zp[1]:2 [ main::i ] 
+Uplifting [] best 311 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ main::i ]
+Uplifting [main] best 311 combination zp[1]:2 [ main::i ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test that address vars are turned into load/store and located at hardcoded addresses
+// Hard-coded zero-page address - local variable
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    .label i = 2
+    // [4] (byte) main::i ← (byte) 3 -- vbuz1=vbuc1 
+    lda #3
+    sta.z i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [5] if((byte) main::i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #7
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+    // main::@2
+  __b2:
+    // [7] *((const byte*) SCREEN + (byte) main::i) ← (byte) main::i -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy.z i
+    tya
+    sta SCREEN,y
+    // [8] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    jmp __b1
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __bend:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*) 1024
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::i loadstore !zp[-1]:2 zp[1]:2 19.0
+
+zp[1]:2 [ main::i ]
+
+
+FINAL ASSEMBLER
+Score: 266
+
+  // File Comments
+// Test that address vars are turned into load/store and located at hardcoded addresses
+// Hard-coded zero-page address - local variable
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    .label i = 2
+    // i = 3
+    // [4] (byte) main::i ← (byte) 3 -- vbuz1=vbuc1 
+    lda #3
+    sta.z i
+    // main::@1
+  __b1:
+    // while(i<7)
+    // [5] if((byte) main::i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #7
+    bcc __b2
+    // main::@return
+    // }
+    // [6] return 
+    rts
+    // main::@2
+  __b2:
+    // SCREEN[i++] = i
+    // [7] *((const byte*) SCREEN + (byte) main::i) ← (byte) main::i -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy.z i
+    tya
+    sta SCREEN,y
+    // SCREEN[i++] = i;
+    // [8] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    jmp __b1
+}
+  // File Data
+

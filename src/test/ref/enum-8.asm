@@ -4,8 +4,8 @@
 .pc = $80d "Program"
   .const RED = 2
 main: {
-    .const button_size = $18
     .label SCREEN = $400
+    .const button_size = $18
     lda #RED
     sta SCREEN
     lda #button_size

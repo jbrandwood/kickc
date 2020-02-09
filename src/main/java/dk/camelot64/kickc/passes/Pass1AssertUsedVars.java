@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
@@ -34,7 +35,14 @@ public class Pass1AssertUsedVars extends Pass1Base {
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
-      assertUsedVars(beginBlock, null, referenceInfos, new LinkedHashSet<>(), new LinkedHashSet<>());
+      final LinkedHashSet<SymbolVariableRef> defined = new LinkedHashSet<>();
+      // Add all variables with an init-value
+      for(Variable var : getScope().getAllVars(true)) {
+         if(var.getInitValue()!=null) {
+            defined.add(var.getRef());
+         }
+      }
+      assertUsedVars(beginBlock, null, referenceInfos, defined, new LinkedHashSet<>());
       getProgram().clearVariableReferenceInfos();
       getProgram().clearStatementIndices();
       return false;
@@ -51,7 +59,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * @param defined Variables already assigned a value at the point of the first execution of the block
     * @param visited Blocks already visited
     */
-   public void assertUsedVars(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<VariableRef> defined, Collection<LabelRef> visited) {
+   public void assertUsedVars(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined, Collection<LabelRef> visited) {
       // If the block has a phi statement it is always examined (to not skip any of the predecessor checks)
       assertUsedVarsPhi(block, predecessor, referenceInfos, defined);
       // If we have already visited the block - skip it
@@ -113,7 +121,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
     * @param visited Blocks already visited
     */
 
-   private void assertUsedVarsPhi(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<VariableRef> defined) {
+   private void assertUsedVarsPhi(ControlFlowBlock block, LabelRef predecessor, VariableReferenceInfos referenceInfos, Collection<SymbolVariableRef> defined) {
       if(predecessor != null && block.hasPhiBlock()) {
          StatementPhiBlock phiBlock = block.getPhiBlock();
          ArrayList<SymbolVariableRef> used = new ArrayList<>();

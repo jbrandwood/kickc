@@ -7,11 +7,10 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
+  .const wavelength = $c0
   .label print_line_cursor = $400
   .label print_char_cursor = 2
 main: {
-    .label wavelength = $c0
-    .label sb = 4
     jsr sin8s_gen
     jsr print_cls
     lda #<print_line_cursor
@@ -23,19 +22,8 @@ main: {
     lda sintab2,x
     sec
     sbc sintabref,x
-    sta.z sb
-    bmi __b2
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-  __b2:
+    sta.z print_sbyte.b
     jsr print_sbyte
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
     jsr print_str
     inx
     cpx #$c0
@@ -43,16 +31,15 @@ main: {
     rts
     str: .text "  "
     .byte 0
-    str1: .text " "
-    .byte 0
-    sintab2: .fill $c0, 0
-    // .fill $c0, round(127.5*sin(i*2*PI/$c0))
-    sintabref: .byte 0, 4, 8, $c, $11, $15, $19, $1d, $21, $25, $29, $2d, $31, $35, $38, $3c, $40, $43, $47, $4a, $4e, $51, $54, $57, $5a, $5d, $60, $63, $65, $68, $6a, $6c, $6e, $70, $72, $74, $76, $77, $79, $7a, $7b, $7c, $7d, $7e, $7e, $7f, $7f, $7f, $80, $7f, $7f, $7f, $7e, $7e, $7d, $7c, $7b, $7a, $79, $77, $76, $74, $72, $70, $6e, $6c, $6a, $68, $65, $63, $60, $5d, $5a, $57, $54, $51, $4e, $4a, $47, $43, $40, $3c, $38, $35, $31, $2d, $29, $25, $21, $1d, $19, $15, $11, $c, 8, 4, 0, $fc, $f8, $f4, $ef, $eb, $e7, $e3, $df, $db, $d7, $d3, $cf, $cb, $c8, $c4, $c0, $bd, $b9, $b6, $b2, $af, $ac, $a9, $a6, $a3, $a0, $9d, $9b, $98, $96, $94, $92, $90, $8e, $8c, $8a, $89, $87, $86, $85, $84, $83, $82, $82, $81, $81, $81, $81, $81, $81, $81, $82, $82, $83, $84, $85, $86, $87, $89, $8a, $8c, $8e, $90, $92, $94, $96, $98, $9b, $9d, $a0, $a3, $a6, $a9, $ac, $af, $b2, $b6, $b9, $bd, $c0, $c4, $c8, $cb, $cf, $d3, $d7, $db, $df, $e3, $e7, $eb, $ef, $f4, $f8, $fc
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(6) str)
+// print_str(byte* zp(6) str)
 print_str: {
     .label str = 6
+    lda #<main.str
+    sta.z str
+    lda #>main.str
+    sta.z str+1
   __b1:
     ldy #0
     lda (str),y
@@ -74,7 +61,7 @@ print_str: {
     jmp __b1
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zeropage(4) b)
+// print_sbyte(signed byte zp(4) b)
 print_sbyte: {
     .label b = 4
     lda.z b
@@ -106,7 +93,7 @@ print_char: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(4) b)
+// print_byte(byte zp(4) b)
 print_byte: {
     .label b = 4
     lda.z b
@@ -161,16 +148,18 @@ memset: {
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zeropage($c) sintab)
+// sin8s_gen(signed byte* zp($c) sintab)
 sin8s_gen: {
     .label step = $e
     .label sintab = $c
+    // u[4.12]
+    // Iterate over the table
     .label x = $a
     .label i = 2
     jsr div16u
-    lda #<main.sintab2
+    lda #<sintab2
     sta.z sintab
-    lda #>main.sintab2
+    lda #>sintab2
     sta.z sintab+1
     lda #<0
     sta.z x
@@ -180,11 +169,11 @@ sin8s_gen: {
   // u[4.12]
   __b1:
     lda.z i+1
-    cmp #>main.wavelength
+    cmp #>wavelength
     bcc __b2
     bne !+
     lda.z i
-    cmp #<main.wavelength
+    cmp #<wavelength
     bcc __b2
   !:
     rts
@@ -216,7 +205,7 @@ sin8s_gen: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zeropage(6) x)
+// sin8s(word zp(6) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
@@ -225,6 +214,7 @@ sin8s: {
     .label x1 = $10
     .label x3 = $11
     .label usinx = $12
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = 4
     lda.z x+1
     cmp #>PI_u4f12
@@ -327,7 +317,7 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zeropage(5) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp(5) select)
 mulu8_sel: {
     .label __0 = 6
     .label __1 = 6
@@ -393,7 +383,7 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($c) dividend, word zeropage($a) rem)
+// divr16u(word zp($c) dividend, word zp($a) rem)
 divr16u: {
     .label rem = $a
     .label dividend = $c
@@ -426,11 +416,11 @@ divr16u: {
     asl.z quotient
     rol.z quotient+1
     lda.z rem+1
-    cmp #>main.wavelength
+    cmp #>wavelength
     bcc __b3
     bne !+
     lda.z rem
-    cmp #<main.wavelength
+    cmp #<wavelength
     bcc __b3
   !:
     inc.z quotient
@@ -439,10 +429,10 @@ divr16u: {
   !:
     lda.z rem
     sec
-    sbc #<main.wavelength
+    sbc #<wavelength
     sta.z rem
     lda.z rem+1
-    sbc #>main.wavelength
+    sbc #>wavelength
     sta.z rem+1
   __b3:
     inx
@@ -451,3 +441,6 @@ divr16u: {
     rts
 }
   print_hextab: .text "0123456789abcdef"
+  sintab2: .fill $c0, 0
+  // .fill $c0, round(127.5*sin(i*2*PI/$c0))
+  sintabref: .byte 0, 4, 8, $c, $11, $15, $19, $1d, $21, $25, $29, $2d, $31, $35, $38, $3c, $40, $43, $47, $4a, $4e, $51, $54, $57, $5a, $5d, $60, $63, $65, $68, $6a, $6c, $6e, $70, $72, $74, $76, $77, $79, $7a, $7b, $7c, $7d, $7e, $7e, $7f, $7f, $7f, $80, $7f, $7f, $7f, $7e, $7e, $7d, $7c, $7b, $7a, $79, $77, $76, $74, $72, $70, $6e, $6c, $6a, $68, $65, $63, $60, $5d, $5a, $57, $54, $51, $4e, $4a, $47, $43, $40, $3c, $38, $35, $31, $2d, $29, $25, $21, $1d, $19, $15, $11, $c, 8, 4, 0, $fc, $f8, $f4, $ef, $eb, $e7, $e3, $df, $db, $d7, $d3, $cf, $cb, $c8, $c4, $c0, $bd, $b9, $b6, $b2, $af, $ac, $a9, $a6, $a3, $a0, $9d, $9b, $98, $96, $94, $92, $90, $8e, $8c, $8a, $89, $87, $86, $85, $84, $83, $82, $82, $81, $81, $81, $81, $81, $81, $81, $82, $82, $83, $84, $85, $86, $87, $89, $8a, $8c, $8e, $90, $92, $94, $96, $98, $9b, $9d, $a0, $a3, $a6, $a9, $ac, $af, $b2, $b6, $b9, $bd, $c0, $c4, $c8, $cb, $cf, $d3, $d7, $db, $df, $e3, $e7, $eb, $ef, $f4, $f8, $fc

@@ -22,13 +22,6 @@ Culled Empty Block (label) fillscreen::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte*) CHARGEN ← ((byte*)) (number) $d000
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BGCOL ← ((byte*)) (number) $d020
-  (byte*) SCROLL ← ((byte*)) (number) $d016
-  (byte*) TEXT ← (const string) $0
   to:@1
 
 (void()) main()
@@ -37,7 +30,7 @@ main: scope:[main]  from @6
   (byte*) nxt#36 ← phi( @6/(byte*) nxt#26 )
   (byte) current_bit#31 ← phi( @6/(byte) current_bit#23 )
   (byte) scroll#21 ← phi( @6/(byte) scroll#15 )
-  (byte*) fillscreen::screen#0 ← (byte*) SCREEN
+  (byte*) fillscreen::screen#0 ← (const byte*) SCREEN
   (byte) fillscreen::fill#0 ← (number) $20
   call fillscreen 
   to:main::@7
@@ -52,7 +45,7 @@ main::@2: scope:[main]  from main::@2 main::@7 main::@8
   (byte*) nxt#31 ← phi( main::@2/(byte*) nxt#31 main::@7/(byte*) nxt#34 main::@8/(byte*) nxt#0 )
   (byte) current_bit#29 ← phi( main::@2/(byte) current_bit#29 main::@7/(byte) current_bit#30 main::@8/(byte) current_bit#0 )
   (byte) scroll#18 ← phi( main::@2/(byte) scroll#18 main::@7/(byte) scroll#20 main::@8/(byte) scroll#0 )
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $fe
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
   if((bool~) main::$1) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@4
@@ -60,7 +53,7 @@ main::@4: scope:[main]  from main::@2 main::@4
   (byte*) nxt#27 ← phi( main::@2/(byte*) nxt#31 main::@4/(byte*) nxt#27 )
   (byte) current_bit#24 ← phi( main::@2/(byte) current_bit#29 main::@4/(byte) current_bit#24 )
   (byte) scroll#16 ← phi( main::@2/(byte) scroll#18 main::@4/(byte) scroll#16 )
-  (bool~) main::$2 ← *((byte*) RASTER) != (number) $ff
+  (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$2) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@4
@@ -68,7 +61,7 @@ main::@5: scope:[main]  from main::@4
   (byte*) nxt#21 ← phi( main::@4/(byte*) nxt#27 )
   (byte) current_bit#17 ← phi( main::@4/(byte) current_bit#24 )
   (byte) scroll#13 ← phi( main::@4/(byte) scroll#16 )
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   call scroll_soft 
   to:main::@8
 main::@8: scope:[main]  from main::@5
@@ -80,7 +73,7 @@ main::@8: scope:[main]  from main::@5
   (byte) current_bit#0 ← (byte) current_bit#9
   (byte*) nxt#0 ← (byte*) nxt#11
   (byte*) current_chargen#0 ← (byte*) current_chargen#8
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   if(true) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@8
@@ -95,7 +88,7 @@ main::@return: scope:[main]  from main::@8
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte) scroll#2 ← (number) 7
+  (byte) scroll#2 ← (byte) 7
   to:@2
 
 (void()) scroll_soft()
@@ -114,7 +107,7 @@ scroll_soft::@1: scope:[scroll_soft]  from scroll_soft scroll_soft::@3
   (byte*) nxt#23 ← phi( scroll_soft/(byte*) nxt#28 scroll_soft::@3/(byte*) nxt#2 )
   (byte) current_bit#19 ← phi( scroll_soft/(byte) current_bit#25 scroll_soft::@3/(byte) current_bit#2 )
   (byte) scroll#10 ← phi( scroll_soft/(byte) scroll#3 scroll_soft::@3/(byte) scroll#14 )
-  *((byte*) SCROLL) ← (byte) scroll#10
+  *((const byte*) SCROLL) ← (byte) scroll#10
   to:scroll_soft::@return
 scroll_soft::@2: scope:[scroll_soft]  from scroll_soft
   (byte*) current_chargen#16 ← phi( scroll_soft/(byte*) current_chargen#23 )
@@ -145,8 +138,8 @@ scroll_soft::@return: scope:[scroll_soft]  from scroll_soft::@1
   to:@return
 @2: scope:[]  from @1
   (byte) scroll#19 ← phi( @1/(byte) scroll#2 )
-  (byte*) current_chargen#4 ← (byte*) CHARGEN
-  (byte) current_bit#4 ← (number) 1
+  (byte*) current_chargen#4 ← (const byte*) CHARGEN
+  (byte) current_bit#4 ← (byte) 1
   to:@3
 
 (void()) scroll_bit()
@@ -171,8 +164,8 @@ scroll_bit::@7: scope:[scroll_bit]  from scroll_bit::@1
   (byte) current_bit#21 ← phi( scroll_bit::@1/(byte) current_bit#26 )
   (byte*) current_chargen#19 ← phi( scroll_bit::@1/(byte*) current_chargen#24 )
   asm { sei  }
-  *((byte*) PROCPORT) ← (number) $32
-  (byte*~) scroll_bit::$4 ← (byte*) SCREEN + (number) $28
+  *((const byte*) PROCPORT) ← (number) $32
+  (byte*~) scroll_bit::$4 ← (const byte*) SCREEN + (number) $28
   (byte*~) scroll_bit::$5 ← (byte*~) scroll_bit::$4 + (number) $27
   (byte*) scroll_bit::sc#0 ← (byte*~) scroll_bit::$5
   (byte) scroll_bit::r#0 ← (byte) 0
@@ -189,7 +182,7 @@ scroll_bit::@8: scope:[scroll_bit]  from scroll_bit::@2
   (byte*) nxt#4 ← (byte*) nxt#15
   (word) scroll_bit::c#0 ← (byte~) scroll_bit::$6
   (number~) scroll_bit::$7 ← (word) scroll_bit::c#0 * (number) 8
-  (byte*~) scroll_bit::$8 ← (byte*) CHARGEN + (number~) scroll_bit::$7
+  (byte*~) scroll_bit::$8 ← (const byte*) CHARGEN + (number~) scroll_bit::$7
   (byte*) current_chargen#5 ← (byte*~) scroll_bit::$8
   (byte) current_bit#6 ← (number) $80
   to:scroll_bit::@1
@@ -232,7 +225,7 @@ scroll_bit::@6: scope:[scroll_bit]  from scroll_bit::@4
   (byte*) current_chargen#20 ← phi( scroll_bit::@4/(byte*) current_chargen#18 )
   (byte*) nxt#25 ← phi( scroll_bit::@4/(byte*) nxt#30 )
   (byte) current_bit#22 ← phi( scroll_bit::@4/(byte) current_bit#20 )
-  *((byte*) PROCPORT) ← (number) $37
+  *((const byte*) PROCPORT) ← (number) $37
   asm { cli  }
   to:scroll_bit::@return
 scroll_bit::@return: scope:[scroll_bit]  from scroll_bit::@6
@@ -248,7 +241,7 @@ scroll_bit::@return: scope:[scroll_bit]  from scroll_bit::@6
   (byte*) current_chargen#26 ← phi( @2/(byte*) current_chargen#4 )
   (byte) current_bit#28 ← phi( @2/(byte) current_bit#4 )
   (byte) scroll#17 ← phi( @2/(byte) scroll#19 )
-  (byte*) nxt#6 ← (byte*) TEXT
+  (byte*) nxt#6 ← (const byte*) TEXT
   to:@6
 
 (byte()) next_char()
@@ -266,7 +259,7 @@ next_char::@1: scope:[next_char]  from next_char next_char::@2
   (byte) next_char::return#1 ← (byte) next_char::c#2
   to:next_char::@return
 next_char::@2: scope:[next_char]  from next_char
-  (byte*) nxt#8 ← (byte*) TEXT
+  (byte*) nxt#8 ← (const byte*) TEXT
   (byte) next_char::c#1 ← *((byte*) nxt#8)
   to:next_char::@1
 next_char::@return: scope:[next_char]  from next_char::@1
@@ -279,7 +272,7 @@ next_char::@return: scope:[next_char]  from next_char::@1
 
 (void()) scroll_hard()
 scroll_hard: scope:[scroll_hard]  from scroll_bit::@1
-  (byte) scroll_hard::i#0 ← (number) 0
+  (byte) scroll_hard::i#0 ← (byte) 0
   to:scroll_hard::@1
 scroll_hard::@1: scope:[scroll_hard]  from scroll_hard scroll_hard::@2
   (byte) scroll_hard::i#2 ← phi( scroll_hard/(byte) scroll_hard::i#0 scroll_hard::@2/(byte) scroll_hard::i#1 )
@@ -288,36 +281,36 @@ scroll_hard::@1: scope:[scroll_hard]  from scroll_hard scroll_hard::@2
   to:scroll_hard::@return
 scroll_hard::@2: scope:[scroll_hard]  from scroll_hard::@1
   (byte) scroll_hard::i#3 ← phi( scroll_hard::@1/(byte) scroll_hard::i#2 )
-  (byte*~) scroll_hard::$1 ← (byte*) SCREEN + (number) $28*(number) 0
-  (byte*~) scroll_hard::$2 ← (byte*) SCREEN + (number) $28*(number) 0
+  (byte*~) scroll_hard::$1 ← (const byte*) SCREEN + (number) $28*(number) 0
+  (byte*~) scroll_hard::$2 ← (const byte*) SCREEN + (number) $28*(number) 0
   (number~) scroll_hard::$3 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$1 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$2 + (number~) scroll_hard::$3)
-  (byte*~) scroll_hard::$4 ← (byte*) SCREEN + (number) $28*(number) 1
-  (byte*~) scroll_hard::$5 ← (byte*) SCREEN + (number) $28*(number) 1
+  (byte*~) scroll_hard::$4 ← (const byte*) SCREEN + (number) $28*(number) 1
+  (byte*~) scroll_hard::$5 ← (const byte*) SCREEN + (number) $28*(number) 1
   (number~) scroll_hard::$6 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$4 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$5 + (number~) scroll_hard::$6)
-  (byte*~) scroll_hard::$7 ← (byte*) SCREEN + (number) $28*(number) 2
-  (byte*~) scroll_hard::$8 ← (byte*) SCREEN + (number) $28*(number) 2
+  (byte*~) scroll_hard::$7 ← (const byte*) SCREEN + (number) $28*(number) 2
+  (byte*~) scroll_hard::$8 ← (const byte*) SCREEN + (number) $28*(number) 2
   (number~) scroll_hard::$9 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$7 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$8 + (number~) scroll_hard::$9)
-  (byte*~) scroll_hard::$10 ← (byte*) SCREEN + (number) $28*(number) 3
-  (byte*~) scroll_hard::$11 ← (byte*) SCREEN + (number) $28*(number) 3
+  (byte*~) scroll_hard::$10 ← (const byte*) SCREEN + (number) $28*(number) 3
+  (byte*~) scroll_hard::$11 ← (const byte*) SCREEN + (number) $28*(number) 3
   (number~) scroll_hard::$12 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$10 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$11 + (number~) scroll_hard::$12)
-  (byte*~) scroll_hard::$13 ← (byte*) SCREEN + (number) $28*(number) 4
-  (byte*~) scroll_hard::$14 ← (byte*) SCREEN + (number) $28*(number) 4
+  (byte*~) scroll_hard::$13 ← (const byte*) SCREEN + (number) $28*(number) 4
+  (byte*~) scroll_hard::$14 ← (const byte*) SCREEN + (number) $28*(number) 4
   (number~) scroll_hard::$15 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$13 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$14 + (number~) scroll_hard::$15)
-  (byte*~) scroll_hard::$16 ← (byte*) SCREEN + (number) $28*(number) 5
-  (byte*~) scroll_hard::$17 ← (byte*) SCREEN + (number) $28*(number) 5
+  (byte*~) scroll_hard::$16 ← (const byte*) SCREEN + (number) $28*(number) 5
+  (byte*~) scroll_hard::$17 ← (const byte*) SCREEN + (number) $28*(number) 5
   (number~) scroll_hard::$18 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$16 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$17 + (number~) scroll_hard::$18)
-  (byte*~) scroll_hard::$19 ← (byte*) SCREEN + (number) $28*(number) 6
-  (byte*~) scroll_hard::$20 ← (byte*) SCREEN + (number) $28*(number) 6
+  (byte*~) scroll_hard::$19 ← (const byte*) SCREEN + (number) $28*(number) 6
+  (byte*~) scroll_hard::$20 ← (const byte*) SCREEN + (number) $28*(number) 6
   (number~) scroll_hard::$21 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$19 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$20 + (number~) scroll_hard::$21)
-  (byte*~) scroll_hard::$22 ← (byte*) SCREEN + (number) $28*(number) 7
-  (byte*~) scroll_hard::$23 ← (byte*) SCREEN + (number) $28*(number) 7
+  (byte*~) scroll_hard::$22 ← (const byte*) SCREEN + (number) $28*(number) 7
+  (byte*~) scroll_hard::$23 ← (const byte*) SCREEN + (number) $28*(number) 7
   (number~) scroll_hard::$24 ← (byte) scroll_hard::i#3 + (number) 1
   *((byte*~) scroll_hard::$22 + (byte) scroll_hard::i#3) ← *((byte*~) scroll_hard::$23 + (number~) scroll_hard::$24)
   (byte) scroll_hard::i#1 ← ++ (byte) scroll_hard::i#3
@@ -370,7 +363,6 @@ fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
 @end: scope:[]  from @7
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
 (label) @1
 (label) @2
 (label) @3
@@ -378,13 +370,13 @@ SYMBOL TABLE SSA
 (label) @7
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) CHARGEN
-(byte*) PROCPORT
-(byte*) RASTER
-(byte*) SCREEN
-(byte*) SCROLL
-(byte*) TEXT
+(const byte*) BGCOL = (byte*)(number) $d020
+(const byte*) CHARGEN = (byte*)(number) $d000
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) SCROLL = (byte*)(number) $d016
+(const byte*) TEXT = (byte*) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
 (byte) current_bit
 (byte) current_bit#0
 (byte) current_bit#1
@@ -644,17 +636,15 @@ SYMBOL TABLE SSA
 (label) scroll_soft::@return
 
 Adding number conversion cast (unumber) $20 in (byte) fillscreen::fill#0 ← (number) $20
-Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((byte*) RASTER) != (number) $fe
-Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) 7 in (byte) scroll#2 ← (number) 7
+Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
+Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) $ff in (bool~) scroll_soft::$0 ← (byte) scroll#3 == (number) $ff
 Adding number conversion cast (unumber) 7 in (byte) scroll#4 ← (number) 7
-Adding number conversion cast (unumber) 1 in (byte) current_bit#4 ← (number) 1
 Adding number conversion cast (unumber) 2 in (number~) scroll_bit::$0 ← (byte) current_bit#13 / (number) 2
 Adding number conversion cast (unumber) scroll_bit::$0 in (number~) scroll_bit::$0 ← (byte) current_bit#13 / (unumber)(number) 2
 Adding number conversion cast (unumber) 0 in (bool~) scroll_bit::$1 ← (byte) current_bit#5 == (number) 0
-Adding number conversion cast (unumber) $32 in *((byte*) PROCPORT) ← (number) $32
-Adding number conversion cast (unumber) $28 in (byte*~) scroll_bit::$4 ← (byte*) SCREEN + (number) $28
+Adding number conversion cast (unumber) $32 in *((const byte*) PROCPORT) ← (number) $32
+Adding number conversion cast (unumber) $28 in (byte*~) scroll_bit::$4 ← (const byte*) SCREEN + (number) $28
 Adding number conversion cast (unumber) $27 in (byte*~) scroll_bit::$5 ← (byte*~) scroll_bit::$4 + (number) $27
 Adding number conversion cast (unumber) 8 in (number~) scroll_bit::$7 ← (word) scroll_bit::c#0 * (number) 8
 Adding number conversion cast (unumber) scroll_bit::$7 in (number~) scroll_bit::$7 ← (word) scroll_bit::c#0 * (unumber)(number) 8
@@ -663,59 +653,49 @@ Adding number conversion cast (unumber) 0 in (bool~) scroll_bit::$10 ← (byte~)
 Adding number conversion cast (unumber) $28 in (byte*~) scroll_bit::$12 ← (byte*) scroll_bit::sc#2 + (number) $28
 Adding number conversion cast (unumber) $80+' ' in (byte) scroll_bit::b#1 ← (number) $80+(byte) ' '
 Adding number conversion cast (unumber) $80 in (byte) scroll_bit::b#1 ← ((unumber)) (number) $80+(byte) ' '
-Adding number conversion cast (unumber) $37 in *((byte*) PROCPORT) ← (number) $37
+Adding number conversion cast (unumber) $37 in *((const byte*) PROCPORT) ← (number) $37
 Adding number conversion cast (unumber) 0 in (bool~) next_char::$0 ← (byte) next_char::c#0 == (number) 0
-Adding number conversion cast (unumber) 0 in (byte) scroll_hard::i#0 ← (number) 0
 Adding number conversion cast (unumber) $27 in (bool~) scroll_hard::$0 ← (byte) scroll_hard::i#2 != (number) $27
-Adding number conversion cast (unumber) $28*0 in (byte*~) scroll_hard::$1 ← (byte*) SCREEN + (number) $28*(number) 0
-Adding number conversion cast (unumber) $28*0 in (byte*~) scroll_hard::$2 ← (byte*) SCREEN + (number) $28*(number) 0
+Adding number conversion cast (unumber) $28*0 in (byte*~) scroll_hard::$1 ← (const byte*) SCREEN + (number) $28*(number) 0
+Adding number conversion cast (unumber) $28*0 in (byte*~) scroll_hard::$2 ← (const byte*) SCREEN + (number) $28*(number) 0
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$3 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$3 in (number~) scroll_hard::$3 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28*1 in (byte*~) scroll_hard::$4 ← (byte*) SCREEN + (number) $28*(number) 1
-Adding number conversion cast (unumber) $28*1 in (byte*~) scroll_hard::$5 ← (byte*) SCREEN + (number) $28*(number) 1
+Adding number conversion cast (unumber) $28*1 in (byte*~) scroll_hard::$4 ← (const byte*) SCREEN + (number) $28*(number) 1
+Adding number conversion cast (unumber) $28*1 in (byte*~) scroll_hard::$5 ← (const byte*) SCREEN + (number) $28*(number) 1
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$6 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$6 in (number~) scroll_hard::$6 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28*2 in (byte*~) scroll_hard::$7 ← (byte*) SCREEN + (number) $28*(number) 2
-Adding number conversion cast (unumber) $28*2 in (byte*~) scroll_hard::$8 ← (byte*) SCREEN + (number) $28*(number) 2
+Adding number conversion cast (unumber) $28*2 in (byte*~) scroll_hard::$7 ← (const byte*) SCREEN + (number) $28*(number) 2
+Adding number conversion cast (unumber) $28*2 in (byte*~) scroll_hard::$8 ← (const byte*) SCREEN + (number) $28*(number) 2
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$9 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$9 in (number~) scroll_hard::$9 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28*3 in (byte*~) scroll_hard::$10 ← (byte*) SCREEN + (number) $28*(number) 3
-Adding number conversion cast (unumber) $28*3 in (byte*~) scroll_hard::$11 ← (byte*) SCREEN + (number) $28*(number) 3
+Adding number conversion cast (unumber) $28*3 in (byte*~) scroll_hard::$10 ← (const byte*) SCREEN + (number) $28*(number) 3
+Adding number conversion cast (unumber) $28*3 in (byte*~) scroll_hard::$11 ← (const byte*) SCREEN + (number) $28*(number) 3
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$12 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$12 in (number~) scroll_hard::$12 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28*4 in (byte*~) scroll_hard::$13 ← (byte*) SCREEN + (number) $28*(number) 4
-Adding number conversion cast (unumber) $28*4 in (byte*~) scroll_hard::$14 ← (byte*) SCREEN + (number) $28*(number) 4
+Adding number conversion cast (unumber) $28*4 in (byte*~) scroll_hard::$13 ← (const byte*) SCREEN + (number) $28*(number) 4
+Adding number conversion cast (unumber) $28*4 in (byte*~) scroll_hard::$14 ← (const byte*) SCREEN + (number) $28*(number) 4
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$15 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$15 in (number~) scroll_hard::$15 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28*5 in (byte*~) scroll_hard::$16 ← (byte*) SCREEN + (number) $28*(number) 5
-Adding number conversion cast (unumber) $28*5 in (byte*~) scroll_hard::$17 ← (byte*) SCREEN + (number) $28*(number) 5
+Adding number conversion cast (unumber) $28*5 in (byte*~) scroll_hard::$16 ← (const byte*) SCREEN + (number) $28*(number) 5
+Adding number conversion cast (unumber) $28*5 in (byte*~) scroll_hard::$17 ← (const byte*) SCREEN + (number) $28*(number) 5
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$18 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$18 in (number~) scroll_hard::$18 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28*6 in (byte*~) scroll_hard::$19 ← (byte*) SCREEN + (number) $28*(number) 6
-Adding number conversion cast (unumber) $28*6 in (byte*~) scroll_hard::$20 ← (byte*) SCREEN + (number) $28*(number) 6
+Adding number conversion cast (unumber) $28*6 in (byte*~) scroll_hard::$19 ← (const byte*) SCREEN + (number) $28*(number) 6
+Adding number conversion cast (unumber) $28*6 in (byte*~) scroll_hard::$20 ← (const byte*) SCREEN + (number) $28*(number) 6
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$21 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$21 in (number~) scroll_hard::$21 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28*7 in (byte*~) scroll_hard::$22 ← (byte*) SCREEN + (number) $28*(number) 7
-Adding number conversion cast (unumber) $28*7 in (byte*~) scroll_hard::$23 ← (byte*) SCREEN + (number) $28*(number) 7
+Adding number conversion cast (unumber) $28*7 in (byte*~) scroll_hard::$22 ← (const byte*) SCREEN + (number) $28*(number) 7
+Adding number conversion cast (unumber) $28*7 in (byte*~) scroll_hard::$23 ← (const byte*) SCREEN + (number) $28*(number) 7
 Adding number conversion cast (unumber) 1 in (number~) scroll_hard::$24 ← (byte) scroll_hard::i#3 + (number) 1
 Adding number conversion cast (unumber) scroll_hard::$24 in (number~) scroll_hard::$24 ← (byte) scroll_hard::i#3 + (unumber)(number) 1
 Adding number conversion cast (unumber) $3e8 in (byte*~) fillscreen::$0 ← (byte*) fillscreen::screen#2 + (number) $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte*) CHARGEN ← (byte*)(number) $d000
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
-Inlining cast (byte*) SCROLL ← (byte*)(number) $d016
 Inlining cast (byte) fillscreen::fill#0 ← (unumber)(number) $20
-Inlining cast (byte) scroll#2 ← (unumber)(number) 7
 Inlining cast (byte) scroll#4 ← (unumber)(number) 7
-Inlining cast (byte) current_bit#4 ← (unumber)(number) 1
-Inlining cast *((byte*) PROCPORT) ← (unumber)(number) $32
+Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $32
 Inlining cast (byte) current_bit#6 ← (unumber)(number) $80
 Inlining cast (byte) scroll_bit::b#1 ← (unumber)(unumber)(number) $80+(byte) ' '
-Inlining cast *((byte*) PROCPORT) ← (unumber)(number) $37
-Inlining cast (byte) scroll_hard::i#0 ← (unumber)(number) 0
+Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $37
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1
 Simplifying constant pointer cast (byte*) 53248
@@ -726,10 +706,8 @@ Simplifying constant pointer cast (byte*) 53270
 Simplifying constant integer cast $20
 Simplifying constant integer cast $fe
 Simplifying constant integer cast $ff
-Simplifying constant integer cast 7
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 7
-Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Simplifying constant integer cast $32
@@ -742,7 +720,6 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast (unumber)(number) $80+(byte) ' '
 Simplifying constant integer cast $80
 Simplifying constant integer cast $37
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $27
 Simplifying constant integer cast 1
@@ -758,10 +735,8 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) $fe
 Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $32
@@ -773,7 +748,6 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) $37
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $27
 Finalized unsigned number type (byte) 1
@@ -796,10 +770,10 @@ Inferred type updated to byte in (unumber~) scroll_hard::$15 ← (byte) scroll_h
 Inferred type updated to byte in (unumber~) scroll_hard::$18 ← (byte) scroll_hard::i#3 + (byte) 1
 Inferred type updated to byte in (unumber~) scroll_hard::$21 ← (byte) scroll_hard::i#3 + (byte) 1
 Inferred type updated to byte in (unumber~) scroll_hard::$24 ← (byte) scroll_hard::i#3 + (byte) 1
-Inversing boolean not [38] (bool~) scroll_soft::$1 ← (byte) scroll#3 != (byte) $ff from [37] (bool~) scroll_soft::$0 ← (byte) scroll#3 == (byte) $ff
-Inversing boolean not [62] (bool~) scroll_bit::$2 ← (byte) current_bit#5 != (byte) 0 from [61] (bool~) scroll_bit::$1 ← (byte) current_bit#5 == (byte) 0
-Inversing boolean not [89] (bool~) scroll_bit::$11 ← (byte~) scroll_bit::$9 == (byte) 0 from [88] (bool~) scroll_bit::$10 ← (byte~) scroll_bit::$9 != (byte) 0
-Inversing boolean not [113] (bool~) next_char::$1 ← (byte) next_char::c#0 != (byte) 0 from [112] (bool~) next_char::$0 ← (byte) next_char::c#0 == (byte) 0
+Inversing boolean not [31] (bool~) scroll_soft::$1 ← (byte) scroll#3 != (byte) $ff from [30] (bool~) scroll_soft::$0 ← (byte) scroll#3 == (byte) $ff
+Inversing boolean not [55] (bool~) scroll_bit::$2 ← (byte) current_bit#5 != (byte) 0 from [54] (bool~) scroll_bit::$1 ← (byte) current_bit#5 == (byte) 0
+Inversing boolean not [82] (bool~) scroll_bit::$11 ← (byte~) scroll_bit::$9 == (byte) 0 from [81] (bool~) scroll_bit::$10 ← (byte~) scroll_bit::$9 != (byte) 0
+Inversing boolean not [106] (bool~) next_char::$1 ← (byte) next_char::c#0 != (byte) 0 from [105] (bool~) next_char::$0 ← (byte) next_char::c#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) scroll#20 = (byte) scroll#21 
 Alias (byte) current_bit#30 = (byte) current_bit#31 
@@ -825,7 +799,6 @@ Alias (byte) current_bit#12 = (byte) current_bit#19 (byte) current_bit#3
 Alias (byte*) nxt#14 = (byte*) nxt#23 (byte*) nxt#3 
 Alias (byte*) current_chargen#11 = (byte*) current_chargen#17 (byte*) current_chargen#3 
 Alias (byte) scroll#15 = (byte) scroll#19 (byte) scroll#2 (byte) scroll#17 
-Alias (byte*) CHARGEN = (byte*) current_chargen#4 (byte*) current_chargen#26 (byte*) current_chargen#21 
 Alias (byte) current_bit#5 = (byte~) scroll_bit::$0 
 Alias (byte*) current_chargen#19 = (byte*) current_chargen#24 
 Alias (byte) current_bit#21 = (byte) current_bit#26 
@@ -846,7 +819,7 @@ Alias (byte) current_bit#15 = (byte) current_bit#22 (byte) current_bit#20 (byte)
 Alias (byte*) nxt#16 = (byte*) nxt#25 (byte*) nxt#30 (byte*) nxt#5 
 Alias (byte*) current_chargen#13 = (byte*) current_chargen#20 (byte*) current_chargen#18 (byte*) current_chargen#6 
 Alias (byte) current_bit#23 = (byte) current_bit#28 (byte) current_bit#4 
-Alias (byte*) TEXT = (byte*) nxt#6 (byte*) nxt#26 
+Alias (byte*) current_chargen#21 = (byte*) current_chargen#26 (byte*) current_chargen#4 
 Alias (byte) next_char::return#1 = (byte) next_char::c#2 (byte) next_char::return#4 (byte) next_char::return#2 
 Alias (byte*) nxt#19 = (byte*) nxt#7 (byte*) nxt#9 
 Alias (byte) scroll_hard::i#2 = (byte) scroll_hard::i#3 
@@ -854,6 +827,7 @@ Alias (byte*) fillscreen::cursor#0 = (byte*) fillscreen::screen#1
 Alias (byte) fillscreen::fill#1 = (byte) fillscreen::fill#2 
 Alias (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#3 
 Alias (byte*) fillscreen::screen#2 = (byte*) fillscreen::screen#3 
+Alias (byte*) nxt#26 = (byte*) nxt#6 
 Alias (byte) scroll#12 = (byte) scroll#6 
 Alias (byte) current_bit#16 = (byte) current_bit#8 
 Alias (byte*) nxt#10 = (byte*) nxt#20 
@@ -867,8 +841,8 @@ Alias (byte*) nxt#16 = (byte*) nxt#32
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) scroll#20 (byte) scroll#15
 Identical Phi Values (byte) current_bit#30 (byte) current_bit#23
-Identical Phi Values (byte*) nxt#34 (byte*) TEXT
-Identical Phi Values (byte*) current_chargen#29 (byte*) CHARGEN
+Identical Phi Values (byte*) nxt#34 (byte*) nxt#26
+Identical Phi Values (byte*) current_chargen#29 (byte*) current_chargen#21
 Identical Phi Values (byte) scroll#13 (byte) scroll#18
 Identical Phi Values (byte) current_bit#17 (byte) current_bit#29
 Identical Phi Values (byte*) nxt#21 (byte*) nxt#31
@@ -901,74 +875,50 @@ Identical Phi Values (byte) current_bit#16 (byte) current_bit#0
 Identical Phi Values (byte*) nxt#10 (byte*) nxt#0
 Identical Phi Values (byte*) current_chargen#14 (byte*) current_chargen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [14] if(*((byte*) RASTER)!=(byte) $fe) goto main::@2
-Simple Condition (bool~) main::$2 [17] if(*((byte*) RASTER)!=(byte) $ff) goto main::@4
-Simple Condition (bool~) scroll_soft::$1 [39] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1
-Simple Condition (bool~) scroll_bit::$2 [63] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1
-Simple Condition (bool~) scroll_bit::$11 [90] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4
-Simple Condition (bool~) scroll_bit::$13 [97] if((byte) scroll_bit::r#1!=rangelast(0,7)) goto scroll_bit::@3
-Simple Condition (bool~) next_char::$1 [114] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
-Simple Condition (bool~) scroll_hard::$0 [127] if((byte) scroll_hard::i#2!=(byte) $27) goto scroll_hard::@2
-Simple Condition (bool~) fillscreen::$1 [168] if((byte*) fillscreen::cursor#2<(byte*~) fillscreen::$0) goto fillscreen::@2
+Simple Condition (bool~) main::$1 [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@2
+Simple Condition (bool~) main::$2 [10] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
+Simple Condition (bool~) scroll_soft::$1 [32] if((byte) scroll#3!=(byte) $ff) goto scroll_soft::@1
+Simple Condition (bool~) scroll_bit::$2 [56] if((byte) current_bit#5!=(byte) 0) goto scroll_bit::@1
+Simple Condition (bool~) scroll_bit::$11 [83] if((byte~) scroll_bit::$9==(byte) 0) goto scroll_bit::@4
+Simple Condition (bool~) scroll_bit::$13 [90] if((byte) scroll_bit::r#1!=rangelast(0,7)) goto scroll_bit::@3
+Simple Condition (bool~) next_char::$1 [107] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
+Simple Condition (bool~) scroll_hard::$0 [120] if((byte) scroll_hard::i#2!=(byte) $27) goto scroll_hard::@2
+Simple Condition (bool~) fillscreen::$1 [161] if((byte*) fillscreen::cursor#2<(byte*~) fillscreen::$0) goto fillscreen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte*) CHARGEN = (byte*) 53248
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BGCOL = (byte*) 53280
-Constant (const byte*) SCROLL = (byte*) 53270
-Constant (const byte*) TEXT = $0
+Constant right-side identified [62] (byte*~) scroll_bit::$4 ← (const byte*) SCREEN + (byte) $28
+Constant right-side identified [122] (byte*~) scroll_hard::$1 ← (const byte*) SCREEN + (byte)(number) $28*(number) 0
+Constant right-side identified [123] (byte*~) scroll_hard::$2 ← (const byte*) SCREEN + (byte)(number) $28*(number) 0
+Constant right-side identified [126] (byte*~) scroll_hard::$4 ← (const byte*) SCREEN + (byte)(number) $28*(number) 1
+Constant right-side identified [127] (byte*~) scroll_hard::$5 ← (const byte*) SCREEN + (byte)(number) $28*(number) 1
+Constant right-side identified [130] (byte*~) scroll_hard::$7 ← (const byte*) SCREEN + (byte)(number) $28*(number) 2
+Constant right-side identified [131] (byte*~) scroll_hard::$8 ← (const byte*) SCREEN + (byte)(number) $28*(number) 2
+Constant right-side identified [134] (byte*~) scroll_hard::$10 ← (const byte*) SCREEN + (byte)(number) $28*(number) 3
+Constant right-side identified [135] (byte*~) scroll_hard::$11 ← (const byte*) SCREEN + (byte)(number) $28*(number) 3
+Constant right-side identified [138] (byte*~) scroll_hard::$13 ← (const byte*) SCREEN + (byte)(number) $28*(number) 4
+Constant right-side identified [139] (byte*~) scroll_hard::$14 ← (const byte*) SCREEN + (byte)(number) $28*(number) 4
+Constant right-side identified [142] (byte*~) scroll_hard::$16 ← (const byte*) SCREEN + (byte)(number) $28*(number) 5
+Constant right-side identified [143] (byte*~) scroll_hard::$17 ← (const byte*) SCREEN + (byte)(number) $28*(number) 5
+Constant right-side identified [146] (byte*~) scroll_hard::$19 ← (const byte*) SCREEN + (byte)(number) $28*(number) 6
+Constant right-side identified [147] (byte*~) scroll_hard::$20 ← (const byte*) SCREEN + (byte)(number) $28*(number) 6
+Constant right-side identified [150] (byte*~) scroll_hard::$22 ← (const byte*) SCREEN + (word)(number) $28*(number) 7
+Constant right-side identified [151] (byte*~) scroll_hard::$23 ← (const byte*) SCREEN + (word)(number) $28*(number) 7
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) fillscreen::screen#0 = SCREEN
 Constant (const byte) fillscreen::fill#0 = $20
 Constant (const byte) scroll#15 = 7
 Constant (const byte) scroll#14 = 7
+Constant (const byte*) current_chargen#21 = CHARGEN
 Constant (const byte) current_bit#23 = 1
+Constant (const byte*) scroll_bit::$4 = SCREEN+$28
 Constant (const byte) scroll_bit::r#0 = 0
 Constant (const byte) current_bit#6 = $80
 Constant (const byte) scroll_bit::b#0 = ' '
 Constant (const byte) scroll_bit::b#1 = $80+' '
-Constant (const byte) scroll_hard::i#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) fillscreen::screen#0 = SCREEN
+Constant (const byte*) nxt#26 = TEXT
 Constant (const byte*) nxt#8 = TEXT
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [27] if(true) goto main::@2
-Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [95] scroll_bit::r#1 ← ++ scroll_bit::r#2 to ++
-Resolved ranged comparison value [97] if(scroll_bit::r#1!=rangelast(0,7)) goto scroll_bit::@3 to (number) 8
-Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [129] (byte*~) scroll_hard::$1 ← (const byte*) SCREEN + (byte)(number) $28*(number) 0
-Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in [130] (byte*~) scroll_hard::$2 ← (const byte*) SCREEN + (byte)(number) $28*(number) 0
-Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN in [129] (byte*~) scroll_hard::$1 ← (const byte*) SCREEN + (byte) 0
-Simplifying expression containing zero SCREEN in [130] (byte*~) scroll_hard::$2 ← (const byte*) SCREEN + (byte) 0
-Successful SSA optimization PassNSimplifyExpressionWithZero
-Removing unused block main::@return
-Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) 8 in if((byte) scroll_bit::r#1!=(number) 8) goto scroll_bit::@3
-Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast 8
-Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 8
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [19] (byte*~) scroll_bit::$4 ← (const byte*) SCREEN + (byte) $28
-Constant right-side identified [50] (byte*~) scroll_hard::$4 ← (const byte*) SCREEN + (byte)(number) $28*(number) 1
-Constant right-side identified [51] (byte*~) scroll_hard::$5 ← (const byte*) SCREEN + (byte)(number) $28*(number) 1
-Constant right-side identified [54] (byte*~) scroll_hard::$7 ← (const byte*) SCREEN + (byte)(number) $28*(number) 2
-Constant right-side identified [55] (byte*~) scroll_hard::$8 ← (const byte*) SCREEN + (byte)(number) $28*(number) 2
-Constant right-side identified [58] (byte*~) scroll_hard::$10 ← (const byte*) SCREEN + (byte)(number) $28*(number) 3
-Constant right-side identified [59] (byte*~) scroll_hard::$11 ← (const byte*) SCREEN + (byte)(number) $28*(number) 3
-Constant right-side identified [62] (byte*~) scroll_hard::$13 ← (const byte*) SCREEN + (byte)(number) $28*(number) 4
-Constant right-side identified [63] (byte*~) scroll_hard::$14 ← (const byte*) SCREEN + (byte)(number) $28*(number) 4
-Constant right-side identified [66] (byte*~) scroll_hard::$16 ← (const byte*) SCREEN + (byte)(number) $28*(number) 5
-Constant right-side identified [67] (byte*~) scroll_hard::$17 ← (const byte*) SCREEN + (byte)(number) $28*(number) 5
-Constant right-side identified [70] (byte*~) scroll_hard::$19 ← (const byte*) SCREEN + (byte)(number) $28*(number) 6
-Constant right-side identified [71] (byte*~) scroll_hard::$20 ← (const byte*) SCREEN + (byte)(number) $28*(number) 6
-Constant right-side identified [74] (byte*~) scroll_hard::$22 ← (const byte*) SCREEN + (word)(number) $28*(number) 7
-Constant right-side identified [75] (byte*~) scroll_hard::$23 ← (const byte*) SCREEN + (word)(number) $28*(number) 7
-Constant right-side identified [81] (byte*~) fillscreen::$0 ← (const byte*) fillscreen::screen#0 + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) scroll_bit::$4 = SCREEN+$28
-Constant (const byte*) scroll_hard::$1 = SCREEN
-Constant (const byte*) scroll_hard::$2 = SCREEN
+Constant (const byte) scroll_hard::i#0 = 0
+Constant (const byte*) scroll_hard::$1 = SCREEN+(byte)$28*0
+Constant (const byte*) scroll_hard::$2 = SCREEN+(byte)$28*0
 Constant (const byte*) scroll_hard::$4 = SCREEN+(byte)$28*1
 Constant (const byte*) scroll_hard::$5 = SCREEN+(byte)$28*1
 Constant (const byte*) scroll_hard::$7 = SCREEN+(byte)$28*2
@@ -983,11 +933,30 @@ Constant (const byte*) scroll_hard::$19 = SCREEN+(byte)$28*6
 Constant (const byte*) scroll_hard::$20 = SCREEN+(byte)$28*6
 Constant (const byte*) scroll_hard::$22 = SCREEN+(word)$28*7
 Constant (const byte*) scroll_hard::$23 = SCREEN+(word)$28*7
-Constant (const byte*) fillscreen::$0 = fillscreen::screen#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [20] if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Resolved ranged next value [88] scroll_bit::r#1 ← ++ scroll_bit::r#2 to ++
+Resolved ranged comparison value [90] if(scroll_bit::r#1!=rangelast(0,7)) goto scroll_bit::@3 to (number) 8
+Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in 
+Simplifying constant evaluating to zero (byte)(number) $28*(number) 0 in 
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero SCREEN in 
+Simplifying expression containing zero SCREEN in 
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Adding number conversion cast (unumber) 8 in if((byte) scroll_bit::r#1!=(number) 8) goto scroll_bit::@3
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast 8
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [19] (byte*) scroll_bit::sc#0 ← (const byte*) scroll_bit::$4 + (byte) $27
+Constant right-side identified [64] (byte*~) fillscreen::$0 ← (const byte*) fillscreen::screen#0 + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) scroll_bit::sc#0 = scroll_bit::$4+$27
+Constant (const byte*) fillscreen::$0 = fillscreen::screen#0+$3e8
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting division to use shift [13] (byte) current_bit#5 ← (byte) current_bit#29 / (byte) 2
 Rewriting multiplication to use shift [22] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 * (byte) 8
@@ -999,20 +968,22 @@ Inlining constant with var siblings (const byte*) scroll_bit::sc#0
 Inlining constant with var siblings (const byte) scroll_hard::i#0
 Inlining constant with var siblings (const byte) scroll#15
 Inlining constant with var siblings (const byte) scroll#14
+Inlining constant with var siblings (const byte*) current_chargen#21
 Inlining constant with var siblings (const byte) current_bit#23
 Inlining constant with var siblings (const byte) current_bit#6
+Inlining constant with var siblings (const byte*) nxt#26
 Inlining constant with var siblings (const byte*) nxt#8
 Constant inlined scroll_hard::$4 = (const byte*) SCREEN+(byte)(number) $28*(number) 1
 Constant inlined scroll_hard::$5 = (const byte*) SCREEN+(byte)(number) $28*(number) 1
 Constant inlined scroll_hard::$2 = (const byte*) SCREEN
 Constant inlined scroll_hard::$1 = (const byte*) SCREEN
-Constant inlined $0 = (const byte*) TEXT
 Constant inlined scroll_hard::$23 = (const byte*) SCREEN+(word)(number) $28*(number) 7
 Constant inlined current_bit#6 = (byte) $80
 Constant inlined scroll_bit::r#0 = (byte) 0
 Constant inlined current_bit#23 = (byte) 1
 Constant inlined fillscreen::screen#0 = (const byte*) SCREEN
 Constant inlined nxt#8 = (const byte*) TEXT
+Constant inlined current_chargen#21 = (const byte*) CHARGEN
 Constant inlined scroll_hard::$8 = (const byte*) SCREEN+(byte)(number) $28*(number) 2
 Constant inlined scroll_hard::$7 = (const byte*) SCREEN+(byte)(number) $28*(number) 2
 Constant inlined scroll_hard::$20 = (const byte*) SCREEN+(byte)(number) $28*(number) 6
@@ -1027,6 +998,7 @@ Constant inlined scroll_hard::$14 = (const byte*) SCREEN+(byte)(number) $28*(num
 Constant inlined scroll_hard::$16 = (const byte*) SCREEN+(byte)(number) $28*(number) 5
 Constant inlined scroll_hard::$17 = (const byte*) SCREEN+(byte)(number) $28*(number) 5
 Constant inlined scroll_hard::$19 = (const byte*) SCREEN+(byte)(number) $28*(number) 6
+Constant inlined nxt#26 = (const byte*) TEXT
 Constant inlined scroll_bit::sc#0 = (const byte*) SCREEN+(byte) $28+(byte) $27
 Constant inlined scroll#15 = (byte) 7
 Constant inlined scroll_hard::$10 = (const byte*) SCREEN+(byte)(number) $28*(number) 3
@@ -1352,11 +1324,11 @@ Initial phi equivalence classes
 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
-Added variable next_char::return#0 to zero page equivalence class [ next_char::return#0 ]
-Added variable scroll_bit::c#0 to zero page equivalence class [ scroll_bit::c#0 ]
-Added variable scroll_bit::$7 to zero page equivalence class [ scroll_bit::$7 ]
-Added variable scroll_bit::bits#0 to zero page equivalence class [ scroll_bit::bits#0 ]
-Added variable scroll_bit::$9 to zero page equivalence class [ scroll_bit::$9 ]
+Added variable next_char::return#0 to live range equivalence class [ next_char::return#0 ]
+Added variable scroll_bit::c#0 to live range equivalence class [ scroll_bit::c#0 ]
+Added variable scroll_bit::$7 to live range equivalence class [ scroll_bit::$7 ]
+Added variable scroll_bit::bits#0 to live range equivalence class [ scroll_bit::bits#0 ]
+Added variable scroll_bit::$9 to live range equivalence class [ scroll_bit::$9 ]
 Complete equivalence classes
 [ scroll#18 scroll#10 scroll#3 ]
 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
@@ -1373,21 +1345,21 @@ Complete equivalence classes
 [ scroll_bit::$7 ]
 [ scroll_bit::bits#0 ]
 [ scroll_bit::$9 ]
-Allocated zp ZP_BYTE:2 [ scroll#18 scroll#10 scroll#3 ]
-Allocated zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-Allocated zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ]
-Allocated zp ZP_BYTE:6 [ scroll_bit::r#2 scroll_bit::r#1 ]
-Allocated zp ZP_WORD:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
-Allocated zp ZP_BYTE:9 [ scroll_bit::b#2 ]
-Allocated zp ZP_BYTE:10 [ scroll_hard::i#2 scroll_hard::i#1 ]
-Allocated zp ZP_WORD:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
-Allocated zp ZP_BYTE:13 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
-Allocated zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
-Allocated zp ZP_BYTE:16 [ next_char::return#0 ]
-Allocated zp ZP_WORD:17 [ scroll_bit::c#0 ]
-Allocated zp ZP_WORD:19 [ scroll_bit::$7 ]
-Allocated zp ZP_BYTE:21 [ scroll_bit::bits#0 ]
-Allocated zp ZP_BYTE:22 [ scroll_bit::$9 ]
+Allocated zp[1]:2 [ scroll#18 scroll#10 scroll#3 ]
+Allocated zp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
+Allocated zp[2]:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ]
+Allocated zp[1]:6 [ scroll_bit::r#2 scroll_bit::r#1 ]
+Allocated zp[2]:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
+Allocated zp[1]:9 [ scroll_bit::b#2 ]
+Allocated zp[1]:10 [ scroll_hard::i#2 scroll_hard::i#1 ]
+Allocated zp[2]:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
+Allocated zp[1]:13 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
+Allocated zp[2]:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
+Allocated zp[1]:16 [ next_char::return#0 ]
+Allocated zp[2]:17 [ scroll_bit::c#0 ]
+Allocated zp[2]:19 [ scroll_bit::$7 ]
+Allocated zp[1]:21 [ scroll_bit::bits#0 ]
+Allocated zp[1]:22 [ scroll_bit::$9 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1404,8 +1376,10 @@ Target platform is c64basic / MOS6502X
   .label RASTER = $d012
   .label BGCOL = $d020
   .label SCROLL = $d016
+  // Soft-scroll using $d016 - trigger bit-scroll/char-scroll when needed
   .label scroll = 2
   .label current_bit = 3
+  // Scroll the next bit from the current char onto the screen - trigger next char if needed
   .label current_chargen = 4
   .label nxt = $b
   // @begin
@@ -1848,22 +1822,22 @@ fillscreen: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 [ scroll#18 current_bit#29 nxt#31 current_chargen#27 ] ( main:2 [ scroll#18 current_bit#29 nxt#31 current_chargen#27 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ scroll#18 scroll#10 scroll#3 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ scroll#18 scroll#10 scroll#3 ]
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
 Statement [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ scroll#18 current_bit#29 nxt#31 current_chargen#27 ] ( main:2 [ scroll#18 current_bit#29 nxt#31 current_chargen#27 ] ) always clobbers reg byte a 
 Statement [24] (word) scroll_bit::c#0 ← (byte) next_char::return#0 [ scroll_bit::c#0 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:15 [ scroll_bit::c#0 nxt#19 ] ) always clobbers reg byte a 
 Statement [25] (word~) scroll_bit::$7 ← (word) scroll_bit::c#0 << (byte) 3 [ scroll_bit::$7 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:15 [ scroll_bit::$7 nxt#19 ] ) always clobbers reg byte a 
 Statement [26] (byte*) current_chargen#5 ← (const byte*) CHARGEN + (word~) scroll_bit::$7 [ current_chargen#5 nxt#19 ] ( main:2::scroll_soft:10::scroll_bit:15 [ current_chargen#5 nxt#19 ] ) always clobbers reg byte a 
 Statement [30] *((const byte*) PROCPORT) ← (byte) $32 [ current_bit#21 nxt#35 current_chargen#19 ] ( main:2::scroll_soft:10::scroll_bit:15 [ current_bit#21 nxt#35 current_chargen#19 ] ) always clobbers reg byte a 
 Statement [32] (byte) scroll_bit::bits#0 ← *((byte*) current_chargen#19 + (byte) scroll_bit::r#2) [ current_bit#21 nxt#35 current_chargen#19 scroll_bit::r#2 scroll_bit::sc#2 scroll_bit::bits#0 ] ( main:2::scroll_soft:10::scroll_bit:15 [ current_bit#21 nxt#35 current_chargen#19 scroll_bit::r#2 scroll_bit::sc#2 scroll_bit::bits#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ scroll_bit::r#2 scroll_bit::r#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ scroll_bit::r#2 scroll_bit::r#1 ]
 Statement [37] *((byte*) scroll_bit::sc#2) ← (byte) scroll_bit::b#2 [ current_bit#21 nxt#35 current_chargen#19 scroll_bit::r#2 scroll_bit::sc#2 ] ( main:2::scroll_soft:10::scroll_bit:15 [ current_bit#21 nxt#35 current_chargen#19 scroll_bit::r#2 scroll_bit::sc#2 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ scroll_bit::r#2 scroll_bit::r#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
+Removing always clobbered register reg byte y as potential for zp[1]:6 [ scroll_bit::r#2 scroll_bit::r#1 ]
 Statement [38] (byte*) scroll_bit::sc#1 ← (byte*) scroll_bit::sc#2 + (byte) $28 [ current_bit#21 nxt#35 current_chargen#19 scroll_bit::r#2 scroll_bit::sc#1 ] ( main:2::scroll_soft:10::scroll_bit:15 [ current_bit#21 nxt#35 current_chargen#19 scroll_bit::r#2 scroll_bit::sc#1 ] ) always clobbers reg byte a 
 Statement [41] *((const byte*) PROCPORT) ← (byte) $37 [ current_bit#21 nxt#35 current_chargen#19 ] ( main:2::scroll_soft:10::scroll_bit:15 [ current_bit#21 nxt#35 current_chargen#19 ] ) always clobbers reg byte a 
 Statement [48] *((const byte*) SCREEN + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN+(byte) 1 + (byte) scroll_hard::i#2) [ scroll_hard::i#2 ] ( main:2::scroll_soft:10::scroll_bit:15::scroll_hard:28 [ current_bit#21 nxt#35 current_chargen#19 scroll_hard::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ scroll_hard::i#2 scroll_hard::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:10 [ scroll_hard::i#2 scroll_hard::i#1 ]
 Statement [49] *((const byte*) SCREEN+(byte)(number) $28*(number) 1 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN+(byte)(number) $28*(number) 1+(byte) 1 + (byte) scroll_hard::i#2) [ scroll_hard::i#2 ] ( main:2::scroll_soft:10::scroll_bit:15::scroll_hard:28 [ current_bit#21 nxt#35 current_chargen#19 scroll_hard::i#2 ] ) always clobbers reg byte a 
 Statement [50] *((const byte*) SCREEN+(byte)(number) $28*(number) 2 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN+(byte)(number) $28*(number) 2+(byte) 1 + (byte) scroll_hard::i#2) [ scroll_hard::i#2 ] ( main:2::scroll_soft:10::scroll_bit:15::scroll_hard:28 [ current_bit#21 nxt#35 current_chargen#19 scroll_hard::i#2 ] ) always clobbers reg byte a 
 Statement [51] *((const byte*) SCREEN+(byte)(number) $28*(number) 3 + (byte) scroll_hard::i#2) ← *((const byte*) SCREEN+(byte)(number) $28*(number) 3+(byte) 1 + (byte) scroll_hard::i#2) [ scroll_hard::i#2 ] ( main:2::scroll_soft:10::scroll_bit:15::scroll_hard:28 [ current_bit#21 nxt#35 current_chargen#19 scroll_hard::i#2 ] ) always clobbers reg byte a 
@@ -1895,48 +1869,48 @@ Statement [55] *((const byte*) SCREEN+(word)(number) $28*(number) 7 + (byte) scr
 Statement [57] (byte) next_char::c#0 ← *((byte*) nxt#31) [ nxt#31 next_char::c#0 ] ( main:2::scroll_soft:10::scroll_bit:15::next_char:22 [ nxt#31 next_char::c#0 ] ) always clobbers reg byte a reg byte y 
 Statement [65] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] ) always clobbers reg byte a 
 Statement [67] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_BYTE:2 [ scroll#18 scroll#10 scroll#3 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] : zp ZP_BYTE:3 , reg byte x , 
-Potential registers zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_BYTE:6 [ scroll_bit::r#2 scroll_bit::r#1 ] : zp ZP_BYTE:6 , reg byte x , 
-Potential registers zp ZP_WORD:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_BYTE:9 [ scroll_bit::b#2 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ scroll_hard::i#2 scroll_hard::i#1 ] : zp ZP_BYTE:10 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ] : zp ZP_WORD:11 , 
-Potential registers zp ZP_BYTE:13 [ next_char::return#1 next_char::c#0 next_char::c#1 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] : zp ZP_WORD:14 , 
-Potential registers zp ZP_BYTE:16 [ next_char::return#0 ] : zp ZP_BYTE:16 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:17 [ scroll_bit::c#0 ] : zp ZP_WORD:17 , 
-Potential registers zp ZP_WORD:19 [ scroll_bit::$7 ] : zp ZP_WORD:19 , 
-Potential registers zp ZP_BYTE:21 [ scroll_bit::bits#0 ] : zp ZP_BYTE:21 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:22 [ scroll_bit::$9 ] : zp ZP_BYTE:22 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ scroll#18 scroll#10 scroll#3 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] : zp[1]:3 , reg byte x , 
+Potential registers zp[2]:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ scroll_bit::r#2 scroll_bit::r#1 ] : zp[1]:6 , reg byte x , 
+Potential registers zp[2]:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ] : zp[2]:7 , 
+Potential registers zp[1]:9 [ scroll_bit::b#2 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ scroll_hard::i#2 scroll_hard::i#1 ] : zp[1]:10 , reg byte x , reg byte y , 
+Potential registers zp[2]:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ] : zp[2]:11 , 
+Potential registers zp[1]:13 [ next_char::return#1 next_char::c#0 next_char::c#1 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] : zp[2]:14 , 
+Potential registers zp[1]:16 [ next_char::return#0 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:17 [ scroll_bit::c#0 ] : zp[2]:17 , 
+Potential registers zp[2]:19 [ scroll_bit::$7 ] : zp[2]:19 , 
+Potential registers zp[1]:21 [ scroll_bit::bits#0 ] : zp[1]:21 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:22 [ scroll_bit::$9 ] : zp[1]:22 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [scroll_bit] 202: zp ZP_BYTE:21 [ scroll_bit::bits#0 ] 202: zp ZP_BYTE:22 [ scroll_bit::$9 ] 189.38: zp ZP_BYTE:6 [ scroll_bit::r#2 scroll_bit::r#1 ] 110.62: zp ZP_WORD:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ] 101: zp ZP_BYTE:9 [ scroll_bit::b#2 ] 4: zp ZP_WORD:17 [ scroll_bit::c#0 ] 4: zp ZP_WORD:19 [ scroll_bit::$7 ] 
-Uplift Scope [scroll_hard] 393.9: zp ZP_BYTE:10 [ scroll_hard::i#2 scroll_hard::i#1 ] 
-Uplift Scope [] 59.75: zp ZP_BYTE:2 [ scroll#18 scroll#10 scroll#3 ] 42.83: zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 37.06: zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] 26.32: zp ZP_WORD:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ] 
-Uplift Scope [fillscreen] 36.67: zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
-Uplift Scope [next_char] 8.5: zp ZP_BYTE:13 [ next_char::return#1 next_char::c#0 next_char::c#1 ] 4: zp ZP_BYTE:16 [ next_char::return#0 ] 
+Uplift Scope [scroll_bit] 202: zp[1]:21 [ scroll_bit::bits#0 ] 202: zp[1]:22 [ scroll_bit::$9 ] 189.38: zp[1]:6 [ scroll_bit::r#2 scroll_bit::r#1 ] 110.62: zp[2]:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ] 101: zp[1]:9 [ scroll_bit::b#2 ] 4: zp[2]:17 [ scroll_bit::c#0 ] 4: zp[2]:19 [ scroll_bit::$7 ] 
+Uplift Scope [scroll_hard] 393.9: zp[1]:10 [ scroll_hard::i#2 scroll_hard::i#1 ] 
+Uplift Scope [] 59.75: zp[1]:2 [ scroll#18 scroll#10 scroll#3 ] 42.83: zp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 37.06: zp[2]:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] 26.32: zp[2]:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ] 
+Uplift Scope [fillscreen] 36.67: zp[2]:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
+Uplift Scope [next_char] 8.5: zp[1]:13 [ next_char::return#1 next_char::c#0 next_char::c#1 ] 4: zp[1]:16 [ next_char::return#0 ] 
 Uplift Scope [main] 
 Uplift Scope [scroll_soft] 
 
-Uplifting [scroll_bit] best 27962 combination reg byte a [ scroll_bit::bits#0 ] reg byte a [ scroll_bit::$9 ] reg byte x [ scroll_bit::r#2 scroll_bit::r#1 ] zp ZP_WORD:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ] reg byte a [ scroll_bit::b#2 ] zp ZP_WORD:17 [ scroll_bit::c#0 ] zp ZP_WORD:19 [ scroll_bit::$7 ] 
+Uplifting [scroll_bit] best 27962 combination reg byte a [ scroll_bit::bits#0 ] reg byte a [ scroll_bit::$9 ] reg byte x [ scroll_bit::r#2 scroll_bit::r#1 ] zp[2]:7 [ scroll_bit::sc#2 scroll_bit::sc#1 ] reg byte a [ scroll_bit::b#2 ] zp[2]:17 [ scroll_bit::c#0 ] zp[2]:19 [ scroll_bit::$7 ] 
 Limited combination testing to 100 combinations of 128 possible.
 Uplifting [scroll_hard] best 24662 combination reg byte x [ scroll_hard::i#2 scroll_hard::i#1 ] 
-Uplifting [] best 24350 combination reg byte x [ scroll#18 scroll#10 scroll#3 ] zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] zp ZP_WORD:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ] 
-Uplifting [fillscreen] best 24350 combination zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
+Uplifting [] best 24350 combination reg byte x [ scroll#18 scroll#10 scroll#3 ] zp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] zp[2]:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] zp[2]:11 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ] 
+Uplifting [fillscreen] best 24350 combination zp[2]:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
 Uplifting [next_char] best 24336 combination reg byte x [ next_char::return#1 next_char::c#0 next_char::c#1 ] reg byte a [ next_char::return#0 ] 
 Uplifting [main] best 24336 combination 
 Uplifting [scroll_soft] best 24336 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-Uplifting [] best 24336 combination zp ZP_BYTE:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 
-Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] ] with [ zp ZP_WORD:19 [ scroll_bit::$7 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 ] ] with [ zp ZP_WORD:17 [ scroll_bit::c#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] ] with [ zp ZP_WORD:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ] ]
-Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
-Allocated (was zp ZP_WORD:7) zp ZP_WORD:3 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:5 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
-Allocated (was zp ZP_WORD:14) zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
+Attempting to uplift remaining variables inzp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
+Uplifting [] best 24336 combination zp[1]:3 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ] 
+Coalescing zero page register [ zp[2]:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 ] ] with [ zp[2]:19 [ scroll_bit::$7 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 ] ] with [ zp[2]:17 [ scroll_bit::c#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:14 [ fillscreen::cursor#2 fillscreen::cursor#1 ] ] with [ zp[2]:4 [ current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ] ]
+Allocated (was zp[1]:3) zp[1]:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
+Allocated (was zp[2]:7) zp[2]:3 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
+Allocated (was zp[2]:11) zp[2]:5 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
+Allocated (was zp[2]:14) zp[2]:7 [ fillscreen::cursor#2 fillscreen::cursor#1 current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1953,6 +1927,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BGCOL = $d020
   .label SCROLL = $d016
   .label current_bit = 2
+  // Scroll the next bit from the current char onto the screen - trigger next char if needed
   .label current_chargen = 7
   .label nxt = 5
   // @begin
@@ -2449,30 +2424,30 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53280
-(const byte*) CHARGEN CHARGEN = (byte*) 53248
-(const byte*) PROCPORT PROCPORT = (byte*) 1
-(const byte*) RASTER RASTER = (byte*) 53266
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte*) SCROLL SCROLL = (byte*) 53270
-(const byte*) TEXT TEXT = (string) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
+(const byte*) BGCOL = (byte*) 53280
+(const byte*) CHARGEN = (byte*) 53248
+(const byte*) PROCPORT = (byte*) 1
+(const byte*) RASTER = (byte*) 53266
+(const byte*) SCREEN = (byte*) 1024
+(const byte*) SCROLL = (byte*) 53270
+(const byte*) TEXT = (byte*) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
 (byte) current_bit
-(byte) current_bit#12 current_bit zp ZP_BYTE:2 3.0
-(byte) current_bit#21 current_bit zp ZP_BYTE:2 5.833333333333333
-(byte) current_bit#29 current_bit zp ZP_BYTE:2 31.0
-(byte) current_bit#5 current_bit zp ZP_BYTE:2 3.0
+(byte) current_bit#12 current_bit zp[1]:2 3.0
+(byte) current_bit#21 current_bit zp[1]:2 5.833333333333333
+(byte) current_bit#29 current_bit zp[1]:2 31.0
+(byte) current_bit#5 current_bit zp[1]:2 3.0
 (byte*) current_chargen
-(byte*) current_chargen#11 current_chargen zp ZP_WORD:7 3.0
-(byte*) current_chargen#19 current_chargen zp ZP_WORD:7 5.944444444444444
-(byte*) current_chargen#27 current_chargen zp ZP_WORD:7 24.111111111111107
-(byte*) current_chargen#5 current_chargen zp ZP_WORD:7 4.0
+(byte*) current_chargen#11 current_chargen zp[2]:7 3.0
+(byte*) current_chargen#19 current_chargen zp[2]:7 5.944444444444444
+(byte*) current_chargen#27 current_chargen zp[2]:7 24.111111111111107
+(byte*) current_chargen#5 current_chargen zp[2]:7 4.0
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (label) fillscreen::@1
 (label) fillscreen::@2
 (label) fillscreen::@return
 (byte*) fillscreen::cursor
-(byte*) fillscreen::cursor#1 cursor zp ZP_WORD:7 22.0
-(byte*) fillscreen::cursor#2 cursor zp ZP_WORD:7 14.666666666666666
+(byte*) fillscreen::cursor#1 cursor zp[2]:7 22.0
+(byte*) fillscreen::cursor#2 cursor zp[2]:7 14.666666666666666
 (byte) fillscreen::fill
 (const byte) fillscreen::fill#0 fill = (byte) $20
 (byte*) fillscreen::screen
@@ -2492,17 +2467,17 @@ FINAL SYMBOL TABLE
 (byte) next_char::return#0 reg byte a 4.0
 (byte) next_char::return#1 reg byte x 1.5
 (byte*) nxt
-(byte*) nxt#14 nxt zp ZP_WORD:5 3.0
-(byte*) nxt#18 nxt zp ZP_WORD:5 4.0
-(byte*) nxt#19 nxt zp ZP_WORD:5 0.5714285714285714
-(byte*) nxt#31 nxt zp ZP_WORD:5 18.41666666666667
-(byte*) nxt#35 nxt zp ZP_WORD:5 0.3333333333333333
+(byte*) nxt#14 nxt zp[2]:5 3.0
+(byte*) nxt#18 nxt zp[2]:5 4.0
+(byte*) nxt#19 nxt zp[2]:5 0.5714285714285714
+(byte*) nxt#31 nxt zp[2]:5 18.41666666666667
+(byte*) nxt#35 nxt zp[2]:5 0.3333333333333333
 (byte) scroll
 (byte) scroll#10 reg byte x 3.0
 (byte) scroll#18 reg byte x 53.75
 (byte) scroll#3 reg byte x 3.0
 (void()) scroll_bit()
-(word~) scroll_bit::$7 $7 zp ZP_WORD:7 4.0
+(word~) scroll_bit::$7 zp[2]:7 4.0
 (byte~) scroll_bit::$9 reg byte a 202.0
 (label) scroll_bit::@1
 (label) scroll_bit::@2
@@ -2518,13 +2493,13 @@ FINAL SYMBOL TABLE
 (byte) scroll_bit::bits
 (byte) scroll_bit::bits#0 reg byte a 202.0
 (word) scroll_bit::c
-(word) scroll_bit::c#0 c zp ZP_WORD:7 4.0
+(word) scroll_bit::c#0 c zp[2]:7 4.0
 (byte) scroll_bit::r
 (byte) scroll_bit::r#1 reg byte x 151.5
 (byte) scroll_bit::r#2 reg byte x 37.875
 (byte*) scroll_bit::sc
-(byte*) scroll_bit::sc#1 sc zp ZP_WORD:3 67.33333333333333
-(byte*) scroll_bit::sc#2 sc zp ZP_WORD:3 43.285714285714285
+(byte*) scroll_bit::sc#1 sc zp[2]:3 67.33333333333333
+(byte*) scroll_bit::sc#2 sc zp[2]:3 43.285714285714285
 (void()) scroll_hard()
 (label) scroll_hard::@1
 (label) scroll_hard::@2
@@ -2538,14 +2513,14 @@ FINAL SYMBOL TABLE
 (label) scroll_soft::@return
 
 reg byte x [ scroll#18 scroll#10 scroll#3 ]
-zp ZP_BYTE:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
+zp[1]:2 [ current_bit#29 current_bit#12 current_bit#21 current_bit#5 ]
 reg byte x [ scroll_bit::r#2 scroll_bit::r#1 ]
-zp ZP_WORD:3 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
+zp[2]:3 [ scroll_bit::sc#2 scroll_bit::sc#1 ]
 reg byte a [ scroll_bit::b#2 ]
 reg byte x [ scroll_hard::i#2 scroll_hard::i#1 ]
-zp ZP_WORD:5 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
+zp[2]:5 [ nxt#18 nxt#31 nxt#14 nxt#35 nxt#19 ]
 reg byte x [ next_char::return#1 next_char::c#0 next_char::c#1 ]
-zp ZP_WORD:7 [ fillscreen::cursor#2 fillscreen::cursor#1 current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
+zp[2]:7 [ fillscreen::cursor#2 fillscreen::cursor#1 current_chargen#27 current_chargen#11 current_chargen#19 current_chargen#5 scroll_bit::$7 scroll_bit::c#0 ]
 reg byte a [ next_char::return#0 ]
 reg byte a [ scroll_bit::bits#0 ]
 reg byte a [ scroll_bit::$9 ]
@@ -2568,6 +2543,7 @@ Score: 20886
   .label BGCOL = $d020
   .label SCROLL = $d016
   .label current_bit = 2
+  // Scroll the next bit from the current char onto the screen - trigger next char if needed
   .label current_chargen = 7
   .label nxt = 5
   // @begin

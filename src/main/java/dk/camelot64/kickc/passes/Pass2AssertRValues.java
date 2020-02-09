@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ForwardVariableRef;
 import dk.camelot64.kickc.model.values.Value;
@@ -29,9 +28,8 @@ public class Pass2AssertRValues extends Pass2SsaAssertion {
             return;
          }
          if(rValue instanceof VariableRef) {
-            VariableRef variableRef = (VariableRef) rValue;
-            Variable variable = getScope().getVariable(variableRef);
-            if(variable.getStorageStrategy().equals(SymbolVariable.StorageStrategy.PHI_MASTER)) {
+            Variable variable = getScope().getVariable((VariableRef) rValue);
+            if(variable.isKindPhiMaster()) {
                throw new CompileError("No unversioned variable references allowed "+currentStmt.toString(getProgram(), false), currentStmt.getSource());
             }
          }

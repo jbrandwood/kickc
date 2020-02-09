@@ -70,7 +70,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zeropage(2) x, byte zeropage(3) y, byte zeropage(6) x1, byte zeropage($b) xd)
+// bitmap_line_xdyi(byte zp(2) x, byte zp(3) y, byte zp(6) x1, byte zp($b) xd)
 bitmap_line_xdyi: {
     .label x1 = 6
     .label xd = $b
@@ -132,7 +132,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage(3) y, byte zeropage(2) x, byte zeropage(6) xd)
+// bitmap_line_ydxi(byte zp(3) y, byte zp(2) x, byte zp(6) xd)
 bitmap_line_ydxi: {
     .label xd = 6
     .label e = 4
@@ -167,7 +167,7 @@ bitmap_line_ydxi: {
     bne __b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage(2) x, byte zeropage(3) y, byte zeropage(6) xd)
+// bitmap_line_xdyd(byte zp(2) x, byte zp(3) y, byte zp(6) xd)
 bitmap_line_xdyd: {
     .label x = 2
     .label xd = 6
@@ -199,7 +199,7 @@ bitmap_line_xdyd: {
     bne __b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage(3) y, byte zeropage(2) x, byte zeropage(6) xd)
+// bitmap_line_ydxd(byte zp(3) y, byte zp(2) x, byte zp(6) xd)
 bitmap_line_ydxd: {
     .label xd = 6
     .label e = 4

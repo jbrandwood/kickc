@@ -19,14 +19,14 @@ public class CallingConventionStack {
     */
    public static ConstantRef getReturnOffsetConstant(Procedure procedure) {
       String returnOffsetConstantName = "OFFSET_STACK_RETURN";
-      ConstantVar returnOffsetConstant = procedure.getConstant(returnOffsetConstantName);
+      Variable returnOffsetConstant = procedure.getConstant(returnOffsetConstantName);
       if(returnOffsetConstant == null) {
          // Constant not found - create it
          long returnByteOffset = getReturnByteOffset(procedure);
-         returnOffsetConstant = new ConstantVar(returnOffsetConstantName, procedure, SymbolType.BYTE, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         returnOffsetConstant = Variable.createConstant(returnOffsetConstantName, SymbolType.BYTE, procedure, null, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          procedure.add(returnOffsetConstant);
       }
-      return returnOffsetConstant.getRef();
+      return returnOffsetConstant.getConstantRef();
    }
 
    /**
@@ -38,14 +38,14 @@ public class CallingConventionStack {
     */
    public static ConstantRef getParameterOffsetConstant(Procedure procedure, Variable parameter) {
       String paramOffsetConstantName = getParameterOffsetConstantName(parameter.getName());
-      ConstantVar paramOffsetConstant = procedure.getConstant(paramOffsetConstantName);
+      Variable paramOffsetConstant = procedure.getConstant(paramOffsetConstantName);
       if(paramOffsetConstant == null) {
          // Constant not found - create it
          long paramByteOffset = getParameterByteOffset(procedure, parameter);
-         paramOffsetConstant = new ConstantVar(paramOffsetConstantName, procedure, SymbolType.BYTE, new ConstantInteger(paramByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         paramOffsetConstant = Variable.createConstant(paramOffsetConstantName, SymbolType.BYTE, procedure, null, new ConstantInteger(paramByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          procedure.add(paramOffsetConstant);
       }
-      return paramOffsetConstant.getRef();
+      return paramOffsetConstant.getConstantRef();
    }
 
    /**
@@ -123,9 +123,9 @@ public class CallingConventionStack {
     */
    public static ConstantRef getStackBaseConstant(ProgramScope programScope) {
       long STACK_BASE_ADDRESS = 0x103L;
-      ConstantVar stackBase = new ConstantVar("STACK_BASE", programScope, SymbolType.WORD, new ConstantInteger(STACK_BASE_ADDRESS, SymbolType.WORD), Scope.SEGMENT_DATA_DEFAULT);
+      Variable stackBase = Variable.createConstant("STACK_BASE", SymbolType.WORD, programScope, null, new ConstantInteger(STACK_BASE_ADDRESS, SymbolType.WORD), Scope.SEGMENT_DATA_DEFAULT);
       programScope.add(stackBase);
-      return stackBase.getRef();
+      return stackBase.getConstantRef();
    }
 
 }

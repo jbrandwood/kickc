@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -74,8 +74,8 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
          blockSuccessors.put(blockLabel, successorClosure);
       }
       // Gather symbols in the symbol table referencing other variables/constants
-      Collection<SymbolVariable> allSymbolVariables = getProgram().getScope().getAllSymbolVariables(true);
-      for(SymbolVariable referencingVar : allSymbolVariables) {
+      Collection<Variable> allVariables = getProgram().getScope().getAllVars(true);
+      for(Variable referencingVar : allVariables) {
          ProgramValueIterator.execute(referencingVar,
                (programValue, currentStmt, stmtIt, currentBlock) -> {
                   Value rValue = programValue.get();

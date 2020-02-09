@@ -2,7 +2,7 @@ Culled Empty Block (label) malloc::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) MEM#0 ← ((byte*)) (number) $400
+  (byte*) MEM#0 ← (byte*)(number) $400
   to:@1
 
 (byte*()) malloc()
@@ -106,7 +106,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 0 in *((byte*) SCREEN_1#1) ← (number) 0
 Adding number conversion cast (unumber) 0 in *((byte*) SCREEN_2#1) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) MEM#0 ← (byte*)(number) $400
 Inlining cast *((byte*) SCREEN_1#1) ← (unumber)(number) 0
 Inlining cast *((byte*) SCREEN_2#1) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -215,11 +214,11 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ MEM#5 MEM#1 ]
-Added variable malloc::return#2 to zero page equivalence class [ malloc::return#2 ]
-Added variable SCREEN_1#0 to zero page equivalence class [ SCREEN_1#0 ]
-Added variable malloc::return#3 to zero page equivalence class [ malloc::return#3 ]
-Added variable SCREEN_2#0 to zero page equivalence class [ SCREEN_2#0 ]
-Added variable malloc::return#0 to zero page equivalence class [ malloc::return#0 ]
+Added variable malloc::return#2 to live range equivalence class [ malloc::return#2 ]
+Added variable SCREEN_1#0 to live range equivalence class [ SCREEN_1#0 ]
+Added variable malloc::return#3 to live range equivalence class [ malloc::return#3 ]
+Added variable SCREEN_2#0 to live range equivalence class [ SCREEN_2#0 ]
+Added variable malloc::return#0 to live range equivalence class [ malloc::return#0 ]
 Complete equivalence classes
 [ MEM#5 MEM#1 ]
 [ malloc::return#2 ]
@@ -227,12 +226,12 @@ Complete equivalence classes
 [ malloc::return#3 ]
 [ SCREEN_2#0 ]
 [ malloc::return#0 ]
-Allocated zp ZP_WORD:2 [ MEM#5 MEM#1 ]
-Allocated zp ZP_WORD:4 [ malloc::return#2 ]
-Allocated zp ZP_WORD:6 [ SCREEN_1#0 ]
-Allocated zp ZP_WORD:8 [ malloc::return#3 ]
-Allocated zp ZP_WORD:10 [ SCREEN_2#0 ]
-Allocated zp ZP_WORD:12 [ malloc::return#0 ]
+Allocated zp[2]:2 [ MEM#5 MEM#1 ]
+Allocated zp[2]:4 [ malloc::return#2 ]
+Allocated zp[2]:6 [ SCREEN_1#0 ]
+Allocated zp[2]:8 [ malloc::return#3 ]
+Allocated zp[2]:10 [ SCREEN_2#0 ]
+Allocated zp[2]:12 [ malloc::return#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -267,16 +266,16 @@ malloc_from___b1:
   jsr malloc
   // [3] (byte*) malloc::return#2 ← (byte*) malloc::return#0 -- pbuz1=pbuz2 
   lda.z malloc.return
-  sta.z malloc.return_2
+  sta.z malloc.return_1
   lda.z malloc.return+1
-  sta.z malloc.return_2+1
+  sta.z malloc.return_1+1
   jmp __b3
   // @3
 __b3:
   // [4] (byte*) SCREEN_1#0 ← (byte*) malloc::return#2 -- pbuz1=pbuz2 
-  lda.z malloc.return_2
+  lda.z malloc.return_1
   sta.z SCREEN_1
-  lda.z malloc.return_2+1
+  lda.z malloc.return_1+1
   sta.z SCREEN_1+1
   // [5] call malloc 
   // [14] phi from @3 to malloc [phi:@3->malloc]
@@ -285,16 +284,16 @@ malloc_from___b3:
   jsr malloc
   // [6] (byte*) malloc::return#3 ← (byte*) malloc::return#0 -- pbuz1=pbuz2 
   lda.z malloc.return
-  sta.z malloc.return_3
+  sta.z malloc.return_2
   lda.z malloc.return+1
-  sta.z malloc.return_3+1
+  sta.z malloc.return_2+1
   jmp __b4
   // @4
 __b4:
   // [7] (byte*) SCREEN_2#0 ← (byte*) malloc::return#3 -- pbuz1=pbuz2 
-  lda.z malloc.return_3
+  lda.z malloc.return_2
   sta.z SCREEN_2
-  lda.z malloc.return_3+1
+  lda.z malloc.return_2+1
   sta.z SCREEN_2+1
   // [8] phi from @4 to @2 [phi:@4->@2]
 __b2_from___b4:
@@ -327,8 +326,8 @@ main: {
   // malloc
 malloc: {
     .label return = $c
-    .label return_2 = 4
-    .label return_3 = 8
+    .label return_1 = 4
+    .label return_2 = 8
     // [15] (byte*) MEM#1 ← ++ (byte*) MEM#5 -- pbuz1=_inc_pbuz1 
     inc.z MEM
     bne !+
@@ -355,25 +354,25 @@ Statement [7] (byte*) SCREEN_2#0 ← (byte*) malloc::return#3 [ SCREEN_1#0 SCREE
 Statement [11] *((byte*) SCREEN_1#0) ← (byte) 0 [ SCREEN_2#0 ] ( main:9 [ SCREEN_2#0 ] ) always clobbers reg byte a reg byte y 
 Statement [12] *((byte*) SCREEN_2#0) ← (byte) 0 [ ] ( main:9 [ ] ) always clobbers reg byte a reg byte y 
 Statement [16] (byte*) malloc::return#0 ← (byte*) MEM#1 [ malloc::return#0 MEM#1 ] ( malloc:2 [ malloc::return#0 MEM#1 ] malloc:5 [ malloc::return#0 MEM#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ MEM#5 MEM#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ malloc::return#2 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ SCREEN_1#0 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ malloc::return#3 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_WORD:10 [ SCREEN_2#0 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_WORD:12 [ malloc::return#0 ] : zp ZP_WORD:12 , 
+Potential registers zp[2]:2 [ MEM#5 MEM#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ malloc::return#2 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ SCREEN_1#0 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ malloc::return#3 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ SCREEN_2#0 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ malloc::return#0 ] : zp[2]:12 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [malloc] 4: zp ZP_WORD:4 [ malloc::return#2 ] 4: zp ZP_WORD:8 [ malloc::return#3 ] 1.5: zp ZP_WORD:12 [ malloc::return#0 ] 
-Uplift Scope [] 5: zp ZP_WORD:2 [ MEM#5 MEM#1 ] 1.33: zp ZP_WORD:10 [ SCREEN_2#0 ] 0.8: zp ZP_WORD:6 [ SCREEN_1#0 ] 
+Uplift Scope [malloc] 4: zp[2]:4 [ malloc::return#2 ] 4: zp[2]:8 [ malloc::return#3 ] 1.5: zp[2]:12 [ malloc::return#0 ] 
+Uplift Scope [] 5: zp[2]:2 [ MEM#5 MEM#1 ] 1.33: zp[2]:10 [ SCREEN_2#0 ] 0.8: zp[2]:6 [ SCREEN_1#0 ] 
 Uplift Scope [main] 
 
-Uplifting [malloc] best 153 combination zp ZP_WORD:4 [ malloc::return#2 ] zp ZP_WORD:8 [ malloc::return#3 ] zp ZP_WORD:12 [ malloc::return#0 ] 
-Uplifting [] best 153 combination zp ZP_WORD:2 [ MEM#5 MEM#1 ] zp ZP_WORD:10 [ SCREEN_2#0 ] zp ZP_WORD:6 [ SCREEN_1#0 ] 
+Uplifting [malloc] best 153 combination zp[2]:4 [ malloc::return#2 ] zp[2]:8 [ malloc::return#3 ] zp[2]:12 [ malloc::return#0 ] 
+Uplifting [] best 153 combination zp[2]:2 [ MEM#5 MEM#1 ] zp[2]:10 [ SCREEN_2#0 ] zp[2]:6 [ SCREEN_1#0 ] 
 Uplifting [main] best 153 combination 
-Coalescing zero page register [ zp ZP_WORD:4 [ malloc::return#2 ] ] with [ zp ZP_WORD:6 [ SCREEN_1#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:8 [ malloc::return#3 ] ] with [ zp ZP_WORD:10 [ SCREEN_2#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:8 [ malloc::return#3 SCREEN_2#0 ] ] with [ zp ZP_WORD:12 [ malloc::return#0 ] ] - score: 1
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ malloc::return#3 SCREEN_2#0 malloc::return#0 ]
+Coalescing zero page register [ zp[2]:4 [ malloc::return#2 ] ] with [ zp[2]:6 [ SCREEN_1#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ malloc::return#3 ] ] with [ zp[2]:10 [ SCREEN_2#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ malloc::return#3 SCREEN_2#0 ] ] with [ zp[2]:12 [ malloc::return#0 ] ] - score: 1
+Allocated (was zp[2]:8) zp[2]:6 [ malloc::return#3 SCREEN_2#0 malloc::return#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -407,9 +406,9 @@ malloc_from___b1:
   jsr malloc
   // [3] (byte*) malloc::return#2 ← (byte*) malloc::return#0 -- pbuz1=pbuz2 
   lda.z malloc.return
-  sta.z malloc.return_2
+  sta.z malloc.return_1
   lda.z malloc.return+1
-  sta.z malloc.return_2+1
+  sta.z malloc.return_1+1
   jmp __b3
   // @3
 __b3:
@@ -455,7 +454,7 @@ main: {
   // malloc
 malloc: {
     .label return = 6
-    .label return_2 = 4
+    .label return_1 = 4
     // [15] (byte*) MEM#1 ← ++ (byte*) MEM#5 -- pbuz1=_inc_pbuz1 
     inc.z MEM
     bne !+
@@ -513,24 +512,24 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (byte*) MEM
-(byte*) MEM#1 MEM zp ZP_WORD:2 1.0
-(byte*) MEM#5 MEM zp ZP_WORD:2 4.0
+(byte*) MEM#1 MEM zp[2]:2 1.0
+(byte*) MEM#5 MEM zp[2]:2 4.0
 (byte*) SCREEN_1
-(byte*) SCREEN_1#0 SCREEN_1 zp ZP_WORD:4 0.8
+(byte*) SCREEN_1#0 SCREEN_1 zp[2]:4 0.8
 (byte*) SCREEN_2
-(byte*) SCREEN_2#0 SCREEN_2 zp ZP_WORD:6 1.3333333333333333
+(byte*) SCREEN_2#0 SCREEN_2 zp[2]:6 1.3333333333333333
 (void()) main()
 (label) main::@return
 (byte*()) malloc()
 (label) malloc::@return
 (byte*) malloc::return
-(byte*) malloc::return#0 return zp ZP_WORD:6 1.5
-(byte*) malloc::return#2 return#2 zp ZP_WORD:4 4.0
-(byte*) malloc::return#3 return zp ZP_WORD:6 4.0
+(byte*) malloc::return#0 return zp[2]:6 1.5
+(byte*) malloc::return#2 return_1 zp[2]:4 4.0
+(byte*) malloc::return#3 return zp[2]:6 4.0
 
-zp ZP_WORD:2 [ MEM#5 MEM#1 ]
-zp ZP_WORD:4 [ malloc::return#2 SCREEN_1#0 ]
-zp ZP_WORD:6 [ malloc::return#3 SCREEN_2#0 malloc::return#0 ]
+zp[2]:2 [ MEM#5 MEM#1 ]
+zp[2]:4 [ malloc::return#2 SCREEN_1#0 ]
+zp[2]:6 [ malloc::return#3 SCREEN_2#0 malloc::return#0 ]
 
 
 FINAL ASSEMBLER
@@ -565,9 +564,9 @@ __b1:
   // malloc()
   // [3] (byte*) malloc::return#2 ← (byte*) malloc::return#0 -- pbuz1=pbuz2 
   lda.z malloc.return
-  sta.z malloc.return_2
+  sta.z malloc.return_1
   lda.z malloc.return+1
-  sta.z malloc.return_2+1
+  sta.z malloc.return_1+1
   // @3
   // SCREEN_1 = malloc()
   // [4] (byte*) SCREEN_1#0 ← (byte*) malloc::return#2
@@ -606,7 +605,7 @@ main: {
   // malloc
 malloc: {
     .label return = 6
-    .label return_2 = 4
+    .label return_1 = 4
     // return ++MEM;
     // [15] (byte*) MEM#1 ← ++ (byte*) MEM#5 -- pbuz1=_inc_pbuz1 
     inc.z MEM

@@ -6,12 +6,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
-  *((byte*) main::SCREEN + (byte) main::b#2) ← (byte) 'a'
+  *((const byte*) main::SCREEN + (byte) main::b#2) ← (byte) 'a'
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,$a)
   (bool~) main::$0 ← (byte) main::b#1 != rangelast(0,$a)
   if((bool~) main::$0) goto main::@1
@@ -35,23 +34,20 @@ SYMBOL TABLE SSA
 (bool~) main::$0
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::b
 (byte) main::b#0
 (byte) main::b#1
 (byte) main::b#2
 
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [6] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$0 [5] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [4] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [6] if(main::b#1!=rangelast(0,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [3] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [5] if(main::b#1!=rangelast(0,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (unumber) $b in if((byte) main::b#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
@@ -116,7 +112,7 @@ Initial phi equivalence classes
 [ main::b#2 main::b#1 ]
 Complete equivalence classes
 [ main::b#2 main::b#1 ]
-Allocated zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
+Allocated zp[1]:2 [ main::b#2 main::b#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -179,12 +175,12 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((const byte*) main::SCREEN + (byte) main::b#2) ← (byte) 'a' [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::b#2 main::b#1 ]
 Statement [6] *((const byte*) main::SCREEN + (byte) main::b#2) ← (byte) 'a' [ main::b#2 ] ( main:2 [ main::b#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::b#2 main::b#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::b#2 main::b#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 33: zp ZP_BYTE:2 [ main::b#2 main::b#1 ] 
+Uplift Scope [main] 33: zp[1]:2 [ main::b#2 main::b#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 263 combination reg byte x [ main::b#2 main::b#1 ] 
@@ -277,7 +273,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::b
 (byte) main::b#1 reg byte x 16.5
 (byte) main::b#2 reg byte x 16.5

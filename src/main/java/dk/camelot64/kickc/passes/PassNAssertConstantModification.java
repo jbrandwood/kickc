@@ -9,7 +9,6 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.VariableRef;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ public class PassNAssertConstantModification extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
-      Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Set<VariableRef> assigned = new HashSet<>();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
@@ -33,9 +31,9 @@ public class PassNAssertConstantModification extends Pass2SsaOptimization {
                if(lValue instanceof VariableRef) {
                   VariableRef variableRef = (VariableRef) lValue;
                   Variable variable = getScope().getVariable(variableRef);
-                  if(variable.isStorageConstant() || earlyIdentifiedConstants.contains(variableRef)) {
+                  if(variable.isKindConstant() || variable.isNoModify()) {
                      if(assigned.contains(variableRef)) {
-                        throw new CompileError("Error! Constants can not be modified", statement.getSource());
+                        throw new CompileError("const variable may not be modified "+variable.toString(getProgram()), statement.getSource());
                      } else {
                         assigned.add(variableRef);
                      }

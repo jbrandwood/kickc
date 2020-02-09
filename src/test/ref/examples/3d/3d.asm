@@ -14,7 +14,6 @@
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
-  .label print_screen = $400
   // The rotated point - updated by calling rotate_matrix()
   .label xr = $f0
   .label yr = $f1
@@ -32,6 +31,7 @@
   .label SPRITE = $3000
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
+  .label print_screen = $400
   .label sx = 2
   .label sy = 3
 main: {
@@ -303,7 +303,7 @@ debug_print: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte register(X) b, byte* zeropage($d) at)
+// print_sbyte_at(signed byte register(X) b, byte* zp($d) at)
 print_sbyte_at: {
     .label at = $d
     cpx #0
@@ -328,7 +328,7 @@ print_sbyte_at: {
     jmp __b2
 }
 // Print a single char
-// print_char_at(byte register(Y) ch, byte* zeropage($d) at)
+// print_char_at(byte register(Y) ch, byte* zp($d) at)
 print_char_at: {
     .label at = $d
     tya
@@ -337,7 +337,7 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte register(X) b, byte* zeropage($d) at)
+// print_byte_at(byte register(X) b, byte* zp($d) at)
 print_byte_at: {
     .label at = $d
     txa
@@ -363,7 +363,7 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zeropage(6) y, signed byte zeropage(4) z)
+// rotate_matrix(signed byte register(X) x, signed byte zp(6) y, signed byte zp(4) z)
 rotate_matrix: {
     .label y = 6
     .label z = 4
@@ -506,7 +506,7 @@ store_matrix: {
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-// calculate_matrix(signed byte register(X) sx, signed byte zeropage(3) sy)
+// calculate_matrix(signed byte register(X) sx, signed byte zp(3) sy)
 calculate_matrix: {
     .label sy = 3
     .label t1 = 4
@@ -936,7 +936,7 @@ debug_print_init: {
     .byte 0
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zeropage($d) str, byte* zeropage($f) at)
+// print_str_at(byte* zp($d) str, byte* zp($f) at)
 print_str_at: {
     .label at = $f
     .label str = $d

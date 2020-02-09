@@ -23,7 +23,7 @@ main: {
     jsr print
     rts
 }
-// print(word zeropage(2) w)
+// print(word zp(2) w)
 print: {
     .label w = 2
     txa

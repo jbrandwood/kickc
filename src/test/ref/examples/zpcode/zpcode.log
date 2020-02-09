@@ -1,8 +1,9 @@
 Loading link script "zpcode.ld"
 Resolved forward reference zpLoop to (void()) zpLoop()
-Resolved forward reference zpCodeData to (byte[]) zpCodeData
+Resolved forward reference zpCodeData to (const byte*) zpCodeData
 Identified constant variable (byte*) RASTER
 Identified constant variable (byte*) BGCOL
+Identified constant variable (byte*) main::zpCode
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -18,40 +19,34 @@ Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@16
 Culled Empty Block (label) @1
 Culled Empty Block (label) loop::@2
+Culled Empty Block (label) @2
 Culled Empty Block (label) zpLoop::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BGCOL ← ((byte*)) (number) $d020
-  to:@2
+  to:@3
 
 (void()) main()
 main: scope:[main]  from @3
   asm { sei  }
-  (void()*~) main::$0 ← & (void()) zpLoop()
-  (byte*~) main::$1 ← ((byte*)) (void()*~) main::$0
-  (byte*) main::zpCode#0 ← (byte*~) main::$1
-  (byte) main::i#0 ← (number) 0
+  (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) main::zpCode#2 ← phi( main/(byte*) main::zpCode#0 main::@2/(byte*) main::zpCode#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$2 ← (byte) main::i#2 < (number) $14
-  if((bool~) main::$2) goto main::@2
+  (bool~) main::$0 ← (byte) main::i#2 < (number) $14
+  if((bool~) main::$0) goto main::@2
   to:main::@7
 main::@2: scope:[main]  from main::@1
-  (byte*) main::zpCode#1 ← phi( main::@1/(byte*) main::zpCode#2 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) main::zpCode#1 + (byte) main::i#3) ← *((byte[]) zpCodeData + (byte) main::i#3)
+  *((const byte*) main::zpCode + (byte) main::i#3) ← *((const byte*) zpCodeData + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@7: scope:[main]  from main::@1 main::@20
   if(true) goto main::@10
   to:main::@return
 main::@10: scope:[main]  from main::@10 main::@7
-  (bool~) main::$3 ← *((byte*) RASTER) != (number) $ff
-  if((bool~) main::$3) goto main::@10
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
+  if((bool~) main::$1) goto main::@10
   to:main::@12
 main::@12: scope:[main]  from main::@10
   call loop 
@@ -60,7 +55,7 @@ main::@19: scope:[main]  from main::@12
   call zpLoop 
   to:main::@20
 main::@20: scope:[main]  from main::@19
-  *((byte*) BGCOL) ← (number) 0
+  *((const byte*) BGCOL) ← (number) 0
   to:main::@7
 main::@return: scope:[main]  from main::@7
   return 
@@ -72,7 +67,7 @@ loop: scope:[loop]  from main::@12
   to:loop::@1
 loop::@1: scope:[loop]  from loop loop::@1
   (byte) loop::i#2 ← phi( loop/(byte) loop::i#0 loop::@1/(byte) loop::i#1 )
-  *((byte*) BGCOL) ← -- *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
   (byte) loop::i#1 ← (byte) loop::i#2 + rangenext(0,$64)
   (bool~) loop::$1 ← (byte) loop::i#1 != rangelast(0,$64)
   if((bool~) loop::$1) goto loop::@1
@@ -80,10 +75,6 @@ loop::@1: scope:[loop]  from loop loop::@1
 loop::@return: scope:[loop]  from loop::@1
   return 
   to:@return
-@2: scope:[]  from @begin
-  (byte[]) zpCodeData ← kickasm {{ .segmentout [segments="ZpCode"]
- }}
-  to:@3
 
 (void()) zpLoop()
 zpLoop: scope:[zpLoop]  from main::@19
@@ -91,7 +82,7 @@ zpLoop: scope:[zpLoop]  from main::@19
   to:zpLoop::@1
 zpLoop::@1: scope:[zpLoop]  from zpLoop zpLoop::@1
   (byte) zpLoop::i#2 ← phi( zpLoop/(byte) zpLoop::i#0 zpLoop::@1/(byte) zpLoop::i#1 )
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   (byte) zpLoop::i#1 ← (byte) zpLoop::i#2 + rangenext(0,$64)
   (bool~) zpLoop::$1 ← (byte) zpLoop::i#1 != rangelast(0,$64)
   if((bool~) zpLoop::$1) goto zpLoop::@1
@@ -99,7 +90,7 @@ zpLoop::@1: scope:[zpLoop]  from zpLoop zpLoop::@1
 zpLoop::@return: scope:[zpLoop]  from zpLoop::@1
   return 
   to:@return
-@3: scope:[]  from @2
+@3: scope:[]  from @begin
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -107,13 +98,12 @@ zpLoop::@return: scope:[zpLoop]  from zpLoop::@1
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(label) @2
 (label) @3
 (label) @4
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) RASTER
+(const byte*) BGCOL = (byte*)(number) $d020
+(const byte*) RASTER = (byte*)(number) $d012
 (void()) loop()
 (bool~) loop::$1
 (label) loop::@1
@@ -123,10 +113,8 @@ SYMBOL TABLE SSA
 (byte) loop::i#1
 (byte) loop::i#2
 (void()) main()
-(void()*~) main::$0
-(byte*~) main::$1
-(bool~) main::$2
-(bool~) main::$3
+(bool~) main::$0
+(bool~) main::$1
 (label) main::@1
 (label) main::@10
 (label) main::@12
@@ -140,11 +128,9 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 (byte) main::i#3
-(byte*) main::zpCode
-(byte*) main::zpCode#0
-(byte*) main::zpCode#1
-(byte*) main::zpCode#2
-(byte[]) zpCodeData
+(const byte*) main::zpCode = (byte*)&(void()) zpLoop()
+(const byte*) zpCodeData[]  = kickasm {{ .segmentout [segments="ZpCode"]
+ }}
 (void()) zpLoop()
 (bool~) zpLoop::$1
 (label) zpLoop::@1
@@ -154,59 +140,39 @@ SYMBOL TABLE SSA
 (byte) zpLoop::i#1
 (byte) zpLoop::i#2
 
-Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Adding number conversion cast (unumber) $14 in (bool~) main::$2 ← (byte) main::i#2 < (number) $14
-Adding number conversion cast (unumber) $ff in (bool~) main::$3 ← *((byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) 0 in *((byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) $14 in (bool~) main::$0 ← (byte) main::i#2 < (number) $14
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
-Inlining cast (byte*~) main::$1 ← (byte*)(void()*~) main::$0
-Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast *((byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
-Simplifying constant integer cast 0
 Simplifying constant integer cast $14
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $14
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) main::zpCode#0 = (byte*~) main::$1 
 Alias (byte) main::i#2 = (byte) main::i#3 
-Alias (byte*) main::zpCode#1 = (byte*) main::zpCode#2 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) main::zpCode#1 (byte*) main::zpCode#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [9] if((byte) main::i#2<(byte) $14) goto main::@2
-Simple Condition (bool~) main::$3 [15] if(*((byte*) RASTER)!=(byte) $ff) goto main::@10
-Simple Condition (bool~) loop::$1 [25] if((byte) loop::i#1!=rangelast(0,$64)) goto loop::@1
-Simple Condition (bool~) zpLoop::$1 [33] if((byte) zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1
+Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) $14) goto main::@2
+Simple Condition (bool~) main::$1 [10] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@10
+Simple Condition (bool~) loop::$1 [20] if((byte) loop::i#1!=rangelast(0,$64)) goto loop::@1
+Simple Condition (bool~) zpLoop::$1 [27] if((byte) zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [3] (void()*~) main::$0 ← & (void()) zpLoop()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BGCOL = (byte*) 53280
-Constant (const void()*) main::$0 = &zpLoop
 Constant (const byte) main::i#0 = 0
 Constant (const byte) loop::i#0 = 0
-Constant (const byte[]) zpCodeData = kickasm {{ .segmentout [segments="ZpCode"]
- }}
 Constant (const byte) zpLoop::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::$0 in [4] (byte*) main::zpCode#0 ← (byte*)(const void()*) main::$0
-Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [13] if(true) goto main::@10
+if() condition always true - replacing block destination [8] if(true) goto main::@10
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [23] loop::i#1 ← ++ loop::i#2 to ++
-Resolved ranged comparison value [25] if(loop::i#1!=rangelast(0,$64)) goto loop::@1 to (number) $65
-Resolved ranged next value [31] zpLoop::i#1 ← ++ zpLoop::i#2 to ++
-Resolved ranged comparison value [33] if(zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1 to (number) $65
+Resolved ranged next value [18] loop::i#1 ← ++ loop::i#2 to ++
+Resolved ranged comparison value [20] if(loop::i#1!=rangelast(0,$64)) goto loop::@1 to (number) $65
+Resolved ranged next value [25] zpLoop::i#1 ← ++ zpLoop::i#2 to ++
+Resolved ranged comparison value [27] if(zpLoop::i#1!=rangelast(0,$64)) goto zpLoop::@1 to (number) $65
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $65 in if((byte) loop::i#1!=(number) $65) goto loop::@1
@@ -218,20 +184,16 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $65
 Finalized unsigned number type (byte) $65
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) main::zpCode#0 = (byte*)main::$0
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) loop::i#0
 Inlining constant with var siblings (const byte) zpLoop::i#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined loop::i#0 = (byte) 0
 Constant inlined zpLoop::i#0 = (byte) 0
-Constant inlined main::$0 = &(void()) zpLoop()
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting loop::@3(between loop::@1 and loop::@1)
 Added new block during phi lifting zpLoop::@3(between zpLoop::@1 and zpLoop::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
@@ -241,15 +203,14 @@ Adding NOP phi() at start of main::@19
 Adding NOP phi() at start of zpLoop
 Adding NOP phi() at start of loop
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to loop:12 zpLoop:14 
+Calls in [] to main:2 
+Calls in [main] to loop:11 zpLoop:13 
 
 Created 3 initial phi equivalence classes
-Coalesced [18] main::i#4 ← main::i#1
-Coalesced [25] zpLoop::i#3 ← zpLoop::i#1
-Coalesced [32] loop::i#3 ← loop::i#1
+Coalesced [17] main::i#4 ← main::i#1
+Coalesced [24] zpLoop::i#3 ← zpLoop::i#1
+Coalesced [31] loop::i#3 ← loop::i#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) @4
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) zpLoop::@3
@@ -301,7 +262,7 @@ main::@6: scope:[main]  from main::@5
   [12] *((const byte*) BGCOL) ← (byte) 0
   to:main::@3
 main::@2: scope:[main]  from main::@1
-  [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2)
+  [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2)
   [14] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
@@ -343,7 +304,6 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i
 (byte) main::i#1 22.0
 (byte) main::i#2 18.333333333333332
-(byte*) main::zpCode
 (void()) zpLoop()
 (byte) zpLoop::i
 (byte) zpLoop::i#1 151.5
@@ -357,9 +317,9 @@ Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ zpLoop::i#2 zpLoop::i#1 ]
 [ loop::i#2 loop::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ zpLoop::i#2 zpLoop::i#1 ]
-Allocated zp ZP_BYTE:4 [ loop::i#2 loop::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ zpLoop::i#2 zpLoop::i#1 ]
+Allocated zp[1]:4 [ loop::i#2 loop::i#1 ]
 
 INITIAL ASM
 Target platform is custom / MOS6502X
@@ -398,6 +358,7 @@ __bend:
 .segment Code
   // main
 main: {
+    // Transfer ZP-code to zeropage
     .label zpCode = zpLoop
     .label i = 2
     // asm { sei  }
@@ -448,7 +409,7 @@ main: {
     jmp __b3
     // main::@2
   __b2:
-    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda zpCodeData,y
     sta zpCode,y
@@ -530,19 +491,19 @@ zpCodeData:
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Statement [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ zpLoop::i#2 zpLoop::i#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ loop::i#2 loop::i#1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+Statement [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ zpLoop::i#2 zpLoop::i#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ loop::i#2 loop::i#1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [loop] 252.5: zp ZP_BYTE:4 [ loop::i#2 loop::i#1 ] 
-Uplift Scope [zpLoop] 252.5: zp ZP_BYTE:3 [ zpLoop::i#2 zpLoop::i#1 ] 
-Uplift Scope [main] 40.33: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [loop] 252.5: zp[1]:4 [ loop::i#2 loop::i#1 ] 
+Uplift Scope [zpLoop] 252.5: zp[1]:3 [ zpLoop::i#2 zpLoop::i#1 ] 
+Uplift Scope [main] 40.33: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [loop] best 7031 combination reg byte x [ loop::i#2 loop::i#1 ] 
@@ -586,6 +547,7 @@ __bend:
 .segment Code
   // main
 main: {
+    // Transfer ZP-code to zeropage
     .label zpCode = zpLoop
     // asm { sei  }
     sei
@@ -633,7 +595,7 @@ main: {
     jmp __b3
     // main::@2
   __b2:
-    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda zpCodeData,x
     sta zpCode,x
     // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -752,8 +714,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53280
-(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) BGCOL = (byte*) 53280
+(const byte*) RASTER = (byte*) 53266
 (void()) loop()
 (label) loop::@1
 (label) loop::@return
@@ -770,9 +732,8 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 22.0
 (byte) main::i#2 reg byte x 18.333333333333332
-(byte*) main::zpCode
-(const byte*) main::zpCode#0 zpCode = (byte*)&(void()) zpLoop()
-(const byte[]) zpCodeData zpCodeData = kickasm {{ .segmentout [segments="ZpCode"]
+(const byte*) main::zpCode = (byte*)&(void()) zpLoop()
+(const byte*) zpCodeData[]  = kickasm {{ .segmentout [segments="ZpCode"]
  }}
 (void()) zpLoop()
 (label) zpLoop::@1
@@ -816,6 +777,7 @@ Score: 4076
 .segment Code
   // main
 main: {
+    // Transfer ZP-code to zeropage
     .label zpCode = zpLoop
     // asm
     // asm { sei  }
@@ -857,7 +819,7 @@ main: {
     // main::@2
   __b2:
     // zpCode[i] = zpCodeData[i]
-    // [13] *((const byte*) main::zpCode#0 + (byte) main::i#2) ← *((const byte[]) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda zpCodeData,x
     sta zpCode,x
     // for(char i=0;i<20;i++)

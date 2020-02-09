@@ -21,10 +21,16 @@
   // Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000
+  // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
+  // The MSB bit of the next sprite to use for showing
   .label plex_sprite_msb = 3
+  // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = 5
+  // The index the next sprite to use for showing (sprites are used round-robin)
   .label plex_sprite_idx = 9
+  // The index in the PLEX tables of the next sprite to show
+  // Prepare for showing the sprites
   .label plex_show_idx = $a
 main: {
     sei
@@ -34,6 +40,7 @@ main: {
 }
 // The raster loop
 loop: {
+    // The current index into the y-sinus
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = 8
     .label ss = 4
@@ -209,6 +216,7 @@ plexSort: {
 }
 // Initialize the program
 init: {
+    // Set the x-positions & pointers
     .label xp = 6
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
@@ -261,6 +269,14 @@ plexInit: {
     bne __b1
     rts
 }
+  // The x-positions of the multiplexer sprites ($000-$1ff)
+  PLEX_XPOS: .fill 2*PLEX_COUNT, 0
+  // The y-positions of the multiplexer sprites.
+  PLEX_YPOS: .fill PLEX_COUNT, 0
+  // The sprite pointers for the multiplexed sprites
+  PLEX_PTR: .fill PLEX_COUNT, 0
+  // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
+  PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
   .align $100
@@ -271,14 +287,6 @@ YSIN:
     .for(var i=0;i<256;i++)
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
 
-  // The x-positions of the multiplexer sprites ($000-$1ff)
-  PLEX_XPOS: .fill 2*PLEX_COUNT, 0
-  // The y-positions of the multiplexer sprites.
-  PLEX_YPOS: .fill PLEX_COUNT, 0
-  // The sprite pointers for the multiplexed sprites
-  PLEX_PTR: .fill PLEX_COUNT, 0
-  // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
-  PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
 .pc = SPRITE "SPRITE"
   .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)

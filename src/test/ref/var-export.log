@@ -2,18 +2,16 @@ Identified constant variable (byte*) SCREEN
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) SCREEN + (number) 0) ← (byte) 'x'
+  *((const byte*) SCREEN + (number) 0) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte[]) MESSAGE ← (const string) $0
   call main 
   to:@2
 @2: scope:[]  from @1
@@ -21,32 +19,24 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "camelot!"
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
-(byte[]) MESSAGE
-(byte*) SCREEN
+(const byte*) MESSAGE[]  = (byte*) "camelot!"
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) 'x'
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) 'x'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte[]) MESSAGE = $0
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (byte) 'x'
+Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← (byte) 'x'
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant inlined $0 = (const byte[]) MESSAGE
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -197,8 +187,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte[]) MESSAGE MESSAGE = (string) "camelot!"
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) MESSAGE[]  = (byte*) "camelot!"
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 

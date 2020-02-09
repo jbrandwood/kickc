@@ -1,22 +1,15 @@
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a memory variable struct value
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
-__bbegin:
-  lda #'a'
-  sta bar_thing1
-  lda #'b'
-  sta bar_thing2
-  jsr main
-  rts
+  .const OFFSET_STRUCT_FOO_THING2 = 1
 main: {
     .label SCREEN = $400
-    lda bar_thing1
+    lda bar
     sta SCREEN
-    lda bar_thing2
+    lda bar+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     rts
 }
-  bar_thing1: .byte 0
-  bar_thing2: .byte 0
+  bar: .byte 'a', 'b'

@@ -3,7 +3,6 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -14,7 +13,7 @@ main::@1: scope:[main]  from main main::@3
   (byte) main::y#2 ← phi( main/(byte) main::y#0 main::@3/(byte) main::y#1 )
   (word~) main::$0 ← ((word)) (byte) main::y#2
   (number~) main::$1 ← (word~) main::$0 * (number) $28
-  (byte*~) main::$2 ← (byte*) SCREEN + (number~) main::$1
+  (byte*~) main::$2 ← (const byte*) SCREEN + (number~) main::$1
   (byte*) main::line#0 ← (byte*~) main::$2
   (byte) main::x#0 ← (byte) 5
   to:main::@2
@@ -49,7 +48,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (word~) main::$0
 (number~) main::$1
@@ -78,7 +77,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $28 in (number~) main::$1 ← (word~) main::$0 * (number) $28
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (word~) main::$0 * (unumber)(number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word~) main::$0 ← (word)(byte) main::y#2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -93,17 +91,16 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::y#3 (byte) main::y#2
 Identical Phi Values (byte*) main::line#1 (byte*) main::line#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$4 [13] if((byte) main::x#1!=rangelast(5,$f)) goto main::@2
-Simple Condition (bool~) main::$5 [17] if((byte) main::y#1!=rangelast(5,$f)) goto main::@1
+Simple Condition (bool~) main::$4 [12] if((byte) main::x#1!=rangelast(5,$f)) goto main::@2
+Simple Condition (bool~) main::$5 [16] if((byte) main::y#1!=rangelast(5,$f)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::y#0 = 5
 Constant (const byte) main::x#0 = 5
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [11] main::x#1 ← ++ main::x#2 to ++
-Resolved ranged comparison value [13] if(main::x#1!=rangelast(5,$f)) goto main::@2 to (number) $10
-Resolved ranged next value [15] main::y#1 ← ++ main::y#2 to ++
-Resolved ranged comparison value [17] if(main::y#1!=rangelast(5,$f)) goto main::@1 to (number) $10
+Resolved ranged next value [10] main::x#1 ← ++ main::x#2 to ++
+Resolved ranged comparison value [12] if(main::x#1!=rangelast(5,$f)) goto main::@2 to (number) $10
+Resolved ranged next value [14] main::y#1 ← ++ main::y#2 to ++
+Resolved ranged comparison value [16] if(main::y#1!=rangelast(5,$f)) goto main::@1 to (number) $10
 Adding number conversion cast (unumber) $10 in if((byte) main::x#1!=(number) $10) goto main::@2
 Adding number conversion cast (unumber) $10 in if((byte) main::y#1!=(number) $10) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -119,7 +116,7 @@ Inlining constant with var siblings (const byte) main::x#0
 Constant inlined main::x#0 = (byte) 5
 Constant inlined main::y#0 = (byte) 5
 Successful SSA optimization Pass2ConstantInlining
-Alias (word~) main::$1 = (word) main::$8 
+Alias (word~) main::$1 = (word~) main::$8 
 Successful SSA optimization Pass2AliasElimination
 Added new block during phi lifting main::@5(between main::@3 and main::@1)
 Added new block during phi lifting main::@6(between main::@2 and main::@2)
@@ -161,9 +158,9 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@3
   [5] (byte) main::y#2 ← phi( main/(byte) 5 main::@3/(byte) main::y#1 )
   [6] (word~) main::$0 ← (word)(byte) main::y#2
-  [7] (word) main::$6 ← (word~) main::$0 << (byte) 2
-  [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0
-  [9] (word~) main::$1 ← (word) main::$7 << (byte) 3
+  [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2
+  [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0
+  [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3
   [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
@@ -187,8 +184,8 @@ VARIABLE REGISTER WEIGHTS
 (word~) main::$0 16.5
 (word~) main::$1 22.0
 (byte~) main::$3 202.0
-(word) main::$6 22.0
-(word) main::$7 22.0
+(word~) main::$6 22.0
+(word~) main::$7 22.0
 (byte*) main::line
 (byte*) main::line#0 18.666666666666664
 (byte) main::x
@@ -201,12 +198,12 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::y#2 main::y#1 ]
 [ main::x#2 main::x#1 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::$6 to zero page equivalence class [ main::$6 ]
-Added variable main::$7 to zero page equivalence class [ main::$7 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
-Added variable main::line#0 to zero page equivalence class [ main::line#0 ]
-Added variable main::$3 to zero page equivalence class [ main::$3 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::$6 to live range equivalence class [ main::$6 ]
+Added variable main::$7 to live range equivalence class [ main::$7 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable main::line#0 to live range equivalence class [ main::line#0 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
 Complete equivalence classes
 [ main::y#2 main::y#1 ]
 [ main::x#2 main::x#1 ]
@@ -216,14 +213,14 @@ Complete equivalence classes
 [ main::$1 ]
 [ main::line#0 ]
 [ main::$3 ]
-Allocated zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
-Allocated zp ZP_BYTE:3 [ main::x#2 main::x#1 ]
-Allocated zp ZP_WORD:4 [ main::$0 ]
-Allocated zp ZP_WORD:6 [ main::$6 ]
-Allocated zp ZP_WORD:8 [ main::$7 ]
-Allocated zp ZP_WORD:10 [ main::$1 ]
-Allocated zp ZP_WORD:12 [ main::line#0 ]
-Allocated zp ZP_BYTE:14 [ main::$3 ]
+Allocated zp[1]:2 [ main::y#2 main::y#1 ]
+Allocated zp[1]:3 [ main::x#2 main::x#1 ]
+Allocated zp[2]:4 [ main::$0 ]
+Allocated zp[2]:6 [ main::$6 ]
+Allocated zp[2]:8 [ main::$7 ]
+Allocated zp[2]:10 [ main::$1 ]
+Allocated zp[2]:12 [ main::line#0 ]
+Allocated zp[1]:14 [ main::$3 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -278,7 +275,7 @@ main: {
     sta.z __0
     lda #0
     sta.z __0+1
-    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    // [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __0
     asl
     sta.z __6
@@ -287,7 +284,7 @@ main: {
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz3 
+    // [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz3 
     lda.z __6
     clc
     adc.z __0
@@ -295,7 +292,7 @@ main: {
     lda.z __6+1
     adc.z __0+1
     sta.z __7+1
-    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda.z __7
     asl
     sta.z __1
@@ -360,41 +357,41 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (word~) main::$0 ← (word)(byte) main::y#2 [ main::y#2 main::$0 ] ( main:2 [ main::y#2 main::$0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
-Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
-Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
-Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::y#2 main::y#1 ]
+Statement [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
 Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::x#2 main::x#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::x#2 main::x#1 ]
 Statement [6] (word~) main::$0 ← (word)(byte) main::y#2 [ main::y#2 main::$0 ] ( main:2 [ main::y#2 main::$0 ] ) always clobbers reg byte a 
-Statement [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
-Statement [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
-Statement [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
+Statement [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 [ main::y#2 main::$0 main::$6 ] ( main:2 [ main::y#2 main::$0 main::$6 ] ) always clobbers reg byte a 
+Statement [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 [ main::y#2 main::$7 ] ( main:2 [ main::y#2 main::$7 ] ) always clobbers reg byte a 
+Statement [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 [ main::y#2 main::$1 ] ( main:2 [ main::y#2 main::$1 ] ) always clobbers reg byte a 
 Statement [10] (byte*) main::line#0 ← (const byte*) SCREEN + (word~) main::$1 [ main::y#2 main::line#0 ] ( main:2 [ main::y#2 main::line#0 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::x#2 + (byte) main::y#2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ( main:2 [ main::y#2 main::line#0 main::x#2 main::$3 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::y#2 main::y#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::x#2 main::x#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:4 [ main::$0 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ main::$6 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ main::$7 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_WORD:10 [ main::$1 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_WORD:12 [ main::line#0 ] : zp ZP_WORD:12 , 
-Potential registers zp ZP_BYTE:14 [ main::$3 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::y#2 main::y#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::x#2 main::x#1 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[2]:4 [ main::$0 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::$6 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ main::$7 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ main::$1 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ main::line#0 ] : zp[2]:12 , 
+Potential registers zp[1]:14 [ main::$3 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 286.17: zp ZP_BYTE:3 [ main::x#2 main::x#1 ] 202: zp ZP_BYTE:14 [ main::$3 ] 27.68: zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 22: zp ZP_WORD:6 [ main::$6 ] 22: zp ZP_WORD:8 [ main::$7 ] 22: zp ZP_WORD:10 [ main::$1 ] 18.67: zp ZP_WORD:12 [ main::line#0 ] 16.5: zp ZP_WORD:4 [ main::$0 ] 
+Uplift Scope [main] 286.17: zp[1]:3 [ main::x#2 main::x#1 ] 202: zp[1]:14 [ main::$3 ] 27.68: zp[1]:2 [ main::y#2 main::y#1 ] 22: zp[2]:6 [ main::$6 ] 22: zp[2]:8 [ main::$7 ] 22: zp[2]:10 [ main::$1 ] 18.67: zp[2]:12 [ main::line#0 ] 16.5: zp[2]:4 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 4443 combination reg byte y [ main::x#2 main::x#1 ] reg byte a [ main::$3 ] zp ZP_BYTE:2 [ main::y#2 main::y#1 ] zp ZP_WORD:6 [ main::$6 ] zp ZP_WORD:8 [ main::$7 ] zp ZP_WORD:10 [ main::$1 ] zp ZP_WORD:12 [ main::line#0 ] zp ZP_WORD:4 [ main::$0 ] 
+Uplifting [main] best 4443 combination reg byte y [ main::x#2 main::x#1 ] reg byte a [ main::$3 ] zp[1]:2 [ main::y#2 main::y#1 ] zp[2]:6 [ main::$6 ] zp[2]:8 [ main::$7 ] zp[2]:10 [ main::$1 ] zp[2]:12 [ main::line#0 ] zp[2]:4 [ main::$0 ] 
 Uplifting [] best 4443 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::y#2 main::y#1 ]
-Uplifting [main] best 4443 combination zp ZP_BYTE:2 [ main::y#2 main::y#1 ] 
-Coalescing zero page register [ zp ZP_WORD:4 [ main::$0 ] ] with [ zp ZP_WORD:8 [ main::$7 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:10 [ main::$1 ] ] with [ zp ZP_WORD:12 [ main::line#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:4 [ main::$0 main::$7 ] ] with [ zp ZP_WORD:10 [ main::$1 main::line#0 ] ] - score: 1
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ main::$0 main::$7 main::$1 main::line#0 ]
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ main::$6 ]
+Attempting to uplift remaining variables inzp[1]:2 [ main::y#2 main::y#1 ]
+Uplifting [main] best 4443 combination zp[1]:2 [ main::y#2 main::y#1 ] 
+Coalescing zero page register [ zp[2]:4 [ main::$0 ] ] with [ zp[2]:8 [ main::$7 ] ] - score: 1
+Coalescing zero page register [ zp[2]:10 [ main::$1 ] ] with [ zp[2]:12 [ main::line#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ main::$0 main::$7 ] ] with [ zp[2]:10 [ main::$1 main::line#0 ] ] - score: 1
+Allocated (was zp[2]:4) zp[2]:3 [ main::$0 main::$7 main::$1 main::line#0 ]
+Allocated (was zp[2]:6) zp[2]:5 [ main::$6 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -446,7 +443,7 @@ main: {
     sta.z __0
     lda #0
     sta.z __0+1
-    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    // [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __0
     asl
     sta.z __6
@@ -455,7 +452,7 @@ main: {
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __7
     clc
     adc.z __6
@@ -463,7 +460,7 @@ main: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __1
     rol.z __1+1
     asl.z __1
@@ -554,30 +551,30 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
-(word~) main::$0 $0 zp ZP_WORD:3 16.5
-(word~) main::$1 $1 zp ZP_WORD:3 22.0
+(word~) main::$0 zp[2]:3 16.5
+(word~) main::$1 zp[2]:3 22.0
 (byte~) main::$3 reg byte a 202.0
-(word) main::$6 $6 zp ZP_WORD:5 22.0
-(word) main::$7 $7 zp ZP_WORD:3 22.0
+(word~) main::$6 zp[2]:5 22.0
+(word~) main::$7 zp[2]:3 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@return
 (byte*) main::line
-(byte*) main::line#0 line zp ZP_WORD:3 18.666666666666664
+(byte*) main::line#0 line zp[2]:3 18.666666666666664
 (byte) main::x
 (byte) main::x#1 reg byte y 151.5
 (byte) main::x#2 reg byte y 134.66666666666666
 (byte) main::y
-(byte) main::y#1 y zp ZP_BYTE:2 16.5
-(byte) main::y#2 y zp ZP_BYTE:2 11.181818181818182
+(byte) main::y#1 y zp[1]:2 16.5
+(byte) main::y#2 y zp[1]:2 11.181818181818182
 
-zp ZP_BYTE:2 [ main::y#2 main::y#1 ]
+zp[1]:2 [ main::y#2 main::y#1 ]
 reg byte y [ main::x#2 main::x#1 ]
-zp ZP_WORD:3 [ main::$0 main::$7 main::$1 main::line#0 ]
-zp ZP_WORD:5 [ main::$6 ]
+zp[2]:3 [ main::$0 main::$7 main::$1 main::line#0 ]
+zp[2]:5 [ main::$6 ]
 reg byte a [ main::$3 ]
 
 
@@ -622,7 +619,7 @@ main: {
     lda #0
     sta.z __0+1
     // (word)y*40
-    // [7] (word) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    // [7] (word~) main::$6 ← (word~) main::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __0
     asl
     sta.z __6
@@ -631,7 +628,7 @@ main: {
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [8] (word) main::$7 ← (word) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [8] (word~) main::$7 ← (word~) main::$6 + (word~) main::$0 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __7
     clc
     adc.z __6
@@ -639,7 +636,7 @@ main: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    // [9] (word~) main::$1 ← (word) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    // [9] (word~) main::$1 ← (word~) main::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __1
     rol.z __1+1
     asl.z __1

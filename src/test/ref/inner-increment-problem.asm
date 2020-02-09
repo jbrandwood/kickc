@@ -3,6 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // Count the number of the different chars on the screen
     .label screen = 2
     .label i = 4
     lda #<0

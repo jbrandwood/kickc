@@ -2,6 +2,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
@@ -9,30 +10,15 @@ Culled Empty Block (label) @8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (word) SPRITE_PTRS ← (number) $3f8
-  (byte*) SPRITES_XPOS ← ((byte*)) (number) $d000
-  (byte*) SPRITES_YPOS ← ((byte*)) (number) $d001
-  (byte*) SPRITES_ENABLE ← ((byte*)) (number) $d015
-  to:@4
-@4: scope:[]  from @begin
-  (byte[$100]) SINTABLE ← kickasm {{ .for(var i=0;i<$100;i++)
-        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
- }}
-  (byte[$100]) ZP_STORAGE ← { fill( $100, 0) }
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte[$40]) SPRITE ← kickasm {{ .fill $40,$ff  }}
   to:@9
 
 (void()) main()
 main: scope:[main]  from @9
   asm { sei  }
-  *((byte*) SPRITES_ENABLE) ← (number) 1
-  *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
-  *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
-  (byte*~) main::$0 ← (byte*) SCREEN + (word) SPRITE_PTRS
-  (byte[$40]~) main::$1 ← (byte[$40]) SPRITE / (number) $40
-  (byte~) main::$2 ← ((byte)) (byte[$40]~) main::$1
-  *((byte*~) main::$0) ← (byte~) main::$2
+  *((const byte*) SPRITES_ENABLE) ← (number) 1
+  *((const byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+  *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+  *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(number) $40
   call saveZeropage 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -101,7 +87,7 @@ animSprite: scope:[animSprite]  from main::@2
 animSprite::@return: scope:[animSprite]  from animSprite
   return 
   to:@return
-@9: scope:[]  from @4
+@9: scope:[]  from @begin
   call main 
   to:@10
 @10: scope:[]  from @9
@@ -110,24 +96,22 @@ animSprite::@return: scope:[animSprite]  from animSprite
 
 SYMBOL TABLE SSA
 (label) @10
-(label) @4
 (label) @9
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte[$100]) SINTABLE
-(byte[$40]) SPRITE
-(byte*) SPRITES_ENABLE
-(byte*) SPRITES_XPOS
-(byte*) SPRITES_YPOS
-(word) SPRITE_PTRS
-(byte[$100]) ZP_STORAGE
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
+ }}
+(const byte*) SPRITE[(number) $40]  = kickasm {{ .fill $40,$ff  }}
+(const byte*) SPRITES_ENABLE = (byte*)(number) $d015
+(const byte*) SPRITES_XPOS = (byte*)(number) $d000
+(const byte*) SPRITES_YPOS = (byte*)(number) $d001
+(const word) SPRITE_PTRS = (word) $3f8
+(const byte*) ZP_STORAGE[(number) $100]  = { fill( $100, 0) }
 (void()) animSprite()
 (label) animSprite::@return
 (void()) main()
-(byte*~) main::$0
-(byte[$40]~) main::$1
-(byte~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -140,25 +124,17 @@ SYMBOL TABLE SSA
 (void()) sinZeropage()
 (label) sinZeropage::@return
 
-Adding number conversion cast (unumber) $3f8 in (word) SPRITE_PTRS ← (number) $3f8
-Adding number conversion cast (unumber) 1 in *((byte*) SPRITES_ENABLE) ← (number) 1
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) $40 in (byte[$40]~) main::$1 ← (byte[$40]) SPRITE / (number) $40
+Adding number conversion cast (unumber) 1 in *((const byte*) SPRITES_ENABLE) ← (number) 1
+Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) $40 in *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(number) $40
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word) SPRITE_PTRS ← (unumber)(number) $3f8
-Inlining cast (byte*) SPRITES_XPOS ← (byte*)(number) $d000
-Inlining cast (byte*) SPRITES_YPOS ← (byte*)(number) $d001
-Inlining cast (byte*) SPRITES_ENABLE ← (byte*)(number) $d015
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast *((byte*) SPRITES_ENABLE) ← (unumber)(number) 1
-Inlining cast *((byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast *((byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast (byte~) main::$2 ← (byte)(byte[$40]~) main::$1
+Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) 1
+Inlining cast *((const byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast *((const byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $3f8
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant pointer cast (byte*) 53249
 Simplifying constant pointer cast (byte*) 53269
@@ -170,7 +146,6 @@ Simplifying constant integer cast $64
 Simplifying constant integer cast 0
 Simplifying constant integer cast $40
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3f8
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $64
 Finalized unsigned number type (byte) 0
@@ -178,38 +153,10 @@ Finalized unsigned number type (byte) $64
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [5] (byte[$100]) ZP_STORAGE ← { fill( $100, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) SPRITE_PTRS = $3f8
-Constant (const byte*) SPRITES_XPOS = (byte*) 53248
-Constant (const byte*) SPRITES_YPOS = (byte*) 53249
-Constant (const byte*) SPRITES_ENABLE = (byte*) 53269
-Constant (const byte[$100]) SINTABLE = kickasm {{ .for(var i=0;i<$100;i++)
-        .byte round(127.5+127.5*cos(toRadians(360*i/256)))
- }}
-Constant (const byte[$100]) ZP_STORAGE = { fill( $100, 0) }
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte[$40]) SPRITE = kickasm {{ .fill $40,$ff  }}
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SPRITES_YPOS in [10] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_XPOS in [11] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_YPOS in [2] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_XPOS in [3] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant right-side identified [4] (byte*~) main::$0 ← (const byte*) SCREEN + (const word) SPRITE_PTRS
-Constant right-side identified [5] (byte[$40]~) main::$1 ← (const byte[$40]) SPRITE / (byte) $40
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = SCREEN+SPRITE_PTRS
-Constant (const byte[$40]) main::$1 = SPRITE/$40
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)main::$1 in [6] (byte~) main::$2 ← (byte)(const byte[$40]) main::$1
-Successful SSA optimization Pass2ConstantValues
-Constant (const byte) main::$2 = (byte)main::$1
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$1 = (const byte[$40]) SPRITE/(byte) $40
-Constant inlined main::$2 = (byte)(const byte[$40]) SPRITE/(byte) $40
-Constant inlined main::$0 = (const byte*) SCREEN+(const word) SPRITE_PTRS
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @9
 Adding NOP phi() at start of @10
 Adding NOP phi() at start of @end
@@ -218,12 +165,11 @@ Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to saveZeropage:11 sinZeropage:13 animSprite:15 restoreZeropage:17 
+Calls in [] to main:2 
+Calls in [main] to saveZeropage:10 sinZeropage:12 animSprite:14 restoreZeropage:16 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @10
 Culled Empty Block (label) main::@4
 Renumbering block @9 to @1
@@ -251,7 +197,7 @@ main: scope:[main]  from @1
   [5] *((const byte*) SPRITES_ENABLE) ← (byte) 1
   [6] *((const byte*) SPRITES_YPOS) ← (byte) $64
   [7] *((const byte*) SPRITES_XPOS) ← (byte) $64
-  [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte[$40]) SPRITE/(byte) $40
+  [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(byte) $40
   [9] call saveZeropage 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -378,7 +324,7 @@ main: {
     // [7] *((const byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte[$40]) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+SPRITE_PTRS
     // [9] call saveZeropage 
@@ -508,7 +454,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) SPRITES_YPOS) ← (byte) $64 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) SPRITES_XPOS) ← (byte) $64 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte[$40]) SPRITE/(byte) $40 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(byte) $40 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  } always clobbers reg byte a reg byte x 
@@ -572,7 +518,7 @@ main: {
     // [7] *((const byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte[$40]) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+SPRITE_PTRS
     // [9] call saveZeropage 
@@ -740,16 +686,16 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte[$100]) SINTABLE SINTABLE = kickasm {{ .for(var i=0;i<$100;i++)
+(const byte*) SCREEN = (byte*) 1024
+(const byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
  }}
-(const byte[$40]) SPRITE SPRITE = kickasm {{ .fill $40,$ff  }}
-(const byte*) SPRITES_ENABLE SPRITES_ENABLE = (byte*) 53269
-(const byte*) SPRITES_XPOS SPRITES_XPOS = (byte*) 53248
-(const byte*) SPRITES_YPOS SPRITES_YPOS = (byte*) 53249
-(const word) SPRITE_PTRS SPRITE_PTRS = (word) $3f8
-(const byte[$100]) ZP_STORAGE ZP_STORAGE = { fill( $100, 0) }
+(const byte*) SPRITE[(number) $40]  = kickasm {{ .fill $40,$ff  }}
+(const byte*) SPRITES_ENABLE = (byte*) 53269
+(const byte*) SPRITES_XPOS = (byte*) 53248
+(const byte*) SPRITES_YPOS = (byte*) 53249
+(const word) SPRITE_PTRS = (word) $3f8
+(const byte*) ZP_STORAGE[(number) $100]  = { fill( $100, 0) }
 (void()) animSprite()
 (label) animSprite::@return
 (void()) main()
@@ -808,7 +754,7 @@ main: {
     // [7] *((const byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     sta SPRITES_XPOS
     // *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40)
-    // [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte[$40]) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) SCREEN+(const word) SPRITE_PTRS) ← (byte)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+SPRITE_PTRS
     // saveZeropage()

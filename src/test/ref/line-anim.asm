@@ -21,12 +21,12 @@
   .label CIA2_PORT_A = $dd00
   // CIA #2 Port A data direction register.
   .label CIA2_PORT_A_DDR = $dd02
-  .label BITMAP = $a000
-  .label SCREEN = $8800
   // The number of points
   .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
+  .label BITMAP = $a000
+  .label SCREEN = $8800
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
@@ -75,7 +75,7 @@ main: {
     jmp __b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage($a) x, byte register(X) y)
+// bitmap_plot(word zp($a) x, byte register(X) y)
 bitmap_plot: {
     .label __1 = $e
     .label x = $a
@@ -106,7 +106,7 @@ bitmap_plot: {
     rts
 }
 // Initialize the points to be animated
-// point_init(byte zeropage($12) point_idx)
+// point_init(byte zp($12) point_idx)
 point_init: {
     .label __3 = 6
     .label __4 = $c
@@ -259,7 +259,7 @@ point_init: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zeropage(8) divisor, signed word zeropage(6) rem)
+// divr16s(signed word zp(8) divisor, signed word zp(6) rem)
 divr16s: {
     .label remu = 6
     .label divisoru = 8
@@ -313,7 +313,7 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(2) dividend, word zeropage(8) divisor, word zeropage(6) rem)
+// divr16u(word zp(2) dividend, word zp(8) divisor, word zp(6) rem)
 divr16u: {
     .label rem = 6
     .label dividend = 2
@@ -367,7 +367,7 @@ divr16u: {
     rts
 }
 // Fill the screen with a specific char
-// screen_fill(byte* zeropage(4) screen)
+// screen_fill(byte* zp(4) screen)
 screen_fill: {
     .const ch = $10
     .label screen = 4
@@ -475,10 +475,6 @@ bitmap_init: {
   y_start: .byte $a, $a, $a, $14
   x_end: .word $14, $a, $14, $14
   y_end: .byte $14, $14, $a, $14
-  // Tables for the plotter - initialized by calling bitmap_init();
-  bitmap_plot_ylo: .fill $100, 0
-  bitmap_plot_yhi: .fill $100, 0
-  bitmap_plot_bit: .fill $100, 0
   // Current x position fixed point [12.4]
   x_cur: .fill 2*SIZE, 0
   // Current y position fixed point [12.4]
@@ -489,3 +485,7 @@ bitmap_init: {
   y_add: .fill SIZE, 0
   // Frame delay (counted down to 0)
   delay: .fill SIZE, 0
+  // Tables for the plotter - initialized by calling bitmap_init();
+  bitmap_plot_ylo: .fill $100, 0
+  bitmap_plot_yhi: .fill $100, 0
+  bitmap_plot_bit: .fill $100, 0

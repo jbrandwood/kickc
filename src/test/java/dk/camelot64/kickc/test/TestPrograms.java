@@ -3,8 +3,10 @@ package dk.camelot64.kickc.test;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.asm.AsmProgram;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.TargetCpu;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import org.junit.AfterClass;
@@ -33,6 +35,202 @@ public class TestPrograms {
    final String refPath = "src/test/ref/";
 
    public TestPrograms() {
+   }
+
+   @Test
+   public void testVarModelMaMem3() throws IOException, URISyntaxException {
+      compileAndCompare("varmodel-ma_mem-3");
+   }
+
+   @Test
+   public void testVarModelMaMem2() throws IOException, URISyntaxException {
+      compileAndCompare("varmodel-ma_mem-2");
+   }
+
+   @Test
+   public void testVarModelMaMem() throws IOException, URISyntaxException {
+      compileAndCompare("varmodel-ma_mem");
+   }
+
+   @Test
+   public void testVarModelUnknown() throws IOException, URISyntaxException {
+      assertError("varmodel-unknown", "Warning: Malformed var_model parameter");
+   }
+
+   @Test
+   public void testMillforkPlasma() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/plasma-kc");
+   }
+
+   @Test
+   public void testMillforkRomsum() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/romsum-kc");
+   }
+
+   @Test
+   public void testMillforkSieve() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/sieve-kc");
+   }
+
+   @Test
+   public void testMillforkLinkedlist() throws IOException, URISyntaxException {
+      compileAndCompare("millfork-benchmarks/linkedlist-kc");
+   }
+
+
+   @Test
+   public void testSqrDelta() throws IOException, URISyntaxException {
+      compileAndCompare("sqr-delta");
+   }
+
+   @Test
+   public void testRegister1() throws IOException, URISyntaxException {
+      assertError("register-1", "Unknown register");
+   }
+
+   @Test
+   public void testRegister0() throws IOException, URISyntaxException {
+      compileAndCompare("register-0");
+   }
+
+   @Test
+   public void testAddress6() throws IOException, URISyntaxException {
+      compileAndCompare("address-6");
+   }
+
+   @Test
+   public void testAddress5() throws IOException, URISyntaxException {
+      compileAndCompare("address-5");
+   }
+
+   @Test
+   public void testAddress4() throws IOException, URISyntaxException {
+      compileAndCompare("address-4");
+   }
+
+   @Test
+   public void testAddress3() throws IOException, URISyntaxException {
+      compileAndCompare("address-3");
+   }
+
+   @Test
+   public void testAddress2() throws IOException, URISyntaxException {
+      compileAndCompare("address-2");
+   }
+
+   @Test
+   public void testAddress1() throws IOException, URISyntaxException {
+      compileAndCompare("address-1");
+   }
+
+   @Test
+   public void testAddress0() throws IOException, URISyntaxException {
+      compileAndCompare("address-0");
+   }
+
+   @Test
+   public void testVolatile2() throws IOException, URISyntaxException {
+      compileAndCompare("volatile-2");
+   }
+
+   @Test
+   public void testVolatile1() throws IOException, URISyntaxException {
+      compileAndCompare("volatile-1");
+   }
+
+   @Test
+   public void testVolatile0() throws IOException, URISyntaxException {
+      compileAndCompare("volatile-0");
+   }
+
+   @Test
+   public void testNomodify5() throws IOException, URISyntaxException {
+      assertError("nomodify-5", "const variable may not be modified");
+   }
+
+   @Test
+   public void testNomodify4() throws IOException, URISyntaxException {
+      compileAndCompare("nomodify-4");
+   }
+
+   @Test
+   public void testNomodify3() throws IOException, URISyntaxException {
+      compileAndCompare("nomodify-3");
+   }
+
+   @Test
+   public void testNomodify2() throws IOException, URISyntaxException {
+      assertError("nomodify-2", "const variable may not be modified");
+   }
+
+   @Test
+   public void testNomodify1() throws IOException, URISyntaxException {
+      assertError("nomodify-1", "const variable may not be modified");
+   }
+
+   @Test
+   public void testNomodify0() throws IOException, URISyntaxException {
+      assertError("nomodify-0", "const variable may not be modified");
+   }
+
+   @Test
+   public void testKernalLoad() throws IOException, URISyntaxException {
+      compileAndCompare("examples/kernalload/kernalload");
+   }
+
+   @Test
+   public void testConstantWithPrePost() throws IOException, URISyntaxException {
+      assertError("constant-prepost", "Constant value contains a pre/post-modifier");
+   }
+
+   @Test
+   public void testGridBobs() throws IOException, URISyntaxException {
+      compileAndCompare("complex/prebob/grid-bobs");
+   }
+
+   @Test
+   public void testVogelBobs() throws IOException, URISyntaxException {
+      compileAndCompare("complex/prebob/vogel-bobs");
+   }
+
+   @Test
+   public void testVogelSprites() throws IOException, URISyntaxException {
+      compileAndCompare("complex/prebob/vogel-sprites");
+   }
+
+   @Test
+   public void testUnaryPlus() throws IOException, URISyntaxException {
+      compileAndCompare("unary-plus");
+   }
+
+   @Test
+   public void testConstDeclaration() throws IOException, URISyntaxException {
+      compileAndCompare("const-declaration");
+   }
+
+   @Test
+   public void testStaticRegisterOptimizationProblem() throws IOException, URISyntaxException {
+      compileAndCompare("static-register-optimization-problem");
+   }
+
+   @Test
+   public void testDeclaredSsaVar0() throws IOException, URISyntaxException {
+      compileAndCompare("declared-ssa-var-0");
+   }
+
+   @Test
+   public void testDeclaredMemoryVar8() throws IOException, URISyntaxException {
+      compileAndCompare("declared-memory-var-8");
+   }
+
+   @Test
+   public void testDeclaredMemoryVar7() throws IOException, URISyntaxException {
+      compileAndCompare("declared-memory-var-7");
+   }
+
+   @Test
+   public void testDeclaredMemoryVar6() throws IOException, URISyntaxException {
+      compileAndCompare("declared-memory-var-6");
    }
 
    @Test
@@ -127,15 +325,22 @@ public class TestPrograms {
       compileAndCompare("string-pointer-problem");
    }
 
-   //@Test
-   //public void testOs52() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/unit5/os5.2");
-   //}
+/*
+   @Test
+   public void testMaze() throws IOException, URISyntaxException {
+      compileAndCompare("complex/maze/maze", log().verboseSSAOptimize());
+   }
 
-   //@Test
-   //public void testOs51() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/unit5/os5.1", log().verboseSSAOptimize());
-   //}
+   @Test
+   public void testOs52() throws IOException, URISyntaxException {
+         compileAndCompare("complex/unit5/os5.2");
+   }
+
+   @Test
+   public void testOs51() throws IOException, URISyntaxException {
+      compileAndCompare("complex/unit5/os5.1");
+   }
+*/
 
    @Test
    public void testCpu6502() throws IOException, URISyntaxException {
@@ -273,7 +478,7 @@ public class TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException, URISyntaxException {
-      assertError("function-as-array", "Cannot infer pointer element type from type: void()");
+      assertError("function-as-array", "Error! Dereferencing a non-pointer type void()");
    }
 
    @Test
@@ -343,7 +548,7 @@ public class TestPrograms {
 
    @Test
    public void testCastError() throws IOException, URISyntaxException {
-      assertError("cast-error", "Cannot infer pointer element type from type");
+      assertError("cast-error", "Type mismatch");
    }
 
    @Test
@@ -354,6 +559,11 @@ public class TestPrograms {
    @Test
    public void testAtariTempest() throws IOException, URISyntaxException {
       compileAndCompare("complex/ataritempest/ataritempest");
+   }
+
+   @Test
+   public void testXMega65Logo() throws IOException, URISyntaxException {
+      compileAndCompare("complex/xmega65/xmega65logo");
    }
 
    @Test
@@ -757,7 +967,7 @@ public class TestPrograms {
 
    @Test
    public void testStructError6() throws IOException, URISyntaxException {
-      assertError("struct-error-6", "Initializer cannot initialize");
+      assertError("struct-error-6", "Value list cannot initialize type");
    }
 
    @Test
@@ -775,27 +985,26 @@ public class TestPrograms {
       compileAndCompare("struct-ptr-32");
    }
 
-   @Test
-   public void testStructPtr31() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-31");
-   }
+    @Test
+    public void testStructPtr31() throws IOException, URISyntaxException {
+     compileAndCompare("struct-ptr-31");
+    }
 
    @Test
    public void testStructPtr30() throws IOException, URISyntaxException {
       compileAndCompare("struct-ptr-30");
    }
 
-   @Test
-   public void testStructPtr29() throws IOException, URISyntaxException {
-      compileAndCompare("struct-ptr-29");
-   }
-
-   // TODO: Fix problem with stack-allocated structs that contain arrays!
-   // https://gitlab.com/camelot/kickc/issues/314
+   // TODO: Fix problem with structs containing pointer elements
    //@Test
-   //public void testStructPtr28() throws IOException, URISyntaxException {
-   //   compileAndCompare("struct-ptr-28");
+   //public void testStructPtr29() throws IOException, URISyntaxException {
+   //   compileAndCompare("struct-ptr-29");
    //}
+
+   @Test
+   public void testStructPtr28() throws IOException, URISyntaxException {
+      compileAndCompare("struct-ptr-28");
+   }
 
    @Test
    public void testStructPtr26() throws IOException, URISyntaxException {
@@ -954,12 +1163,12 @@ public class TestPrograms {
 
    @Test
    public void testStructError2() throws IOException, URISyntaxException {
-      assertError("struct-err-2", "Incompatible struct assignment");
+      assertError("struct-err-2", "Type mismatch");
    }
 
    @Test
    public void testStructError1() throws IOException, URISyntaxException {
-      assertError("struct-err-1", "Incompatible struct assignment");
+      assertError("struct-err-1", "Type mismatch");
    }
 
    @Test
@@ -968,8 +1177,163 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct42() throws IOException, URISyntaxException {
+      compileAndCompare("struct-42");
+   }
+
+   @Test
+   public void testStruct41() throws IOException, URISyntaxException {
+      compileAndCompare("struct-41");
+   }
+
+   @Test
+   public void testStruct40() throws IOException, URISyntaxException {
+      compileAndCompare("struct-40");
+   }
+
+   @Test
+   public void testStruct39() throws IOException, URISyntaxException {
+      compileAndCompare("struct-39");
+   }
+
+   @Test
+   public void testStruct38() throws IOException, URISyntaxException {
+      compileAndCompare("struct-38");
+   }
+
+   @Test
+   public void testStruct37() throws IOException, URISyntaxException {
+      compileAndCompare("struct-37");
+   }
+
+   @Test
+   public void testStruct36() throws IOException, URISyntaxException {
+      compileAndCompare("struct-36");
+   }
+
+   @Test
+   public void testStruct35() throws IOException, URISyntaxException {
+      compileAndCompare("struct-35");
+   }
+
+   @Test
+   public void testStruct34() throws IOException, URISyntaxException {
+      compileAndCompare("struct-34");
+   }
+
+   @Test
+   public void testStruct33() throws IOException, URISyntaxException {
+      compileAndCompare("struct-33");
+   }
+
+   @Test
+   public void testStruct32() throws IOException, URISyntaxException {
+      compileAndCompare("struct-32");
+   }
+
+   @Test
+   public void testStruct31() throws IOException, URISyntaxException {
+      compileAndCompare("struct-31");
+   }
+
+   @Test
+   public void testStruct30() throws IOException, URISyntaxException {
+      compileAndCompare("struct-30");
+   }
+
+   @Test
+   public void testStruct29() throws IOException, URISyntaxException {
+      compileAndCompare("struct-29");
+   }
+
+   @Test
+   public void testStruct28() throws IOException, URISyntaxException {
+      compileAndCompare("struct-28");
+   }
+
+   @Test
+   public void testStruct27() throws IOException, URISyntaxException {
+      compileAndCompare("struct-27");
+   }
+
+   @Test
+   public void testStruct26() throws IOException, URISyntaxException {
+      compileAndCompare("struct-26");
+   }
+
+   @Test
+   public void testStruct25() throws IOException, URISyntaxException {
+      compileAndCompare("struct-25");
+   }
+
+   @Test
+   public void testStruct24() throws IOException, URISyntaxException {
+      compileAndCompare("struct-24");
+   }
+
+   @Test
+   public void testStruct23() throws IOException, URISyntaxException {
+      compileAndCompare("struct-23");
+   }
+
+   @Test
+   public void testStruct22() throws IOException, URISyntaxException {
+      compileAndCompare("struct-22");
+   }
+
+   @Test
+   public void testStruct21() throws IOException, URISyntaxException {
+      compileAndCompare("struct-21");
+   }
+
+   @Test
+   public void testStruct20() throws IOException, URISyntaxException {
+      compileAndCompare("struct-20");
+   }
+
+   @Test
+   public void testStruct19() throws IOException, URISyntaxException {
+      compileAndCompare("struct-19");
+   }
+
+   @Test
+   public void testStruct18() throws IOException, URISyntaxException {
+      compileAndCompare("struct-18");
+   }
+
+   @Test
+   public void testStruct17() throws IOException, URISyntaxException {
+      compileAndCompare("struct-17");
+   }
+
+   @Test
+   public void testStruct16() throws IOException, URISyntaxException {
+      compileAndCompare("struct-16");
+   }
+
+   @Test
+   public void testStruct15() throws IOException, URISyntaxException {
+      compileAndCompare("struct-15");
+   }
+
+   @Test
+   public void testStruct14() throws IOException, URISyntaxException {
+      compileAndCompare("struct-14");
+   }
+
+   @Test
+   public void testStruct13() throws IOException, URISyntaxException {
+      compileAndCompare("struct-13");
+   }
+
+   @Test
    public void testStruct12() throws IOException, URISyntaxException {
       compileAndCompare("struct-12");
+   }
+
+   @Test
+   public void testStruct11b() throws IOException, URISyntaxException {
+      compileAndCompare("struct-11b");
    }
 
    @Test
@@ -2101,6 +2465,11 @@ public class TestPrograms {
    //   compileAndCompare("complex/bcmod/bcmod5h", log());
    //}
 
+   //@Test
+   //public void testBcmod5hb() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/bcmod/bcmod5hb", log());
+   //}
+
    @Test
    public void testTetrisSprites() throws IOException, URISyntaxException {
       compileAndCompare("complex/tetris/test-sprites");
@@ -2410,6 +2779,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopNpe() throws IOException, URISyntaxException {
+      assertError("loop-npe", "Error! Loop variable not declared");
+   }
+
+   @Test
    public void testConstWordPointer() throws IOException, URISyntaxException {
       compileAndCompare("const-word-pointer");
    }
@@ -2685,11 +3059,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testVarRegisterZp2() throws IOException, URISyntaxException {
-      assertError("var-register-zp-2", "Error! Register not on zeropage");
-   }
-
-   @Test
    public void testVarRegisterZp3() throws IOException, URISyntaxException {
       compileAndCompare("var-register-zp-3");
    }
@@ -2762,6 +3131,11 @@ public class TestPrograms {
    @Test
    public void testInlineAssignment() throws IOException, URISyntaxException {
       compileAndCompare("inline-assignment");
+   }
+
+   @Test
+   public void testInlineDWord0() throws IOException, URISyntaxException {
+      compileAndCompare("inline-dword-0");
    }
 
    @Test
@@ -3112,7 +3486,7 @@ public class TestPrograms {
 
    @Test
    public void testAssignConst() throws IOException, URISyntaxException {
-      assertError("assign-const", "Constants can not be modified");
+      assertError("assign-const", "const variable may not be modified");
    }
 
    @Test
@@ -3167,7 +3541,7 @@ public class TestPrograms {
 
    @Test
    public void testInvalidConstType() throws IOException, URISyntaxException {
-      assertError("invalid-consttype", "Constant variable has a non-matching type", false);
+      assertError("invalid-consttype", "Constant init-value has a non-matching type", false);
    }
 
    @Test
@@ -3250,8 +3624,13 @@ public class TestPrograms {
       compileAndCompare("condition-type-mismatch");
    }
 
+   static AsmFragmentTemplateSynthesizer asmFragmentSynthesizer;
+
    @BeforeClass
    public static void setUp() {
+      Path asmFragmentBaseFolder = new File("src/main/fragment/").toPath();
+      Path asmFragmentCacheFolder = null;
+      asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, TargetCpu.MOS6502X, asmFragmentCacheFolder, new CompileLog());
    }
 
    @AfterClass
@@ -3335,15 +3714,15 @@ public class TestPrograms {
       tester.testFile(filename, upliftCombinations, null);
    }
 
-   private void compileAndCompare(String filename, CompileLog log, int upliftCombinations) throws IOException, URISyntaxException {
+   private void compileAndCompare(String filename, int upliftCombinations, CompileLog log) throws IOException, URISyntaxException {
       TestPrograms tester = new TestPrograms();
       tester.testFile(filename, upliftCombinations, log);
    }
 
-   private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException, URISyntaxException {
+   private void testFile(String fileName, Integer upliftCombinations, CompileLog compileLog) throws IOException {
       System.out.println("Testing output for " + fileName);
       Compiler compiler = new Compiler();
-      //compiler.setWarnFragmentMissing(true);
+      compiler.setWarnFragmentMissing(true);
       compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
       compiler.setAsmFragmentCacheFolder(null);
       if(compileLog != null) {
@@ -3351,6 +3730,7 @@ public class TestPrograms {
       }
       compiler.addImportPath(stdlibPath);
       compiler.addImportPath(testPath);
+      compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
       if(upliftCombinations != null) {
          compiler.setUpliftCombinations(upliftCombinations);
       }
@@ -3361,7 +3741,7 @@ public class TestPrograms {
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
       success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, false, false, false), program));
-      success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program, null));
+      success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program, false));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());
       if(!success) {

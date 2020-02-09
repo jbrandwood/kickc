@@ -5,7 +5,6 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.List;
 
@@ -25,16 +24,19 @@ public class StatementAssignment extends StatementBase implements StatementLValu
    private Operator operator;
    private RValue rValue2;
 
-   public StatementAssignment(LValue lValue, RValue rValue2, StatementSource source, List<Comment> comments) {
-      this(lValue, null, null, rValue2, null, source, comments);
+   /** This is the initial assignment of the lValue. */
+   private boolean initialAssignment;
+
+   public StatementAssignment(LValue lValue, RValue rValue2, boolean initialAssignment, StatementSource source, List<Comment> comments) {
+      this(lValue, null, null, rValue2, initialAssignment, null, source, comments);
    }
 
-   public StatementAssignment(LValue lValue, Operator operator, RValue rValue2,StatementSource source, List<Comment> comments) {
-      this(lValue, null, operator, rValue2, null, source, comments);
+   public StatementAssignment(LValue lValue, Operator operator, RValue rValue2, boolean initialAssignment, StatementSource source, List<Comment> comments) {
+      this(lValue, null, operator, rValue2, initialAssignment, null, source, comments);
    }
 
-   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2, StatementSource source, List<Comment> comments) {
-      this(lValue, rValue1, operator, rValue2, null, source, comments);
+   public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2, boolean initialAssignment, StatementSource source, List<Comment> comments) {
+      this(lValue, rValue1, operator, rValue2, initialAssignment, null, source, comments);
    }
 
    public StatementAssignment(
@@ -42,6 +44,7 @@ public class StatementAssignment extends StatementBase implements StatementLValu
          RValue rValue1,
          Operator operator,
          RValue rValue2,
+         boolean initialAssignment,
          Integer index,
          StatementSource source,
          List<Comment> comments) {
@@ -50,6 +53,7 @@ public class StatementAssignment extends StatementBase implements StatementLValu
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;
+      this.initialAssignment = initialAssignment;
    }
 
 
@@ -83,6 +87,15 @@ public class StatementAssignment extends StatementBase implements StatementLValu
 
    public void setrValue2(RValue rValue2) {
       this.rValue2 = rValue2;
+   }
+
+   @Override
+   public boolean isInitialAssignment() {
+      return initialAssignment;
+   }
+
+   public void setInitialAssignment(boolean initialAssignment) {
+      this.initialAssignment = initialAssignment;
    }
 
    @Override

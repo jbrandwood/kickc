@@ -191,7 +191,7 @@ main: {
 }
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
-    .label __8 = 7
+    .label __5 = 7
     .label gfxb = 5
     .label x = 3
     .label y = 2
@@ -226,11 +226,11 @@ gfx_init_chunky: {
     lda.z y
     clc
     adc.z x
-    sta.z __8
+    sta.z __5
     lda #0
     adc.z x+1
-    sta.z __8+1
-    lda.z __8
+    sta.z __5+1
+    lda.z __5
     ldy #0
     sta (gfxb),y
     inc.z gfxb

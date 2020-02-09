@@ -49,7 +49,7 @@ main: {
     .byte 0
 }
 // Print a zero-terminated string followed by a newline
-// print_str_ln(byte* zeropage(3) str)
+// print_str_ln(byte* zp(3) str)
 print_str_ln: {
     .label str = 3
     jsr print_str
@@ -77,7 +77,7 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(3) str)
+// print_str(byte* zp(3) str)
 print_str: {
     .label str = 3
   __b1:

@@ -3,14 +3,12 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) lda ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) main::jmp ← (number) 1
-  *((byte*) lda) ← (byte) main::jmp
-  (byte) bne::jsr#0 ← (byte) main::jmp
+  *((const byte*) lda) ← (const byte) main::jmp
+  (byte) bne::jsr#0 ← (const byte) main::jmp
   call bne 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -23,7 +21,7 @@ main::@return: scope:[main]  from main::@1
 (void()) bne((byte) bne::jsr)
 bne: scope:[bne]  from main
   (byte) bne::jsr#1 ← phi( main/(byte) bne::jsr#0 )
-  *((byte*) lda + (number) 1) ← (byte) bne::jsr#1
+  *((const byte*) lda + (number) 1) ← (byte) bne::jsr#1
   to:bne::@return
 bne::@return: scope:[bne]  from bne
   return 
@@ -45,30 +43,21 @@ SYMBOL TABLE SSA
 (byte) bne::jsr
 (byte) bne::jsr#0
 (byte) bne::jsr#1
-(byte*) lda
+(const byte*) lda = (byte*)(number) $400
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte) main::jmp
+(const byte) main::jmp = (byte) 1
 
-Adding number conversion cast (unumber) 1 in (byte) main::jmp ← (number) 1
-Adding number conversion cast (unumber) 1 in *((byte*) lda + (number) 1) ← (byte) bne::jsr#1
+Adding number conversion cast (unumber) 1 in *((const byte*) lda + (number) 1) ← (byte) bne::jsr#1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) lda ← (byte*)(number) $400
-Inlining cast (byte) main::jmp ← (unumber)(number) 1
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
-Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values (byte) bne::jsr#1 (byte) bne::jsr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte*) lda = (byte*) 1024
-Constant (const byte) main::jmp = 1
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) bne::jsr#0 = main::jmp
 Successful SSA optimization Pass2ConstantIdentification
 Constant inlined bne::jsr#0 = (const byte) main::jmp
@@ -299,11 +288,11 @@ FINAL SYMBOL TABLE
 (void()) bne((byte) bne::jsr)
 (label) bne::@return
 (byte) bne::jsr
-(const byte*) lda lda = (byte*) 1024
+(const byte*) lda = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte) main::jmp jmp = (byte) 1
+(const byte) main::jmp = (byte) 1
 
 
 

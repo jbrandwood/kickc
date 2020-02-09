@@ -3,6 +3,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) table_driven_irq::@4
 Culled Empty Block (label) table_driven_irq::@5
 Culled Empty Block (label) table_driven_irq::@7
@@ -12,100 +13,72 @@ Culled Empty Block (label) table_driven_irq::@13
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@5
 
 (void()) main()
 main: scope:[main]  from @6
   asm { sei  }
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-  *((byte*) RASTER) ← (number) $60
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) table_driven_irq()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+  *((const byte*) RASTER) ← (number) $60
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
-@5: scope:[]  from @4
-  (byte*) VIC_BASE ← ((byte*)) (number) $d000
-  (byte) VIC_SIZE ← (number) $30
-  (byte) IRQ_CHANGE_NEXT ← (number) $7f
-  (byte[]) IRQ_CHANGE_IDX ← { (number) $20, (number) $21, (byte) IRQ_CHANGE_NEXT, (number) $20, (number) $21, (byte) IRQ_CHANGE_NEXT, (number) $20, (number) $21, (byte) IRQ_CHANGE_NEXT, (number) $20, (number) $21, (byte) IRQ_CHANGE_NEXT }
-  (byte[]) IRQ_CHANGE_VAL ← { (number) $b, (number) $b, (number) $63, (number) 0, (number) 0, (number) $80, (number) 7, (number) 7, (number) $83, (number) 0, (number) 0, (number) $60 }
-  (byte) irq_idx#0 ← (number) 0
+@5: scope:[]  from @begin
+  (byte) irq_idx ← (byte) 0
   to:@6
 
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
-  (byte) irq_idx#6 ← phi( @6/(byte) irq_idx#9 )
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@8
-  (byte) irq_idx#4 ← phi( table_driven_irq/(byte) irq_idx#6 table_driven_irq::@8/(byte) irq_idx#7 )
-  (byte) table_driven_irq::idx#0 ← *((byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4)
-  (byte) table_driven_irq::val#0 ← *((byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4)
-  (byte) irq_idx#1 ← ++ (byte) irq_idx#4
-  (bool~) table_driven_irq::$0 ← (byte) table_driven_irq::idx#0 < (byte) VIC_SIZE
+  (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (byte) irq_idx)
+  (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (byte) irq_idx)
+  (byte) irq_idx ← ++ (byte) irq_idx
+  (bool~) table_driven_irq::$0 ← (byte) table_driven_irq::idx#0 < (const byte) VIC_SIZE
   if((bool~) table_driven_irq::$0) goto table_driven_irq::@2
   to:table_driven_irq::@9
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
-  (byte) irq_idx#11 ← phi( table_driven_irq::@1/(byte) irq_idx#1 )
   (byte) table_driven_irq::idx#1 ← phi( table_driven_irq::@1/(byte) table_driven_irq::idx#0 )
   (byte) table_driven_irq::val#1 ← phi( table_driven_irq::@1/(byte) table_driven_irq::val#0 )
-  *((byte*) VIC_BASE + (byte) table_driven_irq::idx#1) ← (byte) table_driven_irq::val#1
+  *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#1) ← (byte) table_driven_irq::val#1
   to:table_driven_irq::@8
 table_driven_irq::@9: scope:[table_driven_irq]  from table_driven_irq::@1
-  (byte) irq_idx#10 ← phi( table_driven_irq::@1/(byte) irq_idx#1 )
   (byte) table_driven_irq::val#4 ← phi( table_driven_irq::@1/(byte) table_driven_irq::val#0 )
   (byte) table_driven_irq::idx#2 ← phi( table_driven_irq::@1/(byte) table_driven_irq::idx#0 )
-  (number~) table_driven_irq::$1 ← (byte) VIC_SIZE + (number) 8
-  (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::idx#2 < (number~) table_driven_irq::$1
-  if((bool~) table_driven_irq::$2) goto table_driven_irq::@3
+  (bool~) table_driven_irq::$1 ← (byte) table_driven_irq::idx#2 < (const byte) VIC_SIZE+(number) 8
+  if((bool~) table_driven_irq::$1) goto table_driven_irq::@3
   to:table_driven_irq::@10
 table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@9
-  (byte) irq_idx#12 ← phi( table_driven_irq::@9/(byte) irq_idx#10 )
   (byte) table_driven_irq::val#2 ← phi( table_driven_irq::@9/(byte) table_driven_irq::val#4 )
   (byte) table_driven_irq::idx#3 ← phi( table_driven_irq::@9/(byte) table_driven_irq::idx#2 )
-  (number~) table_driven_irq::$5 ← (byte) table_driven_irq::idx#3 + (number) $3f8
-  (number~) table_driven_irq::$6 ← (number~) table_driven_irq::$5 - (byte) VIC_SIZE
-  *((byte*) SCREEN + (number~) table_driven_irq::$6) ← (byte) table_driven_irq::val#2
+  (number~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (number) $3f8
+  (number~) table_driven_irq::$5 ← (number~) table_driven_irq::$4 - (const byte) VIC_SIZE
+  *((const byte*) SCREEN + (number~) table_driven_irq::$5) ← (byte) table_driven_irq::val#2
   to:table_driven_irq::@8
 table_driven_irq::@10: scope:[table_driven_irq]  from table_driven_irq::@9
-  (byte) irq_idx#8 ← phi( table_driven_irq::@9/(byte) irq_idx#10 )
   (byte) table_driven_irq::val#3 ← phi( table_driven_irq::@9/(byte) table_driven_irq::val#4 )
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
-  *((byte*) RASTER) ← (byte) table_driven_irq::val#3
-  (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 < *((byte*) RASTER)
-  (bool~) table_driven_irq::$4 ← ! (bool~) table_driven_irq::$3
-  if((bool~) table_driven_irq::$4) goto table_driven_irq::@return
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  *((const byte*) RASTER) ← (byte) table_driven_irq::val#3
+  (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const byte*) RASTER)
+  (bool~) table_driven_irq::$3 ← ! (bool~) table_driven_irq::$2
+  if((bool~) table_driven_irq::$3) goto table_driven_irq::@return
   to:table_driven_irq::@11
 table_driven_irq::@11: scope:[table_driven_irq]  from table_driven_irq::@10
-  (byte) irq_idx#2 ← (number) 0
+  (byte) irq_idx ← (number) 0
   to:table_driven_irq::@return
 table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@10 table_driven_irq::@11 table_driven_irq::@8
-  (byte) irq_idx#5 ← phi( table_driven_irq::@10/(byte) irq_idx#8 table_driven_irq::@11/(byte) irq_idx#2 table_driven_irq::@8/(byte) irq_idx#7 )
-  (byte) irq_idx#3 ← (byte) irq_idx#5
   return 
   to:@return
 table_driven_irq::@8: scope:[table_driven_irq]  from table_driven_irq::@2 table_driven_irq::@3
-  (byte) irq_idx#7 ← phi( table_driven_irq::@2/(byte) irq_idx#11 table_driven_irq::@3/(byte) irq_idx#12 )
   if(true) goto table_driven_irq::@1
   to:table_driven_irq::@return
 @6: scope:[]  from @5
-  (byte) irq_idx#9 ← phi( @5/(byte) irq_idx#0 )
   call main 
   to:@7
 @7: scope:[]  from @6
@@ -113,51 +86,35 @@ table_driven_irq::@8: scope:[table_driven_irq]  from table_driven_irq::@2 table_
 @end: scope:[]  from @7
 
 SYMBOL TABLE SSA
-(label) @4
 (label) @5
 (label) @6
 (label) @7
 (label) @begin
 (label) @end
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte[]) IRQ_CHANGE_IDX
-(byte) IRQ_CHANGE_NEXT
-(byte[]) IRQ_CHANGE_VAL
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(void()**) KERNEL_IRQ
-(byte*) RASTER
-(byte*) SCREEN
-(byte*) VIC_BASE
-(byte*) VIC_CONTROL
-(byte) VIC_SIZE
-(byte) irq_idx
-(byte) irq_idx#0
-(byte) irq_idx#1
-(byte) irq_idx#10
-(byte) irq_idx#11
-(byte) irq_idx#12
-(byte) irq_idx#2
-(byte) irq_idx#3
-(byte) irq_idx#4
-(byte) irq_idx#5
-(byte) irq_idx#6
-(byte) irq_idx#7
-(byte) irq_idx#8
-(byte) irq_idx#9
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte*) IRQ_CHANGE_IDX[]  = { (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT }
+(const byte) IRQ_CHANGE_NEXT = (byte) $7f
+(const byte*) IRQ_CHANGE_VAL[]  = { (byte) $b, (byte) $b, (byte) $63, (byte) 0, (byte) 0, (byte) $80, (byte) 7, (byte) 7, (byte) $83, (byte) 0, (byte) 0, (byte) $60 }
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (byte) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) VIC_BASE = (byte*)(number) $d000
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
+(const byte) VIC_SIZE = (byte) $30
+(byte) irq_idx loadstore
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (bool~) table_driven_irq::$0
-(number~) table_driven_irq::$1
+(bool~) table_driven_irq::$1
 (bool~) table_driven_irq::$2
 (bool~) table_driven_irq::$3
-(bool~) table_driven_irq::$4
+(number~) table_driven_irq::$4
 (number~) table_driven_irq::$5
-(number~) table_driven_irq::$6
 (label) table_driven_irq::@1
 (label) table_driven_irq::@10
 (label) table_driven_irq::@11
@@ -178,172 +135,78 @@ interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (byte) table_driven_irq::val#3
 (byte) table_driven_irq::val#4
 
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $60 in *((byte*) RASTER) ← (number) $60
-Adding number conversion cast (unumber) $30 in (byte) VIC_SIZE ← (number) $30
-Adding number conversion cast (unumber) $7f in (byte) IRQ_CHANGE_NEXT ← (number) $7f
-Adding number conversion cast (unumber) 0 in (byte) irq_idx#0 ← (number) 0
-Adding number conversion cast (unumber) 8 in (number~) table_driven_irq::$1 ← (byte) VIC_SIZE + (number) 8
-Adding number conversion cast (unumber) table_driven_irq::$1 in (number~) table_driven_irq::$1 ← (byte) VIC_SIZE + (unumber)(number) 8
-Adding number conversion cast (unumber) $3f8 in (number~) table_driven_irq::$5 ← (byte) table_driven_irq::idx#3 + (number) $3f8
-Adding number conversion cast (unumber) table_driven_irq::$5 in (number~) table_driven_irq::$5 ← (byte) table_driven_irq::idx#3 + (unumber)(number) $3f8
-Adding number conversion cast (unumber) table_driven_irq::$6 in (number~) table_driven_irq::$6 ← (unumber~) table_driven_irq::$5 - (byte) VIC_SIZE
-Adding number conversion cast (unumber) 0 in (byte) irq_idx#2 ← (number) 0
+Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $60 in *((const byte*) RASTER) ← (number) $60
+Adding number conversion cast (unumber) VIC_SIZE+8 in (bool~) table_driven_irq::$1 ← (byte) table_driven_irq::idx#2 < (const byte) VIC_SIZE+(number) 8
+Adding number conversion cast (unumber) 8 in (bool~) table_driven_irq::$1 ← (byte) table_driven_irq::idx#2 < (unumber)(const byte) VIC_SIZE+(number) 8
+Adding number conversion cast (unumber) $3f8 in (number~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (number) $3f8
+Adding number conversion cast (unumber) table_driven_irq::$4 in (number~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (unumber)(number) $3f8
+Adding number conversion cast (unumber) table_driven_irq::$5 in (number~) table_driven_irq::$5 ← (unumber~) table_driven_irq::$4 - (const byte) VIC_SIZE
+Adding number conversion cast (unumber) 0 in (byte) irq_idx ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) IRQ_CHANGE_IDX ← (byte[]){ (byte)(number) $20, (byte)(number) $21, (byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (byte) IRQ_CHANGE_NEXT, (byte)(number) $20, (byte)(number) $21, (byte) IRQ_CHANGE_NEXT }
-Added casts to value list in (byte[]) IRQ_CHANGE_VAL ← (byte[]){ (byte)(number) $b, (byte)(number) $b, (byte)(number) $63, (byte)(number) 0, (byte)(number) 0, (byte)(number) $80, (byte)(number) 7, (byte)(number) 7, (byte)(number) $83, (byte)(number) 0, (byte)(number) 0, (byte)(number) $60 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast *((byte*) RASTER) ← (unumber)(number) $60
-Inlining cast (byte*) VIC_BASE ← (byte*)(number) $d000
-Inlining cast (byte) VIC_SIZE ← (unumber)(number) $30
-Inlining cast (byte) IRQ_CHANGE_NEXT ← (unumber)(number) $7f
-Inlining cast (byte) irq_idx#0 ← (unumber)(number) 0
-Inlining cast (byte) irq_idx#2 ← (unumber)(number) 0
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) $60
+Inlining cast (byte) irq_idx ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 56333
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast $7f
-Simplifying constant integer cast $60
 Simplifying constant pointer cast (byte*) 53248
-Simplifying constant integer cast $30
 Simplifying constant integer cast $7f
-Simplifying constant integer cast $20
-Simplifying constant integer cast $21
-Simplifying constant integer cast $20
-Simplifying constant integer cast $21
-Simplifying constant integer cast $20
-Simplifying constant integer cast $21
-Simplifying constant integer cast $20
-Simplifying constant integer cast $21
-Simplifying constant integer cast $b
-Simplifying constant integer cast $b
-Simplifying constant integer cast $63
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast $80
-Simplifying constant integer cast 7
-Simplifying constant integer cast 7
-Simplifying constant integer cast $83
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast $60
-Simplifying constant integer cast 0
+Simplifying constant integer cast (const byte) VIC_SIZE+(unumber)(number) 8
 Simplifying constant integer cast 8
 Simplifying constant integer cast $3f8
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $60
-Finalized unsigned number type (byte) $30
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (word) $3f8
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) table_driven_irq::$1 ← (byte) VIC_SIZE + (byte) 8
-Inferred type updated to word in (unumber~) table_driven_irq::$5 ← (byte) table_driven_irq::idx#3 + (word) $3f8
-Inferred type updated to word in (unumber~) table_driven_irq::$6 ← (word~) table_driven_irq::$5 - (byte) VIC_SIZE
-Inversing boolean not [46] (bool~) table_driven_irq::$4 ← (byte) table_driven_irq::val#3 >= *((byte*) RASTER) from [45] (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 < *((byte*) RASTER)
+Inferred type updated to word in (unumber~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (word) $3f8
+Inferred type updated to word in (unumber~) table_driven_irq::$5 ← (word~) table_driven_irq::$4 - (const byte) VIC_SIZE
+Inversing boolean not [28] (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 >= *((const byte*) RASTER) from [27] (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const byte*) RASTER)
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) table_driven_irq::val#0 = (byte) table_driven_irq::val#1 (byte) table_driven_irq::val#4 (byte) table_driven_irq::val#2 (byte) table_driven_irq::val#3 
 Alias (byte) table_driven_irq::idx#0 = (byte) table_driven_irq::idx#1 (byte) table_driven_irq::idx#2 (byte) table_driven_irq::idx#3 
-Alias (byte) irq_idx#1 = (byte) irq_idx#11 (byte) irq_idx#10 (byte) irq_idx#12 (byte) irq_idx#8 
-Alias (byte) irq_idx#3 = (byte) irq_idx#5 
-Alias (byte) irq_idx#0 = (byte) irq_idx#9 
 Successful SSA optimization Pass2AliasElimination
-Alias (byte) irq_idx#1 = (byte) irq_idx#7 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) irq_idx#6 (byte) irq_idx#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) table_driven_irq::$0 [31] if((byte) table_driven_irq::idx#0<(byte) VIC_SIZE) goto table_driven_irq::@2
-Simple Condition (bool~) table_driven_irq::$2 [37] if((byte) table_driven_irq::idx#0<(byte~) table_driven_irq::$1) goto table_driven_irq::@3
-Simple Condition (bool~) table_driven_irq::$4 [47] if((byte) table_driven_irq::val#0>=*((byte*) RASTER)) goto table_driven_irq::@return
+Simple Condition (bool~) table_driven_irq::$0 [14] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2
+Simple Condition (bool~) table_driven_irq::$1 [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
+Simple Condition (bool~) table_driven_irq::$3 [29] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [15] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) table_driven_irq()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) $b, (byte) $b, (byte) $63, (byte) 0, (byte) 0, (byte) $80, (byte) 7, (byte) 7, (byte) $83, (byte) 0, (byte) 0, (byte) $60 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const void()*) main::$0 = &table_driven_irq
-Constant (const byte*) VIC_BASE = (byte*) 53248
-Constant (const byte) VIC_SIZE = $30
-Constant (const byte) IRQ_CHANGE_NEXT = $7f
-Constant (const byte[]) IRQ_CHANGE_VAL = { $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60 }
-Successful SSA optimization Pass2ConstantIdentification
-Removing PHI-reference to removed block (table_driven_irq::@8) in block table_driven_irq::@return
-if() condition always true - replacing block destination [53] if(true) goto table_driven_irq::@1
+if() condition always true - replacing block destination [32] if(true) goto table_driven_irq::@1
 Successful SSA optimization Pass2ConstantIfs
-De-inlining pointer[w] to *(pointer+w)   [41] *((const byte*) SCREEN + (word~) table_driven_irq::$6) ← (byte) table_driven_irq::val#0
+De-inlining pointer[w] to *(pointer+w)   [23] *((const byte*) SCREEN + (word~) table_driven_irq::$5) ← (byte) table_driven_irq::val#0
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Constant right-side identified [17] (byte~) table_driven_irq::$1 ← (const byte) VIC_SIZE + (byte) 8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) IRQ_CHANGE_IDX = { $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT }
-Constant (const byte) table_driven_irq::$1 = VIC_SIZE+8
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined table_driven_irq::$1 = (const byte) VIC_SIZE+(byte) 8
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) table_driven_irq()
-Successful SSA optimization Pass2ConstantInlining
-Consolidated constant in assignment table_driven_irq::$7
+Consolidated constant in assignment table_driven_irq::$6
 Successful SSA optimization Pass2ConstantAdditionElimination
-Alias (word~) table_driven_irq::$6 = (word~) table_driven_irq::$5 
+Alias (word~) table_driven_irq::$5 = (word~) table_driven_irq::$4 
 Successful SSA optimization Pass2AliasElimination
-Consolidated constant in assignment table_driven_irq::$7
+Consolidated constant in assignment table_driven_irq::$6
 Successful SSA optimization Pass2ConstantAdditionElimination
-Alias (byte) table_driven_irq::idx#0 = (word~) table_driven_irq::$6 
+Alias (byte) table_driven_irq::idx#0 = (word~) table_driven_irq::$5 
 Successful SSA optimization Pass2AliasElimination
-Converting *(pointer+n) to pointer[n] [19] *((byte*~) table_driven_irq::$7) ← (byte) table_driven_irq::val#0  -- *(SCREEN+-VIC_SIZE+$3f8 + table_driven_irq::idx#0)
+Converting *(pointer+n) to pointer[n] [18] *((byte*~) table_driven_irq::$6) ← (byte) table_driven_irq::val#0  -- *(SCREEN+-VIC_SIZE+$3f8 + table_driven_irq::idx#0)
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable (byte*~) table_driven_irq::$7 and assignment [17] (byte*~) table_driven_irq::$7 ← (const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0
+Eliminating unused variable (byte*~) table_driven_irq::$6 and assignment [16] (byte*~) table_driven_irq::$6 ← (const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0
 Successful SSA optimization PassNEliminateUnusedVars
-Added new block during phi lifting table_driven_irq::@14(between table_driven_irq::@10 and table_driven_irq::@return)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of table_driven_irq
+Adding NOP phi() at start of table_driven_irq::@8
 CALL GRAPH
-Calls in [] to main:4 
+Calls in [] to main:3 
 
-Created 2 initial phi equivalence classes
-Coalesced [16] irq_idx#13 ← irq_idx#0
-Coalesced [27] irq_idx#16 ← irq_idx#2
-Coalesced [30] irq_idx#15 ← irq_idx#1
-Coalesced [32] irq_idx#14 ← irq_idx#1
-Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @4
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @7
-Culled Empty Block (label) table_driven_irq::@14
 Culled Empty Block (label) table_driven_irq::@8
 Renumbering block @5 to @1
 Renumbering block @6 to @2
@@ -360,7 +223,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (byte) irq_idx#0 ← (byte) 0
+  [1] (byte) irq_idx ← (byte) 0
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -389,42 +252,35 @@ table_driven_irq: scope:[table_driven_irq]  from
   [14] phi()
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@2 table_driven_irq::@3
-  [15] (byte) irq_idx#4 ← phi( table_driven_irq/(byte) irq_idx#0 table_driven_irq::@2/(byte) irq_idx#1 table_driven_irq::@3/(byte) irq_idx#1 )
-  [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4)
-  [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4)
-  [18] (byte) irq_idx#1 ← ++ (byte) irq_idx#4
-  [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2
+  [15] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (byte) irq_idx)
+  [16] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (byte) irq_idx)
+  [17] (byte) irq_idx ← ++ (byte) irq_idx
+  [18] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2
   to:table_driven_irq::@4
 table_driven_irq::@4: scope:[table_driven_irq]  from table_driven_irq::@1
-  [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
+  [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
   to:table_driven_irq::@5
 table_driven_irq::@5: scope:[table_driven_irq]  from table_driven_irq::@4
-  [21] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
-  [22] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0
-  [23] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return
+  [20] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  [21] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0
+  [22] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return
   to:table_driven_irq::@6
 table_driven_irq::@6: scope:[table_driven_irq]  from table_driven_irq::@5
-  [24] (byte) irq_idx#2 ← (byte) 0
+  [23] (byte) irq_idx ← (byte) 0
   to:table_driven_irq::@return
 table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@5 table_driven_irq::@6
-  [25] (byte) irq_idx#3 ← phi( table_driven_irq::@5/(byte) irq_idx#1 table_driven_irq::@6/(byte) irq_idx#2 )
-  [26] return 
+  [24] return 
   to:@return
 table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@4
-  [27] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
+  [25] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
   to:table_driven_irq::@1
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
-  [28] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
+  [26] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
   to:table_driven_irq::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) irq_idx
-(byte) irq_idx#0 4.0
-(byte) irq_idx#1 4.375
-(byte) irq_idx#2 4.0
-(byte) irq_idx#3 40.0
-(byte) irq_idx#4 19.0
+(byte) irq_idx loadstore 6.857142857142857
 (void()) main()
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (byte) table_driven_irq::idx
@@ -433,16 +289,16 @@ interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (byte) table_driven_irq::val#0 6.166666666666666
 
 Initial phi equivalence classes
-[ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
-Added variable table_driven_irq::idx#0 to zero page equivalence class [ table_driven_irq::idx#0 ]
-Added variable table_driven_irq::val#0 to zero page equivalence class [ table_driven_irq::val#0 ]
+Added variable irq_idx to live range equivalence class [ irq_idx ]
+Added variable table_driven_irq::idx#0 to live range equivalence class [ table_driven_irq::idx#0 ]
+Added variable table_driven_irq::val#0 to live range equivalence class [ table_driven_irq::val#0 ]
 Complete equivalence classes
-[ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
+[ irq_idx ]
 [ table_driven_irq::idx#0 ]
 [ table_driven_irq::val#0 ]
-Allocated zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
-Allocated zp ZP_BYTE:3 [ table_driven_irq::idx#0 ]
-Allocated zp ZP_BYTE:4 [ table_driven_irq::val#0 ]
+Allocated zp[1]:2 [ irq_idx ]
+Allocated zp[1]:3 [ table_driven_irq::idx#0 ]
+Allocated zp[1]:4 [ table_driven_irq::val#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -477,7 +333,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (byte) irq_idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z irq_idx
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -535,127 +391,118 @@ table_driven_irq: {
     .label idx = 3
     .label val = 4
     // entry interrupt(KERNEL_MIN)
-    // [15] phi from table_driven_irq table_driven_irq::@2 table_driven_irq::@3 to table_driven_irq::@1 [phi:table_driven_irq/table_driven_irq::@2/table_driven_irq::@3->table_driven_irq::@1]
-  __b1_from_table_driven_irq:
-  __b1_from___b2:
-  __b1_from___b3:
-    // [15] phi (byte) irq_idx#4 = (byte) irq_idx#0 [phi:table_driven_irq/table_driven_irq::@2/table_driven_irq::@3->table_driven_irq::@1#0] -- register_copy 
     jmp __b1
     // table_driven_irq::@1
   __b1:
-    // [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [15] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (byte) irq_idx) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
     sta.z idx
-    // [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [16] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (byte) irq_idx) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z irq_idx
     lda IRQ_CHANGE_VAL,y
     sta.z val
-    // [18] (byte) irq_idx#1 ← ++ (byte) irq_idx#4 -- vbuz1=_inc_vbuz1 
+    // [17] (byte) irq_idx ← ++ (byte) irq_idx -- vbuz1=_inc_vbuz1 
     inc.z irq_idx
-    // [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [18] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z idx
     cmp #VIC_SIZE
     bcc __b2
     jmp __b4
     // table_driven_irq::@4
   __b4:
-    // [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuz1_lt_vbuc1_then_la1 
+    // [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda.z idx
     cmp #VIC_SIZE+8
     bcc __b3
     jmp __b5
     // table_driven_irq::@5
   __b5:
-    // [21] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [20] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [22] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuz1 
+    // [21] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuz1 
     lda.z val
     sta RASTER
-    // [23] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return -- vbuz1_ge__deref_pbuc1_then_la1 
+    // [22] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return -- vbuz1_ge__deref_pbuc1_then_la1 
     lda RASTER
     ldy.z val
     sta.z $ff
     cpy.z $ff
-    bcs __breturn_from___b5
+    bcs __breturn
     jmp __b6
     // table_driven_irq::@6
   __b6:
-    // [24] (byte) irq_idx#2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [23] (byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_idx
-    // [25] phi from table_driven_irq::@5 table_driven_irq::@6 to table_driven_irq::@return [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return]
-  __breturn_from___b5:
-  __breturn_from___b6:
-    // [25] phi (byte) irq_idx#3 = (byte) irq_idx#1 [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return#0] -- register_copy 
     jmp __breturn
     // table_driven_irq::@return
   __breturn:
-    // [26] return  - exit interrupt(KERNEL_MIN)
+    // [24] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
     // table_driven_irq::@3
   __b3:
-    // [27] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [25] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z val
     ldy.z idx
     sta SCREEN+-VIC_SIZE+$3f8,y
-    jmp __b1_from___b3
+    jmp __b1
     // table_driven_irq::@2
   __b2:
-    // [28] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [26] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z val
     ldy.z idx
     sta VIC_BASE,y
-    jmp __b1_from___b2
+    jmp __b1
 }
   // File Data
-  IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
+  IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (byte) irq_idx#0 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [1] (byte) irq_idx ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) RASTER) ← (byte) $60 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [11] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 ] ) always clobbers reg byte y 
-Statement [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ table_driven_irq::idx#0 ]
-Statement [21] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ irq_idx#1 table_driven_irq::val#0 ] (  [ irq_idx#1 table_driven_irq::val#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ table_driven_irq::val#0 ]
-Statement [24] (byte) irq_idx#2 ← (byte) 0 [ irq_idx#2 ] (  [ irq_idx#2 ] ) always clobbers reg byte a 
-Statement [27] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Statement [28] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Statement [1] (byte) irq_idx#0 ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [15] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (byte) irq_idx) [ irq_idx table_driven_irq::idx#0 ] (  [ irq_idx table_driven_irq::idx#0 ] ) always clobbers reg byte y 
+Statement [16] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (byte) irq_idx) [ table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ table_driven_irq::idx#0 table_driven_irq::val#0 ] ) always clobbers reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:3 [ table_driven_irq::idx#0 ]
+Statement [20] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ table_driven_irq::val#0 ]
+Statement [23] (byte) irq_idx ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [25] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] ) always clobbers reg byte a 
+Statement [26] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] ) always clobbers reg byte a 
+Statement [1] (byte) irq_idx ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) RASTER) ← (byte) $60 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [11] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() [ ] ( main:3 [ ] ) always clobbers reg byte a 
-Statement [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 ] ) always clobbers reg byte y 
-Statement [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4) [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx#4 table_driven_irq::idx#0 table_driven_irq::val#0 ] ) always clobbers reg byte y 
-Statement [21] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ irq_idx#1 table_driven_irq::val#0 ] (  [ irq_idx#1 table_driven_irq::val#0 ] ) always clobbers reg byte a 
-Statement [24] (byte) irq_idx#2 ← (byte) 0 [ irq_idx#2 ] (  [ irq_idx#2 ] ) always clobbers reg byte a 
-Statement [27] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Statement [28] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx#1 ] (  [ irq_idx#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_BYTE:3 [ table_driven_irq::idx#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , 
-Potential registers zp ZP_BYTE:4 [ table_driven_irq::val#0 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
+Statement [15] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (byte) irq_idx) [ irq_idx table_driven_irq::idx#0 ] (  [ irq_idx table_driven_irq::idx#0 ] ) always clobbers reg byte y 
+Statement [16] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (byte) irq_idx) [ table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ table_driven_irq::idx#0 table_driven_irq::val#0 ] ) always clobbers reg byte y 
+Statement [20] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] ) always clobbers reg byte a 
+Statement [23] (byte) irq_idx ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [25] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] ) always clobbers reg byte a 
+Statement [26] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ irq_idx ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ table_driven_irq::idx#0 ] : zp[1]:3 , reg byte a , reg byte x , 
+Potential registers zp[1]:4 [ table_driven_irq::val#0 ] : zp[1]:4 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 71.38: zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
-Uplift Scope [table_driven_irq] 11: zp ZP_BYTE:3 [ table_driven_irq::idx#0 ] 6.17: zp ZP_BYTE:4 [ table_driven_irq::val#0 ] 
+Uplift Scope [table_driven_irq] 11: zp[1]:3 [ table_driven_irq::idx#0 ] 6.17: zp[1]:4 [ table_driven_irq::val#0 ] 
+Uplift Scope [] 6.86: zp[1]:2 [ irq_idx ] 
 Uplift Scope [main] 
 
-Uplifting [] best 928 combination zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
 Uplifting [table_driven_irq] best 762 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
+Uplifting [] best 762 combination zp[1]:2 [ irq_idx ] 
 Uplifting [main] best 762 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
-Uplifting [] best 762 combination zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ] 
+Attempting to uplift remaining variables inzp[1]:2 [ irq_idx ]
+Uplifting [] best 762 combination zp[1]:2 [ irq_idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -689,7 +536,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (byte) irq_idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z irq_idx
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -745,77 +592,68 @@ main: {
   // table_driven_irq
 table_driven_irq: {
     // entry interrupt(KERNEL_MIN)
-    // [15] phi from table_driven_irq table_driven_irq::@2 table_driven_irq::@3 to table_driven_irq::@1 [phi:table_driven_irq/table_driven_irq::@2/table_driven_irq::@3->table_driven_irq::@1]
-  __b1_from_table_driven_irq:
-  __b1_from___b2:
-  __b1_from___b3:
-    // [15] phi (byte) irq_idx#4 = (byte) irq_idx#0 [phi:table_driven_irq/table_driven_irq::@2/table_driven_irq::@3->table_driven_irq::@1#0] -- register_copy 
     jmp __b1
     // table_driven_irq::@1
   __b1:
-    // [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [15] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (byte) irq_idx) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
-    // [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [16] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (byte) irq_idx) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z irq_idx
     ldx IRQ_CHANGE_VAL,y
-    // [18] (byte) irq_idx#1 ← ++ (byte) irq_idx#4 -- vbuz1=_inc_vbuz1 
+    // [17] (byte) irq_idx ← ++ (byte) irq_idx -- vbuz1=_inc_vbuz1 
     inc.z irq_idx
-    // [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
+    // [18] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE
     bcc __b2
     jmp __b4
     // table_driven_irq::@4
   __b4:
-    // [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
+    // [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE+8
     bcc __b3
     jmp __b5
     // table_driven_irq::@5
   __b5:
-    // [21] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [20] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [22] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
+    // [21] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
     stx RASTER
-    // [23] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
+    // [22] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
     ldy RASTER
     sty.z $ff
     cpx.z $ff
-    bcs __breturn_from___b5
+    bcs __breturn
     jmp __b6
     // table_driven_irq::@6
   __b6:
-    // [24] (byte) irq_idx#2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [23] (byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_idx
-    // [25] phi from table_driven_irq::@5 table_driven_irq::@6 to table_driven_irq::@return [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return]
-  __breturn_from___b5:
-  __breturn_from___b6:
-    // [25] phi (byte) irq_idx#3 = (byte) irq_idx#1 [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return#0] -- register_copy 
     jmp __breturn
     // table_driven_irq::@return
   __breturn:
-    // [26] return  - exit interrupt(KERNEL_MIN)
+    // [24] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
     // table_driven_irq::@3
   __b3:
-    // [27] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [25] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta SCREEN+-VIC_SIZE+$3f8,y
-    jmp __b1_from___b3
+    jmp __b1
     // table_driven_irq::@2
   __b2:
-    // [28] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [26] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta VIC_BASE,y
-    jmp __b1_from___b2
+    jmp __b1
 }
   // File Data
-  IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
+  IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -832,17 +670,9 @@ Removing instruction lda #IRQ_RASTER
 Removing instruction ldy.z irq_idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __bbegin with __b1
-Replacing label __breturn_from___b5 with __breturn
-Replacing label __b1_from___b3 with __b1
-Replacing label __b1_from___b2 with __b1
 Removing instruction __bbegin:
 Removing instruction __b2_from___b1:
 Removing instruction __bend_from___b2:
-Removing instruction __b1_from_table_driven_irq:
-Removing instruction __b1_from___b2:
-Removing instruction __b1_from___b3:
-Removing instruction __breturn_from___b5:
-Removing instruction __breturn_from___b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b2:
 Removing instruction __bend:
@@ -864,26 +694,21 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) CIA1_INTERRUPT CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR CIA_INTERRUPT_CLEAR = (byte) $7f
-(const byte[]) IRQ_CHANGE_IDX IRQ_CHANGE_IDX = { (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT }
-(const byte) IRQ_CHANGE_NEXT IRQ_CHANGE_NEXT = (byte) $7f
-(const byte[]) IRQ_CHANGE_VAL IRQ_CHANGE_VAL = { (byte) $b, (byte) $b, (byte) $63, (byte) 0, (byte) 0, (byte) $80, (byte) 7, (byte) 7, (byte) $83, (byte) 0, (byte) 0, (byte) $60 }
-(const byte*) IRQ_ENABLE IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER IRQ_RASTER = (byte) 1
-(const byte*) IRQ_STATUS IRQ_STATUS = (byte*) 53273
-(const void()**) KERNEL_IRQ KERNEL_IRQ = (void()**) 788
-(const byte*) RASTER RASTER = (byte*) 53266
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte*) VIC_BASE VIC_BASE = (byte*) 53248
-(const byte*) VIC_CONTROL VIC_CONTROL = (byte*) 53265
-(const byte) VIC_SIZE VIC_SIZE = (byte) $30
-(byte) irq_idx
-(byte) irq_idx#0 irq_idx zp ZP_BYTE:2 4.0
-(byte) irq_idx#1 irq_idx zp ZP_BYTE:2 4.375
-(byte) irq_idx#2 irq_idx zp ZP_BYTE:2 4.0
-(byte) irq_idx#3 irq_idx zp ZP_BYTE:2 40.0
-(byte) irq_idx#4 irq_idx zp ZP_BYTE:2 19.0
+(const byte*) CIA1_INTERRUPT = (byte*) 56333
+(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte*) IRQ_CHANGE_IDX[]  = { (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const byte) IRQ_CHANGE_NEXT }
+(const byte) IRQ_CHANGE_NEXT = (byte) $7f
+(const byte*) IRQ_CHANGE_VAL[]  = { (byte) $b, (byte) $b, (byte) $63, (byte) 0, (byte) 0, (byte) $80, (byte) 7, (byte) 7, (byte) $83, (byte) 0, (byte) 0, (byte) $60 }
+(const byte*) IRQ_ENABLE = (byte*) 53274
+(const byte) IRQ_RASTER = (byte) 1
+(const byte*) IRQ_STATUS = (byte*) 53273
+(const void()**) KERNEL_IRQ = (void()**) 788
+(const byte*) RASTER = (byte*) 53266
+(const byte*) SCREEN = (byte*) 1024
+(const byte*) VIC_BASE = (byte*) 53248
+(const byte*) VIC_CONTROL = (byte*) 53265
+(const byte) VIC_SIZE = (byte) $30
+(byte) irq_idx loadstore zp[1]:2 6.857142857142857
 (void()) main()
 (label) main::@return
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
@@ -899,7 +724,7 @@ interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (byte) table_driven_irq::val
 (byte) table_driven_irq::val#0 reg byte x 6.166666666666666
 
-zp ZP_BYTE:2 [ irq_idx#3 irq_idx#4 irq_idx#0 irq_idx#1 irq_idx#2 ]
+zp[1]:2 [ irq_idx ]
 reg byte a [ table_driven_irq::idx#0 ]
 reg byte x [ table_driven_irq::val#0 ]
 
@@ -937,7 +762,7 @@ Score: 604
   // @1
 __b1:
   // irq_idx = 0
-  // [1] (byte) irq_idx#0 ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z irq_idx
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -994,39 +819,37 @@ main: {
   // table_driven_irq
 table_driven_irq: {
     // entry interrupt(KERNEL_MIN)
-    // [15] phi from table_driven_irq table_driven_irq::@2 table_driven_irq::@3 to table_driven_irq::@1 [phi:table_driven_irq/table_driven_irq::@2/table_driven_irq::@3->table_driven_irq::@1]
-    // [15] phi (byte) irq_idx#4 = (byte) irq_idx#0 [phi:table_driven_irq/table_driven_irq::@2/table_driven_irq::@3->table_driven_irq::@1#0] -- register_copy 
     // table_driven_irq::@1
   __b1:
     // idx = IRQ_CHANGE_IDX[irq_idx]
-    // [16] (byte) table_driven_irq::idx#0 ← *((const byte[]) IRQ_CHANGE_IDX + (byte) irq_idx#4) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [15] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (byte) irq_idx) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
     // val = IRQ_CHANGE_VAL[irq_idx]
-    // [17] (byte) table_driven_irq::val#0 ← *((const byte[]) IRQ_CHANGE_VAL + (byte) irq_idx#4) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [16] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (byte) irq_idx) -- vbuxx=pbuc1_derefidx_vbuz1 
     ldx IRQ_CHANGE_VAL,y
     // irq_idx++;
-    // [18] (byte) irq_idx#1 ← ++ (byte) irq_idx#4 -- vbuz1=_inc_vbuz1 
+    // [17] (byte) irq_idx ← ++ (byte) irq_idx -- vbuz1=_inc_vbuz1 
     inc.z irq_idx
     // if (idx < VIC_SIZE)
-    // [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
+    // [18] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE
     bcc __b2
     // table_driven_irq::@4
     // if (idx < VIC_SIZE + 8)
-    // [20] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
+    // [19] if((byte) table_driven_irq::idx#0<(const byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE+8
     bcc __b3
     // table_driven_irq::@5
     // *IRQ_STATUS = IRQ_RASTER
-    // [21] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [20] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // *RASTER = val
-    // [22] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
+    // [21] *((const byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
     stx RASTER
     // if (val < *RASTER)
-    // [23] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
+    // [22] if((byte) table_driven_irq::val#0>=*((const byte*) RASTER)) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
     ldy RASTER
     sty.z $ff
     cpx.z $ff
@@ -1035,19 +858,17 @@ table_driven_irq: {
   !__ea81:
     // table_driven_irq::@6
     // irq_idx = 0
-    // [24] (byte) irq_idx#2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [23] (byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_idx
-    // [25] phi from table_driven_irq::@5 table_driven_irq::@6 to table_driven_irq::@return [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return]
-    // [25] phi (byte) irq_idx#3 = (byte) irq_idx#1 [phi:table_driven_irq::@5/table_driven_irq::@6->table_driven_irq::@return#0] -- register_copy 
     // table_driven_irq::@return
     // }
-    // [26] return  - exit interrupt(KERNEL_MIN)
+    // [24] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
     // table_driven_irq::@3
   __b3:
     // SCREEN[idx + $3f8 - VIC_SIZE] = val
-    // [27] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [25] *((const byte*) SCREEN+-(const byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta SCREEN+-VIC_SIZE+$3f8,y
@@ -1055,13 +876,13 @@ table_driven_irq: {
     // table_driven_irq::@2
   __b2:
     // VIC_BASE[idx] = val
-    // [28] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [26] *((const byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta VIC_BASE,y
     jmp __b1
 }
   // File Data
-  IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
+  IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 

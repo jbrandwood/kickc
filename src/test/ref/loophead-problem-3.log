@@ -15,16 +15,14 @@ Culled Empty Block (label) @9
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
   to:@10
 
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
 mul16u: scope:[mul16u]  from main
   (word) mul16u::a#5 ← phi( main/(word) mul16u::a#1 )
   (word) mul16u::b#1 ← phi( main/(word) mul16u::b#0 )
-  (dword) mul16u::res#0 ← (number) 0
-  (dword) mul16u::mb#0 ← (word) mul16u::b#1
+  (dword) mul16u::res#0 ← (dword) 0
+  (dword) mul16u::mb#0 ← (dword)(word) mul16u::b#1
   to:mul16u::@1
 mul16u::@1: scope:[mul16u]  from mul16u mul16u::@4
   (dword) mul16u::mb#5 ← phi( mul16u/(dword) mul16u::mb#0 mul16u::@4/(dword) mul16u::mb#1 )
@@ -82,9 +80,9 @@ main::@1: scope:[main]  from main
   (word~) main::$1 ← < (dword) main::result#0
   (word) main::kaputt#0 ← (word~) main::$1
   (byte~) main::$2 ← < (word) main::kaputt#0
-  *((byte*) BORDERCOL) ← (byte~) main::$2
+  *((const byte*) BORDERCOL) ← (byte~) main::$2
   (byte~) main::$3 ← > (word) main::kaputt#0
-  *((byte*) BGCOL) ← (byte~) main::$3
+  *((const byte*) BGCOL) ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -101,8 +99,8 @@ SYMBOL TABLE SSA
 (label) @11
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BORDERCOL
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BORDERCOL = (byte*)(number) $d020
 (void()) main()
 (dword~) main::$0
 (word~) main::$1
@@ -161,7 +159,6 @@ SYMBOL TABLE SSA
 (dword) mul16u::return#3
 (dword) mul16u::return#4
 
-Adding number conversion cast (unumber) 0 in (dword) mul16u::res#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) mul16u::$0 ← (word) mul16u::a#2 != (number) 0
 Adding number conversion cast (unumber) 1 in (number~) mul16u::$1 ← (word) mul16u::a#3 & (number) 1
 Adding number conversion cast (unumber) mul16u::$1 in (number~) mul16u::$1 ← (word) mul16u::a#3 & (unumber)(number) 1
@@ -171,15 +168,11 @@ Adding number conversion cast (unumber) 1 in (dword~) mul16u::$6 ← (dword) mul
 Adding number conversion cast (unumber) 4 in (word) mul16u::a#1 ← (number) 4
 Adding number conversion cast (unumber) $7b in (word) mul16u::b#0 ← (number) $7b
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (dword) mul16u::res#0 ← (unumber)(number) 0
 Inlining cast (word) mul16u::a#1 ← (unumber)(number) 4
 Inlining cast (word) mul16u::b#0 ← (unumber)(number) $7b
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -189,7 +182,6 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast $7b
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
@@ -198,9 +190,8 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $7b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) mul16u::$1 ← (word) mul16u::a#3 & (byte) 1
-Inversing boolean not [11] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [10] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
+Inversing boolean not [9] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [8] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (dword) mul16u::mb#0 = (word) mul16u::b#1 
 Alias (word) mul16u::a#2 = (word) mul16u::a#3 (word) mul16u::a#6 
 Alias (dword) mul16u::mb#3 = (dword) mul16u::mb#4 (dword) mul16u::mb#5 
 Alias (dword) mul16u::res#2 = (dword) mul16u::res#5 (dword) mul16u::res#4 (dword) mul16u::return#0 (dword) mul16u::res#3 (dword) mul16u::return#3 (dword) mul16u::return#1 
@@ -214,21 +205,23 @@ Successful SSA optimization Pass2AliasElimination
 Alias (word) mul16u::a#2 = (word) mul16u::a#4 
 Alias (dword) mul16u::mb#2 = (dword) mul16u::mb#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (dword) mul16u::mb#0 (word) mul16u::b#0
+Identical Phi Values (word) mul16u::b#1 (word) mul16u::b#0
 Identical Phi Values (word) mul16u::a#5 (word) mul16u::a#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) mul16u::$0 [7] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2
-Simple Condition (bool~) mul16u::$3 [12] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@4
+Simple Condition (bool~) mul16u::$0 [5] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2
+Simple Condition (bool~) mul16u::$3 [10] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
 Constant (const dword) mul16u::res#0 = 0
 Constant (const word) mul16u::a#1 = 4
 Constant (const word) mul16u::b#0 = $7b
 Successful SSA optimization Pass2ConstantIdentification
+Constant (const dword) mul16u::mb#0 = (dword)mul16u::b#0
+Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const dword) mul16u::res#0
 Inlining constant with var siblings (const word) mul16u::a#1
-Constant inlined mul16u::res#0 = (byte) 0
+Inlining constant with var siblings (const dword) mul16u::mb#0
+Constant inlined mul16u::mb#0 = (dword)(const word) mul16u::b#0
+Constant inlined mul16u::res#0 = (dword) 0
 Constant inlined mul16u::a#1 = (byte) 4
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting mul16u::@10(between mul16u::@2 and mul16u::@4)
@@ -296,8 +289,8 @@ mul16u: scope:[mul16u]  from main
   [14] phi()
   to:mul16u::@1
 mul16u::@1: scope:[mul16u]  from mul16u mul16u::@3
-  [15] (dword) mul16u::mb#2 ← phi( mul16u/(const word) mul16u::b#0 mul16u::@3/(dword) mul16u::mb#1 )
-  [15] (dword) mul16u::res#2 ← phi( mul16u/(byte) 0 mul16u::@3/(dword) mul16u::res#6 )
+  [15] (dword) mul16u::mb#2 ← phi( mul16u/(dword)(const word) mul16u::b#0 mul16u::@3/(dword) mul16u::mb#1 )
+  [15] (dword) mul16u::res#2 ← phi( mul16u/(dword) 0 mul16u::@3/(dword) mul16u::res#6 )
   [15] (word) mul16u::a#2 ← phi( mul16u/(byte) 4 mul16u::@3/(word) mul16u::a#0 )
   [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2
   to:mul16u::@return
@@ -346,12 +339,12 @@ Initial phi equivalence classes
 [ mul16u::a#2 mul16u::a#0 ]
 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ]
 [ mul16u::mb#2 mul16u::mb#1 ]
-Added variable mul16u::return#2 to zero page equivalence class [ mul16u::return#2 ]
-Added variable main::result#0 to zero page equivalence class [ main::result#0 ]
-Added variable main::kaputt#0 to zero page equivalence class [ main::kaputt#0 ]
-Added variable main::$2 to zero page equivalence class [ main::$2 ]
-Added variable main::$3 to zero page equivalence class [ main::$3 ]
-Added variable mul16u::$1 to zero page equivalence class [ mul16u::$1 ]
+Added variable mul16u::return#2 to live range equivalence class [ mul16u::return#2 ]
+Added variable main::result#0 to live range equivalence class [ main::result#0 ]
+Added variable main::kaputt#0 to live range equivalence class [ main::kaputt#0 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable mul16u::$1 to live range equivalence class [ mul16u::$1 ]
 Complete equivalence classes
 [ mul16u::a#2 mul16u::a#0 ]
 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ]
@@ -362,15 +355,15 @@ Complete equivalence classes
 [ main::$2 ]
 [ main::$3 ]
 [ mul16u::$1 ]
-Allocated zp ZP_WORD:2 [ mul16u::a#2 mul16u::a#0 ]
-Allocated zp ZP_DWORD:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ]
-Allocated zp ZP_DWORD:8 [ mul16u::mb#2 mul16u::mb#1 ]
-Allocated zp ZP_DWORD:12 [ mul16u::return#2 ]
-Allocated zp ZP_DWORD:16 [ main::result#0 ]
-Allocated zp ZP_WORD:20 [ main::kaputt#0 ]
-Allocated zp ZP_BYTE:22 [ main::$2 ]
-Allocated zp ZP_BYTE:23 [ main::$3 ]
-Allocated zp ZP_BYTE:24 [ mul16u::$1 ]
+Allocated zp[2]:2 [ mul16u::a#2 mul16u::a#0 ]
+Allocated zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ]
+Allocated zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ]
+Allocated zp[4]:12 [ mul16u::return#2 ]
+Allocated zp[4]:16 [ main::result#0 ]
+Allocated zp[2]:20 [ main::kaputt#0 ]
+Allocated zp[1]:22 [ main::$2 ]
+Allocated zp[1]:23 [ main::$3 ]
+Allocated zp[1]:24 [ mul16u::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -456,7 +449,7 @@ main: {
 }
   // mul16u
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage(2) a)
+// mul16u(word zp(2) a)
 mul16u: {
     .const b = $7b
     .label __1 = $18
@@ -466,7 +459,7 @@ mul16u: {
     .label return = $c
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   __b1_from_mul16u:
-    // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -475,12 +468,14 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
-    lda #0
+    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    lda #<0
     sta.z res
-    lda #0
+    lda #>0
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
     // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4
@@ -560,30 +555,30 @@ Statement [11] (byte~) main::$3 ← > (word) main::kaputt#0 [ main::$3 ] ( main:
 Statement [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] ( main:2::mul16u:5 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] ) always clobbers reg byte a 
 Statement [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] ( main:2::mul16u:5 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] ) always clobbers reg byte a 
 Statement [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] ( main:2::mul16u:5 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ mul16u::a#2 mul16u::a#0 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_DWORD:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] : zp ZP_DWORD:4 , 
-Potential registers zp ZP_DWORD:8 [ mul16u::mb#2 mul16u::mb#1 ] : zp ZP_DWORD:8 , 
-Potential registers zp ZP_DWORD:12 [ mul16u::return#2 ] : zp ZP_DWORD:12 , 
-Potential registers zp ZP_DWORD:16 [ main::result#0 ] : zp ZP_DWORD:16 , 
-Potential registers zp ZP_WORD:20 [ main::kaputt#0 ] : zp ZP_WORD:20 , 
-Potential registers zp ZP_BYTE:22 [ main::$2 ] : zp ZP_BYTE:22 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:23 [ main::$3 ] : zp ZP_BYTE:23 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:24 [ mul16u::$1 ] : zp ZP_BYTE:24 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] : zp[2]:2 , 
+Potential registers zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] : zp[4]:4 , 
+Potential registers zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] : zp[4]:8 , 
+Potential registers zp[4]:12 [ mul16u::return#2 ] : zp[4]:12 , 
+Potential registers zp[4]:16 [ main::result#0 ] : zp[4]:16 , 
+Potential registers zp[2]:20 [ main::kaputt#0 ] : zp[2]:20 , 
+Potential registers zp[1]:22 [ main::$2 ] : zp[1]:22 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:23 [ main::$3 ] : zp[1]:23 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:24 [ mul16u::$1 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [mul16u] 38.83: zp ZP_DWORD:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] 26.71: zp ZP_DWORD:8 [ mul16u::mb#2 mul16u::mb#1 ] 22: zp ZP_BYTE:24 [ mul16u::$1 ] 18.33: zp ZP_WORD:2 [ mul16u::a#2 mul16u::a#0 ] 4: zp ZP_DWORD:12 [ mul16u::return#2 ] 
-Uplift Scope [main] 4: zp ZP_DWORD:16 [ main::result#0 ] 4: zp ZP_BYTE:22 [ main::$2 ] 4: zp ZP_BYTE:23 [ main::$3 ] 2: zp ZP_WORD:20 [ main::kaputt#0 ] 
+Uplift Scope [mul16u] 38.83: zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] 26.71: zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] 22: zp[1]:24 [ mul16u::$1 ] 18.33: zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] 4: zp[4]:12 [ mul16u::return#2 ] 
+Uplift Scope [main] 4: zp[4]:16 [ main::result#0 ] 4: zp[1]:22 [ main::$2 ] 4: zp[1]:23 [ main::$3 ] 2: zp[2]:20 [ main::kaputt#0 ] 
 Uplift Scope [] 
 
-Uplifting [mul16u] best 1617 combination zp ZP_DWORD:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp ZP_DWORD:8 [ mul16u::mb#2 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp ZP_WORD:2 [ mul16u::a#2 mul16u::a#0 ] zp ZP_DWORD:12 [ mul16u::return#2 ] 
-Uplifting [main] best 1605 combination zp ZP_DWORD:16 [ main::result#0 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp ZP_WORD:20 [ main::kaputt#0 ] 
-Uplifting [] best 1605 combination 
-Coalescing zero page register [ zp ZP_DWORD:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] ] with [ zp ZP_DWORD:12 [ mul16u::return#2 ] ] - score: 1
-Coalescing zero page register [ zp ZP_DWORD:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 ] ] with [ zp ZP_DWORD:16 [ main::result#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:20 [ main::kaputt#0 ] ] with [ zp ZP_WORD:2 [ mul16u::a#2 mul16u::a#0 ] ]
-Allocated (was zp ZP_DWORD:4) zp ZP_DWORD:2 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 main::result#0 ]
-Allocated (was zp ZP_DWORD:8) zp ZP_DWORD:6 [ mul16u::mb#2 mul16u::mb#1 ]
-Allocated (was zp ZP_WORD:20) zp ZP_WORD:10 [ main::kaputt#0 mul16u::a#2 mul16u::a#0 ]
+Uplifting [mul16u] best 1657 combination zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] zp[4]:12 [ mul16u::return#2 ] 
+Uplifting [main] best 1645 combination zp[4]:16 [ main::result#0 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[2]:20 [ main::kaputt#0 ] 
+Uplifting [] best 1645 combination 
+Coalescing zero page register [ zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] ] with [ zp[4]:12 [ mul16u::return#2 ] ] - score: 1
+Coalescing zero page register [ zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 ] ] with [ zp[4]:16 [ main::result#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:20 [ main::kaputt#0 ] ] with [ zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] ]
+Allocated (was zp[4]:4) zp[4]:2 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 main::result#0 ]
+Allocated (was zp[4]:8) zp[4]:6 [ mul16u::mb#2 mul16u::mb#1 ]
+Allocated (was zp[2]:20) zp[2]:10 [ main::kaputt#0 mul16u::a#2 mul16u::a#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -646,7 +641,7 @@ main: {
 }
   // mul16u
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($a) a)
+// mul16u(word zp($a) a)
 mul16u: {
     .const b = $7b
     .label a = $a
@@ -655,7 +650,7 @@ mul16u: {
     .label return = 2
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   __b1_from_mul16u:
-    // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -664,12 +659,14 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
-    lda #0
+    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    lda #<0
     sta.z res
-    lda #0
+    lda #>0
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
     // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4
@@ -748,7 +745,7 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b4
 Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #0
+Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __bbegin with __b1
 Replacing label __b3_from___b2 with __b3
@@ -778,17 +775,17 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53281
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) BGCOL = (byte*) 53281
+(const byte*) BORDERCOL = (byte*) 53280
 (void()) main()
 (byte~) main::$2 reg byte a 4.0
 (byte~) main::$3 reg byte a 4.0
 (label) main::@1
 (label) main::@return
 (word) main::kaputt
-(word) main::kaputt#0 kaputt zp ZP_WORD:10 2.0
+(word) main::kaputt#0 kaputt zp[2]:10 2.0
 (dword) main::result
-(dword) main::result#0 result zp ZP_DWORD:2 4.0
+(dword) main::result#0 result zp[4]:2 4.0
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
 (byte~) mul16u::$1 reg byte a 22.0
 (label) mul16u::@1
@@ -797,30 +794,30 @@ FINAL SYMBOL TABLE
 (label) mul16u::@4
 (label) mul16u::@return
 (word) mul16u::a
-(word) mul16u::a#0 a zp ZP_WORD:10 11.0
-(word) mul16u::a#2 a zp ZP_WORD:10 7.333333333333333
+(word) mul16u::a#0 a zp[2]:10 11.0
+(word) mul16u::a#2 a zp[2]:10 7.333333333333333
 (word) mul16u::b
 (const word) mul16u::b#0 b = (byte) $7b
 (dword) mul16u::mb
-(dword) mul16u::mb#1 mb zp ZP_DWORD:6 22.0
-(dword) mul16u::mb#2 mb zp ZP_DWORD:6 4.714285714285714
+(dword) mul16u::mb#1 mb zp[4]:6 22.0
+(dword) mul16u::mb#2 mb zp[4]:6 4.714285714285714
 (dword) mul16u::res
-(dword) mul16u::res#1 res zp ZP_DWORD:2 22.0
-(dword) mul16u::res#2 res zp ZP_DWORD:2 5.833333333333333
-(dword) mul16u::res#6 res zp ZP_DWORD:2 11.0
+(dword) mul16u::res#1 res zp[4]:2 22.0
+(dword) mul16u::res#2 res zp[4]:2 5.833333333333333
+(dword) mul16u::res#6 res zp[4]:2 11.0
 (dword) mul16u::return
-(dword) mul16u::return#2 return zp ZP_DWORD:2 4.0
+(dword) mul16u::return#2 return zp[4]:2 4.0
 
-zp ZP_DWORD:2 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 main::result#0 ]
-zp ZP_DWORD:6 [ mul16u::mb#2 mul16u::mb#1 ]
-zp ZP_WORD:10 [ main::kaputt#0 mul16u::a#2 mul16u::a#0 ]
+zp[4]:2 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 main::result#0 ]
+zp[4]:6 [ mul16u::mb#2 mul16u::mb#1 ]
+zp[2]:10 [ main::kaputt#0 mul16u::a#2 mul16u::a#0 ]
 reg byte a [ main::$2 ]
 reg byte a [ main::$3 ]
 reg byte a [ mul16u::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 1399
+Score: 1439
 
   // File Comments
 // Program where loop-head optimization produces wrong return value
@@ -877,7 +874,7 @@ main: {
 }
   // mul16u
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zeropage($a) a)
+// mul16u(word zp($a) a)
 mul16u: {
     .const b = $7b
     .label a = $a
@@ -885,7 +882,7 @@ mul16u: {
     .label res = 2
     .label return = 2
     // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
-    // [15] phi (dword) mul16u::mb#2 = (const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -894,11 +891,13 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (byte) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vbuc1 
-    lda #0
+    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    lda #<0
     sta.z res
     sta.z res+1
+    lda #<0>>$10
     sta.z res+2
+    lda #>0>>$10
     sta.z res+3
     // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4

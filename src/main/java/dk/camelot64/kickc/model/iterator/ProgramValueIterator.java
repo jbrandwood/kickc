@@ -4,8 +4,9 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -35,23 +36,23 @@ public class ProgramValueIterator {
     * @param handler The handler to execute
     */
    public static void execute(ProgramScope programScope, ProgramValueHandler handler) {
-      for(SymbolVariable symbolVariable : programScope.getAllSymbolVariables(true)) {
-         execute(symbolVariable, handler);
+      for(Variable variable : programScope.getAllVars(true)) {
+         execute(variable, handler);
       }
    }
 
    /**
     * Execute a programValueHandler on all values in a variable symbol (variable or constant).
     *
-    * @param symbolVariable The symbol variable
+    * @param variable The symbol variable
     * @param programValueHandler The programValueHandler to execute
     */
-   public static void execute(SymbolVariable symbolVariable, ProgramValueHandler programValueHandler) {
-      if(symbolVariable.getType() instanceof SymbolTypeArray) {
-         execute(new ProgramValue.ProgramValueTypeArraySize((SymbolTypeArray) symbolVariable.getType()), programValueHandler, null, null, null);
+   public static void execute(Variable variable, ProgramValueHandler programValueHandler) {
+      if(variable.getInitValue()!=null) {
+         execute(new ProgramValue.ProgramValueInitValue(variable), programValueHandler, null, null, null);
       }
-      if(symbolVariable instanceof ConstantVar) {
-         execute(new ProgramValue.ProgramValueConstantVar((ConstantVar) symbolVariable), programValueHandler, null, null, null);
+      if(variable.isArray()) {
+         execute(new ProgramValue.ProgramValueArraySize(variable), programValueHandler, null, null, null);
       }
    }
 
@@ -215,7 +216,7 @@ public class ProgramValueIterator {
          }
       } else if(value instanceof ConstantStructValue) {
          ConstantStructValue constantStructValue = (ConstantStructValue) value;
-         for(VariableRef memberRef : constantStructValue.getMembers()) {
+         for(SymbolVariableRef memberRef : constantStructValue.getMembers()) {
             subValues.add(new ProgramValue.ProgramValueConstantStructMember(constantStructValue, memberRef));
          }
       } else if(value instanceof CastValue) {
@@ -232,8 +233,6 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueConstantBinaryRight((ConstantBinary) value));
       } else if(value instanceof ConstantUnary) {
          subValues.add(new ProgramValue.ProgramValueConstantUnaryValue((ConstantUnary) value));
-      } else if(value instanceof ArrayFilled) {
-         subValues.add(new ProgramValue.ProgramValueArrayFilledSize((ArrayFilled) value));
       } else if(value instanceof ConstantArrayFilled) {
          subValues.add(new ProgramValue.ProgramValueConstantArrayFilledSize((ConstantArrayFilled) value));
       } else if(value instanceof ConstantArrayKickAsm) {
@@ -248,12 +247,16 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueParamValue((ParamValue) value));
       } else if(value instanceof StackIdxValue) {
          subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
+      } else if(value instanceof MemsetValue) {
+         subValues.add(new ProgramValue.ProgramValueMemsetValue((MemsetValue) value));
+      } else if(value instanceof MemcpyValue) {
+         subValues.add(new ProgramValue.ProgramValueMempySize((MemcpyValue) value));
+         subValues.add(new ProgramValue.ProgramValueMempySource((MemcpyValue) value));
       } else if(value == null ||
-            value instanceof VariableRef ||
+            value instanceof SymbolVariableRef ||
             value instanceof Variable ||
             value instanceof ProcedureRef ||
             value instanceof ConstantLiteral ||
-            value instanceof ConstantRef ||
             value instanceof StructZero ||
             value instanceof Label ||
             value instanceof LabelRef

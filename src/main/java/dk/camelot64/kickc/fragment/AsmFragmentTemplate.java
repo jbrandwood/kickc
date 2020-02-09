@@ -7,7 +7,6 @@ import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
@@ -44,7 +43,7 @@ public class AsmFragmentTemplate {
    /** The cycles consumed by the ASM of the fragment. */
    private Double cycles;
 
-   public AsmFragmentTemplate(String signature, String body, boolean cache) {
+   AsmFragmentTemplate(String signature, String body, boolean cache) {
       this.signature = signature;
       this.body = body;
       this.file = true;
@@ -72,28 +71,27 @@ public class AsmFragmentTemplate {
 
    /**
     * Initialize the fields that require parsing the ASM (bodyAsm, clobber, cycles).
-    *
-    * @return The parsed fragment ready for generating
     */
    private void initAsm() {
       // Parse the body ASM
-      this.bodyAsm = AsmParser.parseAsm(this.body, new StatementSource(signature+".asm", 1, this.body, 0, 0));
+      this.bodyAsm = AsmParser.parseAsm(this.body, new StatementSource(signature + ".asm", 1, this.body, 0, 0));
       // Generate a dummy instance to find clobber & cycles
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();
       {
-         Variable v1 = new Variable("z1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v2 = new Variable("z2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v3 = new Variable("z3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v4 = new Variable("z4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v5 = new Variable("z5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         Variable v6 = new Variable("z6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.PHI_VERSION);
-         v1.setAllocation(new Registers.RegisterZpByte(2));
-         v2.setAllocation(new Registers.RegisterZpByte(4));
-         v3.setAllocation(new Registers.RegisterZpByte(6));
-         v4.setAllocation(new Registers.RegisterZpByte(8));
-         v5.setAllocation(new Registers.RegisterZpByte(9));
-         v6.setAllocation(new Registers.RegisterZpByte(10));
+         Variable master = Variable.createPhiMaster("z", SymbolType.BYTE, scope, Variable.MemoryArea.ZEROPAGE_MEMORY, null);
+         Variable v1 = Variable.createPhiVersion(master, 1); v1.setName("z1");
+         Variable v2 = Variable.createPhiVersion(master, 2); v2.setName("z2");
+         Variable v3 = Variable.createPhiVersion(master, 3); v3.setName("z3");
+         Variable v4 = Variable.createPhiVersion(master, 4); v4.setName("z4");
+         Variable v5 = Variable.createPhiVersion(master, 5); v5.setName("z5");
+         Variable v6 = Variable.createPhiVersion(master, 6); v6.setName("z6");
+         v1.setAllocation(new Registers.RegisterZpMem(2, 1));
+         v2.setAllocation(new Registers.RegisterZpMem(4, 1));
+         v3.setAllocation(new Registers.RegisterZpMem(6, 1));
+         v4.setAllocation(new Registers.RegisterZpMem(8, 1));
+         v5.setAllocation(new Registers.RegisterZpMem(9, 1));
+         v6.setAllocation(new Registers.RegisterZpMem(10, 1));
          if(signature.contains("z1")) bindings.put("z1", v1);
          if(signature.contains("z2")) bindings.put("z2", v2);
          if(signature.contains("z3")) bindings.put("z3", v3);
@@ -102,18 +100,18 @@ public class AsmFragmentTemplate {
          if(signature.contains("z6")) bindings.put("z6", v6);
       }
       {
-         Variable v1 = new Variable("m1", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v2 = new Variable("m2", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v3 = new Variable("m3", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v4 = new Variable("m4", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v5 = new Variable("m5", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         Variable v6 = new Variable("m6", scope, SymbolType.BYTE, null, SymbolVariable.StorageStrategy.MEMORY);
-         v1.setAllocation(new Registers.RegisterMemory(v1.getRef()));
-         v2.setAllocation(new Registers.RegisterMemory(v2.getRef()));
-         v3.setAllocation(new Registers.RegisterMemory(v3.getRef()));
-         v4.setAllocation(new Registers.RegisterMemory(v4.getRef()));
-         v5.setAllocation(new Registers.RegisterMemory(v5.getRef()));
-         v6.setAllocation(new Registers.RegisterMemory(v6.getRef()));
+         Variable v1 = Variable.createLoadStore("m1", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v2 = Variable.createLoadStore("m2", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v3 = Variable.createLoadStore("m3", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v4 = Variable.createLoadStore("m4", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v5 = Variable.createLoadStore("m5", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         Variable v6 = Variable.createLoadStore("m6", SymbolType.BYTE, scope, Variable.MemoryArea.MAIN_MEMORY, null);
+         v1.setAllocation(new Registers.RegisterMainMem(v1.getVariableRef(), 1, null));
+         v2.setAllocation(new Registers.RegisterMainMem(v2.getVariableRef(), 1, null));
+         v3.setAllocation(new Registers.RegisterMainMem(v3.getVariableRef(), 1, null));
+         v4.setAllocation(new Registers.RegisterMainMem(v4.getVariableRef(), 1, null));
+         v5.setAllocation(new Registers.RegisterMainMem(v5.getVariableRef(), 1, null));
+         v6.setAllocation(new Registers.RegisterMainMem(v6.getVariableRef(), 1, null));
          if(signature.contains("m1")) bindings.put("m1", v1);
          if(signature.contains("m2")) bindings.put("m2", v2);
          if(signature.contains("m3")) bindings.put("m3", v3);
@@ -138,7 +136,7 @@ public class AsmFragmentTemplate {
       this.cycles = asm.getCycles();
    }
 
-   public String getSignature() {
+   String getSignature() {
       return signature;
    }
 
@@ -146,7 +144,7 @@ public class AsmFragmentTemplate {
       return body;
    }
 
-   public KickCParser.AsmLinesContext getBodyAsm() {
+   KickCParser.AsmLinesContext getBodyAsm() {
       if(bodyAsm == null) {
          initAsm();
       }
@@ -175,11 +173,11 @@ public class AsmFragmentTemplate {
       return cache;
    }
 
-   public AsmFragmentTemplateSynthesisRule getSynthesis() {
+   AsmFragmentTemplateSynthesisRule getSynthesis() {
       return synthesis;
    }
 
-   public AsmFragmentTemplate getSubFragment() {
+   AsmFragmentTemplate getSubFragment() {
       return subFragment;
    }
 

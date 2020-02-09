@@ -5,8 +5,6 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) RASTER ← ((byte*)) (number) $d012
   to:@1
 
 (void()) main()
@@ -17,8 +15,8 @@ main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::col#0 ← *((byte*) RASTER)
-  *((byte*) BGCOL) ← (byte) main::col#0
+  (byte) main::col#0 ← *((const byte*) RASTER)
+  *((const byte*) BGCOL) ← (byte) main::col#0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -35,8 +33,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) RASTER
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) RASTER = (byte*)(number) $d012
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -44,16 +42,10 @@ SYMBOL TABLE SSA
 (byte) main::col
 (byte) main::col#0
 
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53266
 Successful SSA optimization PassNCastSimplification
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) RASTER = (byte*) 53266
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [3] if(true) goto main::@2
+if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -101,10 +93,10 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::col#0 22.0
 
 Initial phi equivalence classes
-Added variable main::col#0 to zero page equivalence class [ main::col#0 ]
+Added variable main::col#0 to live range equivalence class [ main::col#0 ]
 Complete equivalence classes
 [ main::col#0 ]
-Allocated zp ZP_BYTE:2 [ main::col#0 ]
+Allocated zp[1]:2 [ main::col#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -150,10 +142,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::col#0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::col#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp ZP_BYTE:2 [ main::col#0 ] 
+Uplift Scope [main] 22: zp[1]:2 [ main::col#0 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 127 combination reg byte a [ main::col#0 ] 
@@ -220,8 +212,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53281
-(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) BGCOL = (byte*) 53281
+(const byte*) RASTER = (byte*) 53266
 (void()) main()
 (label) main::@1
 (byte) main::col

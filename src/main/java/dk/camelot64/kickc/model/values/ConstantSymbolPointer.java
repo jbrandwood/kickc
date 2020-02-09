@@ -1,12 +1,15 @@
 package dk.camelot64.kickc.model.values;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ConstantNotLiteral;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.Registers;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
+import java.util.Collection;
 import java.util.Objects;
 
 /** A pointer to a symbol (variable or procedure) */
@@ -38,13 +41,30 @@ public class ConstantSymbolPointer implements ConstantValue {
       // If the symbol has been allocated we can calculate a literal value!
       Symbol symbol = scope.getSymbol(toSymbol);
       if(symbol instanceof Variable) {
-         Registers.Register allocation = ((Variable) symbol).getAllocation();
-         if(allocation!=null && allocation.isZp()) {
-            int zp = ((Registers.RegisterZp) allocation).getZp();
-            return new ConstantInteger((long)zp, SymbolType.BYTE);
+         Variable variable = (Variable) symbol;
+         if(variable.isVariable()) {
+
+            // Hacky solution to get a version that has an allocation
+            if(variable.isKindPhiMaster()) {
+               Collection<Variable> versions = variable.getScope().getVersions(variable);
+               for(Variable version : versions) {
+                  if(variable.isVariable()) {
+                     variable = version;
+                     break;
+                  }
+               }
+            }
+
+            Registers.Register allocation = variable.getAllocation();
+            if(allocation != null && Registers.RegisterType.ZP_MEM.equals(allocation.getType())) {
+               int zp = ((Registers.RegisterZpMem) allocation).getZp();
+               return new ConstantInteger((long) zp, SymbolType.BYTE);
+            } else if(allocation != null && Registers.RegisterType.MAIN_MEM.equals(allocation.getType())) {
+               throw new ConstantNotLiteral("Cannot calculate literal var pointer");
+            }
          }
       }
-      // WE cannot calculate a literal value
+      // We cannot calculate a literal value
       throw new ConstantNotLiteral("Cannot calculate literal var pointer");
    }
 

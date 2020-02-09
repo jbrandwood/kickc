@@ -3,8 +3,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label current = 2
 main: {

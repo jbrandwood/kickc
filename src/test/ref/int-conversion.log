@@ -50,24 +50,19 @@ Culled Empty Block (label) assertType::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) RED ← (byte) 2
-  (byte) GREEN ← (byte) 5
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) COLS ← ((byte*)) (number) $d800
   (byte) idx#0 ← (byte) 0
   to:@4
 
 (void()) main()
 main: scope:[main]  from @4
   (byte) idx#114 ← phi( @4/(byte) idx#112 )
-  (byte*) main::s#0 ← (byte*) SCREEN
+  (byte*) main::s#0 ← (const byte*) SCREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) idx#113 ← phi( main/(byte) idx#114 main::@2/(byte) idx#115 )
   (byte*) main::s#2 ← phi( main/(byte*) main::s#0 main::@2/(byte*) main::s#1 )
-  (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e8
-  (bool~) main::$3 ← (byte*) main::s#2 < (byte*~) main::$2
-  if((bool~) main::$3) goto main::@2
+  (bool~) main::$2 ← (byte*) main::s#2 < (const byte*) SCREEN+(number) $3e8
+  if((bool~) main::$2) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) idx#115 ← phi( main::@1/(byte) idx#113 )
@@ -466,17 +461,17 @@ assertType: scope:[assertType]  from testBinaryOperator testBinaryOperator::@1 t
 assertType::@1: scope:[assertType]  from assertType
   (byte) assertType::t1#44 ← phi( assertType/(byte) assertType::t1#42 )
   (byte) idx#105 ← phi( assertType/(byte) idx#111 )
-  *((byte*) COLS + (byte) idx#105) ← (byte) GREEN
+  *((const byte*) COLS + (byte) idx#105) ← (const byte) GREEN
   to:assertType::@2
 assertType::@3: scope:[assertType]  from assertType
   (byte) assertType::t1#45 ← phi( assertType/(byte) assertType::t1#42 )
   (byte) idx#106 ← phi( assertType/(byte) idx#111 )
-  *((byte*) COLS + (byte) idx#106) ← (byte) RED
+  *((const byte*) COLS + (byte) idx#106) ← (const byte) RED
   to:assertType::@2
 assertType::@2: scope:[assertType]  from assertType::@1 assertType::@3
   (byte) idx#107 ← phi( assertType::@1/(byte) idx#105 assertType::@3/(byte) idx#106 )
   (byte) assertType::t1#43 ← phi( assertType::@1/(byte) assertType::t1#44 assertType::@3/(byte) assertType::t1#45 )
-  *((byte*) SCREEN + (byte) idx#107) ← (byte) assertType::t1#43
+  *((const byte*) SCREEN + (byte) idx#107) ← (byte) assertType::t1#43
   (byte) idx#55 ← ++ (byte) idx#107
   to:assertType::@return
 assertType::@return: scope:[assertType]  from assertType::@2
@@ -499,10 +494,10 @@ SYMBOL TABLE SSA
 (label) @5
 (label) @begin
 (label) @end
-(byte*) COLS
-(byte) GREEN
-(byte) RED
-(byte*) SCREEN
+(const byte*) COLS = (byte*)(number) $d800
+(const byte) GREEN = (byte) 5
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*)(number) $400
 (const byte) TYPEID_BYTE = (number) 1
 (const byte) TYPEID_DWORD = (number) 5
 (const byte) TYPEID_SIGNED_BYTE = (number) 2
@@ -724,8 +719,7 @@ SYMBOL TABLE SSA
 (byte) idx#98
 (byte) idx#99
 (void()) main()
-(byte*~) main::$2
-(bool~) main::$3
+(bool~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -826,12 +820,10 @@ SYMBOL TABLE SSA
 (label) testUnaryOperator::@6
 (label) testUnaryOperator::@return
 
-Adding number conversion cast (unumber) $3e8 in (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in (bool~) main::$2 ← (byte*) main::s#2 < (const byte*) SCREEN+(number) $3e8
 Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
 Adding number conversion cast (unumber) $28 in (byte) idx#12 ← (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
 Inlining cast (byte) idx#4 ← (unumber)(number) 0
 Inlining cast (byte) idx#12 ← (unumber)(number) $28
 Successful SSA optimization Pass2InlineCast
@@ -990,14 +982,11 @@ Identical Phi Values (byte) idx#102 (byte) idx#108
 Identical Phi Values (byte) idx#103 (byte) idx#108
 Identical Phi Values (byte) idx#109 (byte) idx#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [10] if((byte*) main::s#2<(byte*~) main::$2) goto main::@2
-Simple Condition (bool~) assertType::$0 [291] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1
+Simple Condition (bool~) main::$2 [5] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2
+Simple Condition (bool~) assertType::$0 [286] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) COLS = (byte*) 55296
 Constant (const byte) idx#0 = 0
+Constant (const byte*) main::s#0 = SCREEN
 Constant (const byte) idx#4 = 0
 Constant (const byte) assertType::t1#0 = TYPEID_BYTE
 Constant (const byte) assertType::t2#0 = TYPEID_BYTE
@@ -1086,14 +1075,8 @@ Constant (const byte) assertType::t2#40 = TYPEID_DWORD
 Constant (const byte) assertType::t1#41 = TYPEID_SIGNED_DWORD
 Constant (const byte) assertType::t2#41 = TYPEID_SIGNED_DWORD
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::s#0 = SCREEN
-Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte) idx#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [1] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$2 = SCREEN+$3e8
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) main::s#0
 Inlining constant with var siblings (const byte) assertType::t1#0
 Inlining constant with var siblings (const byte) assertType::t2#0
@@ -1263,7 +1246,6 @@ Constant inlined assertType::t1#30 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t2#41 = (const byte) TYPEID_SIGNED_DWORD
 Constant inlined assertType::t1#32 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t1#31 = (const byte) TYPEID_DWORD
-Constant inlined main::$2 = (const byte*) SCREEN+(word) $3e8
 Constant inlined assertType::t1#34 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t1#33 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t1#36 = (const byte) TYPEID_SIGNED_DWORD
@@ -1649,10 +1631,10 @@ Complete equivalence classes
 [ assertType::t1#42 ]
 [ assertType::t2#42 ]
 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
-Allocated zp ZP_WORD:2 [ main::s#2 main::s#1 ]
-Allocated zp ZP_BYTE:4 [ assertType::t1#42 ]
-Allocated zp ZP_BYTE:5 [ assertType::t2#42 ]
-Allocated zp ZP_BYTE:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
+Allocated zp[2]:2 [ main::s#2 main::s#1 ]
+Allocated zp[1]:4 [ assertType::t1#42 ]
+Allocated zp[1]:5 [ assertType::t2#42 ]
+Allocated zp[1]:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1663,16 +1645,16 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   .label idx = 6
   // @begin
 __bbegin:
@@ -2338,7 +2320,7 @@ testBinaryOperator: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte zeropage(4) t1, byte zeropage(5) t2)
+// assertType(byte zp(4) t1, byte zp(5) t2)
 assertType: {
     .label t1 = 4
     .label t2 = 5
@@ -2482,8 +2464,8 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 [ main::s#2 ] ( main:2 [ main::s#2 ] ) always clobbers reg byte a 
 Statement [12] *((byte*) main::s#2) ← (byte) ' ' [ main::s#2 ] ( main:2 [ main::s#2 ] ) always clobbers reg byte a reg byte y 
 Statement [89] *((const byte*) COLS + (byte) idx#105) ← (const byte) RED [ assertType::t1#42 idx#105 ] ( main:2::testBinaryOperator:10::assertType:15 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:17 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:19 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:21 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:23 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:25 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:27 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:29 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:31 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:33 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:35 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:37 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:39 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:41 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:43 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:45 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:47 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:49 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:51 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:53 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:55 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:57 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:59 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:61 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:63 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:65 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:67 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:69 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:71 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:73 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:75 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:77 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:79 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:81 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:83 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:85 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:95 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:97 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:99 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:101 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:103 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:105 [ assertType::t1#42 idx#105 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ assertType::t1#42 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ assertType::t1#42 ]
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
 Statement [90] *((const byte*) SCREEN + (byte) idx#105) ← (byte) assertType::t1#42 [ idx#105 ] ( main:2::testBinaryOperator:10::assertType:15 [ idx#105 ] main:2::testBinaryOperator:10::assertType:17 [ idx#105 ] main:2::testBinaryOperator:10::assertType:19 [ idx#105 ] main:2::testBinaryOperator:10::assertType:21 [ idx#105 ] main:2::testBinaryOperator:10::assertType:23 [ idx#105 ] main:2::testBinaryOperator:10::assertType:25 [ idx#105 ] main:2::testBinaryOperator:10::assertType:27 [ idx#105 ] main:2::testBinaryOperator:10::assertType:29 [ idx#105 ] main:2::testBinaryOperator:10::assertType:31 [ idx#105 ] main:2::testBinaryOperator:10::assertType:33 [ idx#105 ] main:2::testBinaryOperator:10::assertType:35 [ idx#105 ] main:2::testBinaryOperator:10::assertType:37 [ idx#105 ] main:2::testBinaryOperator:10::assertType:39 [ idx#105 ] main:2::testBinaryOperator:10::assertType:41 [ idx#105 ] main:2::testBinaryOperator:10::assertType:43 [ idx#105 ] main:2::testBinaryOperator:10::assertType:45 [ idx#105 ] main:2::testBinaryOperator:10::assertType:47 [ idx#105 ] main:2::testBinaryOperator:10::assertType:49 [ idx#105 ] main:2::testBinaryOperator:10::assertType:51 [ idx#105 ] main:2::testBinaryOperator:10::assertType:53 [ idx#105 ] main:2::testBinaryOperator:10::assertType:55 [ idx#105 ] main:2::testBinaryOperator:10::assertType:57 [ idx#105 ] main:2::testBinaryOperator:10::assertType:59 [ idx#105 ] main:2::testBinaryOperator:10::assertType:61 [ idx#105 ] main:2::testBinaryOperator:10::assertType:63 [ idx#105 ] main:2::testBinaryOperator:10::assertType:65 [ idx#105 ] main:2::testBinaryOperator:10::assertType:67 [ idx#105 ] main:2::testBinaryOperator:10::assertType:69 [ idx#105 ] main:2::testBinaryOperator:10::assertType:71 [ idx#105 ] main:2::testBinaryOperator:10::assertType:73 [ idx#105 ] main:2::testBinaryOperator:10::assertType:75 [ idx#105 ] main:2::testBinaryOperator:10::assertType:77 [ idx#105 ] main:2::testBinaryOperator:10::assertType:79 [ idx#105 ] main:2::testBinaryOperator:10::assertType:81 [ idx#105 ] main:2::testBinaryOperator:10::assertType:83 [ idx#105 ] main:2::testBinaryOperator:10::assertType:85 [ idx#105 ] main:2::testUnaryOperator:8::assertType:95 [ idx#105 ] main:2::testUnaryOperator:8::assertType:97 [ idx#105 ] main:2::testUnaryOperator:8::assertType:99 [ idx#105 ] main:2::testUnaryOperator:8::assertType:101 [ idx#105 ] main:2::testUnaryOperator:8::assertType:103 [ idx#105 ] main:2::testUnaryOperator:8::assertType:105 [ idx#105 ] ) always clobbers reg byte a 
 Statement [93] *((const byte*) COLS + (byte) idx#105) ← (const byte) GREEN [ assertType::t1#42 idx#105 ] ( main:2::testBinaryOperator:10::assertType:15 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:17 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:19 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:21 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:23 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:25 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:27 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:29 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:31 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:33 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:35 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:37 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:39 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:41 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:43 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:45 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:47 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:49 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:51 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:53 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:55 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:57 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:59 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:61 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:63 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:65 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:67 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:69 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:71 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:73 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:75 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:77 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:79 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:81 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:83 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:85 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:95 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:97 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:99 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:101 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:103 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:105 [ assertType::t1#42 idx#105 ] ) always clobbers reg byte a 
 Statement [6] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 [ main::s#2 ] ( main:2 [ main::s#2 ] ) always clobbers reg byte a 
@@ -2491,26 +2473,26 @@ Statement [12] *((byte*) main::s#2) ← (byte) ' ' [ main::s#2 ] ( main:2 [ main
 Statement [89] *((const byte*) COLS + (byte) idx#105) ← (const byte) RED [ assertType::t1#42 idx#105 ] ( main:2::testBinaryOperator:10::assertType:15 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:17 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:19 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:21 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:23 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:25 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:27 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:29 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:31 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:33 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:35 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:37 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:39 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:41 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:43 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:45 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:47 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:49 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:51 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:53 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:55 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:57 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:59 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:61 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:63 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:65 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:67 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:69 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:71 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:73 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:75 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:77 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:79 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:81 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:83 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:85 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:95 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:97 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:99 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:101 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:103 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:105 [ assertType::t1#42 idx#105 ] ) always clobbers reg byte a 
 Statement [90] *((const byte*) SCREEN + (byte) idx#105) ← (byte) assertType::t1#42 [ idx#105 ] ( main:2::testBinaryOperator:10::assertType:15 [ idx#105 ] main:2::testBinaryOperator:10::assertType:17 [ idx#105 ] main:2::testBinaryOperator:10::assertType:19 [ idx#105 ] main:2::testBinaryOperator:10::assertType:21 [ idx#105 ] main:2::testBinaryOperator:10::assertType:23 [ idx#105 ] main:2::testBinaryOperator:10::assertType:25 [ idx#105 ] main:2::testBinaryOperator:10::assertType:27 [ idx#105 ] main:2::testBinaryOperator:10::assertType:29 [ idx#105 ] main:2::testBinaryOperator:10::assertType:31 [ idx#105 ] main:2::testBinaryOperator:10::assertType:33 [ idx#105 ] main:2::testBinaryOperator:10::assertType:35 [ idx#105 ] main:2::testBinaryOperator:10::assertType:37 [ idx#105 ] main:2::testBinaryOperator:10::assertType:39 [ idx#105 ] main:2::testBinaryOperator:10::assertType:41 [ idx#105 ] main:2::testBinaryOperator:10::assertType:43 [ idx#105 ] main:2::testBinaryOperator:10::assertType:45 [ idx#105 ] main:2::testBinaryOperator:10::assertType:47 [ idx#105 ] main:2::testBinaryOperator:10::assertType:49 [ idx#105 ] main:2::testBinaryOperator:10::assertType:51 [ idx#105 ] main:2::testBinaryOperator:10::assertType:53 [ idx#105 ] main:2::testBinaryOperator:10::assertType:55 [ idx#105 ] main:2::testBinaryOperator:10::assertType:57 [ idx#105 ] main:2::testBinaryOperator:10::assertType:59 [ idx#105 ] main:2::testBinaryOperator:10::assertType:61 [ idx#105 ] main:2::testBinaryOperator:10::assertType:63 [ idx#105 ] main:2::testBinaryOperator:10::assertType:65 [ idx#105 ] main:2::testBinaryOperator:10::assertType:67 [ idx#105 ] main:2::testBinaryOperator:10::assertType:69 [ idx#105 ] main:2::testBinaryOperator:10::assertType:71 [ idx#105 ] main:2::testBinaryOperator:10::assertType:73 [ idx#105 ] main:2::testBinaryOperator:10::assertType:75 [ idx#105 ] main:2::testBinaryOperator:10::assertType:77 [ idx#105 ] main:2::testBinaryOperator:10::assertType:79 [ idx#105 ] main:2::testBinaryOperator:10::assertType:81 [ idx#105 ] main:2::testBinaryOperator:10::assertType:83 [ idx#105 ] main:2::testBinaryOperator:10::assertType:85 [ idx#105 ] main:2::testUnaryOperator:8::assertType:95 [ idx#105 ] main:2::testUnaryOperator:8::assertType:97 [ idx#105 ] main:2::testUnaryOperator:8::assertType:99 [ idx#105 ] main:2::testUnaryOperator:8::assertType:101 [ idx#105 ] main:2::testUnaryOperator:8::assertType:103 [ idx#105 ] main:2::testUnaryOperator:8::assertType:105 [ idx#105 ] ) always clobbers reg byte a 
 Statement [93] *((const byte*) COLS + (byte) idx#105) ← (const byte) GREEN [ assertType::t1#42 idx#105 ] ( main:2::testBinaryOperator:10::assertType:15 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:17 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:19 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:21 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:23 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:25 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:27 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:29 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:31 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:33 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:35 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:37 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:39 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:41 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:43 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:45 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:47 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:49 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:51 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:53 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:55 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:57 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:59 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:61 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:63 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:65 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:67 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:69 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:71 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:73 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:75 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:77 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:79 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:81 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:83 [ assertType::t1#42 idx#105 ] main:2::testBinaryOperator:10::assertType:85 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:95 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:97 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:99 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:101 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:103 [ assertType::t1#42 idx#105 ] main:2::testUnaryOperator:8::assertType:105 [ assertType::t1#42 idx#105 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::s#2 main::s#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ assertType::t1#42 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ assertType::t2#42 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ] : zp ZP_BYTE:6 , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ main::s#2 main::s#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ assertType::t1#42 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ assertType::t2#42 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ] : zp[1]:6 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 36.67: zp ZP_WORD:2 [ main::s#2 main::s#1 ] 
-Uplift Scope [] 34.25: zp ZP_BYTE:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ] 
-Uplift Scope [assertType] 2: zp ZP_BYTE:5 [ assertType::t2#42 ] 1: zp ZP_BYTE:4 [ assertType::t1#42 ] 
+Uplift Scope [main] 36.67: zp[2]:2 [ main::s#2 main::s#1 ] 
+Uplift Scope [] 34.25: zp[1]:6 [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ] 
+Uplift Scope [assertType] 2: zp[1]:5 [ assertType::t2#42 ] 1: zp[1]:4 [ assertType::t1#42 ] 
 Uplift Scope [testUnaryOperator] 
 Uplift Scope [testBinaryOperator] 
 
-Uplifting [main] best 1506 combination zp ZP_WORD:2 [ main::s#2 main::s#1 ] 
+Uplifting [main] best 1506 combination zp[2]:2 [ main::s#2 main::s#1 ] 
 Uplifting [] best 1473 combination reg byte x [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ] 
-Uplifting [assertType] best 1345 combination zp ZP_BYTE:5 [ assertType::t2#42 ] reg byte y [ assertType::t1#42 ] 
+Uplifting [assertType] best 1345 combination zp[1]:5 [ assertType::t2#42 ] reg byte y [ assertType::t1#42 ] 
 Uplifting [testUnaryOperator] best 1345 combination 
 Uplifting [testBinaryOperator] best 1345 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:5 [ assertType::t2#42 ]
-Uplifting [assertType] best 1345 combination zp ZP_BYTE:5 [ assertType::t2#42 ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assertType::t2#42 ]
+Attempting to uplift remaining variables inzp[1]:5 [ assertType::t2#42 ]
+Uplifting [assertType] best 1345 combination zp[1]:5 [ assertType::t2#42 ] 
+Allocated (was zp[1]:5) zp[1]:4 [ assertType::t2#42 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2520,16 +2502,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -3156,7 +3138,7 @@ testBinaryOperator: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zeropage(4) t2)
+// assertType(byte register(Y) t1, byte zp(4) t2)
 assertType: {
     .label t2 = 4
     // [88] if((byte) assertType::t1#42==(byte) assertType::t2#42) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
@@ -3529,16 +3511,16 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) COLS COLS = (byte*) 55296
-(const byte) GREEN GREEN = (byte) 5
-(const byte) RED RED = (byte) 2
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte) TYPEID_BYTE TYPEID_BYTE = (number) 1
-(const byte) TYPEID_DWORD TYPEID_DWORD = (number) 5
-(const byte) TYPEID_SIGNED_BYTE TYPEID_SIGNED_BYTE = (number) 2
-(const byte) TYPEID_SIGNED_DWORD TYPEID_SIGNED_DWORD = (number) 6
-(const byte) TYPEID_SIGNED_WORD TYPEID_SIGNED_WORD = (number) 4
-(const byte) TYPEID_WORD TYPEID_WORD = (number) 3
+(const byte*) COLS = (byte*) 55296
+(const byte) GREEN = (byte) 5
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*) 1024
+(const byte) TYPEID_BYTE = (number) 1
+(const byte) TYPEID_DWORD = (number) 5
+(const byte) TYPEID_SIGNED_BYTE = (number) 2
+(const byte) TYPEID_SIGNED_DWORD = (number) 6
+(const byte) TYPEID_SIGNED_WORD = (number) 4
+(const byte) TYPEID_WORD = (number) 3
 (void()) assertType((byte) assertType::t1 , (byte) assertType::t2)
 (label) assertType::@1
 (label) assertType::@2
@@ -3547,7 +3529,7 @@ FINAL SYMBOL TABLE
 (byte) assertType::t1
 (byte) assertType::t1#42 reg byte y 1.0
 (byte) assertType::t2
-(byte) assertType::t2#42 t2 zp ZP_BYTE:4 2.0
+(byte) assertType::t2#42 t2 zp[1]:4 2.0
 (byte) idx
 (byte) idx#105 reg byte x 17.200000000000003
 (byte) idx#108 reg byte x 1.0526315789473677
@@ -3562,8 +3544,8 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte*) main::s
-(byte*) main::s#1 s zp ZP_WORD:2 22.0
-(byte*) main::s#2 s zp ZP_WORD:2 14.666666666666666
+(byte*) main::s#1 s zp[2]:2 22.0
+(byte*) main::s#2 s zp[2]:2 14.666666666666666
 (void()) testBinaryOperator()
 (label) testBinaryOperator::@1
 (label) testBinaryOperator::@10
@@ -3609,9 +3591,9 @@ FINAL SYMBOL TABLE
 (label) testUnaryOperator::@5
 (label) testUnaryOperator::@return
 
-zp ZP_WORD:2 [ main::s#2 main::s#1 ]
+zp[2]:2 [ main::s#2 main::s#1 ]
 reg byte y [ assertType::t1#42 ]
-zp ZP_BYTE:4 [ assertType::t2#42 ]
+zp[1]:4 [ assertType::t2#42 ]
 reg byte x [ idx#105 idx#108 idx#26 idx#40 idx#47 idx#19 ]
 
 
@@ -3625,16 +3607,16 @@ Score: 1159
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -4147,7 +4129,7 @@ testBinaryOperator: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zeropage(4) t2)
+// assertType(byte register(Y) t1, byte zp(4) t2)
 assertType: {
     .label t2 = 4
     // if(t1==t2)

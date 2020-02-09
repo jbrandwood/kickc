@@ -5,9 +5,6 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (number) $c01a
-  (byte[]) MESSAGE ← (const string) $2
-  (byte[$32]) SCREEN ← { fill( $32, 0) }
   to:@3
 
 (void()) entryPoint()
@@ -16,7 +13,7 @@ entryPoint: scope:[entryPoint]  from
   to:entryPoint::@1
 entryPoint::@1: scope:[entryPoint]  from entryPoint entryPoint::@1
   (byte) entryPoint::i#2 ← phi( entryPoint/(byte) entryPoint::i#0 entryPoint::@1/(byte) entryPoint::i#1 )
-  *((byte[$32]) SCREEN + (byte) entryPoint::i#2) ← *((byte[]) MESSAGE + (byte) entryPoint::i#2)
+  *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2)
   (byte) entryPoint::i#1 ← (byte) entryPoint::i#2 + rangenext(0,$31)
   (bool~) entryPoint::$0 ← (byte) entryPoint::i#1 != rangelast(0,$31)
   if((bool~) entryPoint::$0) goto entryPoint::@1
@@ -27,7 +24,7 @@ entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
 
 interrupt(HARDWARE_ALL)(void()) nmiHandler()
 nmiHandler: scope:[nmiHandler]  from
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   to:nmiHandler::@return
 nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
   return 
@@ -35,15 +32,12 @@ nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
 
 (void()) main()
 main: scope:[main]  from @3
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 @3: scope:[]  from @begin
-  (void()*~) $0 ← & interrupt(HARDWARE_ALL)(void()) nmiHandler()
-  (void()*~) $1 ← & (void()) entryPoint()
-  (void()*[]) VECTORS ← { (void()*~) $0, (void()*~) $1 }
   call main 
   to:@4
 @4: scope:[]  from @3
@@ -51,17 +45,14 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(void()*~) $0
-(void()*~) $1
-(const string) $2 = (string) "hello world"
 (label) @3
 (label) @4
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte[]) MESSAGE
-(byte[$32]) SCREEN
-(void()*[]) VECTORS
+(const byte*) BGCOL = (byte*)(number) $c01a
+(const byte*) MESSAGE[]  = (byte*) "hello world"
+(const byte*) SCREEN[(number) $32]  = { fill( $32, 0) }
+(const void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
 (void()) entryPoint()
 (bool~) entryPoint::$0
 (label) entryPoint::@1
@@ -75,40 +66,22 @@ SYMBOL TABLE SSA
 interrupt(HARDWARE_ALL)(void()) nmiHandler()
 (label) nmiHandler::@return
 
-Inlining cast (byte*) BGCOL ← (byte*)(number) $c01a
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 49178
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) entryPoint::$0 [8] if((byte) entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1
+Simple Condition (bool~) entryPoint::$0 [5] if((byte) entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (byte[$32]) SCREEN ← { fill( $32, 0) }
-Constant right-side identified [14] (void()*~) $0 ← & interrupt(HARDWARE_ALL)(void()) nmiHandler()
-Constant right-side identified [15] (void()*~) $1 ← & (void()) entryPoint()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) BGCOL = (byte*) 49178
-Constant (const byte[]) MESSAGE = $2
-Constant (const byte[$32]) SCREEN = { fill( $32, 0) }
 Constant (const byte) entryPoint::i#0 = 0
-Constant (const void()*) $0 = &nmiHandler
-Constant (const void()*) $1 = &entryPoint
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [6] entryPoint::i#1 ← ++ entryPoint::i#2 to ++
-Resolved ranged comparison value [8] if(entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1 to (number) $32
+Resolved ranged next value [3] entryPoint::i#1 ← ++ entryPoint::i#2 to ++
+Resolved ranged comparison value [5] if(entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1 to (number) $32
 Adding number conversion cast (unumber) $32 in if((byte) entryPoint::i#1!=(number) $32) goto entryPoint::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $32
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Identified constant from value list (void()*[]) { (const void()*) $0, (const void()*) $1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const void()*[]) VECTORS = { $0, $1 }
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) entryPoint::i#0
 Constant inlined entryPoint::i#0 = (byte) 0
-Constant inlined $0 = &interrupt(HARDWARE_ALL)(void()) nmiHandler()
-Constant inlined $1 = &(void()) entryPoint()
-Constant inlined $2 = (const byte[]) MESSAGE
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting entryPoint::@3(between entryPoint::@1 and entryPoint::@1)
 Adding NOP phi() at start of @begin
@@ -163,7 +136,7 @@ entryPoint: scope:[entryPoint]  from
   to:entryPoint::@1
 entryPoint::@1: scope:[entryPoint]  from entryPoint entryPoint::@1
   [9] (byte) entryPoint::i#2 ← phi( entryPoint/(byte) 0 entryPoint::@1/(byte) entryPoint::i#1 )
-  [10] *((const byte[$32]) SCREEN + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE + (byte) entryPoint::i#2)
+  [10] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2)
   [11] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2
   [12] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1
   to:entryPoint::@return
@@ -184,7 +157,7 @@ Initial phi equivalence classes
 [ entryPoint::i#2 entryPoint::i#1 ]
 Complete equivalence classes
 [ entryPoint::i#2 entryPoint::i#1 ]
-Allocated zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ]
+Allocated zp[1]:2 [ entryPoint::i#2 entryPoint::i#1 ]
 
 INITIAL ASM
 Target platform is custom / MOS6502X
@@ -263,7 +236,7 @@ entryPoint: {
     jmp __b1
     // entryPoint::@1
   __b1:
-    // [10] *((const byte[$32]) SCREEN + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [10] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda MESSAGE,y
     sta SCREEN,y
@@ -290,14 +263,14 @@ entryPoint: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [10] *((const byte[$32]) SCREEN + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ]
+Statement [10] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ entryPoint::i#2 entryPoint::i#1 ]
 Statement [7] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [10] *((const byte[$32]) SCREEN + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Statement [10] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ entryPoint::i#2 entryPoint::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [entryPoint] 38.5: zp ZP_BYTE:2 [ entryPoint::i#2 entryPoint::i#1 ] 
+Uplift Scope [entryPoint] 38.5: zp[1]:2 [ entryPoint::i#2 entryPoint::i#1 ] 
 Uplift Scope [nmiHandler] 
 Uplift Scope [main] 
 Uplift Scope [] 
@@ -381,7 +354,7 @@ entryPoint: {
     jmp __b1
     // entryPoint::@1
   __b1:
-    // [10] *((const byte[$32]) SCREEN + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [10] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,x
     // [11] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2 -- vbuxx=_inc_vbuxx 
@@ -434,10 +407,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 49178
-(const byte[]) MESSAGE MESSAGE = (string) "hello world"
-(const byte[$32]) SCREEN SCREEN = { fill( $32, 0) }
-(const void()*[]) VECTORS VECTORS = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
+(const byte*) BGCOL = (byte*) 49178
+(const byte*) MESSAGE[]  = (byte*) "hello world"
+(const byte*) SCREEN[(number) $32]  = { fill( $32, 0) }
+(const void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
 (void()) entryPoint()
 (label) entryPoint::@1
 (label) entryPoint::@return
@@ -517,7 +490,7 @@ entryPoint: {
     // entryPoint::@1
   __b1:
     // SCREEN[i] = MESSAGE[i]
-    // [10] *((const byte[$32]) SCREEN + (byte) entryPoint::i#2) ← *((const byte[]) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [10] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,x
     // for( char i:0..49)

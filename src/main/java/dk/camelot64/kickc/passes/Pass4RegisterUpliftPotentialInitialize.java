@@ -25,33 +25,43 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
       RegisterPotentials registerPotentials = new RegisterPotentials();
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          Registers.Register declaredRegister = null;
+         int bytes = -1;
          for(VariableRef varRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(varRef);
-            if(variable.getDeclaredRegister() != null) { //TODO: Handle register/memory/storage strategy differently!
-               if(declaredRegister != null && !declaredRegister.equals(variable.getDeclaredRegister())) {
+            if(variable.getRegister() != null) {
+               if(declaredRegister != null && !declaredRegister.equals(variable.getRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
                         " - one register: " + declaredRegister.toString() + "\n" +
-                        " - other register: " + variable.getDeclaredRegister().toString()
+                        " - other register: " + variable.getRegister().toString()
                   );
                }
-               declaredRegister = variable.getDeclaredRegister();
+               declaredRegister = variable.getRegister();
+               bytes = variable.getType().getSizeBytes();
             }
          }
          if(declaredRegister != null) {
-            registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(declaredRegister));
+            if(declaredRegister instanceof Registers.RegisterZpMem) {
+               int zp = ((Registers.RegisterZpMem) declaredRegister).getZp();
+               Registers.RegisterZpMem zpRegister = new Registers.RegisterZpMem(zp, bytes, true);
+               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(zpRegister));
+            } else if(declaredRegister instanceof Registers.RegisterMainMem) {
+               VariableRef varRef = ((Registers.RegisterMainMem) declaredRegister).getVariableRef();
+               Long address = ((Registers.RegisterMainMem) declaredRegister).getAddress();
+               Registers.RegisterMainMem memRegister = new Registers.RegisterMainMem(varRef, bytes, address);
+               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(memRegister));
+            } else {
+               registerPotentials.setPotentialRegisters(equivalenceClass, Arrays.asList(declaredRegister));
+            }
          } else {
             Registers.Register defaultRegister = equivalenceClass.getRegister();
-            Registers.RegisterType registerType = defaultRegister.getType();
             List<Registers.Register> potentials = new ArrayList<>();
             potentials.add(defaultRegister);
-            if(registerType.equals(Registers.RegisterType.ZP_BYTE) && !varVolatile(equivalenceClass)) {
+            boolean isByte2 = defaultRegister.isMem() && defaultRegister.getBytes() == 1;
+            if(isByte2  && !varVolatile(equivalenceClass)) {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
-            }
-            if(registerType.equals(Registers.RegisterType.ZP_BOOL) && !varVolatile(equivalenceClass)) {
-               potentials.add(Registers.getRegisterA());
             }
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
          }
@@ -68,7 +78,7 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
    private boolean varVolatile(LiveRangeEquivalenceClass equivalenceClass) {
       for(VariableRef variableRef : equivalenceClass.getVariables()) {
          Variable variable = getSymbols().getVariable(variableRef);
-         if(variable.isVolatile() || variable.isStorageMemory()) {
+         if(variable.isVolatile() || variable.isKindLoadStore()) {
             return true;
          }
       }

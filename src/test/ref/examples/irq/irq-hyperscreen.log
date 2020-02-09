@@ -4,38 +4,23 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) IRQ_STATUS ← ((byte*)) (number) $d019
-  (byte*) IRQ_ENABLE ← ((byte*)) (number) $d01a
-  (byte) IRQ_RASTER ← (number) 1
-  (byte*) CIA1_INTERRUPT ← ((byte*)) (number) $dc0d
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  (byte) WHITE ← (number) 1
-  (byte) RED ← (number) 2
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) GHOST_BYTE ← ((byte*)) (number) $3fff
   to:@7
 
 (void()) main()
 main: scope:[main]  from @7
-  *((byte*) GHOST_BYTE) ← (number) 0
+  *((const byte*) GHOST_BYTE) ← (number) 0
   asm { sei  }
-  *((byte*) CIA1_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-  *((byte*) RASTER) ← (number) $fa
-  *((byte*) IRQ_ENABLE) ← (byte) IRQ_RASTER
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+  *((const byte*) RASTER) ← (number) $fa
+  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -44,14 +29,12 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
-  *((byte*) BORDERCOL) ← (byte) WHITE
-  (number~) irq_bottom_1::$0 ← (number) $ff ^ (byte) VIC_RSEL
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number~) irq_bottom_1::$0
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
-  *((byte*) RASTER) ← (number) $fd
-  (void()*~) irq_bottom_1::$1 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-  *((void()**) KERNEL_IRQ) ← (void()*~) irq_bottom_1::$1
-  *((byte*) BORDERCOL) ← (byte) RED
+  *((const byte*) BORDERCOL) ← (const byte) WHITE
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $ff^(const byte) VIC_RSEL
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  *((const byte*) RASTER) ← (number) $fd
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
+  *((const byte*) BORDERCOL) ← (const byte) RED
   to:irq_bottom_1::@return
 irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
   return 
@@ -59,18 +42,17 @@ irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
-  *((byte*) BORDERCOL) ← (byte) WHITE
-  *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) | (byte) VIC_RSEL
-  *((byte*) IRQ_STATUS) ← (byte) IRQ_RASTER
-  *((byte*) RASTER) ← (number) $fa
-  (void()*~) irq_bottom_2::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  *((void()**) KERNEL_IRQ) ← (void()*~) irq_bottom_2::$0
-  *((byte*) BORDERCOL) ← (byte) RED
+  *((const byte*) BORDERCOL) ← (const byte) WHITE
+  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL
+  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
+  *((const byte*) RASTER) ← (number) $fa
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
+  *((const byte*) BORDERCOL) ← (const byte) RED
   to:irq_bottom_2::@return
 irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
   return 
   to:@return
-@7: scope:[]  from @4
+@7: scope:[]  from @begin
   call main 
   to:@8
 @8: scope:[]  from @7
@@ -78,91 +60,59 @@ irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
 @end: scope:[]  from @8
 
 SYMBOL TABLE SSA
-(label) @4
 (label) @7
 (label) @8
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) CIA1_INTERRUPT
-(byte) CIA_INTERRUPT_CLEAR
-(byte*) GHOST_BYTE
-(byte*) IRQ_ENABLE
-(byte) IRQ_RASTER
-(byte*) IRQ_STATUS
-(void()**) KERNEL_IRQ
-(byte*) RASTER
-(byte) RED
-(byte*) VIC_CONTROL
-(byte) VIC_RSEL
-(byte) WHITE
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte*) GHOST_BYTE = (byte*)(number) $3fff
+(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const byte) IRQ_RASTER = (byte) 1
+(const byte*) IRQ_STATUS = (byte*)(number) $d019
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte) RED = (byte) 2
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
+(const byte) VIC_RSEL = (byte) 8
+(const byte) WHITE = (byte) 1
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-(number~) irq_bottom_1::$0
-(void()*~) irq_bottom_1::$1
 (label) irq_bottom_1::@return
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-(void()*~) irq_bottom_2::$0
 (label) irq_bottom_2::@return
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
 
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) 1 in (byte) IRQ_RASTER ← (number) 1
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
-Adding number conversion cast (unumber) 0 in *((byte*) GHOST_BYTE) ← (number) 0
-Adding number conversion cast (unumber) $7f in *((byte*) VIC_CONTROL) ← *((byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $fa in *((byte*) RASTER) ← (number) $fa
-Adding number conversion cast (unumber) $ff in (number~) irq_bottom_1::$0 ← (number) $ff ^ (byte) VIC_RSEL
-Adding number conversion cast (unumber) irq_bottom_1::$0 in (number~) irq_bottom_1::$0 ← (unumber)(number) $ff ^ (byte) VIC_RSEL
-Adding number conversion cast (unumber) $fd in *((byte*) RASTER) ← (number) $fd
-Adding number conversion cast (unumber) $fa in *((byte*) RASTER) ← (number) $fa
+Adding number conversion cast (unumber) 0 in *((const byte*) GHOST_BYTE) ← (number) 0
+Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $fa in *((const byte*) RASTER) ← (number) $fa
+Adding number conversion cast (unumber) $ff^VIC_RSEL in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $ff^(const byte) VIC_RSEL
+Adding number conversion cast (unumber) $ff in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (unumber)(number) $ff^(const byte) VIC_RSEL
+Adding number conversion cast (unumber) $fd in *((const byte*) RASTER) ← (number) $fd
+Adding number conversion cast (unumber) $fa in *((const byte*) RASTER) ← (number) $fa
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) IRQ_STATUS ← (byte*)(number) $d019
-Inlining cast (byte*) IRQ_ENABLE ← (byte*)(number) $d01a
-Inlining cast (byte) IRQ_RASTER ← (unumber)(number) 1
-Inlining cast (byte*) CIA1_INTERRUPT ← (byte*)(number) $dc0d
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte) RED ← (unumber)(number) 2
-Inlining cast (byte*) GHOST_BYTE ← (byte*)(number) $3fff
-Inlining cast *((byte*) GHOST_BYTE) ← (unumber)(number) 0
-Inlining cast *((byte*) RASTER) ← (unumber)(number) $fa
-Inlining cast *((byte*) RASTER) ← (unumber)(number) $fd
-Inlining cast *((byte*) RASTER) ← (unumber)(number) $fa
+Inlining cast *((const byte*) GHOST_BYTE) ← (unumber)(number) 0
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fa
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fd
+Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fa
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 56333
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 788
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
 Simplifying constant pointer cast (byte*) 16383
 Simplifying constant integer cast 0
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $fa
+Simplifying constant integer cast (unumber)(number) $ff^(const byte) VIC_RSEL
 Simplifying constant integer cast $ff
 Simplifying constant integer cast $fd
 Simplifying constant integer cast $fa
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) $fa
@@ -170,48 +120,15 @@ Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) $fd
 Finalized unsigned number type (byte) $fa
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) irq_bottom_1::$0 ← (byte) $ff ^ (byte) VIC_RSEL
-Constant right-side identified [19] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Constant right-side identified [28] (void()*~) irq_bottom_1::$1 ← & interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-Constant right-side identified [36] (void()*~) irq_bottom_2::$0 ← & interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) IRQ_STATUS = (byte*) 53273
-Constant (const byte*) IRQ_ENABLE = (byte*) 53274
-Constant (const byte) IRQ_RASTER = 1
-Constant (const byte*) CIA1_INTERRUPT = (byte*) 56333
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte) WHITE = 1
-Constant (const byte) RED = 2
-Constant (const byte*) GHOST_BYTE = (byte*) 16383
-Constant (const void()*) main::$0 = &irq_bottom_1
-Constant (const void()*) irq_bottom_1::$1 = &irq_bottom_2
-Constant (const void()*) irq_bottom_2::$0 = &irq_bottom_1
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [10] (byte~) irq_bottom_1::$0 ← (byte) $ff ^ (const byte) VIC_RSEL
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) irq_bottom_1::$0 = $ff^VIC_RSEL
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined irq_bottom_2::$0 = &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Constant inlined irq_bottom_1::$0 = (byte) $ff^(const byte) VIC_RSEL
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-Constant inlined irq_bottom_1::$1 = &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @8
 Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @8
 Renumbering block @7 to @1
 Adding NOP phi() at start of @begin
@@ -634,19 +551,19 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) CIA1_INTERRUPT CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR CIA_INTERRUPT_CLEAR = (byte) $7f
-(const byte*) GHOST_BYTE GHOST_BYTE = (byte*) 16383
-(const byte*) IRQ_ENABLE IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER IRQ_RASTER = (byte) 1
-(const byte*) IRQ_STATUS IRQ_STATUS = (byte*) 53273
-(const void()**) KERNEL_IRQ KERNEL_IRQ = (void()**) 788
-(const byte*) RASTER RASTER = (byte*) 53266
-(const byte) RED RED = (byte) 2
-(const byte*) VIC_CONTROL VIC_CONTROL = (byte*) 53265
-(const byte) VIC_RSEL VIC_RSEL = (byte) 8
-(const byte) WHITE WHITE = (byte) 1
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) CIA1_INTERRUPT = (byte*) 56333
+(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const byte*) GHOST_BYTE = (byte*) 16383
+(const byte*) IRQ_ENABLE = (byte*) 53274
+(const byte) IRQ_RASTER = (byte) 1
+(const byte*) IRQ_STATUS = (byte*) 53273
+(const void()**) KERNEL_IRQ = (void()**) 788
+(const byte*) RASTER = (byte*) 53266
+(const byte) RED = (byte) 2
+(const byte*) VIC_CONTROL = (byte*) 53265
+(const byte) VIC_RSEL = (byte) 8
+(const byte) WHITE = (byte) 1
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 (label) irq_bottom_1::@return
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()

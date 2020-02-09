@@ -23,7 +23,7 @@ main: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(4) w)
+// print_word(word zp(4) w)
 print_word: {
     .label w = 4
     lda.z w+1

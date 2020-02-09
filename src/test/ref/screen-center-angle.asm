@@ -12,8 +12,6 @@
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
@@ -55,7 +53,7 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($12) dw)
+// print_dword_at(dword zp($12) dw)
 print_dword_at: {
     .label dw = $12
     lda.z dw+2
@@ -79,7 +77,7 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(2) w, byte* zeropage(4) at)
+// print_word_at(word zp(2) w, byte* zp(4) at)
 print_word_at: {
     .label w = 2
     .label at = 4
@@ -88,9 +86,9 @@ print_word_at: {
     jsr print_byte_at
     lda.z w
     sta.z print_byte_at.b
-    lda.z print_byte_at.at
+    lda #2
     clc
-    adc #2
+    adc.z print_byte_at.at
     sta.z print_byte_at.at
     bcc !+
     inc.z print_byte_at.at+1
@@ -99,7 +97,7 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage($1b) b, byte* zeropage(4) at)
+// print_byte_at(byte zp($1b) b, byte* zp(4) at)
 print_byte_at: {
     .label b = $1b
     .label at = 4
@@ -130,7 +128,7 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(6) at)
+// print_char_at(byte register(X) ch, byte* zp(6) at)
 print_char_at: {
     .label at = 6
     txa
@@ -253,7 +251,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($16) x, signed word zeropage($18) y)
+// atan2_16(signed word zp($16) x, signed word zp($18) y)
 atan2_16: {
     .label __2 = 6
     .label __7 = $a
@@ -443,7 +441,7 @@ atan2_16: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
@@ -462,7 +460,7 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($d) charset)
+// init_font_hex(byte* zp($d) charset)
 init_font_hex: {
     .label __0 = $1b
     .label idx = $1a

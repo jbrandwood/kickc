@@ -3,7 +3,6 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -32,7 +31,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -42,17 +41,14 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [6] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
+Simple Condition (bool~) main::$0 [5] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
+Resolved ranged next value [3] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [5] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
 Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
@@ -117,7 +113,7 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -178,12 +174,12 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { lda#'a' staSCREEN  } always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement asm { lda#'a' staSCREEN  } always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 253 combination reg byte x [ main::i#2 main::i#1 ] 
@@ -272,7 +268,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return

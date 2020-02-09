@@ -6,20 +6,19 @@ Culled Empty Block (label) popup_selector::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (number) $400
   (byte) opcode#0 ← (byte) 'a'
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) opcode#6 ← phi( @2/(byte) opcode#11 )
-  *((byte*) screen + (number) $28) ← (byte) opcode#6
+  *((const byte*) screen + (number) $28) ← (byte) opcode#6
   call popup_selector 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) opcode#7 ← phi( main/(byte) opcode#4 )
   (byte) opcode#1 ← (byte) opcode#7
-  *((byte*) screen + (number) $29) ← (byte) opcode#1
+  *((const byte*) screen + (number) $29) ← (byte) opcode#1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   (byte) opcode#8 ← phi( main::@1/(byte) opcode#1 )
@@ -30,7 +29,7 @@ main::@return: scope:[main]  from main::@1
 (void()) popup_selector()
 popup_selector: scope:[popup_selector]  from main
   (byte) opcode#13 ← phi( main/(byte) opcode#6 )
-  (byte) popup_selector::k#0 ← (number) 0
+  (byte) popup_selector::k#0 ← (byte) 0
   to:popup_selector::@1
 popup_selector::@1: scope:[popup_selector]  from popup_selector popup_selector::@2
   (byte) opcode#12 ← phi( popup_selector/(byte) opcode#13 popup_selector::@2/(byte) opcode#3 )
@@ -41,7 +40,7 @@ popup_selector::@1: scope:[popup_selector]  from popup_selector popup_selector::
 popup_selector::@2: scope:[popup_selector]  from popup_selector::@1
   (byte) popup_selector::k#3 ← phi( popup_selector::@1/(byte) popup_selector::k#2 )
   (byte) opcode#3 ← (byte) 'b'
-  *((byte*) screen + (byte) popup_selector::k#3) ← (byte) opcode#3
+  *((const byte*) screen + (byte) popup_selector::k#3) ← (byte) opcode#3
   (byte) popup_selector::k#1 ← ++ (byte) popup_selector::k#3
   to:popup_selector::@1
 popup_selector::@return: scope:[popup_selector]  from popup_selector::@1
@@ -92,25 +91,19 @@ SYMBOL TABLE SSA
 (byte) popup_selector::k#1
 (byte) popup_selector::k#2
 (byte) popup_selector::k#3
-(byte*) screen
+(const byte*) screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) $28 in *((byte*) screen + (number) $28) ← (byte) opcode#6
-Adding number conversion cast (unumber) $29 in *((byte*) screen + (number) $29) ← (byte) opcode#1
-Adding number conversion cast (unumber) 0 in (byte) popup_selector::k#0 ← (number) 0
+Adding number conversion cast (unumber) $28 in *((const byte*) screen + (number) $28) ← (byte) opcode#6
+Adding number conversion cast (unumber) $29 in *((const byte*) screen + (number) $29) ← (byte) opcode#1
 Adding number conversion cast (unumber) 2 in (bool~) popup_selector::$0 ← (byte) popup_selector::k#2 <= (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) screen ← (byte*)(number) $400
-Inlining cast (byte) popup_selector::k#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast $29
-Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $29
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) opcode#1 = (byte) opcode#7 (byte) opcode#8 (byte) opcode#2 
@@ -124,14 +117,13 @@ Identical Phi Values (byte) opcode#1 (byte) opcode#12
 Identical Phi Values (byte) opcode#13 (byte) opcode#6
 Identical Phi Values (byte) opcode#10 (byte) opcode#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) popup_selector::$0 [15] if((byte) popup_selector::k#2<=(byte) 2) goto popup_selector::@2
+Simple Condition (bool~) popup_selector::$0 [14] if((byte) popup_selector::k#2<=(byte) 2) goto popup_selector::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) screen = (byte*) 1024
 Constant (const byte) opcode#0 = 'a'
 Constant (const byte) popup_selector::k#0 = 0
 Constant (const byte) opcode#3 = 'b'
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting conditional comparison [15] if((byte) popup_selector::k#2<=(byte) 2) goto popup_selector::@2
+Rewriting conditional comparison [14] if((byte) popup_selector::k#2<=(byte) 2) goto popup_selector::@2
 Adding number conversion cast (unumber) 2+1 in if((byte) popup_selector::k#2<(byte) 2+(number) 1) goto popup_selector::@2
 Adding number conversion cast (unumber) 1 in if((byte) popup_selector::k#2<(unumber)(byte) 2+(number) 1) goto popup_selector::@2
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -225,8 +217,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ popup_selector::k#2 popup_selector::k#1 ]
 [ opcode#12 ]
-Allocated zp ZP_BYTE:2 [ popup_selector::k#2 popup_selector::k#1 ]
-Allocated zp ZP_BYTE:3 [ opcode#12 ]
+Allocated zp[1]:2 [ popup_selector::k#2 popup_selector::k#1 ]
+Allocated zp[1]:3 [ opcode#12 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -322,15 +314,15 @@ popup_selector: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) screen+(byte) $28) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b' [ popup_selector::k#2 ] ( main:2::popup_selector:5 [ popup_selector::k#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ popup_selector::k#2 popup_selector::k#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ popup_selector::k#2 popup_selector::k#1 ]
 Statement [4] *((const byte*) screen+(byte) $28) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) screen + (byte) popup_selector::k#2) ← (byte) 'b' [ popup_selector::k#2 ] ( main:2::popup_selector:5 [ popup_selector::k#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ popup_selector::k#2 popup_selector::k#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ opcode#12 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ popup_selector::k#2 popup_selector::k#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ opcode#12 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [popup_selector] 36.67: zp ZP_BYTE:2 [ popup_selector::k#2 popup_selector::k#1 ] 
-Uplift Scope [] 0.5: zp ZP_BYTE:3 [ opcode#12 ] 
+Uplift Scope [popup_selector] 36.67: zp[1]:2 [ popup_selector::k#2 popup_selector::k#1 ] 
+Uplift Scope [] 0.5: zp[1]:3 [ opcode#12 ] 
 Uplift Scope [main] 
 
 Uplifting [popup_selector] best 394 combination reg byte x [ popup_selector::k#2 popup_selector::k#1 ] 
@@ -464,7 +456,7 @@ FINAL SYMBOL TABLE
 (byte) popup_selector::k
 (byte) popup_selector::k#1 reg byte x 22.0
 (byte) popup_selector::k#2 reg byte x 14.666666666666666
-(const byte*) screen screen = (byte*) 1024
+(const byte*) screen = (byte*) 1024
 
 reg byte x [ popup_selector::k#2 popup_selector::k#1 ]
 reg byte a [ opcode#12 ]

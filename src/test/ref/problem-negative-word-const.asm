@@ -8,18 +8,15 @@ main: {
     ldx #0
   __b1:
     txa
-    and #1
-    cmp #0
-    beq __b3
-    lda #<-1
-    sta.z w
-    lda #>-1
-    sta.z w+1
-    jmp __b2
-  __b3:
-    txa
     sta.z w
     lda #0
+    sta.z w+1
+    txa
+    and #1
+    cmp #0
+    beq __b2
+    lda #<-1
+    sta.z w
     sta.z w+1
   __b2:
     txa

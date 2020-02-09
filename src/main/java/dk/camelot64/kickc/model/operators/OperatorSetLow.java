@@ -20,7 +20,7 @@ public class OperatorSetLow extends OperatorBinary {
    @Override
    public SymbolType inferType(SymbolType left, SymbolType right) {
       if(left instanceof SymbolTypePointer) {
-         return left;
+         return new SymbolTypePointer(((SymbolTypePointer) left).getElementType());
       }
       if(SymbolType.WORD.equals(left)) {
          return SymbolType.WORD;

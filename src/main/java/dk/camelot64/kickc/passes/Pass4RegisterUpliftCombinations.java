@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.asm.AsmChunk;
+import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.ScopeRef;
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.*;
 

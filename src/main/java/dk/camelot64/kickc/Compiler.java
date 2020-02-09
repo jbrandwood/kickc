@@ -5,12 +5,11 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
-import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.RuleContext;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -34,8 +33,10 @@ public class Compiler {
    /** Disable the entire register uplift. This will create significantly less optimized ASM since registers are not utilized. */
    private boolean disableUplift = false;
 
-   /** Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it.
-    * Currently the optimization is flaky and results in NPE's and wrong values in some programs. */
+   /**
+    * Enable loop head constant optimization. It identified whenever a while()/for() has a constant condition on the first iteration and rewrites it.
+    * Currently the optimization is flaky and results in NPE's and wrong values in some programs.
+    */
    private boolean enableLoopHeadConstant = false;
 
    /** File name of link script to use (from command line parameter). */
@@ -93,6 +94,10 @@ public class Compiler {
       program.initAsmFragmentSynthesizer();
    }
 
+   public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
+      program.initAsmFragmentSynthesizer(synthesizer);
+   }
+
    public AsmFragmentTemplateSynthesizer getAsmFragmentSynthesizer() {
       return program.getAsmFragmentSynthesizer();
    }
@@ -115,7 +120,6 @@ public class Compiler {
       }
       program.setFileName(fileName);
 
-      initAsmFragmentSynthesizer();
       try {
          Path currentPath = new File(".").toPath();
          if(this.linkScriptFileName != null) {
@@ -167,13 +171,14 @@ public class Compiler {
       new Pass1StructTypeSizeFix(program).execute();
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
+      new Pass1AssertNoModifyVars(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("SYMBOLS");
-         getLog().append(program.getScope().toString(program, null));
+         getLog().append(program.getScope().toString(program, false));
       }
 
-      new Pass1AddressOfVolatile(program).execute();
+      new Pass1AddressOfHandling(program).execute();
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
       new PassNAddTypeConversionAssignment(program, false).execute();
@@ -187,14 +192,18 @@ public class Compiler {
       new Pass1PointerSizeofFix(program).execute(); // After this point in the code all pointer math is byte-based
       new PassNSizeOfSimplification(program).execute(); // Needed to eliminate sizeof() referencing pointer value variables
 
+      new PassNAssertTypeMatch(program).check();
+
+      new Pass1ConstantifyRValue(program).execute();
+      new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
-      new PassNStructPointerRewriting(program).execute();
 
       new PassNAddBooleanCasts(program).execute();
       new PassNAddTypeConversionAssignment(program, false).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNAssertConstantModification(program).execute();
+      new PassNAssertTypeDeref(program).check();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE INLINING");
@@ -239,13 +248,12 @@ public class Compiler {
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
       new PassNUnwindLValueLists(program).execute();
-      new Pass1UnwindStructVersions(program).execute();
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");
       getLog().append(program.getGraph().toString(program));
 
       getLog().append("SYMBOL TABLE SSA");
-      getLog().append(program.getScope().toString(program, null));
+      getLog().append(program.getScope().toString(program, false));
 
       program.endPass1();
 
@@ -254,7 +262,8 @@ public class Compiler {
    private void pass2AssertSSA() {
       List<Pass2SsaAssertion> assertions = new ArrayList<>();
       //assertions.add(new Pass2AssertNoLValueObjectEquality(program));
-      assertions.add(new Pass2AssertTypeMatch(program));
+      assertions.add(new PassNAssertTypeDeref(program));
+      assertions.add(new PassNAssertTypeMatch(program));
       assertions.add(new Pass2AssertSymbols(program));
       assertions.add(new Pass2AssertBlocks(program));
       assertions.add(new Pass2AssertNoCallParameters(program));
@@ -274,7 +283,6 @@ public class Compiler {
       List<PassStep> optimizations = new ArrayList<>();
       optimizations.add(new Pass2FixInlineConstructors(program));
       optimizations.add(new PassNAddNumberTypeConversions(program));
-      optimizations.add(new PassNAddInitializerValueListTypeCasts(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));
       optimizations.add(new PassNFinalizeNumberTypeConversions(program));
@@ -294,12 +302,10 @@ public class Compiler {
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new PassNAddBooleanCasts(program));
-      optimizations.add(new PassNStructPointerRewriting(program));
-      optimizations.add(new PassNStructAddressOfRewriting(program));
+      optimizations.add(new PassNStructUnwoundPlaceholderRemoval(program));
       optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
       optimizations.add(new Pass2ConstantRValueConsolidation(program));
-      optimizations.add(new Pass2ConstantInitializerValueLists(program));
       optimizations.add(new Pass2ConstantIdentification(program));
       optimizations.add(new Pass2ConstantValues(program));
       optimizations.add(new Pass2ConstantCallPointerIdentification(program));
@@ -391,7 +397,6 @@ public class Compiler {
       constantOptimizations.add(new Pass2NopCastInlining(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
-      constantOptimizations.add(new Pass2ArrayInStructInlining(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
       constantOptimizations.addAll(getPass2Optimizations());
@@ -413,7 +418,8 @@ public class Compiler {
             boolean stepOptimized = true;
             while(stepOptimized) {
                stepOptimized = optimization.step();
-               ssaOptimized = pass2LogOptimization(ssaOptimized, optimization, stepOptimized);
+               if(stepOptimized) ssaOptimized = true;
+               pass2LogOptimization(optimization, stepOptimized);
             }
          }
       }
@@ -430,21 +436,20 @@ public class Compiler {
       for(PassStep optimization : optimizations) {
          pass2AssertSSA();
          boolean stepOptimized = optimization.step();
-         ssaOptimized = pass2LogOptimization(ssaOptimized, optimization, stepOptimized);
+         if(stepOptimized) ssaOptimized = true;
+         pass2LogOptimization(optimization, stepOptimized);
       }
       return ssaOptimized;
    }
 
-   private boolean pass2LogOptimization(boolean ssaOptimized, PassStep optimization, boolean stepOptimized) {
+   private void pass2LogOptimization(PassStep optimization, boolean stepOptimized) {
       if(stepOptimized) {
          getLog().append("Successful SSA optimization " + optimization.getClass().getSimpleName() + "");
-         ssaOptimized = true;
          if(getLog().isVerboseSSAOptimize()) {
             getLog().append("CONTROL FLOW GRAPH");
             getLog().append(program.getGraph().toString(program));
          }
       }
-      return ssaOptimized;
    }
 
    private void pass3Analysis() {
@@ -539,7 +544,7 @@ public class Compiler {
 
       getLog().append("\nVARIABLE REGISTER WEIGHTS");
       program.getVariableRegisterWeights();
-      getLog().append(program.getScope().toString(program, Variable.class));
+      getLog().append(program.getScope().toString(program, true));
 
       new Pass4LiveRangeEquivalenceClassesFinalize(program).allocate();
       new Pass4RegistersFinalize(program).allocate(true);
@@ -548,7 +553,7 @@ public class Compiler {
       new Pass4CodeGeneration(program, false, program.isWarnFragmentMissing()).generate();
       new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
-      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " +program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
+      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " + program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
 
       if(disableUplift) {
@@ -585,14 +590,14 @@ public class Compiler {
       }
 
       // Register coalesce on assignment (saving bytes & cycles)
-      new Pass4ZeroPageCoalesceAssignment(program).coalesce();
+      new Pass4MemoryCoalesceAssignment(program).coalesce();
 
       // Register coalesce on call graph (saving ZP)
-      new Pass4ZeroPageCoalesceCallGraph(program).coalesce();
+      new Pass4MemoryCoalesceCallGraph(program).coalesce();
 
       if(enableZeroPageCoalasce) {
          // Register coalesce using exhaustive search (saving even more ZP - but slow)
-         new Pass4ZeroPageCoalesceExhaustive(program).coalesce();
+         new Pass4MemoryCoalesceExhaustive(program).coalesce();
       }
       new Pass4RegistersFinalize(program).allocate(true);
       new Pass4AssertZeropageAllocation(program).check();
@@ -646,7 +651,7 @@ public class Compiler {
       new Pass5FixLongBranches(program).optimize();
 
       getLog().append("\nFINAL SYMBOL TABLE");
-      getLog().append(program.getScope().toString(program, null));
+      getLog().append(program.getScope().toString(program, false));
 
       getLog().append("\nFINAL ASSEMBLER");
       getLog().append("Score: " + Pass4RegisterUpliftCombinations.getAsmScore(program) + "\n");

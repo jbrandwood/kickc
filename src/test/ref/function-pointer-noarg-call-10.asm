@@ -22,7 +22,7 @@ main: {
     jsr do10
     rts
 }
-// do10(void()* zeropage(2) fn)
+// do10(void()* zp(2) fn)
 do10: {
     .label i = 4
     .label fn = 2
@@ -48,7 +48,7 @@ world: {
     msg: .text "world "
     .byte 0
 }
-// print(byte* zeropage(5) msg)
+// print(byte* zp(5) msg)
 print: {
     .label msg = 5
     ldy #0

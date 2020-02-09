@@ -97,6 +97,19 @@
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .label print_char_cursor = 4
+  // The value of the DTV control register
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
+  // DTV Graphics Mode
   .label dtv_control = $d
   .label print_line_cursor = 9
 main: {
@@ -280,7 +293,7 @@ menu: {
 mode_8bppchunkybmm: {
     // 8BPP Chunky Bitmap (contains 8bpp pixels)
     .const PLANEB = $20000
-    .label __26 = 9
+    .label __7 = 9
     .label gfxb = $b
     .label x = 4
     .label y = $d
@@ -343,11 +356,11 @@ mode_8bppchunkybmm: {
     lda.z y
     clc
     adc.z x
-    sta.z __26
+    sta.z __7
     lda #0
     adc.z x+1
-    sta.z __26+1
-    lda.z __26
+    sta.z __7+1
+    lda.z __7
     ldy #0
     sta (gfxb),y
     inc.z gfxb
@@ -513,7 +526,8 @@ mode_8bpppixelcell: {
     // 8BPP Pixel Cell Charset (contains 256 64 byte chars)
     .label PLANEB = $4000
     .label CHARGEN = $d000
-    .label __15 = $e
+    .label __3 = $e
+    // Screen Chars for Plane A (screen) - 16x16 repeating
     .label gfxa = $b
     .label ay = $d
     .label bits = 6
@@ -575,10 +589,10 @@ mode_8bpppixelcell: {
     asl
     asl
     asl
-    sta.z __15
+    sta.z __3
     txa
     and #$f
-    ora.z __15
+    ora.z __3
     ldy #0
     sta (gfxa),y
     inc.z gfxa
@@ -664,10 +678,13 @@ mode_sixsfred: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
+    // Colors for high 4 bits of 8bpp
     .label col = 4
     .label cy = $d
+    // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = 9
     .label ay = 2
+    // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = $b
     .label by = 3
     lda #DTV_HIGHCOLOR|DTV_LINEAR
@@ -811,11 +828,15 @@ mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __17 = $e
+    .label __3 = $e
+    // Color for bits 11
+    // Colors for bits 01 / 10
     .label col = $b
     .label cy = 6
+    // Graphics for Plane A - horizontal stripes
     .label gfxa = 9
     .label ay = 7
+    // Graphics for Plane B - vertical stripes
     .label gfxb = 4
     .label by = 2
     lda #DTV_HIGHCOLOR|DTV_LINEAR
@@ -884,10 +905,10 @@ mode_twoplanebitmap: {
     asl
     asl
     asl
-    sta.z __17
+    sta.z __3
     txa
     and #$f
-    ora.z __17
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -976,11 +997,14 @@ mode_sixsfred2: {
     .label PLANEA = $4000
     .label PLANEB = $6000
     .label COLORS = $8000
-    .label __16 = 7
+    .label __3 = 7
+    // Colors for high 4 bits of 8bpp
     .label col = 9
     .label cy = 2
+    // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = 4
     .label ay = 3
+    // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = $b
     .label by = 6
     lda #DTV_LINEAR
@@ -1044,10 +1068,10 @@ mode_sixsfred2: {
     asl
     asl
     asl
-    sta.z __16
+    sta.z __3
     lda #3
     and.z cy
-    ora.z __16
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1134,7 +1158,8 @@ mode_hicolmcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __27 = 7
+    .label __3 = 7
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 3
@@ -1199,10 +1224,10 @@ mode_hicolmcchar: {
     asl
     asl
     asl
-    sta.z __27
+    sta.z __3
     txa
     and #$f
-    ora.z __27
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1243,7 +1268,8 @@ mode_hicolecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __27 = 8
+    .label __3 = 8
+    // Char Colors and screen chars
     .label col = 4
     .label ch = $b
     .label cy = 6
@@ -1310,10 +1336,10 @@ mode_hicolecmchar: {
     asl
     asl
     asl
-    sta.z __27
+    sta.z __3
     txa
     and #$f
-    ora.z __27
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1350,7 +1376,8 @@ mode_hicolstdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $8400
-    .label __26 = 8
+    .label __3 = 8
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 9
     .label cy = 7
@@ -1410,10 +1437,10 @@ mode_hicolstdchar: {
     asl
     asl
     asl
-    sta.z __26
+    sta.z __3
     txa
     and #$f
-    ora.z __26
+    ora.z __3
     ldy #0
     sta (col),y
     inc.z col
@@ -1450,6 +1477,7 @@ mode_stdbitmap: {
     .label BITMAP = $6000
     .const lines_cnt = 9
     .label col2 = $d
+    // Bitmap Colors
     .label ch = 9
     .label cy = 7
     .label l = $e
@@ -1550,7 +1578,7 @@ mode_stdbitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zeropage(6) x0, byte register(X) x1, byte zeropage(8) y0, byte zeropage(3) y1)
+// bitmap_line(byte zp(6) x0, byte register(X) x1, byte zp(8) y0, byte zp(3) y1)
 bitmap_line: {
     .label xd = 7
     .label x0 = 6
@@ -1656,7 +1684,7 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zeropage(2) x, byte zeropage(8) y, byte zeropage(6) x1, byte zeropage(7) xd, byte zeropage($d) yd)
+// bitmap_line_xdyi(byte zp(2) x, byte zp(8) y, byte zp(6) x1, byte zp(7) xd, byte zp($d) yd)
 bitmap_line_xdyi: {
     .label x = 2
     .label y = 8
@@ -1717,7 +1745,7 @@ bitmap_plot: {
     sta (plotter),y
     rts
 }
-// bitmap_line_ydxi(byte zeropage(2) y, byte register(X) x, byte zeropage(3) y1, byte zeropage($d) yd, byte zeropage(7) xd)
+// bitmap_line_ydxi(byte zp(2) y, byte register(X) x, byte zp(3) y1, byte zp($d) yd, byte zp(7) xd)
 bitmap_line_ydxi: {
     .label y = 2
     .label y1 = 3
@@ -1751,7 +1779,7 @@ bitmap_line_ydxi: {
     bne __b1
     rts
 }
-// bitmap_line_xdyd(byte zeropage(2) x, byte zeropage(8) y, byte zeropage(6) x1, byte zeropage(7) xd, byte zeropage($d) yd)
+// bitmap_line_xdyd(byte zp(2) x, byte zp(8) y, byte zp(6) x1, byte zp(7) xd, byte zp($d) yd)
 bitmap_line_xdyd: {
     .label x = 2
     .label y = 8
@@ -1786,7 +1814,7 @@ bitmap_line_xdyd: {
     bne __b1
     rts
 }
-// bitmap_line_ydxd(byte zeropage(2) y, byte register(X) x, byte zeropage(8) y1, byte zeropage($d) yd, byte zeropage(7) xd)
+// bitmap_line_ydxd(byte zp(2) y, byte register(X) x, byte zp(8) y1, byte zp($d) yd, byte zp(7) xd)
 bitmap_line_ydxd: {
     .label y = 2
     .label y1 = 8
@@ -1918,7 +1946,8 @@ mode_mcchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __29 = $d
+    .label __5 = $d
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 7
@@ -1992,10 +2021,10 @@ mode_mcchar: {
     asl
     asl
     asl
-    sta.z __29
+    sta.z __5
     txa
     and #$f
-    ora.z __29
+    ora.z __5
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2030,7 +2059,8 @@ mode_ecmchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __29 = $d
+    .label __5 = $d
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 8
@@ -2105,10 +2135,10 @@ mode_ecmchar: {
     asl
     asl
     asl
-    sta.z __29
+    sta.z __5
     txa
     and #$f
-    ora.z __29
+    ora.z __5
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2139,7 +2169,8 @@ mode_stdchar: {
     .label CHARSET = $9000
     // Charset ROM
     .label COLORS = $d800
-    .label __28 = $e
+    .label __5 = $e
+    // Char Colors and screen chars
     .label col = $b
     .label ch = 4
     .label cy = 6
@@ -2208,10 +2239,10 @@ mode_stdchar: {
     asl
     asl
     asl
-    sta.z __28
+    sta.z __5
     txa
     and #$f
-    ora.z __28
+    ora.z __5
     ldy #0
     sta (ch),y
     inc.z ch
@@ -2232,7 +2263,7 @@ mode_stdchar: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zeropage($b) str)
+// print_str_lines(byte* zp($b) str)
 print_str_lines: {
     .label str = $b
     lda #<menu.SCREEN

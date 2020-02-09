@@ -3,7 +3,6 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400+(number) $28*(number) $a
   to:@1
 
 (void()) main()
@@ -12,7 +11,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (signed word) main::i#2 ← phi( main/(signed word) main::i#0 main::@1/(signed word) main::i#1 )
-  (byte*~) main::$0 ← (byte*) SCREEN + (signed word) main::i#2
+  (byte*~) main::$0 ← (const byte*) SCREEN + (signed word) main::i#2
   (byte*) main::sc#0 ← (byte*~) main::$0
   (byte~) main::$1 ← ((byte)) (signed word) main::i#2
   *((byte*) main::sc#0) ← (byte~) main::$1
@@ -35,7 +34,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400+(number) $28*(number) $a
 (void()) main()
 (byte*~) main::$0
 (byte~) main::$1
@@ -49,20 +48,16 @@ SYMBOL TABLE SSA
 (byte*) main::sc
 (byte*) main::sc#0
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400+(number) $28*(number) $a
 Inlining cast (byte~) main::$1 ← (byte)(signed word) main::i#2
 Successful SSA optimization Pass2InlineCast
 Alias (byte*) main::sc#0 = (byte*~) main::$0 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 [9] if((signed word) main::i#1!=rangelast(-$a,$a)) goto main::@1
+Simple Condition (bool~) main::$2 [8] if((signed word) main::i#1!=rangelast(-$a,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte*) SCREEN ← (byte*)(number) $400+(number) $28*(number) $a
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*)$400+$28*$a
 Constant (const signed word) main::i#0 = -$a
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [9] if(main::i#1!=rangelast(-$a,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [8] if(main::i#1!=rangelast(-$a,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (snumber) $b in if((signed word) main::i#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
@@ -130,15 +125,15 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-Added variable main::sc#0 to zero page equivalence class [ main::sc#0 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
+Added variable main::sc#0 to live range equivalence class [ main::sc#0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::sc#0 ]
 [ main::$1 ]
-Allocated zp ZP_WORD:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:4 [ main::sc#0 ]
-Allocated zp ZP_BYTE:6 [ main::$1 ]
+Allocated zp[2]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:4 [ main::sc#0 ]
+Allocated zp[1]:6 [ main::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -226,15 +221,15 @@ Statement [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::
 Statement [7] (byte~) main::$1 ← (byte)(signed word) main::i#2 [ main::i#2 main::sc#0 main::$1 ] ( main:2 [ main::i#2 main::sc#0 main::$1 ] ) always clobbers reg byte a 
 Statement [8] *((byte*) main::sc#0) ← (byte~) main::$1 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte y 
 Statement [10] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::i#2 main::i#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ main::sc#0 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_BYTE:6 [ main::$1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::sc#0 ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ main::$1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 24.75: zp ZP_WORD:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:6 [ main::$1 ] 11: zp ZP_WORD:4 [ main::sc#0 ] 
+Uplift Scope [main] 24.75: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[1]:6 [ main::$1 ] 11: zp[2]:4 [ main::sc#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 773 combination zp ZP_WORD:2 [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] zp ZP_WORD:4 [ main::sc#0 ] 
+Uplifting [main] best 773 combination zp[2]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] zp[2]:4 [ main::sc#0 ] 
 Uplifting [] best 773 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -345,19 +340,19 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*)(number) $400+(number) $28*(number) $a
+(const byte*) SCREEN = (byte*)(number) $400+(number) $28*(number) $a
 (void()) main()
 (byte~) main::$1 reg byte a 22.0
 (label) main::@1
 (label) main::@return
 (signed word) main::i
-(signed word) main::i#1 i zp ZP_WORD:2 16.5
-(signed word) main::i#2 i zp ZP_WORD:2 8.25
+(signed word) main::i#1 i zp[2]:2 16.5
+(signed word) main::i#2 i zp[2]:2 8.25
 (byte*) main::sc
-(byte*) main::sc#0 sc zp ZP_WORD:4 11.0
+(byte*) main::sc#0 sc zp[2]:4 11.0
 
-zp ZP_WORD:2 [ main::i#2 main::i#1 ]
-zp ZP_WORD:4 [ main::sc#0 ]
+zp[2]:2 [ main::i#2 main::i#1 ]
+zp[2]:4 [ main::sc#0 ]
 reg byte a [ main::$1 ]
 
 

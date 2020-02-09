@@ -12,9 +12,9 @@ main: {
     lda #>$c000
     sta.z heap_head+1
     jsr malloc
-    lda.z malloc.return_2
+    lda.z malloc.return_1
     sta.z malloc.return
-    lda.z malloc.return_2+1
+    lda.z malloc.return_1+1
     sta.z malloc.return+1
     jsr malloc
     lda #'a'
@@ -31,14 +31,13 @@ main: {
 malloc: {
     .label return = 4
     .label return_1 = 6
-    .label return_2 = 6
     inc.z heap_head
     bne !+
     inc.z heap_head+1
   !:
     lda.z heap_head
-    sta.z return_2
+    sta.z return_1
     lda.z heap_head+1
-    sta.z return_2+1
+    sta.z return_1+1
     rts
 }

@@ -1,21 +1,17 @@
-Identified constant variable (byte) SZ
+Identified constant variable (byte*) main::cur_item
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) SZ ← (number) $f
-  (byte[SZ]) items ← { fill( SZ, 0) }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::cur_item#0 ← (byte[SZ]) items
   (byte) main::sub#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte*) main::cur_item#1 ← phi( main/(byte*) main::cur_item#0 main::@1/(byte*) main::cur_item#1 )
   (byte) main::sub#2 ← phi( main/(byte) main::sub#0 main::@1/(byte) main::sub#1 )
-  *((byte*) main::cur_item#1 + (byte) main::sub#2) ← (byte) main::sub#2
+  *((const byte*) main::cur_item + (byte) main::sub#2) ← (byte) main::sub#2
   (byte) main::sub#1 ← (byte) main::sub#2 + rangenext(0,SZ)
   (bool~) main::$0 ← (byte) main::sub#1 != rangelast(0,SZ)
   if((bool~) main::$0) goto main::@1
@@ -35,39 +31,24 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte) SZ
-(byte[SZ]) items
+(const byte) SZ = (byte) $f
+(const byte*) items[(const byte) SZ]  = { fill( SZ, 0) }
 (void()) main()
 (bool~) main::$0
 (label) main::@1
 (label) main::@return
-(byte*) main::cur_item
-(byte*) main::cur_item#0
-(byte*) main::cur_item#1
+(const byte*) main::cur_item = (const byte*) items
 (byte) main::sub
 (byte) main::sub#0
 (byte) main::sub#1
 (byte) main::sub#2
 
-Adding number conversion cast (unumber) $f in (byte) SZ ← (number) $f
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) SZ ← (unumber)(number) $f
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $f
-Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $f
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Identical Phi Values (byte*) main::cur_item#1 (byte*) main::cur_item#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [8] if((byte) main::sub#1!=rangelast(0,SZ)) goto main::@1
+Simple Condition (bool~) main::$0 [5] if((byte) main::sub#1!=rangelast(0,SZ)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) SZ = $f
 Constant (const byte) main::sub#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified { fill( SZ, 0) } in [1] (byte[SZ]) items ← { fill( SZ, 0) }
-Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [6] main::sub#1 ← ++ main::sub#2 to ++
-Resolved ranged comparison value [8] if(main::sub#1!=rangelast(0,SZ)) goto main::@1 to (const byte) SZ+(number) 1
+Resolved ranged next value [3] main::sub#1 ← ++ main::sub#2 to ++
+Resolved ranged comparison value [5] if(main::sub#1!=rangelast(0,SZ)) goto main::@1 to (const byte) SZ+(number) 1
 Adding number conversion cast (unumber) SZ+1 in if((byte) main::sub#1!=(const byte) SZ+(number) 1) goto main::@1
 Adding number conversion cast (unumber) 1 in if((byte) main::sub#1!=(unumber)(const byte) SZ+(number) 1) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -76,13 +57,9 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte[SZ]) items = { fill( SZ, 0) }
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::cur_item#0 = items
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::sub#0
 Constant inlined main::sub#0 = (byte) 0
-Constant inlined main::cur_item#0 = (const byte[SZ]) items
+Constant inlined main::cur_item = (const byte*) items
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
@@ -120,7 +97,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::sub#2 ← phi( main/(byte) 0 main::@1/(byte) main::sub#1 )
-  [6] *((const byte[SZ]) items + (byte) main::sub#2) ← (byte) main::sub#2
+  [6] *((const byte*) items + (byte) main::sub#2) ← (byte) main::sub#2
   [7] (byte) main::sub#1 ← ++ (byte) main::sub#2
   [8] if((byte) main::sub#1!=(const byte) SZ+(byte) 1) goto main::@1
   to:main::@return
@@ -131,7 +108,6 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::cur_item
 (byte) main::sub
 (byte) main::sub#1 16.5
 (byte) main::sub#2 22.0
@@ -140,7 +116,7 @@ Initial phi equivalence classes
 [ main::sub#2 main::sub#1 ]
 Complete equivalence classes
 [ main::sub#2 main::sub#1 ]
-Allocated zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ]
+Allocated zp[1]:2 [ main::sub#2 main::sub#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -184,7 +160,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte[SZ]) items + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] *((const byte*) items + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z sub
     tya
     sta items,y
@@ -204,10 +180,10 @@ main: {
   items: .fill SZ, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::sub#2 main::sub#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::sub#2 main::sub#1 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::sub#2 main::sub#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 263 combination reg byte x [ main::sub#2 main::sub#1 ] 
@@ -252,7 +228,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte[SZ]) items + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) items + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta items,x
     // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
@@ -299,12 +275,11 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) SZ SZ = (byte) $f
-(const byte[SZ]) items items = { fill( SZ, 0) }
+(const byte) SZ = (byte) $f
+(const byte*) items[(const byte) SZ]  = { fill( SZ, 0) }
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte*) main::cur_item
 (byte) main::sub
 (byte) main::sub#1 reg byte x 16.5
 (byte) main::sub#2 reg byte x 22.0
@@ -341,7 +316,7 @@ main: {
     // main::@1
   __b1:
     // cur_item[sub] = sub
-    // [6] *((const byte[SZ]) items + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) items + (byte) main::sub#2) ← (byte) main::sub#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta items,x
     // for( byte sub: 0..SZ)

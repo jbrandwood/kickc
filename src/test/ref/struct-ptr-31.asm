@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
-  .label SCREEN = $400
 main: {
     ldx #0
     lda #<persons
@@ -19,7 +19,7 @@ main: {
     jsr print_person
     rts
 }
-// print_person(struct Person* zeropage(2) person)
+// print_person(struct Person* zp(2) person)
 print_person: {
     .label __1 = 4
     .label __2 = 6

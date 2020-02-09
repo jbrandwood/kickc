@@ -2,16 +2,18 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
-    .label q = p_x
     .label SCREEN = $400
-    .label p_x = 2
-    .label p_y = 3
-    lda #2
-    sta.z p_x
-    lda #3
-    sta.z p_y
+    .label q = p
+    .label p = 2
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda __0-1,y
+    sta p-1,y
+    dey
+    bne !-
     jsr set
     lda.z q
     sta SCREEN
@@ -26,3 +28,4 @@ set: {
     sta main.q+OFFSET_STRUCT_POINT_Y
     rts
 }
+  __0: .byte 2, 3

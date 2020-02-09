@@ -12,7 +12,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen#0 ← ((byte*)) (number) $400
+  (byte*) main::screen#0 ← (byte*)(number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@7
@@ -152,8 +152,6 @@ Adding number conversion cast (unumber) main::$11 in (byte) main::i#8 ← phi( m
   (byte*) main::screen#4 ← phi( main::@5/(byte*) main::screen#7 main::@6/(byte*) main::screen#8 )
   (number~) main::$11 ← phi( main::@5/(unumber~) main::$10 main::@6/(unumber~) main::$8 )
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen#0 ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
@@ -320,9 +318,9 @@ Initial phi equivalence classes
 [ main::screen#3 main::screen#2 ]
 [ main::$5 main::$4 main::$2 ]
 [ main::$11 main::$10 main::$8 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::screen#1 to zero page equivalence class [ main::screen#1 ]
-Added variable main::$6 to zero page equivalence class [ main::$6 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::screen#1 to live range equivalence class [ main::screen#1 ]
+Added variable main::$6 to live range equivalence class [ main::$6 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::screen#3 main::screen#2 ]
@@ -331,13 +329,13 @@ Complete equivalence classes
 [ main::$0 ]
 [ main::screen#1 ]
 [ main::$6 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:3 [ main::screen#3 main::screen#2 ]
-Allocated zp ZP_BYTE:5 [ main::$5 main::$4 main::$2 ]
-Allocated zp ZP_BYTE:6 [ main::$11 main::$10 main::$8 ]
-Allocated zp ZP_BYTE:7 [ main::$0 ]
-Allocated zp ZP_WORD:8 [ main::screen#1 ]
-Allocated zp ZP_BYTE:10 [ main::$6 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:3 [ main::screen#3 main::screen#2 ]
+Allocated zp[1]:5 [ main::$5 main::$4 main::$2 ]
+Allocated zp[1]:6 [ main::$11 main::$10 main::$8 ]
+Allocated zp[1]:7 [ main::$0 ]
+Allocated zp[2]:8 [ main::screen#1 ]
+Allocated zp[1]:10 [ main::$6 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -375,16 +373,15 @@ main: {
     .label __10 = 6
     .label __11 = 6
     .label screen = 8
-    .label screen_2 = 3
+    .label screen_1 = 3
     .label i = 2
-    .label screen_3 = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [5] phi (byte*) main::screen#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
-    sta.z screen_3
+    sta.z screen_1
     lda #>$400
-    sta.z screen_3+1
+    sta.z screen_1+1
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
@@ -422,13 +419,13 @@ main: {
     // [10] *((byte*) main::screen#3) ← (byte~) main::$5 -- _deref_pbuz1=vbuz2 
     lda.z __5
     ldy #0
-    sta (screen_3),y
+    sta (screen_1),y
     // [11] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 -- pbuz1=_inc_pbuz2 
-    lda.z screen_3
+    lda.z screen_1
     clc
     adc #1
     sta.z screen
-    lda.z screen_3+1
+    lda.z screen_1+1
     adc #0
     sta.z screen+1
     // [12] (byte~) main::$6 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
@@ -462,10 +459,10 @@ main: {
     lda.z screen
     clc
     adc #1
-    sta.z screen_2
+    sta.z screen_1
     lda.z screen+1
     adc #0
-    sta.z screen_2+1
+    sta.z screen_1+1
     // [18] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [19] if((byte) main::i#1!=(byte) 3) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -496,9 +493,9 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] (byte~) main::$2 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::screen#3 main::$2 ] ( main:2 [ main::i#2 main::screen#3 main::$2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [10] *((byte*) main::screen#3) ← (byte~) main::$5 [ main::i#2 main::screen#3 ] ( main:2 [ main::i#2 main::screen#3 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [11] (byte*) main::screen#1 ← ++ (byte*) main::screen#3 [ main::i#2 main::screen#1 ] ( main:2 [ main::i#2 main::screen#1 ] ) always clobbers reg byte a 
 Statement [12] (byte~) main::$6 ← (byte) main::i#2 & (byte) 1 [ main::i#2 main::screen#1 main::$6 ] ( main:2 [ main::i#2 main::screen#1 main::$6 ] ) always clobbers reg byte a 
 Statement [14] (byte~) main::$8 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::screen#1 main::$8 ] ( main:2 [ main::i#2 main::screen#1 main::$8 ] ) always clobbers reg byte a 
@@ -516,25 +513,25 @@ Statement [16] *((byte*) main::screen#1) ← (byte~) main::$11 [ main::i#2 main:
 Statement [17] (byte*) main::screen#2 ← ++ (byte*) main::screen#1 [ main::i#2 main::screen#2 ] ( main:2 [ main::i#2 main::screen#2 ] ) always clobbers reg byte a 
 Statement [21] (byte~) main::$10 ← (byte) main::i#2 + (byte) 3 [ main::i#2 main::screen#1 main::$10 ] ( main:2 [ main::i#2 main::screen#1 main::$10 ] ) always clobbers reg byte a 
 Statement [22] (byte~) main::$4 ← (byte) main::i#2 + (byte) 3 [ main::i#2 main::screen#3 main::$4 ] ( main:2 [ main::i#2 main::screen#3 main::$4 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers zp ZP_WORD:3 [ main::screen#3 main::screen#2 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_BYTE:5 [ main::$5 main::$4 main::$2 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ main::$11 main::$10 main::$8 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ main::$0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:8 [ main::screen#1 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_BYTE:10 [ main::$6 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[2]:3 [ main::screen#3 main::screen#2 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ main::$5 main::$4 main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$11 main::$10 main::$8 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::$0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:8 [ main::screen#1 ] : zp[2]:8 , 
+Potential registers zp[1]:10 [ main::$6 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 77: zp ZP_BYTE:5 [ main::$5 main::$4 main::$2 ] 77: zp ZP_BYTE:6 [ main::$11 main::$10 main::$8 ] 22.37: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:7 [ main::$0 ] 22: zp ZP_BYTE:10 [ main::$6 ] 12.05: zp ZP_WORD:3 [ main::screen#3 main::screen#2 ] 4.71: zp ZP_WORD:8 [ main::screen#1 ] 
+Uplift Scope [main] 77: zp[1]:5 [ main::$5 main::$4 main::$2 ] 77: zp[1]:6 [ main::$11 main::$10 main::$8 ] 22.37: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:7 [ main::$0 ] 22: zp[1]:10 [ main::$6 ] 12.05: zp[2]:3 [ main::screen#3 main::screen#2 ] 4.71: zp[2]:8 [ main::screen#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1443 combination reg byte a [ main::$5 main::$4 main::$2 ] reg byte a [ main::$11 main::$10 main::$8 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp ZP_BYTE:10 [ main::$6 ] zp ZP_WORD:3 [ main::screen#3 main::screen#2 ] zp ZP_WORD:8 [ main::screen#1 ] 
+Uplifting [main] best 1443 combination reg byte a [ main::$5 main::$4 main::$2 ] reg byte a [ main::$11 main::$10 main::$8 ] reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp[1]:10 [ main::$6 ] zp[2]:3 [ main::screen#3 main::screen#2 ] zp[2]:8 [ main::screen#1 ] 
 Limited combination testing to 100 combinations of 512 possible.
 Uplifting [] best 1443 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:10 [ main::$6 ]
+Attempting to uplift remaining variables inzp[1]:10 [ main::$6 ]
 Uplifting [main] best 1403 combination reg byte a [ main::$6 ] 
-Coalescing zero page register [ zp ZP_WORD:3 [ main::screen#3 main::screen#2 ] ] with [ zp ZP_WORD:8 [ main::screen#1 ] ] - score: 2
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ main::screen#3 main::screen#2 main::screen#1 ]
+Coalescing zero page register [ zp[2]:3 [ main::screen#3 main::screen#2 ] ] with [ zp[2]:8 [ main::screen#1 ] ] - score: 2
+Allocated (was zp[2]:3) zp[2]:2 [ main::screen#3 main::screen#2 main::screen#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -726,12 +723,12 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 5.866666666666666
 (byte*) main::screen
-(byte*) main::screen#1 screen zp ZP_WORD:2 4.714285714285714
-(byte*) main::screen#2 screen zp ZP_WORD:2 7.333333333333333
-(byte*) main::screen#3 screen zp ZP_WORD:2 4.714285714285714
+(byte*) main::screen#1 screen zp[2]:2 4.714285714285714
+(byte*) main::screen#2 screen zp[2]:2 7.333333333333333
+(byte*) main::screen#3 screen zp[2]:2 4.714285714285714
 
 reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:2 [ main::screen#3 main::screen#2 main::screen#1 ]
+zp[2]:2 [ main::screen#3 main::screen#2 main::screen#1 ]
 reg byte a [ main::$5 main::$4 main::$2 ]
 reg byte a [ main::$11 main::$10 main::$8 ]
 reg byte a [ main::$0 ]

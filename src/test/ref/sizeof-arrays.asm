@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .const SIZEOF_BYTE = 1
   .const SIZEOF_WORD = 2
-  .label SCREEN = $400
 main: {
     .const sz = 7
     lda #'0'+3*SIZEOF_BYTE/SIZEOF_BYTE

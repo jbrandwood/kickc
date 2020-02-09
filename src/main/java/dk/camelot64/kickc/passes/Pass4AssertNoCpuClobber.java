@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.VariableRef;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.symbols.Variable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,7 +102,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             for(VariableRef aliveVar : aliveVars) {
                Variable variable = getProgram().getSymbolInfos().getVariable(aliveVar);
                Registers.Register aliveVarRegister = variable.getAllocation();
-               if(aliveVarRegister.isZp()) {
+               if(aliveVarRegister.isMem()) {
                   // No need to check a zp-register - here we are only interested in CPU registers
                   continue;
                }

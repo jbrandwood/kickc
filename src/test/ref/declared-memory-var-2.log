@@ -2,8 +2,6 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) cursor ← (byte*) SCREEN
   to:@1
 
 (void()) main()
@@ -33,8 +31,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte*) cursor memory
+(const byte*) SCREEN = (byte*)(number) $400
+(byte*) cursor loadstore = (const byte*) SCREEN
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -46,21 +44,17 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $29 in (byte*) cursor ← (byte*) cursor + (number) $29
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $29
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $29
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias candidate removed (volatile)(byte*) SCREEN = (byte*) cursor 
-Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=rangelast(0,$18)) goto main::@1
+Simple Condition (bool~) main::$0 [6] if((byte) main::i#1!=rangelast(0,$18)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,$18)) goto main::@1 to (number) $19
+Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,$18)) goto main::@1 to (number) $19
 Adding number conversion cast (unumber) $19 in if((byte) main::i#1!=(number) $19) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $19
@@ -71,6 +65,7 @@ Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -83,13 +78,14 @@ Coalesced [12] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte*) cursor ← (const byte*) SCREEN
+  [0] phi()
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -115,7 +111,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) cursor memory 5.0
+(byte*) cursor loadstore 4.714285714285714 = (const byte*) SCREEN
 (void()) main()
 (byte) main::i
 (byte) main::i#1 16.5
@@ -123,12 +119,12 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-Added variable cursor to zero page equivalence class [ cursor ]
+Added variable cursor to live range equivalence class [ cursor ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ cursor ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated mem cursor [ cursor ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated mem[2] [ cursor ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -143,11 +139,6 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   // @begin
 __bbegin:
-  // [0] (byte*) cursor ← (const byte*) SCREEN -- pbum1=pbuc1 
-  lda #<SCREEN
-  sta cursor
-  lda #>SCREEN
-  sta cursor+1
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -206,26 +197,24 @@ main: {
     rts
 }
   // File Data
-  cursor: .word 0
+  cursor: .word SCREEN
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte*) cursor ← (const byte*) SCREEN [ cursor ] (  [ cursor ] ) always clobbers reg byte a 
 Statement [6] *((byte*) cursor) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [7] (byte*) cursor ← (byte*) cursor + (byte) $29 [ cursor main::i#2 ] ( main:2 [ cursor main::i#2 ] ) always clobbers reg byte a 
-Statement [0] (byte*) cursor ← (const byte*) SCREEN [ cursor ] (  [ cursor ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [7] (byte*) cursor ← (byte*) cursor + (byte) $29 [ main::i#2 cursor ] ( main:2 [ main::i#2 cursor ] ) always clobbers reg byte a 
 Statement [6] *((byte*) cursor) ← (byte) '*' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a reg byte y 
-Statement [7] (byte*) cursor ← (byte*) cursor + (byte) $29 [ cursor main::i#2 ] ( main:2 [ cursor main::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers mem cursor [ cursor ] : mem cursor , 
+Statement [7] (byte*) cursor ← (byte*) cursor + (byte) $29 [ main::i#2 cursor ] ( main:2 [ main::i#2 cursor ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers mem[2] [ cursor ] : mem[2] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 23.83: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [] 5: mem cursor [ cursor ] 
+Uplift Scope [main] 23.83: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 4.71: mem[2] [ cursor ] 
 
-Uplifting [main] best 650 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 650 combination mem cursor [ cursor ] 
+Uplifting [main] best 638 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 638 combination mem[2] [ cursor ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -239,11 +228,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // @begin
 __bbegin:
-  // [0] (byte*) cursor ← (const byte*) SCREEN -- pbum1=pbuc1 
-  lda #<SCREEN
-  sta cursor
-  lda #>SCREEN
-  sta cursor+1
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -299,7 +283,7 @@ main: {
     rts
 }
   // File Data
-  cursor: .word 0
+  cursor: .word SCREEN
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -307,28 +291,32 @@ Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
 Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
 Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(byte*) cursor memory mem cursor 5.0
+(const byte*) SCREEN = (byte*) 1024
+(byte*) cursor loadstore mem[2] 4.714285714285714 = (const byte*) SCREEN
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -337,35 +325,26 @@ FINAL SYMBOL TABLE
 (byte) main::i#2 reg byte x 7.333333333333333
 
 reg byte x [ main::i#2 main::i#1 ]
-mem cursor [ cursor ]
+mem[2] [ cursor ]
 
 
 FINAL ASSEMBLER
-Score: 560
+Score: 536
 
   // File Comments
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a memory variable containing a pointer
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-__bbegin:
-  // cursor = SCREEN
-  // [0] (byte*) cursor ← (const byte*) SCREEN -- pbum1=pbuc1 
-  lda #<SCREEN
-  sta cursor
-  lda #>SCREEN
-  sta cursor+1
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-  jsr main
-  rts
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
@@ -407,5 +386,5 @@ main: {
     rts
 }
   // File Data
-  cursor: .word 0
+  cursor: .word SCREEN
 

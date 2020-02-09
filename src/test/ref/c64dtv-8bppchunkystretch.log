@@ -4,6 +4,8 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
+Culled Empty Block (label) @5
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@5
@@ -18,140 +20,75 @@ Culled Empty Block (label) @6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) PROCPORT_DDR ← ((byte*)) (number) 0
-  (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-  (byte*) PROCPORT ← ((byte*)) (number) 1
-  (byte) PROCPORT_RAM_IO ← (number) 5
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) VIC_CONTROL ← ((byte*)) (number) $d011
-  (byte) VIC_ECM ← (number) $40
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) VIC_CONTROL2 ← ((byte*)) (number) $d016
-  (byte) VIC_MCM ← (number) $10
-  (byte) VIC_CSEL ← (number) 8
-  (byte*) VIC_MEMORY ← ((byte*)) (number) $d018
-  (byte*) CIA2_PORT_A ← ((byte*)) (number) $dd00
-  (byte*) CIA2_PORT_A_DDR ← ((byte*)) (number) $dd02
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) DTV_FEATURE ← ((byte*)) (number) $d03f
-  (byte) DTV_FEATURE_ENABLE ← (number) 1
-  (byte*) DTV_CONTROL ← ((byte*)) (number) $d03c
-  (byte) DTV_LINEAR ← (number) 1
-  (byte) DTV_HIGHCOLOR ← (number) 4
-  (byte) DTV_COLORRAM_OFF ← (number) $10
-  (byte) DTV_BADLINE_OFF ← (number) $20
-  (byte) DTV_CHUNKY ← (number) $40
-  (byte*) DTV_PALETTE ← ((byte*)) (number) $d200
-  (byte*) DTV_PLANEB_START_LO ← ((byte*)) (number) $d049
-  (byte*) DTV_PLANEB_START_MI ← ((byte*)) (number) $d04a
-  (byte*) DTV_PLANEB_START_HI ← ((byte*)) (number) $d04b
-  (byte*) DTV_PLANEB_STEP ← ((byte*)) (number) $d04c
-  (byte*) DTV_PLANEB_MODULO_LO ← ((byte*)) (number) $d047
-  (byte*) DTV_PLANEB_MODULO_HI ← ((byte*)) (number) $d048
-  to:@5
+  to:@7
 
 (void()) dtvSetCpuBankSegment1((byte) dtvSetCpuBankSegment1::cpuBankIdx)
 dtvSetCpuBankSegment1: scope:[dtvSetCpuBankSegment1]  from gfx_init_chunky gfx_init_chunky::@4 gfx_init_chunky::@6
   (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 ← phi( gfx_init_chunky/(byte) dtvSetCpuBankSegment1::cpuBankIdx#0 gfx_init_chunky::@4/(byte) dtvSetCpuBankSegment1::cpuBankIdx#1 gfx_init_chunky::@6/(byte) dtvSetCpuBankSegment1::cpuBankIdx#2 )
-  (byte*) dtvSetCpuBankSegment1::cpuBank ← ((byte*)) (number) $ff
-  *((byte*) dtvSetCpuBankSegment1::cpuBank) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#3
+  *((const byte*) dtvSetCpuBankSegment1::cpuBank) ← (byte) dtvSetCpuBankSegment1::cpuBankIdx#3
   asm { .byte$32,$dd lda$ff .byte$32,$00  }
   to:dtvSetCpuBankSegment1::@return
 dtvSetCpuBankSegment1::@return: scope:[dtvSetCpuBankSegment1]  from dtvSetCpuBankSegment1
   return 
   to:@return
-@5: scope:[]  from @4
-  (byte*) CHUNKY ← ((byte*)) (number) $8000
-  to:@7
 
 (void()) main()
 main: scope:[main]  from @7
   asm { sei  }
-  *((byte*) PROCPORT_DDR) ← (byte) PROCPORT_DDR_MEMORY_MASK
-  *((byte*) PROCPORT) ← (byte) PROCPORT_RAM_IO
+  *((const byte*) PROCPORT_DDR) ← (const byte) PROCPORT_DDR_MEMORY_MASK
+  *((const byte*) PROCPORT) ← (const byte) PROCPORT_RAM_IO
   call gfx_init_chunky 
   to:main::@17
 main::@17: scope:[main]  from main
-  *((byte*) DTV_FEATURE) ← (byte) DTV_FEATURE_ENABLE
-  (byte~) main::$1 ← (byte) DTV_HIGHCOLOR | (byte) DTV_LINEAR
-  (byte~) main::$2 ← (byte~) main::$1 | (byte) DTV_COLORRAM_OFF
-  (byte~) main::$3 ← (byte~) main::$2 | (byte) DTV_CHUNKY
-  (byte~) main::$4 ← (byte~) main::$3 | (byte) DTV_BADLINE_OFF
-  *((byte*) DTV_CONTROL) ← (byte~) main::$4
-  (byte~) main::$5 ← (byte) VIC_DEN | (byte) VIC_ECM
-  (byte~) main::$6 ← (byte~) main::$5 | (byte) VIC_RSEL
-  (number~) main::$7 ← (byte~) main::$6 | (number) 3
-  *((byte*) VIC_CONTROL) ← (number~) main::$7
-  (byte~) main::$8 ← (byte) VIC_MCM | (byte) VIC_CSEL
-  *((byte*) VIC_CONTROL2) ← (byte~) main::$8
-  (byte~) main::$9 ← < (byte*) CHUNKY
-  *((byte*) DTV_PLANEB_START_LO) ← (byte~) main::$9
-  (byte~) main::$10 ← > (byte*) CHUNKY
-  *((byte*) DTV_PLANEB_START_MI) ← (byte~) main::$10
-  *((byte*) DTV_PLANEB_START_HI) ← (number) 0
-  *((byte*) DTV_PLANEB_STEP) ← (number) 8
-  *((byte*) DTV_PLANEB_MODULO_LO) ← (number) 0
-  *((byte*) DTV_PLANEB_MODULO_HI) ← (number) 0
-  *((byte*) CIA2_PORT_A_DDR) ← (number) 3
-  (word~) main::$11 ← ((word)) (byte*) CHUNKY
-  (number~) main::$12 ← (word~) main::$11 / (number) $4000
-  (byte~) main::$13 ← ((byte)) (number~) main::$12
-  (number~) main::$14 ← (number) 3 ^ (byte~) main::$13
-  *((byte*) CIA2_PORT_A) ← (number~) main::$14
-  (word~) main::$15 ← ((word)) (byte*) CHUNKY
-  (number~) main::$16 ← (word~) main::$15 & (number) $3fff
-  (number~) main::$17 ← (number~) main::$16 / (number) $40
-  (byte~) main::$18 ← ((byte)) (number~) main::$17
-  (word~) main::$19 ← ((word)) (byte*) CHUNKY
-  (number~) main::$20 ← (word~) main::$19 & (number) $3fff
-  (number~) main::$21 ← > (number~) main::$20
-  (number~) main::$22 ← (number~) main::$21 / (number) 4
-  (number~) main::$23 ← (byte~) main::$18 | (number~) main::$22
-  *((byte*) VIC_MEMORY) ← (number~) main::$23
+  *((const byte*) DTV_FEATURE) ← (const byte) DTV_FEATURE_ENABLE
+  *((const byte*) DTV_CONTROL) ← (const byte) DTV_HIGHCOLOR|(const byte) DTV_LINEAR|(const byte) DTV_COLORRAM_OFF|(const byte) DTV_CHUNKY|(const byte) DTV_BADLINE_OFF
+  *((const byte*) VIC_CONTROL) ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(number) 3
+  *((const byte*) VIC_CONTROL2) ← (const byte) VIC_MCM|(const byte) VIC_CSEL
+  *((const byte*) DTV_PLANEB_START_LO) ← <(const byte*) CHUNKY
+  *((const byte*) DTV_PLANEB_START_MI) ← >(const byte*) CHUNKY
+  *((const byte*) DTV_PLANEB_START_HI) ← (number) 0
+  *((const byte*) DTV_PLANEB_STEP) ← (number) 8
+  *((const byte*) DTV_PLANEB_MODULO_LO) ← (number) 0
+  *((const byte*) DTV_PLANEB_MODULO_HI) ← (number) 0
+  *((const byte*) CIA2_PORT_A_DDR) ← (number) 3
+  *((const byte*) CIA2_PORT_A) ← (number) 3^(byte)(word)(const byte*) CHUNKY/(number) $4000
+  *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) CHUNKY&(number) $3fff/(number) $40|>(word)(const byte*) CHUNKY&(number) $3fff/(number) 4
   (byte) main::j#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@17
   (byte) main::j#2 ← phi( main::@1/(byte) main::j#1 main::@17/(byte) main::j#0 )
-  *((byte*) DTV_PALETTE + (byte) main::j#2) ← (byte) main::j#2
+  *((const byte*) DTV_PALETTE + (byte) main::j#2) ← (byte) main::j#2
   (byte) main::j#1 ← (byte) main::j#2 + rangenext(0,$f)
-  (bool~) main::$24 ← (byte) main::j#1 != rangelast(0,$f)
-  if((bool~) main::$24) goto main::@1
+  (bool~) main::$1 ← (byte) main::j#1 != rangelast(0,$f)
+  if((bool~) main::$1) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@12
   if(true) goto main::@4
   to:main::@return
 main::@4: scope:[main]  from main::@3
   asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
-  (byte~) main::$25 ← (byte) VIC_DEN | (byte) VIC_ECM
-  (byte~) main::$26 ← (byte~) main::$25 | (byte) VIC_RSEL
-  (number~) main::$27 ← (byte~) main::$26 | (number) 3
-  *((byte*) VIC_CONTROL) ← (number~) main::$27
-  *((byte*) BORDERCOL) ← (number) 0
-  (byte) main::rst#0 ← (number) $42
+  *((const byte*) VIC_CONTROL) ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(number) 3
+  *((const byte*) BORDERCOL) ← (number) 0
+  (byte) main::rst#0 ← (byte) $42
   to:main::@6
 main::@6: scope:[main]  from main::@4 main::@6
   (byte) main::rst#2 ← phi( main::@4/(byte) main::rst#0 main::@6/(byte) main::rst#2 )
-  (bool~) main::$28 ← *((byte*) RASTER) != (byte) main::rst#2
-  if((bool~) main::$28) goto main::@6
+  (bool~) main::$2 ← *((const byte*) RASTER) != (byte) main::rst#2
+  if((bool~) main::$2) goto main::@6
   to:main::@8
 main::@8: scope:[main]  from main::@6
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   to:main::@12
 main::@12: scope:[main]  from main::@12 main::@8
-  (byte) main::rst#1 ← *((byte*) RASTER)
-  (byte~) main::$29 ← (byte) VIC_DEN | (byte) VIC_ECM
-  (byte~) main::$30 ← (byte~) main::$29 | (byte) VIC_RSEL
-  (number~) main::$31 ← (byte) main::rst#1 & (number) 7
-  (number~) main::$32 ← (byte~) main::$30 | (number~) main::$31
-  *((byte*) VIC_CONTROL) ← (number~) main::$32
-  (number~) main::$33 ← (byte) main::rst#1 * (number) $10
-  *((byte*) BORDERCOL) ← (number~) main::$33
+  (byte) main::rst#1 ← *((const byte*) RASTER)
+  (number~) main::$3 ← (byte) main::rst#1 & (number) 7
+  (number~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (number~) main::$3
+  *((const byte*) VIC_CONTROL) ← (number~) main::$4
+  (number~) main::$5 ← (byte) main::rst#1 * (number) $10
+  *((const byte*) BORDERCOL) ← (number~) main::$5
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-  (bool~) main::$34 ← (byte) main::rst#1 != (number) $f2
-  if((bool~) main::$34) goto main::@12
+  (bool~) main::$6 ← (byte) main::rst#1 != (number) $f2
+  if((bool~) main::$6) goto main::@12
   to:main::@3
 main::@return: scope:[main]  from main::@3
   return 
@@ -159,16 +96,14 @@ main::@return: scope:[main]  from main::@3
 
 (void()) gfx_init_chunky()
 gfx_init_chunky: scope:[gfx_init_chunky]  from main
-  (byte*~) gfx_init_chunky::$0 ← (byte*) CHUNKY / (number) $4000
-  (byte~) gfx_init_chunky::$1 ← ((byte)) (byte*~) gfx_init_chunky::$0
-  (byte) gfx_init_chunky::gfxbCpuBank#0 ← (byte~) gfx_init_chunky::$1
+  (byte) gfx_init_chunky::gfxbCpuBank#0 ← (byte)(const byte*) CHUNKY/(number) $4000
   (byte) dtvSetCpuBankSegment1::cpuBankIdx#0 ← (byte) gfx_init_chunky::gfxbCpuBank#0
   call dtvSetCpuBankSegment1 
   to:gfx_init_chunky::@7
 gfx_init_chunky::@7: scope:[gfx_init_chunky]  from gfx_init_chunky
   (byte) gfx_init_chunky::gfxbCpuBank#3 ← phi( gfx_init_chunky/(byte) gfx_init_chunky::gfxbCpuBank#0 )
   (byte) gfx_init_chunky::gfxbCpuBank#1 ← ++ (byte) gfx_init_chunky::gfxbCpuBank#3
-  (byte*) gfx_init_chunky::gfxb#0 ← ((byte*)) (number) $4000
+  (byte*) gfx_init_chunky::gfxb#0 ← (byte*)(number) $4000
   (byte) gfx_init_chunky::y#0 ← (byte) 0
   to:gfx_init_chunky::@1
 gfx_init_chunky::@1: scope:[gfx_init_chunky]  from gfx_init_chunky::@5 gfx_init_chunky::@7
@@ -182,23 +117,23 @@ gfx_init_chunky::@2: scope:[gfx_init_chunky]  from gfx_init_chunky::@1 gfx_init_
   (byte) gfx_init_chunky::y#4 ← phi( gfx_init_chunky::@1/(byte) gfx_init_chunky::y#6 gfx_init_chunky::@3/(byte) gfx_init_chunky::y#2 )
   (word) gfx_init_chunky::x#3 ← phi( gfx_init_chunky::@1/(word) gfx_init_chunky::x#0 gfx_init_chunky::@3/(word) gfx_init_chunky::x#1 )
   (byte*) gfx_init_chunky::gfxb#3 ← phi( gfx_init_chunky::@1/(byte*) gfx_init_chunky::gfxb#5 gfx_init_chunky::@3/(byte*) gfx_init_chunky::gfxb#1 )
-  (bool~) gfx_init_chunky::$5 ← (byte*) gfx_init_chunky::gfxb#3 == (number) $8000
-  (bool~) gfx_init_chunky::$6 ← ! (bool~) gfx_init_chunky::$5
-  if((bool~) gfx_init_chunky::$6) goto gfx_init_chunky::@3
+  (bool~) gfx_init_chunky::$2 ← (byte*) gfx_init_chunky::gfxb#3 == (number) $8000
+  (bool~) gfx_init_chunky::$3 ← ! (bool~) gfx_init_chunky::$2
+  if((bool~) gfx_init_chunky::$3) goto gfx_init_chunky::@3
   to:gfx_init_chunky::@4
 gfx_init_chunky::@3: scope:[gfx_init_chunky]  from gfx_init_chunky::@2 gfx_init_chunky::@8
   (byte) gfx_init_chunky::gfxbCpuBank#8 ← phi( gfx_init_chunky::@2/(byte) gfx_init_chunky::gfxbCpuBank#6 gfx_init_chunky::@8/(byte) gfx_init_chunky::gfxbCpuBank#2 )
   (byte*) gfx_init_chunky::gfxb#4 ← phi( gfx_init_chunky::@2/(byte*) gfx_init_chunky::gfxb#3 gfx_init_chunky::@8/(byte*) gfx_init_chunky::gfxb#2 )
   (byte) gfx_init_chunky::y#2 ← phi( gfx_init_chunky::@2/(byte) gfx_init_chunky::y#4 gfx_init_chunky::@8/(byte) gfx_init_chunky::y#5 )
   (word) gfx_init_chunky::x#2 ← phi( gfx_init_chunky::@2/(word) gfx_init_chunky::x#3 gfx_init_chunky::@8/(word) gfx_init_chunky::x#4 )
-  (word~) gfx_init_chunky::$8 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#2
-  (byte~) gfx_init_chunky::$9 ← ((byte)) (word~) gfx_init_chunky::$8
-  (byte) gfx_init_chunky::c#0 ← (byte~) gfx_init_chunky::$9
+  (word~) gfx_init_chunky::$5 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#2
+  (byte~) gfx_init_chunky::$6 ← ((byte)) (word~) gfx_init_chunky::$5
+  (byte) gfx_init_chunky::c#0 ← (byte~) gfx_init_chunky::$6
   *((byte*) gfx_init_chunky::gfxb#4) ← (byte) gfx_init_chunky::c#0
   (byte*) gfx_init_chunky::gfxb#1 ← ++ (byte*) gfx_init_chunky::gfxb#4
   (word) gfx_init_chunky::x#1 ← (word) gfx_init_chunky::x#2 + rangenext(0,$13f)
-  (bool~) gfx_init_chunky::$10 ← (word) gfx_init_chunky::x#1 != rangelast(0,$13f)
-  if((bool~) gfx_init_chunky::$10) goto gfx_init_chunky::@2
+  (bool~) gfx_init_chunky::$7 ← (word) gfx_init_chunky::x#1 != rangelast(0,$13f)
+  if((bool~) gfx_init_chunky::$7) goto gfx_init_chunky::@2
   to:gfx_init_chunky::@5
 gfx_init_chunky::@4: scope:[gfx_init_chunky]  from gfx_init_chunky::@2
   (byte) gfx_init_chunky::y#7 ← phi( gfx_init_chunky::@2/(byte) gfx_init_chunky::y#4 )
@@ -219,12 +154,11 @@ gfx_init_chunky::@5: scope:[gfx_init_chunky]  from gfx_init_chunky::@3
   (byte*) gfx_init_chunky::gfxb#6 ← phi( gfx_init_chunky::@3/(byte*) gfx_init_chunky::gfxb#1 )
   (byte) gfx_init_chunky::y#3 ← phi( gfx_init_chunky::@3/(byte) gfx_init_chunky::y#2 )
   (byte) gfx_init_chunky::y#1 ← (byte) gfx_init_chunky::y#3 + rangenext(0,$32)
-  (bool~) gfx_init_chunky::$11 ← (byte) gfx_init_chunky::y#1 != rangelast(0,$32)
-  if((bool~) gfx_init_chunky::$11) goto gfx_init_chunky::@1
+  (bool~) gfx_init_chunky::$8 ← (byte) gfx_init_chunky::y#1 != rangelast(0,$32)
+  if((bool~) gfx_init_chunky::$8) goto gfx_init_chunky::@1
   to:gfx_init_chunky::@6
 gfx_init_chunky::@6: scope:[gfx_init_chunky]  from gfx_init_chunky::@5
-  (byte~) gfx_init_chunky::$3 ← ((byte)) (number) $4000/(number) $4000
-  (byte) dtvSetCpuBankSegment1::cpuBankIdx#2 ← (byte~) gfx_init_chunky::$3
+  (byte) dtvSetCpuBankSegment1::cpuBankIdx#2 ← (byte)(number) $4000/(number) $4000
   call dtvSetCpuBankSegment1 
   to:gfx_init_chunky::@9
 gfx_init_chunky::@9: scope:[gfx_init_chunky]  from gfx_init_chunky::@6
@@ -232,7 +166,7 @@ gfx_init_chunky::@9: scope:[gfx_init_chunky]  from gfx_init_chunky::@6
 gfx_init_chunky::@return: scope:[gfx_init_chunky]  from gfx_init_chunky::@9
   return 
   to:@return
-@7: scope:[]  from @5
+@7: scope:[]  from @begin
   call main 
   to:@8
 @8: scope:[]  from @7
@@ -240,62 +174,57 @@ gfx_init_chunky::@return: scope:[gfx_init_chunky]  from gfx_init_chunky::@9
 @end: scope:[]  from @8
 
 SYMBOL TABLE SSA
-(label) @4
-(label) @5
 (label) @7
 (label) @8
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) CHUNKY
-(byte*) CIA2_PORT_A
-(byte*) CIA2_PORT_A_DDR
-(byte) DTV_BADLINE_OFF
-(byte) DTV_CHUNKY
-(byte) DTV_COLORRAM_OFF
-(byte*) DTV_CONTROL
-(byte*) DTV_FEATURE
-(byte) DTV_FEATURE_ENABLE
-(byte) DTV_HIGHCOLOR
-(byte) DTV_LINEAR
-(byte*) DTV_PALETTE
-(byte*) DTV_PLANEB_MODULO_HI
-(byte*) DTV_PLANEB_MODULO_LO
-(byte*) DTV_PLANEB_START_HI
-(byte*) DTV_PLANEB_START_LO
-(byte*) DTV_PLANEB_START_MI
-(byte*) DTV_PLANEB_STEP
-(byte*) PROCPORT
-(byte*) PROCPORT_DDR
-(byte) PROCPORT_DDR_MEMORY_MASK
-(byte) PROCPORT_RAM_IO
-(byte*) RASTER
-(byte*) VIC_CONTROL
-(byte*) VIC_CONTROL2
-(byte) VIC_CSEL
-(byte) VIC_DEN
-(byte) VIC_ECM
-(byte) VIC_MCM
-(byte*) VIC_MEMORY
-(byte) VIC_RSEL
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CHUNKY = (byte*)(number) $8000
+(const byte*) CIA2_PORT_A = (byte*)(number) $dd00
+(const byte*) CIA2_PORT_A_DDR = (byte*)(number) $dd02
+(const byte) DTV_BADLINE_OFF = (byte) $20
+(const byte) DTV_CHUNKY = (byte) $40
+(const byte) DTV_COLORRAM_OFF = (byte) $10
+(const byte*) DTV_CONTROL = (byte*)(number) $d03c
+(const byte*) DTV_FEATURE = (byte*)(number) $d03f
+(const byte) DTV_FEATURE_ENABLE = (byte) 1
+(const byte) DTV_HIGHCOLOR = (byte) 4
+(const byte) DTV_LINEAR = (byte) 1
+(const byte*) DTV_PALETTE = (byte*)(number) $d200
+(const byte*) DTV_PLANEB_MODULO_HI = (byte*)(number) $d048
+(const byte*) DTV_PLANEB_MODULO_LO = (byte*)(number) $d047
+(const byte*) DTV_PLANEB_START_HI = (byte*)(number) $d04b
+(const byte*) DTV_PLANEB_START_LO = (byte*)(number) $d049
+(const byte*) DTV_PLANEB_START_MI = (byte*)(number) $d04a
+(const byte*) DTV_PLANEB_STEP = (byte*)(number) $d04c
+(const byte*) PROCPORT = (byte*)(number) 1
+(const byte*) PROCPORT_DDR = (byte*)(number) 0
+(const byte) PROCPORT_DDR_MEMORY_MASK = (byte) 7
+(const byte) PROCPORT_RAM_IO = (byte) 5
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) VIC_CONTROL = (byte*)(number) $d011
+(const byte*) VIC_CONTROL2 = (byte*)(number) $d016
+(const byte) VIC_CSEL = (byte) 8
+(const byte) VIC_DEN = (byte) $10
+(const byte) VIC_ECM = (byte) $40
+(const byte) VIC_MCM = (byte) $10
+(const byte*) VIC_MEMORY = (byte*)(number) $d018
+(const byte) VIC_RSEL = (byte) 8
 (void()) dtvSetCpuBankSegment1((byte) dtvSetCpuBankSegment1::cpuBankIdx)
 (label) dtvSetCpuBankSegment1::@return
-(byte*) dtvSetCpuBankSegment1::cpuBank
+(const byte*) dtvSetCpuBankSegment1::cpuBank = (byte*)(number) $ff
 (byte) dtvSetCpuBankSegment1::cpuBankIdx
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#0
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#1
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#2
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#3
 (void()) gfx_init_chunky()
-(byte*~) gfx_init_chunky::$0
-(byte~) gfx_init_chunky::$1
-(bool~) gfx_init_chunky::$10
-(bool~) gfx_init_chunky::$11
-(byte~) gfx_init_chunky::$3
-(bool~) gfx_init_chunky::$5
-(bool~) gfx_init_chunky::$6
-(word~) gfx_init_chunky::$8
-(byte~) gfx_init_chunky::$9
+(bool~) gfx_init_chunky::$2
+(bool~) gfx_init_chunky::$3
+(word~) gfx_init_chunky::$5
+(byte~) gfx_init_chunky::$6
+(bool~) gfx_init_chunky::$7
+(bool~) gfx_init_chunky::$8
 (label) gfx_init_chunky::@1
 (label) gfx_init_chunky::@2
 (label) gfx_init_chunky::@3
@@ -344,40 +273,12 @@ SYMBOL TABLE SSA
 (byte) gfx_init_chunky::y#6
 (byte) gfx_init_chunky::y#7
 (void()) main()
-(byte~) main::$1
-(byte~) main::$10
-(word~) main::$11
-(number~) main::$12
-(byte~) main::$13
-(number~) main::$14
-(word~) main::$15
-(number~) main::$16
-(number~) main::$17
-(byte~) main::$18
-(word~) main::$19
-(byte~) main::$2
-(number~) main::$20
-(number~) main::$21
-(number~) main::$22
-(number~) main::$23
-(bool~) main::$24
-(byte~) main::$25
-(byte~) main::$26
-(number~) main::$27
-(bool~) main::$28
-(byte~) main::$29
-(byte~) main::$3
-(byte~) main::$30
-(number~) main::$31
-(number~) main::$32
-(number~) main::$33
-(bool~) main::$34
-(byte~) main::$4
-(byte~) main::$5
-(byte~) main::$6
-(number~) main::$7
-(byte~) main::$8
-(byte~) main::$9
+(bool~) main::$1
+(bool~) main::$2
+(number~) main::$3
+(number~) main::$4
+(number~) main::$5
+(bool~) main::$6
 (label) main::@1
 (label) main::@12
 (label) main::@17
@@ -395,128 +296,59 @@ SYMBOL TABLE SSA
 (byte) main::rst#1
 (byte) main::rst#2
 
-Adding number conversion cast (unumber) 7 in (byte) PROCPORT_DDR_MEMORY_MASK ← (number) 7
-Adding number conversion cast (unumber) 5 in (byte) PROCPORT_RAM_IO ← (number) 5
-Adding number conversion cast (unumber) $40 in (byte) VIC_ECM ← (number) $40
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) $10 in (byte) VIC_MCM ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_CSEL ← (number) 8
-Adding number conversion cast (unumber) 1 in (byte) DTV_FEATURE_ENABLE ← (number) 1
-Adding number conversion cast (unumber) 1 in (byte) DTV_LINEAR ← (number) 1
-Adding number conversion cast (unumber) 4 in (byte) DTV_HIGHCOLOR ← (number) 4
-Adding number conversion cast (unumber) $10 in (byte) DTV_COLORRAM_OFF ← (number) $10
-Adding number conversion cast (unumber) $20 in (byte) DTV_BADLINE_OFF ← (number) $20
-Adding number conversion cast (unumber) $40 in (byte) DTV_CHUNKY ← (number) $40
-Adding number conversion cast (unumber) 3 in (number~) main::$7 ← (byte~) main::$6 | (number) 3
-Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (byte~) main::$6 | (unumber)(number) 3
-Adding number conversion cast (unumber) 0 in *((byte*) DTV_PLANEB_START_HI) ← (number) 0
-Adding number conversion cast (unumber) 8 in *((byte*) DTV_PLANEB_STEP) ← (number) 8
-Adding number conversion cast (unumber) 0 in *((byte*) DTV_PLANEB_MODULO_LO) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) DTV_PLANEB_MODULO_HI) ← (number) 0
-Adding number conversion cast (unumber) 3 in *((byte*) CIA2_PORT_A_DDR) ← (number) 3
-Adding number conversion cast (unumber) $4000 in (number~) main::$12 ← (word~) main::$11 / (number) $4000
-Adding number conversion cast (unumber) main::$12 in (number~) main::$12 ← (word~) main::$11 / (unumber)(number) $4000
-Adding number conversion cast (unumber) 3 in (number~) main::$14 ← (number) 3 ^ (byte~) main::$13
-Adding number conversion cast (unumber) main::$14 in (number~) main::$14 ← (unumber)(number) 3 ^ (byte~) main::$13
-Adding number conversion cast (unumber) $3fff in (number~) main::$16 ← (word~) main::$15 & (number) $3fff
-Adding number conversion cast (unumber) main::$16 in (number~) main::$16 ← (word~) main::$15 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) $40 in (number~) main::$17 ← (unumber~) main::$16 / (number) $40
-Adding number conversion cast (unumber) main::$17 in (number~) main::$17 ← (unumber~) main::$16 / (unumber)(number) $40
-Adding number conversion cast (unumber) $3fff in (number~) main::$20 ← (word~) main::$19 & (number) $3fff
-Adding number conversion cast (unumber) main::$20 in (number~) main::$20 ← (word~) main::$19 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) main::$21 in (number~) main::$21 ← > (unumber~) main::$20
-Adding number conversion cast (unumber) 4 in (number~) main::$22 ← (unumber~) main::$21 / (number) 4
-Adding number conversion cast (unumber) main::$22 in (number~) main::$22 ← (unumber~) main::$21 / (unumber)(number) 4
-Adding number conversion cast (unumber) main::$23 in (number~) main::$23 ← (byte~) main::$18 | (unumber~) main::$22
-Adding number conversion cast (unumber) 3 in (number~) main::$27 ← (byte~) main::$26 | (number) 3
-Adding number conversion cast (unumber) main::$27 in (number~) main::$27 ← (byte~) main::$26 | (unumber)(number) 3
-Adding number conversion cast (unumber) 0 in *((byte*) BORDERCOL) ← (number) 0
-Adding number conversion cast (unumber) $42 in (byte) main::rst#0 ← (number) $42
-Adding number conversion cast (unumber) 7 in (number~) main::$31 ← (byte) main::rst#1 & (number) 7
-Adding number conversion cast (unumber) main::$31 in (number~) main::$31 ← (byte) main::rst#1 & (unumber)(number) 7
-Adding number conversion cast (unumber) main::$32 in (number~) main::$32 ← (byte~) main::$30 | (unumber~) main::$31
-Adding number conversion cast (unumber) $10 in (number~) main::$33 ← (byte) main::rst#1 * (number) $10
-Adding number conversion cast (unumber) main::$33 in (number~) main::$33 ← (byte) main::rst#1 * (unumber)(number) $10
-Adding number conversion cast (unumber) $f2 in (bool~) main::$34 ← (byte) main::rst#1 != (number) $f2
-Adding number conversion cast (unumber) $4000 in (byte*~) gfx_init_chunky::$0 ← (byte*) CHUNKY / (number) $4000
-Adding number conversion cast (unumber) $8000 in (bool~) gfx_init_chunky::$5 ← (byte*) gfx_init_chunky::gfxb#3 == (number) $8000
+Adding number conversion cast (unumber) VIC_DEN|VIC_ECM|VIC_RSEL|3 in *((const byte*) VIC_CONTROL) ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) VIC_CONTROL) ← ((unumber)) (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 0 in *((const byte*) DTV_PLANEB_START_HI) ← (number) 0
+Adding number conversion cast (unumber) 8 in *((const byte*) DTV_PLANEB_STEP) ← (number) 8
+Adding number conversion cast (unumber) 0 in *((const byte*) DTV_PLANEB_MODULO_LO) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) DTV_PLANEB_MODULO_HI) ← (number) 0
+Adding number conversion cast (unumber) 3 in *((const byte*) CIA2_PORT_A_DDR) ← (number) 3
+Adding number conversion cast (unumber) 3^(byte)(word)CHUNKY/$4000 in *((const byte*) CIA2_PORT_A) ← (number) 3^(byte)(word)(const byte*) CHUNKY/(number) $4000
+Adding number conversion cast (unumber) 3 in *((const byte*) CIA2_PORT_A) ← ((unumber)) (number) 3^(byte)(word)(const byte*) CHUNKY/(number) $4000
+Adding number conversion cast (unumber) $4000 in *((const byte*) CIA2_PORT_A) ← ((unumber)) (unumber)(number) 3^(byte)(word)(const byte*) CHUNKY/(number) $4000
+Adding number conversion cast (unumber) (byte)(word)CHUNKY&$3fff/$40|>(word)CHUNKY&$3fff/4 in *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) CHUNKY&(number) $3fff/(number) $40|>(word)(const byte*) CHUNKY&(number) $3fff/(number) 4
+Adding number conversion cast (unumber) >(word)CHUNKY&$3fff/4 in *((const byte*) VIC_MEMORY) ← ((unumber)) (byte)(word)(const byte*) CHUNKY&(number) $3fff/(number) $40|>(word)(const byte*) CHUNKY&(number) $3fff/(number) 4
+Adding number conversion cast (unumber) $3fff in *((const byte*) VIC_MEMORY) ← ((unumber)) (byte)(word)(const byte*) CHUNKY&(number) $3fff/(number) $40|(unumber)>(word)(const byte*) CHUNKY&(number) $3fff/(number) 4
+Adding number conversion cast (unumber) $3fff in *((const byte*) VIC_MEMORY) ← ((unumber)) (byte)(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(number) $40|(unumber)>(word)(const byte*) CHUNKY&(number) $3fff/(number) 4
+Adding number conversion cast (unumber) VIC_DEN|VIC_ECM|VIC_RSEL|3 in *((const byte*) VIC_CONTROL) ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) VIC_CONTROL) ← ((unumber)) (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 0 in *((const byte*) BORDERCOL) ← (number) 0
+Adding number conversion cast (unumber) 7 in (number~) main::$3 ← (byte) main::rst#1 & (number) 7
+Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (byte) main::rst#1 & (unumber)(number) 7
+Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (unumber~) main::$3
+Adding number conversion cast (unumber) $10 in (number~) main::$5 ← (byte) main::rst#1 * (number) $10
+Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (byte) main::rst#1 * (unumber)(number) $10
+Adding number conversion cast (unumber) $f2 in (bool~) main::$6 ← (byte) main::rst#1 != (number) $f2
+Adding number conversion cast (unumber) $4000 in (byte) gfx_init_chunky::gfxbCpuBank#0 ← (byte)(const byte*) CHUNKY/(number) $4000
+Adding number conversion cast (unumber) $8000 in (bool~) gfx_init_chunky::$2 ← (byte*) gfx_init_chunky::gfxb#3 == (number) $8000
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) PROCPORT_DDR ← (byte*)(number) 0
-Inlining cast (byte) PROCPORT_DDR_MEMORY_MASK ← (unumber)(number) 7
-Inlining cast (byte*) PROCPORT ← (byte*)(number) 1
-Inlining cast (byte) PROCPORT_RAM_IO ← (unumber)(number) 5
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) VIC_CONTROL ← (byte*)(number) $d011
-Inlining cast (byte) VIC_ECM ← (unumber)(number) $40
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) VIC_CONTROL2 ← (byte*)(number) $d016
-Inlining cast (byte) VIC_MCM ← (unumber)(number) $10
-Inlining cast (byte) VIC_CSEL ← (unumber)(number) 8
-Inlining cast (byte*) VIC_MEMORY ← (byte*)(number) $d018
-Inlining cast (byte*) CIA2_PORT_A ← (byte*)(number) $dd00
-Inlining cast (byte*) CIA2_PORT_A_DDR ← (byte*)(number) $dd02
-Inlining cast (byte*) DTV_FEATURE ← (byte*)(number) $d03f
-Inlining cast (byte) DTV_FEATURE_ENABLE ← (unumber)(number) 1
-Inlining cast (byte*) DTV_CONTROL ← (byte*)(number) $d03c
-Inlining cast (byte) DTV_LINEAR ← (unumber)(number) 1
-Inlining cast (byte) DTV_HIGHCOLOR ← (unumber)(number) 4
-Inlining cast (byte) DTV_COLORRAM_OFF ← (unumber)(number) $10
-Inlining cast (byte) DTV_BADLINE_OFF ← (unumber)(number) $20
-Inlining cast (byte) DTV_CHUNKY ← (unumber)(number) $40
-Inlining cast (byte*) DTV_PALETTE ← (byte*)(number) $d200
-Inlining cast (byte*) DTV_PLANEB_START_LO ← (byte*)(number) $d049
-Inlining cast (byte*) DTV_PLANEB_START_MI ← (byte*)(number) $d04a
-Inlining cast (byte*) DTV_PLANEB_START_HI ← (byte*)(number) $d04b
-Inlining cast (byte*) DTV_PLANEB_STEP ← (byte*)(number) $d04c
-Inlining cast (byte*) DTV_PLANEB_MODULO_LO ← (byte*)(number) $d047
-Inlining cast (byte*) DTV_PLANEB_MODULO_HI ← (byte*)(number) $d048
-Inlining cast (byte*) dtvSetCpuBankSegment1::cpuBank ← (byte*)(number) $ff
-Inlining cast (byte*) CHUNKY ← (byte*)(number) $8000
-Inlining cast *((byte*) DTV_PLANEB_START_HI) ← (unumber)(number) 0
-Inlining cast *((byte*) DTV_PLANEB_STEP) ← (unumber)(number) 8
-Inlining cast *((byte*) DTV_PLANEB_MODULO_LO) ← (unumber)(number) 0
-Inlining cast *((byte*) DTV_PLANEB_MODULO_HI) ← (unumber)(number) 0
-Inlining cast *((byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
-Inlining cast (word~) main::$11 ← (word)(byte*) CHUNKY
-Inlining cast (byte~) main::$13 ← (byte)(unumber~) main::$12
-Inlining cast (word~) main::$15 ← (word)(byte*) CHUNKY
-Inlining cast (byte~) main::$18 ← (byte)(unumber~) main::$17
-Inlining cast (word~) main::$19 ← (word)(byte*) CHUNKY
-Inlining cast *((byte*) BORDERCOL) ← (unumber)(number) 0
-Inlining cast (byte) main::rst#0 ← (unumber)(number) $42
-Inlining cast (byte~) gfx_init_chunky::$1 ← (byte)(byte*~) gfx_init_chunky::$0
-Inlining cast (byte*) gfx_init_chunky::gfxb#0 ← (byte*)(number) $4000
-Inlining cast (byte~) gfx_init_chunky::$9 ← (byte)(word~) gfx_init_chunky::$8
+Adding number conversion cast (unumber) $40 in *((const byte*) VIC_MEMORY) ← ((unumber)) (byte)(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(number) $40|(unumber)>(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(number) 4
+Adding number conversion cast (unumber) 4 in *((const byte*) VIC_MEMORY) ← ((unumber)) (byte)(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(unumber)(number) $40|(unumber)>(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(number) 4
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((const byte*) VIC_CONTROL) ← (unumber)(const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(unumber)(number) 3
+Inlining cast *((const byte*) DTV_PLANEB_START_HI) ← (unumber)(number) 0
+Inlining cast *((const byte*) DTV_PLANEB_STEP) ← (unumber)(number) 8
+Inlining cast *((const byte*) DTV_PLANEB_MODULO_LO) ← (unumber)(number) 0
+Inlining cast *((const byte*) DTV_PLANEB_MODULO_HI) ← (unumber)(number) 0
+Inlining cast *((const byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
+Inlining cast *((const byte*) CIA2_PORT_A) ← (unumber)(unumber)(number) 3^(byte)(word)(const byte*) CHUNKY/(unumber)(number) $4000
+Inlining cast *((const byte*) VIC_MEMORY) ← (unumber)(byte)(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(unumber)(number) $40|(unumber)>(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(unumber)(number) 4
+Inlining cast *((const byte*) VIC_CONTROL) ← (unumber)(const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(unumber)(number) 3
+Inlining cast *((const byte*) BORDERCOL) ← (unumber)(number) 0
+Inlining cast (byte~) gfx_init_chunky::$6 ← (byte)(word~) gfx_init_chunky::$5
 Inlining cast (byte*) gfx_init_chunky::gfxb#2 ← (byte*)(number) $4000
-Inlining cast (byte~) gfx_init_chunky::$3 ← (byte)(number) $4000/(number) $4000
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 0
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (byte*) 1
-Simplifying constant integer cast 5
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $40
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53270
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 56576
 Simplifying constant pointer cast (byte*) 56578
 Simplifying constant pointer cast (byte*) 53311
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 53308
-Simplifying constant integer cast 1
-Simplifying constant integer cast 4
-Simplifying constant integer cast $10
-Simplifying constant integer cast $20
-Simplifying constant integer cast $40
 Simplifying constant pointer cast (byte*) 53760
 Simplifying constant pointer cast (byte*) 53321
 Simplifying constant pointer cast (byte*) 53322
@@ -526,21 +358,25 @@ Simplifying constant pointer cast (byte*) 53319
 Simplifying constant pointer cast (byte*) 53320
 Simplifying constant pointer cast (byte*) 255
 Simplifying constant pointer cast (byte*) 32768
+Simplifying constant integer cast (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 3
-Simplifying constant integer cast $4000
+Simplifying constant integer cast (unumber)(number) 3^(byte)(word)(const byte*) CHUNKY/(unumber)(number) $4000
 Simplifying constant integer cast 3
+Simplifying constant integer cast $4000
+Simplifying constant integer cast (byte)(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(unumber)(number) $40|(unumber)>(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(unumber)(number) 4
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast $40
+Simplifying constant integer cast >(word)(const byte*) CHUNKY&(unumber)(number) $3fff/(unumber)(number) 4
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
+Simplifying constant integer cast (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
-Simplifying constant integer cast $42
 Simplifying constant integer cast 7
 Simplifying constant integer cast $10
 Simplifying constant integer cast $f2
@@ -549,64 +385,39 @@ Simplifying constant pointer cast (byte*) 16384
 Simplifying constant integer cast $8000
 Simplifying constant pointer cast (byte*) 16384
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $40
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (word) $4000
-Finalized unsigned number type (byte) 3
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) $40
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $42
 Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) $10
 Finalized unsigned number type (byte) $f2
 Finalized unsigned number type (word) $4000
 Finalized unsigned number type (word) $8000
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$7 ← (byte~) main::$6 | (byte) 3
-Inferred type updated to word in (unumber~) main::$12 ← (word~) main::$11 / (word) $4000
-Inferred type updated to byte in (unumber~) main::$14 ← (byte) 3 ^ (byte~) main::$13
-Inferred type updated to word in (unumber~) main::$16 ← (word~) main::$15 & (word) $3fff
-Inferred type updated to word in (unumber~) main::$17 ← (word~) main::$16 / (byte) $40
-Inferred type updated to word in (unumber~) main::$20 ← (word~) main::$19 & (word) $3fff
-Inferred type updated to byte in (unumber~) main::$21 ← > (word~) main::$20
-Inferred type updated to byte in (unumber~) main::$22 ← (byte~) main::$21 / (byte) 4
-Inferred type updated to byte in (unumber~) main::$23 ← (byte~) main::$18 | (byte~) main::$22
-Inferred type updated to byte in (unumber~) main::$27 ← (byte~) main::$26 | (byte) 3
-Inferred type updated to byte in (unumber~) main::$31 ← (byte) main::rst#1 & (byte) 7
-Inferred type updated to byte in (unumber~) main::$32 ← (byte~) main::$30 | (byte~) main::$31
-Inferred type updated to byte in (unumber~) main::$33 ← (byte) main::rst#1 * (byte) $10
-Inversing boolean not [120] (bool~) gfx_init_chunky::$6 ← (byte*) gfx_init_chunky::gfxb#3 != (word) $8000 from [119] (bool~) gfx_init_chunky::$5 ← (byte*) gfx_init_chunky::gfxb#3 == (word) $8000
+Inferred type updated to byte in (unumber~) main::$3 ← (byte) main::rst#1 & (byte) 7
+Inferred type updated to byte in (unumber~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$3
+Inferred type updated to byte in (unumber~) main::$5 ← (byte) main::rst#1 * (byte) $10
+Inversing boolean not [57] (bool~) gfx_init_chunky::$3 ← (byte*) gfx_init_chunky::gfxb#3 != (word) $8000 from [56] (bool~) gfx_init_chunky::$2 ← (byte*) gfx_init_chunky::gfxb#3 == (word) $8000
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte) gfx_init_chunky::gfxbCpuBank#0 = (byte~) gfx_init_chunky::$1 (byte) gfx_init_chunky::gfxbCpuBank#3 
-Alias (byte) gfx_init_chunky::c#0 = (byte~) gfx_init_chunky::$9 
+Alias (byte) gfx_init_chunky::gfxbCpuBank#0 = (byte) gfx_init_chunky::gfxbCpuBank#3 
+Alias (byte) gfx_init_chunky::c#0 = (byte~) gfx_init_chunky::$6 
 Alias (byte) gfx_init_chunky::gfxbCpuBank#4 = (byte) gfx_init_chunky::gfxbCpuBank#6 (byte) gfx_init_chunky::gfxbCpuBank#5 
 Alias (word) gfx_init_chunky::x#3 = (word) gfx_init_chunky::x#5 (word) gfx_init_chunky::x#4 
 Alias (byte) gfx_init_chunky::y#4 = (byte) gfx_init_chunky::y#7 (byte) gfx_init_chunky::y#5 
 Alias (byte) gfx_init_chunky::y#2 = (byte) gfx_init_chunky::y#3 
 Alias (byte*) gfx_init_chunky::gfxb#1 = (byte*) gfx_init_chunky::gfxb#6 
 Alias (byte) gfx_init_chunky::gfxbCpuBank#8 = (byte) gfx_init_chunky::gfxbCpuBank#9 
-Alias (byte) dtvSetCpuBankSegment1::cpuBankIdx#2 = (byte~) gfx_init_chunky::$3 
 Successful SSA optimization Pass2AliasElimination
 Alias (word) gfx_init_chunky::x#2 = (word) gfx_init_chunky::x#3 
 Alias (byte) gfx_init_chunky::y#2 = (byte) gfx_init_chunky::y#4 
@@ -614,68 +425,35 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::rst#2 (byte) main::rst#0
 Identical Phi Values (byte) gfx_init_chunky::y#2 (byte) gfx_init_chunky::y#6
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$24 [82] if((byte) main::j#1!=rangelast(0,$f)) goto main::@1
-Simple Condition (bool~) main::$28 [93] if(*((byte*) RASTER)!=(byte) main::rst#0) goto main::@6
-Simple Condition (bool~) main::$34 [105] if((byte) main::rst#1!=(byte) $f2) goto main::@12
-Simple Condition (bool~) gfx_init_chunky::$6 [121] if((byte*) gfx_init_chunky::gfxb#3!=(word) $8000) goto gfx_init_chunky::@3
-Simple Condition (bool~) gfx_init_chunky::$10 [130] if((word) gfx_init_chunky::x#1!=rangelast(0,$13f)) goto gfx_init_chunky::@2
-Simple Condition (bool~) gfx_init_chunky::$11 [140] if((byte) gfx_init_chunky::y#1!=rangelast(0,$32)) goto gfx_init_chunky::@1
+Simple Condition (bool~) main::$1 [26] if((byte) main::j#1!=rangelast(0,$f)) goto main::@1
+Simple Condition (bool~) main::$2 [34] if(*((const byte*) RASTER)!=(byte) main::rst#0) goto main::@6
+Simple Condition (bool~) main::$6 [44] if((byte) main::rst#1!=(byte) $f2) goto main::@12
+Simple Condition (bool~) gfx_init_chunky::$3 [58] if((byte*) gfx_init_chunky::gfxb#3!=(word) $8000) goto gfx_init_chunky::@3
+Simple Condition (bool~) gfx_init_chunky::$7 [67] if((word) gfx_init_chunky::x#1!=rangelast(0,$13f)) goto gfx_init_chunky::@2
+Simple Condition (bool~) gfx_init_chunky::$8 [77] if((byte) gfx_init_chunky::y#1!=rangelast(0,$32)) goto gfx_init_chunky::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [141] (byte) dtvSetCpuBankSegment1::cpuBankIdx#2 ← (byte)(number) $4000/(number) $4000
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) PROCPORT_DDR = (byte*) 0
-Constant (const byte) PROCPORT_DDR_MEMORY_MASK = 7
-Constant (const byte*) PROCPORT = (byte*) 1
-Constant (const byte) PROCPORT_RAM_IO = 5
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) VIC_CONTROL = (byte*) 53265
-Constant (const byte) VIC_ECM = $40
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) VIC_CONTROL2 = (byte*) 53270
-Constant (const byte) VIC_MCM = $10
-Constant (const byte) VIC_CSEL = 8
-Constant (const byte*) VIC_MEMORY = (byte*) 53272
-Constant (const byte*) CIA2_PORT_A = (byte*) 56576
-Constant (const byte*) CIA2_PORT_A_DDR = (byte*) 56578
-Constant (const byte*) DTV_FEATURE = (byte*) 53311
-Constant (const byte) DTV_FEATURE_ENABLE = 1
-Constant (const byte*) DTV_CONTROL = (byte*) 53308
-Constant (const byte) DTV_LINEAR = 1
-Constant (const byte) DTV_HIGHCOLOR = 4
-Constant (const byte) DTV_COLORRAM_OFF = $10
-Constant (const byte) DTV_BADLINE_OFF = $20
-Constant (const byte) DTV_CHUNKY = $40
-Constant (const byte*) DTV_PALETTE = (byte*) 53760
-Constant (const byte*) DTV_PLANEB_START_LO = (byte*) 53321
-Constant (const byte*) DTV_PLANEB_START_MI = (byte*) 53322
-Constant (const byte*) DTV_PLANEB_START_HI = (byte*) 53323
-Constant (const byte*) DTV_PLANEB_STEP = (byte*) 53324
-Constant (const byte*) DTV_PLANEB_MODULO_LO = (byte*) 53319
-Constant (const byte*) DTV_PLANEB_MODULO_HI = (byte*) 53320
-Constant (const byte*) dtvSetCpuBankSegment1::cpuBank = (byte*) 255
-Constant (const byte*) CHUNKY = (byte*) 32768
 Constant (const byte) main::j#0 = 0
 Constant (const byte) main::rst#0 = $42
+Constant (const byte) gfx_init_chunky::gfxbCpuBank#0 = (byte)CHUNKY/$4000
 Constant (const byte*) gfx_init_chunky::gfxb#0 = (byte*) 16384
 Constant (const byte) gfx_init_chunky::y#0 = 0
 Constant (const word) gfx_init_chunky::x#0 = 0
 Constant (const byte*) gfx_init_chunky::gfxb#2 = (byte*) 16384
 Constant (const byte) dtvSetCpuBankSegment1::cpuBankIdx#2 = (byte)$4000/$4000
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)CHUNKY in [62] (word~) main::$11 ← (word)(const byte*) CHUNKY
-Constant value identified (word)CHUNKY in [67] (word~) main::$15 ← (word)(const byte*) CHUNKY
-Constant value identified (word)CHUNKY in [71] (word~) main::$19 ← (word)(const byte*) CHUNKY
-Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [83] if(true) goto main::@4
+Constant (const byte) dtvSetCpuBankSegment1::cpuBankIdx#0 = gfx_init_chunky::gfxbCpuBank#0
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [27] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [80] main::j#1 ← ++ main::j#2 to ++
-Resolved ranged comparison value [82] if(main::j#1!=rangelast(0,$f)) goto main::@1 to (number) $10
-Resolved ranged next value [128] gfx_init_chunky::x#1 ← ++ gfx_init_chunky::x#2 to ++
-Resolved ranged comparison value [130] if(gfx_init_chunky::x#1!=rangelast(0,$13f)) goto gfx_init_chunky::@2 to (number) $140
-Resolved ranged next value [138] gfx_init_chunky::y#1 ← ++ gfx_init_chunky::y#6 to ++
-Resolved ranged comparison value [140] if(gfx_init_chunky::y#1!=rangelast(0,$32)) goto gfx_init_chunky::@1 to (number) $33
+Resolved ranged next value [24] main::j#1 ← ++ main::j#2 to ++
+Resolved ranged comparison value [26] if(main::j#1!=rangelast(0,$f)) goto main::@1 to (number) $10
+Resolved ranged next value [65] gfx_init_chunky::x#1 ← ++ gfx_init_chunky::x#2 to ++
+Resolved ranged comparison value [67] if(gfx_init_chunky::x#1!=rangelast(0,$13f)) goto gfx_init_chunky::@2 to (number) $140
+Resolved ranged next value [75] gfx_init_chunky::y#1 ← ++ gfx_init_chunky::y#6 to ++
+Resolved ranged comparison value [77] if(gfx_init_chunky::y#1!=rangelast(0,$32)) goto gfx_init_chunky::@1 to (number) $33
+Simplifying constant evaluating to zero <(const byte*) CHUNKY in [12] *((const byte*) DTV_PLANEB_START_LO) ← <(const byte*) CHUNKY
+Simplifying constant evaluating to zero (byte)(word)(const byte*) CHUNKY&(word) $3fff/(byte) $40|>(word)(const byte*) CHUNKY&(word) $3fff/(byte) 4 in [20] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) CHUNKY&(word) $3fff/(byte) $40|>(word)(const byte*) CHUNKY&(word) $3fff/(byte) 4
+Successful SSA optimization PassNSimplifyConstantZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $10 in if((byte) main::j#1!=(number) $10) goto main::@1
@@ -690,153 +468,38 @@ Finalized unsigned number type (byte) $10
 Finalized unsigned number type (word) $140
 Finalized unsigned number type (byte) $33
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [9] (byte~) main::$1 ← (const byte) DTV_HIGHCOLOR | (const byte) DTV_LINEAR
-Constant right-side identified [14] (byte~) main::$5 ← (const byte) VIC_DEN | (const byte) VIC_ECM
-Constant right-side identified [18] (byte~) main::$8 ← (const byte) VIC_MCM | (const byte) VIC_CSEL
-Constant right-side identified [20] (byte~) main::$9 ← < (const byte*) CHUNKY
-Constant right-side identified [22] (byte~) main::$10 ← > (const byte*) CHUNKY
-Constant right-side identified [49] (byte~) main::$25 ← (const byte) VIC_DEN | (const byte) VIC_ECM
-Constant right-side identified [57] (byte~) main::$29 ← (const byte) VIC_DEN | (const byte) VIC_ECM
-Constant right-side identified [66] (byte*~) gfx_init_chunky::$0 ← (const byte*) CHUNKY / (word) $4000
+Constant right-side identified [39] (byte) gfx_init_chunky::gfxbCpuBank#1 ← ++ (const byte) gfx_init_chunky::gfxbCpuBank#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$1 = DTV_HIGHCOLOR|DTV_LINEAR
-Constant (const byte) main::$5 = VIC_DEN|VIC_ECM
-Constant (const byte) main::$8 = VIC_MCM|VIC_CSEL
-Constant (const byte) main::$9 = <CHUNKY
-Constant (const byte) main::$10 = >CHUNKY
-Constant (const word) main::$11 = (word)CHUNKY
-Constant (const word) main::$15 = (word)CHUNKY
-Constant (const word) main::$19 = (word)CHUNKY
-Constant (const byte) main::$25 = VIC_DEN|VIC_ECM
-Constant (const byte) main::$29 = VIC_DEN|VIC_ECM
-Constant (const byte*) gfx_init_chunky::$0 = CHUNKY/$4000
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)gfx_init_chunky::$0 in [67] (byte) gfx_init_chunky::gfxbCpuBank#0 ← (byte)(const byte*) gfx_init_chunky::$0
-Successful SSA optimization Pass2ConstantValues
-Simplifying constant evaluating to zero <(const byte*) CHUNKY in 
-Successful SSA optimization PassNSimplifyConstantZero
-Constant right-side identified [9] (byte~) main::$2 ← (const byte) main::$1 | (const byte) DTV_COLORRAM_OFF
-Constant right-side identified [13] (byte~) main::$6 ← (const byte) main::$5 | (const byte) VIC_RSEL
-Constant right-side identified [24] (word~) main::$12 ← (const word) main::$11 / (word) $4000
-Constant right-side identified [28] (word~) main::$16 ← (const word) main::$15 & (word) $3fff
-Constant right-side identified [31] (word~) main::$20 ← (const word) main::$19 & (word) $3fff
-Constant right-side identified [41] (byte~) main::$26 ← (const byte) main::$25 | (const byte) VIC_RSEL
-Constant right-side identified [48] (byte~) main::$30 ← (const byte) main::$29 | (const byte) VIC_RSEL
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = main::$1|DTV_COLORRAM_OFF
-Constant (const byte) main::$6 = main::$5|VIC_RSEL
-Constant (const word) main::$12 = main::$11/$4000
-Constant (const word) main::$16 = main::$15&$3fff
-Constant (const word) main::$20 = main::$19&$3fff
-Constant (const byte) main::$26 = main::$25|VIC_RSEL
-Constant (const byte) main::$30 = main::$29|VIC_RSEL
-Constant (const byte) gfx_init_chunky::gfxbCpuBank#0 = (byte)gfx_init_chunky::$0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) dtvSetCpuBankSegment1::cpuBankIdx#0 = gfx_init_chunky::gfxbCpuBank#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)main::$12 in [25] (byte~) main::$13 ← (byte)(const word) main::$12
-Successful SSA optimization Pass2ConstantValues
-Simplifying constant evaluating to zero (const word) main::$15&(word) $3fff in 
-Simplifying constant evaluating to zero (const word) main::$19&(word) $3fff in 
-Successful SSA optimization PassNSimplifyConstantZero
-Eliminating unused constant (const word) main::$15
-Eliminating unused constant (const word) main::$19
-Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [9] (byte~) main::$3 ← (const byte) main::$2 | (const byte) DTV_CHUNKY
-Constant right-side identified [12] (byte~) main::$7 ← (const byte) main::$6 | (byte) 3
-Constant right-side identified [25] (word~) main::$17 ← (const word) main::$16 / (byte) $40
-Constant right-side identified [27] (byte~) main::$21 ← > (const word) main::$20
-Constant right-side identified [36] (byte~) main::$27 ← (const byte) main::$26 | (byte) 3
-Constant right-side identified [50] (byte) gfx_init_chunky::gfxbCpuBank#1 ← ++ (const byte) gfx_init_chunky::gfxbCpuBank#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$3 = main::$2|DTV_CHUNKY
-Constant (const byte) main::$7 = main::$6|3
-Constant (const byte) main::$13 = (byte)main::$12
-Constant (const word) main::$17 = main::$16/$40
-Constant (const byte) main::$21 = >main::$20
-Constant (const byte) main::$27 = main::$26|3
 Constant (const byte) gfx_init_chunky::gfxbCpuBank#1 = ++gfx_init_chunky::gfxbCpuBank#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)main::$17 in [26] (byte~) main::$18 ← (byte)(const word) main::$17
-Successful SSA optimization Pass2ConstantValues
-Simplifying constant evaluating to zero (const word) main::$16/(byte) $40 in 
-Simplifying constant evaluating to zero >(const word) main::$20 in 
-Simplifying constant evaluating to zero (byte)(const word) main::$17 in [26] (byte~) main::$18 ← (byte)(const word) main::$17
-Successful SSA optimization PassNSimplifyConstantZero
-Eliminating unused constant (const word) main::$16
-Eliminating unused constant (const word) main::$20
-Eliminating unused constant (const word) main::$17
-Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [9] (byte~) main::$4 ← (const byte) main::$3 | (const byte) DTV_BADLINE_OFF
-Constant right-side identified [20] (byte~) main::$14 ← (byte) 3 ^ (const byte) main::$13
-Constant right-side identified [23] (byte~) main::$22 ← (const byte) main::$21 / (byte) 4
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$4 = main::$3|DTV_BADLINE_OFF
-Constant (const byte) main::$14 = 3^main::$13
-Constant (const byte) main::$18 = 0
-Constant (const byte) main::$22 = main::$21/4
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero (const byte) main::$21/(byte) 4 in 
-Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::$22 in [24] (byte~) main::$23 ← (const byte) main::$18 | (const byte) main::$22
-Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) main::$21
-Eliminating unused constant (const byte) main::$18
-Successful SSA optimization PassNEliminateUnusedVars
-Constant (const byte) main::$23 = main::$22
-Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [34] (byte~) main::$33 ← (byte) main::rst#1 * (byte) $10
+Rewriting multiplication to use shift [34] (byte~) main::$5 ← (byte) main::rst#1 * (byte) $10
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) dtvSetCpuBankSegment1::cpuBankIdx#2
 Inlining constant with var siblings (const byte) dtvSetCpuBankSegment1::cpuBankIdx#0
 Inlining constant with var siblings (const byte) main::j#0
 Inlining constant with var siblings (const byte) main::rst#0
+Inlining constant with var siblings (const byte) gfx_init_chunky::gfxbCpuBank#0
 Inlining constant with var siblings (const byte*) gfx_init_chunky::gfxb#0
 Inlining constant with var siblings (const byte) gfx_init_chunky::y#0
 Inlining constant with var siblings (const word) gfx_init_chunky::x#0
 Inlining constant with var siblings (const byte*) gfx_init_chunky::gfxb#2
-Inlining constant with var siblings (const byte) gfx_init_chunky::gfxbCpuBank#0
 Inlining constant with var siblings (const byte) gfx_init_chunky::gfxbCpuBank#1
 Constant inlined dtvSetCpuBankSegment1::cpuBankIdx#0 = (byte)(const byte*) CHUNKY/(word) $4000
 Constant inlined main::rst#0 = (byte) $42
 Constant inlined dtvSetCpuBankSegment1::cpuBankIdx#2 = (byte)(number) $4000/(number) $4000
-Constant inlined main::$12 = (word)(const byte*) CHUNKY/(word) $4000
-Constant inlined main::$13 = (byte)(word)(const byte*) CHUNKY/(word) $4000
-Constant inlined main::$14 = (byte) 3^(byte)(word)(const byte*) CHUNKY/(word) $4000
-Constant inlined gfx_init_chunky::y#0 = (byte) 0
-Constant inlined gfx_init_chunky::x#0 = (word) 0
-Constant inlined main::$30 = (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL
-Constant inlined main::$10 = >(const byte*) CHUNKY
-Constant inlined main::$11 = (word)(const byte*) CHUNKY
-Constant inlined main::j#0 = (byte) 0
-Constant inlined main::$23 = (byte) 0
 Constant inlined gfx_init_chunky::gfxbCpuBank#1 = ++(byte)(const byte*) CHUNKY/(word) $4000
-Constant inlined main::$25 = (const byte) VIC_DEN|(const byte) VIC_ECM
-Constant inlined main::$26 = (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL
+Constant inlined gfx_init_chunky::y#0 = (byte) 0
+Constant inlined main::j#0 = (byte) 0
+Constant inlined gfx_init_chunky::x#0 = (word) 0
 Constant inlined gfx_init_chunky::gfxb#2 = (byte*) 16384
 Constant inlined gfx_init_chunky::gfxb#0 = (byte*) 16384
-Constant inlined main::$22 = (byte) 0
 Constant inlined gfx_init_chunky::gfxbCpuBank#0 = (byte)(const byte*) CHUNKY/(word) $4000
-Constant inlined main::$1 = (const byte) DTV_HIGHCOLOR|(const byte) DTV_LINEAR
-Constant inlined main::$27 = (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(byte) 3
-Constant inlined main::$2 = (const byte) DTV_HIGHCOLOR|(const byte) DTV_LINEAR|(const byte) DTV_COLORRAM_OFF
-Constant inlined main::$29 = (const byte) VIC_DEN|(const byte) VIC_ECM
-Constant inlined main::$5 = (const byte) VIC_DEN|(const byte) VIC_ECM
-Constant inlined main::$6 = (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL
-Constant inlined main::$3 = (const byte) DTV_HIGHCOLOR|(const byte) DTV_LINEAR|(const byte) DTV_COLORRAM_OFF|(const byte) DTV_CHUNKY
-Constant inlined main::$4 = (const byte) DTV_HIGHCOLOR|(const byte) DTV_LINEAR|(const byte) DTV_COLORRAM_OFF|(const byte) DTV_CHUNKY|(const byte) DTV_BADLINE_OFF
-Constant inlined gfx_init_chunky::$0 = (const byte*) CHUNKY/(word) $4000
-Constant inlined main::$9 = (byte) 0
-Constant inlined main::$7 = (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(byte) 3
-Constant inlined main::$8 = (const byte) VIC_MCM|(const byte) VIC_CSEL
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@18(between main::@1 and main::@1)
 Added new block during phi lifting gfx_init_chunky::@10(between gfx_init_chunky::@5 and gfx_init_chunky::@1)
 Added new block during phi lifting gfx_init_chunky::@11(between gfx_init_chunky::@3 and gfx_init_chunky::@2)
 Added new block during phi lifting gfx_init_chunky::@12(between gfx_init_chunky::@2 and gfx_init_chunky::@3)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
-Adding NOP phi() at start of @5
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @8
 Adding NOP phi() at start of @end
@@ -846,27 +509,25 @@ Adding NOP phi() at start of gfx_init_chunky::@7
 Adding NOP phi() at start of gfx_init_chunky::@6
 Adding NOP phi() at start of gfx_init_chunky::@9
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to gfx_init_chunky:10 
-Calls in [gfx_init_chunky] to dtvSetCpuBankSegment1:44 dtvSetCpuBankSegment1:53 dtvSetCpuBankSegment1:66 
+Calls in [] to main:2 
+Calls in [main] to gfx_init_chunky:8 
+Calls in [gfx_init_chunky] to dtvSetCpuBankSegment1:42 dtvSetCpuBankSegment1:51 dtvSetCpuBankSegment1:64 
 
 Created 10 initial phi equivalence classes
-Coalesced [42] main::j#3 ← main::j#1
-Coalesced [47] gfx_init_chunky::gfxb#8 ← gfx_init_chunky::gfxb#5
-Coalesced [48] gfx_init_chunky::gfxbCpuBank#11 ← gfx_init_chunky::gfxbCpuBank#7
-Coalesced [52] dtvSetCpuBankSegment1::cpuBankIdx#4 ← dtvSetCpuBankSegment1::cpuBankIdx#1
-Coalesced [55] gfx_init_chunky::gfxbCpuBank#14 ← gfx_init_chunky::gfxbCpuBank#2
-Coalesced [69] gfx_init_chunky::gfxb#7 ← gfx_init_chunky::gfxb#1
-Coalesced [70] gfx_init_chunky::y#8 ← gfx_init_chunky::y#1
-Coalesced [71] gfx_init_chunky::gfxbCpuBank#10 ← gfx_init_chunky::gfxbCpuBank#8
-Coalesced (already) [72] gfx_init_chunky::gfxb#9 ← gfx_init_chunky::gfxb#1
-Coalesced [73] gfx_init_chunky::x#6 ← gfx_init_chunky::x#1
-Coalesced (already) [74] gfx_init_chunky::gfxbCpuBank#12 ← gfx_init_chunky::gfxbCpuBank#8
-Coalesced [75] gfx_init_chunky::gfxb#10 ← gfx_init_chunky::gfxb#3
-Coalesced (already) [76] gfx_init_chunky::gfxbCpuBank#13 ← gfx_init_chunky::gfxbCpuBank#4
+Coalesced [40] main::j#3 ← main::j#1
+Coalesced [45] gfx_init_chunky::gfxb#8 ← gfx_init_chunky::gfxb#5
+Coalesced [46] gfx_init_chunky::gfxbCpuBank#11 ← gfx_init_chunky::gfxbCpuBank#7
+Coalesced [50] dtvSetCpuBankSegment1::cpuBankIdx#4 ← dtvSetCpuBankSegment1::cpuBankIdx#1
+Coalesced [53] gfx_init_chunky::gfxbCpuBank#14 ← gfx_init_chunky::gfxbCpuBank#2
+Coalesced [67] gfx_init_chunky::gfxb#7 ← gfx_init_chunky::gfxb#1
+Coalesced [68] gfx_init_chunky::y#8 ← gfx_init_chunky::y#1
+Coalesced [69] gfx_init_chunky::gfxbCpuBank#10 ← gfx_init_chunky::gfxbCpuBank#8
+Coalesced (already) [70] gfx_init_chunky::gfxb#9 ← gfx_init_chunky::gfxb#1
+Coalesced [71] gfx_init_chunky::x#6 ← gfx_init_chunky::x#1
+Coalesced (already) [72] gfx_init_chunky::gfxbCpuBank#12 ← gfx_init_chunky::gfxbCpuBank#8
+Coalesced [73] gfx_init_chunky::gfxb#10 ← gfx_init_chunky::gfxb#3
+Coalesced (already) [74] gfx_init_chunky::gfxbCpuBank#13 ← gfx_init_chunky::gfxbCpuBank#4
 Coalesced down to 6 phi equivalence classes
-Culled Empty Block (label) @4
-Culled Empty Block (label) @5
 Culled Empty Block (label) @8
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@18
@@ -940,11 +601,11 @@ main::@4: scope:[main]  from main::@3
   to:main::@5
 main::@5: scope:[main]  from main::@4 main::@5
   [30] (byte) main::rst#1 ← *((const byte*) RASTER)
-  [31] (byte~) main::$31 ← (byte) main::rst#1 & (byte) 7
-  [32] (byte~) main::$32 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$31
-  [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$32
-  [34] (byte~) main::$33 ← (byte) main::rst#1 << (byte) 4
-  [35] *((const byte*) BORDERCOL) ← (byte~) main::$33
+  [31] (byte~) main::$3 ← (byte) main::rst#1 & (byte) 7
+  [32] (byte~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$3
+  [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$4
+  [34] (byte~) main::$5 ← (byte) main::rst#1 << (byte) 4
+  [35] *((const byte*) BORDERCOL) ← (byte~) main::$5
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   [37] if((byte) main::rst#1!=(byte) $f2) goto main::@5
   to:main::@2
@@ -975,8 +636,8 @@ gfx_init_chunky::@7: scope:[gfx_init_chunky]  from gfx_init_chunky::@4
 gfx_init_chunky::@3: scope:[gfx_init_chunky]  from gfx_init_chunky::@2 gfx_init_chunky::@7
   [46] (byte) gfx_init_chunky::gfxbCpuBank#8 ← phi( gfx_init_chunky::@2/(byte) gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::@7/(byte) gfx_init_chunky::gfxbCpuBank#2 )
   [46] (byte*) gfx_init_chunky::gfxb#4 ← phi( gfx_init_chunky::@2/(byte*) gfx_init_chunky::gfxb#3 gfx_init_chunky::@7/(byte*) 16384 )
-  [47] (word~) gfx_init_chunky::$8 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6
-  [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$8
+  [47] (word~) gfx_init_chunky::$5 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6
+  [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$5
   [49] *((byte*) gfx_init_chunky::gfxb#4) ← (byte) gfx_init_chunky::c#0
   [50] (byte*) gfx_init_chunky::gfxb#1 ← ++ (byte*) gfx_init_chunky::gfxb#4
   [51] (word) gfx_init_chunky::x#1 ← ++ (word) gfx_init_chunky::x#2
@@ -1011,7 +672,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#1 202.0
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 103.0
 (void()) gfx_init_chunky()
-(word~) gfx_init_chunky::$8 101.0
+(word~) gfx_init_chunky::$5 101.0
 (byte) gfx_init_chunky::c
 (byte) gfx_init_chunky::c#0 202.0
 (byte*) gfx_init_chunky::gfxb
@@ -1031,9 +692,9 @@ VARIABLE REGISTER WEIGHTS
 (byte) gfx_init_chunky::y#1 16.5
 (byte) gfx_init_chunky::y#6 9.461538461538462
 (void()) main()
-(byte~) main::$31 202.0
-(byte~) main::$32 202.0
-(byte~) main::$33 202.0
+(byte~) main::$3 202.0
+(byte~) main::$4 202.0
+(byte~) main::$5 202.0
 (byte) main::j
 (byte) main::j#1 16.5
 (byte) main::j#2 22.0
@@ -1047,12 +708,12 @@ Initial phi equivalence classes
 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ]
-Added variable main::rst#1 to zero page equivalence class [ main::rst#1 ]
-Added variable main::$31 to zero page equivalence class [ main::$31 ]
-Added variable main::$32 to zero page equivalence class [ main::$32 ]
-Added variable main::$33 to zero page equivalence class [ main::$33 ]
-Added variable gfx_init_chunky::$8 to zero page equivalence class [ gfx_init_chunky::$8 ]
-Added variable gfx_init_chunky::c#0 to zero page equivalence class [ gfx_init_chunky::c#0 ]
+Added variable main::rst#1 to live range equivalence class [ main::rst#1 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Added variable main::$4 to live range equivalence class [ main::$4 ]
+Added variable main::$5 to live range equivalence class [ main::$5 ]
+Added variable gfx_init_chunky::$5 to live range equivalence class [ gfx_init_chunky::$5 ]
+Added variable gfx_init_chunky::c#0 to live range equivalence class [ gfx_init_chunky::c#0 ]
 Complete equivalence classes
 [ main::j#2 main::j#1 ]
 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
@@ -1061,23 +722,23 @@ Complete equivalence classes
 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ]
 [ main::rst#1 ]
-[ main::$31 ]
-[ main::$32 ]
-[ main::$33 ]
-[ gfx_init_chunky::$8 ]
+[ main::$3 ]
+[ main::$4 ]
+[ main::$5 ]
+[ gfx_init_chunky::$5 ]
 [ gfx_init_chunky::c#0 ]
-Allocated zp ZP_BYTE:2 [ main::j#2 main::j#1 ]
-Allocated zp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
-Allocated zp ZP_WORD:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ]
-Allocated zp ZP_BYTE:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
-Allocated zp ZP_WORD:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
-Allocated zp ZP_BYTE:9 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ]
-Allocated zp ZP_BYTE:10 [ main::rst#1 ]
-Allocated zp ZP_BYTE:11 [ main::$31 ]
-Allocated zp ZP_BYTE:12 [ main::$32 ]
-Allocated zp ZP_BYTE:13 [ main::$33 ]
-Allocated zp ZP_WORD:14 [ gfx_init_chunky::$8 ]
-Allocated zp ZP_BYTE:16 [ gfx_init_chunky::c#0 ]
+Allocated zp[1]:2 [ main::j#2 main::j#1 ]
+Allocated zp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
+Allocated zp[2]:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ]
+Allocated zp[1]:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
+Allocated zp[2]:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
+Allocated zp[1]:9 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ]
+Allocated zp[1]:10 [ main::rst#1 ]
+Allocated zp[1]:11 [ main::$3 ]
+Allocated zp[1]:12 [ main::$4 ]
+Allocated zp[1]:13 [ main::$5 ]
+Allocated zp[2]:14 [ gfx_init_chunky::$5 ]
+Allocated zp[1]:16 [ gfx_init_chunky::c#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1147,9 +808,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label __31 = $b
-    .label __32 = $c
-    .label __33 = $d
+    .label __3 = $b
+    .label __4 = $c
+    .label __5 = $d
     .label j = 2
     .label rst = $a
     // asm { sei  }
@@ -1320,26 +981,26 @@ main: {
     // [30] (byte) main::rst#1 ← *((const byte*) RASTER) -- vbuz1=_deref_pbuc1 
     lda RASTER
     sta.z rst
-    // [31] (byte~) main::$31 ← (byte) main::rst#1 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
+    // [31] (byte~) main::$3 ← (byte) main::rst#1 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and.z rst
-    sta.z __31
-    // [32] (byte~) main::$32 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$31 -- vbuz1=vbuc1_bor_vbuz2 
+    sta.z __3
+    // [32] (byte~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$3 -- vbuz1=vbuc1_bor_vbuz2 
     lda #VIC_DEN|VIC_ECM|VIC_RSEL
-    ora.z __31
-    sta.z __32
-    // [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$32 -- _deref_pbuc1=vbuz1 
-    lda.z __32
+    ora.z __3
+    sta.z __4
+    // [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+    lda.z __4
     sta VIC_CONTROL
-    // [34] (byte~) main::$33 ← (byte) main::rst#1 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    // [34] (byte~) main::$5 ← (byte) main::rst#1 << (byte) 4 -- vbuz1=vbuz2_rol_4 
     lda.z rst
     asl
     asl
     asl
     asl
-    sta.z __33
-    // [35] *((const byte*) BORDERCOL) ← (byte~) main::$33 -- _deref_pbuc1=vbuz1 
-    lda.z __33
+    sta.z __5
+    // [35] *((const byte*) BORDERCOL) ← (byte~) main::$5 -- _deref_pbuc1=vbuz1 
+    lda.z __5
     sta BORDERCOL
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
@@ -1366,10 +1027,11 @@ main: {
   // gfx_init_chunky
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
-    .label __8 = $e
+    .label __5 = $e
     .label c = $10
     .label gfxb = 7
     .label x = 4
+    // 320x200 8bpp pixels for Plane
     .label gfxbCpuBank = 6
     .label y = 3
     // [39] call dtvSetCpuBankSegment1 
@@ -1458,16 +1120,16 @@ gfx_init_chunky: {
     jmp __b3
     // gfx_init_chunky::@3
   __b3:
-    // [47] (word~) gfx_init_chunky::$8 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 -- vwuz1=vwuz2_plus_vbuz3 
+    // [47] (word~) gfx_init_chunky::$5 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 -- vwuz1=vwuz2_plus_vbuz3 
     lda.z y
     clc
     adc.z x
-    sta.z __8
+    sta.z __5
     lda #0
     adc.z x+1
-    sta.z __8+1
-    // [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$8 -- vbuz1=_byte_vwuz2 
-    lda.z __8
+    sta.z __5+1
+    // [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$5 -- vbuz1=_byte_vwuz2 
+    lda.z __5
     sta.z c
     // [49] *((byte*) gfx_init_chunky::gfxb#4) ← (byte) gfx_init_chunky::c#0 -- _deref_pbuz1=vbuz2 
     lda.z c
@@ -1521,7 +1183,7 @@ gfx_init_chunky: {
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
 // This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
 // The actual memory addressed will be $4000*cpuSegmentIdx
-// dtvSetCpuBankSegment1(byte zeropage(9) cpuBankIdx)
+// dtvSetCpuBankSegment1(byte zp(9) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
@@ -1561,17 +1223,17 @@ Statement asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop
 Statement [26] *((const byte*) VIC_CONTROL) ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [27] *((const byte*) BORDERCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [28] if(*((const byte*) RASTER)!=(byte) $42) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [32] (byte~) main::$32 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$31 [ main::rst#1 main::$32 ] ( main:2 [ main::rst#1 main::$32 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ main::rst#1 ]
-Statement [34] (byte~) main::$33 ← (byte) main::rst#1 << (byte) 4 [ main::rst#1 main::$33 ] ( main:2 [ main::rst#1 main::$33 ] ) always clobbers reg byte a 
+Statement [32] (byte~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$3 [ main::rst#1 main::$4 ] ( main:2 [ main::rst#1 main::$4 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:10 [ main::rst#1 ]
+Statement [34] (byte~) main::$5 ← (byte) main::rst#1 << (byte) 4 [ main::rst#1 main::$5 ] ( main:2 [ main::rst#1 main::$5 ] ) always clobbers reg byte a 
 Statement [42] if((byte*) gfx_init_chunky::gfxb#3!=(word) $8000) goto gfx_init_chunky::@3 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#3 gfx_init_chunky::x#2 gfx_init_chunky::gfxbCpuBank#4 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#3 gfx_init_chunky::x#2 gfx_init_chunky::gfxbCpuBank#4 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
-Statement [47] (word~) gfx_init_chunky::$8 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$8 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$8 ] ) always clobbers reg byte a 
-Statement [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$8 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
+Statement [47] (word~) gfx_init_chunky::$5 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$5 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$5 ] ) always clobbers reg byte a 
+Statement [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$5 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ) always clobbers reg byte a 
 Statement [49] *((byte*) gfx_init_chunky::gfxb#4) ← (byte) gfx_init_chunky::c#0 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
+Removing always clobbered register reg byte y as potential for zp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
 Statement [52] if((word) gfx_init_chunky::x#1!=(word) $140) goto gfx_init_chunky::@2 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#1 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#1 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#1 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#1 ] ) always clobbers reg byte a 
 Statement asm { .byte$32,$dd lda$ff .byte$32,$00  } always clobbers reg byte a 
 Statement [5] *((const byte*) PROCPORT_DDR) ← (const byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -1593,47 +1255,47 @@ Statement asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop
 Statement [26] *((const byte*) VIC_CONTROL) ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL|(byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [27] *((const byte*) BORDERCOL) ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [28] if(*((const byte*) RASTER)!=(byte) $42) goto main::@3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [31] (byte~) main::$31 ← (byte) main::rst#1 & (byte) 7 [ main::rst#1 main::$31 ] ( main:2 [ main::rst#1 main::$31 ] ) always clobbers reg byte a 
-Statement [32] (byte~) main::$32 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$31 [ main::rst#1 main::$32 ] ( main:2 [ main::rst#1 main::$32 ] ) always clobbers reg byte a 
-Statement [34] (byte~) main::$33 ← (byte) main::rst#1 << (byte) 4 [ main::rst#1 main::$33 ] ( main:2 [ main::rst#1 main::$33 ] ) always clobbers reg byte a 
+Statement [31] (byte~) main::$3 ← (byte) main::rst#1 & (byte) 7 [ main::rst#1 main::$3 ] ( main:2 [ main::rst#1 main::$3 ] ) always clobbers reg byte a 
+Statement [32] (byte~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$3 [ main::rst#1 main::$4 ] ( main:2 [ main::rst#1 main::$4 ] ) always clobbers reg byte a 
+Statement [34] (byte~) main::$5 ← (byte) main::rst#1 << (byte) 4 [ main::rst#1 main::$5 ] ( main:2 [ main::rst#1 main::$5 ] ) always clobbers reg byte a 
 Statement [42] if((byte*) gfx_init_chunky::gfxb#3!=(word) $8000) goto gfx_init_chunky::@3 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#3 gfx_init_chunky::x#2 gfx_init_chunky::gfxbCpuBank#4 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#3 gfx_init_chunky::x#2 gfx_init_chunky::gfxbCpuBank#4 ] ) always clobbers reg byte a 
-Statement [47] (word~) gfx_init_chunky::$8 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$8 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$8 ] ) always clobbers reg byte a 
-Statement [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$8 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ) always clobbers reg byte a 
+Statement [47] (word~) gfx_init_chunky::$5 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$5 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::$5 ] ) always clobbers reg byte a 
+Statement [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$5 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 gfx_init_chunky::c#0 ] ) always clobbers reg byte a 
 Statement [49] *((byte*) gfx_init_chunky::gfxb#4) ← (byte) gfx_init_chunky::c#0 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#2 gfx_init_chunky::gfxb#4 ] ) always clobbers reg byte y 
 Statement [52] if((word) gfx_init_chunky::x#1!=(word) $140) goto gfx_init_chunky::@2 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#1 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#1 ] ( main:2::gfx_init_chunky:7 [ gfx_init_chunky::y#6 gfx_init_chunky::gfxb#1 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::x#1 ] ) always clobbers reg byte a 
 Statement asm { .byte$32,$dd lda$ff .byte$32,$00  } always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::j#2 main::j#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] : zp ZP_BYTE:3 , reg byte x , 
-Potential registers zp ZP_WORD:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_BYTE:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ] : zp ZP_BYTE:6 , reg byte x , 
-Potential registers zp ZP_WORD:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ] : zp ZP_WORD:7 , 
-Potential registers zp ZP_BYTE:9 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ main::rst#1 ] : zp ZP_BYTE:10 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:11 [ main::$31 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:12 [ main::$32 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:13 [ main::$33 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:14 [ gfx_init_chunky::$8 ] : zp ZP_WORD:14 , 
-Potential registers zp ZP_BYTE:16 [ gfx_init_chunky::c#0 ] : zp ZP_BYTE:16 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::j#2 main::j#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] : zp[1]:3 , reg byte x , 
+Potential registers zp[2]:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ] : zp[1]:6 , reg byte x , 
+Potential registers zp[2]:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ] : zp[2]:7 , 
+Potential registers zp[1]:9 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ main::rst#1 ] : zp[1]:10 , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ main::$3 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:12 [ main::$4 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:13 [ main::$5 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:14 [ gfx_init_chunky::$5 ] : zp[2]:14 , 
+Potential registers zp[1]:16 [ gfx_init_chunky::c#0 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [gfx_init_chunky] 362.64: zp ZP_BYTE:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ] 297.35: zp ZP_WORD:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ] 202: zp ZP_BYTE:16 [ gfx_init_chunky::c#0 ] 181.8: zp ZP_WORD:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ] 101: zp ZP_WORD:14 [ gfx_init_chunky::$8 ] 25.96: zp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] 
-Uplift Scope [main] 202: zp ZP_BYTE:11 [ main::$31 ] 202: zp ZP_BYTE:12 [ main::$32 ] 202: zp ZP_BYTE:13 [ main::$33 ] 57.71: zp ZP_BYTE:10 [ main::rst#1 ] 38.5: zp ZP_BYTE:2 [ main::j#2 main::j#1 ] 
-Uplift Scope [dtvSetCpuBankSegment1] 305: zp ZP_BYTE:9 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ] 
+Uplift Scope [gfx_init_chunky] 362.64: zp[1]:6 [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ] 297.35: zp[2]:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ] 202: zp[1]:16 [ gfx_init_chunky::c#0 ] 181.8: zp[2]:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ] 101: zp[2]:14 [ gfx_init_chunky::$5 ] 25.96: zp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] 
+Uplift Scope [main] 202: zp[1]:11 [ main::$3 ] 202: zp[1]:12 [ main::$4 ] 202: zp[1]:13 [ main::$5 ] 57.71: zp[1]:10 [ main::rst#1 ] 38.5: zp[1]:2 [ main::j#2 main::j#1 ] 
+Uplift Scope [dtvSetCpuBankSegment1] 305: zp[1]:9 [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ] 
 Uplift Scope [] 
 
-Uplifting [gfx_init_chunky] best 25250 combination reg byte x [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ] zp ZP_WORD:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ] reg byte a [ gfx_init_chunky::c#0 ] zp ZP_WORD:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ] zp ZP_WORD:14 [ gfx_init_chunky::$8 ] zp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] 
-Uplifting [main] best 22650 combination reg byte a [ main::$31 ] reg byte a [ main::$32 ] reg byte a [ main::$33 ] reg byte x [ main::rst#1 ] zp ZP_BYTE:2 [ main::j#2 main::j#1 ] 
+Uplifting [gfx_init_chunky] best 25250 combination reg byte x [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ] zp[2]:7 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ] reg byte a [ gfx_init_chunky::c#0 ] zp[2]:4 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ] zp[2]:14 [ gfx_init_chunky::$5 ] zp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] 
+Uplifting [main] best 22650 combination reg byte a [ main::$3 ] reg byte a [ main::$4 ] reg byte a [ main::$5 ] reg byte x [ main::rst#1 ] zp[1]:2 [ main::j#2 main::j#1 ] 
 Limited combination testing to 100 combinations of 768 possible.
 Uplifting [dtvSetCpuBankSegment1] best 22541 combination reg byte a [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ] 
 Uplifting [] best 22541 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::j#2 main::j#1 ]
+Attempting to uplift remaining variables inzp[1]:2 [ main::j#2 main::j#1 ]
 Uplifting [main] best 22421 combination reg byte x [ main::j#2 main::j#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
-Uplifting [gfx_init_chunky] best 22421 combination zp ZP_BYTE:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] 
-Allocated (was zp ZP_BYTE:3) zp ZP_BYTE:2 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ]
-Allocated (was zp ZP_WORD:7) zp ZP_WORD:5 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
-Allocated (was zp ZP_WORD:14) zp ZP_WORD:7 [ gfx_init_chunky::$8 ]
+Attempting to uplift remaining variables inzp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
+Uplifting [gfx_init_chunky] best 22421 combination zp[1]:3 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ] 
+Allocated (was zp[1]:3) zp[1]:2 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
+Allocated (was zp[2]:4) zp[2]:3 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ]
+Allocated (was zp[2]:7) zp[2]:5 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
+Allocated (was zp[2]:14) zp[2]:7 [ gfx_init_chunky::$5 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1866,20 +1528,20 @@ main: {
   __b5:
     // [30] (byte) main::rst#1 ← *((const byte*) RASTER) -- vbuxx=_deref_pbuc1 
     ldx RASTER
-    // [31] (byte~) main::$31 ← (byte) main::rst#1 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
+    // [31] (byte~) main::$3 ← (byte) main::rst#1 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-    // [32] (byte~) main::$32 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$31 -- vbuaa=vbuc1_bor_vbuaa 
+    // [32] (byte~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$3 -- vbuaa=vbuc1_bor_vbuaa 
     ora #VIC_DEN|VIC_ECM|VIC_RSEL
-    // [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$32 -- _deref_pbuc1=vbuaa 
+    // [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta VIC_CONTROL
-    // [34] (byte~) main::$33 ← (byte) main::rst#1 << (byte) 4 -- vbuaa=vbuxx_rol_4 
+    // [34] (byte~) main::$5 ← (byte) main::rst#1 << (byte) 4 -- vbuaa=vbuxx_rol_4 
     txa
     asl
     asl
     asl
     asl
-    // [35] *((const byte*) BORDERCOL) ← (byte~) main::$33 -- _deref_pbuc1=vbuaa 
+    // [35] *((const byte*) BORDERCOL) ← (byte~) main::$5 -- _deref_pbuc1=vbuaa 
     sta BORDERCOL
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
     nop
@@ -1905,7 +1567,7 @@ main: {
   // gfx_init_chunky
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
-    .label __8 = 7
+    .label __5 = 7
     .label gfxb = 5
     .label x = 3
     .label y = 2
@@ -1992,16 +1654,16 @@ gfx_init_chunky: {
     jmp __b3
     // gfx_init_chunky::@3
   __b3:
-    // [47] (word~) gfx_init_chunky::$8 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 -- vwuz1=vwuz2_plus_vbuz3 
+    // [47] (word~) gfx_init_chunky::$5 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 -- vwuz1=vwuz2_plus_vbuz3 
     lda.z y
     clc
     adc.z x
-    sta.z __8
+    sta.z __5
     lda #0
     adc.z x+1
-    sta.z __8+1
-    // [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$8 -- vbuaa=_byte_vwuz1 
-    lda.z __8
+    sta.z __5+1
+    // [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$5 -- vbuaa=_byte_vwuz1 
+    lda.z __5
     // [49] *((byte*) gfx_init_chunky::gfxb#4) ← (byte) gfx_init_chunky::c#0 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (gfxb),y
@@ -2142,46 +1804,46 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) CHUNKY CHUNKY = (byte*) 32768
-(const byte*) CIA2_PORT_A CIA2_PORT_A = (byte*) 56576
-(const byte*) CIA2_PORT_A_DDR CIA2_PORT_A_DDR = (byte*) 56578
-(const byte) DTV_BADLINE_OFF DTV_BADLINE_OFF = (byte) $20
-(const byte) DTV_CHUNKY DTV_CHUNKY = (byte) $40
-(const byte) DTV_COLORRAM_OFF DTV_COLORRAM_OFF = (byte) $10
-(const byte*) DTV_CONTROL DTV_CONTROL = (byte*) 53308
-(const byte*) DTV_FEATURE DTV_FEATURE = (byte*) 53311
-(const byte) DTV_FEATURE_ENABLE DTV_FEATURE_ENABLE = (byte) 1
-(const byte) DTV_HIGHCOLOR DTV_HIGHCOLOR = (byte) 4
-(const byte) DTV_LINEAR DTV_LINEAR = (byte) 1
-(const byte*) DTV_PALETTE DTV_PALETTE = (byte*) 53760
-(const byte*) DTV_PLANEB_MODULO_HI DTV_PLANEB_MODULO_HI = (byte*) 53320
-(const byte*) DTV_PLANEB_MODULO_LO DTV_PLANEB_MODULO_LO = (byte*) 53319
-(const byte*) DTV_PLANEB_START_HI DTV_PLANEB_START_HI = (byte*) 53323
-(const byte*) DTV_PLANEB_START_LO DTV_PLANEB_START_LO = (byte*) 53321
-(const byte*) DTV_PLANEB_START_MI DTV_PLANEB_START_MI = (byte*) 53322
-(const byte*) DTV_PLANEB_STEP DTV_PLANEB_STEP = (byte*) 53324
-(const byte*) PROCPORT PROCPORT = (byte*) 1
-(const byte*) PROCPORT_DDR PROCPORT_DDR = (byte*) 0
-(const byte) PROCPORT_DDR_MEMORY_MASK PROCPORT_DDR_MEMORY_MASK = (byte) 7
-(const byte) PROCPORT_RAM_IO PROCPORT_RAM_IO = (byte) 5
-(const byte*) RASTER RASTER = (byte*) 53266
-(const byte*) VIC_CONTROL VIC_CONTROL = (byte*) 53265
-(const byte*) VIC_CONTROL2 VIC_CONTROL2 = (byte*) 53270
-(const byte) VIC_CSEL VIC_CSEL = (byte) 8
-(const byte) VIC_DEN VIC_DEN = (byte) $10
-(const byte) VIC_ECM VIC_ECM = (byte) $40
-(const byte) VIC_MCM VIC_MCM = (byte) $10
-(const byte*) VIC_MEMORY VIC_MEMORY = (byte*) 53272
-(const byte) VIC_RSEL VIC_RSEL = (byte) 8
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) CHUNKY = (byte*) 32768
+(const byte*) CIA2_PORT_A = (byte*) 56576
+(const byte*) CIA2_PORT_A_DDR = (byte*) 56578
+(const byte) DTV_BADLINE_OFF = (byte) $20
+(const byte) DTV_CHUNKY = (byte) $40
+(const byte) DTV_COLORRAM_OFF = (byte) $10
+(const byte*) DTV_CONTROL = (byte*) 53308
+(const byte*) DTV_FEATURE = (byte*) 53311
+(const byte) DTV_FEATURE_ENABLE = (byte) 1
+(const byte) DTV_HIGHCOLOR = (byte) 4
+(const byte) DTV_LINEAR = (byte) 1
+(const byte*) DTV_PALETTE = (byte*) 53760
+(const byte*) DTV_PLANEB_MODULO_HI = (byte*) 53320
+(const byte*) DTV_PLANEB_MODULO_LO = (byte*) 53319
+(const byte*) DTV_PLANEB_START_HI = (byte*) 53323
+(const byte*) DTV_PLANEB_START_LO = (byte*) 53321
+(const byte*) DTV_PLANEB_START_MI = (byte*) 53322
+(const byte*) DTV_PLANEB_STEP = (byte*) 53324
+(const byte*) PROCPORT = (byte*) 1
+(const byte*) PROCPORT_DDR = (byte*) 0
+(const byte) PROCPORT_DDR_MEMORY_MASK = (byte) 7
+(const byte) PROCPORT_RAM_IO = (byte) 5
+(const byte*) RASTER = (byte*) 53266
+(const byte*) VIC_CONTROL = (byte*) 53265
+(const byte*) VIC_CONTROL2 = (byte*) 53270
+(const byte) VIC_CSEL = (byte) 8
+(const byte) VIC_DEN = (byte) $10
+(const byte) VIC_ECM = (byte) $40
+(const byte) VIC_MCM = (byte) $10
+(const byte*) VIC_MEMORY = (byte*) 53272
+(const byte) VIC_RSEL = (byte) 8
 (void()) dtvSetCpuBankSegment1((byte) dtvSetCpuBankSegment1::cpuBankIdx)
 (label) dtvSetCpuBankSegment1::@return
-(const byte*) dtvSetCpuBankSegment1::cpuBank cpuBank = (byte*) 255
+(const byte*) dtvSetCpuBankSegment1::cpuBank = (byte*) 255
 (byte) dtvSetCpuBankSegment1::cpuBankIdx
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#1 reg byte a 202.0
 (byte) dtvSetCpuBankSegment1::cpuBankIdx#3 reg byte a 103.0
 (void()) gfx_init_chunky()
-(word~) gfx_init_chunky::$8 $8 zp ZP_WORD:7 101.0
+(word~) gfx_init_chunky::$5 zp[2]:7 101.0
 (label) gfx_init_chunky::@1
 (label) gfx_init_chunky::@2
 (label) gfx_init_chunky::@3
@@ -2193,25 +1855,25 @@ FINAL SYMBOL TABLE
 (byte) gfx_init_chunky::c
 (byte) gfx_init_chunky::c#0 reg byte a 202.0
 (byte*) gfx_init_chunky::gfxb
-(byte*) gfx_init_chunky::gfxb#1 gfxb zp ZP_WORD:5 42.599999999999994
-(byte*) gfx_init_chunky::gfxb#3 gfxb zp ZP_WORD:5 157.0
-(byte*) gfx_init_chunky::gfxb#4 gfxb zp ZP_WORD:5 75.75
-(byte*) gfx_init_chunky::gfxb#5 gfxb zp ZP_WORD:5 22.0
+(byte*) gfx_init_chunky::gfxb#1 gfxb zp[2]:5 42.599999999999994
+(byte*) gfx_init_chunky::gfxb#3 gfxb zp[2]:5 157.0
+(byte*) gfx_init_chunky::gfxb#4 gfxb zp[2]:5 75.75
+(byte*) gfx_init_chunky::gfxb#5 gfxb zp[2]:5 22.0
 (byte) gfx_init_chunky::gfxbCpuBank
 (byte) gfx_init_chunky::gfxbCpuBank#2 reg byte x 202.0
 (byte) gfx_init_chunky::gfxbCpuBank#4 reg byte x 103.75
 (byte) gfx_init_chunky::gfxbCpuBank#7 reg byte x 22.0
 (byte) gfx_init_chunky::gfxbCpuBank#8 reg byte x 34.888888888888886
 (word) gfx_init_chunky::x
-(word) gfx_init_chunky::x#1 x zp ZP_WORD:3 151.5
-(word) gfx_init_chunky::x#2 x zp ZP_WORD:3 30.299999999999997
+(word) gfx_init_chunky::x#1 x zp[2]:3 151.5
+(word) gfx_init_chunky::x#2 x zp[2]:3 30.299999999999997
 (byte) gfx_init_chunky::y
-(byte) gfx_init_chunky::y#1 y zp ZP_BYTE:2 16.5
-(byte) gfx_init_chunky::y#6 y zp ZP_BYTE:2 9.461538461538462
+(byte) gfx_init_chunky::y#1 y zp[1]:2 16.5
+(byte) gfx_init_chunky::y#6 y zp[1]:2 9.461538461538462
 (void()) main()
-(byte~) main::$31 reg byte a 202.0
-(byte~) main::$32 reg byte a 202.0
-(byte~) main::$33 reg byte a 202.0
+(byte~) main::$3 reg byte a 202.0
+(byte~) main::$4 reg byte a 202.0
+(byte~) main::$5 reg byte a 202.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -2225,16 +1887,16 @@ FINAL SYMBOL TABLE
 (byte) main::rst#1 reg byte x 57.714285714285715
 
 reg byte x [ main::j#2 main::j#1 ]
-zp ZP_BYTE:2 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
-zp ZP_WORD:3 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ]
+zp[1]:2 [ gfx_init_chunky::y#6 gfx_init_chunky::y#1 ]
+zp[2]:3 [ gfx_init_chunky::x#2 gfx_init_chunky::x#1 ]
 reg byte x [ gfx_init_chunky::gfxbCpuBank#4 gfx_init_chunky::gfxbCpuBank#7 gfx_init_chunky::gfxbCpuBank#8 gfx_init_chunky::gfxbCpuBank#2 ]
-zp ZP_WORD:5 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
+zp[2]:5 [ gfx_init_chunky::gfxb#4 gfx_init_chunky::gfxb#3 gfx_init_chunky::gfxb#5 gfx_init_chunky::gfxb#1 ]
 reg byte a [ dtvSetCpuBankSegment1::cpuBankIdx#3 dtvSetCpuBankSegment1::cpuBankIdx#1 ]
 reg byte x [ main::rst#1 ]
-reg byte a [ main::$31 ]
-reg byte a [ main::$32 ]
-reg byte a [ main::$33 ]
-zp ZP_WORD:7 [ gfx_init_chunky::$8 ]
+reg byte a [ main::$3 ]
+reg byte a [ main::$4 ]
+reg byte a [ main::$5 ]
+zp[2]:7 [ gfx_init_chunky::$5 ]
 reg byte a [ gfx_init_chunky::c#0 ]
 
 
@@ -2476,24 +2138,24 @@ main: {
     // [30] (byte) main::rst#1 ← *((const byte*) RASTER) -- vbuxx=_deref_pbuc1 
     ldx RASTER
     // rst&7
-    // [31] (byte~) main::$31 ← (byte) main::rst#1 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
+    // [31] (byte~) main::$3 ← (byte) main::rst#1 & (byte) 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
     // VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
-    // [32] (byte~) main::$32 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$31 -- vbuaa=vbuc1_bor_vbuaa 
+    // [32] (byte~) main::$4 ← (const byte) VIC_DEN|(const byte) VIC_ECM|(const byte) VIC_RSEL | (byte~) main::$3 -- vbuaa=vbuc1_bor_vbuaa 
     ora #VIC_DEN|VIC_ECM|VIC_RSEL
     // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
-    // [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$32 -- _deref_pbuc1=vbuaa 
+    // [33] *((const byte*) VIC_CONTROL) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta VIC_CONTROL
     // rst*$10
-    // [34] (byte~) main::$33 ← (byte) main::rst#1 << (byte) 4 -- vbuaa=vbuxx_rol_4 
+    // [34] (byte~) main::$5 ← (byte) main::rst#1 << (byte) 4 -- vbuaa=vbuxx_rol_4 
     txa
     asl
     asl
     asl
     asl
     // *BORDERCOL = rst*$10
-    // [35] *((const byte*) BORDERCOL) ← (byte~) main::$33 -- _deref_pbuc1=vbuaa 
+    // [35] *((const byte*) BORDERCOL) ← (byte~) main::$5 -- _deref_pbuc1=vbuaa 
     sta BORDERCOL
     // asm
     // asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
@@ -2521,7 +2183,7 @@ main: {
   // gfx_init_chunky
 // Initialize Plane with 8bpp chunky
 gfx_init_chunky: {
-    .label __8 = 7
+    .label __5 = 7
     .label gfxb = 5
     .label x = 3
     .label y = 2
@@ -2594,17 +2256,17 @@ gfx_init_chunky: {
     // gfx_init_chunky::@3
   __b3:
     // x+y
-    // [47] (word~) gfx_init_chunky::$8 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 -- vwuz1=vwuz2_plus_vbuz3 
+    // [47] (word~) gfx_init_chunky::$5 ← (word) gfx_init_chunky::x#2 + (byte) gfx_init_chunky::y#6 -- vwuz1=vwuz2_plus_vbuz3 
     lda.z y
     clc
     adc.z x
-    sta.z __8
+    sta.z __5
     lda #0
     adc.z x+1
-    sta.z __8+1
+    sta.z __5+1
     // c = (byte)(x+y)
-    // [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$8 -- vbuaa=_byte_vwuz1 
-    lda.z __8
+    // [48] (byte) gfx_init_chunky::c#0 ← (byte)(word~) gfx_init_chunky::$5 -- vbuaa=_byte_vwuz1 
+    lda.z __5
     // *gfxb++ = c
     // [49] *((byte*) gfx_init_chunky::gfxb#4) ← (byte) gfx_init_chunky::c#0 -- _deref_pbuz1=vbuaa 
     ldy #0

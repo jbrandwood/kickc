@@ -5,7 +5,6 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -21,11 +20,11 @@ main::@1: scope:[main]  from main main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN + (byte) main::i#4) ← (byte) main::i#4
+  *((const byte*) SCREEN + (byte) main::i#4) ← (byte) main::i#4
   to:main::@1
 main::@3: scope:[main]  from main::@1
   (byte) main::i#5 ← phi( main::@1/(byte) main::i#2 )
-  *((byte*) SCREEN + (byte) main::i#5) ← (byte) 'x'
+  *((const byte*) SCREEN + (byte) main::i#5) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -42,7 +41,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -60,7 +59,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 7 in (byte) main::i#1 ← (number) 7
 Adding number conversion cast (unumber) 7 in (bool~) main::$0 ← (byte) main::i#3 < (number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte) main::i#1 ← (unumber)(number) 7
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
@@ -72,9 +70,8 @@ Finalized unsigned number type (byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#4 (byte) main::i#5 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [6] if((byte) main::i#3<(byte) 7) goto main::@2
+Simple Condition (bool~) main::$0 [5] if((byte) main::i#3<(byte) 7) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::i#1 = 7
 Successful SSA optimization Pass2ConstantIdentification
@@ -116,7 +113,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#3 ← phi( main/(byte) 7 main::@2/(byte~) main::i#6 )
+  [5] (byte) main::i#3 ← phi( main/(byte) 7 main::@2/(byte) main::i#6 )
   [6] (byte) main::i#2 ← ++ (byte) main::i#3
   [7] if((byte) main::i#3<(byte) 7) goto main::@2
   to:main::@3
@@ -128,7 +125,7 @@ main::@return: scope:[main]  from main::@3
   to:@return
 main::@2: scope:[main]  from main::@1
   [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2
-  [11] (byte~) main::i#6 ← (byte) main::i#2
+  [11] (byte) main::i#6 ← (byte) main::i#2
   to:main::@1
 
 
@@ -137,16 +134,16 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::i
 (byte) main::i#2 15.333333333333332
 (byte) main::i#3 16.5
-(byte~) main::i#6 22.0
+(byte) main::i#6 22.0
 
 Initial phi equivalence classes
 [ main::i#3 main::i#6 ]
-Added variable main::i#2 to zero page equivalence class [ main::i#2 ]
+Added variable main::i#2 to live range equivalence class [ main::i#2 ]
 Complete equivalence classes
 [ main::i#3 main::i#6 ]
 [ main::i#2 ]
-Allocated zp ZP_BYTE:2 [ main::i#3 main::i#6 ]
-Allocated zp ZP_BYTE:3 [ main::i#2 ]
+Allocated zp[1]:2 [ main::i#3 main::i#6 ]
+Allocated zp[1]:3 [ main::i#2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -178,22 +175,21 @@ __bend:
   // main
 main: {
     .label i = 3
-    .label i_3 = 2
-    .label i_6 = 2
+    .label i_1 = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [5] phi (byte) main::i#3 = (byte) 7 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #7
-    sta.z i_3
+    sta.z i_1
     jmp __b1
     // main::@1
   __b1:
     // [6] (byte) main::i#2 ← ++ (byte) main::i#3 -- vbuz1=_inc_vbuz2 
-    ldy.z i_3
+    ldy.z i_1
     iny
     sty.z i
     // [7] if((byte) main::i#3<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i_3
+    lda.z i_1
     cmp #7
     bcc __b2
     jmp __b3
@@ -215,23 +211,23 @@ main: {
     ldy.z i
     tya
     sta SCREEN,y
-    // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuz1=vbuz2 
+    // [11] (byte) main::i#6 ← (byte) main::i#2 -- vbuz1=vbuz2 
     lda.z i
-    sta.z i_6
+    sta.z i_1
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (byte) main::i#3 = (byte~) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) 'x' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#3 main::i#6 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::i#2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#3 main::i#6 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::i#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::i#3 main::i#6 ] 15.33: zp ZP_BYTE:3 [ main::i#2 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::i#3 main::i#6 ] 15.33: zp[1]:3 [ main::i#2 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 313 combination reg byte a [ main::i#3 main::i#6 ] reg byte x [ main::i#2 ] 
@@ -295,11 +291,11 @@ main: {
     // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-    // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 
+    // [11] (byte) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 
     txa
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (byte) main::i#3 = (byte~) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -333,7 +329,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -342,7 +338,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#2 reg byte x 15.333333333333332
 (byte) main::i#3 reg byte a 16.5
-(byte~) main::i#6 reg byte a 22.0
+(byte) main::i#6 reg byte a 22.0
 
 reg byte a [ main::i#3 main::i#6 ]
 reg byte x [ main::i#2 ]
@@ -397,10 +393,10 @@ main: {
     // [10] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-    // [11] (byte~) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 
+    // [11] (byte) main::i#6 ← (byte) main::i#2 -- vbuaa=vbuxx 
     txa
     // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [5] phi (byte) main::i#3 = (byte~) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#3 = (byte) main::i#6 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

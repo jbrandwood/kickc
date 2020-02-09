@@ -2,14 +2,13 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte) b#0 ← (number) 0
+  (byte) b#0 ← (byte) 0
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) b#6 ← phi( @2/(byte) b#12 )
-  *((byte*) SCREEN + (number) 0) ← (byte) b#6
+  *((const byte*) SCREEN + (number) 0) ← (byte) b#6
   to:main::@return
 main::@return: scope:[main]  from main main::@2
   (byte) b#7 ← phi( main/(byte) b#6 main::@2/(byte) b#2 )
@@ -23,7 +22,7 @@ main::@1: scope:[main]  from
 main::@2: scope:[main]  from main::@1
   (byte) b#8 ← phi( main::@1/(byte) b#4 )
   (byte) b#2 ← (byte) b#8
-  *((byte*) SCREEN + (number) 1) ← (byte) b#2
+  *((const byte*) SCREEN + (number) 1) ← (byte) b#2
   to:main::@return
 
 (void()) bb()
@@ -51,7 +50,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte) b
 (byte) b#0
 (byte) b#1
@@ -74,19 +73,13 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in (byte) b#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) b#6
-Adding number conversion cast (unumber) 1 in *((byte*) SCREEN + (number) 1) ← (byte) b#2
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) b#6
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte) b#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -101,10 +94,9 @@ Identical Phi Values (byte) b#2 (byte) b#10
 Identical Phi Values (byte) b#9 (byte) b#13
 Identical Phi Values (byte) b#11 (byte) b#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [3] *((const byte*) SCREEN + (byte) 0) ← (const byte) b#0
+Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← (const byte) b#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable - keeping the phi block (byte) b#1
 Successful SSA optimization PassNEliminateUnusedVars
@@ -266,7 +258,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (byte) b
 (const byte) b#0 b = (byte) 0
 (void()) main()

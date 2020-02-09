@@ -7,14 +7,11 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
   to:@4
 @4: scope:[]  from @begin
-  (byte*) MUSIC ← ((byte*)) (number) $1000
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (byte*) MUSIC) {{ .fill music.size, music.getData(i)
+  kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@5
 
@@ -23,13 +20,13 @@ main: scope:[main]  from @5
   asm { jsrmusic.init  }
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@3
-  (bool~) main::$0 ← *((byte*) RASTER) != (number) $fd
+  (bool~) main::$0 ← *((const byte*) RASTER) != (number) $fd
   if((bool~) main::$0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   if(true) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -48,21 +45,17 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) MUSIC
-(byte*) RASTER
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) MUSIC = (byte*)(number) $1000
+(const byte*) RASTER = (byte*)(number) $d012
 (void()) main()
 (bool~) main::$0
 (label) main::@2
 (label) main::@3
 (label) main::@return
 
-Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((byte*) RASTER) != (number) $fd
+Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((const byte*) RASTER) != (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) MUSIC ← (byte*)(number) $1000
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 4096
@@ -70,13 +63,9 @@ Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [7] if(*((byte*) RASTER)!=(byte) $fd) goto main::@2
+Simple Condition (bool~) main::$0 [4] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) MUSIC = (byte*) 4096
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [11] if(true) goto main::@2
+if() condition always true - replacing block destination [8] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -305,9 +294,9 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) MUSIC MUSIC = (byte*) 4096
-(const byte*) RASTER RASTER = (byte*) 53266
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) MUSIC = (byte*) 4096
+(const byte*) RASTER = (byte*) 53266
 (void()) main()
 (label) main::@1
 (label) main::@2

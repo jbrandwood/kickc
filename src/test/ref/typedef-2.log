@@ -1,26 +1,21 @@
-Setting inferred volatile on symbol affected by address-of (byte**~) main::$0 ← & (byte*) ptr
+Setting inferred volatile on symbol affected by address-of (word) main::w ← (word)&(byte*) ptr
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) ptr#0 ← ((byte*)) (number) $1000
+  (byte*) ptr ← (byte*)(number) $1000
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) ptr#1 ← phi( @1/(byte*) ptr#2 )
-  (byte**~) main::$0 ← & (byte*) ptr#1
-  (word~) main::$1 ← ((word)) (byte**~) main::$0
-  (word) main::w#0 ← (word~) main::$1
+  (word) main::w#0 ← (word)&(byte*) ptr
   (word) main::w#1 ← (word) main::w#0 + (number) $32
-  (byte~) main::$2 ← < (word) main::w#1
-  *((byte*) SCREEN + (number) 0) ← (byte~) main::$2
+  (byte~) main::$0 ← < (word) main::w#1
+  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) ptr#2 ← phi( @begin/(byte*) ptr#0 )
   call main 
   to:@2
 @2: scope:[]  from @1
@@ -32,27 +27,18 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
-(byte**~) main::$0
-(word~) main::$1
-(byte~) main::$2
+(byte~) main::$0
 (label) main::@return
 (word) main::w
 (word) main::w#0
 (word) main::w#1
-(byte*) ptr
-(byte*) ptr#0
-(byte*) ptr#1
-(byte*) ptr#2
+(byte*) ptr loadstore
 
 Adding number conversion cast (unumber) $32 in (word) main::w#1 ← (word) main::w#0 + (number) $32
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte~) main::$2
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) ptr#0 ← (byte*)(number) $1000
-Inlining cast (word~) main::$1 ← (word)(byte**~) main::$0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 4096
 Simplifying constant integer cast $32
@@ -61,36 +47,23 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $32
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (word) main::w#0 = (word~) main::$1 
-Alias (byte*) ptr#0 = (byte*) ptr#2 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) ptr#1 (byte*) ptr#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] (byte**~) main::$0 ← & (byte*) ptr#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte**) main::$0 = &ptr#0
+Constant (const word) main::w#0 = (word)&ptr
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::$0 in [4] (word) main::w#0 ← (word)(const byte**) main::$0
-Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero SCREEN in [8] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$2
+Simplifying expression containing zero SCREEN in [4] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant (const word) main::w#0 = (word)main::$0
-Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [1] (word) main::w#1 ← (const word) main::w#0 + (byte) $32
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::w#1 = main::w#0+$32
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (byte~) main::$2 ← < (const word) main::w#1
+Constant right-side identified [1] (byte~) main::$0 ← < (const word) main::w#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = <main::w#1
+Constant (const byte) main::$0 = <main::w#1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const word) main::w#0
 Inlining constant with different constant siblings (const word) main::w#1
-Constant inlined main::w#1 = (word)&(byte*) ptr#0+(byte) $32
-Constant inlined main::$2 = <(word)&(byte*) ptr#0+(byte) $32
-Constant inlined main::w#0 = (word)&(byte*) ptr#0
-Constant inlined main::$0 = &(byte*) ptr#0
+Constant inlined main::w#0 = (word)&(byte*) ptr
+Constant inlined main::w#1 = (word)&(byte*) ptr+(byte) $32
+Constant inlined main::$0 = <(word)&(byte*) ptr+(byte) $32
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -106,7 +79,7 @@ Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte*) ptr#0 ← (byte*) 4096
+  [0] (byte*) ptr ← (byte*) 4096
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -117,7 +90,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr#0+(byte) $32
+  [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr+(byte) $32
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -127,13 +100,13 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (word) main::w
-(byte*) ptr
-(byte*) ptr#0 1.0
+(byte*) ptr loadstore 1.0
 
 Initial phi equivalence classes
+Added variable ptr to live range equivalence class [ ptr ]
 Complete equivalence classes
-[ ptr#0 ]
-Allocated zp ZP_WORD:2 [ ptr#0 ]
+[ ptr ]
+Allocated zp[2]:2 [ ptr ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -147,7 +120,7 @@ Target platform is c64basic / MOS6502X
   .label ptr = 2
   // @begin
 __bbegin:
-  // [0] (byte*) ptr#0 ← (byte*) 4096 -- pbuz1=pbuc1 
+  // [0] (byte*) ptr ← (byte*) 4096 -- pbuz1=pbuc1 
   lda #<$1000
   sta.z ptr
   lda #>$1000
@@ -166,7 +139,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr#0+(byte) $32 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr+(byte) $32 -- _deref_pbuc1=vbuc2 
     lda #<ptr+$32
     sta SCREEN
     jmp __breturn
@@ -178,15 +151,15 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte*) ptr#0 ← (byte*) 4096 [ ptr#0 ] (  [ ptr#0 ] ) always clobbers reg byte a 
-Statement [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr#0+(byte) $32 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ ptr#0 ] : zp ZP_WORD:2 , 
+Statement [0] (byte*) ptr ← (byte*) 4096 [ ptr ] (  [ ptr ] ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr+(byte) $32 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Potential registers zp[2]:2 [ ptr ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 1: zp ZP_WORD:2 [ ptr#0 ] 
+Uplift Scope [] 1: zp[2]:2 [ ptr ] 
 Uplift Scope [main] 
 
-Uplifting [] best 37 combination zp ZP_WORD:2 [ ptr#0 ] 
+Uplifting [] best 37 combination zp[2]:2 [ ptr ] 
 Uplifting [main] best 37 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -200,7 +173,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label ptr = 2
   // @begin
 __bbegin:
-  // [0] (byte*) ptr#0 ← (byte*) 4096 -- pbuz1=pbuc1 
+  // [0] (byte*) ptr ← (byte*) 4096 -- pbuz1=pbuc1 
   lda #<$1000
   sta.z ptr
   lda #>$1000
@@ -219,7 +192,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr#0+(byte) $32 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr+(byte) $32 -- _deref_pbuc1=vbuc2 
     lda #<ptr+$32
     sta SCREEN
     jmp __breturn
@@ -249,14 +222,13 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 (word) main::w
-(byte*) ptr
-(byte*) ptr#0 ptr zp ZP_WORD:2 1.0
+(byte*) ptr loadstore zp[2]:2 1.0
 
-zp ZP_WORD:2 [ ptr#0 ]
+zp[2]:2 [ ptr ]
 
 
 FINAL ASSEMBLER
@@ -273,7 +245,7 @@ Score: 34
   // @begin
 __bbegin:
   // ptr = 0x1000
-  // [0] (byte*) ptr#0 ← (byte*) 4096 -- pbuz1=pbuc1 
+  // [0] (byte*) ptr ← (byte*) 4096 -- pbuz1=pbuc1 
   lda #<$1000
   sta.z ptr
   lda #>$1000
@@ -288,7 +260,7 @@ __bbegin:
   // main
 main: {
     // SCREEN[0] = <w
-    // [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr#0+(byte) $32 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) SCREEN) ← <(word)&(byte*) ptr+(byte) $32 -- _deref_pbuc1=vbuc2 
     lda #<ptr+$32
     sta SCREEN
     // main::@return

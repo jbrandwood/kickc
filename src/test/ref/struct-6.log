@@ -4,20 +4,20 @@ Converted struct value to member variables (struct Point) main::p
 Created struct value member variable (struct Point) main::c_center
 Created struct value member variable (byte) main::c_radius
 Converted struct value to member variables (struct Circle) main::c
-Adding struct value list initializer (byte) main::p_x ← (number) $a
-Adding struct value list initializer (byte) main::p_y ← (number) $a
-Adding struct value list initializer (struct Point) main::c_center ← (struct Point) main::p
-Adding struct value list initializer (byte) main::c_radius ← (number) 5
-Replacing struct member reference (struct Circle) main::c.center with member unwinding reference (struct Point) main::c_center
-Replacing struct member reference (struct Circle) main::c.center with member unwinding reference (struct Point) main::c_center
-Replacing struct member reference (struct Circle) main::c.radius with member unwinding reference (byte) main::c_radius
 Created struct value member variable (byte) main::c_center_x
 Created struct value member variable (byte) main::c_center_y
 Converted struct value to member variables (struct Point) main::c_center
-Adding struct value member variable copy (byte) main::c_center_x ← (byte) main::p_x
-Adding struct value member variable copy (byte) main::c_center_y ← (byte) main::p_y
-Replacing struct member reference (struct Point) main::c_center.x with member unwinding reference (byte) main::c_center_x
-Replacing struct member reference (struct Point) main::c_center.y with member unwinding reference (byte) main::c_center_y
+Unwinding value copy (struct Point) main::p ← { x: (byte) $a, y: (byte) $a }
+Adding value simple copy (byte) main::p_x ← (byte) $a
+Adding value simple copy (byte) main::p_y ← (byte) $a
+Unwinding value copy (struct Circle) main::c ← (struct Circle){ (struct Point) main::p, (byte) 5 }
+Unwinding value copy (struct Circle) main::c ← (struct Circle){ (struct Point) main::p, (byte) 5 }
+Adding value simple copy (byte) main::c_center_x ← (byte) main::p_x
+Adding value simple copy (byte) main::c_center_y ← (byte) main::p_y
+Adding value simple copy (byte) main::c_radius ← (byte) 5
+Replacing struct member reference (struct Circle) main::c.center.x with member unwinding reference (byte) main::c_center_x
+Replacing struct member reference (struct Circle) main::c.center.y with member unwinding reference (byte) main::c_center_y
+Replacing struct member reference (struct Circle) main::c.radius with member unwinding reference (byte) main::c_radius
 Identified constant variable (byte) main::p_x
 Identified constant variable (byte) main::p_y
 Identified constant variable (byte) main::c_radius
@@ -28,15 +28,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::p_x ← (number) $a
-  (byte) main::p_y ← (number) $a
-  (byte) main::c_center_x#0 ← (byte) main::p_x
-  (byte) main::c_center_y#0 ← (byte) main::p_y
-  (byte) main::c_radius ← (number) 5
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#0
-  *((byte*) main::SCREEN + (number) 1) ← (byte) main::c_center_y#0
-  *((byte*) main::SCREEN + (number) 2) ← (byte) main::c_radius
+  (byte) main::c_center_x#0 ← (const byte) main::p_x
+  (byte) main::c_center_y#0 ← (const byte) main::p_y
+  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#0
+  *((const byte*) main::SCREEN + (number) 1) ← (byte) main::c_center_y#0
+  *((const byte*) main::SCREEN + (number) 2) ← (const byte) main::c_radius
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -59,52 +55,37 @@ SYMBOL TABLE SSA
 (byte) Point::y
 (void()) main()
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
+(struct Point) main::c_center
 (byte) main::c_center_x
 (byte) main::c_center_x#0
 (byte) main::c_center_y
 (byte) main::c_center_y#0
-(byte) main::c_radius
-(byte) main::p_x
-(byte) main::p_y
+(const byte) main::c_radius = (byte) 5
+(const byte) main::p_x = (byte) $a
+(const byte) main::p_y = (byte) $a
 
-Adding number conversion cast (unumber) $a in (byte) main::p_x ← (number) $a
-Adding number conversion cast (unumber) $a in (byte) main::p_y ← (number) $a
-Adding number conversion cast (unumber) 5 in (byte) main::c_radius ← (number) 5
-Adding number conversion cast (unumber) 0 in *((byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#0
-Adding number conversion cast (unumber) 1 in *((byte*) main::SCREEN + (number) 1) ← (byte) main::c_center_y#0
-Adding number conversion cast (unumber) 2 in *((byte*) main::SCREEN + (number) 2) ← (byte) main::c_radius
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#0
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) main::c_center_y#0
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← (const byte) main::c_radius
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::p_x ← (unumber)(number) $a
-Inlining cast (byte) main::p_y ← (unumber)(number) $a
-Inlining cast (byte) main::c_radius ← (unumber)(number) 5
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $a
-Simplifying constant integer cast $a
-Simplifying constant integer cast 5
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte) main::p_x = (byte) main::c_center_x#0 
-Alias (byte) main::p_y = (byte) main::c_center_y#0 
-Successful SSA optimization Pass2AliasElimination
-Constant (const byte) main::p_x = $a
-Constant (const byte) main::p_y = $a
-Constant (const byte) main::c_radius = 5
-Constant (const byte*) main::SCREEN = (byte*) 1024
+Constant (const byte) main::c_center_x#0 = main::p_x
+Constant (const byte) main::c_center_y#0 = main::p_y
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [6] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::p_x
+Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::c_center_x#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant inlined main::c_center_x#0 = (const byte) main::p_x
+Constant inlined main::c_center_y#0 = (const byte) main::p_y
+Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
 Consolidated array index constant in *(main::SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -150,6 +131,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) Point::x
 (byte) Point::y
 (void()) main()
+(struct Point) main::c_center
 (byte) main::c_center_x
 (byte) main::c_center_y
 
@@ -181,10 +163,10 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label SCREEN = $400
     .const p_x = $a
     .const p_y = $a
     .const c_radius = 5
-    .label SCREEN = $400
     // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
@@ -242,10 +224,10 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label SCREEN = $400
     .const p_x = $a
     .const p_y = $a
     .const c_radius = 5
-    .label SCREEN = $400
     // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
@@ -292,12 +274,13 @@ FINAL SYMBOL TABLE
 (byte) Point::y
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
+(struct Point) main::c_center
 (byte) main::c_center_x
 (byte) main::c_center_y
-(const byte) main::c_radius c_radius = (byte) 5
-(const byte) main::p_x p_x = (byte) $a
-(const byte) main::p_y p_y = (byte) $a
+(const byte) main::c_radius = (byte) 5
+(const byte) main::p_x = (byte) $a
+(const byte) main::p_y = (byte) $a
 
 
 
@@ -319,10 +302,10 @@ Score: 24
   // @end
   // main
 main: {
+    .label SCREEN = $400
     .const p_x = $a
     .const p_y = $a
     .const c_radius = 5
-    .label SCREEN = $400
     // SCREEN[0] = c.center.x
     // [4] *((const byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x

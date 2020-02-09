@@ -10,14 +10,14 @@
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
   // Frames per second (on a C64 PAL)
   .const FRAMES_PER_SEC = $3c
+  // Clock cycles per second (on a C64 PAL)
+  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
@@ -27,28 +27,24 @@
   .const SQRT_COUNT = $80
   /* Sqrt of COUNT */
   .label sieve = $1000
-  // Clock cycles per second (on a C64 PAL)
-  .const CLOCKS_PER_SEC = CLOCKS_PER_FRAME*FRAMES_PER_SEC
+  // Remainder after unsigned 16-bit division
   .label rem16u = $f
   .label print_char_cursor = $11
   .label print_line_cursor = 6
-  .label print_char_cursor_10 = 6
-  .label print_char_cursor_62 = 6
-  .label print_char_cursor_78 = 6
+  .label print_char_cursor_1 = 6
 main: {
     .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label __10 = 9
-    .label __14 = $15
+    .label __12 = $15
     .label cyclecount = 9
     .label sec100s = $d
     .label i = $11
     .label sieve_i = $f
     .label j = 2
     .label s = 4
-    .label i_3 = $d
-    .label i_10 = $d
-    .label __39 = $13
+    .label i_1 = $d
+    .label __34 = $13
     //Show lower case font
     lda #toD0181_return
     sta D018
@@ -129,9 +125,9 @@ main: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     jsr div32u16u
-    lda.z __14
+    lda.z __12
     sta.z sec100s
-    lda.z __14+1
+    lda.z __12+1
     sta.z sec100s+1
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -151,21 +147,21 @@ main: {
     jsr print_dword_decimal
     jsr print_ln
     lda #<2
-    sta.z i_10
+    sta.z i_1
     lda #>2
-    sta.z i_10+1
+    sta.z i_1+1
   __b8:
-    lda.z i_10+1
+    lda.z i_1+1
     cmp #>$514
     bcc __b9
     bne !+
-    lda.z i_10
+    lda.z i_1
     cmp #<$514
     bcc __b9
   !:
-    lda.z print_char_cursor_62
+    lda.z print_char_cursor_1
     sta.z print_char_cursor
-    lda.z print_char_cursor_62+1
+    lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
     lda #<str4
     sta.z print_str.str
@@ -176,27 +172,27 @@ main: {
     inc SCREEN+$3e7
     jmp __b13
   __b9:
-    lda.z i_10
+    lda.z i_1
     clc
     adc #<sieve
-    sta.z __39
-    lda.z i_10+1
+    sta.z __34
+    lda.z i_1+1
     adc #>sieve
-    sta.z __39+1
+    sta.z __34+1
     ldy #0
-    lda (__39),y
+    lda (__34),y
     cmp #0
     bne __b11
-    lda.z print_char_cursor_62
+    lda.z print_char_cursor_1
     sta.z print_char_cursor
-    lda.z print_char_cursor_62+1
+    lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
     jsr print_word_decimal
     jsr print_char
   __b11:
-    inc.z i_3
+    inc.z i_1
     bne !+
-    inc.z i_3+1
+    inc.z i_1+1
   !:
     jmp __b8
   __b2:
@@ -275,14 +271,14 @@ print_char: {
     lda.z print_char_cursor
     clc
     adc #1
-    sta.z print_char_cursor_10
+    sta.z print_char_cursor_1
     lda.z print_char_cursor+1
     adc #0
-    sta.z print_char_cursor_10+1
+    sta.z print_char_cursor_1+1
     rts
 }
 // Print a word as DECIMAL
-// print_word_decimal(word zeropage($d) w)
+// print_word_decimal(word zp($d) w)
 print_word_decimal: {
     .label w = $d
     lda.z w
@@ -298,7 +294,7 @@ print_word_decimal: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($f) str)
+// print_str(byte* zp($f) str)
 print_str: {
     .label str = $f
   __b1:
@@ -326,7 +322,7 @@ print_str: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zeropage(2) value, byte* zeropage(4) buffer)
+// utoa(word zp(2) value, byte* zp(4) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $19
@@ -394,7 +390,7 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zeropage(4) buffer, word zeropage(2) value, word zeropage($19) sub)
+// utoa_append(byte* zp(4) buffer, word zp(2) value, word zp($19) sub)
 utoa_append: {
     .label buffer = 4
     .label value = 2
@@ -446,7 +442,7 @@ print_ln: {
     rts
 }
 // Print a dword as DECIMAL
-// print_dword_decimal(dword zeropage(9) w)
+// print_dword_decimal(dword zp(9) w)
 print_dword_decimal: {
     .label w = 9
     jsr ultoa
@@ -462,7 +458,7 @@ print_dword_decimal: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zeropage(9) value, byte* zeropage($d) buffer)
+// ultoa(dword zp(9) value, byte* zp($d) buffer)
 ultoa: {
     .const max_digits = $a
     .label digit_value = $15
@@ -544,7 +540,7 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zeropage($d) buffer, dword zeropage(9) value, dword zeropage($15) sub)
+// ultoa_append(byte* zp($d) buffer, dword zp(9) value, dword zp($15) sub)
 ultoa_append: {
     .label buffer = $d
     .label value = 9
@@ -591,7 +587,7 @@ ultoa_append: {
 }
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
-// div32u16u(dword zeropage(9) dividend)
+// div32u16u(dword zp(9) dividend)
 div32u16u: {
     .label divisor = CLOCKS_PER_SEC/$64
     .label quotient_hi = $19
@@ -629,7 +625,7 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage($11) dividend, word zeropage($f) rem)
+// divr16u(word zp($11) dividend, word zp($f) rem)
 divr16u: {
     .label rem = $f
     .label dividend = $11
@@ -702,7 +698,7 @@ clock: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
@@ -721,7 +717,7 @@ clock_start: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($11) str, byte register(X) c, word zeropage($f) num)
+// memset(void* zp($11) str, byte register(X) c, word zp($f) num)
 memset: {
     .label end = $f
     .label dst = $11

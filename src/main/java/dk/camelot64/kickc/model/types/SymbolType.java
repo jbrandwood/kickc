@@ -23,8 +23,6 @@ public interface SymbolType extends Serializable {
    SymbolTypeIntegerAuto UNUMBER = new SymbolTypeIntegerAuto("unumber");
    /** Signed integer with unknown size (used for constant expressions). */
    SymbolTypeIntegerAuto SNUMBER = new SymbolTypeIntegerAuto("snumber");
-   /** String value (treated like byte* ). */
-   SymbolTypeNamed STRING = new SymbolTypeNamed("string", 99);
    /** Boolean value. */
    SymbolTypeNamed BOOLEAN = new SymbolTypeNamed("bool", 1);
    /** Numeric floating point value. */
@@ -86,8 +84,6 @@ public interface SymbolType extends Serializable {
             return DWORD;
          case "signed long":
             return SDWORD;
-         case "string":
-            return STRING;
          case "bool":
             return BOOLEAN;
          case "void":

@@ -18,7 +18,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @4
-  (byte) main::i#0 ← (number) 0
+  (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#4 )
@@ -49,12 +49,10 @@ getfn: scope:[getfn]  from main::@2
   if((bool~) getfn::$1) goto getfn::@1
   to:getfn::@3
 getfn::@1: scope:[getfn]  from getfn
-  (void()*~) getfn::$3 ← & (void()) fn1()
-  (void()*) getfn::return#1 ← (void()*~) getfn::$3
+  (void()*) getfn::return#1 ← &(void()) fn1()
   to:getfn::@return
 getfn::@3: scope:[getfn]  from getfn
-  (void()*~) getfn::$2 ← & (void()) fn2()
-  (void()*) getfn::return#2 ← (void()*~) getfn::$2
+  (void()*) getfn::return#2 ← &(void()) fn2()
   to:getfn::@return
 getfn::@return: scope:[getfn]  from getfn::@1 getfn::@3
   (void()*) getfn::return#5 ← phi( getfn::@1/(void()*) getfn::return#1 getfn::@3/(void()*) getfn::return#2 )
@@ -64,8 +62,7 @@ getfn::@return: scope:[getfn]  from getfn::@1 getfn::@3
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL) ← ++ *((byte*) fn1::BORDERCOL)
+  *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
@@ -73,8 +70,7 @@ fn1::@return: scope:[fn1]  from fn1
 
 (void()) fn2()
 fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL ← ((byte*)) (number) $d021
-  *((byte*) fn2::BGCOL) ← ++ *((byte*) fn2::BGCOL)
+  *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   return 
@@ -93,15 +89,13 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(byte*) fn1::BORDERCOL
+(const byte*) fn1::BORDERCOL = (byte*)(number) $d020
 (void()) fn2()
 (label) fn2::@return
-(byte*) fn2::BGCOL
+(const byte*) fn2::BGCOL = (byte*)(number) $d021
 (void()*()) getfn((byte) getfn::b)
 (number~) getfn::$0
 (bool~) getfn::$1
-(void()*~) getfn::$2
-(void()*~) getfn::$3
 (label) getfn::@1
 (label) getfn::@3
 (label) getfn::@return
@@ -128,22 +122,15 @@ SYMBOL TABLE SSA
 (byte) main::i#3
 (byte) main::i#4
 
-Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (number~) getfn::$0 ← (byte) getfn::b#1 & (number) 1
 Adding number conversion cast (unumber) getfn::$0 in (number~) getfn::$0 ← (byte) getfn::b#1 & (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) getfn::$1 ← (unumber~) getfn::$0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) fn1::BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) fn2::BGCOL ← (byte*)(number) $d021
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -151,22 +138,15 @@ Inferred type updated to byte in (unumber~) getfn::$0 ← (byte) getfn::b#1 & (b
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (void()*) getfn::return#0 = (void()*) getfn::return#4 
 Alias (byte) main::i#1 = (byte) main::i#4 
-Alias (void()*) getfn::return#1 = (void()*~) getfn::$3 
-Alias (void()*) getfn::return#2 = (void()*~) getfn::$2 
 Alias (void()*) getfn::return#3 = (void()*) getfn::return#5 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) getfn::b#1 (byte) getfn::b#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) getfn::$1 [15] if((byte~) getfn::$0==(byte) 0) goto getfn::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [16] (void()*) getfn::return#1 ← & (void()) fn1()
-Constant right-side identified [18] (void()*) getfn::return#2 ← & (void()) fn2()
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
 Constant (const void()*) getfn::return#1 = &fn1
 Constant (const void()*) getfn::return#2 = &fn2
-Constant (const byte*) fn1::BORDERCOL = (byte*) 53280
-Constant (const byte*) fn2::BGCOL = (byte*) 53281
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -281,10 +261,10 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ getfn::return#3 ]
-Added variable getfn::b#0 to zero page equivalence class [ getfn::b#0 ]
-Added variable getfn::return#0 to zero page equivalence class [ getfn::return#0 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
-Added variable getfn::$0 to zero page equivalence class [ getfn::$0 ]
+Added variable getfn::b#0 to live range equivalence class [ getfn::b#0 ]
+Added variable getfn::return#0 to live range equivalence class [ getfn::return#0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable getfn::$0 to live range equivalence class [ getfn::$0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ getfn::return#3 ]
@@ -292,12 +272,12 @@ Complete equivalence classes
 [ getfn::return#0 ]
 [ main::$1 ]
 [ getfn::$0 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:3 [ getfn::return#3 ]
-Allocated zp ZP_BYTE:5 [ getfn::b#0 ]
-Allocated zp ZP_WORD:6 [ getfn::return#0 ]
-Allocated zp ZP_WORD:8 [ main::$1 ]
-Allocated zp ZP_BYTE:10 [ getfn::$0 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:3 [ getfn::return#3 ]
+Allocated zp[1]:5 [ getfn::b#0 ]
+Allocated zp[2]:6 [ getfn::return#0 ]
+Allocated zp[2]:8 [ main::$1 ]
+Allocated zp[1]:10 [ getfn::$0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -347,9 +327,9 @@ main: {
     // [8] call getfn 
     jsr getfn
     // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 -- pprz1=pprz2 
-    lda.z getfn.return_3
+    lda.z getfn.return_1
     sta.z getfn.return
-    lda.z getfn.return_3+1
+    lda.z getfn.return_1+1
     sta.z getfn.return+1
     jmp __b3
     // main::@3
@@ -369,12 +349,12 @@ main: {
     jmp (__1)
 }
   // getfn
-// getfn(byte zeropage(5) b)
+// getfn(byte zp(5) b)
 getfn: {
     .label __0 = $a
     .label b = 5
     .label return = 6
-    .label return_3 = 3
+    .label return_1 = 3
     // [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z b
@@ -387,9 +367,9 @@ getfn: {
   __breturn_from_getfn:
     // [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
-    sta.z return_3
+    sta.z return_1
     lda #>fn2
-    sta.z return_3+1
+    sta.z return_1+1
     jmp __breturn
     // [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
   __b1_from_getfn:
@@ -400,9 +380,9 @@ getfn: {
   __breturn_from___b1:
     // [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
-    sta.z return_3
+    sta.z return_1
     lda #>fn1
-    sta.z return_3+1
+    sta.z return_1+1
     jmp __breturn
     // getfn::@return
   __breturn:
@@ -435,37 +415,37 @@ fn1: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] ( main:2 [ main::i#1 getfn::return#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
 Statement [11] call *((void()*~) main::$1)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
-Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] ( main:2 [ main::i#1 getfn::return#0 ] ) always clobbers reg byte a 
 Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] ( main:2 [ main::i#1 main::$1 ] ) always clobbers reg byte a 
 Statement [11] call *((void()*~) main::$1)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_WORD:3 [ getfn::return#3 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_BYTE:5 [ getfn::b#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:6 [ getfn::return#0 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ main::$1 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_BYTE:10 [ getfn::$0 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
+Potential registers zp[2]:3 [ getfn::return#3 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ getfn::b#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:6 [ getfn::return#0 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ main::$1 ] : zp[2]:8 , 
+Potential registers zp[1]:10 [ getfn::$0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [getfn] 22: zp ZP_WORD:6 [ getfn::return#0 ] 13: zp ZP_BYTE:5 [ getfn::b#0 ] 4: zp ZP_BYTE:10 [ getfn::$0 ] 3.67: zp ZP_WORD:3 [ getfn::return#3 ] 
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 11: zp ZP_WORD:8 [ main::$1 ] 
+Uplift Scope [getfn] 22: zp[2]:6 [ getfn::return#0 ] 13: zp[1]:5 [ getfn::b#0 ] 4: zp[1]:10 [ getfn::$0 ] 3.67: zp[2]:3 [ getfn::return#3 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 11: zp[2]:8 [ main::$1 ] 
 Uplift Scope [fn1] 
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [getfn] best 743 combination zp ZP_WORD:6 [ getfn::return#0 ] reg byte a [ getfn::b#0 ] reg byte a [ getfn::$0 ] zp ZP_WORD:3 [ getfn::return#3 ] 
-Uplifting [main] best 743 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] zp ZP_WORD:8 [ main::$1 ] 
+Uplifting [getfn] best 743 combination zp[2]:6 [ getfn::return#0 ] reg byte a [ getfn::b#0 ] reg byte a [ getfn::$0 ] zp[2]:3 [ getfn::return#3 ] 
+Uplifting [main] best 743 combination zp[1]:2 [ main::i#2 main::i#1 ] zp[2]:8 [ main::$1 ] 
 Uplifting [fn1] best 743 combination 
 Uplifting [fn2] best 743 combination 
 Uplifting [] best 743 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 743 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
-Coalescing zero page register [ zp ZP_WORD:3 [ getfn::return#3 ] ] with [ zp ZP_WORD:6 [ getfn::return#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:3 [ getfn::return#3 getfn::return#0 ] ] with [ zp ZP_WORD:8 [ main::$1 ] ] - score: 1
+Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 743 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Coalescing zero page register [ zp[2]:3 [ getfn::return#3 ] ] with [ zp[2]:6 [ getfn::return#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:3 [ getfn::return#3 getfn::return#0 ] ] with [ zp[2]:8 [ main::$1 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -630,10 +610,10 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(const byte*) fn1::BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) fn1::BORDERCOL = (byte*) 53280
 (void()) fn2()
 (label) fn2::@return
-(const byte*) fn2::BGCOL BGCOL = (byte*) 53281
+(const byte*) fn2::BGCOL = (byte*) 53281
 (void()*()) getfn((byte) getfn::b)
 (byte~) getfn::$0 reg byte a 4.0
 (label) getfn::@1
@@ -641,19 +621,19 @@ FINAL SYMBOL TABLE
 (byte) getfn::b
 (byte) getfn::b#0 reg byte a 13.0
 (void()*) getfn::return
-(void()*) getfn::return#0 return zp ZP_WORD:3 22.0
-(void()*) getfn::return#3 return zp ZP_WORD:3 3.6666666666666665
+(void()*) getfn::return#0 return zp[2]:3 22.0
+(void()*) getfn::return#3 return zp[2]:3 3.6666666666666665
 (void()) main()
-(void()*~) main::$1 $1 zp ZP_WORD:3 11.0
+(void()*~) main::$1 zp[2]:3 11.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (byte) main::i
-(byte) main::i#1 i zp ZP_BYTE:2 5.5
-(byte) main::i#2 i zp ZP_BYTE:2 22.0
+(byte) main::i#1 i zp[1]:2 5.5
+(byte) main::i#2 i zp[1]:2 22.0
 
-zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-zp ZP_WORD:3 [ getfn::return#3 getfn::return#0 main::$1 ]
+zp[1]:2 [ main::i#2 main::i#1 ]
+zp[2]:3 [ getfn::return#3 getfn::return#0 main::$1 ]
 reg byte a [ getfn::b#0 ]
 reg byte a [ getfn::$0 ]
 

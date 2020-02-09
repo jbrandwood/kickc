@@ -27,7 +27,7 @@ main: {
     sta SCREEN+1
     rts
 }
-// plus(word zeropage(2) a, word zeropage(4) b)
+// plus(word zp(2) a, word zp(4) b)
 plus: {
     .const OFFSET_STACK_A = 0
     .const OFFSET_STACK_B = 2

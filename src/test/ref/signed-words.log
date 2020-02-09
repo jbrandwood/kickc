@@ -2,6 +2,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) @5
@@ -12,21 +13,6 @@ Culled Empty Block (label) init::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SPRITES_XPOS ← ((byte*)) (number) $d000
-  (byte*) SPRITES_YPOS ← ((byte*)) (number) $d001
-  (byte*) SPRITES_XMSB ← ((byte*)) (number) $d010
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) SPRITES_ENABLE ← ((byte*)) (number) $d015
-  (byte*) SPRITES_EXPAND_Y ← ((byte*)) (number) $d017
-  (byte*) SPRITES_EXPAND_X ← ((byte*)) (number) $d01d
-  (byte*) SPRITES_COLS ← ((byte*)) (number) $d027
-  (byte) WHITE ← (number) 1
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*~) $0 ← (byte*) SCREEN + (number) $3f8
-  (byte*) SPRITES_PTR ← (byte*~) $0
-  (byte*) SPRITE ← ((byte*)) (number) $2000
   to:@6
 
 (void()) main()
@@ -51,7 +37,7 @@ main::@2: scope:[main]  from main::@2 main::@5 main::@6
   (signed word) ypos#16 ← phi( main::@2/(signed word) ypos#16 main::@5/(signed word) ypos#18 main::@6/(signed word) ypos#0 )
   (signed word) xpos#16 ← phi( main::@2/(signed word) xpos#16 main::@5/(signed word) xpos#18 main::@6/(signed word) xpos#0 )
   (signed word) yvel#15 ← phi( main::@2/(signed word) yvel#15 main::@5/(signed word) yvel#16 main::@6/(signed word) yvel#0 )
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -91,22 +77,19 @@ main::@return: scope:[main]  from main::@6
 
 (void()) init()
 init: scope:[init]  from main
-  *((byte*) SPRITES_ENABLE) ← (number) 1
-  *((byte*) SPRITES_EXPAND_X) ← (number) 0
-  *((byte*) SPRITES_EXPAND_Y) ← (number) 0
-  *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
-  *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
-  *((byte*) SPRITES_COLS + (number) 0) ← (byte) WHITE
-  (byte*~) init::$0 ← (byte*) SPRITE / (number) $40
-  (byte~) init::$1 ← ((byte)) (byte*~) init::$0
-  *((byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$1
-  (byte*) init::sc#0 ← (byte*) SCREEN
+  *((const byte*) SPRITES_ENABLE) ← (number) 1
+  *((const byte*) SPRITES_EXPAND_X) ← (number) 0
+  *((const byte*) SPRITES_EXPAND_Y) ← (number) 0
+  *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+  *((const byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+  *((const byte*) SPRITES_COLS + (number) 0) ← (const byte) WHITE
+  *((const byte*) SPRITES_PTR + (number) 0) ← (byte)(const byte*) SPRITE/(number) $40
+  (byte*) init::sc#0 ← (const byte*) SCREEN
   to:init::@1
 init::@1: scope:[init]  from init init::@2
   (byte*) init::sc#2 ← phi( init/(byte*) init::sc#0 init::@2/(byte*) init::sc#1 )
-  (byte*~) init::$2 ← (byte*) SCREEN + (number) $3e8
-  (bool~) init::$3 ← (byte*) init::sc#2 != (byte*~) init::$2
-  if((bool~) init::$3) goto init::@2
+  (bool~) init::$0 ← (byte*) init::sc#2 != (const byte*) SCREEN+(number) $3e8
+  if((bool~) init::$0) goto init::@2
   to:init::@3
 init::@2: scope:[init]  from init::@1
   (byte*) init::sc#3 ← phi( init::@1/(byte*) init::sc#2 )
@@ -118,21 +101,20 @@ init::@3: scope:[init]  from init::@1
   to:init::@7
 init::@7: scope:[init]  from init::@3 init::@7
   (byte) init::i#2 ← phi( init::@3/(byte) init::i#0 init::@7/(byte) init::i#1 )
-  *((byte*) SPRITE + (byte) init::i#2) ← (number) $ff
+  *((const byte*) SPRITE + (byte) init::i#2) ← (number) $ff
   (byte) init::i#1 ← (byte) init::i#2 + rangenext(0,$3f)
-  (bool~) init::$4 ← (byte) init::i#1 != rangelast(0,$3f)
-  if((bool~) init::$4) goto init::@7
+  (bool~) init::$1 ← (byte) init::i#1 != rangelast(0,$3f)
+  if((bool~) init::$1) goto init::@7
   to:init::@return
 init::@return: scope:[init]  from init::@7
   return 
   to:@return
-@6: scope:[]  from @4
-  (signed word) xpos#2 ← (number) 0
-  (signed word) ypos#2 ← (number) 0
-  (signed word) yvel_init#2 ← (number) $64
-  (signed word) xvel#2 ← (number) $c8
+@6: scope:[]  from @begin
+  (signed word) xpos#2 ← (signed word) 0
+  (signed word) ypos#2 ← (signed word) 0
+  (signed word) yvel_init#2 ← (signed word) $64
+  (signed word) xvel#2 ← (signed word) $c8
   (signed word) yvel#2 ← (signed word) yvel_init#2
-  (signed word) g ← (number) -5
   to:@7
 
 (void()) anim()
@@ -152,7 +134,7 @@ anim::@1: scope:[anim]  from anim anim::@4
   (signed word) xvel#8 ← phi( anim/(signed word) xvel#13 anim::@4/(signed word) xvel#14 )
   (signed word) xpos#9 ← phi( anim/(signed word) xpos#13 anim::@4/(signed word) xpos#14 )
   (signed word) yvel#9 ← phi( anim/(signed word) yvel#13 anim::@4/(signed word) yvel#4 )
-  (signed word~) anim::$2 ← (signed word) yvel#9 + (signed word) g
+  (signed word~) anim::$2 ← (signed word) yvel#9 + (const signed word) g
   (signed word) yvel#3 ← (signed word~) anim::$2
   (signed word~) anim::$3 ← (signed word) xpos#9 + (signed word) xvel#8
   (signed word) xpos#3 ← (signed word~) anim::$3
@@ -165,11 +147,11 @@ anim::@1: scope:[anim]  from anim anim::@4
   (number~) anim::$8 ← (number) $e6 - (signed word~) anim::$7
   (signed word) anim::sprite_y#0 ← (number~) anim::$8
   (byte~) anim::$9 ← ((byte)) (signed word) anim::sprite_x#0
-  *((byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
+  *((const byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
   (byte~) anim::$10 ← ((byte)) (signed word) anim::sprite_y#0
-  *((byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
+  *((const byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
   (byte~) anim::$11 ← > (signed word) anim::sprite_x#0
-  *((byte*) SPRITES_XMSB) ← (byte~) anim::$11
+  *((const byte*) SPRITES_XMSB) ← (byte~) anim::$11
   to:anim::@return
 anim::@2: scope:[anim]  from anim
   (signed word) yvel_init#9 ← phi( anim/(signed word) yvel_init#14 )
@@ -233,25 +215,23 @@ anim::@return: scope:[anim]  from anim::@1
 @end: scope:[]  from @8
 
 SYMBOL TABLE SSA
-(byte*~) $0
-(label) @4
 (label) @6
 (label) @7
 (label) @8
 (label) @begin
 (label) @end
-(byte*) RASTER
-(byte*) SCREEN
-(byte*) SPRITE
-(byte*) SPRITES_COLS
-(byte*) SPRITES_ENABLE
-(byte*) SPRITES_EXPAND_X
-(byte*) SPRITES_EXPAND_Y
-(byte*) SPRITES_PTR
-(byte*) SPRITES_XMSB
-(byte*) SPRITES_XPOS
-(byte*) SPRITES_YPOS
-(byte) WHITE
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) SPRITE = (byte*)(number) $2000
+(const byte*) SPRITES_COLS = (byte*)(number) $d027
+(const byte*) SPRITES_ENABLE = (byte*)(number) $d015
+(const byte*) SPRITES_EXPAND_X = (byte*)(number) $d01d
+(const byte*) SPRITES_EXPAND_Y = (byte*)(number) $d017
+(const byte*) SPRITES_PTR = (const byte*) SCREEN+(number) $3f8
+(const byte*) SPRITES_XMSB = (byte*)(number) $d010
+(const byte*) SPRITES_XPOS = (byte*)(number) $d000
+(const byte*) SPRITES_YPOS = (byte*)(number) $d001
+(const byte) WHITE = (byte) 1
 (void()) anim()
 (bool~) anim::$0
 (bool~) anim::$1
@@ -278,13 +258,10 @@ SYMBOL TABLE SSA
 (signed word) anim::sprite_x#0
 (signed word) anim::sprite_y
 (signed word) anim::sprite_y#0
-(signed word) g
+(const signed word) g = (signed word) -5
 (void()) init()
-(byte*~) init::$0
-(byte~) init::$1
-(byte*~) init::$2
-(bool~) init::$3
-(bool~) init::$4
+(bool~) init::$0
+(bool~) init::$1
 (label) init::@1
 (label) init::@2
 (label) init::@3
@@ -410,26 +387,20 @@ SYMBOL TABLE SSA
 (signed word) yvel_init#8
 (signed word) yvel_init#9
 
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Adding number conversion cast (unumber) $3f8 in (byte*~) $0 ← (byte*) SCREEN + (number) $3f8
-Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) 1 in *((byte*) SPRITES_ENABLE) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_X) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_EXPAND_Y) ← (number) 0
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_XPOS + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) $64 in *((byte*) SPRITES_YPOS + (number) 0) ← (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_COLS + (number) 0) ← (byte) WHITE
-Adding number conversion cast (unumber) $40 in (byte*~) init::$0 ← (byte*) SPRITE / (number) $40
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_PTR + (number) 0) ← (byte~) init::$1
-Adding number conversion cast (unumber) $3e8 in (byte*~) init::$2 ← (byte*) SCREEN + (number) $3e8
-Adding number conversion cast (unumber) $ff in *((byte*) SPRITE + (byte) init::i#2) ← (number) $ff
-Adding number conversion cast (snumber) 0 in (signed word) xpos#2 ← (number) 0
-Adding number conversion cast (snumber) 0 in (signed word) ypos#2 ← (number) 0
-Adding number conversion cast (snumber) $64 in (signed word) yvel_init#2 ← (number) $64
-Adding number conversion cast (snumber) $c8 in (signed word) xvel#2 ← (number) $c8
-Adding number conversion cast (snumber) -5 in (signed word) g ← (number) -5
+Adding number conversion cast (unumber) $3f8 in 
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 1 in *((const byte*) SPRITES_ENABLE) ← (number) 1
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_EXPAND_X) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_EXPAND_Y) ← (number) 0
+Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_XPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_XPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) $64 in *((const byte*) SPRITES_YPOS + (number) 0) ← (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_YPOS + (number) 0) ← ((unumber)) (number) $64
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_COLS + (number) 0) ← (const byte) WHITE
+Adding number conversion cast (unumber) $40 in *((const byte*) SPRITES_PTR + (number) 0) ← (byte)(const byte*) SPRITE/(number) $40
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_PTR + (number) 0) ← (byte)(const byte*) SPRITE/(unumber)(number) $40
+Adding number conversion cast (unumber) $3e8 in (bool~) init::$0 ← (byte*) init::sc#2 != (const byte*) SCREEN+(number) $3e8
+Adding number conversion cast (unumber) $ff in *((const byte*) SPRITE + (byte) init::i#2) ← (number) $ff
 Adding number conversion cast (snumber) 0 in (bool~) anim::$0 ← (signed word) ypos#9 < (number) 0
 Adding number conversion cast (snumber) 7 in (signed word~) anim::$5 ← (signed word) xpos#3 >> (number) 7
 Adding number conversion cast (snumber) $a0 in (number~) anim::$6 ← (signed word~) anim::$5 + (number) $a0
@@ -437,8 +408,8 @@ Adding number conversion cast (snumber) anim::$6 in (number~) anim::$6 ← (sign
 Adding number conversion cast (snumber) 5 in (signed word~) anim::$7 ← (signed word) ypos#3 >> (number) 5
 Adding number conversion cast (snumber) $e6 in (number~) anim::$8 ← (number) $e6 - (signed word~) anim::$7
 Adding number conversion cast (snumber) anim::$8 in (number~) anim::$8 ← (snumber)(number) $e6 - (signed word~) anim::$7
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
-Adding number conversion cast (unumber) 0 in *((byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_XPOS + (number) 0) ← (byte~) anim::$9
+Adding number conversion cast (unumber) 0 in *((const byte*) SPRITES_YPOS + (number) 0) ← (byte~) anim::$10
 Adding number conversion cast (snumber) 0 in (signed word) xpos#4 ← (number) 0
 Adding number conversion cast (snumber) 0 in (signed word) ypos#4 ← (number) 0
 Adding number conversion cast (snumber) $a in (number~) anim::$13 ← (signed word) yvel_init#9 - (number) $a
@@ -446,29 +417,12 @@ Adding number conversion cast (snumber) anim::$13 in (number~) anim::$13 ← (si
 Adding number conversion cast (snumber) -$c8 in (bool~) anim::$14 ← (signed word) yvel_init#3 < (number) -$c8
 Adding number conversion cast (snumber) $c8 in (signed word) yvel_init#4 ← (number) $c8
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SPRITES_XPOS ← (byte*)(number) $d000
-Inlining cast (byte*) SPRITES_YPOS ← (byte*)(number) $d001
-Inlining cast (byte*) SPRITES_XMSB ← (byte*)(number) $d010
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) SPRITES_ENABLE ← (byte*)(number) $d015
-Inlining cast (byte*) SPRITES_EXPAND_Y ← (byte*)(number) $d017
-Inlining cast (byte*) SPRITES_EXPAND_X ← (byte*)(number) $d01d
-Inlining cast (byte*) SPRITES_COLS ← (byte*)(number) $d027
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) SPRITE ← (byte*)(number) $2000
-Inlining cast *((byte*) SPRITES_ENABLE) ← (unumber)(number) 1
-Inlining cast *((byte*) SPRITES_EXPAND_X) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_EXPAND_Y) ← (unumber)(number) 0
-Inlining cast *((byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast *((byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
-Inlining cast (byte~) init::$1 ← (byte)(byte*~) init::$0
-Inlining cast *((byte*) SPRITE + (byte) init::i#2) ← (unumber)(number) $ff
-Inlining cast (signed word) xpos#2 ← (snumber)(number) 0
-Inlining cast (signed word) ypos#2 ← (snumber)(number) 0
-Inlining cast (signed word) yvel_init#2 ← (snumber)(number) $64
-Inlining cast (signed word) xvel#2 ← (snumber)(number) $c8
-Inlining cast (signed word) g ← (snumber)(number) -5
+Inlining cast *((const byte*) SPRITES_ENABLE) ← (unumber)(number) 1
+Inlining cast *((const byte*) SPRITES_EXPAND_X) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_EXPAND_Y) ← (unumber)(number) 0
+Inlining cast *((const byte*) SPRITES_XPOS + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast *((const byte*) SPRITES_YPOS + (unumber)(number) 0) ← (unumber)(number) $64
+Inlining cast *((const byte*) SPRITE + (byte) init::i#2) ← (unumber)(number) $ff
 Inlining cast (byte~) anim::$9 ← (byte)(signed word) anim::sprite_x#0
 Inlining cast (byte~) anim::$10 ← (byte)(signed word) anim::sprite_y#0
 Inlining cast (signed word) xpos#4 ← (snumber)(number) 0
@@ -483,7 +437,6 @@ Simplifying constant pointer cast (byte*) 53269
 Simplifying constant pointer cast (byte*) 53271
 Simplifying constant pointer cast (byte*) 53277
 Simplifying constant pointer cast (byte*) 53287
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3f8
 Simplifying constant pointer cast (byte*) 8192
@@ -501,11 +454,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast $64
-Simplifying constant integer cast $c8
-Simplifying constant integer cast -5
-Simplifying constant integer cast 0
 Simplifying constant integer cast 7
 Simplifying constant integer cast $a0
 Simplifying constant integer cast 5
@@ -518,7 +466,6 @@ Simplifying constant integer cast $a
 Simplifying constant integer cast -$c8
 Simplifying constant integer cast $c8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
 Finalized unsigned number type (word) $3f8
 Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 1
@@ -533,11 +480,6 @@ Finalized unsigned number type (byte) $40
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (byte) $ff
-Finalized signed number type (signed byte) 0
-Finalized signed number type (signed byte) 0
-Finalized signed number type (signed byte) $64
-Finalized signed number type (signed word) $c8
-Finalized signed number type (signed byte) -5
 Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) 7
 Finalized signed number type (signed word) $a0
@@ -554,10 +496,9 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to signed word in (snumber~) anim::$6 ← (signed word~) anim::$5 + (signed word) $a0
 Inferred type updated to signed word in (snumber~) anim::$8 ← (signed word) $e6 - (signed word~) anim::$7
 Inferred type updated to signed word in (snumber~) anim::$13 ← (signed word) yvel_init#9 - (signed byte) $a
-Inversing boolean not [67] (bool~) anim::$1 ← (signed word) ypos#9 >= (signed byte) 0 from [66] (bool~) anim::$0 ← (signed word) ypos#9 < (signed byte) 0
-Inversing boolean not [96] (bool~) anim::$15 ← (signed word) yvel_init#3 >= (signed word) -$c8 from [95] (bool~) anim::$14 ← (signed word) yvel_init#3 < (signed word) -$c8
+Inversing boolean not [50] (bool~) anim::$1 ← (signed word) ypos#9 >= (signed byte) 0 from [49] (bool~) anim::$0 ← (signed word) ypos#9 < (signed byte) 0
+Inversing boolean not [79] (bool~) anim::$15 ← (signed word) yvel_init#3 >= (signed word) -$c8 from [78] (bool~) anim::$14 ← (signed word) yvel_init#3 < (signed word) -$c8
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) SPRITES_PTR = (byte*~) $0 
 Alias (signed word) yvel#16 = (signed word) yvel#17 
 Alias (signed word) xpos#18 = (signed word) xpos#19 
 Alias (signed word) ypos#18 = (signed word) ypos#19 
@@ -623,45 +564,32 @@ Identical Phi Values (signed word) ypos#12 (signed word) ypos#0
 Identical Phi Values (signed word) xvel#11 (signed word) xvel#0
 Identical Phi Values (signed word) yvel_init#12 (signed word) yvel_init#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [18] if(*((byte*) RASTER)!=(byte) $ff) goto main::@2
-Simple Condition (bool~) init::$3 [48] if((byte*) init::sc#2!=(byte*~) init::$2) goto init::@2
-Simple Condition (bool~) init::$4 [57] if((byte) init::i#1!=rangelast(0,$3f)) goto init::@7
-Simple Condition (bool~) anim::$1 [68] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1
-Simple Condition (bool~) anim::$15 [97] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4
+Simple Condition (bool~) main::$1 [5] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+Simple Condition (bool~) init::$0 [32] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2
+Simple Condition (bool~) init::$1 [41] if((byte) init::i#1!=rangelast(0,$3f)) goto init::@7
+Simple Condition (bool~) anim::$1 [51] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1
+Simple Condition (bool~) anim::$15 [80] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SPRITES_XPOS = (byte*) 53248
-Constant (const byte*) SPRITES_YPOS = (byte*) 53249
-Constant (const byte*) SPRITES_XMSB = (byte*) 53264
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) SPRITES_ENABLE = (byte*) 53269
-Constant (const byte*) SPRITES_EXPAND_Y = (byte*) 53271
-Constant (const byte*) SPRITES_EXPAND_X = (byte*) 53277
-Constant (const byte*) SPRITES_COLS = (byte*) 53287
-Constant (const byte) WHITE = 1
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) SPRITE = (byte*) 8192
+Constant (const byte*) init::sc#0 = SCREEN
 Constant (const byte) init::i#0 = 0
 Constant (const signed word) xpos#15 = 0
 Constant (const signed word) ypos#15 = 0
 Constant (const signed word) yvel#14 = $64
 Constant (const signed word) xvel#15 = $c8
-Constant (const signed word) g = -5
 Constant (const signed word) xpos#14 = 0
 Constant (const signed word) ypos#14 = 0
 Constant (const signed word) yvel_init#4 = $c8
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) init::sc#0 = SCREEN
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [27] if(true) goto main::@2
+if() condition always true - replacing block destination [14] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [55] init::i#1 ← ++ init::i#2 to ++
-Resolved ranged comparison value [57] if(init::i#1!=rangelast(0,$3f)) goto init::@7 to (number) $40
-Simplifying expression containing zero SPRITES_XPOS in [38] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_YPOS in [39] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
-Simplifying expression containing zero SPRITES_COLS in [40] *((const byte*) SPRITES_COLS + (byte) 0) ← (const byte) WHITE
-Simplifying expression containing zero SPRITES_PTR in [43] *((byte*) SPRITES_PTR + (byte) 0) ← (byte~) init::$1
-Simplifying expression containing zero SPRITES_XPOS in [83] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte~) anim::$9
-Simplifying expression containing zero SPRITES_YPOS in [85] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte~) anim::$10
+Resolved ranged next value [39] init::i#1 ← ++ init::i#2 to ++
+Resolved ranged comparison value [41] if(init::i#1!=rangelast(0,$3f)) goto init::@7 to (number) $40
+Simplifying expression containing zero SPRITES_XPOS in [25] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_YPOS in [26] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
+Simplifying expression containing zero SPRITES_COLS in [27] *((const byte*) SPRITES_COLS + (byte) 0) ← (const byte) WHITE
+Simplifying expression containing zero SPRITES_PTR in [28] *((const byte*) SPRITES_PTR + (byte) 0) ← (byte)(const byte*) SPRITE/(byte) $40
+Simplifying expression containing zero SPRITES_XPOS in [66] *((const byte*) SPRITES_XPOS + (byte) 0) ← (byte~) anim::$9
+Simplifying expression containing zero SPRITES_YPOS in [68] *((const byte*) SPRITES_YPOS + (byte) 0) ← (byte~) anim::$10
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -671,20 +599,8 @@ Simplifying constant integer cast $40
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) SPRITES_PTR ← (const byte*) SCREEN + (word) $3f8
-Constant right-side identified [11] (byte*~) init::$0 ← (const byte*) SPRITE / (byte) $40
-Constant right-side identified [15] (byte*~) init::$2 ← (const byte*) SCREEN + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) SPRITES_PTR = SCREEN+$3f8
-Constant (const byte*) init::$0 = SPRITE/$40
-Constant (const byte*) init::$2 = SCREEN+$3e8
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)init::$0 in [12] (byte~) init::$1 ← (byte)(const byte*) init::$0
-Successful SSA optimization Pass2ConstantValues
-Constant (const byte) init::$1 = (byte)init::$0
-Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) init::i#0
 Inlining constant with var siblings (const byte*) init::sc#0
+Inlining constant with var siblings (const byte) init::i#0
 Inlining constant with var siblings (const signed word) xpos#15
 Inlining constant with var siblings (const signed word) ypos#15
 Inlining constant with var siblings (const signed word) yvel#14
@@ -692,25 +608,21 @@ Inlining constant with var siblings (const signed word) xvel#15
 Inlining constant with var siblings (const signed word) xpos#14
 Inlining constant with var siblings (const signed word) ypos#14
 Inlining constant with var siblings (const signed word) yvel_init#4
-Constant inlined xpos#15 = (signed byte) 0
+Constant inlined xpos#15 = (signed word) 0
 Constant inlined xpos#14 = (signed byte) 0
 Constant inlined yvel_init#4 = (signed word) $c8
 Constant inlined init::i#0 = (byte) 0
 Constant inlined init::sc#0 = (const byte*) SCREEN
 Constant inlined xvel#15 = (signed word) $c8
 Constant inlined ypos#14 = (signed byte) 0
-Constant inlined yvel#14 = (signed byte) $64
-Constant inlined init::$2 = (const byte*) SCREEN+(word) $3e8
-Constant inlined ypos#15 = (signed byte) 0
-Constant inlined init::$1 = (byte)(const byte*) SPRITE/(byte) $40
-Constant inlined init::$0 = (const byte*) SPRITE/(byte) $40
+Constant inlined yvel#14 = (signed word) $64
+Constant inlined ypos#15 = (signed word) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@2 and main::@2)
 Added new block during phi lifting init::@9(between init::@7 and init::@7)
 Added new block during phi lifting anim::@5(between anim and anim::@1)
 Added new block during phi lifting anim::@6(between anim::@2 and anim::@4)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @8
@@ -721,33 +633,32 @@ Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of anim::@3
 Adding NOP phi() at start of init::@3
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to init:8 anim:13 
+Calls in [] to main:3 
+Calls in [main] to init:7 anim:12 
 
 Created 13 initial phi equivalence classes
-Coalesced [14] yvel#19 ← yvel#10
-Coalesced [15] xpos#21 ← xpos#10
-Coalesced [16] ypos#21 ← ypos#11
-Coalesced [17] xvel#21 ← xvel#10
-Coalesced [18] yvel_init#21 ← yvel_init#11
-Coalesced (already) [19] yvel#18 ← yvel#12
-Coalesced (already) [20] xpos#20 ← xpos#12
-Coalesced (already) [21] ypos#20 ← ypos#13
-Coalesced (already) [22] xvel#20 ← xvel#12
-Coalesced (already) [23] yvel_init#20 ← yvel_init#13
-Not coalescing [30] yvel#21 ← yvel#4
-Coalesced [31] xvel#23 ← xvel#14
-Coalesced [32] yvel_init#23 ← yvel#4
-Coalesced [48] yvel#22 ← yvel_init#3
-Coalesced [49] yvel#20 ← yvel#12
-Coalesced [50] xpos#22 ← xpos#12
-Coalesced (already) [51] xvel#22 ← xvel#12
-Coalesced [52] ypos#22 ← ypos#13
-Coalesced (already) [53] yvel_init#22 ← yvel_init#13
-Coalesced [69] init::i#3 ← init::i#1
-Coalesced [72] init::sc#4 ← init::sc#1
+Coalesced [13] yvel#19 ← yvel#10
+Coalesced [14] xpos#21 ← xpos#10
+Coalesced [15] ypos#21 ← ypos#11
+Coalesced [16] xvel#21 ← xvel#10
+Coalesced [17] yvel_init#21 ← yvel_init#11
+Coalesced (already) [18] yvel#18 ← yvel#12
+Coalesced (already) [19] xpos#20 ← xpos#12
+Coalesced (already) [20] ypos#20 ← ypos#13
+Coalesced (already) [21] xvel#20 ← xvel#12
+Coalesced (already) [22] yvel_init#20 ← yvel_init#13
+Not coalescing [29] yvel#21 ← yvel#4
+Coalesced [30] xvel#23 ← xvel#14
+Coalesced [31] yvel_init#23 ← yvel#4
+Coalesced [47] yvel#22 ← yvel_init#3
+Coalesced [48] yvel#20 ← yvel#12
+Coalesced [49] xpos#22 ← xpos#12
+Coalesced (already) [50] xvel#22 ← xvel#12
+Coalesced [51] ypos#22 ← ypos#13
+Coalesced (already) [52] yvel_init#22 ← yvel_init#13
+Coalesced [68] init::i#3 ← init::i#1
+Coalesced [71] init::sc#4 ← init::sc#1
 Coalesced down to 7 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Culled Empty Block (label) @8
 Culled Empty Block (label) main::@5
@@ -787,11 +698,11 @@ main: scope:[main]  from @1
   [5] call init 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  [6] (signed word) yvel_init#13 ← phi( main::@1/(signed word) yvel_init#13 main/(signed byte) $64 main::@2/(signed word) yvel_init#11 )
+  [6] (signed word) yvel_init#13 ← phi( main::@1/(signed word) yvel_init#13 main/(signed word) $64 main::@2/(signed word) yvel_init#11 )
   [6] (signed word) xvel#12 ← phi( main::@1/(signed word) xvel#12 main/(signed word) $c8 main::@2/(signed word) xvel#10 )
-  [6] (signed word) ypos#13 ← phi( main::@1/(signed word) ypos#13 main/(signed byte) 0 main::@2/(signed word) ypos#11 )
-  [6] (signed word) xpos#12 ← phi( main::@1/(signed word) xpos#12 main/(signed byte) 0 main::@2/(signed word) xpos#10 )
-  [6] (signed word) yvel#12 ← phi( main::@1/(signed word) yvel#12 main/(signed byte) $64 main::@2/(signed word) yvel#10 )
+  [6] (signed word) ypos#13 ← phi( main::@1/(signed word) ypos#13 main/(signed word) 0 main::@2/(signed word) ypos#11 )
+  [6] (signed word) xpos#12 ← phi( main::@1/(signed word) xpos#12 main/(signed word) 0 main::@2/(signed word) xpos#10 )
+  [6] (signed word) yvel#12 ← phi( main::@1/(signed word) yvel#12 main/(signed word) $64 main::@2/(signed word) yvel#10 )
   [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -813,14 +724,14 @@ anim::@4: scope:[anim]  from anim::@2
   to:anim::@3
 anim::@3: scope:[anim]  from anim::@2 anim::@4
   [15] (signed word) yvel#4 ← phi( anim::@4/(signed word) yvel_init#3 anim::@2/(signed word) $c8 )
-  [16] (signed word~) yvel#21 ← (signed word) yvel#4
+  [16] (signed word) yvel#21 ← (signed word) yvel#4
   to:anim::@1
 anim::@1: scope:[anim]  from anim anim::@3
   [17] (signed word) yvel_init#11 ← phi( anim/(signed word) yvel_init#13 anim::@3/(signed word) yvel#4 )
   [17] (signed word) ypos#10 ← phi( anim/(signed word) ypos#13 anim::@3/(signed byte) 0 )
   [17] (signed word) xvel#10 ← phi( anim/(signed word) xvel#12 anim::@3/(signed word) xvel#14 )
   [17] (signed word) xpos#9 ← phi( anim/(signed word) xpos#12 anim::@3/(signed byte) 0 )
-  [17] (signed word) yvel#9 ← phi( anim/(signed word) yvel#12 anim::@3/(signed word~) yvel#21 )
+  [17] (signed word) yvel#9 ← phi( anim/(signed word) yvel#12 anim::@3/(signed word) yvel#21 )
   [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g
   [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10
   [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10
@@ -902,7 +813,7 @@ VARIABLE REGISTER WEIGHTS
 (signed word) yvel
 (signed word) yvel#10 0.9999999999999999
 (signed word) yvel#12 53.75
-(signed word~) yvel#21 4.0
+(signed word) yvel#21 4.0
 (signed word) yvel#4 3.0
 (signed word) yvel#9 6.0
 (signed word) yvel_init
@@ -918,13 +829,13 @@ Initial phi equivalence classes
 [ ypos#10 ypos#13 ypos#11 ]
 [ init::sc#2 init::sc#1 ]
 [ init::i#2 init::i#1 ]
-Added variable anim::$5 to zero page equivalence class [ anim::$5 ]
-Added variable anim::sprite_x#0 to zero page equivalence class [ anim::sprite_x#0 ]
-Added variable anim::$7 to zero page equivalence class [ anim::$7 ]
-Added variable anim::sprite_y#0 to zero page equivalence class [ anim::sprite_y#0 ]
-Added variable anim::$9 to zero page equivalence class [ anim::$9 ]
-Added variable anim::$10 to zero page equivalence class [ anim::$10 ]
-Added variable anim::$11 to zero page equivalence class [ anim::$11 ]
+Added variable anim::$5 to live range equivalence class [ anim::$5 ]
+Added variable anim::sprite_x#0 to live range equivalence class [ anim::sprite_x#0 ]
+Added variable anim::$7 to live range equivalence class [ anim::$7 ]
+Added variable anim::sprite_y#0 to live range equivalence class [ anim::sprite_y#0 ]
+Added variable anim::$9 to live range equivalence class [ anim::$9 ]
+Added variable anim::$10 to live range equivalence class [ anim::$10 ]
+Added variable anim::$11 to live range equivalence class [ anim::$11 ]
 Complete equivalence classes
 [ xvel#12 xvel#10 xvel#14 ]
 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
@@ -940,20 +851,20 @@ Complete equivalence classes
 [ anim::$9 ]
 [ anim::$10 ]
 [ anim::$11 ]
-Allocated zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ]
-Allocated zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
-Allocated zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
-Allocated zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ]
-Allocated zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ]
-Allocated zp ZP_WORD:12 [ init::sc#2 init::sc#1 ]
-Allocated zp ZP_BYTE:14 [ init::i#2 init::i#1 ]
-Allocated zp ZP_WORD:15 [ anim::$5 ]
-Allocated zp ZP_WORD:17 [ anim::sprite_x#0 ]
-Allocated zp ZP_WORD:19 [ anim::$7 ]
-Allocated zp ZP_WORD:21 [ anim::sprite_y#0 ]
-Allocated zp ZP_BYTE:23 [ anim::$9 ]
-Allocated zp ZP_BYTE:24 [ anim::$10 ]
-Allocated zp ZP_BYTE:25 [ anim::$11 ]
+Allocated zp[2]:2 [ xvel#12 xvel#10 xvel#14 ]
+Allocated zp[2]:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
+Allocated zp[2]:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
+Allocated zp[2]:8 [ xpos#9 xpos#12 xpos#10 ]
+Allocated zp[2]:10 [ ypos#10 ypos#13 ypos#11 ]
+Allocated zp[2]:12 [ init::sc#2 init::sc#1 ]
+Allocated zp[1]:14 [ init::i#2 init::i#1 ]
+Allocated zp[2]:15 [ anim::$5 ]
+Allocated zp[2]:17 [ anim::sprite_x#0 ]
+Allocated zp[2]:19 [ anim::$7 ]
+Allocated zp[2]:21 [ anim::sprite_y#0 ]
+Allocated zp[1]:23 [ anim::$9 ]
+Allocated zp[1]:24 [ anim::$10 ]
+Allocated zp[1]:25 [ anim::$11 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -973,18 +884,17 @@ Target platform is c64basic / MOS6502X
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
+  // Reset y velocity
   .label yvel_init = 4
   .label yvel = 4
-  .label yvel_9 = 6
+  .label yvel_1 = 6
+  // Reset position
   .label xpos = 8
   .label ypos = $a
-  .label yvel_10 = 6
   .label xvel = 2
-  .label yvel_12 = 6
-  .label yvel_21 = 6
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -1007,7 +917,7 @@ main: {
     jsr init
     // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (signed word) yvel_init#13 = (signed byte) $64 [phi:main->main::@1#0] -- vwsz1=vbsc1 
+    // [6] phi (signed word) yvel_init#13 = (signed word) $64 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<$64
     sta.z yvel_init
     lda #>$64
@@ -1017,21 +927,21 @@ main: {
     sta.z xvel
     lda #>$c8
     sta.z xvel+1
-    // [6] phi (signed word) ypos#13 = (signed byte) 0 [phi:main->main::@1#2] -- vwsz1=vbsc1 
+    // [6] phi (signed word) ypos#13 = (signed word) 0 [phi:main->main::@1#2] -- vwsz1=vwsc1 
     lda #<0
     sta.z ypos
     lda #>0
     sta.z ypos+1
-    // [6] phi (signed word) xpos#12 = (signed byte) 0 [phi:main->main::@1#3] -- vwsz1=vbsc1 
+    // [6] phi (signed word) xpos#12 = (signed word) 0 [phi:main->main::@1#3] -- vwsz1=vwsc1 
     lda #<0
     sta.z xpos
     lda #>0
     sta.z xpos+1
-    // [6] phi (signed word) yvel#12 = (signed byte) $64 [phi:main->main::@1#4] -- vwsz1=vbsc1 
+    // [6] phi (signed word) yvel#12 = (signed word) $64 [phi:main->main::@1#4] -- vwsz1=vwsc1 
     lda #<$64
-    sta.z yvel_12
+    sta.z yvel_1
     lda #>$64
-    sta.z yvel_12+1
+    sta.z yvel_1+1
     jmp __b1
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
   __b1_from___b1:
@@ -1116,11 +1026,11 @@ anim: {
     jmp __b3
     // anim::@3
   __b3:
-    // [16] (signed word~) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
+    // [16] (signed word) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
     lda.z yvel
-    sta.z yvel_21
+    sta.z yvel_1
     lda.z yvel+1
-    sta.z yvel_21+1
+    sta.z yvel_1+1
     // [17] phi from anim::@3 to anim::@1 [phi:anim::@3->anim::@1]
   __b1_from___b3:
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel#4 [phi:anim::@3->anim::@1#0] -- register_copy 
@@ -1135,7 +1045,7 @@ anim: {
     sta.z xpos
     lda #>0
     sta.z xpos+1
-    // [17] phi (signed word) yvel#9 = (signed word~) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
+    // [17] phi (signed word) yvel#9 = (signed word) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
     jmp __b1
     // [17] phi from anim to anim::@1 [phi:anim->anim::@1]
   __b1_from_anim:
@@ -1149,12 +1059,12 @@ anim: {
   __b1:
     // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
-    lda.z yvel_10
+    lda.z yvel_1
     adc #<g
-    sta.z yvel_10
-    lda.z yvel_10+1
+    sta.z yvel_1
+    lda.z yvel_1+1
     adc #>g
-    sta.z yvel_10+1
+    sta.z yvel_1+1
     // [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z xpos
     clc
@@ -1166,10 +1076,10 @@ anim: {
     // [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z ypos
     clc
-    adc.z yvel_10
+    adc.z yvel_1
     sta.z ypos
     lda.z ypos+1
-    adc.z yvel_10+1
+    adc.z yvel_1+1
     sta.z ypos+1
     // [21] (signed word~) anim::$5 ← (signed word) xpos#10 >> (signed byte) 7 -- vwsz1=vwsz2_ror_7 
     lda.z xpos
@@ -1339,7 +1249,7 @@ Statement [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 [ yvel#1
 Statement [11] (signed word) xvel#14 ← - (signed word) xvel#12 [ yvel_init#13 xvel#14 ] ( main:2::anim:9 [ yvel_init#13 xvel#14 ] ) always clobbers reg byte a 
 Statement [12] (signed word) yvel_init#3 ← (signed word) yvel_init#13 - (signed byte) $a [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
 Statement [13] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4 [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
-Statement [16] (signed word~) yvel#21 ← (signed word) yvel#4 [ xvel#14 yvel#4 yvel#21 ] ( main:2::anim:9 [ xvel#14 yvel#4 yvel#21 ] ) always clobbers reg byte a 
+Statement [16] (signed word) yvel#21 ← (signed word) yvel#4 [ xvel#14 yvel#4 yvel#21 ] ( main:2::anim:9 [ xvel#14 yvel#4 yvel#21 ] ) always clobbers reg byte a 
 Statement [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ( main:2::anim:9 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ) always clobbers reg byte a 
 Statement [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ( main:2::anim:9 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ) always clobbers reg byte a 
 Statement [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ) always clobbers reg byte a 
@@ -1359,14 +1269,14 @@ Statement [37] *((const byte*) SPRITES_COLS) ← (const byte) WHITE [ ] ( main:2
 Statement [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte) $40 [ ] ( main:2::init:5 [ ] ) always clobbers reg byte a 
 Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
 Statement [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ init::i#2 init::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:14 [ init::i#2 init::i#1 ]
 Statement [46] *((byte*) init::sc#2) ← (byte) ' ' [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a reg byte y 
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [10] if((signed word) ypos#13>=(signed byte) 0) goto anim::@1 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ( main:2::anim:9 [ yvel#12 xpos#12 ypos#13 xvel#12 yvel_init#13 ] ) always clobbers reg byte a 
 Statement [11] (signed word) xvel#14 ← - (signed word) xvel#12 [ yvel_init#13 xvel#14 ] ( main:2::anim:9 [ yvel_init#13 xvel#14 ] ) always clobbers reg byte a 
 Statement [12] (signed word) yvel_init#3 ← (signed word) yvel_init#13 - (signed byte) $a [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
 Statement [13] if((signed word) yvel_init#3>=(signed word) -$c8) goto anim::@4 [ xvel#14 yvel_init#3 ] ( main:2::anim:9 [ xvel#14 yvel_init#3 ] ) always clobbers reg byte a 
-Statement [16] (signed word~) yvel#21 ← (signed word) yvel#4 [ xvel#14 yvel#4 yvel#21 ] ( main:2::anim:9 [ xvel#14 yvel#4 yvel#21 ] ) always clobbers reg byte a 
+Statement [16] (signed word) yvel#21 ← (signed word) yvel#4 [ xvel#14 yvel#4 yvel#21 ] ( main:2::anim:9 [ xvel#14 yvel#4 yvel#21 ] ) always clobbers reg byte a 
 Statement [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ( main:2::anim:9 [ yvel#10 xvel#10 yvel_init#11 xpos#9 ypos#10 ] ) always clobbers reg byte a 
 Statement [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ( main:2::anim:9 [ yvel#10 xpos#10 xvel#10 yvel_init#11 ypos#10 ] ) always clobbers reg byte a 
 Statement [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ( main:2::anim:9 [ yvel#10 xpos#10 ypos#11 xvel#10 yvel_init#11 ] ) always clobbers reg byte a 
@@ -1387,41 +1297,41 @@ Statement [38] *((const byte*) SPRITES_PTR) ← (byte)(const byte*) SPRITE/(byte
 Statement [40] if((byte*) init::sc#2!=(const byte*) SCREEN+(word) $3e8) goto init::@2 [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a 
 Statement [42] *((const byte*) SPRITE + (byte) init::i#2) ← (byte) $ff [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] ) always clobbers reg byte a 
 Statement [46] *((byte*) init::sc#2) ← (byte) ' ' [ init::sc#2 ] ( main:2::init:5 [ init::sc#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] : zp ZP_WORD:12 , 
-Potential registers zp ZP_BYTE:14 [ init::i#2 init::i#1 ] : zp ZP_BYTE:14 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:15 [ anim::$5 ] : zp ZP_WORD:15 , 
-Potential registers zp ZP_WORD:17 [ anim::sprite_x#0 ] : zp ZP_WORD:17 , 
-Potential registers zp ZP_WORD:19 [ anim::$7 ] : zp ZP_WORD:19 , 
-Potential registers zp ZP_WORD:21 [ anim::sprite_y#0 ] : zp ZP_WORD:21 , 
-Potential registers zp ZP_BYTE:23 [ anim::$9 ] : zp ZP_BYTE:23 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:24 [ anim::$10 ] : zp ZP_BYTE:24 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:25 [ anim::$11 ] : zp ZP_BYTE:25 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ xvel#12 xvel#10 xvel#14 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ xpos#9 xpos#12 xpos#10 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ ypos#10 ypos#13 ypos#11 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ init::sc#2 init::sc#1 ] : zp[2]:12 , 
+Potential registers zp[1]:14 [ init::i#2 init::i#1 ] : zp[1]:14 , reg byte x , reg byte y , 
+Potential registers zp[2]:15 [ anim::$5 ] : zp[2]:15 , 
+Potential registers zp[2]:17 [ anim::sprite_x#0 ] : zp[2]:17 , 
+Potential registers zp[2]:19 [ anim::$7 ] : zp[2]:19 , 
+Potential registers zp[2]:21 [ anim::sprite_y#0 ] : zp[2]:21 , 
+Potential registers zp[1]:23 [ anim::$9 ] : zp[1]:23 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:24 [ anim::$10 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:25 [ anim::$11 ] : zp[1]:25 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 64.75: zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] 56.82: zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ] 56.74: zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ] 55.98: zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] 49.34: zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] 
-Uplift Scope [init] 36.67: zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] 33: zp ZP_BYTE:14 [ init::i#2 init::i#1 ] 
-Uplift Scope [anim] 4: zp ZP_WORD:15 [ anim::$5 ] 4: zp ZP_WORD:19 [ anim::$7 ] 4: zp ZP_BYTE:23 [ anim::$9 ] 4: zp ZP_BYTE:24 [ anim::$10 ] 4: zp ZP_BYTE:25 [ anim::$11 ] 0.67: zp ZP_WORD:21 [ anim::sprite_y#0 ] 0.57: zp ZP_WORD:17 [ anim::sprite_x#0 ] 
+Uplift Scope [] 64.75: zp[2]:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] 56.82: zp[2]:8 [ xpos#9 xpos#12 xpos#10 ] 56.74: zp[2]:10 [ ypos#10 ypos#13 ypos#11 ] 55.98: zp[2]:2 [ xvel#12 xvel#10 xvel#14 ] 49.34: zp[2]:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] 
+Uplift Scope [init] 36.67: zp[2]:12 [ init::sc#2 init::sc#1 ] 33: zp[1]:14 [ init::i#2 init::i#1 ] 
+Uplift Scope [anim] 4: zp[2]:15 [ anim::$5 ] 4: zp[2]:19 [ anim::$7 ] 4: zp[1]:23 [ anim::$9 ] 4: zp[1]:24 [ anim::$10 ] 4: zp[1]:25 [ anim::$11 ] 0.67: zp[2]:21 [ anim::sprite_y#0 ] 0.57: zp[2]:17 [ anim::sprite_x#0 ] 
 Uplift Scope [main] 
 
-Uplifting [] best 7904 combination zp ZP_WORD:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] zp ZP_WORD:8 [ xpos#9 xpos#12 xpos#10 ] zp ZP_WORD:10 [ ypos#10 ypos#13 ypos#11 ] zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] zp ZP_WORD:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] 
-Uplifting [init] best 7784 combination zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] reg byte x [ init::i#2 init::i#1 ] 
-Uplifting [anim] best 7766 combination zp ZP_WORD:15 [ anim::$5 ] zp ZP_WORD:19 [ anim::$7 ] reg byte a [ anim::$9 ] reg byte a [ anim::$10 ] reg byte a [ anim::$11 ] zp ZP_WORD:21 [ anim::sprite_y#0 ] zp ZP_WORD:17 [ anim::sprite_x#0 ] 
+Uplifting [] best 7904 combination zp[2]:6 [ yvel#9 yvel#12 yvel#10 yvel#21 ] zp[2]:8 [ xpos#9 xpos#12 xpos#10 ] zp[2]:10 [ ypos#10 ypos#13 ypos#11 ] zp[2]:2 [ xvel#12 xvel#10 xvel#14 ] zp[2]:4 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ] 
+Uplifting [init] best 7784 combination zp[2]:12 [ init::sc#2 init::sc#1 ] reg byte x [ init::i#2 init::i#1 ] 
+Uplifting [anim] best 7766 combination zp[2]:15 [ anim::$5 ] zp[2]:19 [ anim::$7 ] reg byte a [ anim::$9 ] reg byte a [ anim::$10 ] reg byte a [ anim::$11 ] zp[2]:21 [ anim::sprite_y#0 ] zp[2]:17 [ anim::sprite_x#0 ] 
 Uplifting [main] best 7766 combination 
-Coalescing zero page register [ zp ZP_WORD:15 [ anim::$5 ] ] with [ zp ZP_WORD:17 [ anim::sprite_x#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:19 [ anim::$7 ] ] with [ zp ZP_WORD:21 [ anim::sprite_y#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:12 [ init::sc#2 init::sc#1 ] ] with [ zp ZP_WORD:2 [ xvel#12 xvel#10 xvel#14 ] ]
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:6 [ xpos#9 xpos#12 xpos#10 ]
-Allocated (was zp ZP_WORD:10) zp ZP_WORD:8 [ ypos#10 ypos#13 ypos#11 ]
-Allocated (was zp ZP_WORD:12) zp ZP_WORD:10 [ init::sc#2 init::sc#1 xvel#12 xvel#10 xvel#14 ]
-Allocated (was zp ZP_WORD:15) zp ZP_WORD:12 [ anim::$5 anim::sprite_x#0 ]
-Allocated (was zp ZP_WORD:19) zp ZP_WORD:14 [ anim::$7 anim::sprite_y#0 ]
+Coalescing zero page register [ zp[2]:15 [ anim::$5 ] ] with [ zp[2]:17 [ anim::sprite_x#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:19 [ anim::$7 ] ] with [ zp[2]:21 [ anim::sprite_y#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:12 [ init::sc#2 init::sc#1 ] ] with [ zp[2]:2 [ xvel#12 xvel#10 xvel#14 ] ]
+Allocated (was zp[2]:4) zp[2]:2 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
+Allocated (was zp[2]:6) zp[2]:4 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
+Allocated (was zp[2]:8) zp[2]:6 [ xpos#9 xpos#12 xpos#10 ]
+Allocated (was zp[2]:10) zp[2]:8 [ ypos#10 ypos#13 ypos#11 ]
+Allocated (was zp[2]:12) zp[2]:10 [ init::sc#2 init::sc#1 xvel#12 xvel#10 xvel#14 ]
+Allocated (was zp[2]:15) zp[2]:12 [ anim::$5 anim::sprite_x#0 ]
+Allocated (was zp[2]:19) zp[2]:14 [ anim::$7 anim::sprite_y#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1440,18 +1350,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
+  // Reset y velocity
   .label yvel_init = 2
   .label yvel = 2
-  .label yvel_9 = 4
+  .label yvel_1 = 4
+  // Reset position
   .label xpos = 6
   .label ypos = 8
-  .label yvel_10 = 4
   .label xvel = $a
-  .label yvel_12 = 4
-  .label yvel_21 = 4
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -1474,7 +1383,7 @@ main: {
     jsr init
     // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (signed word) yvel_init#13 = (signed byte) $64 [phi:main->main::@1#0] -- vwsz1=vbsc1 
+    // [6] phi (signed word) yvel_init#13 = (signed word) $64 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<$64
     sta.z yvel_init
     lda #>$64
@@ -1484,21 +1393,21 @@ main: {
     sta.z xvel
     lda #>$c8
     sta.z xvel+1
-    // [6] phi (signed word) ypos#13 = (signed byte) 0 [phi:main->main::@1#2] -- vwsz1=vbsc1 
+    // [6] phi (signed word) ypos#13 = (signed word) 0 [phi:main->main::@1#2] -- vwsz1=vwsc1 
     lda #<0
     sta.z ypos
     lda #>0
     sta.z ypos+1
-    // [6] phi (signed word) xpos#12 = (signed byte) 0 [phi:main->main::@1#3] -- vwsz1=vbsc1 
+    // [6] phi (signed word) xpos#12 = (signed word) 0 [phi:main->main::@1#3] -- vwsz1=vwsc1 
     lda #<0
     sta.z xpos
     lda #>0
     sta.z xpos+1
-    // [6] phi (signed word) yvel#12 = (signed byte) $64 [phi:main->main::@1#4] -- vwsz1=vbsc1 
+    // [6] phi (signed word) yvel#12 = (signed word) $64 [phi:main->main::@1#4] -- vwsz1=vwsc1 
     lda #<$64
-    sta.z yvel_12
+    sta.z yvel_1
     lda #>$64
-    sta.z yvel_12+1
+    sta.z yvel_1+1
     jmp __b1
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
   __b1_from___b1:
@@ -1580,11 +1489,11 @@ anim: {
     jmp __b3
     // anim::@3
   __b3:
-    // [16] (signed word~) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
+    // [16] (signed word) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
     lda.z yvel
-    sta.z yvel_21
+    sta.z yvel_1
     lda.z yvel+1
-    sta.z yvel_21+1
+    sta.z yvel_1+1
     // [17] phi from anim::@3 to anim::@1 [phi:anim::@3->anim::@1]
   __b1_from___b3:
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel#4 [phi:anim::@3->anim::@1#0] -- register_copy 
@@ -1599,7 +1508,7 @@ anim: {
     sta.z xpos
     lda #>0
     sta.z xpos+1
-    // [17] phi (signed word) yvel#9 = (signed word~) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
+    // [17] phi (signed word) yvel#9 = (signed word) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
     jmp __b1
     // [17] phi from anim to anim::@1 [phi:anim->anim::@1]
   __b1_from_anim:
@@ -1613,12 +1522,12 @@ anim: {
   __b1:
     // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
-    lda.z yvel_10
+    lda.z yvel_1
     adc #<g
-    sta.z yvel_10
-    lda.z yvel_10+1
+    sta.z yvel_1
+    lda.z yvel_1+1
     adc #>g
-    sta.z yvel_10+1
+    sta.z yvel_1+1
     // [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z xpos
     clc
@@ -1630,10 +1539,10 @@ anim: {
     // [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z ypos
     clc
-    adc.z yvel_10
+    adc.z yvel_1
     sta.z ypos
     lda.z ypos+1
-    adc.z yvel_10+1
+    adc.z yvel_1+1
     sta.z ypos+1
     // [21] (signed word~) anim::$5 ← (signed word) xpos#10 >> (signed byte) 7 -- vwsz1=vwsz2_ror_7 
     lda.z xpos
@@ -1856,23 +1765,23 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) RASTER RASTER = (byte*) 53266
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte*) SPRITE SPRITE = (byte*) 8192
-(const byte*) SPRITES_COLS SPRITES_COLS = (byte*) 53287
-(const byte*) SPRITES_ENABLE SPRITES_ENABLE = (byte*) 53269
-(const byte*) SPRITES_EXPAND_X SPRITES_EXPAND_X = (byte*) 53277
-(const byte*) SPRITES_EXPAND_Y SPRITES_EXPAND_Y = (byte*) 53271
-(const byte*) SPRITES_PTR SPRITES_PTR = (const byte*) SCREEN+(word) $3f8
-(const byte*) SPRITES_XMSB SPRITES_XMSB = (byte*) 53264
-(const byte*) SPRITES_XPOS SPRITES_XPOS = (byte*) 53248
-(const byte*) SPRITES_YPOS SPRITES_YPOS = (byte*) 53249
-(const byte) WHITE WHITE = (byte) 1
+(const byte*) RASTER = (byte*) 53266
+(const byte*) SCREEN = (byte*) 1024
+(const byte*) SPRITE = (byte*) 8192
+(const byte*) SPRITES_COLS = (byte*) 53287
+(const byte*) SPRITES_ENABLE = (byte*) 53269
+(const byte*) SPRITES_EXPAND_X = (byte*) 53277
+(const byte*) SPRITES_EXPAND_Y = (byte*) 53271
+(const byte*) SPRITES_PTR = (const byte*) SCREEN+(word) $3f8
+(const byte*) SPRITES_XMSB = (byte*) 53264
+(const byte*) SPRITES_XPOS = (byte*) 53248
+(const byte*) SPRITES_YPOS = (byte*) 53249
+(const byte) WHITE = (byte) 1
 (void()) anim()
 (byte~) anim::$10 reg byte a 4.0
 (byte~) anim::$11 reg byte a 4.0
-(signed word~) anim::$5 $5 zp ZP_WORD:12 4.0
-(signed word~) anim::$7 $7 zp ZP_WORD:14 4.0
+(signed word~) anim::$5 zp[2]:12 4.0
+(signed word~) anim::$7 zp[2]:14 4.0
 (byte~) anim::$9 reg byte a 4.0
 (label) anim::@1
 (label) anim::@2
@@ -1880,10 +1789,10 @@ FINAL SYMBOL TABLE
 (label) anim::@4
 (label) anim::@return
 (signed word) anim::sprite_x
-(signed word) anim::sprite_x#0 sprite_x zp ZP_WORD:12 0.5714285714285714
+(signed word) anim::sprite_x#0 sprite_x zp[2]:12 0.5714285714285714
 (signed word) anim::sprite_y
-(signed word) anim::sprite_y#0 sprite_y zp ZP_WORD:14 0.6666666666666666
-(const signed word) g g = (signed byte) -5
+(signed word) anim::sprite_y#0 sprite_y zp[2]:14 0.6666666666666666
+(const signed word) g = (signed word) -5
 (void()) init()
 (label) init::@1
 (label) init::@2
@@ -1893,42 +1802,42 @@ FINAL SYMBOL TABLE
 (byte) init::i#1 reg byte x 16.5
 (byte) init::i#2 reg byte x 16.5
 (byte*) init::sc
-(byte*) init::sc#1 sc zp ZP_WORD:10 22.0
-(byte*) init::sc#2 sc zp ZP_WORD:10 14.666666666666666
+(byte*) init::sc#1 sc zp[2]:10 22.0
+(byte*) init::sc#2 sc zp[2]:10 14.666666666666666
 (void()) main()
 (label) main::@1
 (label) main::@2
 (signed word) xpos
-(signed word) xpos#10 xpos zp ZP_WORD:6 1.0714285714285714
-(signed word) xpos#12 xpos zp ZP_WORD:6 53.75
-(signed word) xpos#9 xpos zp ZP_WORD:6 2.0
+(signed word) xpos#10 xpos zp[2]:6 1.0714285714285714
+(signed word) xpos#12 xpos zp[2]:6 53.75
+(signed word) xpos#9 xpos zp[2]:6 2.0
 (signed word) xvel
-(signed word) xvel#10 xvel zp ZP_WORD:10 1.0625
-(signed word) xvel#12 xvel zp ZP_WORD:10 54.25
-(signed word) xvel#14 xvel zp ZP_WORD:10 0.6666666666666666
+(signed word) xvel#10 xvel zp[2]:10 1.0625
+(signed word) xvel#12 xvel zp[2]:10 54.25
+(signed word) xvel#14 xvel zp[2]:10 0.6666666666666666
 (signed word) ypos
-(signed word) ypos#10 ypos zp ZP_WORD:8 1.3333333333333333
-(signed word) ypos#11 ypos zp ZP_WORD:8 1.1538461538461537
-(signed word) ypos#13 ypos zp ZP_WORD:8 54.25
+(signed word) ypos#10 ypos zp[2]:8 1.3333333333333333
+(signed word) ypos#11 ypos zp[2]:8 1.1538461538461537
+(signed word) ypos#13 ypos zp[2]:8 54.25
 (signed word) yvel
-(signed word) yvel#10 yvel#10 zp ZP_WORD:4 0.9999999999999999
-(signed word) yvel#12 yvel#12 zp ZP_WORD:4 53.75
-(signed word~) yvel#21 yvel#21 zp ZP_WORD:4 4.0
-(signed word) yvel#4 yvel zp ZP_WORD:2 3.0
-(signed word) yvel#9 yvel#9 zp ZP_WORD:4 6.0
+(signed word) yvel#10 yvel_1 zp[2]:4 0.9999999999999999
+(signed word) yvel#12 yvel_1 zp[2]:4 53.75
+(signed word) yvel#21 yvel_1 zp[2]:4 4.0
+(signed word) yvel#4 yvel zp[2]:2 3.0
+(signed word) yvel#9 yvel_1 zp[2]:4 6.0
 (signed word) yvel_init
-(signed word) yvel_init#11 yvel_init zp ZP_WORD:2 0.9375
-(signed word) yvel_init#13 yvel_init zp ZP_WORD:2 43.39999999999999
-(signed word) yvel_init#3 yvel_init zp ZP_WORD:2 2.0
+(signed word) yvel_init#11 yvel_init zp[2]:2 0.9375
+(signed word) yvel_init#13 yvel_init zp[2]:2 43.39999999999999
+(signed word) yvel_init#3 yvel_init zp[2]:2 2.0
 
-zp ZP_WORD:2 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
-zp ZP_WORD:4 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
-zp ZP_WORD:6 [ xpos#9 xpos#12 xpos#10 ]
-zp ZP_WORD:8 [ ypos#10 ypos#13 ypos#11 ]
-zp ZP_WORD:10 [ init::sc#2 init::sc#1 xvel#12 xvel#10 xvel#14 ]
+zp[2]:2 [ yvel_init#13 yvel_init#11 yvel#4 yvel_init#3 ]
+zp[2]:4 [ yvel#9 yvel#12 yvel#10 yvel#21 ]
+zp[2]:6 [ xpos#9 xpos#12 xpos#10 ]
+zp[2]:8 [ ypos#10 ypos#13 ypos#11 ]
+zp[2]:10 [ init::sc#2 init::sc#1 xvel#12 xvel#10 xvel#14 ]
 reg byte x [ init::i#2 init::i#1 ]
-zp ZP_WORD:12 [ anim::$5 anim::sprite_x#0 ]
-zp ZP_WORD:14 [ anim::$7 anim::sprite_y#0 ]
+zp[2]:12 [ anim::$5 anim::sprite_x#0 ]
+zp[2]:14 [ anim::$7 anim::sprite_y#0 ]
 reg byte a [ anim::$9 ]
 reg byte a [ anim::$10 ]
 reg byte a [ anim::$11 ]
@@ -1953,18 +1862,17 @@ Score: 6373
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
+  // Reset y velocity
   .label yvel_init = 2
   .label yvel = 2
-  .label yvel_9 = 4
+  .label yvel_1 = 4
+  // Reset position
   .label xpos = 6
   .label ypos = 8
-  .label yvel_10 = 4
   .label xvel = $a
-  .label yvel_12 = 4
-  .label yvel_21 = 4
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -1978,7 +1886,7 @@ main: {
     // [5] call init 
     jsr init
     // [6] phi from main to main::@1 [phi:main->main::@1]
-    // [6] phi (signed word) yvel_init#13 = (signed byte) $64 [phi:main->main::@1#0] -- vwsz1=vbsc1 
+    // [6] phi (signed word) yvel_init#13 = (signed word) $64 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<$64
     sta.z yvel_init
     lda #>$64
@@ -1988,18 +1896,18 @@ main: {
     sta.z xvel
     lda #>$c8
     sta.z xvel+1
-    // [6] phi (signed word) ypos#13 = (signed byte) 0 [phi:main->main::@1#2] -- vwsz1=vbsc1 
+    // [6] phi (signed word) ypos#13 = (signed word) 0 [phi:main->main::@1#2] -- vwsz1=vwsc1 
     lda #<0
     sta.z ypos
     sta.z ypos+1
-    // [6] phi (signed word) xpos#12 = (signed byte) 0 [phi:main->main::@1#3] -- vwsz1=vbsc1 
+    // [6] phi (signed word) xpos#12 = (signed word) 0 [phi:main->main::@1#3] -- vwsz1=vwsc1 
     sta.z xpos
     sta.z xpos+1
-    // [6] phi (signed word) yvel#12 = (signed byte) $64 [phi:main->main::@1#4] -- vwsz1=vbsc1 
+    // [6] phi (signed word) yvel#12 = (signed word) $64 [phi:main->main::@1#4] -- vwsz1=vwsc1 
     lda #<$64
-    sta.z yvel_12
+    sta.z yvel_1
     lda #>$64
-    sta.z yvel_12+1
+    sta.z yvel_1+1
     // [6] phi from main::@1 main::@2 to main::@1 [phi:main::@1/main::@2->main::@1]
     // [6] phi (signed word) yvel_init#13 = (signed word) yvel_init#13 [phi:main::@1/main::@2->main::@1#0] -- register_copy 
     // [6] phi (signed word) xvel#12 = (signed word) xvel#12 [phi:main::@1/main::@2->main::@1#1] -- register_copy 
@@ -2071,11 +1979,11 @@ anim: {
     // [15] phi (signed word) yvel#4 = (signed word) yvel_init#3 [phi:anim::@4->anim::@3#0] -- register_copy 
     // anim::@3
   __b3:
-    // [16] (signed word~) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
+    // [16] (signed word) yvel#21 ← (signed word) yvel#4 -- vwsz1=vwsz2 
     lda.z yvel
-    sta.z yvel_21
+    sta.z yvel_1
     lda.z yvel+1
-    sta.z yvel_21+1
+    sta.z yvel_1+1
     // [17] phi from anim::@3 to anim::@1 [phi:anim::@3->anim::@1]
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel#4 [phi:anim::@3->anim::@1#0] -- register_copy 
     // [17] phi (signed word) ypos#10 = (signed byte) 0 [phi:anim::@3->anim::@1#1] -- vwsz1=vbsc1 
@@ -2086,7 +1994,7 @@ anim: {
     // [17] phi (signed word) xpos#9 = (signed byte) 0 [phi:anim::@3->anim::@1#3] -- vwsz1=vbsc1 
     sta.z xpos
     sta.z xpos+1
-    // [17] phi (signed word) yvel#9 = (signed word~) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
+    // [17] phi (signed word) yvel#9 = (signed word) yvel#21 [phi:anim::@3->anim::@1#4] -- register_copy 
     // [17] phi from anim to anim::@1 [phi:anim->anim::@1]
     // [17] phi (signed word) yvel_init#11 = (signed word) yvel_init#13 [phi:anim->anim::@1#0] -- register_copy 
     // [17] phi (signed word) ypos#10 = (signed word) ypos#13 [phi:anim->anim::@1#1] -- register_copy 
@@ -2098,12 +2006,12 @@ anim: {
     // yvel + g
     // [18] (signed word) yvel#10 ← (signed word) yvel#9 + (const signed word) g -- vwsz1=vwsz1_plus_vwsc1 
     clc
-    lda.z yvel_10
+    lda.z yvel_1
     adc #<g
-    sta.z yvel_10
-    lda.z yvel_10+1
+    sta.z yvel_1
+    lda.z yvel_1+1
     adc #>g
-    sta.z yvel_10+1
+    sta.z yvel_1+1
     // xpos + xvel
     // [19] (signed word) xpos#10 ← (signed word) xpos#9 + (signed word) xvel#10 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z xpos
@@ -2117,10 +2025,10 @@ anim: {
     // [20] (signed word) ypos#11 ← (signed word) ypos#10 + (signed word) yvel#10 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z ypos
     clc
-    adc.z yvel_10
+    adc.z yvel_1
     sta.z ypos
     lda.z ypos+1
-    adc.z yvel_10+1
+    adc.z yvel_1+1
     sta.z ypos+1
     // xpos>>7
     // [21] (signed word~) anim::$5 ← (signed word) xpos#10 >> (signed byte) 7 -- vwsz1=vwsz2_ror_7 

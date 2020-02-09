@@ -5,12 +5,12 @@
   .const OFFSET_STRUCT_POINT_Y = 1
 main: {
     .label SCREEN = $400
-    .label __5 = 2
+    .label __4 = 2
     ldx #0
   __b1:
     txa
     asl
-    sta.z __5
+    sta.z __4
     tay
     txa
     sta points,y
@@ -18,7 +18,7 @@ main: {
     tay
     iny
     tya
-    ldy.z __5
+    ldy.z __4
     sta points+OFFSET_STRUCT_POINT_Y,y
     inx
     cpx #5

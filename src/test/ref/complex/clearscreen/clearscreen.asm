@@ -2,19 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(__b1)
 .pc = $80d "Program"
-  .const STATUS_FREE = 0
-  .const STATUS_NEW = 1
-  .const STATUS_PROCESSING = 2
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_VX = 4
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 8
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 9
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
-  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Processor port data direction register
@@ -69,12 +56,27 @@
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
   .const NOT_FOUND = $ff
+  .const STATUS_FREE = 0
+  .const STATUS_NEW = 1
+  .const STATUS_PROCESSING = 2
+  .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
+  .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
+  .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
+  .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
   .const RASTER_IRQ_TOP = $30
   .const RASTER_IRQ_MIDDLE = $ff
-  .const XPOS_RIGHTMOST = BORDER_XPOS_RIGHT<<4
-  .const YPOS_BOTTOMMOST = BORDER_YPOS_BOTTOM<<4
-  .const XPOS_LEFTMOST = BORDER_XPOS_LEFT-8<<4
-  .const YPOS_TOPMOST = BORDER_YPOS_TOP-8<<4
+  .const SIZEOF_STRUCT_PROCESSINGSPRITE = $e
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_Y = 2
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_VX = 4
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_VY = 6
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_ID = 8
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_PTR = 9
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
+  .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
+  // Head of the heap. Moved backward each malloc()
   .label heap_head = $18
   .label SCREEN_COPY = 7
   .label SCREEN_DIST = 9
@@ -130,23 +132,14 @@ main: {
     adc.z i
     asl
     tax
-    lda #0
+    ldy #0
+  !:
+    lda __2,y
     sta PROCESSING,x
-    sta PROCESSING+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_PTR,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_COL,x
-    lda #STATUS_FREE
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,x
-    lda #<0
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
-    sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
+    inx
+    iny
+    cpy #SIZEOF_STRUCT_PROCESSINGSPRITE
+    bne !-
     inc.z i
     lda #NUM_PROCESSING-1+1
     cmp.z i
@@ -186,7 +179,7 @@ main: {
     jmp __b1
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zeropage($1e) center_x, byte zeropage($b) center_y)
+// startProcessing(byte zp($1e) center_x, byte zp($b) center_y)
 startProcessing: {
     .label __0 = $c
     .label __1 = $c
@@ -200,7 +193,7 @@ startProcessing: {
     .label __15 = $15
     .label __16 = $15
     .label __17 = $15
-    .label __23 = $18
+    .label __21 = $18
     .label center_x = $1e
     .label center_y = $b
     .label i = 2
@@ -213,9 +206,10 @@ startProcessing: {
     .label spriteX = $13
     .label spriteY = $15
     .label spritePtr = $17
+    // Busy-wait while finding an empty slot in the PROCESSING array
     .label freeIdx = 2
-    .label __47 = $e
-    .label __48 = $c
+    .label __34 = $e
+    .label __35 = $c
     ldx #$ff
   __b1:
     lda #0
@@ -247,19 +241,19 @@ startProcessing: {
     sta.z __0+1
     lda.z __0
     asl
-    sta.z __47
+    sta.z __34
     lda.z __0+1
     rol
-    sta.z __47+1
-    asl.z __47
-    rol.z __47+1
-    lda.z __48
+    sta.z __34+1
+    asl.z __34
+    rol.z __34+1
+    lda.z __35
     clc
-    adc.z __47
-    sta.z __48
-    lda.z __48+1
-    adc.z __47+1
-    sta.z __48+1
+    adc.z __34
+    sta.z __35
+    lda.z __35+1
+    adc.z __34+1
+    sta.z __35+1
     asl.z __1
     rol.z __1+1
     asl.z __1
@@ -412,9 +406,9 @@ startProcessing: {
     asl
     asl
     asl
-    sta.z __23
+    sta.z __21
     lda #0
-    sta.z __23+1
+    sta.z __21+1
     lda.z freeIdx
     asl
     clc
@@ -432,13 +426,13 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y,x
     lda.z spriteY+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_Y+1,x
-    lda.z __23
+    lda.z __21
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX,x
-    lda.z __23+1
+    lda.z __21+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VX+1,x
-    lda #$3c
+    lda #<$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY,x
-    lda #0
+    lda #>$3c
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_VY+1,x
     lda.z freeIdx
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_ID,x
@@ -499,8 +493,8 @@ getCharToProcess: {
   __b1:
     ldy #0
   __b2:
-    lda (screen_line),y
-    cmp #' '
+    lda #' '
+    cmp (screen_line),y
     bne !__b11+
     jmp __b11
   !__b11:
@@ -656,7 +650,7 @@ initSprites: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage($18) screen)
+// init_angle_screen(byte* zp($18) screen)
 init_angle_screen: {
     .label __11 = $10
     .label screen = $18
@@ -758,7 +752,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($1a) x, signed word zeropage($1c) y)
+// atan2_16(signed word zp($1a) x, signed word zp($1c) y)
 atan2_16: {
     .label __2 = $c
     .label __7 = $e
@@ -987,8 +981,8 @@ irqBottom: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label __15 = $24
-    .label __25 = $22
+    .label __13 = $24
+    .label __23 = $22
     .label processing = $1f
     .label bitmask = $21
     .label i = 5
@@ -1015,19 +1009,19 @@ processChars: {
     sta.z processing+1
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
     lda (processing),y
-    tax
+    tay
     lda #1
-    cpx #0
+    cpy #0
     beq !e+
   !:
     asl
-    dex
+    dey
     bne !-
   !e:
     sta.z bitmask
+    lda #STATUS_FREE
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
-    lda (processing),y
-    cmp #STATUS_FREE
+    cmp (processing),y
     bne !__b2+
     jmp __b2
   !__b2:
@@ -1103,19 +1097,19 @@ processChars: {
     sta SPRITES_XPOS,x
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
-    sta.z __15
+    sta.z __13
     iny
     lda (processing),y
-    sta.z __15+1
-    lsr.z __15+1
-    ror.z __15
-    lsr.z __15+1
-    ror.z __15
-    lsr.z __15+1
-    ror.z __15
-    lsr.z __15+1
-    ror.z __15
-    lda.z __15
+    sta.z __13+1
+    lsr.z __13+1
+    ror.z __13
+    lsr.z __13+1
+    ror.z __13
+    lsr.z __13+1
+    ror.z __13
+    lsr.z __13+1
+    ror.z __13
+    lda.z __13
     sta.z ypos
     sta SPRITES_YPOS,x
     // Move sprite
@@ -1175,13 +1169,13 @@ processChars: {
     cmp (processing),y
     bcc __b6
   !:
-    lsr.z __25+1
-    ror.z __25
-    lsr.z __25+1
-    ror.z __25
-    lsr.z __25+1
-    ror.z __25
-    lda.z __25
+    lsr.z __23+1
+    ror.z __23
+    lsr.z __23+1
+    ror.z __23
+    lsr.z __23+1
+    ror.z __23
+    lda.z __23
     sec
     sbc #BORDER_XPOS_LEFT/8
     asl
@@ -1305,3 +1299,6 @@ VYSIN:
 
   // Sprites currently being processed in the interrupt
   PROCESSING: .fill $e*NUM_PROCESSING, 0
+  __2: .word 0, 0, 0, 0
+  .byte 0, 0, 0, STATUS_FREE
+  .word 0

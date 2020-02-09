@@ -67,20 +67,21 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       for(int i = 0; i < parameterDecls.size(); i++) {
          Variable parameterDecl = parameterDecls.get(i);
          RValue parameterValue = parameterValues.get(i);
-         addStatementToCurrentBlock(new StatementAssignment(parameterDecl.getRef(), parameterValue, origCall.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment((LValue) parameterDecl.getRef(), parameterValue, true, origCall.getSource(), Comment.NO_COMMENTS));
       }
       String procedureName = origCall.getProcedureName();
       Variable procReturnVar = procedure.getVariable("return");
       LValue procReturnVarRef = null;
       if(procReturnVar != null) {
-         procReturnVarRef = procReturnVar.getRef();
+         procReturnVarRef = (LValue) procReturnVar.getRef();
          // Special handing of struct value returns
          if(procReturnVar.getType() instanceof SymbolTypeStruct) {
-            StructUnwinding.VariableUnwinding returnVarUnwinding = program.getStructUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
+            StructVariableMemberUnwinding.VariableUnwinding returnVarUnwinding = program.getStructVariableMemberUnwinding().getVariableUnwinding((VariableRef) procReturnVarRef);
             if(returnVarUnwinding!=null) {
                ArrayList<RValue> unwoundReturnVars = new ArrayList<>();
                for(String memberName : returnVarUnwinding.getMemberNames()) {
-                  unwoundReturnVars.add(returnVarUnwinding.getMemberUnwinding(memberName));
+                  final SymbolVariableRef memberUnwound = returnVarUnwinding.getMemberUnwound(memberName);
+                  unwoundReturnVars.add(memberUnwound);
                }
                procReturnVarRef = new ValueList(unwoundReturnVars);
             }
@@ -102,7 +103,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       splitCurrentBlock(splitBlockNewLabelRef);
       splitBlockMap.put(this.getOrigBlock().getLabel(), splitBlockNewLabelRef);
       if(!SymbolType.VOID.equals(procedure.getReturnType()) && origCall.getlValue() != null) {
-         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef, origCall.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment(origCall.getlValue(), procReturnVarRef, origCall.isInitialAssignment(), origCall.getSource(), Comment.NO_COMMENTS));
       } else {
          // No return type. Remove variable receiving the result.
          LValue lValue = origCall.getlValue();
@@ -115,9 +116,9 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Add self-assignments for all variables modified in the procedure
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(VariableRef modifiedVar : modifiedVars) {
-         if(getScope().getVariable(modifiedVar).isStorageMemory())
+         if(getScope().getVariable(modifiedVar).isKindLoadStore())
             continue;
-         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, origCall.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, false, origCall.getSource(), Comment.NO_COMMENTS));
       }
       return null;
    }
@@ -134,9 +135,9 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       // Add self-assignments for all variables modified in the procedure
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(VariableRef modifiedVar : modifiedVars) {
-         if(getScope().getVariable(modifiedVar).isStorageMemory())
+         if(getScope().getVariable(modifiedVar).isKindLoadStore())
             continue;
-         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, orig.getSource(), Comment.NO_COMMENTS));
+         addStatementToCurrentBlock(new StatementAssignment(modifiedVar, modifiedVar, false, orig.getSource(), Comment.NO_COMMENTS));
       }
       return super.visitReturn(orig);
    }

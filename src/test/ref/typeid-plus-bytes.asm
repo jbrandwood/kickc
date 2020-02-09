@@ -2,10 +2,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const TYPEID_BYTE = 1
-  .const TYPEID_SIGNED_BYTE = 2
   .label SCREEN = $400
   .label SSCREEN = $400
+  .const TYPEID_BYTE = 1
+  .const TYPEID_SIGNED_BYTE = 2
 main: {
     jsr testUnsigned
     jsr testUnsignedVals
@@ -15,7 +15,7 @@ main: {
 }
 testSignedVals: {
     .const sbc1 = -$78
-    .label sbv1 = 5
+    .label sbv1 = 2
     lda #-$78
     sta.z sbv1
     sta SSCREEN+$28*3
@@ -51,7 +51,7 @@ testSignedVals: {
     rts
 }
 testSigned: {
-    .label sbv1 = 4
+    .label sbv1 = 3
     lda #-$78
     sta.z sbv1
     lda #0
@@ -73,7 +73,7 @@ testSigned: {
 }
 testUnsignedVals: {
     .const ubc1 = $fa
-    .label ubv1 = 3
+    .label ubv1 = 4
     lda #$fa
     sta.z ubv1
     sta SCREEN+$28
@@ -107,7 +107,7 @@ testUnsignedVals: {
     rts
 }
 testUnsigned: {
-    .label ubv1 = 2
+    .label ubv1 = 5
     lda #$fa
     sta.z ubv1
     lda #0

@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 
 import java.util.Objects;
 
@@ -46,7 +47,7 @@ public class ConstantString implements ConstantLiteral<String> {
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      return SymbolType.STRING;
+      return new SymbolTypePointer(SymbolType.BYTE);
    }
 
    @Override
@@ -86,7 +87,7 @@ public class ConstantString implements ConstantLiteral<String> {
       if(program == null) {
          return "\"" + value + "\"" + suffix;
       } else {
-         return "(" + SymbolType.STRING.getTypeName() + ") " + "\"" + value + "\"" + suffix;
+         return "(" + getType(program.getScope()).getTypeName() + ") " + "\"" + value + "\"" + suffix;
       }
    }
 

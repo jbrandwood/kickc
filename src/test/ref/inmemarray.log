@@ -3,19 +3,17 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte[]) TXT ← { (number) 3, (number) 1, (number) $d, (number) 5, (number) $c, (number) $f, (number) $14, (number) $20 }
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::j#0 ← (number) 0
+  (byte) main::j#0 ← (byte) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte) main::j#3 ← phi( main/(byte) main::j#0 main::@2/(byte) main::j#4 )
-  *((byte*) SCREEN + (byte) main::i#2) ← *((byte[]) TXT + (byte) main::j#3)
+  *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) TXT + (byte) main::j#3)
   (byte) main::j#1 ← ++ (byte) main::j#3
   (bool~) main::$0 ← (byte) main::j#1 == (number) 8
   (bool~) main::$1 ← ! (bool~) main::$0
@@ -47,8 +45,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte[]) TXT
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte*) TXT[]  = { (byte) 3, (byte) 1, (byte) $d, (byte) 5, (byte) $c, (byte) $f, (byte) $14, (byte) $20 }
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -70,52 +68,33 @@ SYMBOL TABLE SSA
 (byte) main::j#3
 (byte) main::j#4
 
-Adding number conversion cast (unumber) 0 in (byte) main::j#0 ← (number) 0
 Adding number conversion cast (unumber) 8 in (bool~) main::$0 ← (byte) main::j#1 == (number) 8
 Adding number conversion cast (unumber) 0 in (byte) main::j#2 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) TXT ← (byte[]){ (byte)(number) 3, (byte)(number) 1, (byte)(number) $d, (byte)(number) 5, (byte)(number) $c, (byte)(number) $f, (byte)(number) $14, (byte)(number) $20 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte) main::j#0 ← (unumber)(number) 0
 Inlining cast (byte) main::j#2 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 3
-Simplifying constant integer cast 1
-Simplifying constant integer cast $d
-Simplifying constant integer cast 5
-Simplifying constant integer cast $c
-Simplifying constant integer cast $f
-Simplifying constant integer cast $14
-Simplifying constant integer cast $20
-Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [8] (bool~) main::$1 ← (byte) main::j#1 != (byte) 8 from [7] (bool~) main::$0 ← (byte) main::j#1 == (byte) 8
+Inversing boolean not [6] (bool~) main::$1 ← (byte) main::j#1 != (byte) 8 from [5] (bool~) main::$0 ← (byte) main::j#1 == (byte) 8
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) main::i#2 = (byte) main::i#4 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [9] if((byte) main::j#1!=(byte) 8) goto main::@2
-Simple Condition (bool~) main::$2 [13] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
+Simple Condition (bool~) main::$1 [7] if((byte) main::j#1!=(byte) 8) goto main::@2
+Simple Condition (bool~) main::$2 [11] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (byte[]) { (byte) 3, (byte) 1, (byte) $d, (byte) 5, (byte) $c, (byte) $f, (byte) $14, (byte) $20 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte[]) TXT = { 3, 1, $d, 5, $c, $f, $14, $20 }
 Constant (const byte) main::j#0 = 0
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
+Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
 Adding number conversion cast (unumber) $65 in if((byte) main::i#1!=(number) $65) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $65
@@ -173,7 +152,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
   [5] (byte) main::j#3 ← phi( main/(byte) 0 main::@2/(byte) main::j#4 )
-  [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) TXT + (byte) main::j#3)
+  [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) TXT + (byte) main::j#3)
   [7] (byte) main::j#1 ← ++ (byte) main::j#3
   [8] if((byte) main::j#1!=(byte) 8) goto main::@3
   to:main::@2
@@ -206,8 +185,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::j#3 main::j#4 main::j#1 ]
 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::j#3 main::j#4 main::j#1 ]
-Allocated zp ZP_BYTE:3 [ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::j#3 main::j#4 main::j#1 ]
+Allocated zp[1]:3 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -254,7 +233,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) TXT + (byte) main::j#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) TXT + (byte) main::j#3) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z j
     lda TXT,y
     ldy.z i
@@ -298,15 +277,15 @@ main: {
   TXT: .byte 3, 1, $d, 5, $c, $f, $14, $20
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) TXT + (byte) main::j#3) [ main::j#3 main::i#2 ] ( main:2 [ main::j#3 main::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::j#3 main::j#4 main::j#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::i#2 main::i#1 ]
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) TXT + (byte) main::j#3) [ main::j#3 main::i#2 ] ( main:2 [ main::j#3 main::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::j#3 main::j#4 main::j#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::i#2 main::i#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
+Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) TXT + (byte) main::j#3) [ main::j#3 main::i#2 ] ( main:2 [ main::j#3 main::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::j#3 main::j#4 main::j#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#2 main::i#1 ]
+Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) TXT + (byte) main::j#3) [ main::j#3 main::i#2 ] ( main:2 [ main::j#3 main::i#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::j#3 main::j#4 main::j#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 34.83: zp ZP_BYTE:2 [ main::j#3 main::j#4 main::j#1 ] 22: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 34.83: zp[1]:2 [ main::j#3 main::j#4 main::j#1 ] 22: zp[1]:3 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 483 combination reg byte y [ main::j#3 main::j#4 main::j#1 ] reg byte x [ main::i#2 main::i#1 ] 
@@ -352,7 +331,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) TXT + (byte) main::j#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) TXT + (byte) main::j#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda TXT,y
     sta SCREEN,x
     // [7] (byte) main::j#1 ← ++ (byte) main::j#3 -- vbuyy=_inc_vbuyy 
@@ -428,8 +407,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte[]) TXT TXT = { (byte) 3, (byte) 1, (byte) $d, (byte) 5, (byte) $c, (byte) $f, (byte) $14, (byte) $20 }
+(const byte*) SCREEN = (byte*) 1024
+(const byte*) TXT[]  = { (byte) 3, (byte) 1, (byte) $d, (byte) 5, (byte) $c, (byte) $f, (byte) $14, (byte) $20 }
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -477,7 +456,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = TXT[j]
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte[]) TXT + (byte) main::j#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) TXT + (byte) main::j#3) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda TXT,y
     sta SCREEN,x
     // if(++j==8)

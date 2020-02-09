@@ -5,19 +5,17 @@ Culled Empty Block (label) sum::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte) a ← (byte) 'a'
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) main::i#0 ← (number) 0
+  (byte) main::i#0 ← (byte) 0
   (byte) main::b#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@3/(byte) main::b#1 )
-  (byte) sum::a#0 ← (byte) a
+  (byte) sum::a#0 ← (const byte) a
   (byte) sum::b#0 ← (byte) main::b#2
   call sum 
   (byte) sum::return#0 ← (byte) sum::return#2
@@ -27,7 +25,7 @@ main::@3: scope:[main]  from main::@1
   (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
   (byte) sum::return#3 ← phi( main::@1/(byte) sum::return#0 )
   (byte~) main::$0 ← (byte) sum::return#3
-  *((byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0
+  *((const byte*) SCREEN + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← ++ (byte) main::i#2
   (byte) main::b#1 ← (byte) main::b#3 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::b#1 != rangelast(0,$a)
@@ -62,8 +60,8 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte) a
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) a = (byte) 'a'
 (void()) main()
 (byte~) main::$0
 (bool~) main::$1
@@ -98,16 +96,8 @@ SYMBOL TABLE SSA
 (byte) sum::return#3
 (byte) sum::return#4
 
-Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) sum::return#0 = (byte) sum::return#3 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::b#2 = (byte) main::b#3 
@@ -116,17 +106,14 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) sum::a#1 (byte) sum::a#0
 Identical Phi Values (byte) sum::b#1 (byte) sum::b#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [15] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$1 [13] if((byte) main::b#1!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte) a = 'a'
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::b#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) sum::a#0 = a
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [13] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [15] if(main::b#1!=rangelast(0,$a)) goto main::@1 to (number) $b
+Resolved ranged next value [11] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [13] if(main::b#1!=rangelast(0,$a)) goto main::@1 to (number) $b
 Adding number conversion cast (unumber) $b in if((byte) main::b#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
@@ -225,10 +212,10 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::b#2 main::b#1 ]
 [ main::i#2 main::i#1 ]
-Added variable sum::b#0 to zero page equivalence class [ sum::b#0 ]
-Added variable sum::return#0 to zero page equivalence class [ sum::return#0 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable sum::return#1 to zero page equivalence class [ sum::return#1 ]
+Added variable sum::b#0 to live range equivalence class [ sum::b#0 ]
+Added variable sum::return#0 to live range equivalence class [ sum::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable sum::return#1 to live range equivalence class [ sum::return#1 ]
 Complete equivalence classes
 [ main::b#2 main::b#1 ]
 [ main::i#2 main::i#1 ]
@@ -236,12 +223,12 @@ Complete equivalence classes
 [ sum::return#0 ]
 [ main::$0 ]
 [ sum::return#1 ]
-Allocated zp ZP_BYTE:2 [ main::b#2 main::b#1 ]
-Allocated zp ZP_BYTE:3 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:4 [ sum::b#0 ]
-Allocated zp ZP_BYTE:5 [ sum::return#0 ]
-Allocated zp ZP_BYTE:6 [ main::$0 ]
-Allocated zp ZP_BYTE:7 [ sum::return#1 ]
+Allocated zp[1]:2 [ main::b#2 main::b#1 ]
+Allocated zp[1]:3 [ main::i#2 main::i#1 ]
+Allocated zp[1]:4 [ sum::b#0 ]
+Allocated zp[1]:5 [ sum::return#0 ]
+Allocated zp[1]:6 [ main::$0 ]
+Allocated zp[1]:7 [ sum::return#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -336,7 +323,7 @@ main: {
  * b - the second byte
  * Returns the sum pf the two bytes
  */
-// sum(byte zeropage(4) b)
+// sum(byte zp(4) b)
 sum: {
     .label b = 4
     .label return = 5
@@ -354,22 +341,22 @@ sum: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::b#2 main::b#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::i#2 main::i#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ sum::b#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ sum::return#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ main::$0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ sum::return#1 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::b#2 main::b#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ sum::b#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ sum::return#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ sum::return#1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp ZP_BYTE:6 [ main::$0 ] 21.21: zp ZP_BYTE:2 [ main::b#2 main::b#1 ] 12.83: zp ZP_BYTE:3 [ main::i#2 main::i#1 ] 
-Uplift Scope [sum] 22: zp ZP_BYTE:5 [ sum::return#0 ] 13: zp ZP_BYTE:4 [ sum::b#0 ] 4.33: zp ZP_BYTE:7 [ sum::return#1 ] 
+Uplift Scope [main] 22: zp[1]:6 [ main::$0 ] 21.21: zp[1]:2 [ main::b#2 main::b#1 ] 12.83: zp[1]:3 [ main::i#2 main::i#1 ] 
+Uplift Scope [sum] 22: zp[1]:5 [ sum::return#0 ] 13: zp[1]:4 [ sum::b#0 ] 4.33: zp[1]:7 [ sum::return#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 630 combination reg byte a [ main::$0 ] zp ZP_BYTE:2 [ main::b#2 main::b#1 ] reg byte y [ main::i#2 main::i#1 ] 
+Uplifting [main] best 630 combination reg byte a [ main::$0 ] zp[1]:2 [ main::b#2 main::b#1 ] reg byte y [ main::i#2 main::i#1 ] 
 Uplifting [sum] best 506 combination reg byte a [ sum::return#0 ] reg byte a [ sum::b#0 ] reg byte a [ sum::return#1 ] 
 Uplifting [] best 506 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::b#2 main::b#1 ]
+Attempting to uplift remaining variables inzp[1]:2 [ main::b#2 main::b#1 ]
 Uplifting [main] best 406 combination reg byte x [ main::b#2 main::b#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -498,8 +485,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte) a a = (byte) 'a'
+(const byte*) SCREEN = (byte*) 1024
+(const byte) a = (byte) 'a'
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (label) main::@1

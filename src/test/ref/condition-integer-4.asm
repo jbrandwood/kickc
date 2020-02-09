@@ -5,10 +5,10 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    .label __6 = 2
-    .label __7 = 3
-    .label __11 = 4
-    .label __12 = 5
+    .label __4 = 2
+    .label __5 = 3
+    .label __8 = 4
+    .label __9 = 5
     ldx #0
     ldy #0
   __b1:
@@ -28,28 +28,28 @@ main: {
   __b3:
     tya
     and #1
-    sta.z __6
+    sta.z __4
     tya
     and #2
-    sta.z __7
+    sta.z __5
     lda #0
-    cmp.z __6
+    cmp.z __4
     beq __b4
-    cmp.z __7
+    cmp.z __5
     beq __b4
     lda #'+'
     sta SCREEN+$28*2,x
   __b4:
     tya
     and #1
-    sta.z __11
+    sta.z __8
     tya
     and #2
-    sta.z __12
+    sta.z __9
     lda #0
-    cmp.z __11
+    cmp.z __8
     bne __b9
-    cmp.z __12
+    cmp.z __9
     beq __b5
   __b9:
     lda #'+'

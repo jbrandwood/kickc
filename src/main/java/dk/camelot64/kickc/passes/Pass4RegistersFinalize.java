@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
@@ -40,8 +37,8 @@ public class Pass4RegistersFinalize extends Pass2Base {
       }
       // Add all ZP's declared hardcoded register for a live variable
       for(Variable variable : getSymbols().getAllVariables(true)) {
-         if(variable.getDeclaredRegister() instanceof Registers.RegisterZpDeclared) { //TODO: Handle register/memory/storage strategy differently!
-            int zp = ((Registers.RegisterZpDeclared) variable.getDeclaredRegister()).getZp();
+         if(variable.getRegister() instanceof Registers.RegisterZpMem) {
+            int zp = ((Registers.RegisterZpMem) variable.getRegister()).getZp();
             int sizeBytes = variable.getType().getSizeBytes();
             for(int i=0;i<sizeBytes; i++) {
                if(!reservedZp.contains(zp+i))
@@ -56,127 +53,117 @@ public class Pass4RegistersFinalize extends Pass2Base {
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          for(VariableRef variableRef : equivalenceClass.getVariables()) {
             Variable variable = getProgram().getScope().getVariable(variableRef);
-            Registers.Register declaredRegister = variable.getDeclaredRegister(); //TODO: Handle register/memory/storage strategy differently!
+            Registers.Register declaredRegister = variable.getRegister(); //TODO: Handle register/memory/storage strategy differently!
+            Registers.Register register = declaredRegister;
             if(declaredRegister !=null) {
-               if(declaredRegister instanceof Registers.RegisterZpDeclared) {
-                  if(declaredRegister.getType().equals(Registers.RegisterType.ZP_VAR)) {
-                     Registers.RegisterType registerType = getRegisterType(variable);
-                     ((Registers.RegisterZpDeclared) declaredRegister).setType(registerType);
-                     getLog().append("Setting declared register type "+variable.toString(getProgram())+" to "+registerType);
-                  }
-               }
-
-               if(equivalenceClass.getRegister()!=null && !declaredRegister.equals(equivalenceClass.getRegister())) {
+               if(declaredRegister instanceof Registers.RegisterZpMem) {
+                  int zp = ((Registers.RegisterZpMem) declaredRegister).getZp();
+                  int bytes = variable.getType().getSizeBytes();
+                  register = new Registers.RegisterZpMem(zp, bytes, true);
+               } else if(declaredRegister instanceof Registers.RegisterMainMem) {
+                  Long address = ((Registers.RegisterMainMem) declaredRegister).getAddress();
+                  VariableRef varRef = ((Registers.RegisterMainMem) declaredRegister).getVariableRef();
+                  int bytes = variable.getType().getSizeBytes();
+                  register = new Registers.RegisterMainMem(varRef, bytes, address);
+               } else if(equivalenceClass.getRegister()!=null && !declaredRegister.equals(equivalenceClass.getRegister())) {
                   throw new CompileError("Equivalence class has variables with different declared registers \n" +
                         " - equivalence class: " + equivalenceClass.toString(true) + "\n" +
                         " - one register: " + equivalenceClass.getRegister().toString() + "\n" +
                         " - other register: " + declaredRegister.toString()
                   );
                }
-               equivalenceClass.setRegister(declaredRegister);
+               equivalenceClass.setRegister(register);
             }
          }
       }
 
       
       if(reallocateZp) {
-         reallocateZpRegisters(liveRangeEquivalenceClassSet);
+         reallocateMemRegisters(liveRangeEquivalenceClassSet);
       }
       liveRangeEquivalenceClassSet.storeRegisterAllocation();
       if(reallocateZp) {
-         shortenZpRegisterNames();
+         shortenAsmNames();
       }
    }
 
    /**
-    * Shorten register names for ZP registers if possible
+    * Shorten ASM names for variables and constants
     */
-   private void shortenZpRegisterNames() {
+   private void shortenAsmNames() {
       Collection<Scope> allScopes = getProgram().getScope().getAllScopes(true);
       allScopes.add(getProgram().getScope());
       for(Scope scope : allScopes) {
-         // Create initial short names - and remember the ones without "#"
+         // Create initial short names
          for(Variable variable : scope.getAllVariables(false)) {
-            if(variable.getAllocation() != null && variable.getAllocation().isZp()) {
+            if(variable.getAllocation() != null && variable.getAllocation().isMem()) {
                variable.setAsmName(variable.getLocalName());
             } else {
                variable.setAsmName(null);
             }
          }
-         for(ConstantVar constantVar : scope.getAllConstants(false)) {
+         for(Variable constantVar : scope.getAllConstants(false)) {
             constantVar.setAsmName(constantVar.getLocalName());
          }
 
-         // Find short asm names for all variables if possible
+         // Maps short name to the allocated register.
          Map<String, Registers.Register> shortNames = new LinkedHashMap<>();
-
+         // Shorten variable and constant names
          for(Variable variable : scope.getAllVariables(false)) {
             Registers.Register allocation = variable.getAllocation();
-            if(allocation != null && allocation.isZp()) {
-               String asmName = variable.getAsmName();
-               if(asmName.contains("#")) {
-                  String shortName = asmName.substring(0, asmName.indexOf("#"));
-                  if(shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
-                     // Short name is usable!
-                     variable.setAsmName(shortName);
-                     shortNames.put(shortName, allocation);
-                     continue;
-                  }
-               }
-               if(shortNames.get(asmName) == null || shortNames.get(asmName).equals(allocation)) {
-                  // Try the full name instead
-                  variable.setAsmName(asmName);
-                  shortNames.put(asmName, allocation);
-                  continue;
-               } else {
-                  // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
-                  throw new RuntimeException("ASM name already used " + asmName);
-               }
+            if(allocation != null && allocation.isMem()) {
+               shortenAsmName(shortNames, variable, allocation);
             }
          }
-
-         for(ConstantVar constantVar : scope.getAllConstants(false)) {
-            String asmName = constantVar.getAsmName();
-            Registers.Register allocation = new Registers.RegisterConstant(constantVar.getValue());
-            if(asmName.contains("#")) {
-               String shortName = asmName.substring(0, asmName.indexOf("#"));
-               if(shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
-                  // Short name is usable!
-                  constantVar.setAsmName(shortName);
-                  shortNames.put(shortName, allocation);
-                  continue;
-               }
-            }
-            if(shortNames.get(asmName) == null || shortNames.get(asmName).equals(allocation)) {
-               // Try the full name instead
-               constantVar.setAsmName(asmName);
-               shortNames.put(asmName, allocation);
-               continue;
-            } else {
-               // Be unhappy (if this triggers in the future extend with ability to create new names by adding suffixes)
-               throw new RuntimeException("ASM name already used " + asmName);
-            }
-
+         for(Variable constantVar : scope.getAllConstants(false)) {
+            Registers.Register allocation = new Registers.RegisterConstant(constantVar.getInitValue());
+            shortenAsmName(shortNames, constantVar, allocation);
          }
-
       }
    }
 
    /**
-    * Reallocate all ZP registers to minimize ZP usage
+    * Shorten the ASM name for a single variable.
+    *
+    * @param shortNames Map of allocated short names. Maps short name to the allocated register.
+    * @param variable The variable to shorten the name for
+    * @param allocation The register allocation for the variable
+    */
+   private void shortenAsmName(Map<String, Registers.Register> shortNames, Variable variable, Registers.Register allocation) {
+      String asmName = variable.getAsmName();
+      String prefix = asmName;
+      if(asmName.contains("#")) {
+         prefix = asmName.substring(0, asmName.indexOf("#"));
+      }
+      int suffix = 0;
+      boolean found = false;
+      while(!found) {
+         String shortName = prefix + ((suffix==0)?"":("_"+suffix));
+         if(shortNames.get(shortName) == null || shortNames.get(shortName).equals(allocation)) {
+            // Short name is usable!
+            variable.setAsmName(shortName);
+            shortNames.put(shortName, allocation);
+            found=true;
+         }
+         suffix++;
+      }
+   }
+
+   /**
+    * Reallocate all memory registers. Minimizes zeropage usage.
     *
     * @param liveRangeEquivalenceClassSet The
     */
-   private void reallocateZpRegisters(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
+   private void reallocateMemRegisters(LiveRangeEquivalenceClassSet liveRangeEquivalenceClassSet) {
       for(LiveRangeEquivalenceClass equivalenceClass : liveRangeEquivalenceClassSet.getEquivalenceClasses()) {
          Registers.Register register = equivalenceClass.getRegister();
          boolean reallocate = true;
          if(register!=null) {
-            if(!register.isZp()) {
+            if(!Registers.RegisterType.ZP_MEM.equals(register.getType())) {
                // Do not allocate non-ZP registers
                reallocate = false;
-            } else if(register instanceof Registers.RegisterZpDeclared) {
-               // Do not allocate declared ZP registers
+            } else if(register.isNonRelocatable()) {
+               // Do not allocate non-relocatable ZP registers
                reallocate = false;
             }
          }
@@ -184,8 +171,8 @@ public class Pass4RegistersFinalize extends Pass2Base {
             String before = register == null ? null : register.toString();
             VariableRef variableRef = equivalenceClass.getVariables().get(0);
             Variable variable = getProgram().getSymbolInfos().getVariable(variableRef);
-            if(variable.isStorageMemory()) {
-               register = new Registers.RegisterMemory(variableRef);
+            if(variable.isMemoryAreaMain()) {
+               register = new Registers.RegisterMainMem(variableRef, variable.getType().getSizeBytes(), null);
             }  else {
                register = allocateNewRegisterZp(variable);
             }
@@ -233,78 +220,42 @@ public class Pass4RegistersFinalize extends Pass2Base {
    private Registers.Register allocateNewRegisterZp(Variable variable) {
       SymbolType varType = variable.getType();
       if(SymbolType.BYTE.equals(varType)) {
-         return new Registers.RegisterZpByte(allocateZp((1)));
+         return new Registers.RegisterZpMem(allocateZp(1), 1);
       } else if(SymbolType.SBYTE.equals(varType)) {
-         return new Registers.RegisterZpByte(allocateZp(1));
+         return new Registers.RegisterZpMem(allocateZp(1),1);
       } else if(SymbolType.WORD.equals(varType)) {
-         Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(allocateZp(2));
+         Registers.RegisterZpMem registerZpWord =
+               new Registers.RegisterZpMem(allocateZp(2), 2);
          return registerZpWord;
       } else if(SymbolType.SWORD.equals(varType)) {
-         Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(allocateZp(2));
+         Registers.RegisterZpMem registerZpWord =
+               new Registers.RegisterZpMem(allocateZp(2), 2);
          return registerZpWord;
       } else if(SymbolType.DWORD.equals(varType)) {
-         Registers.RegisterZpDWord registerZpDWord =
-               new Registers.RegisterZpDWord(allocateZp(4));
+         Registers.RegisterZpMem registerZpDWord =
+               new Registers.RegisterZpMem(allocateZp(4), 4);
          return registerZpDWord;
       } else if(SymbolType.SDWORD.equals(varType)) {
-         Registers.RegisterZpDWord registerZpDWord =
-               new Registers.RegisterZpDWord(allocateZp(4));
+         Registers.RegisterZpMem registerZpDWord =
+               new Registers.RegisterZpMem(allocateZp(4), 4);
          return registerZpDWord;
       } else if(varType.equals(SymbolType.BOOLEAN)) {
-         return new Registers.RegisterZpBool(allocateZp(1));
+         return new Registers.RegisterZpMem(allocateZp(1), 1);
       } else if(varType.equals(SymbolType.VOID)) {
          // No need to setRegister register for VOID value
          return null;
       } else if(varType instanceof SymbolTypePointer) {
-         Registers.RegisterZpWord registerZpWord =
-               new Registers.RegisterZpWord(allocateZp(2));
+         Registers.RegisterZpMem registerZpWord =
+               new Registers.RegisterZpMem(allocateZp(2), 2);
          return registerZpWord;
       } else if(varType instanceof SymbolTypeStruct) {
-         Registers.RegisterZpStruct registerZpStruct =
-               new Registers.RegisterZpStruct(allocateZp(varType.getSizeBytes()));
+         Registers.RegisterZpMem registerZpStruct =
+               new Registers.RegisterZpMem(allocateZp(varType.getSizeBytes()), varType.getSizeBytes());
          return registerZpStruct;
       } else {
          throw new RuntimeException("Unhandled variable type " + varType);
       }
    }
-
-   /**
-    * Get the register type for a specific variable type.
-    *
-    * @param variable The variable to create a register for.
-    * The register type based on the variable type
-    * @return The zeropage register type
-    */
-   private Registers.RegisterType getRegisterType(Variable variable) {
-      SymbolType varType = variable.getType();
-      if(SymbolType.BYTE.equals(varType)) {
-         return Registers.RegisterType.ZP_BYTE;
-      } else if(SymbolType.SBYTE.equals(varType)) {
-         return Registers.RegisterType.ZP_BYTE;
-      } else if(SymbolType.WORD.equals(varType)) {
-         return Registers.RegisterType.ZP_WORD;
-      } else if(SymbolType.SWORD.equals(varType)) {
-         return Registers.RegisterType.ZP_WORD;
-      } else if(SymbolType.DWORD.equals(varType)) {
-         return Registers.RegisterType.ZP_DWORD;
-      } else if(SymbolType.SDWORD.equals(varType)) {
-         return Registers.RegisterType.ZP_DWORD;
-      } else if(varType.equals(SymbolType.BOOLEAN)) {
-         return Registers.RegisterType.ZP_BOOL;
-      } else if(varType.equals(SymbolType.VOID)) {
-         // No need to register for VOID value
-         return null;
-      } else if(varType instanceof SymbolTypePointer) {
-         return Registers.RegisterType.ZP_WORD;
-      } else if(varType instanceof SymbolTypeStruct) {
-         return Registers.RegisterType.ZP_STRUCT;
-      } else {
-         throw new RuntimeException("Unhandled variable type " + varType);
-      }
-   }
-
 
 
 }

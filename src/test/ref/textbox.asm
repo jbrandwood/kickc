@@ -92,10 +92,11 @@ main: {
   !:
     jmp __b4
 }
-// textbox(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2, byte* zeropage(6) text)
+// textbox(byte zp(2) x1, byte zp(3) y1, byte zp(4) x2, byte zp(5) y2, byte* zp(6) text)
 textbox: {
-    .label __8 = $d
-    .label __17 = $a
+    .label __3 = $b
+    .label __9 = $f
+    .label __18 = $a
     .label x1 = 2
     .label y1 = 3
     .label x2 = 4
@@ -105,20 +106,33 @@ textbox: {
     .label z = $b
     .label i = 9
     .label text = 6
-    .label __31 = $d
+    .label __32 = $f
+    .label __33 = $d
+    .label __34 = $b
     jsr draw_window
     inc.z y
     ldy.z x1
     iny
     sty.z x
     lda.z y
-    asl
-    asl
-    clc
-    adc.z y
-    sta.z z
+    sta.z __3
     lda #0
-    sta.z z+1
+    sta.z __3+1
+    lda.z __3
+    asl
+    sta.z __33
+    lda.z __3+1
+    rol
+    sta.z __33+1
+    asl.z __33
+    rol.z __33+1
+    lda.z __34
+    clc
+    adc.z __33
+    sta.z __34
+    lda.z __34+1
+    adc.z __33+1
+    sta.z __34+1
     asl.z z
     rol.z z+1
     asl.z z
@@ -137,21 +151,21 @@ textbox: {
     lda.z x
     clc
     adc.z z
-    sta.z __8
+    sta.z __9
     lda #0
     adc.z z+1
-    sta.z __8+1
+    sta.z __9+1
     clc
-    lda.z __31
+    lda.z __32
     adc #<screen
-    sta.z __31
-    lda.z __31+1
+    sta.z __32
+    lda.z __32+1
     adc #>screen
-    sta.z __31+1
+    sta.z __32+1
     ldy.z i
     lda (text),y
     ldy #0
-    sta (__31),y
+    sta (__32),y
     ldy.z i
     lda (text),y
     cmp #$20
@@ -159,8 +173,8 @@ textbox: {
     iny
     ldx #0
   __b3:
-    lda (text),y
-    cmp #$20
+    lda #$20
+    cmp (text),y
     beq __b5
     lda (text),y
     cmp #0
@@ -173,10 +187,10 @@ textbox: {
     lda.z x2
     sec
     sbc.z x1
-    sta.z __17
+    sta.z __18
     cpy.z x2
     bcc __b2
-    cpx.z __17
+    cpx.z __18
     bcc __b6
   __b2:
     inc.z i
@@ -245,7 +259,7 @@ textbox: {
     inx
     jmp __b3
 }
-// draw_window(byte zeropage(2) x1, byte zeropage(3) y1, byte zeropage(4) x2, byte zeropage(5) y2)
+// draw_window(byte zp(2) x1, byte zp(3) y1, byte zp(4) x2, byte zp(5) y2)
 draw_window: {
     .label __2 = $f
     .label __3 = $b

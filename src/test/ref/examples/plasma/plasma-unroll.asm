@@ -16,7 +16,6 @@
   // The colors of the C64
   .const BLACK = 0
   .const BLUE = 6
-  .label print_line_cursor = $400
   // SID registers for random number generation
   .label SID_VOICE3_FREQ = $d40e
   .label SID_VOICE3_CONTROL = $d412
@@ -24,7 +23,9 @@
   .label SID_VOICE3_OSC = $d41b
   .label SCREEN1 = $2800
   .label CHARSET = $2000
+  .label print_line_cursor = $400
   .label print_char_cursor = $c
+  // Plasma state variables
   .label c1A = $b
   .label c1B = $f
   .label c2A = $12

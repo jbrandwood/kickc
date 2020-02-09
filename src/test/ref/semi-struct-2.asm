@@ -35,26 +35,7 @@
   .const MAX_FILES = $90
   .label print_char_cursor = 4
   .label print_line_cursor = 8
-  .label print_line_cursor_32 = $a
-  .label print_line_cursor_63 = $a
-  .label print_line_cursor_157 = $a
-  .label print_line_cursor_158 = $a
-  .label print_line_cursor_159 = $a
-  .label print_line_cursor_160 = $a
-  .label print_line_cursor_161 = $a
-  .label print_line_cursor_162 = $a
-  .label print_line_cursor_163 = $a
-  .label print_line_cursor_164 = $a
-  .label print_line_cursor_165 = $a
-  .label print_line_cursor_166 = $a
-  .label print_line_cursor_167 = $a
-  .label print_line_cursor_168 = $a
-  .label print_line_cursor_169 = $a
-  .label print_line_cursor_170 = $a
-  .label print_line_cursor_171 = $a
-  .label print_line_cursor_172 = $a
-  .label print_line_cursor_173 = $a
-  .label print_line_cursor_175 = $a
+  .label print_line_cursor_1 = $a
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
@@ -109,14 +90,14 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta.z print_line_cursor_63
+    sta.z print_line_cursor_1
     lda #>$400
-    sta.z print_line_cursor_63+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
-    sta.z print_line_cursor_157
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_157+1
+    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -124,9 +105,9 @@ main: {
     jsr print_ln
     jsr printEntry
     lda.z print_line_cursor
-    sta.z print_line_cursor_158
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_158+1
+    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -156,14 +137,14 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     lda #<$400
-    sta.z print_line_cursor_63
+    sta.z print_line_cursor_1
     lda #>$400
-    sta.z print_line_cursor_63+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
-    sta.z print_line_cursor_159
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_159+1
+    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -175,9 +156,9 @@ main: {
     sta.z printEntry.entry+1
     jsr printEntry
     lda.z print_line_cursor
-    sta.z print_line_cursor_160
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_160+1
+    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -263,7 +244,7 @@ keyboard_matrix_read: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage($a) str)
+// print_str(byte* zp($a) str)
 print_str: {
     .label str = $a
   __b1:
@@ -291,10 +272,10 @@ print_ln: {
   __b1:
     lda #$28
     clc
-    adc.z print_line_cursor_32
+    adc.z print_line_cursor_1
     sta.z print_line_cursor
     lda #0
-    adc.z print_line_cursor_32+1
+    adc.z print_line_cursor_1+1
     sta.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b2
@@ -306,13 +287,13 @@ print_ln: {
     rts
   __b2:
     lda.z print_line_cursor
-    sta.z print_line_cursor_175
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_175+1
+    sta.z print_line_cursor_1+1
     jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zeropage(2) entry)
+// printEntry(byte* zp(2) entry)
 printEntry: {
     .label entry = 2
     lda.z print_line_cursor
@@ -332,9 +313,9 @@ printEntry: {
     sta.z print_word.w+1
     jsr print_word
     lda.z print_line_cursor
-    sta.z print_line_cursor_161
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_161+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -353,9 +334,9 @@ printEntry: {
     sta.z print_word.w+1
     jsr print_word
     lda.z print_line_cursor
-    sta.z print_line_cursor_162
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_162+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -374,9 +355,9 @@ printEntry: {
     sta.z print_word.w+1
     jsr print_word
     lda.z print_line_cursor
-    sta.z print_line_cursor_163
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_163+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -395,9 +376,9 @@ printEntry: {
     sta.z print_word.w+1
     jsr print_word
     lda.z print_line_cursor
-    sta.z print_line_cursor_164
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_164+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -413,9 +394,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_165
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_165+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -431,9 +412,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_166
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_166+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -449,9 +430,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_167
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_167+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -467,9 +448,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_168
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_168+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -488,9 +469,9 @@ printEntry: {
     sta.z print_word.w+1
     jsr print_word
     lda.z print_line_cursor
-    sta.z print_line_cursor_169
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_169+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -506,9 +487,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_170
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_170+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -524,9 +505,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_171
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_171+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -542,9 +523,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_172
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_172+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -560,9 +541,9 @@ printEntry: {
     tax
     jsr print_byte
     lda.z print_line_cursor
-    sta.z print_line_cursor_173
+    sta.z print_line_cursor_1
     lda.z print_line_cursor+1
-    sta.z print_line_cursor_173+1
+    sta.z print_line_cursor_1+1
     jsr print_ln
     rts
     str: .text "bufdisk   "
@@ -621,7 +602,7 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage($a) w)
+// print_word(word zp($a) w)
 print_word: {
     .label w = $a
     lda.z w+1
@@ -634,7 +615,7 @@ print_word: {
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zeropage(4) entry, byte register(X) n)
+// initEntry(byte* zp(4) entry, byte register(X) n)
 initEntry: {
     .label __1 = 8
     .label __3 = $a

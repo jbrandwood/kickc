@@ -2,8 +2,8 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
-import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
+import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.io.File;
 import java.util.*;
@@ -104,8 +105,7 @@ public class Pass4CodeGeneration {
 
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");
-      addConstants(asm, currentScope);
-      addZpLabels(asm, currentScope);
+      addConstantsAndLabels(asm, currentScope);
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          if(!block.getScope().equals(currentScope)) {
             // The current block is in a different scope. End the old scope.
@@ -127,8 +127,7 @@ public class Pass4CodeGeneration {
             // Start the new scope
             asm.addScopeBegin(AsmFormat.asmFix(block.getLabel().getFullName()));
             // Add all ZP labels for the scope
-            addConstants(asm, currentScope);
-            addZpLabels(asm, currentScope);
+            addConstantsAndLabels(asm, currentScope);
          }
 
          generateComments(asm, block.getComments());
@@ -263,71 +262,38 @@ public class Pass4CodeGeneration {
       signature.append(" ").append(procedure.getLocalName()).append("(");
       int i = 0;
       for(Variable parameter : procedure.getParameters()) {
-         List<Variable> versions = new ArrayList<>(procedure.getVersions(parameter));
-         if(versions.size() > 0) {
-            Variable param = versions.get(0);
-            Registers.Register allocation = param.getAllocation();
-            if(i++ > 0) signature.append(", ");
-            signature.append(param.getType().getTypeName()).append(" ");
-            if(allocation instanceof Registers.RegisterZp) {
-               Registers.RegisterZp registerZp = (Registers.RegisterZp) allocation;
-               signature.append("zeropage(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
-            } else if(allocation instanceof Registers.RegisterAByte) {
-               signature.append("register(A)");
-            } else if(allocation instanceof Registers.RegisterXByte) {
-               signature.append("register(X)");
-            } else if(allocation instanceof Registers.RegisterYByte) {
-               signature.append("register(Y)");
-            }
-            signature.append(" ");
-            signature.append(parameter.getLocalName());
+         Variable param = parameter;
+         if(param.isKindPhiMaster()) {
+            List<Variable> versions = new ArrayList<>(procedure.getVersions(parameter));
+            if(versions.size() > 0)
+               param = versions.get(0);
+            else
+               // Parameter optimized away to a constant or unused
+               continue;
          }
+
+         Registers.Register allocation = param.getAllocation();
+         if(i++ > 0) signature.append(", ");
+         signature.append(param.getType().getTypeName()).append(" ");
+         if(allocation instanceof Registers.RegisterZpMem) {
+            Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) allocation;
+            signature.append("zp(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
+         } else if(allocation instanceof Registers.RegisterMainMem) {
+            Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
+            signature.append("mem(").append(registerMainMem.getAddress()==null?"":AsmFormat.getAsmNumber(registerMainMem.getAddress())).append(")");
+         } else if(allocation instanceof Registers.RegisterAByte) {
+            signature.append("register(A)");
+         } else if(allocation instanceof Registers.RegisterXByte) {
+            signature.append("register(X)");
+         } else if(allocation instanceof Registers.RegisterYByte) {
+            signature.append("register(Y)");
+         }
+         signature.append(" ");
+         signature.append(parameter.getLocalName());
       }
       signature.append(")");
       if(i > 0) {
          asm.addComment(signature.toString(), false);
-      }
-   }
-
-   /**
-    * Add constant declarations for all scope constants
-    *
-    * @param asm The ASM program
-    * @param scopeRef The scope
-    */
-   private void addConstants(AsmProgram asm, ScopeRef scopeRef) {
-      Scope scope = program.getScope().getScope(scopeRef);
-      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
-      Set<String> added = new LinkedHashSet<>();
-      for(ConstantVar constantVar : scopeConstants) {
-         if(!hasData(constantVar)) {
-            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-            if(asmName != null && !added.contains(asmName)) {
-               added.add(asmName);
-               // Add any comments
-               generateComments(asm, constantVar.getComments());
-               // Ensure encoding is good
-               ensureEncoding(asm, constantVar.getValue());
-               // Find the constant value calculation
-               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getValue(), 99, scopeRef);
-               if(constantVar.getType() instanceof SymbolTypePointer) {
-                  // Must use a label for pointers
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
-               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
-                  // Use label for integers referenced in other scope - to allow cross-scope referencing
-                  if(useLabelForConst(scopeRef, constantVar)) {
-                     // Use label for integers referenced in other scope - to allow cross-scope referencing
-                     asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
-                  } else {
-                     // Use constant for constant integers not referenced outside scope
-                     asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
-                  }
-               } else {
-                  // Use constant otherwise
-                  asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
-               }
-            }
-         }
       }
    }
 
@@ -343,9 +309,11 @@ public class Pass4CodeGeneration {
       }
    }
 
-   private boolean hasData(ConstantVar constantVar) {
-      ConstantValue constantValue = constantVar.getValue();
+   private boolean hasData(Variable constantVar) {
+      ConstantValue constantValue = constantVar.getInitValue();
       if(constantValue instanceof ConstantArray) {
+         return true;
+      } else if(constantValue instanceof ConstantStructValue) {
          return true;
       } else {
          try {
@@ -369,9 +337,9 @@ public class Pass4CodeGeneration {
     * @param constantVar The constant to examine
     * @return true if a .label should be used in the generated ASM
     */
-   private boolean useLabelForConst(ScopeRef scopeRef, ConstantVar constantVar) {
+   private boolean useLabelForConst(ScopeRef scopeRef, Variable constantVar) {
       boolean useLabel = false;
-      Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getRef());
+      Collection<Integer> constRefStatements = program.getVariableReferenceInfos().getConstRefStatements(constantVar.getConstantRef());
       if(constRefStatements != null) {
          for(Integer constRefStmtIdx : constRefStatements) {
             Statement statement = program.getStatementInfos().getStatement(constRefStmtIdx);
@@ -409,10 +377,10 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getSymbolRefConsts(constantVar.getRef());
+      Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getSymbolRefConsts(constantVar.getConstantRef());
       if(symbolRefConsts != null) {
          for(SymbolVariableRef symbolRefConst : symbolRefConsts) {
-            SymbolVariable symbolRefVar = (SymbolVariable) program.getScope().getSymbol(symbolRefConst);
+            Variable symbolRefVar = (Variable) program.getScope().getSymbol(symbolRefConst);
             if(!symbolRefVar.getScope().getRef().equals(scopeRef)) {
                // Used in constant in another scope - generate label
                useLabel = true;
@@ -424,17 +392,92 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Add data directives for constants declarations
+    * Add constant declarations for constants without data and labels for memory variables without data.
+    * Added before the the code of the scope.
+    *
+    * @param asm The ASM program
+    * @param scopeRef The scope
+    */
+   private void addConstantsAndLabels(AsmProgram asm, ScopeRef scopeRef) {
+      Scope scope = program.getScope().getScope(scopeRef);
+      Set<String> added = new LinkedHashSet<>();
+      Collection<Variable> scopeConstants = scope.getAllConstants(false);
+
+      // Add all constants without data
+      for(Variable constantVar : scopeConstants) {
+         if(!hasData(constantVar)) {
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            if(asmName != null && !added.contains(asmName)) {
+               added.add(asmName);
+               // Add any comments
+               generateComments(asm, constantVar.getComments());
+               // Ensure encoding is good
+               ensureEncoding(asm, constantVar.getInitValue());
+               // Find the constant value calculation
+               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getInitValue(), 99, scopeRef);
+               if(constantVar.getType() instanceof SymbolTypePointer) {
+                  // Must use a label for pointers
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
+               } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
+                  // Use label for integers referenced in other scope - to allow cross-scope referencing
+                  if(useLabelForConst(scopeRef, constantVar)) {
+                     // Use label for integers referenced in other scope - to allow cross-scope referencing
+                     asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
+                  } else {
+                     // Use constant for constant integers not referenced outside scope
+                     asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
+                  }
+               } else {
+                  // Use constant otherwise
+                  asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
+               }
+            }
+         }
+      }
+
+      // Add labels for memory variables without data
+      Collection<Variable> scopeVars = scope.getAllVariables(false);
+      for(Variable scopeVar : scopeVars) {
+         Registers.Register register = scopeVar.getAllocation();
+         if(register != null) {
+            if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
+               Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
+               String asmName = scopeVar.getAsmName();
+               if(asmName != null && !added.contains(asmName)) {
+                  // Add any comments
+                  generateComments(asm, scopeVar.getComments());
+                  // Add the label declaration
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(registerZp.getZp()));
+                  added.add(asmName);
+               }
+            } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType()) && ((Registers.RegisterMainMem) register).getAddress() != null) {
+               String asmName = scopeVar.getAsmName();
+               if(asmName != null && !added.contains(asmName)) {
+                  // Add any comments
+                  generateComments(asm, scopeVar.getComments());
+                  // Add the label declaration
+                  Long address = ((Registers.RegisterMainMem) register).getAddress();
+                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(address));
+                  added.add(asmName);
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * Add constants with data and memory variables with data for a scope.
+    * Added after the the code of the scope.
     *
     * @param asm The ASM program
     * @param scopeRef The scope
     */
    private void addData(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
-      Collection<ConstantVar> scopeConstants = scope.getAllConstants(false);
+      Collection<Variable> scopeConstants = scope.getAllConstants(false);
       Set<String> added = new LinkedHashSet<>();
       // Add all constants arrays incl. strings with data
-      for(ConstantVar constantVar : scopeConstants) {
+      for(Variable constantVar : scopeConstants) {
          if(hasData(constantVar)) {
             // Skip if already added
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
@@ -446,15 +489,15 @@ public class Pass4CodeGeneration {
             // Add any comments
             generateComments(asm, constantVar.getComments());
             // Add any alignment
-            Integer declaredAlignment = constantVar.getDeclaredAlignment();
+            Integer declaredAlignment = constantVar.getMemoryAlignment();
             if(declaredAlignment != null) {
                String alignment = AsmFormat.getAsmNumber(declaredAlignment);
                asm.addDataAlignment(alignment);
             }
-            ConstantValue constantValue = constantVar.getValue();
-            if(constantValue instanceof ConstantArrayList || constantValue instanceof ConstantArrayFilled || constantValue instanceof ConstantArrayKickAsm || constantValue instanceof ConstantString) {
+            ConstantValue constantValue = constantVar.getInitValue();
+            if(constantValue instanceof ConstantArray || constantValue instanceof ConstantString || constantValue instanceof ConstantStructValue) {
                AsmDataChunk asmDataChunk = new AsmDataChunk();
-               addChunkData(asmDataChunk, constantValue, constantVar.getType(), scopeRef);
+               addChunkData(asmDataChunk, constantValue, constantVar.getType(), constantVar.getArraySpec(), scopeRef);
                asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
             } else {
                throw new InternalError("Constant Variable not handled " + constantVar.toString(program));
@@ -465,49 +508,72 @@ public class Pass4CodeGeneration {
       // Add all memory variables
       Collection<Variable> scopeVariables = scope.getAllVariables(false);
       for(Variable variable : scopeVariables) {
-         if(variable.getStorageStrategy().equals(SymbolVariable.StorageStrategy.MEMORY)) {
+         if(variable.isMemoryAreaMain()) {
+            // Skip PHI masters
+            if(variable.isKindPhiMaster())
+               continue;
             // Skip if already added
-            String asmName = variable.getAsmName() == null ? variable.getLocalName() : variable.getAsmName();
-            if(added.contains(asmName)) {
+            if(added.contains(variable.getAsmName())) {
                continue;
             }
-            // Set segment
-            setCurrentSegment(variable.getDataSegment(), asm);
-            // Add any comments
-            generateComments(asm, variable.getComments());
-            // Add any alignment
-            Integer declaredAlignment = variable.getDeclaredAlignment();
-            if(declaredAlignment != null) {
-               String alignment = AsmFormat.getAsmNumber(declaredAlignment);
-               asm.addDataAlignment(alignment);
+            if(variable.isKindLoadStore() || variable.isKindPhiVersion() || variable.isKindIntermediate()) {
+               Registers.Register allocation = variable.getAllocation();
+               if(allocation instanceof Registers.RegisterCpuByte)
+                  continue;
+               if(!(allocation instanceof Registers.RegisterMainMem)) {
+                  throw new InternalError("Expected main memory allocation " + variable.toString(program));
+               }
+               Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
+               if(!registerMainMem.getVariableRef().equals(variable.getRef())) {
+                  continue;
+               }
+               if(registerMainMem.getAddress() == null) {
+                  // Generate into the data segment
+                  // Set segment
+                  setCurrentSegment(variable.getDataSegment(), asm);
+                  // Add any comments
+                  generateComments(asm, variable.getComments());
+                  // Add any alignment
+                  Integer declaredAlignment = variable.getMemoryAlignment();
+                  if(declaredAlignment != null) {
+                     String alignment = AsmFormat.getAsmNumber(declaredAlignment);
+                     asm.addDataAlignment(alignment);
+                  }
+                  if(variable.getInitValue() != null) {
+                     // Variable has a constant init Value
+                     ConstantValue constantValue = variable.getInitValue();
+                     AsmDataChunk asmDataChunk = new AsmDataChunk();
+                     addChunkData(asmDataChunk, constantValue, variable.getType(), variable.getArraySpec(), scopeRef);
+                     asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                  } else {
+                     // Zero-fill variable
+                     AsmDataChunk asmDataChunk = new AsmDataChunk();
+                     ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(variable.getType(), variable.getArraySpec()), null);
+                     addChunkData(asmDataChunk, zeroValue, variable.getType(), variable.getArraySpec(), scopeRef);
+                     asmDataChunk.addToAsm(AsmFormat.asmFix(variable.getAsmName()), asm);
+                  }
+                  added.add(variable.getAsmName());
+               }
+            } else {
+               throw new InternalError("Not handled variable storage " + variable.toString());
             }
-            AsmDataChunk asmDataChunk = new AsmDataChunk();
-            addChunkData(asmDataChunk, ZeroConstantValues.zeroValue(variable.getType(), getScope()), variable.getType(), scopeRef);
-            asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
-            added.add(asmName);
          }
       }
    }
 
    /**
-    * Get the declared size of an array type
+    * Get the declared size of an array type as an integer
     *
-    * @param type The type
-    * @return The declared size. Null if the type is not array or no size is declared.
+    * @param declaredSize The declared size
+    * @return The integer size. Null if it can't be determined
     */
-   private Integer getArrayDeclaredSize(SymbolType type) {
-      if(type instanceof SymbolTypeArray) {
-         RValue declaredSize = ((SymbolTypeArray) type).getSize();
-         if(declaredSize != null) {
-            if(!(declaredSize instanceof ConstantValue)) {
-               throw new CompileError("Error! Array declared size is not constant " + type.toString());
-            }
-            ConstantLiteral declaredSizeVal = ((ConstantValue) declaredSize).calculateLiteral(getScope());
-            if(!(declaredSizeVal instanceof ConstantInteger)) {
-               throw new CompileError("Error! Array declared size is not integer " + type.toString());
-            }
-            return ((ConstantInteger) declaredSizeVal).getInteger().intValue();
+   private Integer getArrayDeclaredSize(ConstantValue declaredSize) {
+      if(declaredSize != null) {
+         ConstantLiteral declaredSizeVal = declaredSize.calculateLiteral(getScope());
+         if(!(declaredSizeVal instanceof ConstantInteger)) {
+            throw new CompileError("Error! Array declared size is not integer " + declaredSize.toString());
          }
+         return ((ConstantInteger) declaredSizeVal).getInteger().intValue();
       }
       return null;
    }
@@ -518,18 +584,29 @@ public class Pass4CodeGeneration {
     *
     * @param dataChunk The data chunk
     * @param value The constant value
+    * @param valueType The declared type of the value
+    * @param valueArraySpec The array properties of the value
+    * @param scopeRef The scope containing the data chunk
     */
-   private void addChunkData(AsmDataChunk dataChunk, ConstantValue value, SymbolType valueType, ScopeRef scopeRef) {
+   private void addChunkData(AsmDataChunk dataChunk, ConstantValue value, SymbolType valueType, ArraySpec valueArraySpec, ScopeRef scopeRef) {
       if(valueType instanceof SymbolTypeStruct) {
-         // Add each struct member recursively
-         ConstantStructValue structValue = (ConstantStructValue) value;
-         for(VariableRef memberRef : structValue.getMembers()) {
-            ConstantValue memberValue = structValue.getValue(memberRef);
-            Variable memberVariable = getScope().getVariable(memberRef);
-            addChunkData(dataChunk, memberValue, memberVariable.getType(), scopeRef);
+         if(value instanceof ConstantStructValue) {
+            // Add each struct member recursively
+            ConstantStructValue structValue = (ConstantStructValue) value;
+            for(SymbolVariableRef memberRef : structValue.getMembers()) {
+               ConstantValue memberValue = structValue.getValue(memberRef);
+               Variable memberVariable = getScope().getVar(memberRef);
+               addChunkData(dataChunk, memberValue, memberVariable.getType(), memberVariable.getArraySpec(), scopeRef);
+            }
+         } else if(value instanceof StructZero) {
+            final SymbolTypeStruct typeStruct = ((StructZero) value).getTypeStruct();
+            final ConstantRef structSize = SizeOfConstants.getSizeOfConstantVar(getScope(), typeStruct);
+            String totalSizeBytesAsm = AsmFormat.getAsmConstant(program, structSize, 99, scopeRef);
+            int totalSizeBytes = typeStruct.getSizeBytes();
+            dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);
          }
-      } else if(valueType instanceof SymbolTypeArray) {
-         SymbolTypeArray constTypeArray = (SymbolTypeArray) valueType;
+      } else if(valueType instanceof SymbolTypePointer && valueArraySpec != null) {
+         SymbolTypePointer constTypeArray = (SymbolTypePointer) valueType;
          SymbolType elementType = constTypeArray.getElementType();
 
          SymbolType dataType = value.getType(program.getScope());
@@ -561,16 +638,22 @@ public class Pass4CodeGeneration {
             ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) value;
             // default - larger then 256
             int bytes = 1023;
-            RValue size = constTypeArray.getSize();
-            if(size instanceof ConstantValue) {
-               ConstantLiteral sizeLiteral = ((ConstantValue) size).calculateLiteral(getScope());
-               if(sizeLiteral instanceof ConstantInteger) {
-                  bytes = (int) (((ConstantInteger) sizeLiteral).getInteger() * elementType.getSizeBytes());
-               }
+            Integer declaredSize = getArrayDeclaredSize(valueArraySpec.getArraySize());
+            if(declaredSize != null) {
+               bytes = declaredSize * elementType.getSizeBytes();
             }
             dataChunk.addDataKickAsm(bytes, kickAsm.getKickAsmCode(), getEncoding(value));
             dataNumElements = bytes;
-         } else if(dataType.equals(SymbolType.STRING)) {
+         } else if(value instanceof ConstantString) {
+            ConstantString stringValue = (ConstantString) value;
+            String asmConstant = AsmFormat.getAsmConstant(program, stringValue, 99, scopeRef);
+            dataChunk.addDataString(asmConstant, getEncoding(stringValue));
+            if(stringValue.isZeroTerminated()) {
+               dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
+            }
+            dataNumElements = stringValue.getStringLength();
+            
+            /*
             try {
                ConstantLiteral literal = value.calculateLiteral(getScope());
                if(literal instanceof ConstantString) {
@@ -585,25 +668,28 @@ public class Pass4CodeGeneration {
             } catch(ConstantNotLiteral e) {
                // can't calculate literal value, so it is not data - just return
             }
+             */
          } else {
             // Assume we have a ConstantArrayList
             ConstantArrayList constantArrayList = (ConstantArrayList) value;
             // Output each element to the chunk
             for(ConstantValue element : constantArrayList.getElements()) {
-               addChunkData(dataChunk, element, elementType, scopeRef);
+               addChunkData(dataChunk, element, elementType, null, scopeRef);
             }
             dataNumElements = constantArrayList.getElements().size();
          }
          // Pad output to match declared size (if larger than the data list)
-         Integer declaredSize = getArrayDeclaredSize(valueType);
-         if(declaredSize != null && declaredSize > dataNumElements) {
-            int padding = declaredSize - dataNumElements;
-            ConstantValue zeroValue = ZeroConstantValues.zeroValue(elementType, program.getScope());
-            if(zeroValue instanceof ConstantInteger) {
-               dataChunk.addDataFilled(getNumericType(elementType), AsmFormat.getAsmNumber(padding), padding, AsmFormat.getAsmConstant(program, zeroValue, 99, scopeRef), getEncoding(zeroValue));
-            } else {
-               for(int i = 0; i < padding; i++) {
-                  addChunkData(dataChunk, zeroValue, elementType, scopeRef);
+         if(!(value instanceof ConstantArrayKickAsm)) {
+            Integer declaredSize = getArrayDeclaredSize(valueArraySpec.getArraySize());
+            if(declaredSize != null && declaredSize > dataNumElements) {
+               int padding = declaredSize - dataNumElements;
+               ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(elementType, valueArraySpec), null);
+               if(zeroValue instanceof ConstantInteger) {
+                  dataChunk.addDataFilled(getNumericType(elementType), AsmFormat.getAsmNumber(padding), padding, AsmFormat.getAsmConstant(program, zeroValue, 99, scopeRef), getEncoding(zeroValue));
+               } else {
+                  for(int i = 0; i < padding; i++) {
+                     addChunkData(dataChunk, zeroValue, elementType, null, scopeRef);
+                  }
                }
             }
          }
@@ -629,6 +715,8 @@ public class Pass4CodeGeneration {
          dataChunk.addDataNumeric(AsmDataNumeric.Type.DWORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
       } else if(valueType instanceof SymbolTypePointer) {
          dataChunk.addDataNumeric(AsmDataNumeric.Type.WORD, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
+      } else if(SymbolType.BOOLEAN.equals(valueType)) {
+         dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
       } else {
          throw new InternalError("Unhandled array element type " + valueType.toString() + " value " + value.toString(program));
       }
@@ -654,30 +742,6 @@ public class Pass4CodeGeneration {
       }
    }
 
-   /**
-    * Add label declarations for all scope variables assigned to ZP registers
-    *
-    * @param asm The ASM program
-    * @param scope The scope
-    */
-   private void addZpLabels(AsmProgram asm, ScopeRef scope) {
-      Collection<Variable> scopeVars = program.getScope().getScope(scope).getAllVariables(false);
-      Set<String> added = new LinkedHashSet<>();
-      for(Variable scopeVar : scopeVars) {
-         Registers.Register register = scopeVar.getAllocation();
-         if(register != null && register.isZp()) {
-            Registers.RegisterZp registerZp = (Registers.RegisterZp) register;
-            String asmName = scopeVar.getAsmName();
-            if(asmName != null && !added.contains(asmName)) {
-               // Add any comments
-               generateComments(asm, scopeVar.getComments());
-               // Add the label declaration
-               asm.addLabelDecl(AsmFormat.asmFix(asmName), registerZp.getZp());
-               added.add(asmName);
-            }
-         }
-      }
-   }
 
    private void genStatements(AsmProgram asm, ControlFlowBlock block) {
       Iterator<Statement> statementsIt = block.getStatements().iterator();
@@ -817,10 +881,10 @@ public class Pass4CodeGeneration {
             if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
 
                long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
-               long returnByteSize = procedure.getReturnType()==null?0:procedure.getReturnType().getSizeBytes();
+               long returnByteSize = procedure.getReturnType() == null ? 0 : procedure.getReturnType().getSizeBytes();
                if(stackFrameByteSize > returnByteSize) {
                   // Clean up the stack
-                  String pullSignature = "_stackpullbyte_" + (stackFrameByteSize-returnByteSize);
+                  String pullSignature = "_stackpullbyte_" + (stackFrameByteSize - returnByteSize);
                   AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   generateAsm(asm, pullFragmentInstanceSpec);
@@ -918,7 +982,7 @@ public class Pass4CodeGeneration {
                   }
                }
             } else if(procedure instanceof ConstantRef) {
-               ConstantVar procedureVariable = getScope().getConstant((ConstantRef) procedure);
+               Variable procedureVariable = getScope().getConstant((ConstantRef) procedure);
                SymbolType procedureVariableType = procedureVariable.getType();
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {

@@ -1,26 +1,23 @@
-Resolved forward reference fn1 to (void()) fn1()
+Identified constant variable (void()*) main::f
 Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@2
 
-(void()) main()
-main: scope:[main]  from @2
-  (void()*~) main::$0 ← & (void()) fn1()
-  (void()*) main::f#0 ← (void()*~) main::$0
-  call *((void()*) main::f#0) 
-  to:main::@return
-main::@return: scope:[main]  from main
+(void()) fn1()
+fn1: scope:[fn1]  from
+  *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL)
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
   return 
   to:@return
 
-(void()) fn1()
-fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL) ← ++ *((byte*) fn1::BORDERCOL)
-  to:fn1::@return
-fn1::@return: scope:[fn1]  from fn1
+(void()) main()
+main: scope:[main]  from @2
+  call *((const void()*) main::f) 
+  to:main::@return
+main::@return: scope:[main]  from main
   return 
   to:@return
 @2: scope:[]  from @begin
@@ -37,27 +34,16 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(byte*) fn1::BORDERCOL
+(const byte*) fn1::BORDERCOL = (byte*)(number) $d020
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
-(void()*) main::f
-(void()*) main::f#0
+(const void()*) main::f = &(void()) fn1()
 
-Inlining cast (byte*) fn1::BORDERCOL ← (byte*)(number) $d020
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Successful SSA optimization PassNCastSimplification
-Alias (void()*) main::f#0 = (void()*~) main::$0 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (void()*) main::f#0 ← & (void()) fn1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()*) main::f#0 = &fn1
-Constant (const byte*) fn1::BORDERCOL = (byte*) 53280
-Successful SSA optimization Pass2ConstantIdentification
 Replacing constant pointer function [2] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
-Eliminating unused constant (const void()*) main::f#0
+Eliminating unused constant (const void()*) main::f
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -109,7 +95,6 @@ fn1::@return: scope:[fn1]  from fn1
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
 (void()) main()
-(void()*) main::f
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -165,12 +150,12 @@ fn1: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 
 Uplift Scope [fn1] 
+Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 42 combination 
 Uplifting [fn1] best 42 combination 
+Uplifting [main] best 42 combination 
 Uplifting [] best 42 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -248,10 +233,9 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(const byte*) fn1::BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) fn1::BORDERCOL = (byte*) 53280
 (void()) main()
 (label) main::@return
-(void()*) main::f
 
 
 

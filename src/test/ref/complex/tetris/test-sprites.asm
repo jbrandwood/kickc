@@ -43,28 +43,28 @@
   .label PLAYFIELD_SCREEN_1 = $400
   // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
+  // Screen Sprite pointers on screen 1
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  // Screen Sprite pointers on screen 2
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
   // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
   // The Y-position of the first sprite row
   .const SPRITES_FIRST_YPOS = $31
-  .label SIN_SPRITE = $2800
-  // Screen Sprite pointers on screen 1
-  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  // Screen Sprite pointers on screen 2
-  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
+  .label SIN_SPRITE = $2800
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-  .label render_screen_showing = 5
-  .label irq_raster_next = 6
-  .label irq_sprite_ypos = 7
-  .label irq_sprite_ptr = 8
-  .label irq_cnt = 9
+  .label render_screen_showing = 4
+  .label irq_raster_next = 5
+  .label irq_sprite_ypos = 6
+  .label irq_sprite_ptr = 7
+  .label irq_cnt = 8
   .label sin_idx = 3
 __b1:
-  // The screen currently being showed to the user. $00 for screen 1 / $20 for screen 2.
+  // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
   lda #0
   sta.z render_screen_showing
   // The raster line of the next IRQ
@@ -219,7 +219,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = 4
+    .label raster_sprite_gfx_modify = 9
     sta rega+1
     stx regx+1
     //(*BGCOL)++;

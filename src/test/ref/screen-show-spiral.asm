@@ -3,21 +3,23 @@
 :BasicUpstart(__b1)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Screen containing angle to center
   .label SCREEN_FILL = $400
   // Char to fill with
   .const FILL_CHAR = '@'
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
+  // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
-  // Screen containing distance to center
-  .label SCREEN_DIST = $b
-  // Screen containing angle to center
-  .label SCREEN_ANGLE = $d
+  // Head of the heap. Moved backward each malloc()
   .label heap_head = $f
+  // Squares for each byte value SQUARES[i] = i*i
+  // Initialized by init_squares()
   .label SQUARES = $11
+  .label SCREEN_DIST = $b
+  .label SCREEN_ANGLE = $d
 __b1:
   lda #<$3e8
   sta.z malloc.size
@@ -49,10 +51,8 @@ main: {
     .label fill = 7
     .label dist_angle = $1a
     .label min_dist_angle = $16
-    .label min_dist_angle_3 = $1a
+    .label min_dist_angle_1 = $1a
     .label min_fill = $18
-    .label min_dist_angle_7 = $1a
-    .label min_dist_angle_8 = $1a
     lda.z SCREEN_DIST
     sta.z init_dist_screen.screen
     lda.z SCREEN_DIST+1
@@ -127,10 +127,10 @@ main: {
     cmp #<SCREEN_FILL+$3e8
     bcc __b9
   !:
-    lda.z min_dist_angle_3+1
+    lda.z min_dist_angle_1+1
     cmp #>$ffff
     bne __b7
-    lda.z min_dist_angle_3
+    lda.z min_dist_angle_1
     cmp #<$ffff
     bne __b7
     rts
@@ -141,27 +141,27 @@ main: {
     sta (min_fill),y
     jmp __b1
   __b9:
-    lda.z min_dist_angle_3
+    lda.z min_dist_angle_1
     sta.z min_dist_angle
-    lda.z min_dist_angle_3+1
+    lda.z min_dist_angle_1+1
     sta.z min_dist_angle+1
     jmp __b2
   __b11:
     lda.z min_dist_angle
-    sta.z min_dist_angle_8
+    sta.z min_dist_angle_1
     lda.z min_dist_angle+1
-    sta.z min_dist_angle_8+1
+    sta.z min_dist_angle_1+1
     jmp __b3
   __b10:
     lda.z min_dist_angle
-    sta.z min_dist_angle_7
+    sta.z min_dist_angle_1
     lda.z min_dist_angle+1
-    sta.z min_dist_angle_7+1
+    sta.z min_dist_angle_1+1
     jmp __b3
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zeropage(9) screen)
+// init_angle_screen(byte* zp(9) screen)
 init_angle_screen: {
     .label __11 = $18
     .label screen = 9
@@ -263,7 +263,7 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($f) x, signed word zeropage($11) y)
+// atan2_16(signed word zp($f) x, signed word zp($11) y)
 atan2_16: {
     .label __2 = $14
     .label __7 = $16
@@ -451,7 +451,7 @@ atan2_16: {
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zeropage(3) screen)
+// init_dist_screen(byte* zp(3) screen)
 init_dist_screen: {
     .label screen = 3
     .label screen_bottomline = 7
@@ -483,9 +483,9 @@ init_dist_screen: {
   __b4:
     jsr sqr
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     lda #$27
     sta.z xb
     lda #0
@@ -552,7 +552,7 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($16) val)
+// sqrt(word zp($16) val)
 sqrt: {
     .label __1 = 9
     .label __3 = 9
@@ -580,7 +580,7 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($16) key, word* zeropage(9) items, byte register(X) num)
+// bsearch16u(word zp($16) key, word* zp(9) items, byte register(X) num)
 bsearch16u: {
     .label __2 = 9
     .label pivot = $18
@@ -664,7 +664,7 @@ bsearch16u: {
 // sqr(byte register(A) val)
 sqr: {
     .label return = $16
-    .label return_2 = $14
+    .label return_1 = $14
     asl
     tay
     lda (SQUARES),y
@@ -723,7 +723,7 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zeropage($11) size)
+// malloc(word zp($11) size)
 malloc: {
     .label mem = $11
     .label size = $11

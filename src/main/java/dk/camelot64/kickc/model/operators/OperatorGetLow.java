@@ -46,8 +46,6 @@ public class OperatorGetLow extends OperatorUnary {
          return SymbolType.WORD;
       } else if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
          return SymbolType.BYTE;
-      } else if(SymbolType.STRING.equals(operandType)) {
-         return SymbolType.BYTE;
       } else if(SymbolType.NUMBER.equals(operandType)) {
          return SymbolType.NUMBER;
       } else if(SymbolType.UNUMBER.equals(operandType)) {

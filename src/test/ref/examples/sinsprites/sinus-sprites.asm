@@ -23,7 +23,9 @@
   .const sinlen_y = $c5
   .label sprites = $2000
   .label SCREEN = $400
+  // Current index within the progress cursor (0-7)
   .label progress_idx = $a
+  // Current position of the progress cursor
   .label progress_cursor = 2
   .label sin_idx_x = 6
   .label sin_idx_y = 8
@@ -40,7 +42,7 @@ main: {
     jmp __b1
 }
 anim: {
-    .label __8 = $a
+    .label __7 = $a
     .label xidx = 9
     .label yidx = 4
     .label x = $f
@@ -67,7 +69,7 @@ anim: {
     lda #>$1e
     adc #0
     sta.z x+1
-    asl.z __8
+    asl.z __7
     ora.z x_msb
     sta.z x_msb
     lda.z x
@@ -199,7 +201,7 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
-// gen_sintab(byte* zeropage($f) sintab, byte zeropage(8) length, byte zeropage(6) min, byte register(X) max)
+// gen_sintab(byte* zp($f) sintab, byte zp(8) length, byte zp(6) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
@@ -363,7 +365,7 @@ addMEMtoFAC: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
-// mulFACbyMEM(byte* zeropage($13) mem)
+// mulFACbyMEM(byte* zp($13) mem)
 mulFACbyMEM: {
     .label mem = $13
     lda.z mem
@@ -385,7 +387,7 @@ sinFAC: {
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
 // Reads 5 bytes from memory
-// divMEMbyFAC(byte* zeropage($13) mem)
+// divMEMbyFAC(byte* zp($13) mem)
 divMEMbyFAC: {
     .label mem = $13
     lda.z mem
@@ -399,7 +401,7 @@ divMEMbyFAC: {
 }
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
-// setFAC(word zeropage($13) w)
+// setFAC(word zp($13) w)
 setFAC: {
     .label prepareMEM1_mem = $13
     .label w = $13
@@ -415,7 +417,7 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zeropage($13) mem)
+// setMEMtoFAC(byte* zp($13) mem)
 setMEMtoFAC: {
     .label mem = $13
     lda.z mem
@@ -440,7 +442,7 @@ setARGtoFAC: {
     rts
 }
 // Initialize the PETSCII progress bar
-// progress_init(byte* zeropage(2) line)
+// progress_init(byte* zp(2) line)
 progress_init: {
     .label line = 2
     rts
@@ -479,16 +481,18 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-// gen_chargen_sprite(byte register(X) ch, byte* zeropage($f) sprite)
+// gen_chargen_sprite(byte register(X) ch, byte* zp($f) sprite)
 gen_chargen_sprite: {
     .label __0 = $13
     .label __1 = $13
     .label sprite = $f
     .label chargen = $13
     .label bits = 5
+    // current sprite byte
     .label s_gen = 9
     .label x = 6
     .label y = 4
+    // Find the current chargen pixel (c)
     .label c = 8
     txa
     sta.z __0

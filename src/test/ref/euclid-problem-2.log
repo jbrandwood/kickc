@@ -8,8 +8,7 @@ Culled Empty Block (label) euclid::@11
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte) idx#0 ← (number) 0
+  (byte) idx#0 ← (byte) 0
   to:@2
 
 (void()) main()
@@ -24,7 +23,7 @@ main::@1: scope:[main]  from main
   (byte) idx#7 ← phi( main/(byte) idx#13 )
   (byte) euclid::return#6 ← phi( main/(byte) euclid::return#0 )
   (byte~) main::$0 ← (byte) euclid::return#6
-  *((byte*) SCREEN + (byte) idx#7) ← (byte~) main::$0
+  *((const byte*) SCREEN + (byte) idx#7) ← (byte~) main::$0
   (byte) idx#1 ← ++ (byte) idx#7
   (byte) euclid::a#1 ← (number) $a9
   (byte) euclid::b#1 ← (number) $45
@@ -35,7 +34,7 @@ main::@2: scope:[main]  from main::@1
   (byte) idx#8 ← phi( main::@1/(byte) idx#1 )
   (byte) euclid::return#7 ← phi( main::@1/(byte) euclid::return#1 )
   (byte~) main::$1 ← (byte) euclid::return#7
-  *((byte*) SCREEN + (byte) idx#8) ← (byte~) main::$1
+  *((const byte*) SCREEN + (byte) idx#8) ← (byte~) main::$1
   (byte) idx#2 ← ++ (byte) idx#8
   (byte) euclid::a#2 ← (number) $ff
   (byte) euclid::b#2 ← (number) $9b
@@ -46,7 +45,7 @@ main::@3: scope:[main]  from main::@2
   (byte) idx#9 ← phi( main::@2/(byte) idx#2 )
   (byte) euclid::return#8 ← phi( main::@2/(byte) euclid::return#2 )
   (byte~) main::$2 ← (byte) euclid::return#8
-  *((byte*) SCREEN + (byte) idx#9) ← (byte~) main::$2
+  *((const byte*) SCREEN + (byte) idx#9) ← (byte~) main::$2
   (byte) idx#3 ← ++ (byte) idx#9
   (byte) euclid::a#3 ← (number) $63
   (byte) euclid::b#3 ← (number) 3
@@ -57,7 +56,7 @@ main::@4: scope:[main]  from main::@3
   (byte) idx#10 ← phi( main::@3/(byte) idx#3 )
   (byte) euclid::return#9 ← phi( main::@3/(byte) euclid::return#3 )
   (byte~) main::$3 ← (byte) euclid::return#9
-  *((byte*) SCREEN + (byte) idx#10) ← (byte~) main::$3
+  *((const byte*) SCREEN + (byte) idx#10) ← (byte~) main::$3
   (byte) idx#4 ← ++ (byte) idx#10
   to:main::@return
 main::@return: scope:[main]  from main::@4
@@ -119,7 +118,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (byte()) euclid((byte) euclid::a , (byte) euclid::b)
 (bool~) euclid::$0
 (bool~) euclid::$1
@@ -193,7 +192,6 @@ SYMBOL TABLE SSA
 (label) main::@4
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in (byte) idx#0 ← (number) 0
 Adding number conversion cast (unumber) $80 in (byte) euclid::a#0 ← (number) $80
 Adding number conversion cast (unumber) 2 in (byte) euclid::b#0 ← (number) 2
 Adding number conversion cast (unumber) $a9 in (byte) euclid::a#1 ← (number) $a9
@@ -203,8 +201,6 @@ Adding number conversion cast (unumber) $9b in (byte) euclid::b#2 ← (number) $
 Adding number conversion cast (unumber) $63 in (byte) euclid::a#3 ← (number) $63
 Adding number conversion cast (unumber) 3 in (byte) euclid::b#3 ← (number) 3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte) idx#0 ← (unumber)(number) 0
 Inlining cast (byte) euclid::a#0 ← (unumber)(number) $80
 Inlining cast (byte) euclid::b#0 ← (unumber)(number) 2
 Inlining cast (byte) euclid::a#1 ← (unumber)(number) $a9
@@ -215,7 +211,6 @@ Inlining cast (byte) euclid::a#3 ← (unumber)(number) $63
 Inlining cast (byte) euclid::b#3 ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
 Simplifying constant integer cast $80
 Simplifying constant integer cast 2
 Simplifying constant integer cast $a9
@@ -225,7 +220,6 @@ Simplifying constant integer cast $9b
 Simplifying constant integer cast $63
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $a9
@@ -254,10 +248,9 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) idx#13 (byte) idx#0
 Identical Phi Values (byte) idx#12 (byte) idx#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) euclid::$0 [41] if((byte) euclid::a#5!=(byte) euclid::b#5) goto euclid::@2
-Simple Condition (bool~) euclid::$1 [44] if((byte) euclid::a#5>(byte) euclid::b#5) goto euclid::@4
+Simple Condition (bool~) euclid::$0 [40] if((byte) euclid::a#5!=(byte) euclid::b#5) goto euclid::@2
+Simple Condition (bool~) euclid::$1 [43] if((byte) euclid::a#5>(byte) euclid::b#5) goto euclid::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) idx#0 = 0
 Constant (const byte) euclid::a#0 = $80
 Constant (const byte) euclid::b#0 = 2
@@ -268,7 +261,7 @@ Constant (const byte) euclid::b#2 = $9b
 Constant (const byte) euclid::a#3 = $63
 Constant (const byte) euclid::b#3 = 3
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [9] *((const byte*) SCREEN + (const byte) idx#0) ← (byte~) main::$0
+Simplifying expression containing zero SCREEN in [8] *((const byte*) SCREEN + (const byte) idx#0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) idx#11 and assignment [19] (byte) idx#11 ← ++ (byte) idx#10
 Successful SSA optimization PassNEliminateUnusedVars
@@ -440,14 +433,14 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
 [ euclid::b#5 euclid::b#9 euclid::b#4 ]
-Added variable euclid::return#0 to zero page equivalence class [ euclid::return#0 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable euclid::return#1 to zero page equivalence class [ euclid::return#1 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
-Added variable euclid::return#2 to zero page equivalence class [ euclid::return#2 ]
-Added variable main::$2 to zero page equivalence class [ main::$2 ]
-Added variable euclid::return#3 to zero page equivalence class [ euclid::return#3 ]
-Added variable main::$3 to zero page equivalence class [ main::$3 ]
+Added variable euclid::return#0 to live range equivalence class [ euclid::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable euclid::return#1 to live range equivalence class [ euclid::return#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable euclid::return#2 to live range equivalence class [ euclid::return#2 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable euclid::return#3 to live range equivalence class [ euclid::return#3 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
 Complete equivalence classes
 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
 [ euclid::b#5 euclid::b#9 euclid::b#4 ]
@@ -459,16 +452,16 @@ Complete equivalence classes
 [ main::$2 ]
 [ euclid::return#3 ]
 [ main::$3 ]
-Allocated zp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
-Allocated zp ZP_BYTE:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ]
-Allocated zp ZP_BYTE:4 [ euclid::return#0 ]
-Allocated zp ZP_BYTE:5 [ main::$0 ]
-Allocated zp ZP_BYTE:6 [ euclid::return#1 ]
-Allocated zp ZP_BYTE:7 [ main::$1 ]
-Allocated zp ZP_BYTE:8 [ euclid::return#2 ]
-Allocated zp ZP_BYTE:9 [ main::$2 ]
-Allocated zp ZP_BYTE:10 [ euclid::return#3 ]
-Allocated zp ZP_BYTE:11 [ main::$3 ]
+Allocated zp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
+Allocated zp[1]:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ]
+Allocated zp[1]:4 [ euclid::return#0 ]
+Allocated zp[1]:5 [ main::$0 ]
+Allocated zp[1]:6 [ euclid::return#1 ]
+Allocated zp[1]:7 [ main::$1 ]
+Allocated zp[1]:8 [ euclid::return#2 ]
+Allocated zp[1]:9 [ main::$2 ]
+Allocated zp[1]:10 [ euclid::return#3 ]
+Allocated zp[1]:11 [ main::$3 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -599,7 +592,7 @@ main: {
 }
   // euclid
 // Calculate least common denominator using euclids subtraction method
-// euclid(byte zeropage(2) a, byte zeropage(3) b)
+// euclid(byte zp(2) a, byte zp(3) b)
 euclid: {
     .label return = 4
     .label return_1 = 6
@@ -653,37 +646,37 @@ euclid: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [27] (byte) euclid::b#4 ← (byte) euclid::b#5 - (byte) euclid::a#5 [ euclid::a#5 euclid::b#4 ] ( main:2::euclid:5 [ euclid::a#5 euclid::b#4 ] main:2::euclid:9 [ euclid::a#5 euclid::b#4 ] main:2::euclid:13 [ euclid::a#5 euclid::b#4 ] main:2::euclid:17 [ euclid::a#5 euclid::b#4 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
 Statement [28] (byte) euclid::a#4 ← (byte) euclid::a#5 - (byte) euclid::b#5 [ euclid::b#5 euclid::a#4 ] ( main:2::euclid:5 [ euclid::b#5 euclid::a#4 ] main:2::euclid:9 [ euclid::b#5 euclid::a#4 ] main:2::euclid:13 [ euclid::b#5 euclid::a#4 ] main:2::euclid:17 [ euclid::b#5 euclid::a#4 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ]
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ]
 Statement [27] (byte) euclid::b#4 ← (byte) euclid::b#5 - (byte) euclid::a#5 [ euclid::a#5 euclid::b#4 ] ( main:2::euclid:5 [ euclid::a#5 euclid::b#4 ] main:2::euclid:9 [ euclid::a#5 euclid::b#4 ] main:2::euclid:13 [ euclid::a#5 euclid::b#4 ] main:2::euclid:17 [ euclid::a#5 euclid::b#4 ] ) always clobbers reg byte a 
 Statement [28] (byte) euclid::a#4 ← (byte) euclid::a#5 - (byte) euclid::b#5 [ euclid::b#5 euclid::a#4 ] ( main:2::euclid:5 [ euclid::b#5 euclid::a#4 ] main:2::euclid:9 [ euclid::b#5 euclid::a#4 ] main:2::euclid:13 [ euclid::b#5 euclid::a#4 ] main:2::euclid:17 [ euclid::b#5 euclid::a#4 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ euclid::return#0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ main::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ euclid::return#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ main::$1 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:8 [ euclid::return#2 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:9 [ main::$2 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ euclid::return#3 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:11 [ main::$3 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ euclid::return#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ euclid::return#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::$1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ euclid::return#2 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ main::$2 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ euclid::return#3 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ main::$3 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [euclid] 43.75: zp ZP_BYTE:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ] 33.67: zp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] 4: zp ZP_BYTE:4 [ euclid::return#0 ] 4: zp ZP_BYTE:6 [ euclid::return#1 ] 4: zp ZP_BYTE:8 [ euclid::return#2 ] 4: zp ZP_BYTE:10 [ euclid::return#3 ] 
-Uplift Scope [main] 4: zp ZP_BYTE:5 [ main::$0 ] 4: zp ZP_BYTE:7 [ main::$1 ] 4: zp ZP_BYTE:9 [ main::$2 ] 4: zp ZP_BYTE:11 [ main::$3 ] 
+Uplift Scope [euclid] 43.75: zp[1]:3 [ euclid::b#5 euclid::b#9 euclid::b#4 ] 33.67: zp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] 4: zp[1]:4 [ euclid::return#0 ] 4: zp[1]:6 [ euclid::return#1 ] 4: zp[1]:8 [ euclid::return#2 ] 4: zp[1]:10 [ euclid::return#3 ] 
+Uplift Scope [main] 4: zp[1]:5 [ main::$0 ] 4: zp[1]:7 [ main::$1 ] 4: zp[1]:9 [ main::$2 ] 4: zp[1]:11 [ main::$3 ] 
 Uplift Scope [] 
 
-Uplifting [euclid] best 625 combination reg byte x [ euclid::b#5 euclid::b#9 euclid::b#4 ] zp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] reg byte a [ euclid::return#0 ] reg byte a [ euclid::return#1 ] zp ZP_BYTE:8 [ euclid::return#2 ] zp ZP_BYTE:10 [ euclid::return#3 ] 
+Uplifting [euclid] best 625 combination reg byte x [ euclid::b#5 euclid::b#9 euclid::b#4 ] zp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] reg byte a [ euclid::return#0 ] reg byte a [ euclid::return#1 ] zp[1]:8 [ euclid::return#2 ] zp[1]:10 [ euclid::return#3 ] 
 Limited combination testing to 100 combinations of 2304 possible.
 Uplifting [main] best 601 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [] best 601 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
-Uplifting [euclid] best 601 combination zp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:8 [ euclid::return#2 ]
+Attempting to uplift remaining variables inzp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
+Uplifting [euclid] best 601 combination zp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ] 
+Attempting to uplift remaining variables inzp[1]:8 [ euclid::return#2 ]
 Uplifting [euclid] best 595 combination reg byte a [ euclid::return#2 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:10 [ euclid::return#3 ]
+Attempting to uplift remaining variables inzp[1]:10 [ euclid::return#3 ]
 Uplifting [euclid] best 589 combination reg byte a [ euclid::return#3 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -790,7 +783,7 @@ main: {
 }
   // euclid
 // Calculate least common denominator using euclids subtraction method
-// euclid(byte zeropage(2) a, byte register(X) b)
+// euclid(byte zp(2) a, byte register(X) b)
 euclid: {
     .label a = 2
     // [23] phi from euclid euclid::@3 euclid::@4 to euclid::@1 [phi:euclid/euclid::@3/euclid::@4->euclid::@1]
@@ -882,7 +875,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (byte()) euclid((byte) euclid::a , (byte) euclid::b)
 (label) euclid::@1
 (label) euclid::@2
@@ -890,9 +883,9 @@ FINAL SYMBOL TABLE
 (label) euclid::@4
 (label) euclid::@return
 (byte) euclid::a
-(byte) euclid::a#10 a zp ZP_BYTE:2 2.0
-(byte) euclid::a#4 a zp ZP_BYTE:2 22.0
-(byte) euclid::a#5 a zp ZP_BYTE:2 9.666666666666668
+(byte) euclid::a#10 a zp[1]:2 2.0
+(byte) euclid::a#4 a zp[1]:2 22.0
+(byte) euclid::a#5 a zp[1]:2 9.666666666666668
 (byte) euclid::b
 (byte) euclid::b#4 reg byte x 22.0
 (byte) euclid::b#5 reg byte x 19.75
@@ -914,7 +907,7 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 
-zp ZP_BYTE:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
+zp[1]:2 [ euclid::a#5 euclid::a#10 euclid::a#4 ]
 reg byte x [ euclid::b#5 euclid::b#9 euclid::b#4 ]
 reg byte a [ euclid::return#0 ]
 reg byte a [ main::$0 ]
@@ -1022,7 +1015,7 @@ main: {
 }
   // euclid
 // Calculate least common denominator using euclids subtraction method
-// euclid(byte zeropage(2) a, byte register(X) b)
+// euclid(byte zp(2) a, byte register(X) b)
 euclid: {
     .label a = 2
     // [23] phi from euclid euclid::@3 euclid::@4 to euclid::@1 [phi:euclid/euclid::@3/euclid::@4->euclid::@1]

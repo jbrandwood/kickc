@@ -8,12 +8,11 @@ Culled Empty Block (label) memset::@3
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (void*) memset::str#0 ← (void*)(byte*) SCREEN
+  (void*) memset::str#0 ← (void*)(const byte*) SCREEN
   (byte) memset::c#0 ← (byte) 'c'
   (word) memset::num#0 ← (number) $3e8
   call memset 
@@ -80,7 +79,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -130,7 +129,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
@@ -142,7 +140,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [9] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [8] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
+Inversing boolean not [8] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [7] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (void*) memset::return#1 = (void*) memset::str#1 (void*) memset::return#3 (void*) memset::return#2 
 Alias (void*) memset::str#2 = (void*) memset::str#3 
@@ -163,27 +161,23 @@ Identical Phi Values (byte) memset::c#1 (byte) memset::c#3
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#1 (void*) memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memset::$1 [10] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [20] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$1 [9] if((word) memset::num#0<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$4 [19] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
+Constant right-side identified [0] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const void*) memset::str#0 = (void*)SCREEN
 Constant (const byte) memset::c#0 = 'c'
 Constant (const word) memset::num#0 = $3e8
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)SCREEN in [1] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
-Successful SSA optimization Pass2ConstantValues
-if() condition always false - eliminating [10] if((const word) memset::num#0<=(byte) 0) goto memset::@1
-Successful SSA optimization Pass2ConstantIfs
-Eliminating unused variable (void*) memset::return#0 and assignment [2] (void*) memset::return#0 ← (void*) memset::str#0
-Successful SSA optimization PassNEliminateUnusedVars
-Constant (const void*) memset::str#0 = (void*)SCREEN
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)memset::str#0 in [3] (byte*~) memset::$2 ← (byte*)(const void*) memset::str#0
-Constant value identified (byte*)memset::str#0 in [5] (byte*) memset::dst#0 ← (byte*)(const void*) memset::str#0
-Successful SSA optimization Pass2ConstantValues
+Constant (const void*) memset::return#0 = memset::str#0
 Constant (const byte*) memset::$2 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
+if() condition always false - eliminating [9] if((const word) memset::num#0<=(byte) 0) goto memset::@1
+Successful SSA optimization Pass2ConstantIfs
+Eliminating unused constant (const void*) memset::return#0
+Successful SSA optimization PassNEliminateUnusedVars
 Constant right-side identified [2] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
@@ -274,7 +268,7 @@ Initial phi equivalence classes
 [ memset::dst#2 memset::dst#1 ]
 Complete equivalence classes
 [ memset::dst#2 memset::dst#1 ]
-Allocated zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ]
+Allocated zp[2]:2 [ memset::dst#2 memset::dst#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -317,9 +311,9 @@ main: {
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
+    .label str = SCREEN
     .const c = 'c'
     .const num = $3e8
-    .label str = SCREEN
     .label end = str+num
     .label dst = 2
     // [8] phi from memset to memset::@1 [phi:memset->memset::@1]
@@ -365,14 +359,14 @@ memset: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::memset:5 [ memset::dst#2 ] ) always clobbers reg byte a 
 Statement [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::memset:5 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:2 , 
+Potential registers zp[2]:2 [ memset::dst#2 memset::dst#1 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memset] 36.67: zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [memset] 36.67: zp[2]:2 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [memset] best 598 combination zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [memset] best 598 combination zp[2]:2 [ memset::dst#2 memset::dst#1 ] 
 Uplifting [main] best 598 combination 
 Uplifting [] best 598 combination 
 
@@ -416,9 +410,9 @@ main: {
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
+    .label str = SCREEN
     .const c = 'c'
     .const num = $3e8
-    .label str = SCREEN
     .label end = str+num
     .label dst = 2
     // [8] phi from memset to memset::@1 [phi:memset->memset::@1]
@@ -491,7 +485,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -501,8 +495,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) 'c'
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:2 22.0
-(byte*) memset::dst#2 dst zp ZP_WORD:2 14.666666666666666
+(byte*) memset::dst#1 dst zp[2]:2 22.0
+(byte*) memset::dst#2 dst zp[2]:2 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -511,7 +505,7 @@ FINAL SYMBOL TABLE
 (void*) memset::str
 (const void*) memset::str#0 str = (void*)(const byte*) SCREEN
 
-zp ZP_WORD:2 [ memset::dst#2 memset::dst#1 ]
+zp[2]:2 [ memset::dst#2 memset::dst#1 ]
 
 
 FINAL ASSEMBLER
@@ -546,9 +540,9 @@ main: {
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
+    .label str = SCREEN
     .const c = 'c'
     .const num = $3e8
-    .label str = SCREEN
     .label end = str+num
     .label dst = 2
     // [8] phi from memset to memset::@1 [phi:memset->memset::@1]

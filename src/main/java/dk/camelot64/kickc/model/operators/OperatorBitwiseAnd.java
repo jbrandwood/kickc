@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
+import dk.camelot64.kickc.model.values.ConstantPointer;
 
 /** Binary bitwise and Operator ( x & y ) */
 public class OperatorBitwiseAnd extends OperatorBinary {
@@ -16,6 +17,8 @@ public class OperatorBitwiseAnd extends OperatorBinary {
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
          return new ConstantInteger(((ConstantInteger) left).getInteger() & ((ConstantInteger) right).getInteger());
+      }  else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
+         return new ConstantPointer(((ConstantPointer) left).getLocation() & ((ConstantInteger) right).getInteger(), ((ConstantPointer) left).getElementType());
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }

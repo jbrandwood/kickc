@@ -1,24 +1,19 @@
-Setting inferred volatile on symbol affected by address-of (byte*~) $0 ← & (byte) idx
+Setting inferred volatile on symbol affected by address-of (byte*) idx_p ← &(byte) idx
+Identified constant variable (byte*) idx_p
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) idx ← (byte) 0
-  (byte*~) $0 ← & (byte) idx
-  (byte*) idx_p#0 ← (byte*~) $0
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) idx_p#2 ← phi( @1/(byte*) idx_p#3 )
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte*) idx_p#1 ← phi( main/(byte*) idx_p#2 main::@1/(byte*) idx_p#1 )
-  *((byte*) SCREEN + (byte) main::i#2) ← *((byte*) idx_p#1)
-  *((byte*) idx_p#1) ← *((byte*) idx_p#1) + (byte) main::i#2
+  *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p)
+  *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,5)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
   if((bool~) main::$0) goto main::@1
@@ -27,7 +22,6 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) idx_p#3 ← phi( @begin/(byte*) idx_p#0 )
   call main 
   to:@2
 @2: scope:[]  from @1
@@ -35,18 +29,13 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(byte*~) $0
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte) idx memory
-(byte*) idx_p
-(byte*) idx_p#0
-(byte*) idx_p#1
-(byte*) idx_p#2
-(byte*) idx_p#3
+(const byte*) SCREEN = (byte*)(number) $400
+(byte) idx loadstore = (byte) 0
+(const byte*) idx_p = &(byte) idx
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -56,25 +45,14 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias (byte*) idx_p#0 = (byte*~) $0 (byte*) idx_p#3 
-Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) idx_p#2 (byte*) idx_p#0
-Identical Phi Values (byte*) idx_p#1 (byte*) idx_p#2
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [11] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$0 [6] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (byte*) idx_p#0 ← & (byte) idx
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) idx_p#0 = &idx
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Adding number conversion cast (unumber) 6 in if((byte) main::i#1!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
@@ -85,6 +63,7 @@ Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -97,13 +76,14 @@ Coalesced [12] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) idx ← (byte) 0
+  [0] phi()
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -118,8 +98,8 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p#0)
-  [7] *((const byte*) idx_p#0) ← *((const byte*) idx_p#0) + (byte) main::i#2
+  [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p)
+  [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte) 6) goto main::@1
   to:main::@return
@@ -129,8 +109,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx memory 20.0
-(byte*) idx_p
+(byte) idx loadstore = (byte) 0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 16.5
@@ -138,12 +117,12 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-Added variable idx to zero page equivalence class [ idx ]
+Added variable idx to live range equivalence class [ idx ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ idx ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated mem idx [ idx ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated mem[1] [ idx ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -155,13 +134,10 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label idx_p = idx
   .label SCREEN = $400
+  .label idx_p = idx
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -191,11 +167,11 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p#0) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda idx_p
     ldy.z i
     sta SCREEN,y
-    // [7] *((const byte*) idx_p#0) ← *((const byte*) idx_p#0) + (byte) main::i#2 -- _deref_pbuc1=_deref_pbuc1_plus_vbuz1 
+    // [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 -- _deref_pbuc1=_deref_pbuc1_plus_vbuz1 
     lda idx_p
     clc
     adc.z i
@@ -216,22 +192,22 @@ main: {
   idx: .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) idx ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p#0) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [7] *((const byte*) idx_p#0) ← *((const byte*) idx_p#0) + (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [0] (byte) idx ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p#0) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) idx_p#0) ← *((const byte*) idx_p#0) + (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers mem idx [ idx ] : mem idx , 
+Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers mem[1] [ idx ] : mem[1] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 31.17: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [] 20: mem idx [ idx ] 
+Uplift Scope [main] 31.17: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 0: mem[1] [ idx ] 
 
-Uplifting [main] best 409 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 409 combination mem idx [ idx ] 
+Uplifting [main] best 403 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 403 combination mem[1] [ idx ] 
+Attempting to uplift remaining variables inmem[1] [ idx ]
+Uplifting [] best 403 combination mem[1] [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -242,13 +218,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label idx_p = idx
   .label SCREEN = $400
+  .label idx_p = idx
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -276,10 +249,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p#0) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
     lda idx_p
     sta SCREEN,x
-    // [7] *((const byte*) idx_p#0) ← *((const byte*) idx_p#0) + (byte) main::i#2 -- _deref_pbuc1=_deref_pbuc1_plus_vbuxx 
+    // [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 -- _deref_pbuc1=_deref_pbuc1_plus_vbuxx 
     txa
     clc
     adc idx_p
@@ -304,30 +277,33 @@ Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
 Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
 Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(byte) idx memory mem idx 20.0
-(byte*) idx_p
-(const byte*) idx_p#0 idx_p = &(byte) idx
+(const byte*) SCREEN = (byte*) 1024
+(byte) idx loadstore mem[1] = (byte) 0
+(const byte*) idx_p = &(byte) idx
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -336,34 +312,27 @@ FINAL SYMBOL TABLE
 (byte) main::i#2 reg byte x 14.666666666666666
 
 reg byte x [ main::i#2 main::i#1 ]
-mem idx [ idx ]
+mem[1] [ idx ]
 
 
 FINAL ASSEMBLER
-Score: 319
+Score: 301
 
   // File Comments
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a pointer to a memory variable
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label idx_p = idx
   .label SCREEN = $400
+  .label idx_p = idx
   // @begin
-__bbegin:
-  // idx
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-  jsr main
-  rts
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
@@ -376,11 +345,11 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = *idx_p
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p#0) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
     lda idx_p
     sta SCREEN,x
     // *idx_p +=i
-    // [7] *((const byte*) idx_p#0) ← *((const byte*) idx_p#0) + (byte) main::i#2 -- _deref_pbuc1=_deref_pbuc1_plus_vbuxx 
+    // [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 -- _deref_pbuc1=_deref_pbuc1_plus_vbuxx 
     txa
     clc
     adc idx_p

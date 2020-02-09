@@ -3,6 +3,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) keyboard_matrix_read::@1
 Culled Empty Block (label) @6
@@ -16,6 +17,7 @@ Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
+Culled Empty Block (label) @12
 Culled Empty Block (label) menu::@7
 Culled Empty Block (label) menu::@3
 Culled Empty Block (label) menu::@8
@@ -34,27 +36,13 @@ Culled Empty Block (label) pressed::@9
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) CIA1_PORT_A ← ((byte*)) (number) $dc00
-  (byte*) CIA1_PORT_B ← ((byte*)) (number) $dc01
-  (byte) RED ← (number) 2
-  (byte) GREEN ← (number) 5
-  to:@4
-@4: scope:[]  from @begin
-  (byte) KEY_E ← (number) $e
-  (byte) KEY_C ← (number) $14
-  (byte) KEY_I ← (number) $21
-  (byte) KEY_SPACE ← (number) $3c
-  (byte[8]) keyboard_matrix_row_bitmask ← { (number) $fe, (number) $fd, (number) $fb, (number) $f7, (number) $ef, (number) $df, (number) $bf, (number) $7f }
-  (byte[8]) keyboard_matrix_col_bitmask ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
-  to:@12
+  to:@14
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((byte*) CIA1_PORT_A) ← *((byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
-  (byte~) keyboard_matrix_read::$0 ← ~ *((byte*) CIA1_PORT_B)
+  *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
@@ -79,7 +67,7 @@ keyboard_key_pressed::@2: scope:[keyboard_key_pressed]  from keyboard_key_presse
   (byte) keyboard_key_pressed::colidx#1 ← phi( keyboard_key_pressed/(byte) keyboard_key_pressed::colidx#0 )
   (byte) keyboard_matrix_read::return#4 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::return#2 )
   (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#4
-  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#1)
+  (byte~) keyboard_key_pressed::$3 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#1)
   (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$3
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@2
@@ -90,7 +78,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (void()) main()
 main: scope:[main]  from @14
-  *((byte*) BORDERCOL) ← (byte) GREEN
+  *((const byte*) BORDERCOL) ← (const byte) GREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   if(true) goto main::@2
@@ -103,9 +91,6 @@ main::@7: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@12: scope:[]  from @4
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@14
 
 (void()) menu()
 menu: scope:[menu]  from main::@2
@@ -114,7 +99,7 @@ menu::@1: scope:[menu]  from menu menu::@6
   if(true) goto menu::@2
   to:menu::@return
 menu::@2: scope:[menu]  from menu::@1
-  (byte) keyboard_key_pressed::key#0 ← (byte) KEY_C
+  (byte) keyboard_key_pressed::key#0 ← (const byte) KEY_C
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
   to:menu::@16
@@ -126,7 +111,7 @@ menu::@16: scope:[menu]  from menu::@2
   if((bool~) menu::$2) goto menu::@4
   to:menu::@9
 menu::@4: scope:[menu]  from menu::@16
-  (byte) keyboard_key_pressed::key#1 ← (byte) KEY_I
+  (byte) keyboard_key_pressed::key#1 ← (const byte) KEY_I
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#1
   to:menu::@17
@@ -146,7 +131,7 @@ menu::@return: scope:[menu]  from menu::@1 menu::@11 menu::@13 menu::@18
   return 
   to:@return
 menu::@5: scope:[menu]  from menu::@17
-  (byte) keyboard_key_pressed::key#2 ← (byte) KEY_E
+  (byte) keyboard_key_pressed::key#2 ← (const byte) KEY_E
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#1
   to:menu::@19
@@ -158,26 +143,26 @@ menu::@19: scope:[menu]  from menu::@5
   if((bool~) menu::$9) goto menu::@6
   to:menu::@13
 menu::@11: scope:[menu]  from menu::@17
-  *((byte*) BORDERCOL) ← (byte) RED
+  *((const byte*) BORDERCOL) ← (const byte) RED
   asm { sei  }
   to:menu::@return
 menu::@6: scope:[menu]  from menu::@19
-  *((byte*) SCREEN) ← ++ *((byte*) SCREEN)
+  *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
   to:menu::@1
 menu::@13: scope:[menu]  from menu::@19
-  *((byte*) BORDERCOL) ← (byte) GREEN
+  *((const byte*) BORDERCOL) ← (const byte) GREEN
   asm { cli  }
   to:menu::@return
 
 (void()) pressed()
 pressed: scope:[pressed]  from menu::@9
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   to:pressed::@1
 pressed::@1: scope:[pressed]  from pressed pressed::@10
   if(true) goto pressed::@2
   to:pressed::@return
 pressed::@2: scope:[pressed]  from pressed::@1
-  (byte) keyboard_key_pressed::key#3 ← (byte) KEY_SPACE
+  (byte) keyboard_key_pressed::key#3 ← (const byte) KEY_SPACE
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#5 ← (byte) keyboard_key_pressed::return#1
   to:pressed::@10
@@ -191,7 +176,7 @@ pressed::@10: scope:[pressed]  from pressed::@2
 pressed::@return: scope:[pressed]  from pressed::@1 pressed::@10
   return 
   to:@return
-@14: scope:[]  from @12
+@14: scope:[]  from @begin
   call main 
   to:@15
 @15: scope:[]  from @14
@@ -199,23 +184,21 @@ pressed::@return: scope:[pressed]  from pressed::@1 pressed::@10
 @end: scope:[]  from @15
 
 SYMBOL TABLE SSA
-(label) @12
 (label) @14
 (label) @15
-(label) @4
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BORDERCOL
-(byte*) CIA1_PORT_A
-(byte*) CIA1_PORT_B
-(byte) GREEN
-(byte) KEY_C
-(byte) KEY_E
-(byte) KEY_I
-(byte) KEY_SPACE
-(byte) RED
-(byte*) SCREEN
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA1_PORT_A = (byte*)(number) $dc00
+(const byte*) CIA1_PORT_B = (byte*)(number) $dc01
+(const byte) GREEN = (byte) 5
+(const byte) KEY_C = (byte) $14
+(const byte) KEY_E = (byte) $e
+(const byte) KEY_I = (byte) $21
+(const byte) KEY_SPACE = (byte) $3c
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*)(number) $400
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 (number~) keyboard_key_pressed::$0
 (byte~) keyboard_key_pressed::$1
@@ -246,7 +229,7 @@ SYMBOL TABLE SSA
 (byte) keyboard_key_pressed::return#9
 (byte) keyboard_key_pressed::rowidx
 (byte) keyboard_key_pressed::rowidx#0
-(byte[8]) keyboard_matrix_col_bitmask
+(const byte*) keyboard_matrix_col_bitmask[(number) 8]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (byte~) keyboard_matrix_read::$0
 (label) keyboard_matrix_read::@return
@@ -261,7 +244,7 @@ SYMBOL TABLE SSA
 (byte) keyboard_matrix_read::rowid
 (byte) keyboard_matrix_read::rowid#0
 (byte) keyboard_matrix_read::rowid#1
-(byte[8]) keyboard_matrix_row_bitmask
+(const byte*) keyboard_matrix_row_bitmask[(number) 8]  = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -299,12 +282,6 @@ SYMBOL TABLE SSA
 (label) pressed::@2
 (label) pressed::@return
 
-Adding number conversion cast (unumber) 2 in (byte) RED ← (number) 2
-Adding number conversion cast (unumber) 5 in (byte) GREEN ← (number) 5
-Adding number conversion cast (unumber) $e in (byte) KEY_E ← (number) $e
-Adding number conversion cast (unumber) $14 in (byte) KEY_C ← (number) $14
-Adding number conversion cast (unumber) $21 in (byte) KEY_I ← (number) $21
-Adding number conversion cast (unumber) $3c in (byte) KEY_SPACE ← (number) $3c
 Adding number conversion cast (unumber) 7 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#4 & (number) 7
 Adding number conversion cast (unumber) keyboard_key_pressed::$0 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#4 & (unumber)(number) 7
 Adding number conversion cast (unumber) 3 in (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#4 >> (number) 3
@@ -313,61 +290,18 @@ Adding number conversion cast (unumber) 0 in (bool~) menu::$5 ← (byte~) menu::
 Adding number conversion cast (unumber) 0 in (bool~) menu::$8 ← (byte~) menu::$7 != (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) pressed::$2 ← (byte~) pressed::$1 != (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[8]) keyboard_matrix_row_bitmask ← (byte[8]){ (byte)(number) $fe, (byte)(number) $fd, (byte)(number) $fb, (byte)(number) $f7, (byte)(number) $ef, (byte)(number) $df, (byte)(number) $bf, (byte)(number) $7f }
-Added casts to value list in (byte[8]) keyboard_matrix_col_bitmask ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) CIA1_PORT_A ← (byte*)(number) $dc00
-Inlining cast (byte*) CIA1_PORT_B ← (byte*)(number) $dc01
-Inlining cast (byte) RED ← (unumber)(number) 2
-Inlining cast (byte) GREEN ← (unumber)(number) 5
-Inlining cast (byte) KEY_E ← (unumber)(number) $e
-Inlining cast (byte) KEY_C ← (unumber)(number) $14
-Inlining cast (byte) KEY_I ← (unumber)(number) $21
-Inlining cast (byte) KEY_SPACE ← (unumber)(number) $3c
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 56320
 Simplifying constant pointer cast (byte*) 56321
-Simplifying constant integer cast 2
-Simplifying constant integer cast 5
-Simplifying constant integer cast $e
-Simplifying constant integer cast $14
-Simplifying constant integer cast $21
-Simplifying constant integer cast $3c
-Simplifying constant integer cast $fe
-Simplifying constant integer cast $fd
-Simplifying constant integer cast $fb
-Simplifying constant integer cast $f7
-Simplifying constant integer cast $ef
-Simplifying constant integer cast $df
-Simplifying constant integer cast $bf
-Simplifying constant integer cast $7f
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 4
-Simplifying constant integer cast 8
-Simplifying constant integer cast $10
-Simplifying constant integer cast $20
-Simplifying constant integer cast $40
-Simplifying constant integer cast $80
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 7
 Simplifying constant integer cast 3
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) $e
-Finalized unsigned number type (byte) $14
-Finalized unsigned number type (byte) $21
-Finalized unsigned number type (byte) $3c
 Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 0
@@ -376,10 +310,10 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7
-Inversing boolean not [47] (bool~) menu::$2 ← (byte~) menu::$0 == (byte) 0 from [46] (bool~) menu::$1 ← (byte~) menu::$0 != (byte) 0
-Inversing boolean not [55] (bool~) menu::$6 ← (byte~) menu::$4 == (byte) 0 from [54] (bool~) menu::$5 ← (byte~) menu::$4 != (byte) 0
-Inversing boolean not [65] (bool~) menu::$9 ← (byte~) menu::$7 == (byte) 0 from [64] (bool~) menu::$8 ← (byte~) menu::$7 != (byte) 0
-Inversing boolean not [80] (bool~) pressed::$3 ← (byte~) pressed::$1 == (byte) 0 from [79] (bool~) pressed::$2 ← (byte~) pressed::$1 != (byte) 0
+Inversing boolean not [34] (bool~) menu::$2 ← (byte~) menu::$0 == (byte) 0 from [33] (bool~) menu::$1 ← (byte~) menu::$0 != (byte) 0
+Inversing boolean not [42] (bool~) menu::$6 ← (byte~) menu::$4 == (byte) 0 from [41] (bool~) menu::$5 ← (byte~) menu::$4 != (byte) 0
+Inversing boolean not [52] (bool~) menu::$9 ← (byte~) menu::$7 == (byte) 0 from [51] (bool~) menu::$8 ← (byte~) menu::$7 != (byte) 0
+Inversing boolean not [67] (bool~) pressed::$3 ← (byte~) pressed::$1 == (byte) 0 from [66] (bool~) pressed::$2 ← (byte~) pressed::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) keyboard_matrix_read::return#0 = (byte) keyboard_matrix_read::row_pressed_bits#0 (byte~) keyboard_matrix_read::$0 (byte) keyboard_matrix_read::return#3 (byte) keyboard_matrix_read::return#1 
 Alias (byte) keyboard_key_pressed::colidx#0 = (byte~) keyboard_key_pressed::$0 (byte) keyboard_key_pressed::colidx#1 
@@ -393,38 +327,21 @@ Alias (byte) keyboard_key_pressed::return#10 = (byte) keyboard_key_pressed::retu
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) keyboard_matrix_read::rowid#1 (byte) keyboard_matrix_read::rowid#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) menu::$2 [48] if((byte~) menu::$0==(byte) 0) goto menu::@4
-Simple Condition (bool~) menu::$6 [56] if((byte~) menu::$4==(byte) 0) goto menu::@5
-Simple Condition (bool~) menu::$9 [66] if((byte~) menu::$7==(byte) 0) goto menu::@6
-Simple Condition (bool~) pressed::$3 [81] if((byte~) pressed::$1==(byte) 0) goto pressed::@1
+Simple Condition (bool~) menu::$2 [35] if((byte~) menu::$0==(byte) 0) goto menu::@4
+Simple Condition (bool~) menu::$6 [43] if((byte~) menu::$4==(byte) 0) goto menu::@5
+Simple Condition (bool~) menu::$9 [53] if((byte~) menu::$7==(byte) 0) goto menu::@6
+Simple Condition (bool~) pressed::$3 [68] if((byte~) pressed::$1==(byte) 0) goto pressed::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [81] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return
+Negating conditional jump and destination [68] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Identified constant from value list (byte[8]) { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
-Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) CIA1_PORT_A = (byte*) 56320
-Constant (const byte*) CIA1_PORT_B = (byte*) 56321
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte) KEY_E = $e
-Constant (const byte) KEY_C = $14
-Constant (const byte) KEY_I = $21
-Constant (const byte) KEY_SPACE = $3c
-Constant (const byte[8]) keyboard_matrix_row_bitmask = { $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f }
-Constant (const byte[8]) keyboard_matrix_col_bitmask = { 1, 2, 4, 8, $10, $20, $40, $80 }
-Constant (const byte*) SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) keyboard_key_pressed::key#0 = KEY_C
 Constant (const byte) keyboard_key_pressed::key#1 = KEY_I
 Constant (const byte) keyboard_key_pressed::key#2 = KEY_E
 Constant (const byte) keyboard_key_pressed::key#3 = KEY_SPACE
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [36] if(true) goto main::@2
-if() condition always true - replacing block destination [40] if(true) goto menu::@2
-if() condition always true - replacing block destination [73] if(true) goto pressed::@2
+if() condition always true - replacing block destination [24] if(true) goto main::@2
+if() condition always true - replacing block destination [27] if(true) goto menu::@2
+if() condition always true - replacing block destination [60] if(true) goto pressed::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -438,8 +355,6 @@ Constant inlined keyboard_key_pressed::key#2 = (const byte) KEY_E
 Constant inlined keyboard_key_pressed::key#3 = (const byte) KEY_SPACE
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
-Adding NOP phi() at start of @12
 Adding NOP phi() at start of @14
 Adding NOP phi() at start of @15
 Adding NOP phi() at start of @end
@@ -456,16 +371,14 @@ Adding NOP phi() at start of menu::@5
 Adding NOP phi() at start of pressed::@1
 Adding NOP phi() at start of pressed::@2
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to menu:10 
-Calls in [menu] to keyboard_key_pressed:15 pressed:20 keyboard_key_pressed:24 keyboard_key_pressed:31 
-Calls in [keyboard_key_pressed] to keyboard_matrix_read:42 
-Calls in [pressed] to keyboard_key_pressed:53 
+Calls in [] to main:2 
+Calls in [main] to menu:8 
+Calls in [menu] to keyboard_key_pressed:13 pressed:18 keyboard_key_pressed:22 keyboard_key_pressed:29 
+Calls in [keyboard_key_pressed] to keyboard_matrix_read:40 
+Calls in [pressed] to keyboard_key_pressed:51 
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @4
-Culled Empty Block (label) @12
 Culled Empty Block (label) @15
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@7
@@ -579,7 +492,7 @@ keyboard_key_pressed: scope:[keyboard_key_pressed]  from menu::@1 menu::@2 menu:
   to:keyboard_key_pressed::@1
 keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_pressed
   [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0)
+  [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0)
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
   [39] return 
@@ -587,7 +500,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
-  [40] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0)
+  [40] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0)
   [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
@@ -645,21 +558,21 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ keyboard_key_pressed::key#4 ]
-Added variable keyboard_key_pressed::return#2 to zero page equivalence class [ keyboard_key_pressed::return#2 ]
-Added variable menu::$0 to zero page equivalence class [ menu::$0 ]
-Added variable keyboard_key_pressed::return#3 to zero page equivalence class [ keyboard_key_pressed::return#3 ]
-Added variable menu::$4 to zero page equivalence class [ menu::$4 ]
-Added variable keyboard_key_pressed::return#4 to zero page equivalence class [ keyboard_key_pressed::return#4 ]
-Added variable menu::$7 to zero page equivalence class [ menu::$7 ]
-Added variable keyboard_key_pressed::colidx#0 to zero page equivalence class [ keyboard_key_pressed::colidx#0 ]
-Added variable keyboard_key_pressed::rowidx#0 to zero page equivalence class [ keyboard_key_pressed::rowidx#0 ]
-Added variable keyboard_matrix_read::rowid#0 to zero page equivalence class [ keyboard_matrix_read::rowid#0 ]
-Added variable keyboard_matrix_read::return#2 to zero page equivalence class [ keyboard_matrix_read::return#2 ]
-Added variable keyboard_key_pressed::$2 to zero page equivalence class [ keyboard_key_pressed::$2 ]
-Added variable keyboard_key_pressed::return#0 to zero page equivalence class [ keyboard_key_pressed::return#0 ]
-Added variable keyboard_matrix_read::return#0 to zero page equivalence class [ keyboard_matrix_read::return#0 ]
-Added variable keyboard_key_pressed::return#10 to zero page equivalence class [ keyboard_key_pressed::return#10 ]
-Added variable pressed::$1 to zero page equivalence class [ pressed::$1 ]
+Added variable keyboard_key_pressed::return#2 to live range equivalence class [ keyboard_key_pressed::return#2 ]
+Added variable menu::$0 to live range equivalence class [ menu::$0 ]
+Added variable keyboard_key_pressed::return#3 to live range equivalence class [ keyboard_key_pressed::return#3 ]
+Added variable menu::$4 to live range equivalence class [ menu::$4 ]
+Added variable keyboard_key_pressed::return#4 to live range equivalence class [ keyboard_key_pressed::return#4 ]
+Added variable menu::$7 to live range equivalence class [ menu::$7 ]
+Added variable keyboard_key_pressed::colidx#0 to live range equivalence class [ keyboard_key_pressed::colidx#0 ]
+Added variable keyboard_key_pressed::rowidx#0 to live range equivalence class [ keyboard_key_pressed::rowidx#0 ]
+Added variable keyboard_matrix_read::rowid#0 to live range equivalence class [ keyboard_matrix_read::rowid#0 ]
+Added variable keyboard_matrix_read::return#2 to live range equivalence class [ keyboard_matrix_read::return#2 ]
+Added variable keyboard_key_pressed::$2 to live range equivalence class [ keyboard_key_pressed::$2 ]
+Added variable keyboard_key_pressed::return#0 to live range equivalence class [ keyboard_key_pressed::return#0 ]
+Added variable keyboard_matrix_read::return#0 to live range equivalence class [ keyboard_matrix_read::return#0 ]
+Added variable keyboard_key_pressed::return#10 to live range equivalence class [ keyboard_key_pressed::return#10 ]
+Added variable pressed::$1 to live range equivalence class [ pressed::$1 ]
 Complete equivalence classes
 [ keyboard_key_pressed::key#4 ]
 [ keyboard_key_pressed::return#2 ]
@@ -677,22 +590,22 @@ Complete equivalence classes
 [ keyboard_matrix_read::return#0 ]
 [ keyboard_key_pressed::return#10 ]
 [ pressed::$1 ]
-Allocated zp ZP_BYTE:2 [ keyboard_key_pressed::key#4 ]
-Allocated zp ZP_BYTE:3 [ keyboard_key_pressed::return#2 ]
-Allocated zp ZP_BYTE:4 [ menu::$0 ]
-Allocated zp ZP_BYTE:5 [ keyboard_key_pressed::return#3 ]
-Allocated zp ZP_BYTE:6 [ menu::$4 ]
-Allocated zp ZP_BYTE:7 [ keyboard_key_pressed::return#4 ]
-Allocated zp ZP_BYTE:8 [ menu::$7 ]
-Allocated zp ZP_BYTE:9 [ keyboard_key_pressed::colidx#0 ]
-Allocated zp ZP_BYTE:10 [ keyboard_key_pressed::rowidx#0 ]
-Allocated zp ZP_BYTE:11 [ keyboard_matrix_read::rowid#0 ]
-Allocated zp ZP_BYTE:12 [ keyboard_matrix_read::return#2 ]
-Allocated zp ZP_BYTE:13 [ keyboard_key_pressed::$2 ]
-Allocated zp ZP_BYTE:14 [ keyboard_key_pressed::return#0 ]
-Allocated zp ZP_BYTE:15 [ keyboard_matrix_read::return#0 ]
-Allocated zp ZP_BYTE:16 [ keyboard_key_pressed::return#10 ]
-Allocated zp ZP_BYTE:17 [ pressed::$1 ]
+Allocated zp[1]:2 [ keyboard_key_pressed::key#4 ]
+Allocated zp[1]:3 [ keyboard_key_pressed::return#2 ]
+Allocated zp[1]:4 [ menu::$0 ]
+Allocated zp[1]:5 [ keyboard_key_pressed::return#3 ]
+Allocated zp[1]:6 [ menu::$4 ]
+Allocated zp[1]:7 [ keyboard_key_pressed::return#4 ]
+Allocated zp[1]:8 [ menu::$7 ]
+Allocated zp[1]:9 [ keyboard_key_pressed::colidx#0 ]
+Allocated zp[1]:10 [ keyboard_key_pressed::rowidx#0 ]
+Allocated zp[1]:11 [ keyboard_matrix_read::rowid#0 ]
+Allocated zp[1]:12 [ keyboard_matrix_read::return#2 ]
+Allocated zp[1]:13 [ keyboard_key_pressed::$2 ]
+Allocated zp[1]:14 [ keyboard_key_pressed::return#0 ]
+Allocated zp[1]:15 [ keyboard_matrix_read::return#0 ]
+Allocated zp[1]:16 [ keyboard_key_pressed::return#10 ]
+Allocated zp[1]:17 [ pressed::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -773,12 +686,12 @@ menu: {
     jsr keyboard_key_pressed
     // [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
-    sta.z keyboard_key_pressed.return_2
+    sta.z keyboard_key_pressed.return_1
     jmp __b8
     // menu::@8
   __b8:
     // [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
-    lda.z keyboard_key_pressed.return_2
+    lda.z keyboard_key_pressed.return_1
     sta.z __0
     // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuz1_eq_0_then_la1 
     lda.z __0
@@ -810,12 +723,12 @@ menu: {
     jsr keyboard_key_pressed
     // [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
-    sta.z keyboard_key_pressed.return_3
+    sta.z keyboard_key_pressed.return_2
     jmp __b9
     // menu::@9
   __b9:
     // [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3 -- vbuz1=vbuz2 
-    lda.z keyboard_key_pressed.return_3
+    lda.z keyboard_key_pressed.return_2
     sta.z __4
     // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuz1_eq_0_then_la1 
     lda.z __4
@@ -844,12 +757,12 @@ menu: {
     jsr keyboard_key_pressed
     // [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
-    sta.z keyboard_key_pressed.return_4
+    sta.z keyboard_key_pressed.return_3
     jmp __b10
     // menu::@10
   __b10:
     // [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4 -- vbuz1=vbuz2 
-    lda.z keyboard_key_pressed.return_4
+    lda.z keyboard_key_pressed.return_3
     sta.z __7
     // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuz1_eq_0_then_la1 
     lda.z __7
@@ -875,17 +788,17 @@ menu: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-// keyboard_key_pressed(byte zeropage(2) key)
+// keyboard_key_pressed(byte zp(2) key)
 keyboard_key_pressed: {
     .label __2 = $d
     .label colidx = 9
     .label rowidx = $a
     .label return = $e
-    .label return_2 = 3
-    .label return_3 = 5
-    .label return_4 = 7
+    .label return_1 = 3
+    .label return_2 = 5
+    .label return_3 = 7
     .label key = 2
-    .label return_10 = $10
+    .label return_4 = $10
     // [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and.z key
@@ -903,14 +816,14 @@ keyboard_key_pressed: {
     jsr keyboard_matrix_read
     // [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return
-    sta.z keyboard_matrix_read.return_2
+    sta.z keyboard_matrix_read.return_1
     jmp __b1
     // keyboard_key_pressed::@1
   __b1:
     // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
-    lda.z keyboard_matrix_read.return_2
+    lda.z keyboard_matrix_read.return_1
     sta.z __2
-    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
+    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
     lda.z __2
     ldy.z colidx
     and keyboard_matrix_col_bitmask,y
@@ -927,12 +840,12 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte zeropage($b) rowid)
+// keyboard_matrix_read(byte zp($b) rowid)
 keyboard_matrix_read: {
     .label return = $f
     .label rowid = $b
-    .label return_2 = $c
-    // [40] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    .label return_1 = $c
+    // [40] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy.z rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
@@ -966,12 +879,12 @@ pressed: {
     jsr keyboard_key_pressed
     // [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
-    sta.z keyboard_key_pressed.return_10
+    sta.z keyboard_key_pressed.return_4
     jmp __b2
     // pressed::@2
   __b2:
     // [47] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
-    lda.z keyboard_key_pressed.return_10
+    lda.z keyboard_key_pressed.return_4
     sta.z __1
     // [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuz1_neq_0_then_la1 
     lda.z __1
@@ -994,56 +907,56 @@ Statement [4] *((const byte*) BORDERCOL) ← (const byte) GREEN [ ] ( main:2 [ ]
 Statement [21] *((const byte*) BORDERCOL) ← (const byte) RED [ ] ( main:2::menu:6 [ ] ) always clobbers reg byte a 
 Statement [28] *((const byte*) BORDERCOL) ← (const byte) GREEN [ ] ( main:2::menu:6 [ ] ) always clobbers reg byte a 
 Statement [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::menu:6::keyboard_key_pressed:9 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::menu:6::keyboard_key_pressed:17 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::menu:6::keyboard_key_pressed:24 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ keyboard_key_pressed::colidx#0 ]
-Statement [40] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:9 [ keyboard_key_pressed::colidx#0 ]
+Statement [40] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
 Statement [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
 Statement [4] *((const byte*) BORDERCOL) ← (const byte) GREEN [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [21] *((const byte*) BORDERCOL) ← (const byte) RED [ ] ( main:2::menu:6 [ ] ) always clobbers reg byte a 
 Statement [28] *((const byte*) BORDERCOL) ← (const byte) GREEN [ ] ( main:2::menu:6 [ ] ) always clobbers reg byte a 
 Statement [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::menu:6::keyboard_key_pressed:9 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::menu:6::keyboard_key_pressed:17 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::menu:6::keyboard_key_pressed:24 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ) always clobbers reg byte a 
-Statement [40] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
+Statement [40] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] ) always clobbers reg byte a 
 Statement [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ keyboard_key_pressed::key#4 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ keyboard_key_pressed::return#2 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ menu::$0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ keyboard_key_pressed::return#3 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ menu::$4 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ keyboard_key_pressed::return#4 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:8 [ menu::$7 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:9 [ keyboard_key_pressed::colidx#0 ] : zp ZP_BYTE:9 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ keyboard_key_pressed::rowidx#0 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:11 [ keyboard_matrix_read::rowid#0 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:12 [ keyboard_matrix_read::return#2 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:13 [ keyboard_key_pressed::$2 ] : zp ZP_BYTE:13 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:14 [ keyboard_key_pressed::return#0 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:15 [ keyboard_matrix_read::return#0 ] : zp ZP_BYTE:15 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:16 [ keyboard_key_pressed::return#10 ] : zp ZP_BYTE:16 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:17 [ pressed::$1 ] : zp ZP_BYTE:17 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ keyboard_key_pressed::key#4 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ keyboard_key_pressed::return#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ menu::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ keyboard_key_pressed::return#3 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ menu::$4 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ keyboard_key_pressed::return#4 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ menu::$7 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ keyboard_key_pressed::colidx#0 ] : zp[1]:9 , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ keyboard_key_pressed::rowidx#0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ keyboard_matrix_read::rowid#0 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:12 [ keyboard_matrix_read::return#2 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:13 [ keyboard_key_pressed::$2 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:14 [ keyboard_key_pressed::return#0 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:15 [ keyboard_matrix_read::return#0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:16 [ keyboard_key_pressed::return#10 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:17 [ pressed::$1 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [keyboard_key_pressed] 202: zp ZP_BYTE:3 [ keyboard_key_pressed::return#2 ] 202: zp ZP_BYTE:5 [ keyboard_key_pressed::return#3 ] 202: zp ZP_BYTE:7 [ keyboard_key_pressed::return#4 ] 202: zp ZP_BYTE:16 [ keyboard_key_pressed::return#10 ] 67.67: zp ZP_BYTE:14 [ keyboard_key_pressed::return#0 ] 4: zp ZP_BYTE:10 [ keyboard_key_pressed::rowidx#0 ] 4: zp ZP_BYTE:13 [ keyboard_key_pressed::$2 ] 2: zp ZP_BYTE:2 [ keyboard_key_pressed::key#4 ] 0.67: zp ZP_BYTE:9 [ keyboard_key_pressed::colidx#0 ] 
-Uplift Scope [menu] 202: zp ZP_BYTE:4 [ menu::$0 ] 202: zp ZP_BYTE:6 [ menu::$4 ] 202: zp ZP_BYTE:8 [ menu::$7 ] 
-Uplift Scope [pressed] 202: zp ZP_BYTE:17 [ pressed::$1 ] 
-Uplift Scope [keyboard_matrix_read] 4: zp ZP_BYTE:11 [ keyboard_matrix_read::rowid#0 ] 4: zp ZP_BYTE:12 [ keyboard_matrix_read::return#2 ] 1.33: zp ZP_BYTE:15 [ keyboard_matrix_read::return#0 ] 
+Uplift Scope [keyboard_key_pressed] 202: zp[1]:3 [ keyboard_key_pressed::return#2 ] 202: zp[1]:5 [ keyboard_key_pressed::return#3 ] 202: zp[1]:7 [ keyboard_key_pressed::return#4 ] 202: zp[1]:16 [ keyboard_key_pressed::return#10 ] 67.67: zp[1]:14 [ keyboard_key_pressed::return#0 ] 4: zp[1]:10 [ keyboard_key_pressed::rowidx#0 ] 4: zp[1]:13 [ keyboard_key_pressed::$2 ] 2: zp[1]:2 [ keyboard_key_pressed::key#4 ] 0.67: zp[1]:9 [ keyboard_key_pressed::colidx#0 ] 
+Uplift Scope [menu] 202: zp[1]:4 [ menu::$0 ] 202: zp[1]:6 [ menu::$4 ] 202: zp[1]:8 [ menu::$7 ] 
+Uplift Scope [pressed] 202: zp[1]:17 [ pressed::$1 ] 
+Uplift Scope [keyboard_matrix_read] 4: zp[1]:11 [ keyboard_matrix_read::rowid#0 ] 4: zp[1]:12 [ keyboard_matrix_read::return#2 ] 1.33: zp[1]:15 [ keyboard_matrix_read::return#0 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [keyboard_key_pressed] best 9851 combination reg byte a [ keyboard_key_pressed::return#2 ] reg byte a [ keyboard_key_pressed::return#3 ] reg byte a [ keyboard_key_pressed::return#4 ] reg byte a [ keyboard_key_pressed::return#10 ] zp ZP_BYTE:14 [ keyboard_key_pressed::return#0 ] zp ZP_BYTE:10 [ keyboard_key_pressed::rowidx#0 ] zp ZP_BYTE:13 [ keyboard_key_pressed::$2 ] zp ZP_BYTE:2 [ keyboard_key_pressed::key#4 ] zp ZP_BYTE:9 [ keyboard_key_pressed::colidx#0 ] 
+Uplifting [keyboard_key_pressed] best 9851 combination reg byte a [ keyboard_key_pressed::return#2 ] reg byte a [ keyboard_key_pressed::return#3 ] reg byte a [ keyboard_key_pressed::return#4 ] reg byte a [ keyboard_key_pressed::return#10 ] zp[1]:14 [ keyboard_key_pressed::return#0 ] zp[1]:10 [ keyboard_key_pressed::rowidx#0 ] zp[1]:13 [ keyboard_key_pressed::$2 ] zp[1]:2 [ keyboard_key_pressed::key#4 ] zp[1]:9 [ keyboard_key_pressed::colidx#0 ] 
 Limited combination testing to 100 combinations of 196608 possible.
 Uplifting [menu] best 8051 combination reg byte a [ menu::$0 ] reg byte a [ menu::$4 ] reg byte a [ menu::$7 ] 
 Uplifting [pressed] best 7451 combination reg byte a [ pressed::$1 ] 
 Uplifting [keyboard_matrix_read] best 7433 combination reg byte x [ keyboard_matrix_read::rowid#0 ] reg byte a [ keyboard_matrix_read::return#2 ] reg byte a [ keyboard_matrix_read::return#0 ] 
 Uplifting [main] best 7433 combination 
 Uplifting [] best 7433 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:14 [ keyboard_key_pressed::return#0 ]
+Attempting to uplift remaining variables inzp[1]:14 [ keyboard_key_pressed::return#0 ]
 Uplifting [keyboard_key_pressed] best 6230 combination reg byte a [ keyboard_key_pressed::return#0 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:10 [ keyboard_key_pressed::rowidx#0 ]
+Attempting to uplift remaining variables inzp[1]:10 [ keyboard_key_pressed::rowidx#0 ]
 Uplifting [keyboard_key_pressed] best 6226 combination reg byte a [ keyboard_key_pressed::rowidx#0 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:13 [ keyboard_key_pressed::$2 ]
+Attempting to uplift remaining variables inzp[1]:13 [ keyboard_key_pressed::$2 ]
 Uplifting [keyboard_key_pressed] best 6220 combination reg byte a [ keyboard_key_pressed::$2 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ keyboard_key_pressed::key#4 ]
+Attempting to uplift remaining variables inzp[1]:2 [ keyboard_key_pressed::key#4 ]
 Uplifting [keyboard_key_pressed] best 6204 combination reg byte x [ keyboard_key_pressed::key#4 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:9 [ keyboard_key_pressed::colidx#0 ]
+Attempting to uplift remaining variables inzp[1]:9 [ keyboard_key_pressed::colidx#0 ]
 Uplifting [keyboard_key_pressed] best 6202 combination reg byte y [ keyboard_key_pressed::colidx#0 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -1225,7 +1138,7 @@ keyboard_key_pressed: {
     // keyboard_key_pressed::@1
   __b1:
     // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
     jmp __breturn
     // keyboard_key_pressed::@return
@@ -1241,7 +1154,7 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // [40] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [40] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     // [41] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
@@ -1359,17 +1272,17 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53281
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) CIA1_PORT_A CIA1_PORT_A = (byte*) 56320
-(const byte*) CIA1_PORT_B CIA1_PORT_B = (byte*) 56321
-(const byte) GREEN GREEN = (byte) 5
-(const byte) KEY_C KEY_C = (byte) $14
-(const byte) KEY_E KEY_E = (byte) $e
-(const byte) KEY_I KEY_I = (byte) $21
-(const byte) KEY_SPACE KEY_SPACE = (byte) $3c
-(const byte) RED RED = (byte) 2
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) BGCOL = (byte*) 53281
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) CIA1_PORT_A = (byte*) 56320
+(const byte*) CIA1_PORT_B = (byte*) 56321
+(const byte) GREEN = (byte) 5
+(const byte) KEY_C = (byte) $14
+(const byte) KEY_E = (byte) $e
+(const byte) KEY_I = (byte) $21
+(const byte) KEY_SPACE = (byte) $3c
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*) 1024
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 (byte~) keyboard_key_pressed::$2 reg byte a 4.0
 (label) keyboard_key_pressed::@1
@@ -1386,7 +1299,7 @@ FINAL SYMBOL TABLE
 (byte) keyboard_key_pressed::return#4 reg byte a 202.0
 (byte) keyboard_key_pressed::rowidx
 (byte) keyboard_key_pressed::rowidx#0 reg byte a 4.0
-(const byte[8]) keyboard_matrix_col_bitmask keyboard_matrix_col_bitmask = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
+(const byte*) keyboard_matrix_col_bitmask[(number) 8]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (label) keyboard_matrix_read::@return
 (byte) keyboard_matrix_read::return
@@ -1395,7 +1308,7 @@ FINAL SYMBOL TABLE
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
 (byte) keyboard_matrix_read::rowid#0 reg byte x 4.0
-(const byte[8]) keyboard_matrix_row_bitmask keyboard_matrix_row_bitmask = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
+(const byte*) keyboard_matrix_row_bitmask[(number) 8]  = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 (void()) main()
 (label) main::@1
 (void()) menu()
@@ -1601,7 +1514,7 @@ keyboard_key_pressed: {
     // keyboard_key_pressed::@1
     // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
     // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte[8]) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
     // keyboard_key_pressed::@return
     // }
@@ -1617,7 +1530,7 @@ keyboard_key_pressed: {
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [40] *((const byte*) CIA1_PORT_A) ← *((const byte[8]) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [40] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     // ~*CIA1_PORT_B

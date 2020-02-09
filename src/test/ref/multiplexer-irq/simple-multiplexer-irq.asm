@@ -32,10 +32,10 @@
   .const PLEX_COUNT = $20
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
-  .label plex_show_idx = 7
-  .label plex_sprite_idx = 6
-  .label plex_sprite_msb = 9
-  .label plex_free_next = 8
+  .label plex_show_idx = 6
+  .label plex_sprite_idx = 7
+  .label plex_sprite_msb = 8
+  .label plex_free_next = 9
   .label framedone = $a
 __b1:
   // The index in the PLEX tables of the next sprite to show
@@ -61,6 +61,7 @@ main: {
 }
 // The raster loop
 loop: {
+    // The current index into the y-sinus
     .label sin_idx = 2
     lda #0
     sta.z sin_idx
@@ -159,6 +160,7 @@ plexSort: {
 }
 // Initialize the program
 init: {
+    // Set the x-positions & pointers
     .label xp = 4
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
@@ -229,7 +231,7 @@ plex_irq: {
     sta BORDERCOL
   __b3:
     jsr plexShowSprite
-    ldy.z plexShowSprite.plexFreeAdd1___2
+    ldy.z plex_free_next
     ldx PLEX_FREE_YPOS,y
     lda RASTER
     clc
@@ -259,8 +261,6 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label __6 = 6
-    .label plexFreeAdd1___2 = 8
     .label plex_sprite_idx2 = $d
     lda.z plex_sprite_idx
     asl
@@ -276,8 +276,9 @@ plexShowSprite: {
     sta PLEX_FREE_YPOS,y
     ldx.z plex_free_next
     inx
-    lda #7
-    sax.z plexFreeAdd1___2
+    txa
+    and #7
+    sta.z plex_free_next
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
@@ -300,8 +301,9 @@ plexShowSprite: {
   __b2:
     ldx.z plex_sprite_idx
     inx
-    lda #7
-    sax.z __6
+    txa
+    and #7
+    sta.z plex_sprite_idx
     inc.z plex_show_idx
     asl.z plex_sprite_msb
     lda.z plex_sprite_msb
@@ -317,6 +319,14 @@ plexShowSprite: {
     sta SPRITES_XMSB
     jmp __b2
 }
+  // The x-positions of the multiplexer sprites (0x000-0x1ff)
+  PLEX_XPOS: .fill 2*PLEX_COUNT, 0
+  // The y-positions of the multiplexer sprites.
+  PLEX_YPOS: .fill PLEX_COUNT, 0
+  // The sprite pointers for the multiplexed sprites
+  PLEX_PTR: .fill PLEX_COUNT, 0
+  // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
+  PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
   .align $40
@@ -330,11 +340,3 @@ SPRITE:
 YSIN:
 .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 
-  // The x-positions of the multiplexer sprites (0x000-0x1ff)
-  PLEX_XPOS: .fill 2*PLEX_COUNT, 0
-  // The y-positions of the multiplexer sprites.
-  PLEX_YPOS: .fill PLEX_COUNT, 0
-  // The sprite pointers for the multiplexed sprites
-  PLEX_PTR: .fill PLEX_COUNT, 0
-  // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
-  PLEX_SORTED_IDX: .fill PLEX_COUNT, 0

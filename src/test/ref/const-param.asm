@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label screen = $400
     .label reverse = $80
+    .label screen = $400
     lda #'c'
     jsr sum
     sta screen

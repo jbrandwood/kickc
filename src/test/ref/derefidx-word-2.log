@@ -6,13 +6,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (number~) main::$0 ← (number) $28*(number) $a + (byte) main::i#2
-  *((byte*) main::screen + (number~) main::$0) ← (byte) 'a'
+  *((const byte*) main::screen + (number~) main::$0) ← (byte) 'a'
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$27)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$27)
   if((bool~) main::$1) goto main::@1
@@ -41,24 +40,21 @@ SYMBOL TABLE SSA
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) $28*$a in (number~) main::$0 ← (number) $28*(number) $a + (byte) main::i#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) $28*(number) $a + (byte) main::i#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Inferred type updated to word in (unumber~) main::$0 ← (word)(number) $28*(number) $a + (byte) main::i#2
-Simple Condition (bool~) main::$1 [7] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
+Simple Condition (bool~) main::$1 [6] if((byte) main::i#1!=rangelast(0,$27)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,$27)) goto main::@1 to (number) $28
-De-inlining pointer[w] to *(pointer+w)   [4] *((const byte*) main::screen + (word~) main::$0) ← (byte) 'a'
+Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,$27)) goto main::@1 to (number) $28
+De-inlining pointer[w] to *(pointer+w)   [3] *((const byte*) main::screen + (word~) main::$0) ← (byte) 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Adding number conversion cast (unumber) $28 in if((byte) main::i#1!=(number) $28) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -132,7 +128,7 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -195,12 +191,12 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((const byte*) main::screen+(word)(number) $28*(number) $a + (byte) main::i#2) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [6] *((const byte*) main::screen+(word)(number) $28*(number) $a + (byte) main::i#2) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 33: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 33: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 263 combination reg byte x [ main::i#2 main::i#1 ] 
@@ -296,7 +292,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 16.5
-(const byte*) main::screen screen = (byte*) 1024
+(const byte*) main::screen = (byte*) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 

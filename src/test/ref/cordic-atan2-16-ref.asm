@@ -12,8 +12,9 @@
   .label SCREEN = $2800
   .label print_char_cursor = 2
 main: {
+    .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label __12 = 6
+    .label __10 = 6
     .label xw = $15
     .label yw = $17
     .label angle_w = 6
@@ -52,12 +53,12 @@ main: {
     jsr atan2_16
     lda #$80
     clc
-    adc.z __12
-    sta.z __12
+    adc.z __10
+    sta.z __10
     bcc !+
-    inc.z __12+1
+    inc.z __10+1
   !:
-    lda.z __12+1
+    lda.z __10+1
     tax
     ldy #0
     lda (screen_ref),y
@@ -93,14 +94,11 @@ main: {
     bne __b1
     jsr print_word
   __b5:
-    lda COLS+$c*$28+$13
-    clc
-    adc #1
-    sta COLS+$c*$28+$13
+    inc col00
     jmp __b5
 }
 // Print a word as HEX
-// print_word(word zeropage($c) w)
+// print_word(word zp($c) w)
 print_word: {
     .label w = $c
     lda.z w+1
@@ -162,7 +160,7 @@ diff: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zeropage($15) x, signed word zeropage($17) y)
+// atan2_16(signed word zp($15) x, signed word zp($17) y)
 atan2_16: {
     .label __2 = $11
     .label __7 = 4
@@ -349,7 +347,7 @@ atan2_16: {
     jmp __b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage($f) charset)
+// init_font_hex(byte* zp($f) charset)
 init_font_hex: {
     .label __0 = $19
     .label idx = $14

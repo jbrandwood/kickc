@@ -1,5 +1,7 @@
-Setting inferred volatile on symbol affected by address-of (byte*~) main::$0 ← & (byte) main::ub
-Setting inferred volatile on symbol affected by address-of (signed byte*~) main::$3 ← & (signed byte) main::sb
+Setting inferred volatile on symbol affected by address-of (signed byte*) main::sb_ptr ← (signed byte*)&(byte) main::ub
+Setting inferred volatile on symbol affected by address-of (byte*) main::ub_ptr ← (byte*)&(signed byte) main::sb
+Identified constant variable (signed byte*) main::sb_ptr
+Identified constant variable (byte*) main::ub_ptr
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,21 +9,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::ub_screen ← ((byte*)) (number) $400
-  (byte) main::ub#0 ← (number) $ff
-  (byte*~) main::$0 ← & (byte) main::ub#0
-  (signed byte*~) main::$1 ← ((signed byte*)) (byte*~) main::$0
-  (signed byte*) main::sb_ptr#0 ← (signed byte*~) main::$1
-  *((signed byte*) main::sb_ptr#0) ← (number) 1
-  *((byte*) main::ub_screen) ← (byte) main::ub#0
-  (signed byte*) main::sb_screen ← ((signed byte*)) (number) $428
-  (signed byte~) main::$2 ← ((signed byte)) (number) $7f
-  (signed byte) main::sb#0 ← (signed byte~) main::$2
-  (signed byte*~) main::$3 ← & (signed byte) main::sb#0
-  (byte*~) main::$4 ← ((byte*)) (signed byte*~) main::$3
-  (byte*) main::ub_ptr#0 ← (byte*~) main::$4
-  *((byte*) main::ub_ptr#0) ← (number) 1
-  *((signed byte*) main::sb_screen) ← (signed byte) main::sb#0
+  (byte) main::ub ← (byte) $ff
+  *((const signed byte*) main::sb_ptr) ← (number) 1
+  *((const byte*) main::ub_screen) ← (byte) main::ub
+  (signed byte) main::sb ← (signed byte)(number) $7f
+  *((const byte*) main::ub_ptr) ← (number) 1
+  *((const signed byte*) main::sb_screen) ← (signed byte) main::sb
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -39,71 +32,29 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
-(signed byte*~) main::$1
-(signed byte~) main::$2
-(signed byte*~) main::$3
-(byte*~) main::$4
 (label) main::@return
-(signed byte) main::sb
-(signed byte) main::sb#0
-(signed byte*) main::sb_ptr
-(signed byte*) main::sb_ptr#0
-(signed byte*) main::sb_screen
-(byte) main::ub
-(byte) main::ub#0
-(byte*) main::ub_ptr
-(byte*) main::ub_ptr#0
-(byte*) main::ub_screen
+(signed byte) main::sb loadstore
+(const signed byte*) main::sb_ptr = (signed byte*)&(byte) main::ub
+(const signed byte*) main::sb_screen = (signed byte*)(number) $428
+(byte) main::ub loadstore
+(const byte*) main::ub_ptr = (byte*)&(signed byte) main::sb
+(const byte*) main::ub_screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) $ff in (byte) main::ub#0 ← (number) $ff
-Adding number conversion cast (snumber) 1 in *((signed byte*) main::sb_ptr#0) ← (number) 1
-Adding number conversion cast (unumber) 1 in *((byte*) main::ub_ptr#0) ← (number) 1
+Adding number conversion cast (snumber) 1 in *((const signed byte*) main::sb_ptr) ← (number) 1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::ub_ptr) ← (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::ub_screen ← (byte*)(number) $400
-Inlining cast (byte) main::ub#0 ← (unumber)(number) $ff
-Inlining cast (signed byte*~) main::$1 ← (signed byte*)(byte*~) main::$0
-Inlining cast *((signed byte*) main::sb_ptr#0) ← (snumber)(number) 1
-Inlining cast (signed byte*) main::sb_screen ← (signed byte*)(number) $428
-Inlining cast (signed byte~) main::$2 ← (signed byte)(number) $7f
-Inlining cast (byte*~) main::$4 ← (byte*)(signed byte*~) main::$3
-Inlining cast *((byte*) main::ub_ptr#0) ← (unumber)(number) 1
+Inlining cast *((const signed byte*) main::sb_ptr) ← (snumber)(number) 1
+Inlining cast *((const byte*) main::ub_ptr) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast $ff
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (signed byte*) 1064
+Simplifying constant integer cast 1
 Simplifying constant integer cast $7f
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $ff
 Finalized signed number type (signed byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias candidate removed (volatile)(signed byte) main::sb#0 = (signed byte~) main::$2 
-Alias (signed byte*) main::sb_ptr#0 = (signed byte*~) main::$1 
-Alias (byte*) main::ub_ptr#0 = (byte*~) main::$4 
-Successful SSA optimization Pass2AliasElimination
-Alias candidate removed (volatile)(signed byte) main::sb#0 = (signed byte~) main::$2 
-Constant right-side identified [2] (byte*~) main::$0 ← & (byte) main::ub#0
-Constant right-side identified [10] (signed byte*~) main::$3 ← & (signed byte) main::sb#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::ub_screen = (byte*) 1024
-Constant (const byte*) main::$0 = &main::ub#0
-Constant (const signed byte*) main::sb_screen = (signed byte*) 1064
-Constant (const signed byte) main::$2 = $7f
-Constant (const signed byte*) main::$3 = &main::sb#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (signed byte*)main::$0 in [3] (signed byte*) main::sb_ptr#0 ← (signed byte*)(const byte*) main::$0
-Constant value identified (byte*)main::$3 in [11] (byte*) main::ub_ptr#0 ← (byte*)(const signed byte*) main::$3
-Successful SSA optimization Pass2ConstantValues
-Constant (const signed byte*) main::sb_ptr#0 = (signed byte*)main::$0
-Constant (const byte*) main::ub_ptr#0 = (byte*)main::$3
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$3 = &(signed byte) main::sb#0
-Constant inlined main::$2 = (signed byte) $7f
-Constant inlined main::$0 = &(byte) main::ub#0
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -131,12 +82,12 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte) main::ub#0 ← (byte) $ff
-  [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1
-  [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0
-  [7] (signed byte) main::sb#0 ← (signed byte) $7f
-  [8] *((const byte*) main::ub_ptr#0) ← (byte) 1
-  [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0
+  [4] (byte) main::ub ← (byte) $ff
+  [5] *((const signed byte*) main::sb_ptr) ← (signed byte) 1
+  [6] *((const byte*) main::ub_screen) ← (byte) main::ub
+  [7] (signed byte) main::sb ← (signed byte) $7f
+  [8] *((const byte*) main::ub_ptr) ← (byte) 1
+  [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb
   to:main::@return
 main::@return: scope:[main]  from main
   [10] return 
@@ -145,19 +96,17 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(signed byte) main::sb
-(signed byte) main::sb#0 2.0
-(signed byte*) main::sb_ptr
-(byte) main::ub
-(byte) main::ub#0 2.0
-(byte*) main::ub_ptr
+(signed byte) main::sb loadstore 2.0
+(byte) main::ub loadstore 2.0
 
 Initial phi equivalence classes
+Added variable main::ub to live range equivalence class [ main::ub ]
+Added variable main::sb to live range equivalence class [ main::sb ]
 Complete equivalence classes
-[ main::ub#0 ]
-[ main::sb#0 ]
-Allocated zp ZP_BYTE:2 [ main::ub#0 ]
-Allocated zp ZP_BYTE:3 [ main::sb#0 ]
+[ main::ub ]
+[ main::sb ]
+Allocated zp[1]:2 [ main::ub ]
+Allocated zp[1]:3 [ main::sb ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -190,22 +139,22 @@ main: {
     .label ub_ptr = sb
     .label ub = 2
     .label sb = 3
-    // [4] (byte) main::ub#0 ← (byte) $ff -- vbuz1=vbuc1 
+    // [4] (byte) main::ub ← (byte) $ff -- vbuz1=vbuc1 
     lda #$ff
     sta.z ub
-    // [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
+    // [5] *((const signed byte*) main::sb_ptr) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
     lda #1
     sta.z sb_ptr
-    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub -- _deref_pbuc1=vbuz1 
     lda.z ub
     sta ub_screen
-    // [7] (signed byte) main::sb#0 ← (signed byte) $7f -- vbsz1=vbsc1 
+    // [7] (signed byte) main::sb ← (signed byte) $7f -- vbsz1=vbsc1 
     lda #$7f
     sta.z sb
-    // [8] *((const byte*) main::ub_ptr#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) main::ub_ptr) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta.z ub_ptr
-    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
+    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb -- _deref_pbsc1=vbsz1 
     lda.z sb
     sta sb_screen
     jmp __breturn
@@ -217,25 +166,25 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) main::ub#0 ← (byte) $ff [ main::ub#0 ] ( main:2 [ main::ub#0 ] ) always clobbers reg byte a 
-Statement [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1 [ main::ub#0 ] ( main:2 [ main::ub#0 ] ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] (signed byte) main::sb#0 ← (signed byte) $7f [ main::sb#0 ] ( main:2 [ main::sb#0 ] ) always clobbers reg byte a 
-Statement [8] *((const byte*) main::ub_ptr#0) ← (byte) 1 [ main::sb#0 ] ( main:2 [ main::sb#0 ] ) always clobbers reg byte a 
-Statement [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::ub#0 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_BYTE:3 [ main::sb#0 ] : zp ZP_BYTE:3 , 
+Statement [4] (byte) main::ub ← (byte) $ff [ main::ub ] ( main:2 [ main::ub ] ) always clobbers reg byte a 
+Statement [5] *((const signed byte*) main::sb_ptr) ← (signed byte) 1 [ main::ub ] ( main:2 [ main::ub ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::ub_screen) ← (byte) main::ub [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [7] (signed byte) main::sb ← (signed byte) $7f [ main::sb ] ( main:2 [ main::sb ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::ub_ptr) ← (byte) 1 [ main::sb ] ( main:2 [ main::sb ] ) always clobbers reg byte a 
+Statement [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::ub ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ main::sb ] : zp[1]:3 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2: zp ZP_BYTE:2 [ main::ub#0 ] 2: zp ZP_BYTE:3 [ main::sb#0 ] 
+Uplift Scope [main] 2: zp[1]:2 [ main::ub ] 2: zp[1]:3 [ main::sb ] 
 Uplift Scope [] 
 
-Uplifting [main] best 55 combination zp ZP_BYTE:2 [ main::ub#0 ] zp ZP_BYTE:3 [ main::sb#0 ] 
+Uplifting [main] best 55 combination zp[1]:2 [ main::ub ] zp[1]:3 [ main::sb ] 
 Uplifting [] best 55 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::ub#0 ]
-Uplifting [main] best 55 combination zp ZP_BYTE:2 [ main::ub#0 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::sb#0 ]
-Uplifting [main] best 55 combination zp ZP_BYTE:3 [ main::sb#0 ] 
+Attempting to uplift remaining variables inzp[1]:2 [ main::ub ]
+Uplifting [main] best 55 combination zp[1]:2 [ main::ub ] 
+Attempting to uplift remaining variables inzp[1]:3 [ main::sb ]
+Uplifting [main] best 55 combination zp[1]:3 [ main::sb ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -267,22 +216,22 @@ main: {
     .label ub_ptr = sb
     .label ub = 2
     .label sb = 3
-    // [4] (byte) main::ub#0 ← (byte) $ff -- vbuz1=vbuc1 
+    // [4] (byte) main::ub ← (byte) $ff -- vbuz1=vbuc1 
     lda #$ff
     sta.z ub
-    // [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
+    // [5] *((const signed byte*) main::sb_ptr) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
     lda #1
     sta.z sb_ptr
-    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub -- _deref_pbuc1=vbuz1 
     lda.z ub
     sta ub_screen
-    // [7] (signed byte) main::sb#0 ← (signed byte) $7f -- vbsz1=vbsc1 
+    // [7] (signed byte) main::sb ← (signed byte) $7f -- vbsz1=vbsc1 
     lda #$7f
     sta.z sb
-    // [8] *((const byte*) main::ub_ptr#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) main::ub_ptr) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta.z ub_ptr
-    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
+    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb -- _deref_pbsc1=vbsz1 
     lda.z sb
     sta sb_screen
     jmp __breturn
@@ -318,19 +267,15 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(signed byte) main::sb
-(signed byte) main::sb#0 sb zp ZP_BYTE:3 2.0
-(signed byte*) main::sb_ptr
-(const signed byte*) main::sb_ptr#0 sb_ptr = (signed byte*)&(byte) main::ub#0
-(const signed byte*) main::sb_screen sb_screen = (signed byte*) 1064
-(byte) main::ub
-(byte) main::ub#0 ub zp ZP_BYTE:2 2.0
-(byte*) main::ub_ptr
-(const byte*) main::ub_ptr#0 ub_ptr = (byte*)&(signed byte) main::sb#0
-(const byte*) main::ub_screen ub_screen = (byte*) 1024
+(signed byte) main::sb loadstore zp[1]:3 2.0
+(const signed byte*) main::sb_ptr = (signed byte*)&(byte) main::ub
+(const signed byte*) main::sb_screen = (signed byte*) 1064
+(byte) main::ub loadstore zp[1]:2 2.0
+(const byte*) main::ub_ptr = (byte*)&(signed byte) main::sb
+(const byte*) main::ub_screen = (byte*) 1024
 
-zp ZP_BYTE:2 [ main::ub#0 ]
-zp ZP_BYTE:3 [ main::sb#0 ]
+zp[1]:2 [ main::ub ]
+zp[1]:3 [ main::sb ]
 
 
 FINAL ASSEMBLER
@@ -358,27 +303,27 @@ main: {
     .label ub = 2
     .label sb = 3
     // ub = 0xff
-    // [4] (byte) main::ub#0 ← (byte) $ff -- vbuz1=vbuc1 
+    // [4] (byte) main::ub ← (byte) $ff -- vbuz1=vbuc1 
     lda #$ff
     sta.z ub
     // *sb_ptr = 1
-    // [5] *((const signed byte*) main::sb_ptr#0) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
+    // [5] *((const signed byte*) main::sb_ptr) ← (signed byte) 1 -- _deref_pbsc1=vbsc2 
     lda #1
     sta.z sb_ptr
     // *ub_screen = ub
-    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub#0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) main::ub_screen) ← (byte) main::ub -- _deref_pbuc1=vbuz1 
     lda.z ub
     sta ub_screen
     // sb = (signed byte)0x7f
-    // [7] (signed byte) main::sb#0 ← (signed byte) $7f -- vbsz1=vbsc1 
+    // [7] (signed byte) main::sb ← (signed byte) $7f -- vbsz1=vbsc1 
     lda #$7f
     sta.z sb
     // *ub_ptr = 1
-    // [8] *((const byte*) main::ub_ptr#0) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((const byte*) main::ub_ptr) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta.z ub_ptr
     // *sb_screen = sb
-    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb#0 -- _deref_pbsc1=vbsz1 
+    // [9] *((const signed byte*) main::sb_screen) ← (signed byte) main::sb -- _deref_pbsc1=vbsz1 
     lda.z sb
     sta sb_screen
     // main::@return

@@ -15,7 +15,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @3
   (void()*) main::f#0 ← (void()*) 0
-  (byte) main::i#0 ← (number) 0
+  (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@5
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@5/(byte) main::i#4 )
@@ -30,13 +30,11 @@ main::@2: scope:[main]  from main::@1
   to:main::@8
 main::@4: scope:[main]  from main::@2
   (byte) main::i#5 ← phi( main::@2/(byte) main::i#1 )
-  (void()*~) main::$3 ← & (void()) fn1()
-  (void()*) main::f#1 ← (void()*~) main::$3
+  (void()*) main::f#1 ← &(void()) fn1()
   to:main::@5
 main::@8: scope:[main]  from main::@2
   (byte) main::i#6 ← phi( main::@2/(byte) main::i#1 )
-  (void()*~) main::$2 ← & (void()) fn2()
-  (void()*) main::f#2 ← (void()*~) main::$2
+  (void()*) main::f#2 ← &(void()) fn2()
   to:main::@5
 main::@5: scope:[main]  from main::@4 main::@8
   (byte) main::i#4 ← phi( main::@4/(byte) main::i#5 main::@8/(byte) main::i#6 )
@@ -49,8 +47,7 @@ main::@return: scope:[main]  from main::@1
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL) ← ++ *((byte*) fn1::BORDERCOL)
+  *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
@@ -58,8 +55,7 @@ fn1::@return: scope:[fn1]  from fn1
 
 (void()) fn2()
 fn2: scope:[fn2]  from
-  (byte*) fn2::BGCOL ← ((byte*)) (number) $d021
-  *((byte*) fn2::BGCOL) ← ++ *((byte*) fn2::BGCOL)
+  *((const byte*) fn2::BGCOL) ← ++ *((const byte*) fn2::BGCOL)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   return 
@@ -78,15 +74,13 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(byte*) fn1::BORDERCOL
+(const byte*) fn1::BORDERCOL = (byte*)(number) $d020
 (void()) fn2()
 (label) fn2::@return
-(byte*) fn2::BGCOL
+(const byte*) fn2::BGCOL = (byte*)(number) $d021
 (void()) main()
 (number~) main::$0
 (bool~) main::$1
-(void()*~) main::$2
-(void()*~) main::$3
 (label) main::@1
 (label) main::@2
 (label) main::@4
@@ -107,44 +101,30 @@ SYMBOL TABLE SSA
 (byte) main::i#5
 (byte) main::i#6
 
-Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#1 & (number) 1
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#1 & (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (unumber~) main::$0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) fn1::BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) fn2::BGCOL ← (byte*)(number) $d021
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#1 & (byte) 1
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte) main::i#1 = (byte) main::i#5 (byte) main::i#6 
-Alias (void()*) main::f#1 = (void()*~) main::$3 
-Alias (void()*) main::f#2 = (void()*~) main::$2 
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#1 = (byte) main::i#4 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$1 [8] if((byte~) main::$0==(byte) 0) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [10] (void()*) main::f#1 ← & (void()) fn1()
-Constant right-side identified [13] (void()*) main::f#2 ← & (void()) fn2()
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void()*) main::f#0 = (void()*) 0
 Constant (const byte) main::i#0 = 0
 Constant (const void()*) main::f#1 = &fn1
 Constant (const void()*) main::f#2 = &fn2
-Constant (const byte*) fn1::BORDERCOL = (byte*) 53280
-Constant (const byte*) fn2::BGCOL = (byte*) 53281
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [3] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -245,14 +225,14 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::f#3 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::f#3 ]
 [ main::$0 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:3 [ main::f#3 ]
-Allocated zp ZP_BYTE:5 [ main::$0 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:3 [ main::f#3 ]
+Allocated zp[1]:5 [ main::$0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -363,27 +343,27 @@ fn1: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] call *((void()*) main::f#3)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte x as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] ) always clobbers reg byte a 
 Statement [11] call *((void()*) main::f#3)  [ main::i#1 ] ( main:2 [ main::i#1 ] ) always clobbers reg byte a reg byte x reg byte y 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , 
-Potential registers zp ZP_WORD:3 [ main::f#3 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_BYTE:5 [ main::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
+Potential registers zp[2]:3 [ main::f#3 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:5 [ main::$0 ] 0: zp ZP_WORD:3 [ main::f#3 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 0: zp[2]:3 [ main::f#3 ] 
 Uplift Scope [fn1] 
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [main] best 727 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp ZP_WORD:3 [ main::f#3 ] 
+Uplifting [main] best 727 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp[2]:3 [ main::f#3 ] 
 Uplifting [fn1] best 727 combination 
 Uplifting [fn2] best 727 combination 
 Uplifting [] best 727 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 727 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 727 combination zp[1]:2 [ main::i#2 main::i#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -528,10 +508,10 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(const byte*) fn1::BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) fn1::BORDERCOL = (byte*) 53280
 (void()) fn2()
 (label) fn2::@return
-(const byte*) fn2::BGCOL BGCOL = (byte*) 53281
+(const byte*) fn2::BGCOL = (byte*) 53281
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (label) main::@1
@@ -539,13 +519,13 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@4
 (void()*) main::f
-(void()*) main::f#3 f zp ZP_WORD:3
+(void()*) main::f#3 f zp[2]:3
 (byte) main::i
-(byte) main::i#1 i zp ZP_BYTE:2 5.5
-(byte) main::i#2 i zp ZP_BYTE:2 22.0
+(byte) main::i#1 i zp[1]:2 5.5
+(byte) main::i#2 i zp[1]:2 22.0
 
-zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-zp ZP_WORD:3 [ main::f#3 ]
+zp[1]:2 [ main::i#2 main::i#1 ]
+zp[2]:3 [ main::f#3 ]
 reg byte a [ main::$0 ]
 
 

@@ -8,10 +8,11 @@
 main: {
     // Print points
     .label SCREEN = $400
+    // Fill points
     .label points = 2
-    .label points_3 = 4
+    // Fill points
+    .label points_1 = 4
     .label i1 = 6
-    .label points_5 = 4
     ldx #0
     lda #<POINTS
     sta.z points
@@ -40,16 +41,16 @@ main: {
     sta.z i1
     tax
     lda #<POINTS
-    sta.z points_5
+    sta.z points_1
     lda #>POINTS
-    sta.z points_5+1
+    sta.z points_1+1
   __b2:
     ldy #0
-    lda (points_5),y
+    lda (points_1),y
     sta SCREEN,x
     inx
     ldy #OFFSET_STRUCT_POINT_Y
-    lda (points_5),y
+    lda (points_1),y
     sta SCREEN,x
     inx
     lda #' '
@@ -57,10 +58,10 @@ main: {
     inx
     lda #SIZEOF_STRUCT_POINT
     clc
-    adc.z points_3
-    sta.z points_3
+    adc.z points_1
+    sta.z points_1
     bcc !+
-    inc.z points_3+1
+    inc.z points_1+1
   !:
     inc.z i1
     lda #4

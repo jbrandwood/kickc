@@ -17,7 +17,7 @@ main: {
     jsr print
     rts
 }
-// print(byte* zeropage(2) m)
+// print(byte* zp(2) m)
 print: {
     .label m = 2
     ldy #2

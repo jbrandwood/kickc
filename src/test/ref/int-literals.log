@@ -22,24 +22,19 @@ Culled Empty Block (label) assertType::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) RED ← (byte) 2
-  (byte) GREEN ← (byte) 5
-  (byte*) SCREEN ← ((byte*)) (word) $400
-  (byte*) COLS ← ((byte*)) (word) $d800
   (byte) idx#0 ← (byte) 0
   to:@3
 
 (void()) main()
 main: scope:[main]  from @3
   (byte) idx#50 ← phi( @3/(byte) idx#48 )
-  (byte*) main::s#0 ← (byte*) SCREEN
+  (byte*) main::s#0 ← (const byte*) SCREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) idx#49 ← phi( main/(byte) idx#50 main::@2/(byte) idx#51 )
   (byte*) main::s#2 ← phi( main/(byte*) main::s#0 main::@2/(byte*) main::s#1 )
-  (byte*~) main::$1 ← (byte*) SCREEN + (word) $3e8
-  (bool~) main::$2 ← (byte*) main::s#2 < (byte*~) main::$1
-  if((bool~) main::$2) goto main::@2
+  (bool~) main::$1 ← (byte*) main::s#2 < (const byte*) SCREEN+(word) $3e8
+  if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) idx#51 ← phi( main::@1/(byte) idx#49 )
@@ -202,17 +197,17 @@ assertType: scope:[assertType]  from testSimpleTypes testSimpleTypes::@1 testSim
 assertType::@1: scope:[assertType]  from assertType
   (byte) assertType::t1#17 ← phi( assertType/(byte) assertType::t1#15 )
   (byte) idx#41 ← phi( assertType/(byte) idx#47 )
-  *((byte*) COLS + (byte) idx#41) ← (byte) GREEN
+  *((const byte*) COLS + (byte) idx#41) ← (const byte) GREEN
   to:assertType::@2
 assertType::@3: scope:[assertType]  from assertType
   (byte) assertType::t1#18 ← phi( assertType/(byte) assertType::t1#15 )
   (byte) idx#42 ← phi( assertType/(byte) idx#47 )
-  *((byte*) COLS + (byte) idx#42) ← (byte) RED
+  *((const byte*) COLS + (byte) idx#42) ← (const byte) RED
   to:assertType::@2
 assertType::@2: scope:[assertType]  from assertType::@1 assertType::@3
   (byte) idx#43 ← phi( assertType::@1/(byte) idx#41 assertType::@3/(byte) idx#42 )
   (byte) assertType::t1#16 ← phi( assertType::@1/(byte) assertType::t1#17 assertType::@3/(byte) assertType::t1#18 )
-  *((byte*) SCREEN + (byte) idx#43) ← (byte) assertType::t1#16
+  *((const byte*) SCREEN + (byte) idx#43) ← (byte) assertType::t1#16
   (byte) idx#20 ← ++ (byte) idx#43
   to:assertType::@return
 assertType::@return: scope:[assertType]  from assertType::@2
@@ -235,10 +230,10 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(byte*) COLS
-(byte) GREEN
-(byte) RED
-(byte*) SCREEN
+(const byte*) COLS = (byte*)(word) $d800
+(const byte) GREEN = (byte) 5
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*)(word) $400
 (const byte) TYPEID_BYTE = (number) 1
 (const byte) TYPEID_DWORD = (number) 5
 (const byte) TYPEID_SIGNED_BYTE = (number) 2
@@ -342,8 +337,7 @@ SYMBOL TABLE SSA
 (byte) idx#8
 (byte) idx#9
 (void()) main()
-(byte*~) main::$1
-(bool~) main::$2
+(bool~) main::$1
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -387,9 +381,6 @@ SYMBOL TABLE SSA
 (label) testSimpleTypes::@9
 (label) testSimpleTypes::@return
 
-Inlining cast (byte*) SCREEN ← (byte*)(word) $400
-Inlining cast (byte*) COLS ← (byte*)(word) $d800
-Successful SSA optimization Pass2InlineCast
 Alias (byte*) main::s#2 = (byte*) main::s#3 
 Alias (byte) idx#46 = (byte) idx#51 (byte) idx#49 
 Alias (byte) idx#1 = (byte) idx#23 (byte) idx#24 (byte) idx#2 
@@ -452,17 +443,11 @@ Identical Phi Values (byte) idx#17 (byte) idx#20
 Identical Phi Values (byte) idx#18 (byte) idx#20
 Identical Phi Values (byte) idx#22 (byte) idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [10] if((byte*) main::s#2<(byte*~) main::$1) goto main::@2
-Simple Condition (bool~) assertType::$0 [117] if((byte) assertType::t1#15==(byte) assertType::t2#15) goto assertType::@1
+Simple Condition (bool~) main::$1 [5] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2
+Simple Condition (bool~) assertType::$0 [112] if((byte) assertType::t1#15==(byte) assertType::t2#15) goto assertType::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (byte*) SCREEN ← (byte*)(word) $400
-Constant right-side identified [3] (byte*) COLS ← (byte*)(word) $d800
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) RED = 2
-Constant (const byte) GREEN = 5
-Constant (const byte*) SCREEN = (byte*)$400
-Constant (const byte*) COLS = (byte*)$d800
 Constant (const byte) idx#0 = 0
+Constant (const byte*) main::s#0 = SCREEN
 Constant (const byte) idx#3 = 0
 Constant (const byte) assertType::t1#0 = TYPEID_BYTE
 Constant (const byte) assertType::t2#0 = TYPEID_BYTE
@@ -495,14 +480,8 @@ Constant (const byte) assertType::t2#13 = TYPEID_SIGNED_DWORD
 Constant (const byte) assertType::t1#14 = TYPEID_SIGNED_DWORD
 Constant (const byte) assertType::t2#14 = TYPEID_SIGNED_DWORD
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::s#0 = SCREEN
-Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte) idx#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [1] (byte*~) main::$1 ← (const byte*) SCREEN + (word) $3e8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$1 = SCREEN+$3e8
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) main::s#0
 Inlining constant with var siblings (const byte) assertType::t1#0
 Inlining constant with var siblings (const byte) assertType::t2#0
@@ -563,7 +542,6 @@ Constant inlined assertType::t2#4 = (const byte) TYPEID_WORD
 Constant inlined assertType::t1#5 = (const byte) TYPEID_WORD
 Constant inlined main::s#0 = (const byte*) SCREEN
 Constant inlined assertType::t1#10 = (const byte) TYPEID_DWORD
-Constant inlined main::$1 = (const byte*) SCREEN+(word) $3e8
 Constant inlined assertType::t1#12 = (const byte) TYPEID_SIGNED_DWORD
 Constant inlined assertType::t1#11 = (const byte) TYPEID_DWORD
 Constant inlined assertType::t1#14 = (const byte) TYPEID_SIGNED_DWORD
@@ -768,10 +746,10 @@ Complete equivalence classes
 [ assertType::t1#15 ]
 [ assertType::t2#15 ]
 [ idx#41 idx#20 ]
-Allocated zp ZP_WORD:2 [ main::s#2 main::s#1 ]
-Allocated zp ZP_BYTE:4 [ assertType::t1#15 ]
-Allocated zp ZP_BYTE:5 [ assertType::t2#15 ]
-Allocated zp ZP_BYTE:6 [ idx#41 idx#20 ]
+Allocated zp[2]:2 [ main::s#2 main::s#1 ]
+Allocated zp[1]:4 [ assertType::t1#15 ]
+Allocated zp[1]:5 [ assertType::t2#15 ]
+Allocated zp[1]:6 [ idx#41 idx#20 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -782,16 +760,16 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   .label idx = 6
   // @begin
 __bbegin:
@@ -1110,7 +1088,7 @@ testSimpleTypes: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte zeropage(4) t1, byte zeropage(5) t2)
+// assertType(byte zp(4) t1, byte zp(5) t2)
 assertType: {
     .label t1 = 4
     .label t2 = 5
@@ -1153,8 +1131,8 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 [ main::s#2 ] ( main:2 [ main::s#2 ] ) always clobbers reg byte a 
 Statement [10] *((byte*) main::s#2) ← (byte) ' ' [ main::s#2 ] ( main:2 [ main::s#2 ] ) always clobbers reg byte a reg byte y 
 Statement [45] *((const byte*) COLS + (byte) idx#41) ← (const byte) RED [ assertType::t1#15 idx#41 ] ( main:2::testSimpleTypes:8::assertType:13 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:15 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:17 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:19 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:21 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:23 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:25 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:27 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:29 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:31 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:33 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:35 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:37 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:39 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:41 [ assertType::t1#15 idx#41 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ assertType::t1#15 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ idx#41 idx#20 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ assertType::t1#15 ]
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ idx#41 idx#20 ]
 Statement [46] *((const byte*) SCREEN + (byte) idx#41) ← (byte) assertType::t1#15 [ idx#41 ] ( main:2::testSimpleTypes:8::assertType:13 [ idx#41 ] main:2::testSimpleTypes:8::assertType:15 [ idx#41 ] main:2::testSimpleTypes:8::assertType:17 [ idx#41 ] main:2::testSimpleTypes:8::assertType:19 [ idx#41 ] main:2::testSimpleTypes:8::assertType:21 [ idx#41 ] main:2::testSimpleTypes:8::assertType:23 [ idx#41 ] main:2::testSimpleTypes:8::assertType:25 [ idx#41 ] main:2::testSimpleTypes:8::assertType:27 [ idx#41 ] main:2::testSimpleTypes:8::assertType:29 [ idx#41 ] main:2::testSimpleTypes:8::assertType:31 [ idx#41 ] main:2::testSimpleTypes:8::assertType:33 [ idx#41 ] main:2::testSimpleTypes:8::assertType:35 [ idx#41 ] main:2::testSimpleTypes:8::assertType:37 [ idx#41 ] main:2::testSimpleTypes:8::assertType:39 [ idx#41 ] main:2::testSimpleTypes:8::assertType:41 [ idx#41 ] ) always clobbers reg byte a 
 Statement [49] *((const byte*) COLS + (byte) idx#41) ← (const byte) GREEN [ assertType::t1#15 idx#41 ] ( main:2::testSimpleTypes:8::assertType:13 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:15 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:17 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:19 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:21 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:23 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:25 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:27 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:29 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:31 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:33 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:35 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:37 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:39 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:41 [ assertType::t1#15 idx#41 ] ) always clobbers reg byte a 
 Statement [6] if((byte*) main::s#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 [ main::s#2 ] ( main:2 [ main::s#2 ] ) always clobbers reg byte a 
@@ -1162,24 +1140,24 @@ Statement [10] *((byte*) main::s#2) ← (byte) ' ' [ main::s#2 ] ( main:2 [ main
 Statement [45] *((const byte*) COLS + (byte) idx#41) ← (const byte) RED [ assertType::t1#15 idx#41 ] ( main:2::testSimpleTypes:8::assertType:13 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:15 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:17 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:19 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:21 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:23 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:25 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:27 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:29 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:31 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:33 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:35 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:37 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:39 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:41 [ assertType::t1#15 idx#41 ] ) always clobbers reg byte a 
 Statement [46] *((const byte*) SCREEN + (byte) idx#41) ← (byte) assertType::t1#15 [ idx#41 ] ( main:2::testSimpleTypes:8::assertType:13 [ idx#41 ] main:2::testSimpleTypes:8::assertType:15 [ idx#41 ] main:2::testSimpleTypes:8::assertType:17 [ idx#41 ] main:2::testSimpleTypes:8::assertType:19 [ idx#41 ] main:2::testSimpleTypes:8::assertType:21 [ idx#41 ] main:2::testSimpleTypes:8::assertType:23 [ idx#41 ] main:2::testSimpleTypes:8::assertType:25 [ idx#41 ] main:2::testSimpleTypes:8::assertType:27 [ idx#41 ] main:2::testSimpleTypes:8::assertType:29 [ idx#41 ] main:2::testSimpleTypes:8::assertType:31 [ idx#41 ] main:2::testSimpleTypes:8::assertType:33 [ idx#41 ] main:2::testSimpleTypes:8::assertType:35 [ idx#41 ] main:2::testSimpleTypes:8::assertType:37 [ idx#41 ] main:2::testSimpleTypes:8::assertType:39 [ idx#41 ] main:2::testSimpleTypes:8::assertType:41 [ idx#41 ] ) always clobbers reg byte a 
 Statement [49] *((const byte*) COLS + (byte) idx#41) ← (const byte) GREEN [ assertType::t1#15 idx#41 ] ( main:2::testSimpleTypes:8::assertType:13 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:15 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:17 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:19 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:21 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:23 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:25 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:27 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:29 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:31 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:33 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:35 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:37 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:39 [ assertType::t1#15 idx#41 ] main:2::testSimpleTypes:8::assertType:41 [ assertType::t1#15 idx#41 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::s#2 main::s#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ assertType::t1#15 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ assertType::t2#15 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ idx#41 idx#20 ] : zp ZP_BYTE:6 , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ main::s#2 main::s#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ assertType::t1#15 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ assertType::t2#15 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ idx#41 idx#20 ] : zp[1]:6 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 36.67: zp ZP_WORD:2 [ main::s#2 main::s#1 ] 
-Uplift Scope [] 8.2: zp ZP_BYTE:6 [ idx#41 idx#20 ] 
-Uplift Scope [assertType] 2: zp ZP_BYTE:5 [ assertType::t2#15 ] 1: zp ZP_BYTE:4 [ assertType::t1#15 ] 
+Uplift Scope [main] 36.67: zp[2]:2 [ main::s#2 main::s#1 ] 
+Uplift Scope [] 8.2: zp[1]:6 [ idx#41 idx#20 ] 
+Uplift Scope [assertType] 2: zp[1]:5 [ assertType::t2#15 ] 1: zp[1]:4 [ assertType::t1#15 ] 
 Uplift Scope [testSimpleTypes] 
 
-Uplifting [main] best 948 combination zp ZP_WORD:2 [ main::s#2 main::s#1 ] 
+Uplifting [main] best 948 combination zp[2]:2 [ main::s#2 main::s#1 ] 
 Uplifting [] best 933 combination reg byte x [ idx#41 idx#20 ] 
-Uplifting [assertType] best 886 combination zp ZP_BYTE:5 [ assertType::t2#15 ] reg byte y [ assertType::t1#15 ] 
+Uplifting [assertType] best 886 combination zp[1]:5 [ assertType::t2#15 ] reg byte y [ assertType::t1#15 ] 
 Uplifting [testSimpleTypes] best 886 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:5 [ assertType::t2#15 ]
-Uplifting [assertType] best 886 combination zp ZP_BYTE:5 [ assertType::t2#15 ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:4 [ assertType::t2#15 ]
+Attempting to uplift remaining variables inzp[1]:5 [ assertType::t2#15 ]
+Uplifting [assertType] best 886 combination zp[1]:5 [ assertType::t2#15 ] 
+Allocated (was zp[1]:5) zp[1]:4 [ assertType::t2#15 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1189,16 +1167,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -1500,7 +1478,7 @@ testSimpleTypes: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zeropage(4) t2)
+// assertType(byte register(Y) t1, byte zp(4) t2)
 assertType: {
     .label t2 = 4
     // [44] if((byte) assertType::t1#15==(byte) assertType::t2#15) goto assertType::@1 -- vbuyy_eq_vbuz1_then_la1 
@@ -1645,16 +1623,16 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) COLS COLS = (byte*)(word) $d800
-(const byte) GREEN GREEN = (byte) 5
-(const byte) RED RED = (byte) 2
-(const byte*) SCREEN SCREEN = (byte*)(word) $400
-(const byte) TYPEID_BYTE TYPEID_BYTE = (number) 1
-(const byte) TYPEID_DWORD TYPEID_DWORD = (number) 5
-(const byte) TYPEID_SIGNED_BYTE TYPEID_SIGNED_BYTE = (number) 2
-(const byte) TYPEID_SIGNED_DWORD TYPEID_SIGNED_DWORD = (number) 6
-(const byte) TYPEID_SIGNED_WORD TYPEID_SIGNED_WORD = (number) 4
-(const byte) TYPEID_WORD TYPEID_WORD = (number) 3
+(const byte*) COLS = (byte*)(word) $d800
+(const byte) GREEN = (byte) 5
+(const byte) RED = (byte) 2
+(const byte*) SCREEN = (byte*)(word) $400
+(const byte) TYPEID_BYTE = (number) 1
+(const byte) TYPEID_DWORD = (number) 5
+(const byte) TYPEID_SIGNED_BYTE = (number) 2
+(const byte) TYPEID_SIGNED_DWORD = (number) 6
+(const byte) TYPEID_SIGNED_WORD = (number) 4
+(const byte) TYPEID_WORD = (number) 3
 (void()) assertType((byte) assertType::t1 , (byte) assertType::t2)
 (label) assertType::@1
 (label) assertType::@2
@@ -1663,7 +1641,7 @@ FINAL SYMBOL TABLE
 (byte) assertType::t1
 (byte) assertType::t1#15 reg byte y 1.0
 (byte) assertType::t2
-(byte) assertType::t2#15 t2 zp ZP_BYTE:4 2.0
+(byte) assertType::t2#15 t2 zp[1]:4 2.0
 (byte) idx
 (byte) idx#20 reg byte x 0.9999999999999999
 (byte) idx#41 reg byte x 7.200000000000002
@@ -1673,8 +1651,8 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 (byte*) main::s
-(byte*) main::s#1 s zp ZP_WORD:2 22.0
-(byte*) main::s#2 s zp ZP_WORD:2 14.666666666666666
+(byte*) main::s#1 s zp[2]:2 22.0
+(byte*) main::s#2 s zp[2]:2 14.666666666666666
 (void()) testSimpleTypes()
 (label) testSimpleTypes::@1
 (label) testSimpleTypes::@10
@@ -1692,9 +1670,9 @@ FINAL SYMBOL TABLE
 (label) testSimpleTypes::@9
 (label) testSimpleTypes::@return
 
-zp ZP_WORD:2 [ main::s#2 main::s#1 ]
+zp[2]:2 [ main::s#2 main::s#1 ]
 reg byte y [ assertType::t1#15 ]
-zp ZP_BYTE:4 [ assertType::t2#15 ]
+zp[1]:4 [ assertType::t2#15 ]
 reg byte x [ idx#41 idx#20 ]
 
 
@@ -1708,16 +1686,16 @@ Score: 784
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -1963,7 +1941,7 @@ testSimpleTypes: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zeropage(4) t2)
+// assertType(byte register(Y) t1, byte zp(4) t2)
 assertType: {
     .label t2 = 4
     // if(t1==t2)

@@ -37,7 +37,7 @@ print_msg: {
     msg_2: .text "World!"
     .byte 0
 }
-// print(byte* zeropage(4) msg)
+// print(byte* zp(4) msg)
 print: {
     .label msg = 4
   __b1:

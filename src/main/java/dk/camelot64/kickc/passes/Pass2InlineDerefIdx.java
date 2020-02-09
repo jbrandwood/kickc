@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.operators.OperatorCastPtr;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -48,6 +49,9 @@ public class Pass2InlineDerefIdx extends Pass2SsaOptimization {
    public RValue attemptInlineDeref(RValue pointer) {
       if(pointer instanceof VariableRef) {
          VariableRef derefVar = (VariableRef) pointer;
+         final Variable var = getScope().getVar(derefVar);
+         if(var.isKindLoadStore())
+            return null;
          StatementLValue derefVarDefined = getGraph().getAssignment(derefVar);
          if(derefVarDefined instanceof StatementAssignment) {
             StatementAssignment derefAssignment = (StatementAssignment) derefVarDefined;

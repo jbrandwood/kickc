@@ -3,15 +3,10 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.ConstantArray;
-import dk.camelot64.kickc.model.values.ConstantRef;
-import dk.camelot64.kickc.model.values.ConstantString;
-import dk.camelot64.kickc.model.values.ConstantValue;
+import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
@@ -92,11 +87,11 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
     */
    private Map<ConstantRef, ConstantValue> findUnnamedConstants() {
       Map<ConstantRef, ConstantValue> unnamed = new HashMap<>();
-      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
+      Collection<Variable> allConstants = getProgram().getScope().getAllConstants(true);
+      for(Variable constant : allConstants) {
          if(constant.getRef().isIntermediate()) {
-            if(!(constant.getType().equals(SymbolType.STRING)) && !(constant.getValue() instanceof ConstantArray)) {
-               unnamed.put(constant.getRef(), constant.getValue());
+            if(!(constant.getInitValue() instanceof ConstantString) && !(constant.getInitValue() instanceof ConstantArray) && !(constant.getInitValue() instanceof ConstantStructValue) && !(constant.getInitValue() instanceof StructZero)) {
+               unnamed.put(constant.getConstantRef(), constant.getInitValue());
             }
          }
       }
@@ -111,16 +106,17 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    private Map<ConstantRef, ConstantValue> findAliasConstants() {
       Map<ConstantRef, ConstantValue> aliases = new HashMap<>();
       ProgramScope programScope = getProgram().getScope();
-      Collection<ConstantVar> allConstants = programScope.getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
-         ConstantValue constantValue = constant.getValue();
+      Collection<Variable> allConstants = programScope.getAllConstants(true);
+      for(Variable constant : allConstants) {
+         ConstantValue constantValue = constant.getInitValue();
          if(constantValue instanceof ConstantRef) {
             if(((ConstantRef) constantValue).isIntermediate()) {
                // The value is an intermediate constant - replace all uses of the intermediate with uses of the referrer instead.
-               aliases.put((ConstantRef) constant.getValue(), constant.getRef());
-               constant.setValue(programScope.getConstant((ConstantRef) constantValue).getValue());
+               aliases.put((ConstantRef) constant.getInitValue(), constant.getConstantRef());
+               final ConstantValue initValue = programScope.getConstant((ConstantRef) constantValue).getInitValue();
+               constant.setInitValue(initValue);
             } else {
-               aliases.put(constant.getRef(), constant.getValue());
+               aliases.put(constant.getConstantRef(), constant.getInitValue());
             }
          }
       }
@@ -137,23 +133,23 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
    private Map<ConstantRef, ConstantValue> findConstVarVersions() {
       Map<ConstantRef, ConstantValue> aliases = new HashMap<>();
 
-      Collection<ConstantVar> allConstants = getProgram().getScope().getAllConstants(true);
-      for(ConstantVar constant : allConstants) {
+      Collection<Variable> allConstants = getProgram().getScope().getAllConstants(true);
+      for(Variable constant : allConstants) {
          if(constant.getRef().isVersion()) {
             // Constant is a version - find the other versions
             String baseName = constant.getRef().getFullNameUnversioned();
             Collection<Symbol> scopeSymbols = constant.getScope().getAllSymbols();
             for(Symbol symbol : scopeSymbols) {
                if(symbol.getRef().isVersion() && symbol.getRef().getFullNameUnversioned().equals(baseName)) {
-                  ConstantValue value = constant.getValue();
-                  if(symbol instanceof Variable) {
-                     aliases.put(constant.getRef(), value);
+                  ConstantValue value = constant.getInitValue();
+                  if(symbol instanceof Variable && ((Variable) symbol).isVariable()) {
+                     aliases.put(constant.getConstantRef(), value);
                      getLog().append("Inlining constant with var siblings " + constant);
                      break;
-                  } else if(symbol instanceof ConstantVar) {
-                     ConstantValue otherValue = ((ConstantVar) symbol).getValue();
+                  } else if(symbol instanceof Variable && ((Variable) symbol).isKindConstant()) {
+                     ConstantValue otherValue = ((Variable) symbol).getInitValue();
                      if(!otherValue.equals(value) && !(value instanceof ConstantString) && !(value instanceof ConstantArray) && !(otherValue instanceof ConstantRef)) {
-                        aliases.put(constant.getRef(), value);
+                        aliases.put(constant.getConstantRef(), value);
                         getLog().append("Inlining constant with different constant siblings " + constant);
                         break;
                      }

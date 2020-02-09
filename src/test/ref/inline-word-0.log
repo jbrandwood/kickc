@@ -1,4 +1,5 @@
 Fixing pointer array-indexing *((word*) main::screen + (number) 0)
+Identified constant variable (word) main::w
 Identified constant variable (word*) main::screen
 
 CONTROL FLOW GRAPH SSA
@@ -7,10 +8,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word) main::w#0 ← ((word)) { (byte) 2, (byte) 1 }
-  (word*) main::screen ← ((word*)) (number) $400
   (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_WORD
-  *((word*) main::screen + (number~) main::$0) ← (word) main::w#0
+  *((const word*) main::screen + (number~) main::$0) ← (const word) main::w
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -31,54 +30,29 @@ SYMBOL TABLE SSA
 (void()) main()
 (number~) main::$0
 (label) main::@return
-(word*) main::screen
-(word) main::w
-(word) main::w#0
+(const word*) main::screen = (word*)(number) $400
+(const word) main::w = (byte) 2*(word) $100+(byte) 1
 
-Fixing inline constructor with main::$1 ← (byte)2 w= (byte)1
-Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 0 in (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word*) main::screen ← (word*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast (byte) 2
-Simplifying constant integer cast (byte) 1
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) 0 * (const byte) SIZEOF_WORD
-Alias (word) main::w#0 = (word~) main::$1 
-Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (word) main::w#0 ← (byte) 2 w= (byte) 1
-Constant right-side identified [3] (byte~) main::$0 ← (byte) 0 * (const byte) SIZEOF_WORD
+Constant right-side identified [0] (byte~) main::$0 ← (byte) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word*) main::screen = (word*) 1024
 Constant (const byte) main::$0 = 0*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::screen in [4] *((const word*) main::screen + (const byte) main::$0) ← (word) main::w#0
+Simplifying expression containing zero main::screen in [1] *((const word*) main::screen + (const byte) main::$0) ← (const word) main::w
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$0
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) 2*$100+1 in (word) main::w#0 ← (byte) 2*(number) $100+(byte) 1
-Adding number conversion cast (unumber) 2*$100 in (word) main::w#0 ← ((unumber)) (byte) 2*(number) $100+(byte) 1
-Adding number conversion cast (unumber) $100 in (word) main::w#0 ← ((unumber)) (unumber)(byte) 2*(number) $100+(byte) 1
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word) main::w#0 ← (unumber)(unumber)(byte) 2*(unumber)(number) $100+(byte) 1
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast (unumber)(byte) 2*(unumber)(number) $100+(byte) 1
-Simplifying constant integer cast (byte) 2*(unumber)(number) $100
-Simplifying constant integer cast $100
-Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $100
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const word) main::w#0 = 2*$100+1
-Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -106,7 +80,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const word*) main::screen) ← (const word) main::w#0
+  [4] *((const word*) main::screen) ← (const word) main::w
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -115,7 +89,6 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(word) main::w
 
 Initial phi equivalence classes
 Complete equivalence classes
@@ -145,9 +118,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label screen = $400
     .const w = 2*$100+1
-    // [4] *((const word*) main::screen) ← (const word) main::w#0 -- _deref_pwuc1=vwuc2 
+    .label screen = $400
+    // [4] *((const word*) main::screen) ← (const word) main::w -- _deref_pwuc1=vwuc2 
     lda #<w
     sta screen
     lda #>w
@@ -161,7 +134,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const word*) main::screen) ← (const word) main::w#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [4] *((const word*) main::screen) ← (const word) main::w [ ] ( main:2 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -194,9 +167,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label screen = $400
     .const w = 2*$100+1
-    // [4] *((const word*) main::screen) ← (const word) main::w#0 -- _deref_pwuc1=vwuc2 
+    .label screen = $400
+    // [4] *((const word*) main::screen) ← (const word) main::w -- _deref_pwuc1=vwuc2 
     lda #<w
     sta screen
     lda #>w
@@ -234,9 +207,8 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const word*) main::screen screen = (word*) 1024
-(word) main::w
-(const word) main::w#0 w = (byte) 2*(word) $100+(byte) 1
+(const word*) main::screen = (word*) 1024
+(const word) main::w = (byte) 2*(word) $100+(byte) 1
 
 
 
@@ -258,10 +230,10 @@ Score: 18
   // @end
   // main
 main: {
-    .label screen = $400
     .const w = 2*$100+1
+    .label screen = $400
     // screen[0] = w
-    // [4] *((const word*) main::screen) ← (const word) main::w#0 -- _deref_pwuc1=vwuc2 
+    // [4] *((const word*) main::screen) ← (const word) main::w -- _deref_pwuc1=vwuc2 
     lda #<w
     sta screen
     lda #>w

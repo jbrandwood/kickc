@@ -7,10 +7,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word[]) main::words ← { (number) $3130, (number) $3332, (number) $3534, (number) $3736 }
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  (byte) main::idx#0 ← (number) 0
-  (word*) main::wp#0 ← (word[]) main::words
+  (byte) main::idx#0 ← (byte) 0
+  (word*) main::wp#0 ← (const word*) main::words
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -20,10 +18,10 @@ main::@1: scope:[main]  from main main::@1
   (word) main::w#0 ← *((word*) main::wp#2)
   (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD
   (byte~) main::$0 ← < (word) main::w#0
-  *((byte*) main::SCREEN + (byte) main::idx#4) ← (byte~) main::$0
+  *((const byte*) main::SCREEN + (byte) main::idx#4) ← (byte~) main::$0
   (byte) main::idx#1 ← ++ (byte) main::idx#4
   (byte~) main::$1 ← > (word) main::w#0
-  *((byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$1
+  *((const byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$1
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   (byte) main::idx#3 ← ++ (byte) main::idx#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,3)
@@ -52,7 +50,7 @@ SYMBOL TABLE SSA
 (bool~) main::$2
 (label) main::@1
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -65,41 +63,22 @@ SYMBOL TABLE SSA
 (byte) main::idx#4
 (word) main::w
 (word) main::w#0
-(word[]) main::words
+(const word*) main::words[]  = { (word) $3130, (word) $3332, (word) $3534, (word) $3736 }
 (word*) main::wp
 (word*) main::wp#0
 (word*) main::wp#1
 (word*) main::wp#2
 
-Adding number conversion cast (unumber) 0 in (byte) main::idx#0 ← (number) 0
-Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (word[]) main::words ← (word[]){ (word)(number) $3130, (word)(number) $3332, (word)(number) $3534, (word)(number) $3736 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Inlining cast (byte) main::idx#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $3130
-Simplifying constant integer cast $3332
-Simplifying constant integer cast $3534
-Simplifying constant integer cast $3736
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (word[]) main::words = (word*) main::wp#0 
-Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 [17] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
+Simple Condition (bool~) main::$2 [15] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (word[]) { (word) $3130, (word) $3332, (word) $3534, (word) $3736 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const word[]) main::words = { $3130, $3332, $3534, $3736 }
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::idx#0 = 0
+Constant (const word*) main::wp#0 = main::words
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [15] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [17] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
+Resolved ranged next value [13] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [15] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
 Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
@@ -107,8 +86,10 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::idx#0
+Inlining constant with var siblings (const word*) main::wp#0
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
+Constant inlined main::wp#0 = (const word*) main::words
 Constant inlined main::idx#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
@@ -150,7 +131,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
   [5] (byte) main::idx#4 ← phi( main/(byte) 0 main::@1/(byte) main::idx#3 )
-  [5] (word*) main::wp#2 ← phi( main/(const word[]) main::words main::@1/(word*) main::wp#1 )
+  [5] (word*) main::wp#2 ← phi( main/(const word*) main::words main::@1/(word*) main::wp#1 )
   [6] (word) main::w#0 ← *((word*) main::wp#2)
   [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD
   [8] (byte~) main::$0 ← < (word) main::w#0
@@ -190,11 +171,11 @@ Initial phi equivalence classes
 [ main::wp#2 main::wp#1 ]
 [ main::idx#4 main::idx#3 ]
 [ main::i#2 main::i#1 ]
-Added variable main::w#0 to zero page equivalence class [ main::w#0 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::idx#1 to zero page equivalence class [ main::idx#1 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
-Added variable main::idx#2 to zero page equivalence class [ main::idx#2 ]
+Added variable main::w#0 to live range equivalence class [ main::w#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::idx#1 to live range equivalence class [ main::idx#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable main::idx#2 to live range equivalence class [ main::idx#2 ]
 Complete equivalence classes
 [ main::wp#2 main::wp#1 ]
 [ main::idx#4 main::idx#3 ]
@@ -204,14 +185,14 @@ Complete equivalence classes
 [ main::idx#1 ]
 [ main::$1 ]
 [ main::idx#2 ]
-Allocated zp ZP_WORD:2 [ main::wp#2 main::wp#1 ]
-Allocated zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ]
-Allocated zp ZP_BYTE:5 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:6 [ main::w#0 ]
-Allocated zp ZP_BYTE:8 [ main::$0 ]
-Allocated zp ZP_BYTE:9 [ main::idx#1 ]
-Allocated zp ZP_BYTE:10 [ main::$1 ]
-Allocated zp ZP_BYTE:11 [ main::idx#2 ]
+Allocated zp[2]:2 [ main::wp#2 main::wp#1 ]
+Allocated zp[1]:4 [ main::idx#4 main::idx#3 ]
+Allocated zp[1]:5 [ main::i#2 main::i#1 ]
+Allocated zp[2]:6 [ main::w#0 ]
+Allocated zp[1]:8 [ main::$0 ]
+Allocated zp[1]:9 [ main::idx#1 ]
+Allocated zp[1]:10 [ main::$1 ]
+Allocated zp[1]:11 [ main::idx#2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -247,10 +228,9 @@ main: {
     .label w = 6
     .label wp = 2
     .label idx = 9
-    .label idx_2 = $b
-    .label idx_3 = 4
+    .label idx_1 = $b
+    .label idx_2 = 4
     .label i = 5
-    .label idx_4 = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
@@ -258,8 +238,8 @@ main: {
     sta.z i
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
-    sta.z idx_4
-    // [5] phi (word*) main::wp#2 = (const word[]) main::words [phi:main->main::@1#2] -- pwuz1=pwuc1 
+    sta.z idx_2
+    // [5] phi (word*) main::wp#2 = (const word*) main::words [phi:main->main::@1#2] -- pwuz1=pwuc1 
     lda #<words
     sta.z wp
     lda #>words
@@ -293,10 +273,10 @@ main: {
     sta.z __0
     // [9] *((const byte*) main::SCREEN + (byte) main::idx#4) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __0
-    ldy.z idx_4
+    ldy.z idx_2
     sta SCREEN,y
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#4 -- vbuz1=_inc_vbuz2 
-    ldy.z idx_4
+    ldy.z idx_2
     iny
     sty.z idx
     // [11] (byte~) main::$1 ← > (word) main::w#0 -- vbuz1=_hi_vwuz2 
@@ -309,11 +289,11 @@ main: {
     // [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
     ldy.z idx
     iny
-    sty.z idx_2
+    sty.z idx_1
     // [14] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz2 
-    ldy.z idx_2
+    ldy.z idx_1
     iny
-    sty.z idx_3
+    sty.z idx_2
     // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [16] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -332,39 +312,39 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (word) main::w#0 ← *((word*) main::wp#2) [ main::wp#2 main::idx#4 main::i#2 main::w#0 ] ( main:2 [ main::wp#2 main::idx#4 main::i#2 main::w#0 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::idx#4 main::idx#3 ]
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ main::idx#4 main::idx#3 ]
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:5 [ main::i#2 main::i#1 ]
 Statement [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← < (word) main::w#0 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ) always clobbers reg byte a 
 Statement [11] (byte~) main::$1 ← > (word) main::w#0 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:9 [ main::idx#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::idx#1 ]
 Statement [6] (word) main::w#0 ← *((word*) main::wp#2) [ main::wp#2 main::idx#4 main::i#2 main::w#0 ] ( main:2 [ main::wp#2 main::idx#4 main::i#2 main::w#0 ] ) always clobbers reg byte a reg byte y 
 Statement [7] (word*) main::wp#1 ← (word*) main::wp#2 + (const byte) SIZEOF_WORD [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 ] ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← < (word) main::w#0 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ( main:2 [ main::idx#4 main::i#2 main::wp#1 main::w#0 main::$0 ] ) always clobbers reg byte a 
 Statement [11] (byte~) main::$1 ← > (word) main::w#0 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ( main:2 [ main::i#2 main::wp#1 main::idx#1 main::$1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::wp#2 main::wp#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] : zp ZP_BYTE:4 , reg byte x , 
-Potential registers zp ZP_BYTE:5 [ main::i#2 main::i#1 ] : zp ZP_BYTE:5 , reg byte x , 
-Potential registers zp ZP_WORD:6 [ main::w#0 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_BYTE:8 [ main::$0 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:9 [ main::idx#1 ] : zp ZP_BYTE:9 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ main::$1 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:11 [ main::idx#2 ] : zp ZP_BYTE:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ main::wp#2 main::wp#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ main::idx#4 main::idx#3 ] : zp[1]:4 , reg byte x , 
+Potential registers zp[1]:5 [ main::i#2 main::i#1 ] : zp[1]:5 , reg byte x , 
+Potential registers zp[2]:6 [ main::w#0 ] : zp[2]:6 , 
+Potential registers zp[1]:8 [ main::$0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ main::idx#1 ] : zp[1]:9 , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ main::$1 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ main::idx#2 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp ZP_BYTE:8 [ main::$0 ] 22: zp ZP_BYTE:10 [ main::$1 ] 22: zp ZP_BYTE:11 [ main::idx#2 ] 18.7: zp ZP_WORD:2 [ main::wp#2 main::wp#1 ] 18.7: zp ZP_BYTE:5 [ main::i#2 main::i#1 ] 13.93: zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] 11: zp ZP_BYTE:9 [ main::idx#1 ] 6.6: zp ZP_WORD:6 [ main::w#0 ] 
+Uplift Scope [main] 22: zp[1]:8 [ main::$0 ] 22: zp[1]:10 [ main::$1 ] 22: zp[1]:11 [ main::idx#2 ] 18.7: zp[2]:2 [ main::wp#2 main::wp#1 ] 18.7: zp[1]:5 [ main::i#2 main::i#1 ] 13.93: zp[1]:4 [ main::idx#4 main::idx#3 ] 11: zp[1]:9 [ main::idx#1 ] 6.6: zp[2]:6 [ main::w#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1168 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::idx#2 ] zp ZP_WORD:2 [ main::wp#2 main::wp#1 ] reg byte x [ main::i#2 main::i#1 ] zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] zp ZP_BYTE:9 [ main::idx#1 ] zp ZP_WORD:6 [ main::w#0 ] 
+Uplifting [main] best 1168 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::idx#2 ] zp[2]:2 [ main::wp#2 main::wp#1 ] reg byte x [ main::i#2 main::i#1 ] zp[1]:4 [ main::idx#4 main::idx#3 ] zp[1]:9 [ main::idx#1 ] zp[2]:6 [ main::w#0 ] 
 Limited combination testing to 100 combinations of 768 possible.
 Uplifting [] best 1168 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::idx#4 main::idx#3 ]
-Uplifting [main] best 1168 combination zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:9 [ main::idx#1 ]
+Attempting to uplift remaining variables inzp[1]:4 [ main::idx#4 main::idx#3 ]
+Uplifting [main] best 1168 combination zp[1]:4 [ main::idx#4 main::idx#3 ] 
+Attempting to uplift remaining variables inzp[1]:9 [ main::idx#1 ]
 Uplifting [main] best 1078 combination reg byte y [ main::idx#1 ] 
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:5 [ main::w#0 ]
+Allocated (was zp[2]:6) zp[2]:5 [ main::w#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -404,7 +384,7 @@ main: {
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z idx
-    // [5] phi (word*) main::wp#2 = (const word[]) main::words [phi:main->main::@1#2] -- pwuz1=pwuc1 
+    // [5] phi (word*) main::wp#2 = (const word*) main::words [phi:main->main::@1#2] -- pwuz1=pwuc1 
     lda #<words
     sta.z wp
     lda #>words
@@ -500,32 +480,32 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) SIZEOF_WORD SIZEOF_WORD = (byte) 2
+(const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (byte~) main::$1 reg byte a 22.0
 (label) main::@1
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 2.2
 (byte) main::idx
 (byte) main::idx#1 reg byte y 11.0
 (byte) main::idx#2 reg byte a 22.0
-(byte) main::idx#3 idx zp ZP_BYTE:4 7.333333333333333
-(byte) main::idx#4 idx zp ZP_BYTE:4 6.6000000000000005
+(byte) main::idx#3 idx zp[1]:4 7.333333333333333
+(byte) main::idx#4 idx zp[1]:4 6.6000000000000005
 (word) main::w
-(word) main::w#0 w zp ZP_WORD:5 6.6000000000000005
-(const word[]) main::words words = { (word) $3130, (word) $3332, (word) $3534, (word) $3736 }
+(word) main::w#0 w zp[2]:5 6.6000000000000005
+(const word*) main::words[]  = { (word) $3130, (word) $3332, (word) $3534, (word) $3736 }
 (word*) main::wp
-(word*) main::wp#1 wp zp ZP_WORD:2 2.2
-(word*) main::wp#2 wp zp ZP_WORD:2 16.5
+(word*) main::wp#1 wp zp[2]:2 2.2
+(word*) main::wp#2 wp zp[2]:2 16.5
 
-zp ZP_WORD:2 [ main::wp#2 main::wp#1 ]
-zp ZP_BYTE:4 [ main::idx#4 main::idx#3 ]
+zp[2]:2 [ main::wp#2 main::wp#1 ]
+zp[1]:4 [ main::idx#4 main::idx#3 ]
 reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:5 [ main::w#0 ]
+zp[2]:5 [ main::w#0 ]
 reg byte a [ main::$0 ]
 reg byte y [ main::idx#1 ]
 reg byte a [ main::$1 ]
@@ -562,7 +542,7 @@ main: {
     // [5] phi (byte) main::idx#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     txa
     sta.z idx
-    // [5] phi (word*) main::wp#2 = (const word[]) main::words [phi:main->main::@1#2] -- pwuz1=pwuc1 
+    // [5] phi (word*) main::wp#2 = (const word*) main::words [phi:main->main::@1#2] -- pwuz1=pwuc1 
     lda #<words
     sta.z wp
     lda #>words

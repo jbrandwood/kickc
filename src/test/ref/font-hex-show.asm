@@ -21,7 +21,7 @@ main: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage(5) charset)
+// init_font_hex(byte* zp(5) charset)
 init_font_hex: {
     .label __0 = $b
     .label idx = $a

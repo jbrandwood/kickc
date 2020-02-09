@@ -15,7 +15,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::line#0 ← ((byte*)) (number) $400
+  (byte*) main::line#0 ← (byte*)(number) $400
   to:main::@1
 main::@1: scope:[main]  from main main::@8
   (byte*) main::line#2 ← phi( main/(byte*) main::line#0 main::@8/(byte*) main::line#1 )
@@ -98,8 +98,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $400+$28*$19 in (bool~) main::$0 ← (byte*) main::line#2 < (number) $400+(number) $28*(number) $19
 Adding number conversion cast (unumber) $28 in (byte*) main::line#1 ← (byte*) main::line#6 + (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::line#0 ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
@@ -219,8 +217,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::line#2 main::line#1 ]
 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:2 [ main::line#2 main::line#1 ]
-Allocated zp ZP_BYTE:4 [ main::i#2 main::i#1 ]
+Allocated zp[2]:2 [ main::line#2 main::line#1 ]
+Allocated zp[1]:4 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -296,9 +294,9 @@ main: {
     // main::@3
   __b3:
     // [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 -- pbuz1_derefidx_vbuz2_eq_vbuc1_then_la1 
+    lda #'a'
     ldy.z i
-    lda (line),y
-    cmp #'a'
+    cmp (line),y
     beq __b5
     jmp __b4
     // main::@4
@@ -335,7 +333,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if((byte*) main::line#2>=(word)(number) $400+(number) $28*(number) $19) goto main::@return [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a 
 Statement [7] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@3 [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a reg byte y 
 Statement [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 [ main::line#2 main::i#2 ] ( main:2 [ main::line#2 main::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::i#2 main::i#1 ]
 Statement [11] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' [ main::line#2 main::i#2 ] ( main:2 [ main::line#2 main::i#2 ] ) always clobbers reg byte a 
 Statement [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::line#1 ] ( main:2 [ main::line#1 ] ) always clobbers reg byte a 
 Statement [6] if((byte*) main::line#2>=(word)(number) $400+(number) $28*(number) $19) goto main::@return [ main::line#2 ] ( main:2 [ main::line#2 ] ) always clobbers reg byte a 
@@ -343,14 +341,14 @@ Statement [7] if(*((byte*) main::line#2)!=(byte) 'a') goto main::@3 [ main::line
 Statement [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 [ main::line#2 main::i#2 ] ( main:2 [ main::line#2 main::i#2 ] ) always clobbers reg byte a 
 Statement [11] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' [ main::line#2 main::i#2 ] ( main:2 [ main::line#2 main::i#2 ] ) always clobbers reg byte a 
 Statement [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::line#1 ] ( main:2 [ main::line#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::line#2 main::line#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ main::i#2 main::i#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ main::line#2 main::line#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ main::i#2 main::i#1 ] : zp[1]:4 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 286.17: zp ZP_BYTE:4 [ main::i#2 main::i#1 ] 52.75: zp ZP_WORD:2 [ main::line#2 main::line#1 ] 
+Uplift Scope [main] 286.17: zp[1]:4 [ main::i#2 main::i#1 ] 52.75: zp[2]:2 [ main::line#2 main::line#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 4558 combination reg byte y [ main::i#2 main::i#1 ] zp ZP_WORD:2 [ main::line#2 main::line#1 ] 
+Uplifting [main] best 4558 combination reg byte y [ main::i#2 main::i#1 ] zp[2]:2 [ main::line#2 main::line#1 ] 
 Uplifting [] best 4558 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -424,8 +422,8 @@ main: {
     // main::@3
   __b3:
     // [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
-    lda (line),y
-    cmp #'a'
+    lda #'a'
+    cmp (line),y
     beq __b5
     jmp __b4
     // main::@4
@@ -487,6 +485,8 @@ Relabelling long label __b3_from___b2 to b1
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #'a'
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -505,15 +505,15 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte y 151.5
 (byte) main::i#2 reg byte y 134.66666666666666
 (byte*) main::line
-(byte*) main::line#1 line zp ZP_WORD:2 22.0
-(byte*) main::line#2 line zp ZP_WORD:2 30.75
+(byte*) main::line#1 line zp[2]:2 22.0
+(byte*) main::line#2 line zp[2]:2 30.75
 
-zp ZP_WORD:2 [ main::line#2 main::line#1 ]
+zp[2]:2 [ main::line#2 main::line#1 ]
 reg byte y [ main::i#2 main::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 3256
+Score: 3056
 
   // File Comments
 // Tests break statement in a simple loop
@@ -572,13 +572,12 @@ main: {
   __b3:
     // if(line[i]=='a')
     // [10] if(*((byte*) main::line#2 + (byte) main::i#2)==(byte) 'a') goto main::@5 -- pbuz1_derefidx_vbuyy_eq_vbuc1_then_la1 
-    lda (line),y
-    cmp #'a'
+    lda #'a'
+    cmp (line),y
     beq __b5
     // main::@4
     // line[i] = 'a'
     // [11] *((byte*) main::line#2 + (byte) main::i#2) ← (byte) 'a' -- pbuz1_derefidx_vbuyy=vbuc1 
-    lda #'a'
     sta (line),y
     // for( byte i: 0..39)
     // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 

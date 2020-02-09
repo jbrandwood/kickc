@@ -9,20 +9,18 @@ Culled Empty Block (label) print2::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen ← ((byte*)) (number) $400
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) main::hello ← (const string) main::$3
-  (byte*) print2::at#0 ← (byte*) screen
-  (byte*) print2::msg#0 ← (byte*) main::hello
+  (byte*) print2::at#0 ← (const byte*) screen
+  (byte*) print2::msg#0 ← (const byte*) main::hello
   call print2 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*~) main::$1 ← (byte*) screen + (number) $50
+  (byte*~) main::$1 ← (const byte*) screen + (number) $50
   (byte*) print2::at#1 ← (byte*~) main::$1
-  (byte*) print2::msg#1 ← (byte*) main::hello
+  (byte*) print2::msg#1 ← (const byte*) main::hello
   call print2 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -35,8 +33,8 @@ main::@return: scope:[main]  from main::@2
 print2: scope:[print2]  from main main::@1
   (byte*) print2::at#4 ← phi( main/(byte*) print2::at#0 main::@1/(byte*) print2::at#1 )
   (byte*) print2::msg#4 ← phi( main/(byte*) print2::msg#0 main::@1/(byte*) print2::msg#1 )
-  (byte) print2::j#0 ← (number) 0
-  (byte) print2::i#0 ← (number) 0
+  (byte) print2::j#0 ← (byte) 0
+  (byte) print2::i#0 ← (byte) 0
   to:print2::@1
 print2::@1: scope:[print2]  from print2 print2::@2
   (byte) print2::j#3 ← phi( print2/(byte) print2::j#0 print2::@2/(byte) print2::j#1 )
@@ -72,11 +70,10 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (byte*~) main::$1
-(const string) main::$3 = (string) "hello world!"
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::hello
+(const byte*) main::hello = (byte*) "hello world!"
 (void()) print2((byte*) print2::at , (byte*) print2::msg)
 (bool~) print2::$0
 (label) print2::@1
@@ -104,28 +101,18 @@ SYMBOL TABLE SSA
 (byte*) print2::msg#2
 (byte*) print2::msg#3
 (byte*) print2::msg#4
-(byte*) screen
+(const byte*) screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) $50 in (byte*~) main::$1 ← (byte*) screen + (number) $50
-Adding number conversion cast (unumber) 0 in (byte) print2::j#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) print2::i#0 ← (number) 0
+Adding number conversion cast (unumber) $50 in (byte*~) main::$1 ← (const byte*) screen + (number) $50
 Adding number conversion cast (unumber) 0 in (bool~) print2::$0 ← (number) 0 != *((byte*) print2::msg#2 + (byte) print2::i#2)
 Adding number conversion cast (unumber) 2 in (byte) print2::j#1 ← (byte) print2::j#2 + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) screen ← (byte*)(number) $400
-Inlining cast (byte) print2::j#0 ← (unumber)(number) 0
-Inlining cast (byte) print2::i#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $50
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $50
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -138,34 +125,29 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) print2::msg#2 (byte*) print2::msg#4
 Identical Phi Values (byte*) print2::at#2 (byte*) print2::at#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print2::$0 [15] if((byte) 0!=*((byte*) print2::msg#4 + (byte) print2::i#2)) goto print2::@2
+Simple Condition (bool~) print2::$0 [13] if((byte) 0!=*((byte*) print2::msg#4 + (byte) print2::i#2)) goto print2::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) screen = (byte*) 1024
-Constant (const byte*) main::hello = main::$3
+Constant right-side identified [3] (byte*) print2::at#1 ← (const byte*) screen + (byte) $50
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) print2::at#0 = screen
+Constant (const byte*) print2::msg#0 = main::hello
+Constant (const byte*) print2::at#1 = screen+$50
+Constant (const byte*) print2::msg#1 = main::hello
 Constant (const byte) print2::j#0 = 0
 Constant (const byte) print2::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) print2::at#0 = screen
-Constant (const byte*) print2::msg#0 = main::hello
-Constant (const byte*) print2::msg#1 = main::hello
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (byte*) print2::at#1 ← (const byte*) screen + (byte) $50
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) print2::at#1 = screen+$50
-Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) print2::j#0
-Inlining constant with var siblings (const byte) print2::i#0
 Inlining constant with var siblings (const byte*) print2::at#0
 Inlining constant with var siblings (const byte*) print2::msg#0
-Inlining constant with var siblings (const byte*) print2::msg#1
 Inlining constant with var siblings (const byte*) print2::at#1
+Inlining constant with var siblings (const byte*) print2::msg#1
+Inlining constant with var siblings (const byte) print2::j#0
+Inlining constant with var siblings (const byte) print2::i#0
+Constant inlined print2::at#1 = (const byte*) screen+(byte) $50
+Constant inlined print2::at#0 = (const byte*) screen
 Constant inlined print2::msg#1 = (const byte*) main::hello
 Constant inlined print2::j#0 = (byte) 0
 Constant inlined print2::msg#0 = (const byte*) main::hello
 Constant inlined print2::i#0 = (byte) 0
-Constant inlined print2::at#1 = (const byte*) screen+(byte) $50
-Constant inlined main::$3 = (const byte*) main::hello
-Constant inlined print2::at#0 = (const byte*) screen
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (byte*) print2::msg#4 (const byte*) main::hello
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -257,9 +239,9 @@ Complete equivalence classes
 [ print2::at#4 ]
 [ print2::i#2 print2::i#1 ]
 [ print2::j#2 print2::j#1 ]
-Allocated zp ZP_WORD:2 [ print2::at#4 ]
-Allocated zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ]
-Allocated zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ]
+Allocated zp[2]:2 [ print2::at#4 ]
+Allocated zp[1]:4 [ print2::i#2 print2::i#1 ]
+Allocated zp[1]:5 [ print2::j#2 print2::j#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -320,7 +302,7 @@ main: {
     .byte 0
 }
   // print2
-// print2(byte* zeropage(2) at)
+// print2(byte* zp(2) at)
 print2: {
     .label j = 5
     .label i = 4
@@ -370,21 +352,21 @@ print2: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ print2::i#2 print2::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ print2::j#2 print2::j#1 ]
 Statement [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
 Statement [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
 Statement [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ print2::at#4 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ print2::at#4 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ print2::i#2 print2::i#1 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ print2::j#2 print2::j#1 ] : zp[1]:5 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print2] 33: zp ZP_BYTE:4 [ print2::i#2 print2::i#1 ] 22: zp ZP_BYTE:5 [ print2::j#2 print2::j#1 ] 1.83: zp ZP_WORD:2 [ print2::at#4 ] 
+Uplift Scope [print2] 33: zp[1]:4 [ print2::i#2 print2::i#1 ] 22: zp[1]:5 [ print2::j#2 print2::j#1 ] 1.83: zp[2]:2 [ print2::at#4 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [print2] best 447 combination reg byte x [ print2::i#2 print2::i#1 ] reg byte y [ print2::j#2 print2::j#1 ] zp ZP_WORD:2 [ print2::at#4 ] 
+Uplifting [print2] best 447 combination reg byte x [ print2::i#2 print2::i#1 ] reg byte y [ print2::j#2 print2::j#1 ] zp[2]:2 [ print2::at#4 ] 
 Uplifting [main] best 447 combination 
 Uplifting [] best 447 combination 
 
@@ -446,7 +428,7 @@ main: {
     .byte 0
 }
   // print2
-// print2(byte* zeropage(2) at)
+// print2(byte* zp(2) at)
 print2: {
     .label at = 2
     // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
@@ -522,13 +504,13 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte*) main::hello hello = (string) "hello world!"
+(const byte*) main::hello = (byte*) "hello world!"
 (void()) print2((byte*) print2::at , (byte*) print2::msg)
 (label) print2::@1
 (label) print2::@2
 (label) print2::@return
 (byte*) print2::at
-(byte*) print2::at#4 at zp ZP_WORD:2 1.8333333333333333
+(byte*) print2::at#4 at zp[2]:2 1.8333333333333333
 (byte) print2::i
 (byte) print2::i#1 reg byte x 22.0
 (byte) print2::i#2 reg byte x 11.0
@@ -536,9 +518,9 @@ FINAL SYMBOL TABLE
 (byte) print2::j#1 reg byte y 11.0
 (byte) print2::j#2 reg byte y 11.0
 (byte*) print2::msg
-(const byte*) screen screen = (byte*) 1024
+(const byte*) screen = (byte*) 1024
 
-zp ZP_WORD:2 [ print2::at#4 ]
+zp[2]:2 [ print2::at#4 ]
 reg byte x [ print2::i#2 print2::i#1 ]
 reg byte y [ print2::j#2 print2::j#1 ]
 
@@ -590,7 +572,7 @@ main: {
     .byte 0
 }
   // print2
-// print2(byte* zeropage(2) at)
+// print2(byte* zp(2) at)
 print2: {
     .label at = 2
     // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]

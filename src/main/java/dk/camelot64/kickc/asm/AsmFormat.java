@@ -3,10 +3,7 @@ package dk.camelot64.kickc.asm;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Symbol;
-import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -19,13 +16,13 @@ public class AsmFormat {
     * Get ASM code for a constant value
     *
     * @param value The constant value
-    * @param precedence The precedence of the outer expression operator. Used to generate perenthesis when needed.
+    * @param precedence The precedence of the outer expression operator. Used to generate parenthesis when needed.
     * @param codeScope The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     * @return The ASM string representing the constant value
     */
    public static String getAsmConstant(Program program, ConstantValue value, int precedence, ScopeRef codeScope) {
       if(value instanceof ConstantRef) {
-         ConstantVar constantVar = program.getScope().getConstant((ConstantRef) value);
+         Variable constantVar = program.getScope().getConstant((ConstantRef) value);
          String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
          return getAsmParamName(constantVar.getScope().getRef(), asmName, codeScope);
       } else if(value instanceof ConstantInteger) {
@@ -172,7 +169,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, operand, outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
             return "<" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
@@ -183,7 +180,7 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, new ConstantInteger(0l), outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
             return ">" + getAsmConstant(program, operand, outerPrecedence, codeScope);
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
@@ -198,13 +195,15 @@ public class AsmFormat {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
          if(SymbolType.BYTE.equals(operandType) || SymbolType.SBYTE.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xff)), outerPrecedence, codeScope);
-         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer || SymbolType.STRING.equals(operandType)) {
+         } else if(SymbolType.WORD.equals(operandType) || SymbolType.SWORD.equals(operandType) || operandType instanceof SymbolTypePointer) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xffffffff)), outerPrecedence, codeScope);
          } else {
             throw new CompileError("Unhandled type " + operand);
          }
+      } else if(Operators.POS.equals(operator)) {
+         return getAsmConstant(program, operand, outerPrecedence, codeScope);
       } else {
          return operator.getOperator() +
                getAsmConstant(program, operand, operator.getPrecedence(), codeScope);
@@ -312,18 +311,6 @@ public class AsmFormat {
     * @return The ASM parameter to use in the ASM code
     */
    public static String getAsmParamName(Variable boundVar, ScopeRef codeScopeRef) {
-      ScopeRef varScopeRef = boundVar.getScope().getRef();
-      String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-      return getAsmParamName(varScopeRef, asmName, codeScopeRef);
-   }
-
-   /**
-    * Get the ASM parameter for a specific bound constant
-    *
-    * @param boundVar The constant
-    * @return The ASM parameter to use in the ASM code
-    */
-   public static String getAsmParamName(ConstantVar boundVar, ScopeRef codeScopeRef) {
       ScopeRef varScopeRef = boundVar.getScope().getRef();
       String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
       return getAsmParamName(varScopeRef, asmName, codeScopeRef);

@@ -1,4 +1,5 @@
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Identified constant variable (byte*) SCREEN
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Culled Empty Block (label) @1
@@ -12,6 +13,8 @@ Culled Empty Block (label) memcpy::@7
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
 Culled Empty Block (label) @7
+Culled Empty Block (label) @8
+Culled Empty Block (label) @9
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@5
@@ -19,10 +22,7 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) COLS ← ((byte*)) (number) $d800
-  (byte) BLACK ← (number) 0
-  to:@8
+  to:@10
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main main::@7
@@ -61,28 +61,19 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   (void*) memcpy::return#1 ← (void*) memcpy::return#4
   return 
   to:@return
-@8: scope:[]  from @begin
-  (byte[$3e8]) MEDUSA_SCREEN ← kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
-    .fill fileScreen.getSize(), fileScreen.get(i)
- }}
-  (byte[]) MEDUSA_COLORS ← kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
-    .fill fileCols.getSize(), fileCols.get(i)
- }}
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@9
 
 (void()) main()
-main: scope:[main]  from @9
-  *((byte*) BGCOL) ← (byte) BLACK
-  (void*) memcpy::destination#0 ← (void*)(byte*) SCREEN
-  (void*) memcpy::source#0 ← (void*)(byte[$3e8]) MEDUSA_SCREEN
+main: scope:[main]  from @10
+  *((const byte*) BGCOL) ← (const byte) BLACK
+  (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
+  (void*) memcpy::source#0 ← (void*)(const byte*) MEDUSA_SCREEN
   (word) memcpy::num#0 ← (number) $3e8
   call memcpy 
   (void*) memcpy::return#2 ← (void*) memcpy::return#1
   to:main::@7
 main::@7: scope:[main]  from main
-  (void*) memcpy::destination#1 ← (void*)(byte*) COLS
-  (void*) memcpy::source#1 ← (void*)(byte[]) MEDUSA_COLORS
+  (void*) memcpy::destination#1 ← (void*)(const byte*) COLS
+  (void*) memcpy::source#1 ← (void*)(const byte*) MEDUSA_COLORS
   (word) memcpy::num#1 ← (number) $3e8
   call memcpy 
   (void*) memcpy::return#3 ← (void*) memcpy::return#1
@@ -93,31 +84,34 @@ main::@1: scope:[main]  from main::@2 main::@8
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e7
+  (byte*~) main::$2 ← (const byte*) SCREEN + (number) $3e7
   *((byte*~) main::$2) ← *((byte*~) main::$2) ^ (number) $e
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@9: scope:[]  from @8
+@10: scope:[]  from @begin
   call main 
-  to:@10
-@10: scope:[]  from @9
+  to:@11
+@11: scope:[]  from @10
   to:@end
-@end: scope:[]  from @10
+@end: scope:[]  from @11
 
 SYMBOL TABLE SSA
 (label) @10
-(label) @8
-(label) @9
+(label) @11
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte) BLACK
-(byte*) COLS
-(byte[]) MEDUSA_COLORS
-(byte[$3e8]) MEDUSA_SCREEN
-(byte*) SCREEN
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte) BLACK = (byte) 0
+(const byte*) COLS = (byte*)(number) $d800
+(const byte*) MEDUSA_COLORS[]  = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+    .fill fileCols.getSize(), fileCols.get(i)
+ }}
+(const byte*) MEDUSA_SCREEN[(number) $3e8]  = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+    .fill fileScreen.getSize(), fileScreen.get(i)
+ }}
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte*~) main::$2
 (label) main::@1
@@ -169,32 +163,25 @@ SYMBOL TABLE SSA
 (byte*) memcpy::src_end#1
 (byte*) memcpy::src_end#2
 
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
 Adding number conversion cast (unumber) $3e8 in (word) memcpy::num#0 ← (number) $3e8
 Adding number conversion cast (unumber) $3e8 in (word) memcpy::num#1 ← (number) $3e8
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$2 ← (byte*) SCREEN + (number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*~) main::$2 ← (const byte*) SCREEN + (number) $3e7
 Adding number conversion cast (unumber) $e in *((byte*~) main::$2) ← *((byte*~) main::$2) ^ (number) $e
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Inlining cast (byte) BLACK ← (unumber)(number) 0
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2
 Inlining cast (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (word) memcpy::num#0 ← (unumber)(number) $3e8
 Inlining cast (word) memcpy::num#1 ← (unumber)(number) $3e8
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e7
 Simplifying constant integer cast $e
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3e7
@@ -209,84 +196,67 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) memcpy::src_end#1 (byte*) memcpy::src_end#0
 Identical Phi Values (void*) memcpy::destination#3 (void*) memcpy::destination#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memcpy::$2 [11] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
+Simple Condition (bool~) memcpy::$2 [8] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) COLS = (byte*) 55296
-Constant (const byte) BLACK = 0
-Constant (const byte[$3e8]) MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
-    .fill fileScreen.getSize(), fileScreen.get(i)
- }}
-Constant (const byte[]) MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
-    .fill fileCols.getSize(), fileCols.get(i)
- }}
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const word) memcpy::num#0 = $3e8
-Constant (const word) memcpy::num#1 = $3e8
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)SCREEN in [25] (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
-Constant value identified (void*)MEDUSA_SCREEN in [26] (void*) memcpy::source#0 ← (void*)(const byte[$3e8]) MEDUSA_SCREEN
-Constant value identified (void*)COLS in [30] (void*) memcpy::destination#1 ← (void*)(const byte*) COLS
-Constant value identified (void*)MEDUSA_COLORS in [31] (void*) memcpy::source#1 ← (void*)(const byte[]) MEDUSA_COLORS
-Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [35] if(true) goto main::@2
-Successful SSA optimization Pass2ConstantIfs
-Eliminating unused variable (void*) memcpy::return#2 and assignment [15] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memcpy::return#3 and assignment [19] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
-Successful SSA optimization PassNEliminateUnusedVars
-Removing unused block main::@return
-Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [18] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e7
+Constant right-side identified [19] (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
+Constant right-side identified [30] (byte*~) main::$2 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void*) memcpy::destination#0 = (void*)SCREEN
 Constant (const void*) memcpy::source#0 = (void*)MEDUSA_SCREEN
+Constant (const word) memcpy::num#0 = $3e8
 Constant (const void*) memcpy::destination#1 = (void*)COLS
 Constant (const void*) memcpy::source#1 = (void*)MEDUSA_COLORS
+Constant (const word) memcpy::num#1 = $3e8
 Constant (const byte*) main::$2 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [29] if(true) goto main::@2
+Successful SSA optimization Pass2ConstantIfs
+Eliminating unused variable (void*) memcpy::return#2 and assignment [13] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memcpy::return#3 and assignment [15] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
 Inlining Noop Cast [1] (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Inlining Noop Cast [2] (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2 keeping memcpy::destination#2
 Inlining Noop Cast [3] (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Successful SSA optimization Pass2NopCastInlining
-Inlining constant with var siblings (const word) memcpy::num#0
-Inlining constant with var siblings (const word) memcpy::num#1
 Inlining constant with var siblings (const void*) memcpy::destination#0
 Inlining constant with var siblings (const void*) memcpy::source#0
+Inlining constant with var siblings (const word) memcpy::num#0
 Inlining constant with var siblings (const void*) memcpy::destination#1
 Inlining constant with var siblings (const void*) memcpy::source#1
+Inlining constant with var siblings (const word) memcpy::num#1
 Constant inlined memcpy::num#1 = (word) $3e8
 Constant inlined memcpy::num#0 = (word) $3e8
-Constant inlined memcpy::source#1 = (void*)(const byte[]) MEDUSA_COLORS
+Constant inlined memcpy::source#1 = (void*)(const byte*) MEDUSA_COLORS
 Constant inlined main::$2 = (const byte*) SCREEN+(word) $3e7
 Constant inlined memcpy::destination#0 = (void*)(const byte*) SCREEN
 Constant inlined memcpy::destination#1 = (void*)(const byte*) COLS
-Constant inlined memcpy::source#0 = (void*)(const byte[$3e8]) MEDUSA_SCREEN
+Constant inlined memcpy::source#0 = (void*)(const byte*) MEDUSA_SCREEN
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) memcpy::num#2 (word) $3e8
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @8
-Adding NOP phi() at start of @9
 Adding NOP phi() at start of @10
+Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@7
 Adding NOP phi() at start of main::@8
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of memcpy::@3
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to memcpy:7 memcpy:9 
+Calls in [] to main:2 
+Calls in [main] to memcpy:6 memcpy:8 
 
 Created 4 initial phi equivalence classes
-Coalesced [24] memcpy::src#5 ← memcpy::src#1
-Coalesced [25] memcpy::dst#5 ← memcpy::dst#1
+Coalesced [23] memcpy::src#5 ← memcpy::src#1
+Coalesced [24] memcpy::dst#5 ← memcpy::dst#1
 Coalesced down to 4 phi equivalence classes
-Culled Empty Block (label) @8
-Culled Empty Block (label) @10
+Culled Empty Block (label) @11
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) memcpy::@3
-Renumbering block @9 to @1
+Renumbering block @10 to @1
 Renumbering block main::@2 to main::@1
 Renumbering block main::@7 to main::@2
 Adding NOP phi() at start of @begin
@@ -321,14 +291,14 @@ main::@1: scope:[main]  from main::@1 main::@2
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main main::@2
   [9] (void*) memcpy::destination#2 ← phi( main/(void*)(const byte*) SCREEN main::@2/(void*)(const byte*) COLS )
-  [9] (void*) memcpy::source#2 ← phi( main/(void*)(const byte[$3e8]) MEDUSA_SCREEN main::@2/(void*)(const byte[]) MEDUSA_COLORS )
+  [9] (void*) memcpy::source#2 ← phi( main/(void*)(const byte*) MEDUSA_SCREEN main::@2/(void*)(const byte*) MEDUSA_COLORS )
   [10] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) $3e8
-  [11] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-  [12] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+  [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+  [12] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
-  [13] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*~) memcpy::dst#4 memcpy::@2/(byte*) memcpy::dst#1 )
-  [13] (byte*) memcpy::src#2 ← phi( memcpy/(byte*~) memcpy::src#4 memcpy::@2/(byte*) memcpy::src#1 )
+  [13] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*) memcpy::dst#4 memcpy::@2/(byte*) memcpy::dst#1 )
+  [13] (byte*) memcpy::src#2 ← phi( memcpy/(byte*) memcpy::src#4 memcpy::@2/(byte*) memcpy::src#1 )
   [14] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
   to:memcpy::@return
 memcpy::@return: scope:[memcpy]  from memcpy::@1
@@ -349,7 +319,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) memcpy::dst
 (byte*) memcpy::dst#1 11.0
 (byte*) memcpy::dst#2 11.666666666666666
-(byte*~) memcpy::dst#4 4.0
+(byte*) memcpy::dst#4 4.0
 (word) memcpy::num
 (void*) memcpy::return
 (void*) memcpy::source
@@ -357,7 +327,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) memcpy::src
 (byte*) memcpy::src#1 22.0
 (byte*) memcpy::src#2 11.5
-(byte*~) memcpy::src#4 2.0
+(byte*) memcpy::src#4 2.0
 (byte*) memcpy::src_end
 (byte*) memcpy::src_end#0 1.625
 
@@ -366,18 +336,18 @@ Initial phi equivalence classes
 [ memcpy::destination#2 ]
 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
-Added variable memcpy::src_end#0 to zero page equivalence class [ memcpy::src_end#0 ]
+Added variable memcpy::src_end#0 to live range equivalence class [ memcpy::src_end#0 ]
 Complete equivalence classes
 [ memcpy::source#2 ]
 [ memcpy::destination#2 ]
 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
 [ memcpy::src_end#0 ]
-Allocated zp ZP_WORD:2 [ memcpy::source#2 ]
-Allocated zp ZP_WORD:4 [ memcpy::destination#2 ]
-Allocated zp ZP_WORD:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
-Allocated zp ZP_WORD:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
-Allocated zp ZP_WORD:10 [ memcpy::src_end#0 ]
+Allocated zp[2]:2 [ memcpy::source#2 ]
+Allocated zp[2]:4 [ memcpy::destination#2 ]
+Allocated zp[2]:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
+Allocated zp[2]:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
+Allocated zp[2]:10 [ memcpy::src_end#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -422,7 +392,7 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[$3e8]) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_SCREEN
     sta.z memcpy.source
     lda #>MEDUSA_SCREEN
@@ -441,7 +411,7 @@ main: {
     sta.z memcpy.destination
     lda #>COLS
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[]) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_COLORS
     sta.z memcpy.source
     lda #>MEDUSA_COLORS
@@ -459,7 +429,7 @@ main: {
   // memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zeropage(4) destination, void* zeropage(2) source)
+// memcpy(void* zp(4) destination, void* zp(2) source)
 memcpy: {
     .label src_end = $a
     .label dst = 8
@@ -474,12 +444,12 @@ memcpy: {
     lda.z source+1
     adc #>$3e8
     sta.z src_end+1
-    // [11] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
+    // [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
     lda.z source
     sta.z src
     lda.z source+1
     sta.z src+1
-    // [12] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
+    // [12] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
     lda.z destination
     sta.z dst
     lda.z destination+1
@@ -487,8 +457,8 @@ memcpy: {
     // [13] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   __b1_from_memcpy:
   __b1_from___b2:
-    // [13] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [13] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [13] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [13] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
     // memcpy::@1
   __b1:
@@ -537,27 +507,27 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) BGCOL) ← (const byte) BLACK [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) SCREEN+(word) $3e7) ← *((const byte*) SCREEN+(word) $3e7) ^ (byte) $e [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) $3e8 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:2::memcpy:5 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] main:2::memcpy:7 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ) always clobbers reg byte a 
-Statement [11] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:5 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] main:2::memcpy:7 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ) always clobbers reg byte a 
-Statement [12] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:2::memcpy:5 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] main:2::memcpy:7 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ) always clobbers reg byte a 
+Statement [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:5 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] main:2::memcpy:7 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ) always clobbers reg byte a 
+Statement [12] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:2::memcpy:5 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] main:2::memcpy:7 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ) always clobbers reg byte a 
 Statement [14] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:5 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] main:2::memcpy:7 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ) always clobbers reg byte a 
 Statement [16] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:5 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] main:2::memcpy:7 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ memcpy::source#2 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ memcpy::destination#2 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_WORD:10 [ memcpy::src_end#0 ] : zp ZP_WORD:10 , 
+Potential registers zp[2]:2 [ memcpy::source#2 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ memcpy::destination#2 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ memcpy::src_end#0 ] : zp[2]:10 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memcpy] 35.5: zp ZP_WORD:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] 26.67: zp ZP_WORD:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] 1.62: zp ZP_WORD:10 [ memcpy::src_end#0 ] 0: zp ZP_WORD:2 [ memcpy::source#2 ] 0: zp ZP_WORD:4 [ memcpy::destination#2 ] 
+Uplift Scope [memcpy] 35.5: zp[2]:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] 26.67: zp[2]:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] 1.62: zp[2]:10 [ memcpy::src_end#0 ] 0: zp[2]:2 [ memcpy::source#2 ] 0: zp[2]:4 [ memcpy::destination#2 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [memcpy] best 919 combination zp ZP_WORD:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp ZP_WORD:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp ZP_WORD:10 [ memcpy::src_end#0 ] zp ZP_WORD:2 [ memcpy::source#2 ] zp ZP_WORD:4 [ memcpy::destination#2 ] 
+Uplifting [memcpy] best 919 combination zp[2]:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:10 [ memcpy::src_end#0 ] zp[2]:2 [ memcpy::source#2 ] zp[2]:4 [ memcpy::destination#2 ] 
 Uplifting [main] best 919 combination 
 Uplifting [] best 919 combination 
-Coalescing zero page register [ zp ZP_WORD:2 [ memcpy::source#2 ] ] with [ zp ZP_WORD:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:4 [ memcpy::destination#2 ] ] with [ zp ZP_WORD:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
-Allocated (was zp ZP_WORD:10) zp ZP_WORD:6 [ memcpy::src_end#0 ]
+Coalescing zero page register [ zp[2]:2 [ memcpy::source#2 ] ] with [ zp[2]:6 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ memcpy::destination#2 ] ] with [ zp[2]:8 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
+Allocated (was zp[2]:10) zp[2]:6 [ memcpy::src_end#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -601,7 +571,7 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[$3e8]) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_SCREEN
     sta.z memcpy.source
     lda #>MEDUSA_SCREEN
@@ -620,7 +590,7 @@ main: {
     sta.z memcpy.destination
     lda #>COLS
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[]) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_COLORS
     sta.z memcpy.source
     lda #>MEDUSA_COLORS
@@ -638,7 +608,7 @@ main: {
   // memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zeropage(4) destination, void* zeropage(2) source)
+// memcpy(void* zp(4) destination, void* zp(2) source)
 memcpy: {
     .label src_end = 6
     .label dst = 4
@@ -653,13 +623,13 @@ memcpy: {
     lda.z source+1
     adc #>$3e8
     sta.z src_end+1
-    // [11] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-    // [12] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+    // [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+    // [12] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
     // [13] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   __b1_from_memcpy:
   __b1_from___b2:
-    // [13] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [13] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [13] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [13] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
     // memcpy::@1
   __b1:
@@ -739,16 +709,16 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53281
-(const byte) BLACK BLACK = (byte) 0
-(const byte*) COLS COLS = (byte*) 55296
-(const byte[]) MEDUSA_COLORS MEDUSA_COLORS = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
+(const byte*) BGCOL = (byte*) 53281
+(const byte) BLACK = (byte) 0
+(const byte*) COLS = (byte*) 55296
+(const byte*) MEDUSA_COLORS[]  = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
-(const byte[$3e8]) MEDUSA_SCREEN MEDUSA_SCREEN = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
+(const byte*) MEDUSA_SCREEN[(number) $3e8]  = kickasm {{ .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)
  }}
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -757,25 +727,25 @@ FINAL SYMBOL TABLE
 (label) memcpy::@2
 (label) memcpy::@return
 (void*) memcpy::destination
-(void*) memcpy::destination#2 destination zp ZP_WORD:4
+(void*) memcpy::destination#2 destination zp[2]:4
 (byte*) memcpy::dst
-(byte*) memcpy::dst#1 dst zp ZP_WORD:4 11.0
-(byte*) memcpy::dst#2 dst zp ZP_WORD:4 11.666666666666666
-(byte*~) memcpy::dst#4 dst zp ZP_WORD:4 4.0
+(byte*) memcpy::dst#1 dst zp[2]:4 11.0
+(byte*) memcpy::dst#2 dst zp[2]:4 11.666666666666666
+(byte*) memcpy::dst#4 dst zp[2]:4 4.0
 (word) memcpy::num
 (void*) memcpy::return
 (void*) memcpy::source
-(void*) memcpy::source#2 source zp ZP_WORD:2
+(void*) memcpy::source#2 source zp[2]:2
 (byte*) memcpy::src
-(byte*) memcpy::src#1 src zp ZP_WORD:2 22.0
-(byte*) memcpy::src#2 src zp ZP_WORD:2 11.5
-(byte*~) memcpy::src#4 src zp ZP_WORD:2 2.0
+(byte*) memcpy::src#1 src zp[2]:2 22.0
+(byte*) memcpy::src#2 src zp[2]:2 11.5
+(byte*) memcpy::src#4 src zp[2]:2 2.0
 (byte*) memcpy::src_end
-(byte*) memcpy::src_end#0 src_end zp ZP_WORD:6 1.625
+(byte*) memcpy::src_end#0 src_end zp[2]:6 1.625
 
-zp ZP_WORD:2 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
-zp ZP_WORD:4 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
-zp ZP_WORD:6 [ memcpy::src_end#0 ]
+zp[2]:2 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
+zp[2]:4 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
+zp[2]:6 [ memcpy::src_end#0 ]
 
 
 FINAL ASSEMBLER
@@ -815,7 +785,7 @@ main: {
     sta.z memcpy.destination
     lda #>SCREEN
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[$3e8]) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_SCREEN [phi:main->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_SCREEN
     sta.z memcpy.source
     lda #>MEDUSA_SCREEN
@@ -831,7 +801,7 @@ main: {
     sta.z memcpy.destination
     lda #>COLS
     sta.z memcpy.destination+1
-    // [9] phi (void*) memcpy::source#2 = (void*)(const byte[]) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::source#2 = (void*)(const byte*) MEDUSA_COLORS [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<MEDUSA_COLORS
     sta.z memcpy.source
     lda #>MEDUSA_COLORS
@@ -849,7 +819,7 @@ main: {
   // memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zeropage(4) destination, void* zeropage(2) source)
+// memcpy(void* zp(4) destination, void* zp(2) source)
 memcpy: {
     .label src_end = 6
     .label dst = 4
@@ -865,11 +835,11 @@ memcpy: {
     lda.z source+1
     adc #>$3e8
     sta.z src_end+1
-    // [11] (byte*~) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-    // [12] (byte*~) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+    // [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+    // [12] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
     // [13] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-    // [13] phi (byte*) memcpy::dst#2 = (byte*~) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [13] phi (byte*) memcpy::src#2 = (byte*~) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [13] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [13] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     // memcpy::@1
   __b1:
     // while(src!=src_end)

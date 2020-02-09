@@ -6,7 +6,6 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.SymbolVariable;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.AssignmentRValue;
@@ -121,7 +120,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
          if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
             program.getLog().append("Inferred type updated to " + type + " for " + symbol.toString(program));
          }
-         symbol.setTypeInferred(type);
+         symbol.setType(type);
       }
    }
 
@@ -133,14 +132,6 @@ public class PassNTypeInference extends Pass2SsaOptimization {
          if(SymbolType.VAR.equals(symbol.getType()) || SymbolType.NUMBER.equals(symbol.getType())|| SymbolType.UNUMBER.equals(symbol.getType()) || SymbolType.SNUMBER.equals(symbol.getType())) {
             SymbolType type = SymbolTypeInference.inferType(programScope, new AssignmentRValue(assignment));
             setInferedType(program, assignment, symbol, type);
-            // If the type is an array or a string the symbol is constant
-            if(symbol.getType() instanceof SymbolTypeArray) {
-               symbol.setDeclaredConstant(true);
-               symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-            } else if(SymbolType.STRING.equals(symbol.getType())) {
-               symbol.setDeclaredConstant(true);
-               symbol.setStorageStrategy(SymbolVariable.StorageStrategy.CONSTANT);
-            }
          }
       }
    }
@@ -149,7 +140,7 @@ public class PassNTypeInference extends Pass2SsaOptimization {
       if(!SymbolType.VAR.equals(symbol.getType()) && !type.equals(symbol.getType())) {
          program.getLog().append("Inferred type updated to " + type + " in " + statement.toString(program, false));
       }
-      symbol.setTypeInferred(type);
+      symbol.setType(type);
    }
 
 

@@ -203,7 +203,7 @@ main: {
     str: .text "ddr port ddr2 $00 $01 $a000 $d000 $e000"
     .byte 0
 }
-// testProcport(byte register(X) ddr, byte zeropage(2) port, byte zeropage(3) ddr2)
+// testProcport(byte register(X) ddr, byte zp(2) port, byte zp(3) ddr2)
 testProcport: {
     .label port = 2
     .label ddr2 = 3
@@ -335,7 +335,7 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(6) str)
+// print_str(byte* zp(6) str)
 print_str: {
     .label str = 6
   __b1:

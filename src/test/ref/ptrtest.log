@@ -45,10 +45,9 @@ main::@return: scope:[main]  from main::@4
 
 (void()) lvalue()
 lvalue: scope:[lvalue]  from main
-  (byte[$400]) lvalue::SCREEN ← ((byte[$400])) (number) $400
-  *((byte[$400]) lvalue::SCREEN) ← (number) 1
-  *((byte[$400]) lvalue::SCREEN + (number) 1) ← (number) 2
-  (byte) lvalue::i#0 ← (number) 2
+  *((const byte*) lvalue::SCREEN) ← (number) 1
+  *((const byte*) lvalue::SCREEN + (number) 1) ← (number) 2
+  (byte) lvalue::i#0 ← (byte) 2
   to:lvalue::@1
 lvalue::@1: scope:[lvalue]  from lvalue lvalue::@2
   (byte) lvalue::i#2 ← phi( lvalue/(byte) lvalue::i#0 lvalue::@2/(byte) lvalue::i#1 )
@@ -57,7 +56,7 @@ lvalue::@1: scope:[lvalue]  from lvalue lvalue::@2
   to:lvalue::@return
 lvalue::@2: scope:[lvalue]  from lvalue::@1
   (byte) lvalue::i#3 ← phi( lvalue::@1/(byte) lvalue::i#2 )
-  *((byte[$400]) lvalue::SCREEN + (byte) lvalue::i#3) ← (number) 3
+  *((const byte*) lvalue::SCREEN + (byte) lvalue::i#3) ← (number) 3
   (byte) lvalue::i#1 ← ++ (byte) lvalue::i#3
   to:lvalue::@1
 lvalue::@return: scope:[lvalue]  from lvalue::@1
@@ -66,10 +65,9 @@ lvalue::@return: scope:[lvalue]  from lvalue::@1
 
 (void()) rvalue()
 rvalue: scope:[rvalue]  from main::@1
-  (byte[$400]) rvalue::SCREEN ← ((byte[$400])) (number) $400
-  (byte) rvalue::b#0 ← *((byte[$400]) rvalue::SCREEN)
-  (byte) rvalue::b#1 ← *((byte[$400]) rvalue::SCREEN + (number) 1)
-  (byte) rvalue::i#0 ← (number) 2
+  (byte) rvalue::b#0 ← *((const byte*) rvalue::SCREEN)
+  (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN + (number) 1)
+  (byte) rvalue::i#0 ← (byte) 2
   to:rvalue::@1
 rvalue::@1: scope:[rvalue]  from rvalue rvalue::@2
   (byte) rvalue::b#4 ← phi( rvalue/(byte) rvalue::b#1 rvalue::@2/(byte) rvalue::b#2 )
@@ -79,13 +77,12 @@ rvalue::@1: scope:[rvalue]  from rvalue rvalue::@2
   to:rvalue::@3
 rvalue::@2: scope:[rvalue]  from rvalue::@1
   (byte) rvalue::i#3 ← phi( rvalue::@1/(byte) rvalue::i#2 )
-  (byte) rvalue::b#2 ← *((byte[$400]) rvalue::SCREEN + (byte) rvalue::i#3)
+  (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#3)
   (byte) rvalue::i#1 ← ++ (byte) rvalue::i#3
   to:rvalue::@1
 rvalue::@3: scope:[rvalue]  from rvalue::@1
   (byte) rvalue::b#3 ← phi( rvalue::@1/(byte) rvalue::b#4 )
-  (byte*) rvalue::screen2 ← ((byte*)) (number) $400
-  *((byte*) rvalue::screen2) ← (byte) rvalue::b#3
+  *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3
   to:rvalue::@return
 rvalue::@return: scope:[rvalue]  from rvalue::@3
   return 
@@ -93,9 +90,8 @@ rvalue::@return: scope:[rvalue]  from rvalue::@3
 
 (void()) lvaluevar()
 lvaluevar: scope:[lvaluevar]  from main::@3
-  (byte*) lvaluevar::screen#0 ← ((byte*)) (number) $400
-  (byte) lvaluevar::b ← (number) 4
-  (byte) lvaluevar::i#0 ← (number) 2
+  (byte*) lvaluevar::screen#0 ← (byte*)(number) $400
+  (byte) lvaluevar::i#0 ← (byte) 2
   to:lvaluevar::@1
 lvaluevar::@1: scope:[lvaluevar]  from lvaluevar lvaluevar::@2
   (byte*) lvaluevar::screen#3 ← phi( lvaluevar/(byte*) lvaluevar::screen#0 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
@@ -106,7 +102,7 @@ lvaluevar::@1: scope:[lvaluevar]  from lvaluevar lvaluevar::@2
 lvaluevar::@2: scope:[lvaluevar]  from lvaluevar::@1
   (byte) lvaluevar::i#3 ← phi( lvaluevar::@1/(byte) lvaluevar::i#2 )
   (byte*) lvaluevar::screen#2 ← phi( lvaluevar::@1/(byte*) lvaluevar::screen#3 )
-  *((byte*) lvaluevar::screen#2) ← (byte) lvaluevar::b
+  *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b
   (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
   (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#3
   to:lvaluevar::@1
@@ -116,9 +112,9 @@ lvaluevar::@return: scope:[lvaluevar]  from lvaluevar::@1
 
 (void()) rvaluevar()
 rvaluevar: scope:[rvaluevar]  from main::@2
-  (byte*) rvaluevar::screen#0 ← ((byte*)) (number) $400
+  (byte*) rvaluevar::screen#0 ← (byte*)(number) $400
   (byte) rvaluevar::b#0 ← (byte) 0
-  (byte) rvaluevar::i#0 ← (number) 2
+  (byte) rvaluevar::i#0 ← (byte) 2
   to:rvaluevar::@1
 rvaluevar::@1: scope:[rvaluevar]  from rvaluevar rvaluevar::@2
   (byte) rvaluevar::b#3 ← phi( rvaluevar/(byte) rvaluevar::b#0 rvaluevar::@2/(byte) rvaluevar::b#1 )
@@ -136,8 +132,7 @@ rvaluevar::@2: scope:[rvaluevar]  from rvaluevar::@1
   to:rvaluevar::@1
 rvaluevar::@3: scope:[rvaluevar]  from rvaluevar::@1
   (byte) rvaluevar::b#2 ← phi( rvaluevar::@1/(byte) rvaluevar::b#3 )
-  (byte*) rvaluevar::screen2 ← ((byte*)) (number) $400
-  *((byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2
+  *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2
   to:rvaluevar::@return
 rvaluevar::@return: scope:[rvaluevar]  from rvaluevar::@3
   return 
@@ -159,7 +154,7 @@ SYMBOL TABLE SSA
 (label) lvalue::@1
 (label) lvalue::@2
 (label) lvalue::@return
-(byte[$400]) lvalue::SCREEN
+(const byte*) lvalue::SCREEN[(number) $400]  = (byte*)(number) $400
 (byte) lvalue::i
 (byte) lvalue::i#0
 (byte) lvalue::i#1
@@ -170,7 +165,7 @@ SYMBOL TABLE SSA
 (label) lvaluevar::@1
 (label) lvaluevar::@2
 (label) lvaluevar::@return
-(byte) lvaluevar::b
+(const byte) lvaluevar::b = (byte) 4
 (byte) lvaluevar::i
 (byte) lvaluevar::i#0
 (byte) lvaluevar::i#1
@@ -193,7 +188,7 @@ SYMBOL TABLE SSA
 (label) rvalue::@2
 (label) rvalue::@3
 (label) rvalue::@return
-(byte[$400]) rvalue::SCREEN
+(const byte*) rvalue::SCREEN[(number) $400]  = (byte*)(number) $400
 (byte) rvalue::b
 (byte) rvalue::b#0
 (byte) rvalue::b#1
@@ -205,7 +200,7 @@ SYMBOL TABLE SSA
 (byte) rvalue::i#1
 (byte) rvalue::i#2
 (byte) rvalue::i#3
-(byte*) rvalue::screen2
+(const byte*) rvalue::screen2 = (byte*)(number) $400
 (void()) rvaluevar()
 (bool~) rvaluevar::$0
 (label) rvaluevar::@1
@@ -227,72 +222,46 @@ SYMBOL TABLE SSA
 (byte*) rvaluevar::screen#1
 (byte*) rvaluevar::screen#2
 (byte*) rvaluevar::screen#3
-(byte*) rvaluevar::screen2
+(const byte*) rvaluevar::screen2 = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 1 in *((byte[$400]) lvalue::SCREEN) ← (number) 1
-Adding number conversion cast (unumber) 2 in *((byte[$400]) lvalue::SCREEN + (number) 1) ← (number) 2
-Adding number conversion cast (unumber) 1 in *((byte[$400]) lvalue::SCREEN + (number) 1) ← ((unumber)) (number) 2
-Adding number conversion cast (unumber) 2 in (byte) lvalue::i#0 ← (number) 2
+Adding number conversion cast (unumber) 1 in *((const byte*) lvalue::SCREEN) ← (number) 1
+Adding number conversion cast (unumber) 2 in *((const byte*) lvalue::SCREEN + (number) 1) ← (number) 2
+Adding number conversion cast (unumber) 1 in *((const byte*) lvalue::SCREEN + (number) 1) ← ((unumber)) (number) 2
 Adding number conversion cast (unumber) $a in (bool~) lvalue::$0 ← (byte) lvalue::i#2 < (number) $a
-Adding number conversion cast (unumber) 3 in *((byte[$400]) lvalue::SCREEN + (byte) lvalue::i#3) ← (number) 3
-Adding number conversion cast (unumber) 1 in (byte) rvalue::b#1 ← *((byte[$400]) rvalue::SCREEN + (number) 1)
-Adding number conversion cast (unumber) 2 in (byte) rvalue::i#0 ← (number) 2
+Adding number conversion cast (unumber) 3 in *((const byte*) lvalue::SCREEN + (byte) lvalue::i#3) ← (number) 3
+Adding number conversion cast (unumber) 1 in (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN + (number) 1)
 Adding number conversion cast (unumber) $a in (bool~) rvalue::$0 ← (byte) rvalue::i#2 < (number) $a
-Adding number conversion cast (unumber) 4 in (byte) lvaluevar::b ← (number) 4
-Adding number conversion cast (unumber) 2 in (byte) lvaluevar::i#0 ← (number) 2
 Adding number conversion cast (unumber) $a in (bool~) lvaluevar::$0 ← (byte) lvaluevar::i#2 < (number) $a
-Adding number conversion cast (unumber) 2 in (byte) rvaluevar::i#0 ← (number) 2
 Adding number conversion cast (unumber) $a in (bool~) rvaluevar::$0 ← (byte) rvaluevar::i#2 < (number) $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte[$400]) lvalue::SCREEN ← (byte[$400])(number) $400
-Inlining cast *((byte[$400]) lvalue::SCREEN) ← (unumber)(number) 1
-Inlining cast *((byte[$400]) lvalue::SCREEN + (unumber)(number) 1) ← (unumber)(number) 2
-Inlining cast (byte) lvalue::i#0 ← (unumber)(number) 2
-Inlining cast *((byte[$400]) lvalue::SCREEN + (byte) lvalue::i#3) ← (unumber)(number) 3
-Inlining cast (byte[$400]) rvalue::SCREEN ← (byte[$400])(number) $400
-Inlining cast (byte) rvalue::i#0 ← (unumber)(number) 2
-Inlining cast (byte*) rvalue::screen2 ← (byte*)(number) $400
-Inlining cast (byte*) lvaluevar::screen#0 ← (byte*)(number) $400
-Inlining cast (byte) lvaluevar::b ← (unumber)(number) 4
-Inlining cast (byte) lvaluevar::i#0 ← (unumber)(number) 2
-Inlining cast (byte*) rvaluevar::screen#0 ← (byte*)(number) $400
-Inlining cast (byte) rvaluevar::i#0 ← (unumber)(number) 2
-Inlining cast (byte*) rvaluevar::screen2 ← (byte*)(number) $400
+Inlining cast *((const byte*) lvalue::SCREEN) ← (unumber)(number) 1
+Inlining cast *((const byte*) lvalue::SCREEN + (unumber)(number) 1) ← (unumber)(number) 2
+Inlining cast *((const byte*) lvalue::SCREEN + (byte) lvalue::i#3) ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
-Simplifying constant integer cast 2
 Simplifying constant integer cast $a
 Simplifying constant integer cast 3
-Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
-Simplifying constant integer cast 2
 Simplifying constant integer cast $a
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 4
-Simplifying constant integer cast 2
 Simplifying constant integer cast $a
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 2
 Simplifying constant integer cast $a
-Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) lvalue::i#2 = (byte) lvalue::i#3 
@@ -304,25 +273,20 @@ Alias (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#3
 Alias (byte) rvaluevar::i#2 = (byte) rvaluevar::i#3 
 Alias (byte) rvaluevar::b#2 = (byte) rvaluevar::b#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) lvalue::$0 [11] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2
-Simple Condition (bool~) rvalue::$0 [22] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2
-Simple Condition (bool~) lvaluevar::$0 [35] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2
-Simple Condition (bool~) rvaluevar::$0 [46] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2
+Simple Condition (bool~) lvalue::$0 [10] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2
+Simple Condition (bool~) rvalue::$0 [20] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2
+Simple Condition (bool~) lvaluevar::$0 [31] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2
+Simple Condition (bool~) rvaluevar::$0 [42] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[$400]) lvalue::SCREEN = (byte*) 1024
 Constant (const byte) lvalue::i#0 = 2
-Constant (const byte[$400]) rvalue::SCREEN = (byte*) 1024
 Constant (const byte) rvalue::i#0 = 2
-Constant (const byte*) rvalue::screen2 = (byte*) 1024
 Constant (const byte*) lvaluevar::screen#0 = (byte*) 1024
-Constant (const byte) lvaluevar::b = 4
 Constant (const byte) lvaluevar::i#0 = 2
 Constant (const byte*) rvaluevar::screen#0 = (byte*) 1024
 Constant (const byte) rvaluevar::b#0 = 0
 Constant (const byte) rvaluevar::i#0 = 2
-Constant (const byte*) rvaluevar::screen2 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Eliminating unused variable (byte) rvalue::b#0 and assignment [12] (byte) rvalue::b#0 ← *((const byte[$400]) rvalue::SCREEN)
+Eliminating unused variable (byte) rvalue::b#0 and assignment [12] (byte) rvalue::b#0 ← *((const byte*) rvalue::SCREEN)
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) lvalue::i#0
 Inlining constant with var siblings (const byte) rvalue::i#0
@@ -455,7 +419,7 @@ rvaluevar::@2: scope:[rvaluevar]  from rvaluevar::@1
 
 (void()) rvalue()
 rvalue: scope:[rvalue]  from main::@1
-  [28] (byte) rvalue::b#1 ← *((const byte[$400]) rvalue::SCREEN+(byte) 1)
+  [28] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1)
   to:rvalue::@1
 rvalue::@1: scope:[rvalue]  from rvalue rvalue::@2
   [29] (byte) rvalue::b#3 ← phi( rvalue/(byte) rvalue::b#1 rvalue::@2/(byte) rvalue::b#2 )
@@ -469,14 +433,14 @@ rvalue::@return: scope:[rvalue]  from rvalue::@3
   [32] return 
   to:@return
 rvalue::@2: scope:[rvalue]  from rvalue::@1
-  [33] (byte) rvalue::b#2 ← *((const byte[$400]) rvalue::SCREEN + (byte) rvalue::i#2)
+  [33] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2)
   [34] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
   to:rvalue::@1
 
 (void()) lvalue()
 lvalue: scope:[lvalue]  from main
-  [35] *((const byte[$400]) lvalue::SCREEN) ← (byte) 1
-  [36] *((const byte[$400]) lvalue::SCREEN+(byte) 1) ← (byte) 2
+  [35] *((const byte*) lvalue::SCREEN) ← (byte) 1
+  [36] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2
   to:lvalue::@1
 lvalue::@1: scope:[lvalue]  from lvalue lvalue::@2
   [37] (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
@@ -486,7 +450,7 @@ lvalue::@return: scope:[lvalue]  from lvalue::@1
   [39] return 
   to:@return
 lvalue::@2: scope:[lvalue]  from lvalue::@1
-  [40] *((const byte[$400]) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3
+  [40] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3
   [41] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
   to:lvalue::@1
 
@@ -541,14 +505,14 @@ Complete equivalence classes
 [ rvalue::i#2 rvalue::i#1 ]
 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
 [ lvalue::i#2 lvalue::i#1 ]
-Allocated zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
-Allocated zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ]
-Allocated zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
-Allocated zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
-Allocated zp ZP_BYTE:8 [ rvaluevar::b#2 rvaluevar::b#1 ]
-Allocated zp ZP_BYTE:9 [ rvalue::i#2 rvalue::i#1 ]
-Allocated zp ZP_BYTE:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
-Allocated zp ZP_BYTE:11 [ lvalue::i#2 lvalue::i#1 ]
+Allocated zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
+Allocated zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ]
+Allocated zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
+Allocated zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
+Allocated zp[1]:8 [ rvaluevar::b#2 rvaluevar::b#1 ]
+Allocated zp[1]:9 [ rvalue::i#2 rvalue::i#1 ]
+Allocated zp[1]:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
+Allocated zp[1]:11 [ lvalue::i#2 lvalue::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -660,6 +624,7 @@ lvaluevar: {
   // rvaluevar
 rvaluevar: {
     .label screen2 = $400
+    // RValue Variable pointer dereference
     .label b = 8
     .label screen = 6
     .label i = 5
@@ -720,8 +685,9 @@ rvalue: {
     .label SCREEN = $400
     .label screen2 = $400
     .label b = $a
+    // RValue constant array variable index
     .label i = 9
-    // [28] (byte) rvalue::b#1 ← *((const byte[$400]) rvalue::SCREEN+(byte) 1) -- vbuz1=_deref_pbuc1 
+    // [28] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuz1=_deref_pbuc1 
     // RValue constant array pointer constant index
     lda SCREEN+1
     sta.z b
@@ -751,7 +717,7 @@ rvalue: {
     rts
     // rvalue::@2
   __b2:
-    // [33] (byte) rvalue::b#2 ← *((const byte[$400]) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [33] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda SCREEN,y
     sta.z b
@@ -767,12 +733,13 @@ rvalue: {
 lvalue: {
     // A constant pointer
     .label SCREEN = $400
+    // LValue constant array variable indexing
     .label i = $b
-    // [35] *((const byte[$400]) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [35] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // LValue constant pointer dereference
     lda #1
     sta SCREEN
-    // [36] *((const byte[$400]) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [36] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     // LValue constant array constant indexing
     lda #2
     sta SCREEN+1
@@ -795,7 +762,7 @@ lvalue: {
     rts
     // lvalue::@2
   __b2:
-    // [40] *((const byte[$400]) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [40] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #3
     ldy.z i
     sta SCREEN,y
@@ -810,45 +777,45 @@ lvalue: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
 Statement [25] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
-Statement [35] *((const byte[$400]) lvalue::SCREEN) ← (byte) 1 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
-Statement [36] *((const byte[$400]) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
-Statement [40] *((const byte[$400]) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:11 [ lvalue::i#2 lvalue::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
+Statement [35] *((const byte*) lvalue::SCREEN) ← (byte) 1 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
+Statement [36] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
+Statement [40] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:11 [ lvalue::i#2 lvalue::i#1 ]
 Statement [17] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b [ lvaluevar::i#2 lvaluevar::screen#2 ] ( main:2::lvaluevar:11 [ lvaluevar::i#2 lvaluevar::screen#2 ] ) always clobbers reg byte a reg byte y 
 Statement [25] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ( main:2::rvaluevar:9 [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ) always clobbers reg byte a reg byte y 
-Statement [35] *((const byte[$400]) lvalue::SCREEN) ← (byte) 1 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
-Statement [36] *((const byte[$400]) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
-Statement [40] *((const byte[$400]) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ] : zp ZP_BYTE:5 , reg byte x , 
-Potential registers zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_BYTE:8 [ rvaluevar::b#2 rvaluevar::b#1 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:9 [ rvalue::i#2 rvalue::i#1 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:11 [ lvalue::i#2 lvalue::i#1 ] : zp ZP_BYTE:11 , reg byte x , reg byte y , 
+Statement [35] *((const byte*) lvalue::SCREEN) ← (byte) 1 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
+Statement [36] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( main:2::lvalue:5 [ ] ) always clobbers reg byte a 
+Statement [40] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( main:2::lvalue:5 [ lvalue::i#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ] : zp[1]:5 , reg byte x , 
+Potential registers zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] : zp[2]:6 , 
+Potential registers zp[1]:8 [ rvaluevar::b#2 rvaluevar::b#1 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ rvalue::i#2 rvalue::i#1 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ lvalue::i#2 lvalue::i#1 ] : zp[1]:11 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [rvaluevar] 30.25: zp ZP_BYTE:5 [ rvaluevar::i#2 rvaluevar::i#1 ] 22: zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] 13.83: zp ZP_BYTE:8 [ rvaluevar::b#2 rvaluevar::b#1 ] 
-Uplift Scope [rvalue] 36.67: zp ZP_BYTE:9 [ rvalue::i#2 rvalue::i#1 ] 22.5: zp ZP_BYTE:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] 
-Uplift Scope [lvaluevar] 30.25: zp ZP_BYTE:2 [ lvaluevar::i#2 lvaluevar::i#1 ] 22: zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
-Uplift Scope [lvalue] 36.67: zp ZP_BYTE:11 [ lvalue::i#2 lvalue::i#1 ] 
+Uplift Scope [rvaluevar] 30.25: zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ] 22: zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] 13.83: zp[1]:8 [ rvaluevar::b#2 rvaluevar::b#1 ] 
+Uplift Scope [rvalue] 36.67: zp[1]:9 [ rvalue::i#2 rvalue::i#1 ] 22.5: zp[1]:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] 
+Uplift Scope [lvaluevar] 30.25: zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ] 22: zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
+Uplift Scope [lvalue] 36.67: zp[1]:11 [ lvalue::i#2 lvalue::i#1 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [rvaluevar] best 1954 combination reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ] zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] reg byte y [ rvaluevar::b#2 rvaluevar::b#1 ] 
+Uplifting [rvaluevar] best 1954 combination reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ] zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] reg byte y [ rvaluevar::b#2 rvaluevar::b#1 ] 
 Uplifting [rvalue] best 1798 combination reg byte x [ rvalue::i#2 rvalue::i#1 ] reg byte a [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] 
-Uplifting [lvaluevar] best 1708 combination reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ] zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
+Uplifting [lvaluevar] best 1708 combination reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ] zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
 Uplifting [lvalue] best 1588 combination reg byte x [ lvalue::i#2 lvalue::i#1 ] 
 Uplifting [main] best 1588 combination 
 Uplifting [] best 1588 combination 
-Coalescing zero page register [ zp ZP_WORD:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] ] with [ zp ZP_WORD:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] ]
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:2 [ rvaluevar::screen#2 rvaluevar::screen#1 lvaluevar::screen#2 lvaluevar::screen#1 ]
+Coalescing zero page register [ zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] ] with [ zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] ]
+Allocated (was zp[2]:6) zp[2]:2 [ rvaluevar::screen#2 rvaluevar::screen#1 lvaluevar::screen#2 lvaluevar::screen#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1009,7 +976,7 @@ rvalue: {
     // A constant pointer
     .label SCREEN = $400
     .label screen2 = $400
-    // [28] (byte) rvalue::b#1 ← *((const byte[$400]) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [28] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
     // RValue constant array pointer constant index
     lda SCREEN+1
     // [29] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
@@ -1035,7 +1002,7 @@ rvalue: {
     rts
     // rvalue::@2
   __b2:
-    // [33] (byte) rvalue::b#2 ← *((const byte[$400]) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [33] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
     // [34] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -1049,11 +1016,11 @@ rvalue: {
 lvalue: {
     // A constant pointer
     .label SCREEN = $400
-    // [35] *((const byte[$400]) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [35] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // LValue constant pointer dereference
     lda #1
     sta SCREEN
-    // [36] *((const byte[$400]) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [36] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     // LValue constant array constant indexing
     lda #2
     sta SCREEN+1
@@ -1074,7 +1041,7 @@ lvalue: {
     rts
     // lvalue::@2
   __b2:
-    // [40] *((const byte[$400]) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [40] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #3
     sta SCREEN,x
     // [41] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 -- vbuxx=_inc_vbuxx 
@@ -1150,7 +1117,7 @@ FINAL SYMBOL TABLE
 (label) lvalue::@1
 (label) lvalue::@2
 (label) lvalue::@return
-(const byte[$400]) lvalue::SCREEN SCREEN = (byte*) 1024
+(const byte*) lvalue::SCREEN[(number) $400]  = (byte*) 1024
 (byte) lvalue::i
 (byte) lvalue::i#1 reg byte x 22.0
 (byte) lvalue::i#2 reg byte x 14.666666666666666
@@ -1158,13 +1125,13 @@ FINAL SYMBOL TABLE
 (label) lvaluevar::@1
 (label) lvaluevar::@2
 (label) lvaluevar::@return
-(const byte) lvaluevar::b b = (byte) 4
+(const byte) lvaluevar::b = (byte) 4
 (byte) lvaluevar::i
 (byte) lvaluevar::i#1 reg byte x 22.0
 (byte) lvaluevar::i#2 reg byte x 8.25
 (byte*) lvaluevar::screen
-(byte*) lvaluevar::screen#1 screen zp ZP_WORD:2 11.0
-(byte*) lvaluevar::screen#2 screen zp ZP_WORD:2 11.0
+(byte*) lvaluevar::screen#1 screen zp[2]:2 11.0
+(byte*) lvaluevar::screen#2 screen zp[2]:2 11.0
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -1175,7 +1142,7 @@ FINAL SYMBOL TABLE
 (label) rvalue::@2
 (label) rvalue::@3
 (label) rvalue::@return
-(const byte[$400]) rvalue::SCREEN SCREEN = (byte*) 1024
+(const byte*) rvalue::SCREEN[(number) $400]  = (byte*) 1024
 (byte) rvalue::b
 (byte) rvalue::b#1 reg byte a 4.0
 (byte) rvalue::b#2 reg byte a 11.0
@@ -1183,7 +1150,7 @@ FINAL SYMBOL TABLE
 (byte) rvalue::i
 (byte) rvalue::i#1 reg byte x 22.0
 (byte) rvalue::i#2 reg byte x 14.666666666666666
-(const byte*) rvalue::screen2 screen2 = (byte*) 1024
+(const byte*) rvalue::screen2 = (byte*) 1024
 (void()) rvaluevar()
 (label) rvaluevar::@1
 (label) rvaluevar::@2
@@ -1196,13 +1163,13 @@ FINAL SYMBOL TABLE
 (byte) rvaluevar::i#1 reg byte x 22.0
 (byte) rvaluevar::i#2 reg byte x 8.25
 (byte*) rvaluevar::screen
-(byte*) rvaluevar::screen#1 screen zp ZP_WORD:2 11.0
-(byte*) rvaluevar::screen#2 screen zp ZP_WORD:2 11.0
-(const byte*) rvaluevar::screen2 screen2 = (byte*) 1024
+(byte*) rvaluevar::screen#1 screen zp[2]:2 11.0
+(byte*) rvaluevar::screen#2 screen zp[2]:2 11.0
+(const byte*) rvaluevar::screen2 = (byte*) 1024
 
 reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ]
 reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ]
-zp ZP_WORD:2 [ rvaluevar::screen#2 rvaluevar::screen#1 lvaluevar::screen#2 lvaluevar::screen#1 ]
+zp[2]:2 [ rvaluevar::screen#2 rvaluevar::screen#1 lvaluevar::screen#2 lvaluevar::screen#1 ]
 reg byte y [ rvaluevar::b#2 rvaluevar::b#1 ]
 reg byte x [ rvalue::i#2 rvalue::i#1 ]
 reg byte a [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
@@ -1353,7 +1320,7 @@ rvalue: {
     .label SCREEN = $400
     .label screen2 = $400
     // b = SCREEN[1]
-    // [28] (byte) rvalue::b#1 ← *((const byte[$400]) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [28] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
     // RValue constant array pointer constant index
     lda SCREEN+1
     // [29] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
@@ -1377,7 +1344,7 @@ rvalue: {
     // rvalue::@2
   __b2:
     // b = SCREEN[i++]
-    // [33] (byte) rvalue::b#2 ← *((const byte[$400]) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [33] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
     // b = SCREEN[i++];
     // [34] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuxx=_inc_vbuxx 
@@ -1392,12 +1359,12 @@ lvalue: {
     // A constant pointer
     .label SCREEN = $400
     // *SCREEN = 1
-    // [35] *((const byte[$400]) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [35] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // LValue constant pointer dereference
     lda #1
     sta SCREEN
     // SCREEN[1] = 2
-    // [36] *((const byte[$400]) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [36] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     // LValue constant array constant indexing
     lda #2
     sta SCREEN+1
@@ -1417,7 +1384,7 @@ lvalue: {
     // lvalue::@2
   __b2:
     // SCREEN[i++] = 3
-    // [40] *((const byte[$400]) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [40] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #3
     sta SCREEN,x
     // SCREEN[i++] = 3;

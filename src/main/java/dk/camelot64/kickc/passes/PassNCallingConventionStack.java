@@ -24,7 +24,7 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
    @Override
    public boolean step() {
       // Offset-constants for all stack-call parameters
-      Map<VariableRef, ConstantRef> offsetConstants = new HashMap<>();
+      Map<SymbolVariableRef, ConstantRef> offsetConstants = new HashMap<>();
 
       // Introduce STACK_OFFSET constants
       boolean createStackBase = false;

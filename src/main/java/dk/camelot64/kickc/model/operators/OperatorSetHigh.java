@@ -20,7 +20,7 @@ public class OperatorSetHigh extends OperatorBinary {
    @Override
    public SymbolType inferType(SymbolType left, SymbolType right) {
       if(left instanceof SymbolTypePointer) {
-         return left;
+         return new SymbolTypePointer(((SymbolTypePointer) left).getElementType());
       } else if(SymbolType.BYTE.equals(left)) {
          return SymbolType.WORD;
       } else if(SymbolType.SBYTE.equals(left)) {

@@ -4,13 +4,13 @@ Culled Empty Block (label) inci::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) i#0 ← (number) 0
+  (byte) i#0 ← (byte) 0
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
   (byte) i#13 ← phi( @2/(byte) i#14 )
-  (byte) main::a#0 ← (number) 4
+  (byte) main::a#0 ← (byte) 4
   call inci 
   (byte) inci::return#0 ← (byte) inci::return#3
   to:main::@1
@@ -33,9 +33,8 @@ main::@2: scope:[main]  from main::@1
   (byte) i#2 ← (byte) i#8
   (byte~) main::$3 ← (byte) main::a#4 + (byte~) main::$2
   (byte) main::a#2 ← (byte~) main::$3
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN) ← (byte) i#2
-  (byte*~) main::$4 ← (byte*) main::SCREEN + (number) 1
+  *((const byte*) main::SCREEN) ← (byte) i#2
+  (byte*~) main::$4 ← (const byte*) main::SCREEN + (number) 1
   *((byte*~) main::$4) ← (byte) main::a#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -109,7 +108,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::a
 (byte) main::a#0
 (byte) main::a#1
@@ -117,24 +116,14 @@ SYMBOL TABLE SSA
 (byte) main::a#3
 (byte) main::a#4
 
-Adding number conversion cast (unumber) 0 in (byte) i#0 ← (number) 0
-Adding number conversion cast (unumber) 4 in (byte) main::a#0 ← (number) 4
-Adding number conversion cast (unumber) 1 in (byte*~) main::$4 ← (byte*) main::SCREEN + (number) 1
+Adding number conversion cast (unumber) 1 in (byte*~) main::$4 ← (const byte*) main::SCREEN + (number) 1
 Adding number conversion cast (unumber) 7 in (number~) inci::$0 ← (byte) i#10 + (number) 7
 Adding number conversion cast (unumber) inci::$0 in (number~) inci::$0 ← (byte) i#10 + (unumber)(number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) i#0 ← (unumber)(number) 0
-Inlining cast (byte) main::a#0 ← (unumber)(number) 4
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 4
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -156,21 +145,18 @@ Identical Phi Values (byte) i#1 (byte) i#11
 Identical Phi Values (byte) i#2 (byte) i#11
 Identical Phi Values (byte) i#12 (byte) i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [18] (byte*~) main::$4 ← (const byte*) main::SCREEN + (byte) 1
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 4
-Constant (const byte*) main::SCREEN = (byte*) 1024
+Constant (const byte*) main::$4 = main::SCREEN+1
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [20] *((byte*~) main::$4) ← (byte) main::a#2  -- *(main::SCREEN + 1)
-Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable (byte*~) main::$4 and assignment [9] (byte*~) main::$4 ← (const byte*) main::SCREEN + (byte) 1
-Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) main::a#0
 Inlining constant with var siblings (const byte) i#0
 Constant inlined main::a#0 = (byte) 4
+Constant inlined main::$4 = (const byte*) main::SCREEN+(byte) 1
 Constant inlined i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Consolidated array index constant in *(main::SCREEN+1)
-Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
@@ -252,13 +238,13 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ i#10 i#11 ]
-Added variable inci::return#0 to zero page equivalence class [ inci::return#0 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::a#1 to zero page equivalence class [ main::a#1 ]
-Added variable inci::return#1 to zero page equivalence class [ inci::return#1 ]
-Added variable main::$2 to zero page equivalence class [ main::$2 ]
-Added variable main::a#2 to zero page equivalence class [ main::a#2 ]
-Added variable inci::return#2 to zero page equivalence class [ inci::return#2 ]
+Added variable inci::return#0 to live range equivalence class [ inci::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::a#1 to live range equivalence class [ main::a#1 ]
+Added variable inci::return#1 to live range equivalence class [ inci::return#1 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::a#2 to live range equivalence class [ main::a#2 ]
+Added variable inci::return#2 to live range equivalence class [ inci::return#2 ]
 Complete equivalence classes
 [ i#10 i#11 ]
 [ inci::return#0 ]
@@ -268,14 +254,14 @@ Complete equivalence classes
 [ main::$2 ]
 [ main::a#2 ]
 [ inci::return#2 ]
-Allocated zp ZP_BYTE:2 [ i#10 i#11 ]
-Allocated zp ZP_BYTE:3 [ inci::return#0 ]
-Allocated zp ZP_BYTE:4 [ main::$0 ]
-Allocated zp ZP_BYTE:5 [ main::a#1 ]
-Allocated zp ZP_BYTE:6 [ inci::return#1 ]
-Allocated zp ZP_BYTE:7 [ main::$2 ]
-Allocated zp ZP_BYTE:8 [ main::a#2 ]
-Allocated zp ZP_BYTE:9 [ inci::return#2 ]
+Allocated zp[1]:2 [ i#10 i#11 ]
+Allocated zp[1]:3 [ inci::return#0 ]
+Allocated zp[1]:4 [ main::$0 ]
+Allocated zp[1]:5 [ main::a#1 ]
+Allocated zp[1]:6 [ inci::return#1 ]
+Allocated zp[1]:7 [ main::$2 ]
+Allocated zp[1]:8 [ main::a#2 ]
+Allocated zp[1]:9 [ inci::return#2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -308,7 +294,7 @@ main: {
     .label __0 = 4
     .label __2 = 7
     .label a = 5
-    .label a_2 = 8
+    .label a_1 = 8
     // [5] call inci 
     // [16] phi from main to inci [phi:main->inci]
   inci_from_main:
@@ -347,12 +333,12 @@ main: {
     lda.z a
     clc
     adc.z __2
-    sta.z a_2
+    sta.z a_1
     // [13] *((const byte*) main::SCREEN) ← (byte) i#11 -- _deref_pbuc1=vbuz1 
     lda.z i
     sta SCREEN
     // [14] *((const byte*) main::SCREEN+(byte) 1) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
-    lda.z a_2
+    lda.z a_1
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -382,32 +368,32 @@ inci: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ i#10 i#11 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ i#10 i#11 ]
 Statement [17] (byte) i#11 ← (byte) i#10 + (byte) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:5 [ main::a#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::a#1 ]
 Statement [12] (byte) main::a#2 ← (byte) main::a#1 + (byte~) main::$2 [ main::a#2 i#11 ] ( main:2 [ main::a#2 i#11 ] ) always clobbers reg byte a 
 Statement [17] (byte) i#11 ← (byte) i#10 + (byte) 7 [ i#11 ] ( main:2::inci:5 [ i#11 ] main:2::inci:9 [ main::a#1 i#11 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ i#10 i#11 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ inci::return#0 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ main::$0 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ main::a#1 ] : zp ZP_BYTE:5 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ inci::return#1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ main::$2 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:8 [ main::a#2 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:9 [ inci::return#2 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ i#10 i#11 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ inci::return#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::a#1 ] : zp[1]:5 , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ inci::return#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::$2 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ main::a#2 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ inci::return#2 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 4: zp ZP_BYTE:4 [ main::$0 ] 4: zp ZP_BYTE:7 [ main::$2 ] 2: zp ZP_BYTE:8 [ main::a#2 ] 1: zp ZP_BYTE:5 [ main::a#1 ] 
-Uplift Scope [inci] 4: zp ZP_BYTE:3 [ inci::return#0 ] 4: zp ZP_BYTE:6 [ inci::return#1 ] 1.5: zp ZP_BYTE:9 [ inci::return#2 ] 
-Uplift Scope [] 4.73: zp ZP_BYTE:2 [ i#10 i#11 ] 
+Uplift Scope [main] 4: zp[1]:4 [ main::$0 ] 4: zp[1]:7 [ main::$2 ] 2: zp[1]:8 [ main::a#2 ] 1: zp[1]:5 [ main::a#1 ] 
+Uplift Scope [inci] 4: zp[1]:3 [ inci::return#0 ] 4: zp[1]:6 [ inci::return#1 ] 1.5: zp[1]:9 [ inci::return#2 ] 
+Uplift Scope [] 4.73: zp[1]:2 [ i#10 i#11 ] 
 
-Uplifting [main] best 110 combination reg byte a [ main::$0 ] reg byte a [ main::$2 ] reg byte x [ main::a#2 ] zp ZP_BYTE:5 [ main::a#1 ] 
+Uplifting [main] best 110 combination reg byte a [ main::$0 ] reg byte a [ main::$2 ] reg byte x [ main::a#2 ] zp[1]:5 [ main::a#1 ] 
 Limited combination testing to 100 combinations of 192 possible.
 Uplifting [inci] best 89 combination reg byte a [ inci::return#0 ] reg byte a [ inci::return#1 ] reg byte a [ inci::return#2 ] 
 Uplifting [] best 82 combination reg byte y [ i#10 i#11 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:5 [ main::a#1 ]
-Uplifting [main] best 82 combination zp ZP_BYTE:5 [ main::a#1 ] 
-Allocated (was zp ZP_BYTE:5) zp ZP_BYTE:2 [ main::a#1 ]
+Attempting to uplift remaining variables inzp[1]:5 [ main::a#1 ]
+Uplifting [main] best 82 combination zp[1]:5 [ main::a#1 ] 
+Allocated (was zp[1]:5) zp[1]:2 [ main::a#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -539,15 +525,15 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::a
-(byte) main::a#1 a zp ZP_BYTE:2 1.0
+(byte) main::a#1 a zp[1]:2 1.0
 (byte) main::a#2 reg byte x 2.0
 
 reg byte y [ i#10 i#11 ]
 reg byte a [ inci::return#0 ]
 reg byte a [ main::$0 ]
-zp ZP_BYTE:2 [ main::a#1 ]
+zp[1]:2 [ main::a#1 ]
 reg byte a [ inci::return#1 ]
 reg byte a [ main::$2 ]
 reg byte x [ main::a#2 ]

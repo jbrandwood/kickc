@@ -10,8 +10,9 @@ __bbegin:
   rts
 main: {
     .label SCREEN1 = $400
-    .label ptr = val
     .label SCREEN2 = SCREEN1+$28
+    // Use address-of - hereafter all versions of val must be in the same memory
+    .label ptr = val
     lda.z val
     sta SCREEN1
     lda #'.'

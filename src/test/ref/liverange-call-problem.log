@@ -6,8 +6,8 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (word) w1#0 ← (number) 0
-  (word) w2#0 ← (number) 0
+  (word) w1#0 ← (word) 0
+  (word) w2#0 ← (word) 0
   to:@3
 
 (void()) main()
@@ -38,11 +38,10 @@ main::@4: scope:[main]  from main::@3
   (word) w1#9 ← phi( main::@3/(word) w1#2 )
   (word) w2#8 ← phi( main::@3/(word) w2#5 )
   (word) w2#2 ← (word) w2#8
-  (word*) main::SCREEN ← ((word*)) (number) $400
   (number~) main::$4 ← (number) 0 * (const byte) SIZEOF_WORD
-  *((word*) main::SCREEN + (number~) main::$4) ← (word) w1#9
+  *((const word*) main::SCREEN + (number~) main::$4) ← (word) w1#9
   (number~) main::$5 ← (number) 2 * (const byte) SIZEOF_WORD
-  *((word*) main::SCREEN + (number~) main::$5) ← (word) w2#2
+  *((const word*) main::SCREEN + (number~) main::$5) ← (word) w2#2
   to:main::@return
 main::@return: scope:[main]  from main::@4
   (word) w2#9 ← phi( main::@4/(word) w2#2 )
@@ -104,7 +103,7 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(word*) main::SCREEN
+(const word*) main::SCREEN = (word*)(number) $400
 (word) w1
 (word) w1#0
 (word) w1#1
@@ -142,25 +141,15 @@ SYMBOL TABLE SSA
 (word) w2#8
 (word) w2#9
 
-Adding number conversion cast (unumber) 0 in (word) w1#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (word) w2#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (number~) main::$4 ← (number) 0 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber)(number) 0 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) 2 in (number~) main::$5 ← (number) 2 * (const byte) SIZEOF_WORD
 Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber)(number) 2 * (const byte) SIZEOF_WORD
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word) w1#0 ← (unumber)(number) 0
-Inlining cast (word) w2#0 ← (unumber)(number) 0
-Inlining cast (word*) main::SCREEN ← (word*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -187,26 +176,25 @@ Identical Phi Values (word) w2#2 (word) w2#11
 Identical Phi Values (word) w1#13 (word) w1#10
 Identical Phi Values (word) w2#12 (word) w2#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [16] (byte~) main::$4 ← (byte) 0 * (const byte) SIZEOF_WORD
-Constant right-side identified [18] (byte~) main::$5 ← (byte) 2 * (const byte) SIZEOF_WORD
+Constant right-side identified [15] (byte~) main::$4 ← (byte) 0 * (const byte) SIZEOF_WORD
+Constant right-side identified [17] (byte~) main::$5 ← (byte) 2 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) w1#0 = 0
 Constant (const word) w2#0 = 0
-Constant (const word*) main::SCREEN = (word*) 1024
 Constant (const byte) main::$4 = 0*SIZEOF_WORD
 Constant (const byte) main::$5 = 2*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::SCREEN in [17] *((const word*) main::SCREEN + (const byte) main::$4) ← (word) w1#12
+Simplifying expression containing zero main::SCREEN in [16] *((const word*) main::SCREEN + (const byte) main::$4) ← (word) w1#12
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$4
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const word) w1#0
 Inlining constant with var siblings (const word) w2#0
 Constant inlined main::$5 = (byte) 2*(const byte) SIZEOF_WORD
-Constant inlined w1#0 = (byte) 0
-Constant inlined w2#0 = (byte) 0
+Constant inlined w1#0 = (word) 0
+Constant inlined w2#0 = (word) 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+2*SIZEOF_WORD)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -272,7 +260,7 @@ main::@return: scope:[main]  from main::@4
 
 (void()) incw2()
 incw2: scope:[incw2]  from main::@1 main::@3
-  [15] (word) w2#10 ← phi( main::@1/(byte) 0 main::@3/(word) w2#11 )
+  [15] (word) w2#10 ← phi( main::@1/(word) 0 main::@3/(word) w2#11 )
   [16] (word) w2#11 ← ++ (word) w2#10
   to:incw2::@return
 incw2::@return: scope:[incw2]  from incw2
@@ -281,7 +269,7 @@ incw2::@return: scope:[incw2]  from incw2
 
 (void()) incw1()
 incw1: scope:[incw1]  from main main::@2
-  [18] (word) w1#11 ← phi( main/(byte) 0 main::@2/(word) w1#12 )
+  [18] (word) w1#11 ← phi( main/(word) 0 main::@2/(word) w1#12 )
   [19] (word) w1#12 ← ++ (word) w1#11
   to:incw1::@return
 incw1::@return: scope:[incw1]  from incw1
@@ -306,8 +294,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ w2#10 w2#11 ]
 [ w1#11 w1#12 ]
-Allocated zp ZP_WORD:2 [ w2#10 w2#11 ]
-Allocated zp ZP_WORD:4 [ w1#11 w1#12 ]
+Allocated zp[2]:2 [ w2#10 w2#11 ]
+Allocated zp[2]:4 [ w1#11 w1#12 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -344,7 +332,7 @@ main: {
     // [5] call incw1 
     // [18] phi from main to incw1 [phi:main->incw1]
   incw1_from_main:
-    // [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
+    // [18] phi (word) w1#11 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w1
     lda #>0
@@ -358,7 +346,7 @@ main: {
     // [7] call incw2 
     // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
   incw2_from___b1:
-    // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
+    // [15] phi (word) w2#10 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w2
     lda #>0
@@ -434,16 +422,16 @@ incw1: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] *((const word*) main::SCREEN) ← (word) w1#12 [ w2#11 ] ( main:2 [ w2#11 ] ) always clobbers reg byte a 
 Statement [13] *((const word*) main::SCREEN+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#11 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ w2#10 w2#11 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ w1#11 w1#12 ] : zp ZP_WORD:4 , 
+Potential registers zp[2]:2 [ w2#10 w2#11 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ w1#11 w1#12 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 4.75: zp ZP_WORD:2 [ w2#10 w2#11 ] 4.67: zp ZP_WORD:4 [ w1#11 w1#12 ] 
+Uplift Scope [] 4.75: zp[2]:2 [ w2#10 w2#11 ] 4.67: zp[2]:4 [ w1#11 w1#12 ] 
 Uplift Scope [main] 
 Uplift Scope [incw1] 
 Uplift Scope [incw2] 
 
-Uplifting [] best 147 combination zp ZP_WORD:2 [ w2#10 w2#11 ] zp ZP_WORD:4 [ w1#11 w1#12 ] 
+Uplifting [] best 147 combination zp[2]:2 [ w2#10 w2#11 ] zp[2]:4 [ w1#11 w1#12 ] 
 Uplifting [main] best 147 combination 
 Uplifting [incw1] best 147 combination 
 Uplifting [incw2] best 147 combination 
@@ -482,7 +470,7 @@ main: {
     // [5] call incw1 
     // [18] phi from main to incw1 [phi:main->incw1]
   incw1_from_main:
-    // [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
+    // [18] phi (word) w1#11 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w1
     lda #>0
@@ -496,7 +484,7 @@ main: {
     // [7] call incw2 
     // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
   incw2_from___b1:
-    // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
+    // [15] phi (word) w2#10 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w2
     lda #>0
@@ -615,7 +603,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) SIZEOF_WORD SIZEOF_WORD = (byte) 2
+(const byte) SIZEOF_WORD = (byte) 2
 (void()) incw1()
 (label) incw1::@return
 (void()) incw2()
@@ -626,16 +614,16 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(const word*) main::SCREEN SCREEN = (word*) 1024
+(const word*) main::SCREEN = (word*) 1024
 (word) w1
-(word) w1#11 w1 zp ZP_WORD:4 4.0
-(word) w1#12 w1 zp ZP_WORD:4 0.6666666666666666
+(word) w1#11 w1 zp[2]:4 4.0
+(word) w1#12 w1 zp[2]:4 0.6666666666666666
 (word) w2
-(word) w2#10 w2 zp ZP_WORD:2 4.0
-(word) w2#11 w2 zp ZP_WORD:2 0.75
+(word) w2#10 w2 zp[2]:2 4.0
+(word) w2#11 w2 zp[2]:2 0.75
 
-zp ZP_WORD:2 [ w2#10 w2#11 ]
-zp ZP_WORD:4 [ w1#11 w1#12 ]
+zp[2]:2 [ w2#10 w2#11 ]
+zp[2]:4 [ w1#11 w1#12 ]
 
 
 FINAL ASSEMBLER
@@ -665,7 +653,7 @@ main: {
     // incw1()
     // [5] call incw1 
     // [18] phi from main to incw1 [phi:main->incw1]
-    // [18] phi (word) w1#11 = (byte) 0 [phi:main->incw1#0] -- vwuz1=vbuc1 
+    // [18] phi (word) w1#11 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w1
     sta.z w1+1
@@ -675,7 +663,7 @@ main: {
     // incw2()
     // [7] call incw2 
     // [15] phi from main::@1 to incw2 [phi:main::@1->incw2]
-    // [15] phi (word) w2#10 = (byte) 0 [phi:main::@1->incw2#0] -- vwuz1=vbuc1 
+    // [15] phi (word) w2#10 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w2
     sta.z w2+1

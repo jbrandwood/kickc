@@ -11,12 +11,11 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.PointerDereference;
-import dk.camelot64.kickc.model.values.RValue;
-import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.model.values.*;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -38,17 +37,17 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
                AssignmentRValue assignmentRValue = new AssignmentRValue(assignment, block);
-               if(!assignmentRValue.isConstant() && !assignmentRValue.isTrivial() && !assignmentRValue.isVolatile()) {
+               if(!assignmentRValue.isConstant() && !assignmentRValue.isTrivial() && !assignmentRValue.isVolatile()&& !assignmentRValue.isLoadStore()) {
                   if(rValues.contains(assignmentRValue)) {
                      AssignmentRValue firstAssignment = rValues.stream().filter(assignmentRValue1 -> assignmentRValue1.equals(assignmentRValue)).findFirst().get();
                      if(firstAssignment.assignment.getlValue() instanceof VariableRef) {
-                        getLog().append("Identified duplicate assignment right side "+assignment.toString(getProgram(), false));
+                        getLog().append("Identified duplicate assignment right side " + assignment.toString(getProgram(), false));
                         assignment.setrValue1(null);
                         assignment.setOperator(null);
                         assignment.setrValue2(firstAssignment.assignment.getlValue());
                         modified = true;
                      } else {
-                        throw new InternalError("Complex lValue for duplicate rvalue "+firstAssignment.assignment.toString(getProgram(), false));
+                        throw new InternalError("Complex lValue for duplicate rvalue " + firstAssignment.assignment.toString(getProgram(), false));
                      }
                   } else {
                      rValues.add(assignmentRValue);
@@ -86,6 +85,21 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(rValue2 != null && !(rValue2 instanceof ConstantValue))
             return false;
          return true;
+      }
+
+      private boolean isLoadStore() {
+         AtomicBoolean isLoadStore = new AtomicBoolean(false);
+         ProgramValueHandler loadStoreIdentificator = (programValue, currentStmt, stmtIt, currentBlock) -> {
+            Value value = programValue.get();
+            if(value instanceof VariableRef) {
+               Variable var = getScope().getVar((VariableRef) value);
+               if(var.isKindLoadStore())
+                  isLoadStore.set(true);
+            }
+         };
+         ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue1), loadStoreIdentificator,  assignment, null, block);
+         ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue2), loadStoreIdentificator,  assignment, null, block);
+         return isLoadStore.get();
       }
 
       private boolean isVolatile() {

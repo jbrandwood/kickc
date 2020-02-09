@@ -8,9 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) main::state ← (const byte) main::ON
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
-  *((byte*) main::SCREEN) ← (byte) main::state
+  *((const byte*) main::SCREEN) ← (const byte) main::state
   call test 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -21,9 +19,7 @@ main::@return: scope:[main]  from main::@1
 
 (void()) test()
 test: scope:[test]  from main
-  (byte) test::state ← (const byte) test::ON
-  (byte*) test::SCREEN ← ((byte*)) (number) $428
-  *((byte*) test::SCREEN) ← (byte) test::state
+  *((const byte*) test::SCREEN) ← (const byte) test::state
   to:test::@return
 test::@return: scope:[test]  from test
   return 
@@ -44,25 +40,17 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (const byte) main::ON = (byte) 1
-(byte*) main::SCREEN
-(byte) main::state
+(const byte*) main::SCREEN = (byte*)(number) $400
+(const byte) main::state = (const byte) main::ON
 (void()) test()
 (label) test::@return
 (const byte) test::ON = (byte) 8
-(byte*) test::SCREEN
-(byte) test::state
+(const byte*) test::SCREEN = (byte*)(number) $428
+(const byte) test::state = (const byte) test::ON
 
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) test::SCREEN ← (byte*)(number) $428
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1064
 Successful SSA optimization PassNCastSimplification
-Constant (const byte) main::state = main::ON
-Constant (const byte*) main::SCREEN = (byte*) 1024
-Constant (const byte) test::state = test::ON
-Constant (const byte*) test::SCREEN = (byte*) 1064
-Successful SSA optimization Pass2ConstantIdentification
 Constant inlined main::state = (const byte) main::ON
 Constant inlined test::state = (const byte) test::ON
 Successful SSA optimization Pass2ConstantInlining
@@ -265,12 +253,12 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte) main::ON ON = (byte) 1
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte) main::ON = (byte) 1
+(const byte*) main::SCREEN = (byte*) 1024
 (void()) test()
 (label) test::@return
-(const byte) test::ON ON = (byte) 8
-(const byte*) test::SCREEN SCREEN = (byte*) 1064
+(const byte) test::ON = (byte) 8
+(const byte*) test::SCREEN = (byte*) 1064
 
 
 

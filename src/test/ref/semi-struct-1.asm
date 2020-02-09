@@ -117,7 +117,7 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zp(2) str)
 print_str: {
     .label str = 2
     lda #<print_points.str

@@ -12,15 +12,15 @@ main: {
     jsr print
     jsr print
     rts
-    string: .text "rex"
+    rex1: .text "rex"
     .byte 0
 }
-// print(byte* zeropage(4) string)
+// print(byte* zp(4) string)
 print: {
     .label string = 4
-    lda #<main.string
+    lda #<main.rex1
     sta.z string
-    lda #>main.string
+    lda #>main.rex1
     sta.z string+1
   __b1:
     ldy #0

@@ -1,16 +1,15 @@
-Fixing pointer array-indexing *((struct Point[4]) points + (byte) main::i)
-Fixing pointer array-indexing *((struct Point[4]) points + (byte) main::i)
-Fixing pointer array-indexing *((struct Point[4]) points + (byte) main::i1)
-Fixing pointer array-indexing *((struct Point[4]) points + (byte) main::i1)
-Rewriting struct pointer member access *((struct Point[4]) points + (byte~) main::$4).x
-Rewriting struct pointer member access *((struct Point[4]) points + (byte~) main::$5).y
-Rewriting struct pointer member access *((struct Point[4]) points + (byte~) main::$6).x
-Rewriting struct pointer member access *((struct Point[4]) points + (byte~) main::$7).y
+Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i)
+Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i)
+Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i1)
+Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i1)
+Replacing struct member reference *((const struct Point*) points + (byte~) main::$3).x with member unwinding reference *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$3)
+Replacing struct member reference *((const struct Point*) points + (byte~) main::$4).y with member unwinding reference *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4)
+Replacing struct member reference *((const struct Point*) points + (byte~) main::$5).x with member unwinding reference *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$5)
+Replacing struct member reference *((const struct Point*) points + (byte~) main::$6).y with member unwinding reference *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6)
 Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (struct Point[4]) points ← { fill( 4, 0) }
   to:@1
 
 (void()) main()
@@ -19,33 +18,27 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$4 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*) main::$8 ← (byte*)(struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*) main::$8 + (byte~) main::$4) ← (byte) main::i#2
+  (byte~) main::$3 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
+  *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$3) ← (byte) main::i#2
   (number~) main::$0 ← (byte) main::i#2 + (number) 1
-  (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*) main::$9 ← (byte*)(struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*) main::$9 + (byte~) main::$5) ← (number~) main::$0
+  (byte~) main::$4 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
+  *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4) ← (number~) main::$0
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,4)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,4)
   if((bool~) main::$1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i1#0 ← (byte) 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
   (byte) main::i1#2 ← phi( main::@2/(byte) main::i1#0 main::@3/(byte) main::i1#1 )
+  (byte~) main::$5 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
+  *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$5)
   (byte~) main::$6 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*) main::$10 ← (byte*)(struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_X
-  *((byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*) main::$10 + (byte~) main::$6)
-  (byte*~) main::$2 ← (byte*) main::SCREEN + (number) $28
-  (byte~) main::$7 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
-  (byte*) main::$11 ← (byte*)(struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-  *((byte*~) main::$2 + (byte) main::i1#2) ← *((byte*) main::$11 + (byte~) main::$7)
+  *((const byte*) main::SCREEN+(number) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6)
   (byte) main::i1#1 ← (byte) main::i1#2 + rangenext(0,4)
-  (bool~) main::$3 ← (byte) main::i1#1 != rangelast(0,4)
-  if((bool~) main::$3) goto main::@3
+  (bool~) main::$2 ← (byte) main::i1#1 != rangelast(0,4)
+  if((bool~) main::$2) goto main::@3
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -70,21 +63,16 @@ SYMBOL TABLE SSA
 (void()) main()
 (number~) main::$0
 (bool~) main::$1
-(byte*) main::$10
-(byte*) main::$11
-(byte*~) main::$2
-(bool~) main::$3
+(bool~) main::$2
+(byte~) main::$3
 (byte~) main::$4
 (byte~) main::$5
 (byte~) main::$6
-(byte~) main::$7
-(byte*) main::$8
-(byte*) main::$9
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -93,46 +81,35 @@ SYMBOL TABLE SSA
 (byte) main::i1#0
 (byte) main::i1#1
 (byte) main::i1#2
-(struct Point[4]) points
+(const struct Point*) points[(number) 4]  = { fill( 4, 0) }
 
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#2 + (number) 1
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#2 + (unumber)(number) 1
-Adding number conversion cast (unumber) $28 in (byte*~) main::$2 ← (byte*) main::SCREEN + (number) $28
+Adding number conversion cast (unumber) $28 in *((const byte*) main::SCREEN+(number) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#2 + (byte) 1
-Identified duplicate assignment right side [7] (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-Identified duplicate assignment right side [20] (byte~) main::$7 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
+Identified duplicate assignment right side [5] (byte~) main::$4 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
+Identified duplicate assignment right side [14] (byte~) main::$6 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$1 [12] if((byte) main::i#1!=rangelast(0,4)) goto main::@1
-Simple Condition (bool~) main::$3 [25] if((byte) main::i1#1!=rangelast(0,4)) goto main::@3
+Simple Condition (bool~) main::$1 [9] if((byte) main::i#1!=rangelast(0,4)) goto main::@1
+Simple Condition (bool~) main::$2 [18] if((byte) main::i1#1!=rangelast(0,4)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (struct Point[4]) points ← { fill( 4, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const struct Point[4]) points = { fill( 4, 0) }
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i1#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)points in [4] (byte*) main::$8 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)points in [8] (byte*) main::$9 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Constant value identified (byte*)points in [17] (byte*) main::$10 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_X
-Constant value identified (byte*)points in [21] (byte*) main::$11 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantValues
-Resolved ranged next value [10] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [12] if(main::i#1!=rangelast(0,4)) goto main::@1 to (number) 5
-Resolved ranged next value [23] main::i1#1 ← ++ main::i1#2 to ++
-Resolved ranged comparison value [25] if(main::i1#1!=rangelast(0,4)) goto main::@3 to (number) 5
-Simplifying expression containing zero (byte*)points in [4] (byte*) main::$8 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_X
-Simplifying expression containing zero (byte*)points in [17] (byte*) main::$10 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_X
+Resolved ranged next value [7] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [9] if(main::i#1!=rangelast(0,4)) goto main::@1 to (number) 5
+Resolved ranged next value [16] main::i1#1 ← ++ main::i1#2 to ++
+Resolved ranged comparison value [18] if(main::i1#1!=rangelast(0,4)) goto main::@3 to (number) 5
+Simplifying expression containing zero (byte*)points in [3] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$3) ← (byte) main::i#2
+Simplifying expression containing zero (byte*)points in [13] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$5)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -145,31 +122,16 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte~) main::$5 = (byte~) main::$4 
-Alias (byte~) main::$7 = (byte~) main::$6 
+Alias (byte~) main::$4 = (byte~) main::$3 
+Alias (byte~) main::$6 = (byte~) main::$5 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [6] (byte*) main::$9 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Constant right-side identified [14] (byte*~) main::$2 ← (const byte*) main::SCREEN + (byte) $28
-Constant right-side identified [16] (byte*) main::$11 ← (byte*)(const struct Point[4]) points + (const byte) OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$8 = (byte*)points
-Constant (const byte*) main::$9 = (byte*)points+OFFSET_STRUCT_POINT_Y
-Constant (const byte*) main::$10 = (byte*)points
-Constant (const byte*) main::$2 = main::SCREEN+$28
-Constant (const byte*) main::$11 = (byte*)points+OFFSET_STRUCT_POINT_Y
-Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [1] (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
-Rewriting multiplication to use shift [8] (byte~) main::$7 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
+Rewriting multiplication to use shift [1] (byte~) main::$4 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
+Rewriting multiplication to use shift [8] (byte~) main::$6 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) main::i1#0
-Constant inlined main::$2 = (const byte*) main::SCREEN+(byte) $28
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::i1#0 = (byte) 0
-Constant inlined main::$9 = (byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y
-Constant inlined main::$10 = (byte*)(const struct Point[4]) points
-Constant inlined main::$8 = (byte*)(const struct Point[4]) points
-Constant inlined main::$11 = (byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization PassNEliminateUnusedVars
@@ -215,18 +177,18 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1
-  [7] *((byte*)(const struct Point[4]) points + (byte~) main::$5) ← (byte) main::i#2
+  [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1
+  [7] *((byte*)(const struct Point*) points + (byte~) main::$4) ← (byte) main::i#2
   [8] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1
-  [9] *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$5) ← (byte~) main::$0
+  [9] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4) ← (byte~) main::$0
   [10] (byte) main::i#1 ← ++ (byte) main::i#2
   [11] if((byte) main::i#1!=(byte) 5) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   [12] (byte) main::i1#2 ← phi( main::@1/(byte) 0 main::@2/(byte) main::i1#1 )
-  [13] (byte~) main::$7 ← (byte) main::i1#2 << (byte) 1
-  [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points + (byte~) main::$7)
-  [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7)
+  [13] (byte~) main::$6 ← (byte) main::i1#2 << (byte) 1
+  [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points + (byte~) main::$6)
+  [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6)
   [16] (byte) main::i1#1 ← ++ (byte) main::i1#2
   [17] if((byte) main::i1#1!=(byte) 5) goto main::@2
   to:main::@return
@@ -240,8 +202,8 @@ VARIABLE REGISTER WEIGHTS
 (byte) Point::y
 (void()) main()
 (byte~) main::$0 22.0
-(byte~) main::$5 11.0
-(byte~) main::$7 16.5
+(byte~) main::$4 11.0
+(byte~) main::$6 16.5
 (byte) main::i
 (byte) main::i#1 16.5
 (byte) main::i#2 11.0
@@ -252,20 +214,20 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::i1#2 main::i1#1 ]
-Added variable main::$5 to zero page equivalence class [ main::$5 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::$7 to zero page equivalence class [ main::$7 ]
+Added variable main::$4 to live range equivalence class [ main::$4 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::$6 to live range equivalence class [ main::$6 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::i1#2 main::i1#1 ]
-[ main::$5 ]
+[ main::$4 ]
 [ main::$0 ]
-[ main::$7 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::i1#2 main::i1#1 ]
-Allocated zp ZP_BYTE:4 [ main::$5 ]
-Allocated zp ZP_BYTE:5 [ main::$0 ]
-Allocated zp ZP_BYTE:6 [ main::$7 ]
+[ main::$6 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::i1#2 main::i1#1 ]
+Allocated zp[1]:4 [ main::$4 ]
+Allocated zp[1]:5 [ main::$0 ]
+Allocated zp[1]:6 [ main::$6 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -297,8 +259,8 @@ __bend:
 main: {
     .label SCREEN = $400
     .label __0 = 5
-    .label __5 = 4
-    .label __7 = 6
+    .label __4 = 4
+    .label __6 = 6
     .label i = 2
     .label i1 = 3
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -313,21 +275,21 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z __5
-    // [7] *((byte*)(const struct Point[4]) points + (byte~) main::$5) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    sta.z __4
+    // [7] *((byte*)(const struct Point*) points + (byte~) main::$4) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z i
-    ldy.z __5
+    ldy.z __4
     sta points,y
     // [8] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy.z i
     iny
     sty.z __0
-    // [9] *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$5) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [9] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __0
-    ldy.z __5
+    ldy.z __4
     sta points+OFFSET_STRUCT_POINT_Y,y
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
@@ -347,17 +309,17 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [13] (byte~) main::$7 ← (byte) main::i1#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [13] (byte~) main::$6 ← (byte) main::i1#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i1
     asl
-    sta.z __7
-    // [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points + (byte~) main::$7) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
-    ldy.z __7
+    sta.z __6
+    // [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points + (byte~) main::$6) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    ldy.z __6
     lda points,y
     ldy.z i1
     sta SCREEN,y
-    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
-    ldy.z __7
+    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    ldy.z __6
     lda points+OFFSET_STRUCT_POINT_Y,y
     ldy.z i1
     sta SCREEN+$28,y
@@ -377,38 +339,38 @@ main: {
   points: .fill 2*4, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$5 ] ( main:2 [ main::i#2 main::$5 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [7] *((byte*)(const struct Point[4]) points + (byte~) main::$5) ← (byte) main::i#2 [ main::i#2 main::$5 ] ( main:2 [ main::i#2 main::$5 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ main::$5 ]
-Statement [13] (byte~) main::$7 ← (byte) main::i1#2 << (byte) 1 [ main::i1#2 main::$7 ] ( main:2 [ main::i1#2 main::$7 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::i1#2 main::i1#1 ]
-Statement [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points + (byte~) main::$7) [ main::i1#2 main::$7 ] ( main:2 [ main::i1#2 main::$7 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:6 [ main::$7 ]
-Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7) [ main::i1#2 ] ( main:2 [ main::i1#2 ] ) always clobbers reg byte a 
-Statement [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$5 ] ( main:2 [ main::i#2 main::$5 ] ) always clobbers reg byte a 
-Statement [7] *((byte*)(const struct Point[4]) points + (byte~) main::$5) ← (byte) main::i#2 [ main::i#2 main::$5 ] ( main:2 [ main::i#2 main::$5 ] ) always clobbers reg byte a 
-Statement [13] (byte~) main::$7 ← (byte) main::i1#2 << (byte) 1 [ main::i1#2 main::$7 ] ( main:2 [ main::i1#2 main::$7 ] ) always clobbers reg byte a 
-Statement [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points + (byte~) main::$7) [ main::i1#2 main::$7 ] ( main:2 [ main::i1#2 main::$7 ] ) always clobbers reg byte a 
-Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7) [ main::i1#2 ] ( main:2 [ main::i1#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::i1#2 main::i1#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ main::$5 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ main::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ main::$7 ] : zp ZP_BYTE:6 , reg byte x , reg byte y , 
+Statement [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$4 ] ( main:2 [ main::i#2 main::$4 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [7] *((byte*)(const struct Point*) points + (byte~) main::$4) ← (byte) main::i#2 [ main::i#2 main::$4 ] ( main:2 [ main::i#2 main::$4 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::$4 ]
+Statement [13] (byte~) main::$6 ← (byte) main::i1#2 << (byte) 1 [ main::i1#2 main::$6 ] ( main:2 [ main::i1#2 main::$6 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i1#2 main::i1#1 ]
+Statement [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points + (byte~) main::$6) [ main::i1#2 main::$6 ] ( main:2 [ main::i1#2 main::$6 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::$6 ]
+Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) [ main::i1#2 ] ( main:2 [ main::i1#2 ] ) always clobbers reg byte a 
+Statement [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$4 ] ( main:2 [ main::i#2 main::$4 ] ) always clobbers reg byte a 
+Statement [7] *((byte*)(const struct Point*) points + (byte~) main::$4) ← (byte) main::i#2 [ main::i#2 main::$4 ] ( main:2 [ main::i#2 main::$4 ] ) always clobbers reg byte a 
+Statement [13] (byte~) main::$6 ← (byte) main::i1#2 << (byte) 1 [ main::i1#2 main::$6 ] ( main:2 [ main::i1#2 main::$6 ] ) always clobbers reg byte a 
+Statement [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points + (byte~) main::$6) [ main::i1#2 main::$6 ] ( main:2 [ main::i1#2 main::$6 ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) [ main::i1#2 ] ( main:2 [ main::i1#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::i1#2 main::i1#1 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$4 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$6 ] : zp[1]:6 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 30.25: zp ZP_BYTE:3 [ main::i1#2 main::i1#1 ] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:5 [ main::$0 ] 16.5: zp ZP_BYTE:6 [ main::$7 ] 11: zp ZP_BYTE:4 [ main::$5 ] 
+Uplift Scope [main] 30.25: zp[1]:3 [ main::i1#2 main::i1#1 ] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 16.5: zp[1]:6 [ main::$6 ] 11: zp[1]:4 [ main::$4 ] 
 Uplift Scope [Point] 
 Uplift Scope [] 
 
-Uplifting [main] best 918 combination reg byte y [ main::i1#2 main::i1#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte y [ main::$0 ] reg byte x [ main::$7 ] zp ZP_BYTE:4 [ main::$5 ] 
+Uplifting [main] best 918 combination reg byte y [ main::i1#2 main::i1#1 ] reg byte x [ main::i#2 main::i#1 ] reg byte y [ main::$0 ] reg byte x [ main::$6 ] zp[1]:4 [ main::$4 ] 
 Limited combination testing to 100 combinations of 324 possible.
 Uplifting [Point] best 918 combination 
 Uplifting [] best 918 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:4 [ main::$5 ]
-Uplifting [main] best 918 combination zp ZP_BYTE:4 [ main::$5 ] 
-Allocated (was zp ZP_BYTE:4) zp ZP_BYTE:2 [ main::$5 ]
+Attempting to uplift remaining variables inzp[1]:4 [ main::$4 ]
+Uplifting [main] best 918 combination zp[1]:4 [ main::$4 ] 
+Allocated (was zp[1]:4) zp[1]:2 [ main::$4 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -438,7 +400,7 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    .label __5 = 2
+    .label __4 = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -450,21 +412,21 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
+    // [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
-    sta.z __5
-    // [7] *((byte*)(const struct Point[4]) points + (byte~) main::$5) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuxx 
-    ldy.z __5
+    sta.z __4
+    // [7] *((byte*)(const struct Point*) points + (byte~) main::$4) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuxx 
+    ldy.z __4
     txa
     sta points,y
     // [8] (byte~) main::$0 ← (byte) main::i#2 + (byte) 1 -- vbuyy=vbuxx_plus_1 
     txa
     tay
     iny
-    // [9] *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$5) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // [9] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuyy 
     tya
-    ldy.z __5
+    ldy.z __4
     sta points+OFFSET_STRUCT_POINT_Y,y
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -482,14 +444,14 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [13] (byte~) main::$7 ← (byte) main::i1#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
+    // [13] (byte~) main::$6 ← (byte) main::i1#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
     asl
     tax
-    // [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points + (byte~) main::$7) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points + (byte~) main::$6) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda points,x
     sta SCREEN,y
-    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda points+OFFSET_STRUCT_POINT_Y,x
     sta SCREEN+$28,y
     // [16] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuyy=_inc_vbuyy 
@@ -513,7 +475,7 @@ Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldy.z __5 with TAY
+Replacing instruction ldy.z __4 with TAY
 Replacing label __bbegin with __b1
 Replacing label __b1_from___b1 with __b1
 Replacing label __b2_from___b2 with __b2
@@ -542,30 +504,30 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) OFFSET_STRUCT_POINT_Y OFFSET_STRUCT_POINT_Y = (byte) 1
+(const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
 (byte) Point::x
 (byte) Point::y
 (void()) main()
 (byte~) main::$0 reg byte y 22.0
-(byte~) main::$5 $5 zp ZP_BYTE:2 11.0
-(byte~) main::$7 reg byte x 16.5
+(byte~) main::$4 zp[1]:2 11.0
+(byte~) main::$6 reg byte x 16.5
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 11.0
 (byte) main::i1
 (byte) main::i1#1 reg byte y 16.5
 (byte) main::i1#2 reg byte y 13.75
-(const struct Point[4]) points points = { fill( 4, 0) }
+(const struct Point*) points[(number) 4]  = { fill( 4, 0) }
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::i1#2 main::i1#1 ]
-zp ZP_BYTE:2 [ main::$5 ]
+zp[1]:2 [ main::$4 ]
 reg byte y [ main::$0 ]
-reg byte x [ main::$7 ]
+reg byte x [ main::$6 ]
 
 
 FINAL ASSEMBLER
@@ -589,7 +551,7 @@ Score: 746
   // main
 main: {
     .label SCREEN = $400
-    .label __5 = 2
+    .label __4 = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
@@ -598,11 +560,11 @@ main: {
     // main::@1
   __b1:
     // points[i].x = i
-    // [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
+    // [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
-    sta.z __5
-    // [7] *((byte*)(const struct Point[4]) points + (byte~) main::$5) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuxx 
+    sta.z __4
+    // [7] *((byte*)(const struct Point*) points + (byte~) main::$4) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuxx 
     tay
     txa
     sta points,y
@@ -612,9 +574,9 @@ main: {
     tay
     iny
     // points[i].y = i+1
-    // [9] *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$5) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // [9] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuyy 
     tya
-    ldy.z __5
+    ldy.z __4
     sta points+OFFSET_STRUCT_POINT_Y,y
     // for( byte i: 0..4)
     // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -630,15 +592,15 @@ main: {
     // main::@2
   __b2:
     // SCREEN[i] = points[i].x
-    // [13] (byte~) main::$7 ← (byte) main::i1#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
+    // [13] (byte~) main::$6 ← (byte) main::i1#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
     tya
     asl
     tax
-    // [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points + (byte~) main::$7) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [14] *((const byte*) main::SCREEN + (byte) main::i1#2) ← *((byte*)(const struct Point*) points + (byte~) main::$6) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda points,x
     sta SCREEN,y
     // (SCREEN+40)[i] = points[i].y
-    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point[4]) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$7) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [15] *((const byte*) main::SCREEN+(byte) $28 + (byte) main::i1#2) ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda points+OFFSET_STRUCT_POINT_Y,x
     sta SCREEN+$28,y
     // for( byte i: 0..4)

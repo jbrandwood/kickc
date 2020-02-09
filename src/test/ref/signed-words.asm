@@ -11,18 +11,17 @@
   .label SPRITES_COLS = $d027
   .const WHITE = 1
   .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   .const g = -5
-  .label SPRITES_PTR = SCREEN+$3f8
+  // Reset y velocity
   .label yvel_init = 2
   .label yvel = 2
-  .label yvel_9 = 4
+  .label yvel_1 = 4
+  // Reset position
   .label xpos = 6
   .label ypos = 8
-  .label yvel_10 = 4
   .label xvel = $a
-  .label yvel_12 = 4
-  .label yvel_21 = 4
 main: {
     jsr init
     lda #<$64
@@ -39,9 +38,9 @@ main: {
     sta.z xpos
     sta.z xpos+1
     lda #<$64
-    sta.z yvel_12
+    sta.z yvel_1
     lda #>$64
-    sta.z yvel_12+1
+    sta.z yvel_1+1
   __b1:
     lda #$ff
     cmp RASTER
@@ -84,9 +83,9 @@ anim: {
     sta.z yvel+1
   __b3:
     lda.z yvel
-    sta.z yvel_21
+    sta.z yvel_1
     lda.z yvel+1
-    sta.z yvel_21+1
+    sta.z yvel_1+1
     lda #<0
     sta.z ypos
     sta.z ypos+1
@@ -94,12 +93,12 @@ anim: {
     sta.z xpos+1
   __b1:
     clc
-    lda.z yvel_10
+    lda.z yvel_1
     adc #<g
-    sta.z yvel_10
-    lda.z yvel_10+1
+    sta.z yvel_1
+    lda.z yvel_1+1
     adc #>g
-    sta.z yvel_10+1
+    sta.z yvel_1+1
     lda.z xpos
     clc
     adc.z xvel
@@ -109,10 +108,10 @@ anim: {
     sta.z xpos+1
     lda.z ypos
     clc
-    adc.z yvel_10
+    adc.z yvel_1
     sta.z ypos
     lda.z ypos+1
-    adc.z yvel_10+1
+    adc.z yvel_1+1
     sta.z ypos+1
     lda.z xpos
     sta.z $ff

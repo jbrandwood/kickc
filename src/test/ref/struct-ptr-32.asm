@@ -15,7 +15,7 @@ main: {
     lda #'a'
     sta persons+OFFSET_STRUCT_PERSON_NAME+8
     lda #'b'
-    sta persons+1*SIZEOF_STRUCT_PERSON+OFFSET_STRUCT_PERSON_NAME+8
+    sta persons+OFFSET_STRUCT_PERSON_NAME+1*SIZEOF_STRUCT_PERSON+8
     lda #<$141
     sta persons+OFFSET_STRUCT_PERSON_AGE
     lda #>$141

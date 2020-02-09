@@ -3,10 +3,11 @@ Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot +
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
-Rewriting struct pointer member access *((struct fileentry*) file).bufEdit
-Rewriting struct pointer member access *((struct fileentry*) file).bufEdit
-Rewriting struct pointer member access *((struct fileentry*) file).bufEdit
+Replacing struct member reference *((struct fileentry*) file).bufEdit with member unwinding reference *((byte**~) main::$8)
+Replacing struct member reference *((struct fileentry*) file).bufEdit with member unwinding reference *((byte**~) main::$9)
+Replacing struct member reference *((struct fileentry*) file).bufEdit with member unwinding reference *((byte**~) main::$10)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
@@ -29,13 +30,13 @@ Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @13
+Culled Empty Block (label) @12
 Culled Empty Block (label) @14
+Culled Empty Block (label) @15
 Culled Empty Block (label) print_str::@4
 Culled Empty Block (label) print_str::@3
 Culled Empty Block (label) print_str::@5
 Culled Empty Block (label) print_str::@6
-Culled Empty Block (label) @15
 Culled Empty Block (label) @16
 Culled Empty Block (label) @17
 Culled Empty Block (label) @18
@@ -49,17 +50,19 @@ Culled Empty Block (label) @25
 Culled Empty Block (label) @26
 Culled Empty Block (label) @27
 Culled Empty Block (label) @28
+Culled Empty Block (label) @29
 Culled Empty Block (label) @30
 Culled Empty Block (label) @31
 Culled Empty Block (label) @32
 Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
+Culled Empty Block (label) @36
 Culled Empty Block (label) main::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@12
+  to:@13
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from print_cls
@@ -104,11 +107,11 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#3
   return 
   to:@return
-@12: scope:[]  from @begin
-  (byte*) print_screen#0 ← ((byte*)) (number) $400
+@13: scope:[]  from @begin
+  (byte*) print_screen#0 ← (byte*)(number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@29
+  to:@37
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from main::@2 main::@5
@@ -158,19 +161,13 @@ print_ln::@return: scope:[print_ln]  from print_ln::@2
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#24
   return 
   to:@return
-@29: scope:[]  from @12
-  (byte*) print_screen#6 ← phi( @12/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#47 ← phi( @12/(byte*) print_char_cursor#0 )
-  (byte*) print_line_cursor#27 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte[]) print_hextab ← (const string) $0
-  to:@36
 
 (void()) print_byte((byte) print_byte::b)
 print_byte: scope:[print_byte]  from main::@3 main::@6
   (byte*) print_char_cursor#42 ← phi( main::@3/(byte*) print_char_cursor#13 main::@6/(byte*) print_char_cursor#16 )
   (byte) print_byte::b#2 ← phi( main::@3/(byte) print_byte::b#0 main::@6/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -178,7 +175,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#25 ← phi( print_byte/(byte*) print_char_cursor#9 )
   (byte*) print_char_cursor#5 ← (byte*) print_char_cursor#25
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -225,26 +222,25 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_char_cursor#11 ← (byte*) print_char_cursor#30
   return 
   to:@return
-@36: scope:[]  from @29
-  (byte*) print_screen#5 ← phi( @29/(byte*) print_screen#6 )
-  (byte*) print_char_cursor#46 ← phi( @29/(byte*) print_char_cursor#47 )
-  (byte*) print_line_cursor#26 ← phi( @29/(byte*) print_line_cursor#27 )
-  (struct fileentry[$a]) files ← { fill( $a, 0) }
+@37: scope:[]  from @13
+  (byte*) print_screen#5 ← phi( @13/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#46 ← phi( @13/(byte*) print_char_cursor#0 )
+  (byte*) print_line_cursor#26 ← phi( @13/(byte*) print_line_cursor#0 )
   (struct fileentry*) file#0 ← (struct fileentry*) 0
-  to:@37
+  to:@38
 
 (signed word()) main()
-main: scope:[main]  from @37
-  (byte*) print_char_cursor#43 ← phi( @37/(byte*) print_char_cursor#44 )
-  (byte*) print_line_cursor#20 ← phi( @37/(byte*) print_line_cursor#23 )
-  (byte*) print_screen#3 ← phi( @37/(byte*) print_screen#4 )
-  (struct fileentry*) file#1 ← (struct fileentry[$a]) files
-  (byte**) main::$10 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-  *((byte**) main::$10) ← ((byte*)) (number) $4000
-  (byte**) main::$11 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-  *(*((byte**) main::$11) + (number) 3) ← (number) $aa
-  (byte**) main::$12 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-  (byte*~) main::$0 ← ((byte*)) *((byte**) main::$12)
+main: scope:[main]  from @38
+  (byte*) print_char_cursor#43 ← phi( @38/(byte*) print_char_cursor#44 )
+  (byte*) print_line_cursor#20 ← phi( @38/(byte*) print_line_cursor#23 )
+  (byte*) print_screen#3 ← phi( @38/(byte*) print_screen#4 )
+  (struct fileentry*) file#1 ← (const struct fileentry*) files
+  (byte**~) main::$8 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+  *((byte**~) main::$8) ← ((byte*)) (number) $4000
+  (byte**~) main::$9 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+  *(*((byte**~) main::$9) + (number) 3) ← (number) $aa
+  (byte**~) main::$10 ← (byte**)(struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+  (byte*~) main::$0 ← ((byte*)) *((byte**~) main::$10)
   *((byte*~) main::$0 + (number) 4) ← (number) $cc
   call print_cls 
   to:main::@2
@@ -254,7 +250,7 @@ main::@2: scope:[main]  from main
   (byte*) print_line_cursor#14 ← phi( main/(byte*) print_line_cursor#4 )
   (byte*) print_line_cursor#5 ← (byte*) print_line_cursor#14
   (byte*) print_char_cursor#12 ← (byte*) print_char_cursor#31
-  (byte*) print_str::str#1 ← (const string) main::str
+  (byte*) print_str::str#1 ← (const byte*) main::str
   call print_str 
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -262,8 +258,7 @@ main::@3: scope:[main]  from main::@2
   (byte*) print_line_cursor#24 ← phi( main::@2/(byte*) print_line_cursor#5 )
   (byte*) print_char_cursor#32 ← phi( main::@2/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#13 ← (byte*) print_char_cursor#32
-  (byte*~) main::$3 ← ((byte*)) (number) 0
-  (byte) print_byte::b#0 ← *((byte*~) main::$3)
+  (byte) print_byte::b#0 ← *((byte*)(number) 0)
   call print_byte 
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -279,7 +274,7 @@ main::@5: scope:[main]  from main::@4
   (byte*) print_line_cursor#15 ← phi( main::@4/(byte*) print_line_cursor#2 )
   (byte*) print_line_cursor#6 ← (byte*) print_line_cursor#15
   (byte*) print_char_cursor#15 ← (byte*) print_char_cursor#34
-  (byte*) print_str::str#2 ← (const string) main::str1
+  (byte*) print_str::str#2 ← (const byte*) main::str1
   call print_str 
   to:main::@6
 main::@6: scope:[main]  from main::@5
@@ -287,8 +282,7 @@ main::@6: scope:[main]  from main::@5
   (byte*) print_line_cursor#25 ← phi( main::@5/(byte*) print_line_cursor#6 )
   (byte*) print_char_cursor#35 ← phi( main::@5/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#16 ← (byte*) print_char_cursor#35
-  (byte*~) main::$7 ← ((byte*)) (number) $4004
-  (byte) print_byte::b#1 ← *((byte*~) main::$7)
+  (byte) print_byte::b#1 ← *((byte*)(number) $4004)
   call print_byte 
   to:main::@7
 main::@7: scope:[main]  from main::@6
@@ -317,31 +311,29 @@ main::@return: scope:[main]  from main::@8
   (byte*) print_char_cursor#19 ← (byte*) print_char_cursor#38
   return 
   to:@return
-@37: scope:[]  from @36
-  (byte*) print_screen#4 ← phi( @36/(byte*) print_screen#5 )
-  (byte*) print_char_cursor#44 ← phi( @36/(byte*) print_char_cursor#46 )
-  (byte*) print_line_cursor#23 ← phi( @36/(byte*) print_line_cursor#26 )
-  (struct fileentry*) file#7 ← phi( @36/(struct fileentry*) file#0 )
+@38: scope:[]  from @37
+  (byte*) print_screen#4 ← phi( @37/(byte*) print_screen#5 )
+  (byte*) print_char_cursor#44 ← phi( @37/(byte*) print_char_cursor#46 )
+  (byte*) print_line_cursor#23 ← phi( @37/(byte*) print_line_cursor#26 )
+  (struct fileentry*) file#7 ← phi( @37/(struct fileentry*) file#0 )
   call main 
   (signed word) main::return#2 ← (signed word) main::return#1
-  to:@38
-@38: scope:[]  from @37
-  (byte*) print_char_cursor#39 ← phi( @37/(byte*) print_char_cursor#19 )
-  (byte*) print_line_cursor#18 ← phi( @37/(byte*) print_line_cursor#8 )
-  (struct fileentry*) file#5 ← phi( @37/(struct fileentry*) file#2 )
+  to:@39
+@39: scope:[]  from @38
+  (byte*) print_char_cursor#39 ← phi( @38/(byte*) print_char_cursor#19 )
+  (byte*) print_line_cursor#18 ← phi( @38/(byte*) print_line_cursor#8 )
+  (struct fileentry*) file#5 ← phi( @38/(struct fileentry*) file#2 )
   (struct fileentry*) file#3 ← (struct fileentry*) file#5
   (byte*) print_line_cursor#9 ← (byte*) print_line_cursor#18
   (byte*) print_char_cursor#20 ← (byte*) print_char_cursor#39
   to:@end
-@end: scope:[]  from @38
+@end: scope:[]  from @39
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"z
-(label) @12
-(label) @29
-(label) @36
+(label) @13
 (label) @37
 (label) @38
+(label) @39
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT = (byte) 0
@@ -365,14 +357,12 @@ SYMBOL TABLE SSA
 (struct fileentry*) file#8
 (struct fileentry*) file#9
 (byte*) fileentry::bufEdit
-(struct fileentry[$a]) files
+(const struct fileentry*) files[(number) $a]  = { fill( $a, 0) }
 (signed word()) main()
 (byte*~) main::$0
-(byte**) main::$10
-(byte**) main::$11
-(byte**) main::$12
-(byte*~) main::$3
-(byte*~) main::$7
+(byte**~) main::$10
+(byte**~) main::$8
+(byte**~) main::$9
 (label) main::@2
 (label) main::@3
 (label) main::@4
@@ -386,8 +376,8 @@ SYMBOL TABLE SSA
 (signed word) main::return#1
 (signed word) main::return#2
 (signed word) main::return#3
-(const string) main::str = (string) "$0000="
-(const string) main::str1 = (string) "$4004="
+(const byte*) main::str[(byte) 7]  = (byte*) "$0000="
+(const byte*) main::str1[(byte) 7]  = (byte*) "$4004="
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (bool~) memset::$0
 (bool~) memset::$1
@@ -490,7 +480,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#44
 (byte*) print_char_cursor#45
 (byte*) print_char_cursor#46
-(byte*) print_char_cursor#47
 (byte*) print_char_cursor#5
 (byte*) print_char_cursor#6
 (byte*) print_char_cursor#7
@@ -499,7 +488,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(byte[]) print_hextab
+(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -521,7 +510,6 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#24
 (byte*) print_line_cursor#25
 (byte*) print_line_cursor#26
-(byte*) print_line_cursor#27
 (byte*) print_line_cursor#3
 (byte*) print_line_cursor#4
 (byte*) print_line_cursor#5
@@ -542,7 +530,6 @@ SYMBOL TABLE SSA
 (byte*) print_screen#3
 (byte*) print_screen#4
 (byte*) print_screen#5
-(byte*) print_screen#6
 (void()) print_str((byte*) print_str::str)
 (bool~) print_str::$0
 (label) print_str::@1
@@ -563,22 +550,19 @@ Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) p
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
 Adding number conversion cast (unumber) print_byte::$2 in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (unumber)(number) $f
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) $aa in *(*((byte**) main::$11) + (number) 3) ← (number) $aa
-Adding number conversion cast (unumber) 3 in *(*((byte**) main::$11) + (number) 3) ← ((unumber)) (number) $aa
+Adding number conversion cast (unumber) $aa in *(*((byte**~) main::$9) + (number) 3) ← (number) $aa
+Adding number conversion cast (unumber) 3 in *(*((byte**~) main::$9) + (number) 3) ← ((unumber)) (number) $aa
 Adding number conversion cast (unumber) $cc in *((byte*~) main::$0 + (number) 4) ← (number) $cc
 Adding number conversion cast (unumber) 4 in *((byte*~) main::$0 + (number) 4) ← ((unumber)) (number) $cc
 Adding number conversion cast (snumber) 0 in (signed word) main::return#0 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast *((byte**) main::$10) ← (byte*)(number) $4000
-Inlining cast *(*((byte**) main::$11) + (unumber)(number) 3) ← (unumber)(number) $aa
-Inlining cast (byte*~) main::$0 ← (byte*)*((byte**) main::$12)
+Inlining cast *((byte**~) main::$8) ← (byte*)(number) $4000
+Inlining cast *(*((byte**~) main::$9) + (unumber)(number) 3) ← (unumber)(number) $aa
+Inlining cast (byte*~) main::$0 ← (byte*)*((byte**~) main::$10)
 Inlining cast *((byte*~) main::$0 + (unumber)(number) 4) ← (unumber)(number) $cc
-Inlining cast (byte*~) main::$3 ← (byte*)(number) 0
-Inlining cast (byte*~) main::$7 ← (byte*)(number) $4004
 Inlining cast (signed word) main::return#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
@@ -591,7 +575,7 @@ Simplifying constant integer cast $3e8
 Simplifying constant pointer cast (byte*) 16384
 Simplifying constant integer cast $aa
 Simplifying constant integer cast 3
-Simplifying constant integer cast *((byte**) main::$12)
+Simplifying constant integer cast *((byte**~) main::$10)
 Simplifying constant integer cast $cc
 Simplifying constant integer cast 4
 Simplifying constant pointer cast (byte*) 0
@@ -622,7 +606,7 @@ Alias (byte) memset::c#1 = (byte) memset::c#2
 Alias (byte*) memset::dst#2 = (byte*) memset::dst#3 
 Alias (byte*) memset::end#1 = (byte*) memset::end#2 
 Alias (void*) memset::str#4 = (void*) memset::str#5 
-Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#27 (byte*) print_char_cursor#47 (byte*) print_screen#6 (byte*) print_line_cursor#26 (byte*) print_char_cursor#46 (byte*) print_screen#5 (byte*) print_line_cursor#23 (byte*) print_char_cursor#44 (byte*) print_screen#4 
+Alias (byte*) print_line_cursor#0 = (byte*) print_screen#0 (byte*) print_char_cursor#0 (byte*) print_line_cursor#26 (byte*) print_char_cursor#46 (byte*) print_screen#5 (byte*) print_line_cursor#23 (byte*) print_char_cursor#44 (byte*) print_screen#4 
 Alias (byte*) print_str::str#3 = (byte*) print_str::str#4 
 Alias (byte*) print_char_cursor#2 = (byte*) print_char_cursor#21 (byte*) print_char_cursor#40 (byte*) print_char_cursor#22 
 Alias (byte*) print_line_cursor#1 = (byte*~) print_ln::$0 (byte*) print_line_cursor#11 (byte*) print_char_cursor#3 (byte*) print_line_cursor#12 (byte*) print_char_cursor#24 (byte*) print_line_cursor#2 (byte*) print_char_cursor#4 
@@ -684,59 +668,49 @@ Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memse
 Simple Condition (bool~) print_str::$0 [26] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [39] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [82] (struct fileentry[$a]) files ← { fill( $a, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
-Constant (const byte[]) print_hextab = $0
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const struct fileentry[$a]) files = { fill( $a, 0) }
 Constant (const struct fileentry*) file#0 = (struct fileentry*) 0
+Constant (const struct fileentry*) file#1 = files
 Constant (const byte*) print_str::str#1 = main::str
-Constant (const byte*) main::$3 = (byte*) 0
 Constant (const byte*) print_str::str#2 = main::str1
-Constant (const byte*) main::$7 = (byte*) 16388
 Constant (const signed word) main::return#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const struct fileentry*) file#1 = files
+Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Constant (const signed word) main::return#2 = main::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (void*)print_line_cursor#0 in [69] (void*) memset::str#0 ← (void*)(const byte*) print_line_cursor#0
-Constant value identified (byte**)file#1 in [86] (byte**) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Constant value identified (byte**)file#1 in [88] (byte**) main::$11 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Constant value identified (byte**)file#1 in [90] (byte**) main::$12 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
+Constant (const void*) memset::return#2 = memset::str#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte**)file#1 in [83] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant value identified (byte**)file#1 in [85] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Constant value identified (byte**)file#1 in [87] (byte**~) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
 Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [3] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
-Converting *(pointer+n) to pointer[n] [87] *((byte**) main::$10) ← (byte*) 16384  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [89] *(*((byte**) main::$11) + (byte) 3) ← (byte) $aa  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [91] (byte*~) main::$0 ← *((byte**) main::$12)  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [84] *((byte**~) main::$8) ← (byte*) 16384  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [86] *(*((byte**~) main::$9) + (byte) 3) ← (byte) $aa  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [88] (byte*~) main::$0 ← *((byte**~) main::$10)  -- *((byte**)file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte**)file#1 in [86] (byte**) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)file#1 in [87] *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 16384
-Simplifying expression containing zero (byte**)file#1 in [88] (byte**) main::$11 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)file#1 in [89] *(*((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) 3) ← (byte) $aa
-Simplifying expression containing zero (byte**)file#1 in [90] (byte**) main::$12 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)file#1 in [91] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Simplifying expression containing zero (byte**)file#1 in [83] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)file#1 in [84] *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 16384
+Simplifying expression containing zero (byte**)file#1 in [85] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)file#1 in [86] *(*((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) 3) ← (byte) $aa
+Simplifying expression containing zero (byte**)file#1 in [87] (byte**~) main::$10 ← (byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero (byte**)file#1 in [88] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (void*) memset::return#2 and assignment [34] (void*) memset::return#2 ← (void*) memset::str#0
-Eliminating unused variable (byte**) main::$10 and assignment [36] (byte**) main::$10 ← (byte**)(const struct fileentry*) file#1
-Eliminating unused variable (byte**) main::$11 and assignment [38] (byte**) main::$11 ← (byte**)(const struct fileentry*) file#1
-Eliminating unused variable (byte**) main::$12 and assignment [40] (byte**) main::$12 ← (byte**)(const struct fileentry*) file#1
+Eliminating unused variable (byte**~) main::$8 and assignment [32] (byte**~) main::$8 ← (byte**)(const struct fileentry*) file#1
+Eliminating unused variable (byte**~) main::$9 and assignment [34] (byte**~) main::$9 ← (byte**)(const struct fileentry*) file#1
+Eliminating unused variable (byte**~) main::$10 and assignment [36] (byte**~) main::$10 ← (byte**)(const struct fileentry*) file#1
+Eliminating unused constant (const void*) memset::return#2
 Eliminating unused constant (const signed word) main::return#2
 Eliminating unused constant (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
 Eliminating unused constant (const struct fileentry*) file#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const signed word) main::return#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)memset::str#0 in [0] (byte*~) memset::$2 ← (byte*)(const void*) memset::str#0
-Constant value identified (byte*)memset::str#0 in [2] (byte*) memset::dst#0 ← (byte*)(const void*) memset::str#0
-Successful SSA optimization Pass2ConstantValues
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
-Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
-Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
@@ -745,23 +719,19 @@ Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte*) print_str::str#1
 Inlining constant with var siblings (const byte*) print_str::str#2
 Inlining constant with var siblings (const byte*) print_line_cursor#0
-Constant inlined file#1 = (const struct fileentry[$a]) files
+Constant inlined file#1 = (const struct fileentry*) files
+Constant inlined print_str::str#2 = (const byte*) main::str1
 Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
-Constant inlined print_line_cursor#0 = (byte*) 1024
-Constant inlined print_str::str#2 = (const string) main::str1
-Constant inlined main::$3 = (byte*) 0
 Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
-Constant inlined print_str::str#1 = (const string) main::str
-Constant inlined $0 = (const byte[]) print_hextab
-Constant inlined main::$7 = (byte*) 16388
+Constant inlined print_str::str#1 = (const byte*) main::str
+Constant inlined print_line_cursor#0 = (byte*) 1024
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @29
-Adding NOP phi() at start of @36
+Adding NOP phi() at start of @13
 Adding NOP phi() at start of @37
 Adding NOP phi() at start of @38
+Adding NOP phi() at start of @39
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@4
@@ -774,32 +744,31 @@ Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:5 
-Calls in [main] to print_cls:12 print_str:14 print_byte:17 print_ln:19 print_str:21 print_byte:24 print_ln:26 
-Calls in [print_byte] to print_char:42 print_char:47 
-Calls in [print_cls] to memset:66 
+Calls in [] to main:4 
+Calls in [main] to print_cls:11 print_str:13 print_byte:16 print_ln:18 print_str:20 print_byte:23 print_ln:25 
+Calls in [print_byte] to print_char:41 print_char:46 
+Calls in [print_cls] to memset:65 
 
 Created 10 initial phi equivalence classes
-Coalesced [16] print_byte::b#4 ← print_byte::b#0
-Not coalescing [20] print_char_cursor#48 ← print_line_cursor#1
-Coalesced [23] print_byte::b#5 ← print_byte::b#1
-Coalesced [25] print_line_cursor#28 ← print_line_cursor#1
-Coalesced [30] print_line_cursor#29 ← print_line_cursor#19
-Coalesced (already) [36] print_line_cursor#30 ← print_line_cursor#1
-Coalesced [40] print_char::ch#3 ← print_char::ch#0
-Coalesced [41] print_char_cursor#51 ← print_char_cursor#2
-Coalesced [45] print_char::ch#4 ← print_char::ch#1
-Coalesced [46] print_char_cursor#52 ← print_char_cursor#29
-Coalesced [55] print_str::str#6 ← print_str::str#5
-Coalesced [56] print_char_cursor#49 ← print_char_cursor#45
-Coalesced [63] print_str::str#7 ← print_str::str#0
-Coalesced [64] print_char_cursor#50 ← print_char_cursor#1
-Coalesced [77] memset::dst#4 ← memset::dst#1
+Coalesced [15] print_byte::b#4 ← print_byte::b#0
+Not coalescing [19] print_char_cursor#47 ← print_line_cursor#1
+Coalesced [22] print_byte::b#5 ← print_byte::b#1
+Coalesced [24] print_line_cursor#27 ← print_line_cursor#1
+Coalesced [29] print_line_cursor#28 ← print_line_cursor#19
+Coalesced (already) [35] print_line_cursor#29 ← print_line_cursor#1
+Coalesced [39] print_char::ch#3 ← print_char::ch#0
+Coalesced [40] print_char_cursor#50 ← print_char_cursor#2
+Coalesced [44] print_char::ch#4 ← print_char::ch#1
+Coalesced [45] print_char_cursor#51 ← print_char_cursor#29
+Coalesced [54] print_str::str#6 ← print_str::str#5
+Coalesced [55] print_char_cursor#48 ← print_char_cursor#45
+Coalesced [62] print_str::str#7 ← print_str::str#0
+Coalesced [63] print_char_cursor#49 ← print_char_cursor#1
+Coalesced [76] memset::dst#4 ← memset::dst#1
 Coalesced down to 6 phi equivalence classes
-Culled Empty Block (label) @12
-Culled Empty Block (label) @29
-Culled Empty Block (label) @36
-Culled Empty Block (label) @38
+Culled Empty Block (label) @13
+Culled Empty Block (label) @37
+Culled Empty Block (label) @39
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_ln::@3
@@ -807,7 +776,7 @@ Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
-Renumbering block @37 to @1
+Renumbering block @38 to @1
 Renumbering block memset::@4 to memset::@1
 Renumbering block memset::@5 to memset::@2
 Renumbering block main::@2 to main::@1
@@ -838,9 +807,9 @@ FINAL CONTROL FLOW GRAPH
 
 (signed word()) main()
 main: scope:[main]  from @1
-  [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384
-  [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa
-  [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files)
+  [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384
+  [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa
+  [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files)
   [7] *((byte*~) main::$0 + (byte) 4) ← (byte) $cc
   [8] call print_cls 
   to:main::@1
@@ -857,7 +826,7 @@ main::@3: scope:[main]  from main::@2
   [14] call print_ln 
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  [15] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1
+  [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1
   [16] call print_str 
   to:main::@5
 main::@5: scope:[main]  from main::@4
@@ -889,12 +858,12 @@ print_ln::@return: scope:[print_ln]  from print_ln::@1
 print_byte: scope:[print_byte]  from main::@2 main::@5
   [27] (byte) print_byte::b#2 ← phi( main::@2/(byte) print_byte::b#0 main::@5/(byte) print_byte::b#1 )
   [28] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [30] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [31] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [33] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -914,8 +883,8 @@ print_char::@return: scope:[print_char]  from print_char
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from main::@1 main::@4
-  [39] (byte*) print_char_cursor#45 ← phi( main::@1/(byte*) 1024 main::@4/(byte*~) print_char_cursor#48 )
-  [39] (byte*) print_str::str#5 ← phi( main::@1/(const string) main::str main::@4/(const string) main::str1 )
+  [39] (byte*) print_char_cursor#45 ← phi( main::@1/(byte*) 1024 main::@4/(byte*) print_char_cursor#47 )
+  [39] (byte*) print_str::str#5 ← phi( main::@1/(const byte*) main::str main::@4/(const byte*) main::str1 )
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@2
   [40] (byte*) print_char_cursor#2 ← phi( print_str/(byte*) print_char_cursor#45 print_str::@2/(byte*) print_char_cursor#1 )
@@ -990,7 +959,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) print_char_cursor#28 4.0
 (byte*) print_char_cursor#29 0.9999999999999999
 (byte*) print_char_cursor#45 4.0
-(byte*~) print_char_cursor#48 4.0
+(byte*) print_char_cursor#47 4.0
 (void()) print_cls()
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 4.111111111111112
@@ -1008,31 +977,31 @@ Initial phi equivalence classes
 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-[ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ]
+[ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
 [ memset::dst#2 memset::dst#1 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable print_byte::$0 to zero page equivalence class [ print_byte::$0 ]
-Added variable print_byte::$2 to zero page equivalence class [ print_byte::$2 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable print_byte::$0 to live range equivalence class [ print_byte::$0 ]
+Added variable print_byte::$2 to live range equivalence class [ print_byte::$2 ]
 Complete equivalence classes
 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-[ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ]
+[ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
 [ memset::dst#2 memset::dst#1 ]
 [ main::$0 ]
 [ print_byte::$0 ]
 [ print_byte::$2 ]
-Allocated zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
-Allocated zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
-Allocated zp ZP_BYTE:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-Allocated zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ]
-Allocated zp ZP_WORD:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
-Allocated zp ZP_WORD:10 [ memset::dst#2 memset::dst#1 ]
-Allocated zp ZP_WORD:12 [ main::$0 ]
-Allocated zp ZP_BYTE:14 [ print_byte::$0 ]
-Allocated zp ZP_BYTE:15 [ print_byte::$2 ]
+Allocated zp[2]:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
+Allocated zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
+Allocated zp[1]:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
+Allocated zp[2]:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
+Allocated zp[2]:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
+Allocated zp[2]:10 [ memset::dst#2 memset::dst#1 ]
+Allocated zp[2]:12 [ main::$0 ]
+Allocated zp[1]:14 [ print_byte::$0 ]
+Allocated zp[1]:15 [ print_byte::$2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1063,12 +1032,12 @@ __bend:
   // main
 main: {
     .label __0 = $c
-    // [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
+    // [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
     lda #<$4000
     sta files
     lda #>$4000
     sta files+1
-    // [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
     ldx files
@@ -1076,7 +1045,7 @@ main: {
     ldx files+1
     stx.z $ff
     sta ($fe),y
-    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) -- pbuz1=_deref_pptc1 
+    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) -- pbuz1=_deref_pptc1 
     lda files
     sta.z __0
     lda files+1
@@ -1103,7 +1072,7 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    // [39] phi (byte*) print_str::str#5 = (const string) main::str [phi:main::@1->print_str#1] -- pbuz1=pbuc1 
+    // [39] phi (byte*) print_str::str#5 = (const byte*) main::str [phi:main::@1->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
@@ -1137,7 +1106,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [15] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -1145,8 +1114,8 @@ main: {
     // [16] call print_str 
     // [39] phi from main::@4 to print_str [phi:main::@4->print_str]
   print_str_from___b4:
-    // [39] phi (byte*) print_char_cursor#45 = (byte*~) print_char_cursor#48 [phi:main::@4->print_str#0] -- register_copy 
-    // [39] phi (byte*) print_str::str#5 = (const string) main::str1 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
+    // [39] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#47 [phi:main::@4->print_str#0] -- register_copy 
+    // [39] phi (byte*) print_str::str#5 = (const byte*) main::str1 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
@@ -1218,7 +1187,7 @@ print_ln: {
 }
   // print_byte
 // Print a byte as HEX
-// print_byte(byte zeropage(4) b)
+// print_byte(byte zp(4) b)
 print_byte: {
     .label __0 = $e
     .label __2 = $f
@@ -1230,7 +1199,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -1247,7 +1216,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -1265,7 +1234,7 @@ print_byte: {
 }
   // print_char
 // Print a single char
-// print_char(byte zeropage(5) ch)
+// print_char(byte zp(5) ch)
 print_char: {
     .label ch = 5
     // [36] *((byte*) print_char_cursor#28) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
@@ -1285,7 +1254,7 @@ print_char: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(8) str)
+// print_str(byte* zp(8) str)
 print_str: {
     .label str = 8
     // [40] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -1389,27 +1358,27 @@ memset: {
   files: .fill 2*$a, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [7] *((byte*~) main::$0 + (byte) 4) ← (byte) $cc [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Statement [15] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1 [ print_char_cursor#47 print_line_cursor#1 ] ( main:2 [ print_char_cursor#47 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [24] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_ln:14 [ print_line_cursor#1 print_char_cursor#29 ] main:2::print_ln:20 [ print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [25] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_ln:14 [ print_line_cursor#1 print_char_cursor#29 ] main:2::print_ln:20 [ print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [28] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_byte::$0 print_char_cursor#2 ] ( main:2::print_byte:12 [ print_byte::b#2 print_byte::$0 print_char_cursor#2 ] main:2::print_byte:18 [ print_line_cursor#1 print_byte::b#2 print_byte::$0 print_char_cursor#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [31] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#29 print_byte::$2 ] ( main:2::print_byte:12 [ print_char_cursor#29 print_byte::$2 ] main:2::print_byte:18 [ print_line_cursor#1 print_char_cursor#29 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [36] *((byte*) print_char_cursor#28) ← (byte) print_char::ch#2 [ print_char_cursor#28 ] ( main:2::print_byte:12::print_char:30 [ print_byte::b#2 print_char_cursor#28 ] main:2::print_byte:18::print_char:30 [ print_line_cursor#1 print_byte::b#2 print_char_cursor#28 ] main:2::print_byte:12::print_char:33 [ print_char_cursor#28 ] main:2::print_byte:18::print_char:33 [ print_line_cursor#1 print_char_cursor#28 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [41] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:10 [ print_char_cursor#2 print_str::str#3 ] main:2::print_str:16 [ print_line_cursor#1 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [43] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#3) [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:10 [ print_char_cursor#2 print_str::str#3 ] main:2::print_str:16 [ print_line_cursor#1 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [51] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:8::memset:47 [ memset::dst#2 ] ) always clobbers reg byte a 
 Statement [53] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:8::memset:47 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Statement [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [7] *((byte*~) main::$0 + (byte) 4) ← (byte) $cc [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Statement [15] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 [ print_char_cursor#48 print_line_cursor#1 ] ( main:2 [ print_char_cursor#48 print_line_cursor#1 ] ) always clobbers reg byte a 
+Statement [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1 [ print_char_cursor#47 print_line_cursor#1 ] ( main:2 [ print_char_cursor#47 print_line_cursor#1 ] ) always clobbers reg byte a 
 Statement [24] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_ln:14 [ print_line_cursor#1 print_char_cursor#29 ] main:2::print_ln:20 [ print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [25] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#29 ] ( main:2::print_ln:14 [ print_line_cursor#1 print_char_cursor#29 ] main:2::print_ln:20 [ print_line_cursor#1 print_char_cursor#29 ] ) always clobbers reg byte a 
 Statement [28] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_byte::$0 print_char_cursor#2 ] ( main:2::print_byte:12 [ print_byte::b#2 print_byte::$0 print_char_cursor#2 ] main:2::print_byte:18 [ print_line_cursor#1 print_byte::b#2 print_byte::$0 print_char_cursor#2 ] ) always clobbers reg byte a 
@@ -1419,43 +1388,43 @@ Statement [41] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2 [ pr
 Statement [43] *((byte*) print_char_cursor#2) ← *((byte*) print_str::str#3) [ print_char_cursor#2 print_str::str#3 ] ( main:2::print_str:10 [ print_char_cursor#2 print_str::str#3 ] main:2::print_str:16 [ print_line_cursor#1 print_char_cursor#2 print_str::str#3 ] ) always clobbers reg byte a reg byte y 
 Statement [51] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:8::memset:47 [ memset::dst#2 ] ) always clobbers reg byte a 
 Statement [53] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:8::memset:47 [ memset::dst#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp ZP_BYTE:4 , reg byte x , 
-Potential registers zp ZP_BYTE:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_WORD:10 [ memset::dst#2 memset::dst#1 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_WORD:12 [ main::$0 ] : zp ZP_WORD:12 , 
-Potential registers zp ZP_BYTE:14 [ print_byte::$0 ] : zp ZP_BYTE:14 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:15 [ print_byte::$2 ] : zp ZP_BYTE:15 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp[1]:4 , reg byte x , 
+Potential registers zp[1]:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ memset::dst#2 memset::dst#1 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ main::$0 ] : zp[2]:12 , 
+Potential registers zp[1]:14 [ print_byte::$0 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:15 [ print_byte::$2 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 32.11: zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] 27.36: zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ] 
-Uplift Scope [memset] 36.67: zp ZP_WORD:10 [ memset::dst#2 memset::dst#1 ] 
-Uplift Scope [print_str] 35.5: zp ZP_WORD:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
-Uplift Scope [print_byte] 10: zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:14 [ print_byte::$0 ] 4: zp ZP_BYTE:15 [ print_byte::$2 ] 
-Uplift Scope [print_char] 14: zp ZP_BYTE:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplift Scope [main] 4: zp ZP_WORD:12 [ main::$0 ] 
+Uplift Scope [] 32.11: zp[2]:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] 27.36: zp[2]:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ] 
+Uplift Scope [memset] 36.67: zp[2]:10 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [print_str] 35.5: zp[2]:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
+Uplift Scope [print_byte] 10: zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp[1]:14 [ print_byte::$0 ] 4: zp[1]:15 [ print_byte::$2 ] 
+Uplift Scope [print_char] 14: zp[1]:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplift Scope [main] 4: zp[2]:12 [ main::$0 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
 Uplift Scope [print_cls] 
 Uplift Scope [fileentry] 
 
-Uplifting [] best 1948 combination zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ] 
-Uplifting [memset] best 1948 combination zp ZP_WORD:10 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [print_str] best 1948 combination zp ZP_WORD:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
+Uplifting [] best 1948 combination zp[2]:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] zp[2]:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ] 
+Uplifting [memset] best 1948 combination zp[2]:10 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [print_str] best 1948 combination zp[2]:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] 
 Uplifting [print_byte] best 1930 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
 Uplifting [print_char] best 1921 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [main] best 1921 combination zp ZP_WORD:12 [ main::$0 ] 
+Uplifting [main] best 1921 combination zp[2]:12 [ main::$0 ] 
 Uplifting [RADIX] best 1921 combination 
 Uplifting [print_ln] best 1921 combination 
 Uplifting [print_cls] best 1921 combination 
 Uplifting [fileentry] best 1921 combination 
-Coalescing zero page register [ zp ZP_WORD:10 [ memset::dst#2 memset::dst#1 ] ] with [ zp ZP_WORD:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:12 [ main::$0 ] ] with [ zp ZP_WORD:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ] ]
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:2 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
-Allocated (was zp ZP_WORD:10) zp ZP_WORD:4 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
-Allocated (was zp ZP_WORD:12) zp ZP_WORD:6 [ main::$0 print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ]
+Coalescing zero page register [ zp[2]:10 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] ]
+Coalescing zero page register [ zp[2]:12 [ main::$0 ] ] with [ zp[2]:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ] ]
+Allocated (was zp[2]:8) zp[2]:2 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
+Allocated (was zp[2]:10) zp[2]:4 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
+Allocated (was zp[2]:12) zp[2]:6 [ main::$0 print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1485,12 +1454,12 @@ __bend:
   // main
 main: {
     .label __0 = 6
-    // [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
+    // [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
     lda #<$4000
     sta files
     lda #>$4000
     sta files+1
-    // [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
     ldx files
@@ -1498,7 +1467,7 @@ main: {
     ldx files+1
     stx.z $ff
     sta ($fe),y
-    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) -- pbuz1=_deref_pptc1 
+    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) -- pbuz1=_deref_pptc1 
     lda files
     sta.z __0
     lda files+1
@@ -1525,7 +1494,7 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    // [39] phi (byte*) print_str::str#5 = (const string) main::str [phi:main::@1->print_str#1] -- pbuz1=pbuc1 
+    // [39] phi (byte*) print_str::str#5 = (const byte*) main::str [phi:main::@1->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
@@ -1558,7 +1527,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [15] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -1566,8 +1535,8 @@ main: {
     // [16] call print_str 
     // [39] phi from main::@4 to print_str [phi:main::@4->print_str]
   print_str_from___b4:
-    // [39] phi (byte*) print_char_cursor#45 = (byte*~) print_char_cursor#48 [phi:main::@4->print_str#0] -- register_copy 
-    // [39] phi (byte*) print_str::str#5 = (const string) main::str1 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
+    // [39] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#47 [phi:main::@4->print_str#0] -- register_copy 
+    // [39] phi (byte*) print_str::str#5 = (const byte*) main::str1 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
@@ -1646,7 +1615,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [30] call print_char 
@@ -1661,7 +1630,7 @@ print_byte: {
     // [31] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [33] call print_char 
     // [35] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -1695,7 +1664,7 @@ print_char: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zp(2) str)
 print_str: {
     .label str = 2
     // [40] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
@@ -1874,15 +1843,15 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) RADIX::BINARY BINARY = (number) 2
-(const byte) RADIX::DECIMAL DECIMAL = (number) $a
-(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
-(const byte) RADIX::OCTAL OCTAL = (number) 8
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
 (struct fileentry*) file
 (byte*) fileentry::bufEdit
-(const struct fileentry[$a]) files files = { fill( $a, 0) }
+(const struct fileentry*) files[(number) $a]  = { fill( $a, 0) }
 (signed word()) main()
-(byte*~) main::$0 $0 zp ZP_WORD:6 4.0
+(byte*~) main::$0 zp[2]:6 4.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -1891,8 +1860,8 @@ FINAL SYMBOL TABLE
 (label) main::@6
 (label) main::@return
 (signed word) main::return
-(const string) main::str str = (string) "$0000="
-(const string) main::str1 str1 = (string) "$4004="
+(const byte*) main::str[(byte) 7]  = (byte*) "$0000="
+(const byte*) main::str1[(byte) 7]  = (byte*) "$4004="
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
 (label) memset::@2
@@ -1900,8 +1869,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp ZP_WORD:4 22.0
-(byte*) memset::dst#2 dst zp ZP_WORD:4 14.666666666666666
+(byte*) memset::dst#1 dst zp[2]:4 22.0
+(byte*) memset::dst#2 dst zp[2]:4 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -1925,19 +1894,19 @@ FINAL SYMBOL TABLE
 (byte) print_char::ch#1 reg byte a 4.0
 (byte) print_char::ch#2 reg byte a 6.0
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp ZP_WORD:6 11.0
-(byte*) print_char_cursor#2 print_char_cursor zp ZP_WORD:6 3.3636363636363638
-(byte*) print_char_cursor#28 print_char_cursor zp ZP_WORD:6 4.0
-(byte*) print_char_cursor#29 print_char_cursor zp ZP_WORD:6 0.9999999999999999
-(byte*) print_char_cursor#45 print_char_cursor zp ZP_WORD:6 4.0
-(byte*~) print_char_cursor#48 print_char_cursor zp ZP_WORD:6 4.0
+(byte*) print_char_cursor#1 print_char_cursor zp[2]:6 11.0
+(byte*) print_char_cursor#2 print_char_cursor zp[2]:6 3.3636363636363638
+(byte*) print_char_cursor#28 print_char_cursor zp[2]:6 4.0
+(byte*) print_char_cursor#29 print_char_cursor zp[2]:6 0.9999999999999999
+(byte*) print_char_cursor#45 print_char_cursor zp[2]:6 4.0
+(byte*) print_char_cursor#47 print_char_cursor zp[2]:6 4.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte[]) print_hextab print_hextab = (string) "0123456789abcdef"z
+(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
-(byte*) print_line_cursor#1 print_line_cursor zp ZP_WORD:4 4.111111111111112
-(byte*) print_line_cursor#10 print_line_cursor zp ZP_WORD:4 24.0
-(byte*) print_line_cursor#19 print_line_cursor zp ZP_WORD:4 4.0
+(byte*) print_line_cursor#1 print_line_cursor zp[2]:4 4.111111111111112
+(byte*) print_line_cursor#10 print_line_cursor zp[2]:4 24.0
+(byte*) print_line_cursor#19 print_line_cursor zp[2]:4 4.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -1947,15 +1916,15 @@ FINAL SYMBOL TABLE
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp ZP_WORD:2 22.0
-(byte*) print_str::str#3 str zp ZP_WORD:2 11.5
-(byte*) print_str::str#5 str zp ZP_WORD:2 2.0
+(byte*) print_str::str#0 str zp[2]:2 22.0
+(byte*) print_str::str#3 str zp[2]:2 11.5
+(byte*) print_str::str#5 str zp[2]:2 2.0
 
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-zp ZP_WORD:2 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
-zp ZP_WORD:4 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
-zp ZP_WORD:6 [ main::$0 print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#48 print_char_cursor#1 ]
+zp[2]:2 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
+zp[2]:4 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
+zp[2]:6 [ main::$0 print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 
@@ -1983,13 +1952,13 @@ Score: 1676
 main: {
     .label __0 = 6
     // file->bufEdit = 0x4000
-    // [4] *((byte**)(const struct fileentry[$a]) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
+    // [4] *((byte**)(const struct fileentry*) files) ← (byte*) 16384 -- _deref_pptc1=pbuc2 
     lda #<$4000
     sta files
     lda #>$4000
     sta files+1
     // file->bufEdit[3] = 0xAA
-    // [5] *(*((byte**)(const struct fileentry[$a]) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
+    // [5] *(*((byte**)(const struct fileentry*) files) + (byte) 3) ← (byte) $aa -- (_deref_pptc1)_derefidx_vbuc2=vbuc3 
     lda #$aa
     ldy #3
     ldx files
@@ -1998,7 +1967,7 @@ main: {
     stx.z $ff
     sta ($fe),y
     // (char *)file->bufEdit
-    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry[$a]) files) -- pbuz1=_deref_pptc1 
+    // [6] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) files) -- pbuz1=_deref_pptc1 
     lda files
     sta.z __0
     lda files+1
@@ -2023,7 +1992,7 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    // [39] phi (byte*) print_str::str#5 = (const string) main::str [phi:main::@1->print_str#1] -- pbuz1=pbuc1 
+    // [39] phi (byte*) print_str::str#5 = (const byte*) main::str [phi:main::@1->print_str#1] -- pbuz1=pbuc1 
     lda #<str
     sta.z print_str.str
     lda #>str
@@ -2049,7 +2018,7 @@ main: {
     sta.z print_line_cursor+1
     jsr print_ln
     // main::@4
-    // [15] (byte*~) print_char_cursor#48 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
+    // [15] (byte*) print_char_cursor#47 ← (byte*) print_line_cursor#1 -- pbuz1=pbuz2 
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -2057,8 +2026,8 @@ main: {
     // print_str("$4004=")
     // [16] call print_str 
     // [39] phi from main::@4 to print_str [phi:main::@4->print_str]
-    // [39] phi (byte*) print_char_cursor#45 = (byte*~) print_char_cursor#48 [phi:main::@4->print_str#0] -- register_copy 
-    // [39] phi (byte*) print_str::str#5 = (const string) main::str1 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
+    // [39] phi (byte*) print_char_cursor#45 = (byte*) print_char_cursor#47 [phi:main::@4->print_str#0] -- register_copy 
+    // [39] phi (byte*) print_str::str#5 = (const byte*) main::str1 [phi:main::@4->print_str#1] -- pbuz1=pbuc1 
     lda #<str1
     sta.z print_str.str
     lda #>str1
@@ -2131,7 +2100,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [29] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [29] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [30] call print_char 
@@ -2145,7 +2114,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [32] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [32] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [33] call print_char 
     // [35] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -2178,7 +2147,7 @@ print_char: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zp(2) str)
 print_str: {
     .label str = 2
     // [40] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]

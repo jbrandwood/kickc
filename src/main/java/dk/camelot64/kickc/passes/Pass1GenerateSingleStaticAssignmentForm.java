@@ -6,13 +6,14 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Collection;
@@ -79,11 +80,10 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
     * @param source The statement source - usable for error messages
     */
    private void versionAssignment(VariableRef lValueRef, ProgramValue programLValue, StatementSource source) {
-      Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable assignedVar = getScope().getVariable(lValueRef);
-      if(assignedVar.isStoragePhiMaster()) {
-         if(assignedVar.isDeclaredConstant() || earlyIdentifiedConstants.contains(assignedVar.getRef()))
-            throw new InternalError("Error! Constants can not be versioned ", source);
+      if(assignedVar.isKindPhiMaster()) {
+         if(assignedVar.isVolatile())
+            throw new InternalError("Error! Volatiles can not be versioned ", source);
          Variable version = assignedVar.createVersion();
          programLValue.set(version.getRef());
       }
@@ -123,35 +123,18 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   }
                }
             }
-            // Examine if the assigned variable is an array with a fixed size
-            if(currentStmt instanceof StatementAssignment) {
-               LValue lValue = ((StatementAssignment) currentStmt).getlValue();
-               if(lValue instanceof VariableRef) {
-                  Variable assignedVar = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable((VariableRef) lValue);
-                  SymbolType assignedVarType = assignedVar.getType();
-                  if(assignedVarType instanceof SymbolTypeArray) {
-                     SymbolTypeArray assignedArrayType = (SymbolTypeArray) assignedVarType;
-                     RValue arraySize = assignedArrayType.getSize();
-                     Variable vrs = findOrCreateVersion(arraySize, blockVersions, blockNewPhis);
-                     if(vrs != null) {
-                        assignedArrayType.setSize(vrs.getRef());
-                     }
-                  }
-               }
-            }
          });
          // Add new Phi functions to block
          for(Variable symbol : blockNewPhis.keySet()) {
-            block.getPhiBlock().addPhiVariable(blockNewPhis.get(symbol).getRef());
+            block.getPhiBlock().addPhiVariable((VariableRef) blockNewPhis.get(symbol).getRef());
          }
       }
    }
 
    private void updateBlockVersions(VariableRef lValue, Map<Variable, Variable> blockVersions) {
-      VariableRef lValueRef = lValue;
-      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValueRef);
-      if(variable.isStoragePhiVersion()) {
-         blockVersions.put(variable.getVersionOf(), variable);
+      Variable variable = Pass1GenerateSingleStaticAssignmentForm.this.getScope().getVariable(lValue);
+      if(variable.isKindPhiVersion()) {
+         blockVersions.put(variable.getPhiMaster(), variable);
       }
    }
 
@@ -168,14 +151,13 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
          Value rValue,
          Map<Variable, Variable> blockVersions,
          Map<Variable, Variable> blockNewPhis) {
-      Collection<VariableRef> earlyIdentifiedConstants = getProgram().getEarlyIdentifiedConstants();
       Variable version = null;
       if(rValue instanceof VariableRef) {
          Variable rValueVar = getScope().getVariable((VariableRef) rValue);
-         if(rValueVar.isStoragePhiMaster()) {
+         if(rValueVar.isKindPhiMaster()) {
             // rValue needs versioning - look for version in statements
             Variable rSymbol = rValueVar;
-            if(rSymbol.isDeclaredConstant() || earlyIdentifiedConstants.contains(rSymbol.getRef())) {
+            if(rSymbol.isKindConstant()) {
                // A constant - find the single created version
                Scope scope = rSymbol.getScope();
                Collection<Variable> versions = scope.getVersions(rSymbol);
@@ -219,7 +201,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                   if(phiVariable.isEmpty()) {
                      VariableRef phiLValVarRef = phiVariable.getVariable();
                      Variable versioned = getScope().getVariable(phiLValVarRef);
-                     Variable unversioned = versioned.getVersionOf();
+                     Variable unversioned = versioned.getPhiMaster();
                      List<ControlFlowBlock> predecessors = getPhiPredecessors(block, getProgram());
                      for(ControlFlowBlock predecessor : predecessors) {
                         LabelRef predecessorLabel = predecessor.getLabel();
@@ -256,7 +238,7 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
             for(Variable symbol : blockNewPhis.keySet()) {
                StatementPhiBlock phiBlock = block.getPhiBlock();
                Variable variable = blockNewPhis.get(symbol);
-               phiBlock.addPhiVariable(variable.getRef());
+               phiBlock.addPhiVariable((VariableRef) variable.getRef());
             }
          }
       }
@@ -314,10 +296,10 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
    private void addSymbolToMap(LValue lValue, ControlFlowBlock block, Map<LabelRef, Map<Variable, Variable>> symbolMap) {
       if(lValue instanceof VariableRef) {
          Variable lValueVar = getScope().getVariable((VariableRef) lValue);
-         if(lValueVar.isStoragePhiVersion()) {
+         if(lValueVar.isKindPhiVersion()) {
             Variable versioned = lValueVar;
             LabelRef label = block.getLabel();
-            Variable unversioned = versioned.getVersionOf();
+            Variable unversioned = versioned.getPhiMaster();
             Map<Variable, Variable> blockMap = symbolMap.get(label);
             if(blockMap == null) {
                blockMap = new LinkedHashMap<>();

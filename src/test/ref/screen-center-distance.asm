@@ -3,8 +3,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
   .label D018 = $d018
   // CIA #2 Timer A+B Value (32-bit)
   .label CIA2_TIMER_AB = $dd04
@@ -14,8 +12,6 @@
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
@@ -23,7 +19,12 @@
   .const CLOCKS_PER_INIT = $12
   .label CHARSET = $2000
   .label SCREEN = $2800
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
+  // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  // Squares for each byte value SQUARES[i] = i*i
+  // Initialized by init_squares()
   .label SQUARES = malloc.return
 main: {
     .label BASE_SCREEN = $400
@@ -57,7 +58,7 @@ main: {
     rts
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage($d) dw)
+// print_dword_at(dword zp($d) dw)
 print_dword_at: {
     .label dw = $d
     lda.z dw+2
@@ -81,7 +82,7 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(4) w, byte* zeropage(9) at)
+// print_word_at(word zp(4) w, byte* zp(9) at)
 print_word_at: {
     .label w = 4
     .label at = 9
@@ -90,9 +91,9 @@ print_word_at: {
     jsr print_byte_at
     lda.z w
     sta.z print_byte_at.b
-    lda.z print_byte_at.at
+    lda #2
     clc
-    adc #2
+    adc.z print_byte_at.at
     sta.z print_byte_at.at
     bcc !+
     inc.z print_byte_at.at+1
@@ -101,7 +102,7 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage($c) b, byte* zeropage(9) at)
+// print_byte_at(byte zp($c) b, byte* zp(9) at)
 print_byte_at: {
     .label b = $c
     .label at = 9
@@ -132,7 +133,7 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(2) at)
+// print_char_at(byte register(X) ch, byte* zp(2) at)
 print_char_at: {
     .label at = 2
     txa
@@ -192,9 +193,9 @@ init_dist_screen: {
   __b4:
     jsr sqr
     lda.z sqr.return
-    sta.z sqr.return_2
+    sta.z sqr.return_1
     lda.z sqr.return+1
-    sta.z sqr.return_2+1
+    sta.z sqr.return_1+1
     lda #$27
     sta.z xb
     lda #0
@@ -261,7 +262,7 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zeropage($13) val)
+// sqrt(word zp($13) val)
 sqrt: {
     .label __1 = 2
     .label __3 = 2
@@ -285,7 +286,7 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zeropage($13) key, word* zeropage(2) items, byte register(X) num)
+// bsearch16u(word zp($13) key, word* zp(2) items, byte register(X) num)
 bsearch16u: {
     .label __2 = 2
     .label pivot = $15
@@ -373,7 +374,7 @@ bsearch16u: {
 // sqr(byte register(A) val)
 sqr: {
     .label return = $13
-    .label return_2 = $11
+    .label return_1 = $11
     asl
     tay
     lda SQUARES,y
@@ -437,7 +438,7 @@ malloc: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
@@ -456,7 +457,7 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage(9) charset)
+// init_font_hex(byte* zp(9) charset)
 init_font_hex: {
     .label __0 = $19
     .label idx = $c

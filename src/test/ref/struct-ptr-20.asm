@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .const SIZEOF_STRUCT_SETTING = 2
   .const OFFSET_STRUCT_SETTING_ID = 1
-  .label SCREEN = $400
 main: {
     .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
     .label setting = 2

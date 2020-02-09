@@ -1,26 +1,29 @@
 package dk.camelot64.kickc.model.values;
 
-import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 
 /** A reference to a named Constant (in the symbol table) */
 public class ConstantRef extends SymbolVariableRef implements ConstantValue {
 
-   public ConstantRef(ConstantVar constantVar) {
+   public ConstantRef(Variable constantVar) {
       super(constantVar.getFullName());
+      if(!constantVar.isKindConstant())
+         throw new InternalError("VariableRef not allowed for non-constant "+constantVar.toString());
    }
 
    @Override
    public SymbolType getType(ProgramScope scope) {
-      ConstantVar constant = scope.getConstant(this);
+      Variable constant = scope.getConstant(this);
       return constant.getType();
    }
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      ConstantVar constantVar = scope.getConstant(this);
-      ConstantValue constantVarValue = constantVar.getValue();
+      Variable constantVar = scope.getConstant(this);
+      ConstantValue constantVarValue = constantVar.getInitValue();
       return constantVarValue.calculateLiteral(scope);
    }
 }

@@ -12,14 +12,12 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
-  (byte*) main::sc#0 ← (byte*) main::screen
+  (byte*) main::sc#0 ← (const byte*) main::screen
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte*) main::sc#2 ← phi( main/(byte*) main::sc#0 main::@2/(byte*) main::sc#1 )
-  (byte*~) main::$0 ← (byte*) main::screen + (number) $3e7
-  (bool~) main::$1 ← (byte*) main::sc#2 <= (byte*~) main::$0
-  if((bool~) main::$1) goto main::@2
+  (bool~) main::$0 ← (byte*) main::sc#2 <= (const byte*) main::screen+(number) $3e7
+  if((bool~) main::$0) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte*) main::sc#3 ← phi( main::@1/(byte*) main::sc#2 )
@@ -27,15 +25,12 @@ main::@2: scope:[main]  from main::@1
   (byte*) main::sc#1 ← ++ (byte*) main::sc#3
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  (byte*) main::cols ← ((byte*)) (number) $d800
-  (byte*~) main::$2 ← (byte*) main::cols + (number) $3e7
-  (byte*) main::cc#0 ← (byte*~) main::$2
+  (byte*) main::cc#0 ← (const byte*) main::cols+(number) $3e7
   to:main::@7
 main::@7: scope:[main]  from main::@3 main::@8
   (byte*) main::cc#2 ← phi( main::@3/(byte*) main::cc#0 main::@8/(byte*) main::cc#1 )
-  (byte*~) main::$3 ← (byte*) main::cols - (number) 1
-  (bool~) main::$4 ← (byte*) main::cc#2 > (byte*~) main::$3
-  if((bool~) main::$4) goto main::@8
+  (bool~) main::$1 ← (byte*) main::cc#2 > (const byte*) main::cols-(number) 1
+  if((bool~) main::$1) goto main::@8
   to:main::@return
 main::@8: scope:[main]  from main::@7
   (byte*) main::cc#3 ← phi( main::@7/(byte*) main::cc#2 )
@@ -58,11 +53,8 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
+(bool~) main::$0
 (bool~) main::$1
-(byte*~) main::$2
-(byte*~) main::$3
-(bool~) main::$4
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -74,26 +66,24 @@ SYMBOL TABLE SSA
 (byte*) main::cc#1
 (byte*) main::cc#2
 (byte*) main::cc#3
-(byte*) main::cols
+(const byte*) main::cols = (byte*)(number) $d800
 (byte*) main::sc
 (byte*) main::sc#0
 (byte*) main::sc#1
 (byte*) main::sc#2
 (byte*) main::sc#3
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$0 ← (byte*) main::screen + (number) $3e7
-Adding number conversion cast (unumber) $3e7 in (byte*~) main::$2 ← (byte*) main::cols + (number) $3e7
-Adding number conversion cast (unumber) 1 in (byte*~) main::$3 ← (byte*) main::cols - (number) 1
+Adding number conversion cast (unumber) $3e7 in (bool~) main::$0 ← (byte*) main::sc#2 <= (const byte*) main::screen+(number) $3e7
+Adding number conversion cast (unumber) $3e7 in (byte*) main::cc#0 ← (const byte*) main::cols+(number) $3e7
+Adding number conversion cast (unumber) 1 in (bool~) main::$1 ← (byte*) main::cc#2 > (const byte*) main::cols-(number) 1
 Adding number conversion cast (unumber) 2 in *((byte*) main::cc#3) ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Inlining cast (byte*) main::cols ← (byte*)(number) $d800
 Inlining cast *((byte*) main::cc#3) ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast $3e7
 Simplifying constant pointer cast (byte*) 55296
+Simplifying constant integer cast $3e7
 Simplifying constant integer cast $3e7
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
@@ -103,29 +93,19 @@ Finalized unsigned number type (word) $3e7
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (byte*) main::screen = (byte*) main::sc#0 
 Alias (byte*) main::sc#2 = (byte*) main::sc#3 
-Alias (byte*) main::cc#0 = (byte*~) main::$2 
 Alias (byte*) main::cc#2 = (byte*) main::cc#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [5] if((byte*) main::sc#2<=(byte*~) main::$0) goto main::@2
-Simple Condition (bool~) main::$4 [15] if((byte*) main::cc#2>(byte*~) main::$3) goto main::@8
+Simple Condition (bool~) main::$0 [3] if((byte*) main::sc#2<=(const byte*) main::screen+(word) $3e7) goto main::@2
+Simple Condition (bool~) main::$1 [10] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::screen = (byte*) 1024
-Constant (const byte*) main::cols = (byte*) 55296
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (byte*~) main::$0 ← (const byte*) main::screen + (word) $3e7
-Constant right-side identified [5] (byte*) main::cc#0 ← (const byte*) main::cols + (word) $3e7
-Constant right-side identified [7] (byte*~) main::$3 ← (const byte*) main::cols - (byte) 1
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = main::screen+$3e7
+Constant (const byte*) main::sc#0 = main::screen
 Constant (const byte*) main::cc#0 = main::cols+$3e7
-Constant (const byte*) main::$3 = main::cols-1
 Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with var siblings (const byte*) main::sc#0
 Inlining constant with var siblings (const byte*) main::cc#0
-Constant inlined main::$3 = (const byte*) main::cols-(byte) 1
+Constant inlined main::sc#0 = (const byte*) main::screen
 Constant inlined main::cc#0 = (const byte*) main::cols+(word) $3e7
-Constant inlined main::$0 = (const byte*) main::screen+(word) $3e7
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -200,8 +180,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::sc#2 main::sc#1 ]
 [ main::cc#2 main::cc#1 ]
-Allocated zp ZP_WORD:2 [ main::sc#2 main::sc#1 ]
-Allocated zp ZP_WORD:4 [ main::cc#2 main::cc#1 ]
+Allocated zp[2]:2 [ main::sc#2 main::sc#1 ]
+Allocated zp[2]:4 [ main::cc#2 main::cc#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -317,14 +297,14 @@ Statement [8] if((byte*) main::cc#2>(const byte*) main::cols-(byte) 1) goto main
 Statement [10] *((byte*) main::cc#2) ← (byte) 2 [ main::cc#2 ] ( main:2 [ main::cc#2 ] ) always clobbers reg byte a reg byte y 
 Statement [11] (byte*) main::cc#1 ← -- (byte*) main::cc#2 [ main::cc#1 ] ( main:2 [ main::cc#1 ] ) always clobbers reg byte a 
 Statement [12] *((byte*) main::sc#2) ← (byte) 'a' [ main::sc#2 ] ( main:2 [ main::sc#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ main::cc#2 main::cc#1 ] : zp ZP_WORD:4 , 
+Potential registers zp[2]:2 [ main::sc#2 main::sc#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::cc#2 main::cc#1 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 36.67: zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] 36.67: zp ZP_WORD:4 [ main::cc#2 main::cc#1 ] 
+Uplift Scope [main] 36.67: zp[2]:2 [ main::sc#2 main::sc#1 ] 36.67: zp[2]:4 [ main::cc#2 main::cc#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1198 combination zp ZP_WORD:2 [ main::sc#2 main::sc#1 ] zp ZP_WORD:4 [ main::cc#2 main::cc#1 ] 
+Uplifting [main] best 1198 combination zp[2]:2 [ main::sc#2 main::sc#1 ] zp[2]:4 [ main::cc#2 main::cc#1 ] 
 Uplifting [] best 1198 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -471,16 +451,16 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte*) main::cc
-(byte*) main::cc#1 cc zp ZP_WORD:4 22.0
-(byte*) main::cc#2 cc zp ZP_WORD:4 14.666666666666666
-(const byte*) main::cols cols = (byte*) 55296
+(byte*) main::cc#1 cc zp[2]:4 22.0
+(byte*) main::cc#2 cc zp[2]:4 14.666666666666666
+(const byte*) main::cols = (byte*) 55296
 (byte*) main::sc
-(byte*) main::sc#1 sc zp ZP_WORD:2 22.0
-(byte*) main::sc#2 sc zp ZP_WORD:2 14.666666666666666
-(const byte*) main::screen screen = (byte*) 1024
+(byte*) main::sc#1 sc zp[2]:2 22.0
+(byte*) main::sc#2 sc zp[2]:2 14.666666666666666
+(const byte*) main::screen = (byte*) 1024
 
-zp ZP_WORD:2 [ main::sc#2 main::sc#1 ]
-zp ZP_WORD:4 [ main::cc#2 main::cc#1 ]
+zp[2]:2 [ main::sc#2 main::sc#1 ]
+zp[2]:4 [ main::cc#2 main::cc#1 ]
 
 
 FINAL ASSEMBLER

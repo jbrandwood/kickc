@@ -6,8 +6,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::i#0 ← (number) $a
-  (byte) main::s#0 ← (number) 0
+  (byte) main::i#0 ← (byte) $a
+  (byte) main::s#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::s#3 ← phi( main/(byte) main::s#0 main::@2/(byte) main::s#4 )
@@ -66,21 +66,12 @@ SYMBOL TABLE SSA
 (byte) main::s#3
 (byte) main::s#4
 
-Adding number conversion cast (unumber) $a in (byte) main::i#0 ← (number) $a
-Adding number conversion cast (unumber) 0 in (byte) main::s#0 ← (number) 0
 Adding number conversion cast (unumber) 5 in (bool~) main::$0 ← (byte) main::i#2 > (number) 5
 Adding number conversion cast (unumber) 0 in (bool~) main::$3 ← (byte) main::i#1 > (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::i#0 ← (unumber)(number) $a
-Inlining cast (byte) main::s#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $a
-Simplifying constant integer cast 0
 Simplifying constant integer cast 5
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $a
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -185,8 +176,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::s#2 main::s#4 main::s#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::s#2 main::s#4 main::s#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::s#2 main::s#4 main::s#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -266,13 +257,13 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] (byte) main::s#1 ← (byte) main::s#2 + (byte) main::i#2 [ main::i#2 main::s#1 ] ( main:2 [ main::i#2 main::s#1 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte) main::s#1 ← (byte) main::s#2 + (byte) main::i#2 [ main::i#2 main::s#1 ] ( main:2 [ main::i#2 main::s#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::s#2 main::s#4 main::s#1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::s#2 main::s#4 main::s#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 49.5: zp ZP_BYTE:3 [ main::s#2 main::s#4 main::s#1 ] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 49.5: zp[1]:3 [ main::s#2 main::s#4 main::s#1 ] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 398 combination reg byte a [ main::s#2 main::s#4 main::s#1 ] reg byte x [ main::i#2 main::i#1 ] 

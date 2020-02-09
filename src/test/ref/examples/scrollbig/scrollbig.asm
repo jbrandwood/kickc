@@ -9,6 +9,7 @@
   .label BGCOL = $d020
   .label SCROLL = $d016
   .label current_bit = 2
+  // Scroll the next bit from the current char onto the screen - trigger next char if needed
   .label current_chargen = 7
   .label nxt = 5
 main: {

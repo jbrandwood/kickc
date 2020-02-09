@@ -6,7 +6,6 @@ import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -76,22 +75,22 @@ public class AsmFragmentInstance {
       if(boundValue == null) {
          throw new RuntimeException("Binding '" + name + "' not found in fragment " + this.name);
       }
-      if(boundValue instanceof Variable) {
+      if(boundValue instanceof Variable && ((Variable) boundValue).isVariable()) {
          Variable boundVar = (Variable) boundValue;
          Registers.Register register = boundVar.getAllocation();
-         if(register != null && register instanceof Registers.RegisterZp) {
+         if(register != null && register instanceof Registers.RegisterZpMem) {
             return new AsmParameter(AsmFormat.getAsmParamName(boundVar, codeScopeRef), true);
-         } else if(register!=null && register instanceof Registers.RegisterMemory) {
+         } else if(register!=null && register instanceof Registers.RegisterMainMem) {
             return new AsmParameter(AsmFormat.getAsmParamName(boundVar, codeScopeRef), false);
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }
-      } else if(boundValue instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) boundValue;
-         String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getRef(), 99, codeScopeRef);
+      } else if(boundValue instanceof Variable && ((Variable) boundValue).isKindConstant()) {
+         Variable constantVar = (Variable) boundValue;
+         String constantValueAsm = AsmFormat.getAsmConstant(program, constantVar.getConstantRef(), 99, codeScopeRef);
          boolean constantValueZp = SymbolType.BYTE.equals(constantVar.getType());
          if(!constantValueZp) {
-            constantValueZp = isConstantValueZp(constantVar.getValue());
+            constantValueZp = isConstantValueZp(constantVar.getInitValue());
          }
          return new AsmParameter(constantValueAsm, constantValueZp);
       } else if(boundValue instanceof ConstantValue) {
@@ -127,8 +126,8 @@ public class AsmFragmentInstance {
          // ignore
       }
       if(boundConst instanceof ConstantRef) {
-         ConstantVar reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
-         return isConstantValueZp(reffedConstant.getValue());
+         Variable reffedConstant = program.getScope().getConstant((ConstantRef) boundConst);
+         return isConstantValueZp(reffedConstant.getInitValue());
       }
       if(boundConst instanceof ConstantCastValue) {
          SymbolType toType = ((ConstantCastValue) boundConst).getToType();

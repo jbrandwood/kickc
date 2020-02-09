@@ -10,8 +10,6 @@
   .label CIA2_TIMER_B_CONTROL = $dd0f
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
-  // Timer Control - Time CONTINUOUS/ONE-SHOT (0:CONTINUOUS, 1: ONE-SHOT)
-  .const CIA_TIMER_CONTROL_CONTINUOUS = 0
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
@@ -42,7 +40,7 @@ main: {
     jmp __b1
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zeropage(9) dw)
+// print_dword_at(dword zp(9) dw)
 print_dword_at: {
     .label dw = 9
     lda.z dw+2
@@ -66,7 +64,7 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zeropage(2) w, byte* zeropage(4) at)
+// print_word_at(word zp(2) w, byte* zp(4) at)
 print_word_at: {
     .label w = 2
     .label at = 4
@@ -75,9 +73,9 @@ print_word_at: {
     jsr print_byte_at
     lda.z w
     sta.z print_byte_at.b
-    lda.z print_byte_at.at
+    lda #2
     clc
-    adc #2
+    adc.z print_byte_at.at
     sta.z print_byte_at.at
     bcc !+
     inc.z print_byte_at.at+1
@@ -86,7 +84,7 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zeropage(6) b, byte* zeropage(4) at)
+// print_byte_at(byte zp(6) b, byte* zp(4) at)
 print_byte_at: {
     .label b = 6
     .label at = 4
@@ -117,7 +115,7 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zeropage(7) at)
+// print_char_at(byte register(X) ch, byte* zp(7) at)
 print_char_at: {
     .label at = 7
     txa
@@ -148,7 +146,7 @@ clock: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #CIA_TIMER_CONTROL_CONTINUOUS
+    lda #0
     sta CIA2_TIMER_A_CONTROL
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL

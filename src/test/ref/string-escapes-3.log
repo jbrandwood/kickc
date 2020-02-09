@@ -10,14 +10,13 @@ Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte[]) MESSAGE ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::line#0 ← ((byte*)) (number) $400
+  (byte*) main::line#0 ← (byte*)(number) $400
   (byte*) main::cursor#0 ← (byte*) main::line#0
-  (byte*) main::msg#0 ← (byte[]) MESSAGE
+  (byte*) main::msg#0 ← (const byte*) MESSAGE
   to:main::@1
 main::@1: scope:[main]  from main main::@6
   (byte*) main::cursor#5 ← phi( main/(byte*) main::cursor#0 main::@6/(byte*) main::cursor#6 )
@@ -64,13 +63,12 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "hello
-world"pm
 (label) @1
 (label) @2
 (label) @begin
 (label) @end
-(byte[]) MESSAGE
+(const byte*) MESSAGE[]  = (byte*) "hello
+world"pm
 (void()) main()
 (number~) main::$0
 (bool~) main::$1
@@ -110,8 +108,6 @@ Adding number conversion cast (unumber) $28 in (byte*) main::line#1 ← (byte*) 
 Adding number conversion cast (unumber) $3f in (number~) main::$0 ← *((byte*) main::msg#4) & (number) $3f
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← *((byte*) main::msg#4) & (unumber)(number) $3f
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::line#0 ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -130,18 +126,15 @@ Alias (byte*) main::cursor#1 = (byte*) main::line#1
 Successful SSA optimization Pass2AliasElimination
 Alias (byte*) main::msg#2 = (byte*) main::msg#5 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
+Simple Condition (bool~) main::$1 [5] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[]) MESSAGE = $0
 Constant (const byte*) main::cursor#0 = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::msg#0 = MESSAGE
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) main::cursor#0
 Inlining constant with var siblings (const byte*) main::msg#0
-Constant inlined $0 = (const byte[]) MESSAGE
 Constant inlined main::cursor#0 = (byte*) 1024
-Constant inlined main::msg#0 = (const byte[]) MESSAGE
+Constant inlined main::msg#0 = (const byte*) MESSAGE
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -187,7 +180,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@5
   [5] (byte*) main::cursor#3 ← phi( main/(byte*) 1024 main::@5/(byte*) main::cursor#6 )
   [5] (byte*) main::line#2 ← phi( main/(byte*) 1024 main::@5/(byte*) main::line#5 )
-  [5] (byte*) main::msg#2 ← phi( main/(const byte[]) MESSAGE main::@5/(byte*) main::msg#1 )
+  [5] (byte*) main::msg#2 ← phi( main/(const byte*) MESSAGE main::@5/(byte*) main::msg#1 )
   [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -204,12 +197,12 @@ main::@4: scope:[main]  from main::@2
   to:main::@5
 main::@5: scope:[main]  from main::@3 main::@4
   [12] (byte*) main::cursor#6 ← phi( main::@3/(byte*) main::cursor#1 main::@4/(byte*) main::cursor#2 )
-  [12] (byte*) main::line#5 ← phi( main::@3/(byte*~) main::line#8 main::@4/(byte*) main::line#2 )
+  [12] (byte*) main::line#5 ← phi( main::@3/(byte*) main::line#8 main::@4/(byte*) main::line#2 )
   [13] (byte*) main::msg#1 ← ++ (byte*) main::msg#2
   to:main::@1
 main::@3: scope:[main]  from main::@2
   [14] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28
-  [15] (byte*~) main::line#8 ← (byte*) main::cursor#1
+  [15] (byte*) main::line#8 ← (byte*) main::cursor#1
   to:main::@5
 
 
@@ -224,7 +217,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) main::line
 (byte*) main::line#2 5.5
 (byte*) main::line#5 16.5
-(byte*~) main::line#8 22.0
+(byte*) main::line#8 22.0
 (byte*) main::msg
 (byte*) main::msg#1 22.0
 (byte*) main::msg#2 6.111111111111112
@@ -233,16 +226,16 @@ Initial phi equivalence classes
 [ main::msg#2 main::msg#1 ]
 [ main::line#2 main::line#5 main::line#8 ]
 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
 Complete equivalence classes
 [ main::msg#2 main::msg#1 ]
 [ main::line#2 main::line#5 main::line#8 ]
 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
 [ main::$0 ]
-Allocated zp ZP_WORD:2 [ main::msg#2 main::msg#1 ]
-Allocated zp ZP_WORD:4 [ main::line#2 main::line#5 main::line#8 ]
-Allocated zp ZP_WORD:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
-Allocated zp ZP_BYTE:8 [ main::$0 ]
+Allocated zp[2]:2 [ main::msg#2 main::msg#1 ]
+Allocated zp[2]:4 [ main::line#2 main::line#5 main::line#8 ]
+Allocated zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+Allocated zp[1]:8 [ main::$0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -288,7 +281,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -335,7 +328,7 @@ main: {
   __b5_from___b3:
   __b5_from___b4:
     // [12] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
-    // [12] phi (byte*) main::line#5 = (byte*~) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
+    // [12] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
     jmp __b5
     // main::@5
   __b5:
@@ -360,7 +353,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [15] (byte*~) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
+    // [15] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1
@@ -378,17 +371,17 @@ Statement [8] if(*((byte*) main::msg#2)==(byte) '
 Statement [9] (byte~) main::$0 ← *((byte*) main::msg#2) & (byte) $3f [ main::msg#2 main::line#2 main::cursor#3 main::$0 ] ( main:2 [ main::msg#2 main::line#2 main::cursor#3 main::$0 ] ) always clobbers reg byte a reg byte y 
 Statement [10] *((byte*) main::cursor#3) ← (byte~) main::$0 [ main::msg#2 main::line#2 main::cursor#3 ] ( main:2 [ main::msg#2 main::line#2 main::cursor#3 ] ) always clobbers reg byte y 
 Statement [14] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 [ main::msg#2 main::cursor#1 ] ( main:2 [ main::msg#2 main::cursor#1 ] ) always clobbers reg byte a 
-Statement [15] (byte*~) main::line#8 ← (byte*) main::cursor#1 [ main::msg#2 main::line#8 main::cursor#1 ] ( main:2 [ main::msg#2 main::line#8 main::cursor#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ main::msg#2 main::msg#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ main::line#2 main::line#5 main::line#8 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_BYTE:8 [ main::$0 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
+Statement [15] (byte*) main::line#8 ← (byte*) main::cursor#1 [ main::msg#2 main::line#8 main::cursor#1 ] ( main:2 [ main::msg#2 main::line#8 main::cursor#1 ] ) always clobbers reg byte a 
+Potential registers zp[2]:2 [ main::msg#2 main::msg#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] : zp[2]:6 , 
+Potential registers zp[1]:8 [ main::$0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 61.6: zp ZP_WORD:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] 44: zp ZP_WORD:4 [ main::line#2 main::line#5 main::line#8 ] 28.11: zp ZP_WORD:2 [ main::msg#2 main::msg#1 ] 22: zp ZP_BYTE:8 [ main::$0 ] 
+Uplift Scope [main] 61.6: zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] 44: zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] 28.11: zp[2]:2 [ main::msg#2 main::msg#1 ] 22: zp[1]:8 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1463 combination zp ZP_WORD:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] zp ZP_WORD:4 [ main::line#2 main::line#5 main::line#8 ] zp ZP_WORD:2 [ main::msg#2 main::msg#1 ] reg byte a [ main::$0 ] 
+Uplifting [main] best 1463 combination zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] zp[2]:2 [ main::msg#2 main::msg#1 ] reg byte a [ main::$0 ] 
 Uplifting [] best 1463 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -433,7 +426,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -478,7 +471,7 @@ main: {
   __b5_from___b3:
   __b5_from___b4:
     // [12] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
-    // [12] phi (byte*) main::line#5 = (byte*~) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
+    // [12] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
     jmp __b5
     // main::@5
   __b5:
@@ -503,7 +496,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [15] (byte*~) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
+    // [15] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1
@@ -551,7 +544,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte[]) MESSAGE MESSAGE = (string) "hello
+(const byte*) MESSAGE[]  = (byte*) "hello
 world"pm
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
@@ -562,21 +555,21 @@ world"pm
 (label) main::@5
 (label) main::@return
 (byte*) main::cursor
-(byte*) main::cursor#1 cursor zp ZP_WORD:6 16.5
-(byte*) main::cursor#2 cursor zp ZP_WORD:6 22.0
-(byte*) main::cursor#3 cursor zp ZP_WORD:6 6.6000000000000005
-(byte*) main::cursor#6 cursor zp ZP_WORD:6 16.5
+(byte*) main::cursor#1 cursor zp[2]:6 16.5
+(byte*) main::cursor#2 cursor zp[2]:6 22.0
+(byte*) main::cursor#3 cursor zp[2]:6 6.6000000000000005
+(byte*) main::cursor#6 cursor zp[2]:6 16.5
 (byte*) main::line
-(byte*) main::line#2 line zp ZP_WORD:4 5.5
-(byte*) main::line#5 line zp ZP_WORD:4 16.5
-(byte*~) main::line#8 line zp ZP_WORD:4 22.0
+(byte*) main::line#2 line zp[2]:4 5.5
+(byte*) main::line#5 line zp[2]:4 16.5
+(byte*) main::line#8 line zp[2]:4 22.0
 (byte*) main::msg
-(byte*) main::msg#1 msg zp ZP_WORD:2 22.0
-(byte*) main::msg#2 msg zp ZP_WORD:2 6.111111111111112
+(byte*) main::msg#1 msg zp[2]:2 22.0
+(byte*) main::msg#2 msg zp[2]:2 6.111111111111112
 
-zp ZP_WORD:2 [ main::msg#2 main::msg#1 ]
-zp ZP_WORD:4 [ main::line#2 main::line#5 main::line#8 ]
-zp ZP_WORD:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
+zp[2]:2 [ main::msg#2 main::msg#1 ]
+zp[2]:4 [ main::line#2 main::line#5 main::line#8 ]
+zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ]
 reg byte a [ main::$0 ]
 
 
@@ -614,7 +607,7 @@ main: {
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte[]) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -659,7 +652,7 @@ main: {
   !:
     // [12] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
     // [12] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
-    // [12] phi (byte*) main::line#5 = (byte*~) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
+    // [12] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
     // main::@5
   __b5:
     // msg++;
@@ -684,7 +677,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [15] (byte*~) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
+    // [15] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1

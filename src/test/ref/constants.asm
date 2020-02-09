@@ -69,7 +69,7 @@ test_sbytes: {
     msg4: .text "-127-127=2"
     .byte 0
 }
-// assert_sbyte(byte* zeropage(7) msg, signed byte register(X) b, signed byte zeropage(6) c)
+// assert_sbyte(byte* zp(7) msg, signed byte register(X) b, signed byte zp(6) c)
 assert_sbyte: {
     .label msg = 7
     .label c = 6
@@ -104,7 +104,7 @@ assert_sbyte: {
     jmp __b2
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(7) str)
+// print_str(byte* zp(7) str)
 print_str: {
     .label str = 7
   __b1:
@@ -196,7 +196,7 @@ test_bytes: {
     msg2: .text "0+2-4=254"
     .byte 0
 }
-// assert_byte(byte* zeropage(7) msg, byte register(X) b, byte zeropage(6) c)
+// assert_byte(byte* zp(7) msg, byte register(X) b, byte zp(6) c)
 assert_byte: {
     .label msg = 7
     .label c = 6

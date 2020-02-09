@@ -7,14 +7,30 @@ import "sqr"
 import "atan2"
 
 // Screen containing distance to center
-const byte[] SCREEN_DIST = malloc(1000);
+byte* SCREEN_DIST = malloc(1000);
 // Screen containing angle to center
-const byte[] SCREEN_ANGLE= malloc(1000);
+byte* SCREEN_ANGLE= malloc(1000);
 // Screen containing angle to center
 const byte* SCREEN_FILL = 0x0400;
 
 // Char to fill with
 const byte FILL_CHAR = '*';
+
+// The number of buckets in our bucket sort
+const byte NUM_BUCKETS = 0x30;
+
+// Array containing the bucket size for each of the distance buckets
+byte* BUCKET_SIZES = malloc(NUM_BUCKETS*sizeof(byte));
+
+// Buckets containing screen indices for each distance from the center.
+// BUCKETS[dist] is an array of words containing screen indices.
+// The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
+word** BUCKETS = malloc(NUM_BUCKETS*sizeof(word*));
+
+// Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
+byte* BUCKET_IDX = malloc(NUM_BUCKETS*sizeof(byte));
+
+
 
 void main() {
     asm { sei }
@@ -27,7 +43,7 @@ void main() {
     while(true) {
         do { } while (*RASTER!=0xff);
         (*BORDERCOL)++;
-        word[] bucket = BUCKETS[bucket_idx];
+        word* bucket = BUCKETS[bucket_idx];
         byte bucket_size = BUCKET_SIZES[bucket_idx];
         if(bucket_size>0) {
             // Find the minimum unfilled angle in the current bucket
@@ -65,20 +81,6 @@ void main() {
     while(true)
         (*(COLS+999))++;
 }
-
-// The number of buckets in our bucket sort
-const byte NUM_BUCKETS = 0x30;
-
-// Array containing the bucket size for each of the distance buckets
-const byte[] BUCKET_SIZES = malloc(NUM_BUCKETS*sizeof(byte));
-
-// Buckets containing screen indices for each distance from the center.
-// BUCKETS[dist] is an array of words containing screen indices.
-// The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
-const word*[] BUCKETS = malloc(NUM_BUCKETS*sizeof(word*));
-
-// Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
-const byte[] BUCKET_IDX = malloc(NUM_BUCKETS*sizeof(byte));
 
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
 void init_buckets(byte* screen) {

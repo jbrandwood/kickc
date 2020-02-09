@@ -9,30 +9,20 @@ Culled Empty Block (label) @6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (word*) CIA2_TIMER_A ← ((word*)) (number) $dd04
-  (byte*) CIA2_INTERRUPT ← ((byte*)) (number) $dd0d
-  (byte*) CIA2_TIMER_A_CONTROL ← ((byte*)) (number) $dd0e
-  (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-  (void()**) KERNEL_NMI ← ((void()**)) (number) $318
-  (byte*) SID_VOLUME ← ((byte*)) (number) $d418
   to:@4
 @4: scope:[]  from @begin
-  (word) SAMPLE_SIZE ← (number) $6100
-  (byte[SAMPLE_SIZE]) SAMPLE ← kickasm {{ .import binary "moments_sample.bin"  }}
-  (byte*) sample#0 ← (byte[SAMPLE_SIZE]) SAMPLE
+  (byte*) sample ← (const byte*) SAMPLE
   to:@7
 
 (void()) main()
 main: scope:[main]  from @7
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
-  *((byte*) CIA2_INTERRUPT) ← (byte) CIA_INTERRUPT_CLEAR
-  (void()*~) main::$0 ← & interrupt(HARDWARE_ALL)(void()) nmi()
-  *((void()**) KERNEL_NMI) ← (void()*~) main::$0
-  *((word*) CIA2_TIMER_A) ← (number) $88
-  *((byte*) CIA2_INTERRUPT) ← (number) $81
-  *((byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
+  *((const byte*) CIA2_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
+  *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
+  *((const word*) CIA2_TIMER_A) ← (number) $88
+  *((const byte*) CIA2_INTERRUPT) ← (number) $81
+  *((const byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -41,14 +31,12 @@ main::@return: scope:[main]  from main
 
 interrupt(HARDWARE_ALL)(void()) nmi()
 nmi: scope:[nmi]  from
-  (byte*) sample#4 ← phi( @7/(byte*) sample#7 )
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
-  (number~) nmi::$1 ← *((byte*) sample#4) & (number) $f
-  *((byte*) SID_VOLUME) ← (number~) nmi::$1
-  (void()*~) nmi::$2 ← & interrupt(HARDWARE_ALL)(void()) nmi2()
-  *((void()**) KERNEL_NMI) ← (void()*~) nmi::$2
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  (number~) nmi::$1 ← *((byte*) sample) & (number) $f
+  *((const byte*) SID_VOLUME) ← (number~) nmi::$1
+  *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2()
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:nmi::@return
 nmi::@return: scope:[nmi]  from nmi
   return 
@@ -56,35 +44,27 @@ nmi::@return: scope:[nmi]  from nmi
 
 interrupt(HARDWARE_ALL)(void()) nmi2()
 nmi2: scope:[nmi2]  from
-  (byte*) sample#5 ← phi( @7/(byte*) sample#7 )
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
-  (byte~) nmi2::$1 ← *((byte*) sample#5) >> (number) 4
-  *((byte*) SID_VOLUME) ← (byte~) nmi2::$1
-  (byte*) sample#1 ← ++ (byte*) sample#5
-  (byte~) nmi2::$2 ← > (byte*) sample#1
-  (byte*~) nmi2::$3 ← (byte[SAMPLE_SIZE]) SAMPLE + (number) $6100
-  (byte~) nmi2::$4 ← > (byte*~) nmi2::$3
-  (bool~) nmi2::$5 ← (byte~) nmi2::$2 == (byte~) nmi2::$4
-  (bool~) nmi2::$6 ← ! (bool~) nmi2::$5
-  if((bool~) nmi2::$6) goto nmi2::@1
+  (byte~) nmi2::$1 ← *((byte*) sample) >> (number) 4
+  *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1
+  (byte*) sample ← ++ (byte*) sample
+  (byte~) nmi2::$2 ← > (byte*) sample
+  (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(number) $6100
+  (bool~) nmi2::$4 ← ! (bool~) nmi2::$3
+  if((bool~) nmi2::$4) goto nmi2::@1
   to:nmi2::@2
 nmi2::@1: scope:[nmi2]  from nmi2 nmi2::@2
-  (byte*) sample#8 ← phi( nmi2/(byte*) sample#1 nmi2::@2/(byte*) sample#2 )
-  (void()*~) nmi2::$7 ← & interrupt(HARDWARE_ALL)(void()) nmi()
-  *((void()**) KERNEL_NMI) ← (void()*~) nmi2::$7
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:nmi2::@return
 nmi2::@2: scope:[nmi2]  from nmi2
-  (byte*) sample#2 ← (byte[SAMPLE_SIZE]) SAMPLE
+  (byte*) sample ← (const byte*) SAMPLE
   to:nmi2::@1
 nmi2::@return: scope:[nmi2]  from nmi2::@1
-  (byte*) sample#6 ← phi( nmi2::@1/(byte*) sample#8 )
-  (byte*) sample#3 ← (byte*) sample#6
   return 
   to:@return
 @7: scope:[]  from @4
-  (byte*) sample#7 ← phi( @4/(byte*) sample#0 )
   call main 
   to:@8
 @8: scope:[]  from @7
@@ -97,74 +77,48 @@ SYMBOL TABLE SSA
 (label) @8
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
-(byte*) CIA2_INTERRUPT
-(word*) CIA2_TIMER_A
-(byte*) CIA2_TIMER_A_CONTROL
-(byte) CIA_INTERRUPT_CLEAR
-(void()**) KERNEL_NMI
-(byte[SAMPLE_SIZE]) SAMPLE
-(word) SAMPLE_SIZE
-(byte*) SID_VOLUME
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) CIA2_INTERRUPT = (byte*)(number) $dd0d
+(const word*) CIA2_TIMER_A = (word*)(number) $dd04
+(const byte*) CIA2_TIMER_A_CONTROL = (byte*)(number) $dd0e
+(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const void()**) KERNEL_NMI = (void()**)(number) $318
+(const byte*) SAMPLE[(const word) SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
+(const word) SAMPLE_SIZE = (word) $6100
+(const byte*) SID_VOLUME = (byte*)(number) $d418
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmi()
 (number~) nmi::$1
-(void()*~) nmi::$2
 (label) nmi::@return
 interrupt(HARDWARE_ALL)(void()) nmi2()
 (byte~) nmi2::$1
 (byte~) nmi2::$2
-(byte*~) nmi2::$3
-(byte~) nmi2::$4
-(bool~) nmi2::$5
-(bool~) nmi2::$6
-(void()*~) nmi2::$7
+(bool~) nmi2::$3
+(bool~) nmi2::$4
 (label) nmi2::@1
 (label) nmi2::@2
 (label) nmi2::@return
-(byte*) sample
-(byte*) sample#0
-(byte*) sample#1
-(byte*) sample#2
-(byte*) sample#3
-(byte*) sample#4
-(byte*) sample#5
-(byte*) sample#6
-(byte*) sample#7
-(byte*) sample#8
+(byte*) sample loadstore
 
-Adding number conversion cast (unumber) $7f in (byte) CIA_INTERRUPT_CLEAR ← (number) $7f
-Adding number conversion cast (unumber) $6100 in (word) SAMPLE_SIZE ← (number) $6100
-Adding number conversion cast (unumber) $88 in *((word*) CIA2_TIMER_A) ← (number) $88
-Adding number conversion cast (unumber) $81 in *((byte*) CIA2_INTERRUPT) ← (number) $81
-Adding number conversion cast (unumber) 1 in *((byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
-Adding number conversion cast (unumber) $f in (number~) nmi::$1 ← *((byte*) sample#4) & (number) $f
-Adding number conversion cast (unumber) nmi::$1 in (number~) nmi::$1 ← *((byte*) sample#4) & (unumber)(number) $f
-Adding number conversion cast (unumber) 4 in (byte~) nmi2::$1 ← *((byte*) sample#5) >> (number) 4
-Adding number conversion cast (unumber) $6100 in (byte*~) nmi2::$3 ← (byte[SAMPLE_SIZE]) SAMPLE + (number) $6100
+Adding number conversion cast (unumber) $88 in *((const word*) CIA2_TIMER_A) ← (number) $88
+Adding number conversion cast (unumber) $81 in *((const byte*) CIA2_INTERRUPT) ← (number) $81
+Adding number conversion cast (unumber) 1 in *((const byte*) CIA2_TIMER_A_CONTROL) ← (number) 1
+Adding number conversion cast (unumber) $f in (number~) nmi::$1 ← *((byte*) sample) & (number) $f
+Adding number conversion cast (unumber) nmi::$1 in (number~) nmi::$1 ← *((byte*) sample) & (unumber)(number) $f
+Adding number conversion cast (unumber) 4 in (byte~) nmi2::$1 ← *((byte*) sample) >> (number) 4
+Adding number conversion cast (unumber) $6100 in (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(number) $6100
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (word*) CIA2_TIMER_A ← (word*)(number) $dd04
-Inlining cast (byte*) CIA2_INTERRUPT ← (byte*)(number) $dd0d
-Inlining cast (byte*) CIA2_TIMER_A_CONTROL ← (byte*)(number) $dd0e
-Inlining cast (byte) CIA_INTERRUPT_CLEAR ← (unumber)(number) $7f
-Inlining cast (void()**) KERNEL_NMI ← (void()**)(number) $318
-Inlining cast (byte*) SID_VOLUME ← (byte*)(number) $d418
-Inlining cast (word) SAMPLE_SIZE ← (unumber)(number) $6100
-Inlining cast *((word*) CIA2_TIMER_A) ← (unumber)(number) $88
-Inlining cast *((byte*) CIA2_INTERRUPT) ← (unumber)(number) $81
-Inlining cast *((byte*) CIA2_TIMER_A_CONTROL) ← (unumber)(number) 1
+Inlining cast *((const word*) CIA2_TIMER_A) ← (unumber)(number) $88
+Inlining cast *((const byte*) CIA2_INTERRUPT) ← (unumber)(number) $81
+Inlining cast *((const byte*) CIA2_TIMER_A_CONTROL) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (word*) 56580
 Simplifying constant pointer cast (byte*) 56589
 Simplifying constant pointer cast (byte*) 56590
-Simplifying constant integer cast $7f
 Simplifying constant pointer cast (void()**) 792
 Simplifying constant pointer cast (byte*) 54296
-Simplifying constant integer cast $6100
 Simplifying constant integer cast $88
 Simplifying constant integer cast $81
 Simplifying constant integer cast 1
@@ -172,8 +126,6 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast 4
 Simplifying constant integer cast $6100
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (word) $6100
 Finalized unsigned number type (byte) $88
 Finalized unsigned number type (byte) $81
 Finalized unsigned number type (byte) 1
@@ -181,51 +133,11 @@ Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (word) $6100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) nmi::$1 ← *((byte*) sample#4) & (byte) $f
-Inversing boolean not [39] (bool~) nmi2::$6 ← (byte~) nmi2::$2 != (byte~) nmi2::$4 from [38] (bool~) nmi2::$5 ← (byte~) nmi2::$2 == (byte~) nmi2::$4
+Inferred type updated to byte in (unumber~) nmi::$1 ← *((byte*) sample) & (byte) $f
+Inversing boolean not [24] (bool~) nmi2::$4 ← (byte~) nmi2::$2 != >(const byte*) SAMPLE+(word) $6100 from [23] (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(word) $6100
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias candidate removed (volatile)(byte[SAMPLE_SIZE]) SAMPLE = (byte*) sample#0 (byte*) sample#7 
-Alias (byte*) sample#3 = (byte*) sample#6 (byte*) sample#8 
-Successful SSA optimization Pass2AliasElimination
-Alias candidate removed (volatile)(byte[SAMPLE_SIZE]) SAMPLE = (byte*) sample#0 (byte*) sample#7 
-Identical Phi Values (byte*) sample#4 (byte*) sample#7
-Identical Phi Values (byte*) sample#5 (byte*) sample#7
-Identical Phi Values (byte*) sample#7 (byte*) sample#0
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) nmi2::$6 [40] if((byte~) nmi2::$2!=(byte~) nmi2::$4) goto nmi2::@1
+Simple Condition (bool~) nmi2::$4 [25] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [13] (void()*~) main::$0 ← & interrupt(HARDWARE_ALL)(void()) nmi()
-Constant right-side identified [25] (void()*~) nmi::$2 ← & interrupt(HARDWARE_ALL)(void()) nmi2()
-Constant right-side identified [42] (void()*~) nmi2::$7 ← & interrupt(HARDWARE_ALL)(void()) nmi()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const word*) CIA2_TIMER_A = (word*) 56580
-Constant (const byte*) CIA2_INTERRUPT = (byte*) 56589
-Constant (const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
-Constant (const byte) CIA_INTERRUPT_CLEAR = $7f
-Constant (const void()**) KERNEL_NMI = (void()**) 792
-Constant (const byte*) SID_VOLUME = (byte*) 54296
-Constant (const word) SAMPLE_SIZE = $6100
-Constant (const byte[SAMPLE_SIZE]) SAMPLE = kickasm {{ .import binary "moments_sample.bin"  }}
-Constant (const void()*) main::$0 = &nmi
-Constant (const void()*) nmi::$2 = &nmi2
-Constant (const void()*) nmi2::$7 = &nmi
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [23] (byte*~) nmi2::$3 ← (const byte[SAMPLE_SIZE]) SAMPLE + (word) $6100
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) nmi2::$3 = SAMPLE+$6100
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [23] (byte~) nmi2::$4 ← > (const byte*) nmi2::$3
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) nmi2::$4 = >nmi2::$3
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined nmi::$2 = &interrupt(HARDWARE_ALL)(void()) nmi2()
-Constant inlined nmi2::$4 = >(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100
-Constant inlined nmi2::$7 = &interrupt(HARDWARE_ALL)(void()) nmi()
-Constant inlined nmi2::$3 = (const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100
-Constant inlined main::$0 = &interrupt(HARDWARE_ALL)(void()) nmi()
-Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting nmi2::@3(between nmi2 and nmi2::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @7
 Adding NOP phi() at start of @8
@@ -233,12 +145,9 @@ Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:3 
 
-Created 1 initial phi equivalence classes
-Coalesced [23] sample#10 ← sample#2
-Coalesced [28] sample#9 ← sample#1
-Coalesced down to 1 phi equivalence classes
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
 Culled Empty Block (label) @8
-Culled Empty Block (label) nmi2::@3
 Renumbering block @4 to @1
 Renumbering block @7 to @2
 Adding NOP phi() at start of @begin
@@ -250,7 +159,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE
+  [1] (byte*) sample ← (const byte*) SAMPLE
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -278,35 +187,34 @@ interrupt(HARDWARE_ALL)(void()) nmi2()
 nmi2: scope:[nmi2]  from
   [14] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
-  [16] (byte~) nmi2::$1 ← *((byte*) sample#0) >> (byte) 4
+  [16] (byte~) nmi2::$1 ← *((byte*) sample) >> (byte) 4
   [17] *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1
-  [18] (byte*) sample#1 ← ++ (byte*) sample#0
-  [19] (byte~) nmi2::$2 ← > (byte*) sample#1
-  [20] if((byte~) nmi2::$2!=>(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100) goto nmi2::@1
+  [18] (byte*) sample ← ++ (byte*) sample
+  [19] (byte~) nmi2::$2 ← > (byte*) sample
+  [20] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
   to:nmi2::@2
 nmi2::@2: scope:[nmi2]  from nmi2
-  [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE
+  [21] (byte*) sample ← (const byte*) SAMPLE
   to:nmi2::@1
 nmi2::@1: scope:[nmi2]  from nmi2 nmi2::@2
-  [22] (byte*) sample#3 ← phi( nmi2/(byte*) sample#1 nmi2::@2/(byte*) sample#2 )
-  [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
-  [24] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
+  [22] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
+  [23] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:nmi2::@return
 nmi2::@return: scope:[nmi2]  from nmi2::@1
-  [25] return 
+  [24] return 
   to:@return
 
 interrupt(HARDWARE_ALL)(void()) nmi()
 nmi: scope:[nmi]  from
-  [26] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
+  [25] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
-  [28] (byte~) nmi::$1 ← *((byte*) sample#0) & (byte) $f
-  [29] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1
-  [30] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2()
-  [31] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
+  [27] (byte~) nmi::$1 ← *((byte*) sample) & (byte) $f
+  [28] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1
+  [29] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2()
+  [30] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   to:nmi::@return
 nmi::@return: scope:[nmi]  from nmi
-  [32] return 
+  [31] return 
   to:@return
 
 
@@ -317,27 +225,22 @@ interrupt(HARDWARE_ALL)(void()) nmi()
 interrupt(HARDWARE_ALL)(void()) nmi2()
 (byte~) nmi2::$1 4.0
 (byte~) nmi2::$2 4.0
-(byte*) sample
-(byte*) sample#0 1.3333333333333333
-(byte*) sample#1 2.0
-(byte*) sample#2 4.0
-(byte*) sample#3 40.0
+(byte*) sample loadstore 2.8
 
 Initial phi equivalence classes
-[ sample#3 sample#1 sample#2 ]
-Coalescing volatile variable equivalence classes [ sample#0 ] and [ sample#3 sample#1 sample#2 ]
-Added variable nmi2::$1 to zero page equivalence class [ nmi2::$1 ]
-Added variable nmi2::$2 to zero page equivalence class [ nmi2::$2 ]
-Added variable nmi::$1 to zero page equivalence class [ nmi::$1 ]
+Added variable sample to live range equivalence class [ sample ]
+Added variable nmi2::$1 to live range equivalence class [ nmi2::$1 ]
+Added variable nmi2::$2 to live range equivalence class [ nmi2::$2 ]
+Added variable nmi::$1 to live range equivalence class [ nmi::$1 ]
 Complete equivalence classes
-[ sample#0 sample#3 sample#1 sample#2 ]
+[ sample ]
 [ nmi2::$1 ]
 [ nmi2::$2 ]
 [ nmi::$1 ]
-Allocated zp ZP_WORD:2 [ sample#0 sample#3 sample#1 sample#2 ]
-Allocated zp ZP_BYTE:4 [ nmi2::$1 ]
-Allocated zp ZP_BYTE:5 [ nmi2::$2 ]
-Allocated zp ZP_BYTE:6 [ nmi::$1 ]
+Allocated zp[2]:2 [ sample ]
+Allocated zp[1]:4 [ nmi2::$1 ]
+Allocated zp[1]:5 [ nmi2::$2 ]
+Allocated zp[1]:6 [ nmi::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -370,7 +273,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
+  // [1] (byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
   lda #<SAMPLE
   sta.z sample
   lda #>SAMPLE
@@ -442,7 +345,7 @@ nmi2: {
     inc BORDERCOL
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
-    // [16] (byte~) nmi2::$1 ← *((byte*) sample#0) >> (byte) 4 -- vbuz1=_deref_pbuz2_ror_4 
+    // [16] (byte~) nmi2::$1 ← *((byte*) sample) >> (byte) 4 -- vbuz1=_deref_pbuz2_ror_4 
     ldy #0
     lda (sample),y
     lsr
@@ -453,44 +356,40 @@ nmi2: {
     // [17] *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta SID_VOLUME
-    // [18] (byte*) sample#1 ← ++ (byte*) sample#0 -- pbuz1=_inc_pbuz1 
+    // [18] (byte*) sample ← ++ (byte*) sample -- pbuz1=_inc_pbuz1 
     inc.z sample
     bne !+
     inc.z sample+1
   !:
-    // [19] (byte~) nmi2::$2 ← > (byte*) sample#1 -- vbuz1=_hi_pbuz2 
+    // [19] (byte~) nmi2::$2 ← > (byte*) sample -- vbuz1=_hi_pbuz2 
     lda.z sample+1
     sta.z __2
-    // [20] if((byte~) nmi2::$2!=>(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [20] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #>SAMPLE+$6100
     cmp.z __2
-    bne __b1_from_nmi2
+    bne __b1
     jmp __b2
     // nmi2::@2
   __b2:
-    // [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
+    // [21] (byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
     sta.z sample+1
-    // [22] phi from nmi2 nmi2::@2 to nmi2::@1 [phi:nmi2/nmi2::@2->nmi2::@1]
-  __b1_from_nmi2:
-  __b1_from___b2:
-    // [22] phi (byte*) sample#3 = (byte*) sample#1 [phi:nmi2/nmi2::@2->nmi2::@1#0] -- register_copy 
     jmp __b1
     // nmi2::@1
   __b1:
-    // [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
+    // [22] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
-    // [24] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [23] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp __breturn
     // nmi2::@return
   __breturn:
-    // [25] return  - exit interrupt(HARDWARE_ALL)
+    // [24] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:
@@ -506,29 +405,29 @@ nmi: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [26] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [25] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
-    // [28] (byte~) nmi::$1 ← *((byte*) sample#0) & (byte) $f -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [27] (byte~) nmi::$1 ← *((byte*) sample) & (byte) $f -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$f
     ldy #0
     and (sample),y
     sta.z __1
-    // [29] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuz1 
+    // [28] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta SID_VOLUME
-    // [30] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
+    // [29] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
     lda #<nmi2
     sta KERNEL_NMI
     lda #>nmi2
     sta KERNEL_NMI+1
-    // [31] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [30] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp __breturn
     // nmi::@return
   __breturn:
-    // [32] return  - exit interrupt(HARDWARE_ALL)
+    // [31] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:
@@ -542,7 +441,7 @@ SAMPLE:
 .import binary "moments_sample.bin" 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE [ ] (  [ ] ) always clobbers reg byte a 
+Statement [1] (byte*) sample ← (const byte*) SAMPLE [ ] (  [ ] ) always clobbers reg byte a 
 Statement asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  } always clobbers reg byte a 
 Statement [7] *((const byte*) CIA2_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [8] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() [ ] ( main:3 [ ] ) always clobbers reg byte a 
@@ -550,28 +449,28 @@ Statement [9] *((const word*) CIA2_TIMER_A) ← (byte) $88 [ ] ( main:3 [ ] ) al
 Statement [10] *((const byte*) CIA2_INTERRUPT) ← (byte) $81 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement [11] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 1 [ ] ( main:3 [ ] ) always clobbers reg byte a 
 Statement asm { ldaCIA2_INTERRUPT  } always clobbers reg byte a 
-Statement [16] (byte~) nmi2::$1 ← *((byte*) sample#0) >> (byte) 4 [ sample#0 nmi2::$1 ] (  [ sample#0 nmi2::$1 ] ) always clobbers reg byte a reg byte y 
-Statement [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE [ sample#2 ] (  [ sample#2 ] ) always clobbers reg byte a 
-Statement [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() [ ] (  [ ] ) always clobbers reg byte a 
-Statement [25] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Statement [16] (byte~) nmi2::$1 ← *((byte*) sample) >> (byte) 4 [ nmi2::$1 ] (  [ nmi2::$1 ] ) always clobbers reg byte a reg byte y 
+Statement [21] (byte*) sample ← (const byte*) SAMPLE [ ] (  [ ] ) always clobbers reg byte a 
+Statement [22] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() [ ] (  [ ] ) always clobbers reg byte a 
+Statement [24] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
 Statement asm { ldaCIA2_INTERRUPT  } always clobbers reg byte a 
-Statement [28] (byte~) nmi::$1 ← *((byte*) sample#0) & (byte) $f [ nmi::$1 ] (  [ nmi::$1 ] ) always clobbers reg byte a reg byte y 
-Statement [30] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() [ ] (  [ ] ) always clobbers reg byte a 
-Statement [32] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
-Potential registers zp ZP_WORD:2 [ sample#0 sample#3 sample#1 sample#2 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ nmi2::$1 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ nmi2::$2 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ nmi::$1 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+Statement [27] (byte~) nmi::$1 ← *((byte*) sample) & (byte) $f [ nmi::$1 ] (  [ nmi::$1 ] ) always clobbers reg byte a reg byte y 
+Statement [29] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() [ ] (  [ ] ) always clobbers reg byte a 
+Statement [31] return  [ ] (  [ ] ) always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp[2]:2 [ sample ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ nmi2::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ nmi2::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ nmi::$1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 47.33: zp ZP_WORD:2 [ sample#0 sample#3 sample#1 sample#2 ] 
-Uplift Scope [nmi2] 4: zp ZP_BYTE:4 [ nmi2::$1 ] 4: zp ZP_BYTE:5 [ nmi2::$2 ] 
-Uplift Scope [nmi] 4: zp ZP_BYTE:6 [ nmi::$1 ] 
+Uplift Scope [nmi2] 4: zp[1]:4 [ nmi2::$1 ] 4: zp[1]:5 [ nmi2::$2 ] 
+Uplift Scope [nmi] 4: zp[1]:6 [ nmi::$1 ] 
+Uplift Scope [] 2.8: zp[2]:2 [ sample ] 
 Uplift Scope [main] 
 
-Uplifting [] best 546 combination zp ZP_WORD:2 [ sample#0 sample#3 sample#1 sample#2 ] 
 Uplifting [nmi2] best 534 combination reg byte a [ nmi2::$1 ] reg byte a [ nmi2::$2 ] 
 Uplifting [nmi] best 528 combination reg byte a [ nmi::$1 ] 
+Uplifting [] best 528 combination zp[2]:2 [ sample ] 
 Uplifting [main] best 528 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -604,7 +503,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
+  // [1] (byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
   lda #<SAMPLE
   sta.z sample
   lda #>SAMPLE
@@ -674,7 +573,7 @@ nmi2: {
     inc BORDERCOL
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
-    // [16] (byte~) nmi2::$1 ← *((byte*) sample#0) >> (byte) 4 -- vbuaa=_deref_pbuz1_ror_4 
+    // [16] (byte~) nmi2::$1 ← *((byte*) sample) >> (byte) 4 -- vbuaa=_deref_pbuz1_ror_4 
     ldy #0
     lda (sample),y
     lsr
@@ -683,42 +582,38 @@ nmi2: {
     lsr
     // [17] *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
     sta SID_VOLUME
-    // [18] (byte*) sample#1 ← ++ (byte*) sample#0 -- pbuz1=_inc_pbuz1 
+    // [18] (byte*) sample ← ++ (byte*) sample -- pbuz1=_inc_pbuz1 
     inc.z sample
     bne !+
     inc.z sample+1
   !:
-    // [19] (byte~) nmi2::$2 ← > (byte*) sample#1 -- vbuaa=_hi_pbuz1 
+    // [19] (byte~) nmi2::$2 ← > (byte*) sample -- vbuaa=_hi_pbuz1 
     lda.z sample+1
-    // [20] if((byte~) nmi2::$2!=>(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [20] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
-    bne __b1_from_nmi2
+    bne __b1
     jmp __b2
     // nmi2::@2
   __b2:
-    // [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
+    // [21] (byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
     sta.z sample+1
-    // [22] phi from nmi2 nmi2::@2 to nmi2::@1 [phi:nmi2/nmi2::@2->nmi2::@1]
-  __b1_from_nmi2:
-  __b1_from___b2:
-    // [22] phi (byte*) sample#3 = (byte*) sample#1 [phi:nmi2/nmi2::@2->nmi2::@1#0] -- register_copy 
     jmp __b1
     // nmi2::@1
   __b1:
-    // [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
+    // [22] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
-    // [24] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [23] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp __breturn
     // nmi2::@return
   __breturn:
-    // [25] return  - exit interrupt(HARDWARE_ALL)
+    // [24] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:
@@ -733,27 +628,27 @@ nmi: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [26] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [25] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
-    // [28] (byte~) nmi::$1 ← *((byte*) sample#0) & (byte) $f -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [27] (byte~) nmi::$1 ← *((byte*) sample) & (byte) $f -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$f
     ldy #0
     and (sample),y
-    // [29] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
+    // [28] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
     sta SID_VOLUME
-    // [30] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
+    // [29] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
     lda #<nmi2
     sta KERNEL_NMI
     lda #>nmi2
     sta KERNEL_NMI+1
-    // [31] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [30] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp __breturn
     // nmi::@return
   __breturn:
-    // [32] return  - exit interrupt(HARDWARE_ALL)
+    // [31] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:
@@ -777,12 +672,9 @@ Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __bbegin with __b1
-Replacing label __b1_from_nmi2 with __b1
 Removing instruction __bbegin:
 Removing instruction __b2_from___b1:
 Removing instruction __bend_from___b2:
-Removing instruction __b1_from_nmi2:
-Removing instruction __b1_from___b2:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
@@ -799,15 +691,15 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) CIA2_INTERRUPT CIA2_INTERRUPT = (byte*) 56589
-(const word*) CIA2_TIMER_A CIA2_TIMER_A = (word*) 56580
-(const byte*) CIA2_TIMER_A_CONTROL CIA2_TIMER_A_CONTROL = (byte*) 56590
-(const byte) CIA_INTERRUPT_CLEAR CIA_INTERRUPT_CLEAR = (byte) $7f
-(const void()**) KERNEL_NMI KERNEL_NMI = (void()**) 792
-(const byte[SAMPLE_SIZE]) SAMPLE SAMPLE = kickasm {{ .import binary "moments_sample.bin"  }}
-(const word) SAMPLE_SIZE SAMPLE_SIZE = (word) $6100
-(const byte*) SID_VOLUME SID_VOLUME = (byte*) 54296
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) CIA2_INTERRUPT = (byte*) 56589
+(const word*) CIA2_TIMER_A = (word*) 56580
+(const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
+(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const void()**) KERNEL_NMI = (void()**) 792
+(const byte*) SAMPLE[(const word) SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
+(const word) SAMPLE_SIZE = (word) $6100
+(const byte*) SID_VOLUME = (byte*) 54296
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmi()
@@ -819,13 +711,9 @@ interrupt(HARDWARE_ALL)(void()) nmi2()
 (label) nmi2::@1
 (label) nmi2::@2
 (label) nmi2::@return
-(byte*) sample
-(byte*) sample#0 sample zp ZP_WORD:2 1.3333333333333333
-(byte*) sample#1 sample zp ZP_WORD:2 2.0
-(byte*) sample#2 sample zp ZP_WORD:2 4.0
-(byte*) sample#3 sample zp ZP_WORD:2 40.0
+(byte*) sample loadstore zp[2]:2 2.8
 
-zp ZP_WORD:2 [ sample#0 sample#3 sample#1 sample#2 ]
+zp[2]:2 [ sample ]
 reg byte a [ nmi2::$1 ]
 reg byte a [ nmi2::$2 ]
 reg byte a [ nmi::$1 ]
@@ -862,7 +750,7 @@ Score: 483
   // @1
 __b1:
   // sample = SAMPLE
-  // [1] (byte*) sample#0 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
+  // [1] (byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
   lda #<SAMPLE
   sta.z sample
   lda #>SAMPLE
@@ -936,7 +824,7 @@ nmi2: {
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
     // *sample >> 4
-    // [16] (byte~) nmi2::$1 ← *((byte*) sample#0) >> (byte) 4 -- vbuaa=_deref_pbuz1_ror_4 
+    // [16] (byte~) nmi2::$1 ← *((byte*) sample) >> (byte) 4 -- vbuaa=_deref_pbuz1_ror_4 
     ldy #0
     lda (sample),y
     lsr
@@ -947,41 +835,39 @@ nmi2: {
     // [17] *((const byte*) SID_VOLUME) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
     sta SID_VOLUME
     // sample++;
-    // [18] (byte*) sample#1 ← ++ (byte*) sample#0 -- pbuz1=_inc_pbuz1 
+    // [18] (byte*) sample ← ++ (byte*) sample -- pbuz1=_inc_pbuz1 
     inc.z sample
     bne !+
     inc.z sample+1
   !:
     // >sample
-    // [19] (byte~) nmi2::$2 ← > (byte*) sample#1 -- vbuaa=_hi_pbuz1 
+    // [19] (byte~) nmi2::$2 ← > (byte*) sample -- vbuaa=_hi_pbuz1 
     lda.z sample+1
     // if (>sample == >(SAMPLE+$6100))
-    // [20] if((byte~) nmi2::$2!=>(const byte[SAMPLE_SIZE]) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [20] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
     bne __b1
     // nmi2::@2
     // sample = SAMPLE
-    // [21] (byte*) sample#2 ← (const byte[SAMPLE_SIZE]) SAMPLE -- pbuz1=pbuc1 
+    // [21] (byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
     sta.z sample+1
-    // [22] phi from nmi2 nmi2::@2 to nmi2::@1 [phi:nmi2/nmi2::@2->nmi2::@1]
-    // [22] phi (byte*) sample#3 = (byte*) sample#1 [phi:nmi2/nmi2::@2->nmi2::@1#0] -- register_copy 
     // nmi2::@1
   __b1:
     // *KERNEL_NMI = &nmi
-    // [23] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
+    // [22] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_pptc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
     // (*BORDERCOL)--;
-    // [24] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [23] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     // nmi2::@return
     // }
-    // [25] return  - exit interrupt(HARDWARE_ALL)
+    // [24] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:
@@ -997,31 +883,31 @@ nmi: {
     stx regx+1
     sty regy+1
     // (*BORDERCOL)++;
-    // [26] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [25] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
     // *sample & $0f
-    // [28] (byte~) nmi::$1 ← *((byte*) sample#0) & (byte) $f -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [27] (byte~) nmi::$1 ← *((byte*) sample) & (byte) $f -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$f
     ldy #0
     and (sample),y
     // *SID_VOLUME = *sample & $0f
-    // [29] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
+    // [28] *((const byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
     sta SID_VOLUME
     // *KERNEL_NMI = &nmi2
-    // [30] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
+    // [29] *((const void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
     lda #<nmi2
     sta KERNEL_NMI
     lda #>nmi2
     sta KERNEL_NMI+1
     // (*BORDERCOL)--;
-    // [31] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [30] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     // nmi::@return
     // }
-    // [32] return  - exit interrupt(HARDWARE_ALL)
+    // [31] return  - exit interrupt(HARDWARE_ALL)
   rega:
     lda #00
   regx:

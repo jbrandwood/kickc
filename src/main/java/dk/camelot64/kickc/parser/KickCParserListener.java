@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -286,6 +286,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code globalDirectiveVarModel}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code globalDirectiveVarModel}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
@@ -297,30 +309,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveConst(KickCParser.DirectiveConstContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code directiveExtern}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveExtern(KickCParser.DirectiveExternContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveExtern}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveExtern(KickCParser.DirectiveExternContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code directiveExport}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveExport(KickCParser.DirectiveExportContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code directiveExport}
-	 * labeled alternative in {@link KickCParser#directive}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveExport(KickCParser.DirectiveExportContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveAlign}
 	 * labeled alternative in {@link KickCParser#directive}.
@@ -346,29 +334,41 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveRegister(KickCParser.DirectiveRegisterContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code directiveMemory}
+	 * Enter a parse tree produced by the {@code directiveMemoryAreaZp}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void enterDirectiveMemory(KickCParser.DirectiveMemoryContext ctx);
+	void enterDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code directiveMemory}
+	 * Exit a parse tree produced by the {@code directiveMemoryAreaZp}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void exitDirectiveMemory(KickCParser.DirectiveMemoryContext ctx);
+	void exitDirectiveMemoryAreaZp(KickCParser.DirectiveMemoryAreaZpContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code directiveInline}
+	 * Enter a parse tree produced by the {@code directiveMemoryAreaMain}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void enterDirectiveInline(KickCParser.DirectiveInlineContext ctx);
+	void enterDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code directiveInline}
+	 * Exit a parse tree produced by the {@code directiveMemoryAreaMain}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree
 	 */
-	void exitDirectiveInline(KickCParser.DirectiveInlineContext ctx);
+	void exitDirectiveMemoryAreaMain(KickCParser.DirectiveMemoryAreaMainContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveMemoryAreaAddress}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveMemoryAreaAddress}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveVolatile}
 	 * labeled alternative in {@link KickCParser#directive}.
@@ -381,6 +381,66 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveFormSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveFormSsa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveFormMa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveFormMa}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveFormMa(KickCParser.DirectiveFormMaContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveExtern}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveExtern(KickCParser.DirectiveExternContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveExtern}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveExtern(KickCParser.DirectiveExternContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveExport}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveExport(KickCParser.DirectiveExportContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveExport}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveExport(KickCParser.DirectiveExportContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveInline}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveInline(KickCParser.DirectiveInlineContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveInline}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveInline(KickCParser.DirectiveInlineContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveInterrupt}
 	 * labeled alternative in {@link KickCParser#directive}.

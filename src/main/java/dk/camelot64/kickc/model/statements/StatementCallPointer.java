@@ -20,6 +20,8 @@ public class StatementCallPointer extends StatementBase implements StatementLVal
    private RValue procedure;
    /** The parameter values passed to the procedure. */
    private List<RValue> parameters;
+   /** This is the initial assignment of the lValue. */
+   private boolean initialAssignment;
 
    public StatementCallPointer(LValue lValue, RValue procedure, List<RValue> parameters, StatementSource source, List<Comment> comments) {
       super(null, source, comments);
@@ -62,6 +64,15 @@ public class StatementCallPointer extends StatementBase implements StatementLVal
 
    public void clearParameters() {
       this.parameters = null;
+   }
+
+   @Override
+   public boolean isInitialAssignment() {
+      return initialAssignment;
+   }
+
+   public void setInitialAssignment(boolean initialAssignment) {
+      this.initialAssignment = initialAssignment;
    }
 
    @Override

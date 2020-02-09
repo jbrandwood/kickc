@@ -7,4 +7,5 @@ public abstract class SymbolVariableRef extends SymbolRef implements RValue {
       super(fullName);
    }
 
+
 }

@@ -4,6 +4,7 @@ Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - 
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
 Warning! Adding boolean cast to non-boolean condition (byte) print_str_lines::ch
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str::str)
@@ -26,7 +27,7 @@ Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
 Culled Empty Block (label) @11
-Culled Empty Block (label) @13
+Culled Empty Block (label) @12
 Culled Empty Block (label) @14
 Culled Empty Block (label) @15
 Culled Empty Block (label) @16
@@ -42,12 +43,15 @@ Culled Empty Block (label) @25
 Culled Empty Block (label) @26
 Culled Empty Block (label) @27
 Culled Empty Block (label) @28
+Culled Empty Block (label) @29
 Culled Empty Block (label) @30
 Culled Empty Block (label) @31
 Culled Empty Block (label) @32
 Culled Empty Block (label) @33
 Culled Empty Block (label) @34
 Culled Empty Block (label) @35
+Culled Empty Block (label) @36
+Culled Empty Block (label) @37
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@3
@@ -57,23 +61,24 @@ Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@9
 Culled Empty Block (label) main::@10
+Culled Empty Block (label) @38
 Culled Empty Block (label) mulf_init::@5
 Culled Empty Block (label) mulf_init::@6
 Culled Empty Block (label) mulf_init::@8
 Culled Empty Block (label) mulf_init::@13
 Culled Empty Block (label) mulf_init::@14
 Culled Empty Block (label) mulf_init::@16
-Culled Empty Block (label) @38
+Culled Empty Block (label) @39
 Culled Empty Block (label) mulf16u::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@12
-@12: scope:[]  from @begin
-  (byte*) print_screen#0 ← ((byte*)) (number) $400
+  to:@13
+@13: scope:[]  from @begin
+  (byte*) print_screen#0 ← (byte*)(number) $400
   (byte*) print_line_cursor#0 ← (byte*) print_screen#0
   (byte*) print_char_cursor#0 ← (byte*) print_line_cursor#0
-  to:@29
+  to:@40
 
 (void()) print_word((word) print_word::w)
 print_word: scope:[print_word]  from print_dword print_dword::@1
@@ -126,19 +131,13 @@ print_dword::@return: scope:[print_dword]  from print_dword::@2
   (byte*) print_char_cursor#6 ← (byte*) print_char_cursor#23
   return 
   to:@return
-@29: scope:[]  from @12
-  (byte*) print_line_cursor#19 ← phi( @12/(byte*) print_line_cursor#0 )
-  (byte*) print_screen#19 ← phi( @12/(byte*) print_screen#0 )
-  (byte*) print_char_cursor#46 ← phi( @12/(byte*) print_char_cursor#0 )
-  (byte[]) print_hextab ← (const string) $0
-  to:@36
 
 (void()) print_byte((byte) print_byte::b)
 print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#36 ← phi( print_word/(byte*) print_char_cursor#34 print_word::@1/(byte*) print_char_cursor#1 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((byte[]) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -146,7 +145,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#24 ← phi( print_byte/(byte*) print_char_cursor#11 )
   (byte*) print_char_cursor#7 ← (byte*) print_char_cursor#24
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((byte[]) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -188,28 +187,18 @@ print_set_screen::@return: scope:[print_set_screen]  from print_set_screen
   (byte*) print_char_cursor#13 ← (byte*) print_char_cursor#29
   return 
   to:@return
-@36: scope:[]  from @29
-  (byte*) print_line_cursor#18 ← phi( @29/(byte*) print_line_cursor#19 )
-  (byte*) print_screen#18 ← phi( @29/(byte*) print_screen#19 )
-  (byte*) print_char_cursor#45 ← phi( @29/(byte*) print_char_cursor#46 )
-  (byte*) RASTER ← ((byte*)) (number) $d012
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  to:@37
 
 (void()) main()
-main: scope:[main]  from @39
-  (byte*) print_line_cursor#16 ← phi( @39/(byte*) print_line_cursor#12 )
-  (byte*) print_screen#16 ← phi( @39/(byte*) print_screen#12 )
-  (byte*) print_char_cursor#43 ← phi( @39/(byte*) print_char_cursor#39 )
+main: scope:[main]  from @40
+  (byte*) print_line_cursor#15 ← phi( @40/(byte*) print_line_cursor#12 )
+  (byte*) print_screen#15 ← phi( @40/(byte*) print_screen#12 )
+  (byte*) print_char_cursor#42 ← phi( @40/(byte*) print_char_cursor#39 )
   call mulf_init 
   to:main::@13
 main::@13: scope:[main]  from main
-  (byte*) print_line_cursor#13 ← phi( main/(byte*) print_line_cursor#16 )
-  (byte*) print_screen#13 ← phi( main/(byte*) print_screen#16 )
-  (byte*) print_char_cursor#40 ← phi( main/(byte*) print_char_cursor#43 )
-  (word) main::a ← (number) $4d2
-  (word) main::b ← (number) $929
+  (byte*) print_line_cursor#13 ← phi( main/(byte*) print_line_cursor#15 )
+  (byte*) print_screen#13 ← phi( main/(byte*) print_screen#15 )
+  (byte*) print_char_cursor#40 ← phi( main/(byte*) print_char_cursor#42 )
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main::@13 main::@16
@@ -219,30 +208,30 @@ main::@1: scope:[main]  from main::@13 main::@16
   if(true) goto main::@4
   to:main::@return
 main::@4: scope:[main]  from main::@1 main::@4
-  (byte*) print_line_cursor#20 ← phi( main::@1/(byte*) print_line_cursor#11 main::@4/(byte*) print_line_cursor#20 )
-  (byte*) print_screen#20 ← phi( main::@1/(byte*) print_screen#11 main::@4/(byte*) print_screen#20 )
-  (byte*) print_char_cursor#44 ← phi( main::@1/(byte*) print_char_cursor#38 main::@4/(byte*) print_char_cursor#44 )
-  (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
+  (byte*) print_line_cursor#17 ← phi( main::@1/(byte*) print_line_cursor#11 main::@4/(byte*) print_line_cursor#17 )
+  (byte*) print_screen#17 ← phi( main::@1/(byte*) print_screen#11 main::@4/(byte*) print_screen#17 )
+  (byte*) print_char_cursor#43 ← phi( main::@1/(byte*) print_char_cursor#38 main::@4/(byte*) print_char_cursor#43 )
+  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
   if((bool~) main::$1) goto main::@4
   to:main::@6
 main::@6: scope:[main]  from main::@4
-  (byte*) print_line_cursor#17 ← phi( main::@4/(byte*) print_line_cursor#20 )
-  (byte*) print_screen#17 ← phi( main::@4/(byte*) print_screen#20 )
-  (byte*) print_char_cursor#41 ← phi( main::@4/(byte*) print_char_cursor#44 )
-  *((byte*) BORDERCOL) ← ++ *((byte*) BORDERCOL)
-  (word) mulf16u::a#0 ← (word) main::a
-  (word) mulf16u::b#0 ← (word) main::b
+  (byte*) print_line_cursor#16 ← phi( main::@4/(byte*) print_line_cursor#17 )
+  (byte*) print_screen#16 ← phi( main::@4/(byte*) print_screen#17 )
+  (byte*) print_char_cursor#41 ← phi( main::@4/(byte*) print_char_cursor#43 )
+  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
+  (word) mulf16u::a#0 ← (const word) main::a
+  (word) mulf16u::b#0 ← (const word) main::b
   call mulf16u 
   (dword) mulf16u::return#0 ← (dword) mulf16u::return#2
   to:main::@14
 main::@14: scope:[main]  from main::@6
-  (byte*) print_line_cursor#14 ← phi( main::@6/(byte*) print_line_cursor#17 )
-  (byte*) print_screen#14 ← phi( main::@6/(byte*) print_screen#17 )
+  (byte*) print_line_cursor#14 ← phi( main::@6/(byte*) print_line_cursor#16 )
+  (byte*) print_screen#14 ← phi( main::@6/(byte*) print_screen#16 )
   (byte*) print_char_cursor#37 ← phi( main::@6/(byte*) print_char_cursor#41 )
   (dword) mulf16u::return#3 ← phi( main::@6/(dword) mulf16u::return#0 )
   (dword~) main::$3 ← (dword) mulf16u::return#3
   (dword) main::r#0 ← (dword~) main::$3
-  *((byte*) BORDERCOL) ← -- *((byte*) BORDERCOL)
+  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
   (dword) print_dword::dw#0 ← (dword) main::r#0
   call print_dword 
   to:main::@15
@@ -251,7 +240,7 @@ main::@15: scope:[main]  from main::@14
   (byte*) print_screen#10 ← phi( main::@14/(byte*) print_screen#14 )
   (byte*) print_char_cursor#30 ← phi( main::@14/(byte*) print_char_cursor#6 )
   (byte*) print_char_cursor#14 ← (byte*) print_char_cursor#30
-  (byte*) print_set_screen::screen#0 ← (byte*) SCREEN
+  (byte*) print_set_screen::screen#0 ← (const byte*) SCREEN
   call print_set_screen 
   to:main::@16
 main::@16: scope:[main]  from main::@15
@@ -271,25 +260,14 @@ main::@return: scope:[main]  from main::@1
   (byte*) print_line_cursor#4 ← (byte*) print_line_cursor#8
   return 
   to:@return
-@37: scope:[]  from @36
-  (byte*) print_line_cursor#15 ← phi( @36/(byte*) print_line_cursor#18 )
-  (byte*) print_screen#15 ← phi( @36/(byte*) print_screen#18 )
-  (byte*) print_char_cursor#42 ← phi( @36/(byte*) print_char_cursor#45 )
-  (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
-  (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
-  (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
-  (byte[$200]) mulf_sqr2_hi ← { fill( $200, 0) }
-  to:@39
 
 (void()) mulf_init()
 mulf_init: scope:[mulf_init]  from main
-  (word) mulf_init::sqr#0 ← (number) 0
-  (byte) mulf_init::x_2#0 ← (number) 0
-  (byte) mulf_init::c#0 ← (number) 0
-  (byte*~) mulf_init::$0 ← (byte[$200]) mulf_sqr1_hi + (number) 1
-  (byte*) mulf_init::sqr1_hi#0 ← (byte*~) mulf_init::$0
-  (byte*~) mulf_init::$6 ← (byte[$200]) mulf_sqr1_lo + (number) 1
-  (byte*) mulf_init::sqr1_lo#0 ← (byte*~) mulf_init::$6
+  (word) mulf_init::sqr#0 ← (word) 0
+  (byte) mulf_init::x_2#0 ← (byte) 0
+  (byte) mulf_init::c#0 ← (byte) 0
+  (byte*) mulf_init::sqr1_hi#0 ← (const byte*) mulf_sqr1_hi+(number) 1
+  (byte*) mulf_init::sqr1_lo#0 ← (const byte*) mulf_sqr1_lo+(number) 1
   to:mulf_init::@1
 mulf_init::@1: scope:[mulf_init]  from mulf_init mulf_init::@4
   (byte) mulf_init::x_2#5 ← phi( mulf_init/(byte) mulf_init::x_2#0 mulf_init::@4/(byte) mulf_init::x_2#2 )
@@ -297,9 +275,8 @@ mulf_init::@1: scope:[mulf_init]  from mulf_init mulf_init::@4
   (word) mulf_init::sqr#6 ← phi( mulf_init/(word) mulf_init::sqr#0 mulf_init::@4/(word) mulf_init::sqr#1 )
   (byte) mulf_init::c#3 ← phi( mulf_init/(byte) mulf_init::c#0 mulf_init::@4/(byte) mulf_init::c#4 )
   (byte*) mulf_init::sqr1_lo#2 ← phi( mulf_init/(byte*) mulf_init::sqr1_lo#0 mulf_init::@4/(byte*) mulf_init::sqr1_lo#1 )
-  (byte*~) mulf_init::$7 ← (byte[$200]) mulf_sqr1_lo + (number) $200
-  (bool~) mulf_init::$8 ← (byte*) mulf_init::sqr1_lo#2 != (byte*~) mulf_init::$7
-  if((bool~) mulf_init::$8) goto mulf_init::@2
+  (bool~) mulf_init::$0 ← (byte*) mulf_init::sqr1_lo#2 != (const byte*) mulf_sqr1_lo+(number) $200
+  if((bool~) mulf_init::$0) goto mulf_init::@2
   to:mulf_init::@3
 mulf_init::@2: scope:[mulf_init]  from mulf_init::@1
   (byte) mulf_init::x_2#4 ← phi( mulf_init::@1/(byte) mulf_init::x_2#5 )
@@ -308,17 +285,16 @@ mulf_init::@2: scope:[mulf_init]  from mulf_init::@1
   (word) mulf_init::sqr#5 ← phi( mulf_init::@1/(word) mulf_init::sqr#6 )
   (byte) mulf_init::c#2 ← phi( mulf_init::@1/(byte) mulf_init::c#3 )
   (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2
-  (number~) mulf_init::$9 ← (byte) mulf_init::c#1 & (number) 1
-  (bool~) mulf_init::$10 ← (number~) mulf_init::$9 == (number) 0
-  (bool~) mulf_init::$11 ← ! (bool~) mulf_init::$10
-  if((bool~) mulf_init::$11) goto mulf_init::@4
+  (number~) mulf_init::$1 ← (byte) mulf_init::c#1 & (number) 1
+  (bool~) mulf_init::$2 ← (number~) mulf_init::$1 == (number) 0
+  (bool~) mulf_init::$3 ← ! (bool~) mulf_init::$2
+  if((bool~) mulf_init::$3) goto mulf_init::@4
   to:mulf_init::@7
 mulf_init::@3: scope:[mulf_init]  from mulf_init::@1
-  (byte~) mulf_init::$1 ← ((byte)) (number) -1
-  (byte) mulf_init::x_255#0 ← (byte~) mulf_init::$1
-  (byte) mulf_init::dir#0 ← (number) $ff
-  (byte*) mulf_init::sqr2_hi#0 ← (byte[$200]) mulf_sqr2_hi
-  (byte*) mulf_init::sqr2_lo#0 ← (byte[$200]) mulf_sqr2_lo
+  (byte) mulf_init::x_255#0 ← (byte)(number) -1
+  (byte) mulf_init::dir#0 ← (byte) $ff
+  (byte*) mulf_init::sqr2_hi#0 ← (const byte*) mulf_sqr2_hi
+  (byte*) mulf_init::sqr2_lo#0 ← (const byte*) mulf_sqr2_lo
   to:mulf_init::@9
 mulf_init::@4: scope:[mulf_init]  from mulf_init::@2 mulf_init::@7
   (byte) mulf_init::c#4 ← phi( mulf_init::@2/(byte) mulf_init::c#1 mulf_init::@7/(byte) mulf_init::c#5 )
@@ -326,13 +302,13 @@ mulf_init::@4: scope:[mulf_init]  from mulf_init::@2 mulf_init::@7
   (byte*) mulf_init::sqr1_hi#2 ← phi( mulf_init::@2/(byte*) mulf_init::sqr1_hi#3 mulf_init::@7/(byte*) mulf_init::sqr1_hi#4 )
   (byte*) mulf_init::sqr1_lo#3 ← phi( mulf_init::@2/(byte*) mulf_init::sqr1_lo#4 mulf_init::@7/(byte*) mulf_init::sqr1_lo#5 )
   (word) mulf_init::sqr#3 ← phi( mulf_init::@2/(word) mulf_init::sqr#5 mulf_init::@7/(word) mulf_init::sqr#2 )
-  (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3
-  *((byte*) mulf_init::sqr1_lo#3) ← (byte~) mulf_init::$12
-  (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3
-  *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13
+  (byte~) mulf_init::$4 ← < (word) mulf_init::sqr#3
+  *((byte*) mulf_init::sqr1_lo#3) ← (byte~) mulf_init::$4
+  (byte~) mulf_init::$5 ← > (word) mulf_init::sqr#3
+  *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5
   (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2
-  (word~) mulf_init::$14 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2
-  (word) mulf_init::sqr#1 ← (word~) mulf_init::$14
+  (word~) mulf_init::$6 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2
+  (word) mulf_init::sqr#1 ← (word~) mulf_init::$6
   (byte*) mulf_init::sqr1_lo#1 ← ++ (byte*) mulf_init::sqr1_lo#3
   to:mulf_init::@1
 mulf_init::@7: scope:[mulf_init]  from mulf_init::@2
@@ -349,31 +325,26 @@ mulf_init::@9: scope:[mulf_init]  from mulf_init::@12 mulf_init::@3
   (byte*) mulf_init::sqr2_hi#3 ← phi( mulf_init::@12/(byte*) mulf_init::sqr2_hi#4 mulf_init::@3/(byte*) mulf_init::sqr2_hi#0 )
   (byte) mulf_init::x_255#3 ← phi( mulf_init::@12/(byte) mulf_init::x_255#4 mulf_init::@3/(byte) mulf_init::x_255#0 )
   (byte*) mulf_init::sqr2_lo#2 ← phi( mulf_init::@12/(byte*) mulf_init::sqr2_lo#1 mulf_init::@3/(byte*) mulf_init::sqr2_lo#0 )
-  (byte*~) mulf_init::$15 ← (byte[$200]) mulf_sqr2_lo + (number) $1ff
-  (bool~) mulf_init::$16 ← (byte*) mulf_init::sqr2_lo#2 != (byte*~) mulf_init::$15
-  if((bool~) mulf_init::$16) goto mulf_init::@10
+  (bool~) mulf_init::$7 ← (byte*) mulf_init::sqr2_lo#2 != (const byte*) mulf_sqr2_lo+(number) $1ff
+  if((bool~) mulf_init::$7) goto mulf_init::@10
   to:mulf_init::@11
 mulf_init::@10: scope:[mulf_init]  from mulf_init::@9
   (byte) mulf_init::dir#2 ← phi( mulf_init::@9/(byte) mulf_init::dir#3 )
   (byte*) mulf_init::sqr2_hi#2 ← phi( mulf_init::@9/(byte*) mulf_init::sqr2_hi#3 )
   (byte*) mulf_init::sqr2_lo#3 ← phi( mulf_init::@9/(byte*) mulf_init::sqr2_lo#2 )
   (byte) mulf_init::x_255#2 ← phi( mulf_init::@9/(byte) mulf_init::x_255#3 )
-  *((byte*) mulf_init::sqr2_lo#3) ← *((byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2)
-  *((byte*) mulf_init::sqr2_hi#2) ← *((byte[$200]) mulf_sqr1_hi + (byte) mulf_init::x_255#2)
+  *((byte*) mulf_init::sqr2_lo#3) ← *((const byte*) mulf_sqr1_lo + (byte) mulf_init::x_255#2)
+  *((byte*) mulf_init::sqr2_hi#2) ← *((const byte*) mulf_sqr1_hi + (byte) mulf_init::x_255#2)
   (byte*) mulf_init::sqr2_hi#1 ← ++ (byte*) mulf_init::sqr2_hi#2
-  (byte~) mulf_init::$17 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2
-  (byte) mulf_init::x_255#1 ← (byte~) mulf_init::$17
-  (bool~) mulf_init::$18 ← (byte) mulf_init::x_255#1 == (number) 0
-  (bool~) mulf_init::$19 ← ! (bool~) mulf_init::$18
-  if((bool~) mulf_init::$19) goto mulf_init::@12
+  (byte~) mulf_init::$8 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2
+  (byte) mulf_init::x_255#1 ← (byte~) mulf_init::$8
+  (bool~) mulf_init::$9 ← (byte) mulf_init::x_255#1 == (number) 0
+  (bool~) mulf_init::$10 ← ! (bool~) mulf_init::$9
+  if((bool~) mulf_init::$10) goto mulf_init::@12
   to:mulf_init::@15
 mulf_init::@11: scope:[mulf_init]  from mulf_init::@9
-  (byte*~) mulf_init::$2 ← (byte[$200]) mulf_sqr2_lo + (number) $1ff
-  (byte*~) mulf_init::$3 ← (byte[$200]) mulf_sqr1_lo + (number) $100
-  *((byte*~) mulf_init::$2) ← *((byte*~) mulf_init::$3)
-  (byte*~) mulf_init::$4 ← (byte[$200]) mulf_sqr2_hi + (number) $1ff
-  (byte*~) mulf_init::$5 ← (byte[$200]) mulf_sqr1_hi + (number) $100
-  *((byte*~) mulf_init::$4) ← *((byte*~) mulf_init::$5)
+  *((const byte*) mulf_sqr2_lo+(number) $1ff) ← *((const byte*) mulf_sqr1_lo+(number) $100)
+  *((const byte*) mulf_sqr2_hi+(number) $1ff) ← *((const byte*) mulf_sqr1_hi+(number) $100)
   to:mulf_init::@return
 mulf_init::@12: scope:[mulf_init]  from mulf_init::@10 mulf_init::@15
   (byte) mulf_init::dir#4 ← phi( mulf_init::@10/(byte) mulf_init::dir#2 mulf_init::@15/(byte) mulf_init::dir#1 )
@@ -396,52 +367,45 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@11
 mulf16u: scope:[mulf16u]  from main::@6
   (word) mulf16u::b#1 ← phi( main::@6/(word) mulf16u::b#0 )
   (word) mulf16u::a#1 ← phi( main::@6/(word) mulf16u::a#0 )
-  (word*) mulf16u::memA ← ((word*)) (number) $f8
-  (word*) mulf16u::memB ← ((word*)) (number) $fa
-  (dword*) mulf16u::memR ← ((dword*)) (number) $fc
-  *((word*) mulf16u::memA) ← (word) mulf16u::a#1
-  *((word*) mulf16u::memB) ← (word) mulf16u::b#1
+  *((const word*) mulf16u::memA) ← (word) mulf16u::a#1
+  *((const word*) mulf16u::memB) ← (word) mulf16u::b#1
   asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  }
-  (dword) mulf16u::return#1 ← *((dword*) mulf16u::memR)
+  (dword) mulf16u::return#1 ← *((const dword*) mulf16u::memR)
   to:mulf16u::@return
 mulf16u::@return: scope:[mulf16u]  from mulf16u
   (dword) mulf16u::return#4 ← phi( mulf16u/(dword) mulf16u::return#1 )
   (dword) mulf16u::return#2 ← (dword) mulf16u::return#4
   return 
   to:@return
-@39: scope:[]  from @37
-  (byte*) print_line_cursor#12 ← phi( @37/(byte*) print_line_cursor#15 )
-  (byte*) print_screen#12 ← phi( @37/(byte*) print_screen#15 )
-  (byte*) print_char_cursor#39 ← phi( @37/(byte*) print_char_cursor#42 )
+@40: scope:[]  from @13
+  (byte*) print_line_cursor#12 ← phi( @13/(byte*) print_line_cursor#0 )
+  (byte*) print_screen#12 ← phi( @13/(byte*) print_screen#0 )
+  (byte*) print_char_cursor#39 ← phi( @13/(byte*) print_char_cursor#0 )
   call main 
-  to:@40
-@40: scope:[]  from @39
-  (byte*) print_line_cursor#9 ← phi( @39/(byte*) print_line_cursor#4 )
-  (byte*) print_screen#9 ← phi( @39/(byte*) print_screen#4 )
-  (byte*) print_char_cursor#33 ← phi( @39/(byte*) print_char_cursor#16 )
+  to:@41
+@41: scope:[]  from @40
+  (byte*) print_line_cursor#9 ← phi( @40/(byte*) print_line_cursor#4 )
+  (byte*) print_screen#9 ← phi( @40/(byte*) print_screen#4 )
+  (byte*) print_char_cursor#33 ← phi( @40/(byte*) print_char_cursor#16 )
   (byte*) print_char_cursor#17 ← (byte*) print_char_cursor#33
   (byte*) print_screen#5 ← (byte*) print_screen#9
   (byte*) print_line_cursor#5 ← (byte*) print_line_cursor#9
   to:@end
-@end: scope:[]  from @40
+@end: scope:[]  from @41
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "0123456789abcdef"z
-(label) @12
-(label) @29
-(label) @36
-(label) @37
-(label) @39
+(label) @13
 (label) @40
+(label) @41
 (label) @begin
 (label) @end
-(byte*) BORDERCOL
+(const byte*) BORDERCOL = (byte*)(number) $d020
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(byte*) RASTER
-(byte*) SCREEN
+(const byte*) RASTER = (byte*)(number) $d012
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$1
 (dword~) main::$3
@@ -453,8 +417,8 @@ SYMBOL TABLE SSA
 (label) main::@4
 (label) main::@6
 (label) main::@return
-(word) main::a
-(word) main::b
+(const word) main::a = (word) $4d2
+(const word) main::b = (word) $929
 (dword) main::r
 (dword) main::r#0
 (dword()) mulf16u((word) mulf16u::a , (word) mulf16u::b)
@@ -465,9 +429,9 @@ SYMBOL TABLE SSA
 (word) mulf16u::b
 (word) mulf16u::b#0
 (word) mulf16u::b#1
-(word*) mulf16u::memA
-(word*) mulf16u::memB
-(dword*) mulf16u::memR
+(const word*) mulf16u::memA = (word*)(number) $f8
+(const word*) mulf16u::memB = (word*)(number) $fa
+(const dword*) mulf16u::memR = (dword*)(number) $fc
 (dword) mulf16u::return
 (dword) mulf16u::return#0
 (dword) mulf16u::return#1
@@ -475,26 +439,17 @@ SYMBOL TABLE SSA
 (dword) mulf16u::return#3
 (dword) mulf16u::return#4
 (void()) mulf_init()
-(byte*~) mulf_init::$0
-(byte~) mulf_init::$1
+(bool~) mulf_init::$0
+(number~) mulf_init::$1
 (bool~) mulf_init::$10
-(bool~) mulf_init::$11
-(byte~) mulf_init::$12
-(byte~) mulf_init::$13
-(word~) mulf_init::$14
-(byte*~) mulf_init::$15
-(bool~) mulf_init::$16
-(byte~) mulf_init::$17
-(bool~) mulf_init::$18
-(bool~) mulf_init::$19
-(byte*~) mulf_init::$2
-(byte*~) mulf_init::$3
-(byte*~) mulf_init::$4
-(byte*~) mulf_init::$5
-(byte*~) mulf_init::$6
-(byte*~) mulf_init::$7
-(bool~) mulf_init::$8
-(number~) mulf_init::$9
+(bool~) mulf_init::$2
+(bool~) mulf_init::$3
+(byte~) mulf_init::$4
+(byte~) mulf_init::$5
+(word~) mulf_init::$6
+(bool~) mulf_init::$7
+(byte~) mulf_init::$8
+(bool~) mulf_init::$9
 (label) mulf_init::@1
 (label) mulf_init::@10
 (label) mulf_init::@11
@@ -569,10 +524,10 @@ SYMBOL TABLE SSA
 (byte) mulf_init::x_255#3
 (byte) mulf_init::x_255#4
 (byte) mulf_init::x_255#5
-(byte[$200]) mulf_sqr1_hi
-(byte[$200]) mulf_sqr1_lo
-(byte[$200]) mulf_sqr2_hi
-(byte[$200]) mulf_sqr2_lo
+(const byte*) mulf_sqr1_hi[(number) $200]  = { fill( $200, 0) }
+(const byte*) mulf_sqr1_lo[(number) $200]  = { fill( $200, 0) }
+(const byte*) mulf_sqr2_hi[(number) $200]  = { fill( $200, 0) }
+(const byte*) mulf_sqr2_lo[(number) $200]  = { fill( $200, 0) }
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0
 (number~) print_byte::$2
@@ -630,9 +585,6 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#41
 (byte*) print_char_cursor#42
 (byte*) print_char_cursor#43
-(byte*) print_char_cursor#44
-(byte*) print_char_cursor#45
-(byte*) print_char_cursor#46
 (byte*) print_char_cursor#5
 (byte*) print_char_cursor#6
 (byte*) print_char_cursor#7
@@ -648,7 +600,7 @@ SYMBOL TABLE SSA
 (dword) print_dword::dw#0
 (dword) print_dword::dw#1
 (dword) print_dword::dw#2
-(byte[]) print_hextab
+(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -660,10 +612,7 @@ SYMBOL TABLE SSA
 (byte*) print_line_cursor#15
 (byte*) print_line_cursor#16
 (byte*) print_line_cursor#17
-(byte*) print_line_cursor#18
-(byte*) print_line_cursor#19
 (byte*) print_line_cursor#2
-(byte*) print_line_cursor#20
 (byte*) print_line_cursor#3
 (byte*) print_line_cursor#4
 (byte*) print_line_cursor#5
@@ -682,10 +631,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#15
 (byte*) print_screen#16
 (byte*) print_screen#17
-(byte*) print_screen#18
-(byte*) print_screen#19
 (byte*) print_screen#2
-(byte*) print_screen#20
 (byte*) print_screen#3
 (byte*) print_screen#4
 (byte*) print_screen#5
@@ -713,101 +659,69 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
 Adding number conversion cast (unumber) print_byte::$2 in (number~) print_byte::$2 ← (byte) print_byte::b#3 & (unumber)(number) $f
-Adding number conversion cast (unumber) $4d2 in (word) main::a ← (number) $4d2
-Adding number conversion cast (unumber) $929 in (word) main::b ← (number) $929
-Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) 0 in (word) mulf_init::sqr#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) mulf_init::x_2#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) mulf_init::c#0 ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte*~) mulf_init::$0 ← (byte[$200]) mulf_sqr1_hi + (number) 1
-Adding number conversion cast (unumber) 1 in (byte*~) mulf_init::$6 ← (byte[$200]) mulf_sqr1_lo + (number) 1
-Adding number conversion cast (unumber) $200 in (byte*~) mulf_init::$7 ← (byte[$200]) mulf_sqr1_lo + (number) $200
-Adding number conversion cast (unumber) 1 in (number~) mulf_init::$9 ← (byte) mulf_init::c#1 & (number) 1
-Adding number conversion cast (unumber) mulf_init::$9 in (number~) mulf_init::$9 ← (byte) mulf_init::c#1 & (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in (bool~) mulf_init::$10 ← (unumber~) mulf_init::$9 == (number) 0
-Adding number conversion cast (unumber) $ff in (byte) mulf_init::dir#0 ← (number) $ff
-Adding number conversion cast (unumber) $1ff in (byte*~) mulf_init::$15 ← (byte[$200]) mulf_sqr2_lo + (number) $1ff
-Adding number conversion cast (unumber) 0 in (bool~) mulf_init::$18 ← (byte) mulf_init::x_255#1 == (number) 0
-Adding number conversion cast (unumber) $1ff in (byte*~) mulf_init::$2 ← (byte[$200]) mulf_sqr2_lo + (number) $1ff
-Adding number conversion cast (unumber) $100 in (byte*~) mulf_init::$3 ← (byte[$200]) mulf_sqr1_lo + (number) $100
-Adding number conversion cast (unumber) $1ff in (byte*~) mulf_init::$4 ← (byte[$200]) mulf_sqr2_hi + (number) $1ff
-Adding number conversion cast (unumber) $100 in (byte*~) mulf_init::$5 ← (byte[$200]) mulf_sqr1_hi + (number) $100
+Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) 1 in (byte*) mulf_init::sqr1_hi#0 ← (const byte*) mulf_sqr1_hi+(number) 1
+Adding number conversion cast (unumber) 1 in (byte*) mulf_init::sqr1_lo#0 ← (const byte*) mulf_sqr1_lo+(number) 1
+Adding number conversion cast (unumber) $200 in (bool~) mulf_init::$0 ← (byte*) mulf_init::sqr1_lo#2 != (const byte*) mulf_sqr1_lo+(number) $200
+Adding number conversion cast (unumber) 1 in (number~) mulf_init::$1 ← (byte) mulf_init::c#1 & (number) 1
+Adding number conversion cast (unumber) mulf_init::$1 in (number~) mulf_init::$1 ← (byte) mulf_init::c#1 & (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) mulf_init::$2 ← (unumber~) mulf_init::$1 == (number) 0
+Adding number conversion cast (unumber) $1ff in (bool~) mulf_init::$7 ← (byte*) mulf_init::sqr2_lo#2 != (const byte*) mulf_sqr2_lo+(number) $1ff
+Adding number conversion cast (unumber) 0 in (bool~) mulf_init::$9 ← (byte) mulf_init::x_255#1 == (number) 0
+Adding number conversion cast (unumber) $100 in *((const byte*) mulf_sqr2_lo+(number) $1ff) ← *((const byte*) mulf_sqr1_lo+(number) $100)
+Adding number conversion cast (unumber) $1ff in *((const byte*) mulf_sqr2_lo+(number) $1ff) ← *((const byte*) mulf_sqr1_lo+(unumber)(number) $100)
+Adding number conversion cast (unumber) $100 in *((const byte*) mulf_sqr2_hi+(number) $1ff) ← *((const byte*) mulf_sqr1_hi+(number) $100)
+Adding number conversion cast (unumber) $1ff in *((const byte*) mulf_sqr2_hi+(number) $1ff) ← *((const byte*) mulf_sqr1_hi+(unumber)(number) $100)
 Adding number conversion cast (unumber) 1 in (byte) mulf_init::dir#1 ← (number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) print_screen#0 ← (byte*)(number) $400
-Inlining cast (byte*) RASTER ← (byte*)(number) $d012
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (word) main::a ← (unumber)(number) $4d2
-Inlining cast (word) main::b ← (unumber)(number) $929
-Inlining cast (word) mulf_init::sqr#0 ← (unumber)(number) 0
-Inlining cast (byte) mulf_init::x_2#0 ← (unumber)(number) 0
-Inlining cast (byte) mulf_init::c#0 ← (unumber)(number) 0
-Inlining cast (byte~) mulf_init::$1 ← (byte)(number) -1
-Inlining cast (byte) mulf_init::dir#0 ← (unumber)(number) $ff
 Inlining cast (byte) mulf_init::dir#1 ← (unumber)(number) 1
-Inlining cast (word*) mulf16u::memA ← (word*)(number) $f8
-Inlining cast (word*) mulf16u::memB ← (word*)(number) $fa
-Inlining cast (dword*) mulf16u::memR ← (dword*)(number) $fc
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 4
-Simplifying constant integer cast $f
+Simplifying constant pointer cast (word*) 248
+Simplifying constant pointer cast (word*) 250
+Simplifying constant pointer cast (dword*) 252
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast $4d2
-Simplifying constant integer cast $929
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 4
+Simplifying constant integer cast $f
 Simplifying constant integer cast $ff
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast $200
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast -1
-Simplifying constant integer cast $ff
 Simplifying constant integer cast $1ff
 Simplifying constant integer cast 0
-Simplifying constant integer cast $1ff
 Simplifying constant integer cast $100
 Simplifying constant integer cast $1ff
 Simplifying constant integer cast $100
+Simplifying constant integer cast $1ff
 Simplifying constant integer cast 1
-Simplifying constant pointer cast (word*) 248
-Simplifying constant pointer cast (word*) 250
-Simplifying constant pointer cast (dword*) 252
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
-Finalized unsigned number type (word) $4d2
-Finalized unsigned number type (word) $929
 Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (word) $200
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (word) $1ff
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $1ff
 Finalized unsigned number type (word) $100
 Finalized unsigned number type (word) $1ff
 Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $1ff
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) print_byte::$2 ← (byte) print_byte::b#3 & (byte) $f
-Inferred type updated to byte in (unumber~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1
-Inversing boolean not [122] (bool~) mulf_init::$11 ← (byte~) mulf_init::$9 != (byte) 0 from [121] (bool~) mulf_init::$10 ← (byte~) mulf_init::$9 == (byte) 0
-Inversing boolean not [152] (bool~) mulf_init::$19 ← (byte) mulf_init::x_255#1 != (byte) 0 from [151] (bool~) mulf_init::$18 ← (byte) mulf_init::x_255#1 == (byte) 0
+Inferred type updated to byte in (unumber~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1
+Inversing boolean not [106] (bool~) mulf_init::$3 ← (byte~) mulf_init::$1 != (byte) 0 from [105] (bool~) mulf_init::$2 ← (byte~) mulf_init::$1 == (byte) 0
+Inversing boolean not [134] (bool~) mulf_init::$10 ← (byte) mulf_init::x_255#1 != (byte) 0 from [133] (bool~) mulf_init::$9 ← (byte) mulf_init::x_255#1 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#46 (byte*) print_screen#19 (byte*) print_line_cursor#19 (byte*) print_char_cursor#45 (byte*) print_screen#18 (byte*) print_line_cursor#18 (byte*) print_char_cursor#42 (byte*) print_screen#15 (byte*) print_line_cursor#15 (byte*) print_char_cursor#39 (byte*) print_screen#12 (byte*) print_line_cursor#12 
+Alias (byte*) print_char_cursor#0 = (byte*) print_line_cursor#0 (byte*) print_screen#0 (byte*) print_char_cursor#39 (byte*) print_screen#12 (byte*) print_line_cursor#12 
 Alias (byte) print_byte::b#0 = (byte~) print_word::$0 
 Alias (word) print_word::w#2 = (word) print_word::w#3 
 Alias (byte*) print_char_cursor#1 = (byte*) print_char_cursor#18 
@@ -823,12 +737,12 @@ Alias (byte*) print_char_cursor#24 = (byte*) print_char_cursor#7
 Alias (byte*) print_char_cursor#25 = (byte*) print_char_cursor#8 (byte*) print_char_cursor#26 (byte*) print_char_cursor#9 
 Alias (byte*) print_char_cursor#10 = (byte*) print_char_cursor#28 (byte*) print_char_cursor#11 
 Alias (byte*) print_screen#1 = (byte*) print_line_cursor#1 (byte*) print_char_cursor#12 (byte*) print_screen#6 (byte*) print_line_cursor#6 (byte*) print_char_cursor#29 (byte*) print_screen#2 (byte*) print_line_cursor#2 (byte*) print_char_cursor#13 
-Alias (byte*) print_char_cursor#40 = (byte*) print_char_cursor#43 
-Alias (byte*) print_screen#13 = (byte*) print_screen#16 
-Alias (byte*) print_line_cursor#13 = (byte*) print_line_cursor#16 
-Alias (byte*) print_char_cursor#37 = (byte*) print_char_cursor#41 (byte*) print_char_cursor#44 
-Alias (byte*) print_screen#10 = (byte*) print_screen#17 (byte*) print_screen#20 (byte*) print_screen#14 
-Alias (byte*) print_line_cursor#10 = (byte*) print_line_cursor#17 (byte*) print_line_cursor#20 (byte*) print_line_cursor#14 
+Alias (byte*) print_char_cursor#40 = (byte*) print_char_cursor#42 
+Alias (byte*) print_screen#13 = (byte*) print_screen#15 
+Alias (byte*) print_line_cursor#13 = (byte*) print_line_cursor#15 
+Alias (byte*) print_char_cursor#37 = (byte*) print_char_cursor#41 (byte*) print_char_cursor#43 
+Alias (byte*) print_screen#10 = (byte*) print_screen#16 (byte*) print_screen#17 (byte*) print_screen#14 
+Alias (byte*) print_line_cursor#10 = (byte*) print_line_cursor#16 (byte*) print_line_cursor#17 (byte*) print_line_cursor#14 
 Alias (dword) mulf16u::return#0 = (dword) mulf16u::return#3 
 Alias (dword) main::r#0 = (dword~) main::$3 
 Alias (byte*) print_char_cursor#14 = (byte*) print_char_cursor#30 
@@ -838,21 +752,18 @@ Alias (byte*) print_char_cursor#15 = (byte*) print_char_cursor#31
 Alias (byte*) print_char_cursor#16 = (byte*) print_char_cursor#32 (byte*) print_char_cursor#38 
 Alias (byte*) print_screen#11 = (byte*) print_screen#8 (byte*) print_screen#4 
 Alias (byte*) print_line_cursor#11 = (byte*) print_line_cursor#8 (byte*) print_line_cursor#4 
-Alias (byte*) mulf_init::sqr1_hi#0 = (byte*~) mulf_init::$0 
-Alias (byte*) mulf_init::sqr1_lo#0 = (byte*~) mulf_init::$6 
 Alias (byte) mulf_init::c#2 = (byte) mulf_init::c#3 
 Alias (word) mulf_init::sqr#4 = (word) mulf_init::sqr#5 (word) mulf_init::sqr#6 
 Alias (byte*) mulf_init::sqr1_lo#2 = (byte*) mulf_init::sqr1_lo#4 (byte*) mulf_init::sqr1_lo#5 
 Alias (byte*) mulf_init::sqr1_hi#3 = (byte*) mulf_init::sqr1_hi#5 (byte*) mulf_init::sqr1_hi#4 
 Alias (byte) mulf_init::x_2#3 = (byte) mulf_init::x_2#4 (byte) mulf_init::x_2#5 
-Alias (byte) mulf_init::x_255#0 = (byte~) mulf_init::$1 
-Alias (word) mulf_init::sqr#1 = (word~) mulf_init::$14 
+Alias (word) mulf_init::sqr#1 = (word~) mulf_init::$6 
 Alias (byte) mulf_init::c#1 = (byte) mulf_init::c#5 
 Alias (byte) mulf_init::x_255#2 = (byte) mulf_init::x_255#3 
 Alias (byte*) mulf_init::sqr2_lo#2 = (byte*) mulf_init::sqr2_lo#3 (byte*) mulf_init::sqr2_lo#5 
 Alias (byte*) mulf_init::sqr2_hi#2 = (byte*) mulf_init::sqr2_hi#3 
 Alias (byte) mulf_init::dir#2 = (byte) mulf_init::dir#3 
-Alias (byte) mulf_init::x_255#1 = (byte~) mulf_init::$17 (byte) mulf_init::x_255#5 
+Alias (byte) mulf_init::x_255#1 = (byte~) mulf_init::$8 (byte) mulf_init::x_255#5 
 Alias (byte*) mulf_init::sqr2_hi#1 = (byte*) mulf_init::sqr2_hi#5 
 Alias (dword) mulf16u::return#1 = (dword) mulf16u::return#4 (dword) mulf16u::return#2 
 Alias (byte*) print_char_cursor#17 = (byte*) print_char_cursor#33 
@@ -891,114 +802,69 @@ Identical Phi Values (byte*) print_char_cursor#17 (byte*) print_char_cursor#16
 Identical Phi Values (byte*) print_screen#5 (byte*) print_screen#11
 Identical Phi Values (byte*) print_line_cursor#5 (byte*) print_line_cursor#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [76] if(*((byte*) RASTER)!=(byte) $ff) goto main::@4
-Simple Condition (bool~) mulf_init::$8 [117] if((byte*) mulf_init::sqr1_lo#2!=(byte*~) mulf_init::$7) goto mulf_init::@2
-Simple Condition (bool~) mulf_init::$11 [123] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@4
-Simple Condition (bool~) mulf_init::$16 [144] if((byte*) mulf_init::sqr2_lo#2!=(byte*~) mulf_init::$15) goto mulf_init::@10
-Simple Condition (bool~) mulf_init::$19 [153] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@12
+Simple Condition (bool~) main::$1 [68] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
+Simple Condition (bool~) mulf_init::$0 [101] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2
+Simple Condition (bool~) mulf_init::$3 [107] if((byte~) mulf_init::$1!=(byte) 0) goto mulf_init::@4
+Simple Condition (bool~) mulf_init::$7 [126] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@10
+Simple Condition (bool~) mulf_init::$10 [135] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@12
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [103] (byte[$200]) mulf_sqr1_lo ← { fill( $200, 0) }
-Constant right-side identified [104] (byte[$200]) mulf_sqr1_hi ← { fill( $200, 0) }
-Constant right-side identified [105] (byte[$200]) mulf_sqr2_lo ← { fill( $200, 0) }
-Constant right-side identified [106] (byte[$200]) mulf_sqr2_hi ← { fill( $200, 0) }
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
-Constant (const byte[]) print_hextab = $0
-Constant (const byte*) RASTER = (byte*) 53266
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const word) main::a = $4d2
-Constant (const word) main::b = $929
-Constant (const byte[$200]) mulf_sqr1_lo = { fill( $200, 0) }
-Constant (const byte[$200]) mulf_sqr1_hi = { fill( $200, 0) }
-Constant (const byte[$200]) mulf_sqr2_lo = { fill( $200, 0) }
-Constant (const byte[$200]) mulf_sqr2_hi = { fill( $200, 0) }
-Constant (const word) mulf_init::sqr#0 = 0
-Constant (const byte) mulf_init::x_2#0 = 0
-Constant (const byte) mulf_init::c#0 = 0
-Constant (const byte) mulf_init::x_255#0 = -1
-Constant (const byte) mulf_init::dir#0 = $ff
-Constant (const byte) mulf_init::dir#1 = 1
-Constant (const word*) mulf16u::memA = (word*) 248
-Constant (const word*) mulf16u::memB = (word*) 250
-Constant (const dword*) mulf16u::memR = (dword*) 252
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) mulf16u::a#0 = main::a
 Constant (const word) mulf16u::b#0 = main::b
 Constant (const byte*) print_set_screen::screen#0 = SCREEN
+Constant (const word) mulf_init::sqr#0 = 0
+Constant (const byte) mulf_init::x_2#0 = 0
+Constant (const byte) mulf_init::c#0 = 0
+Constant (const byte*) mulf_init::sqr1_hi#0 = mulf_sqr1_hi+1
+Constant (const byte*) mulf_init::sqr1_lo#0 = mulf_sqr1_lo+1
+Constant (const byte) mulf_init::x_255#0 = -1
+Constant (const byte) mulf_init::dir#0 = $ff
 Constant (const byte*) mulf_init::sqr2_hi#0 = mulf_sqr2_hi
 Constant (const byte*) mulf_init::sqr2_lo#0 = mulf_sqr2_lo
+Constant (const byte) mulf_init::dir#1 = 1
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) print_screen#1 = print_set_screen::screen#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [73] if(true) goto main::@4
+if() condition always true - replacing block destination [65] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused variable - keeping the phi block (byte*) print_screen#11
 Eliminating unused variable - keeping the phi block (byte*) print_line_cursor#11
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [36] (byte*) mulf_init::sqr1_hi#0 ← (const byte[$200]) mulf_sqr1_hi + (byte) 1
-Constant right-side identified [37] (byte*) mulf_init::sqr1_lo#0 ← (const byte[$200]) mulf_sqr1_lo + (byte) 1
-Constant right-side identified [39] (byte*~) mulf_init::$7 ← (const byte[$200]) mulf_sqr1_lo + (word) $200
-Constant right-side identified [55] (byte*~) mulf_init::$15 ← (const byte[$200]) mulf_sqr2_lo + (word) $1ff
-Constant right-side identified [62] (byte*~) mulf_init::$2 ← (const byte[$200]) mulf_sqr2_lo + (word) $1ff
-Constant right-side identified [63] (byte*~) mulf_init::$3 ← (const byte[$200]) mulf_sqr1_lo + (word) $100
-Constant right-side identified [65] (byte*~) mulf_init::$4 ← (const byte[$200]) mulf_sqr2_hi + (word) $1ff
-Constant right-side identified [66] (byte*~) mulf_init::$5 ← (const byte[$200]) mulf_sqr1_hi + (word) $100
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) mulf_init::sqr1_hi#0 = mulf_sqr1_hi+1
-Constant (const byte*) mulf_init::sqr1_lo#0 = mulf_sqr1_lo+1
-Constant (const byte*) mulf_init::$7 = mulf_sqr1_lo+$200
-Constant (const byte*) mulf_init::$15 = mulf_sqr2_lo+$1ff
-Constant (const byte*) mulf_init::$2 = mulf_sqr2_lo+$1ff
-Constant (const byte*) mulf_init::$3 = mulf_sqr1_lo+$100
-Constant (const byte*) mulf_init::$4 = mulf_sqr2_hi+$1ff
-Constant (const byte*) mulf_init::$5 = mulf_sqr1_hi+$100
-Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const word) mulf_init::sqr#0
 Inlining constant with var siblings (const byte) mulf_init::x_2#0
 Inlining constant with var siblings (const byte) mulf_init::c#0
-Inlining constant with var siblings (const byte) mulf_init::x_255#0
-Inlining constant with var siblings (const byte) mulf_init::dir#0
-Inlining constant with var siblings (const byte) mulf_init::dir#1
-Inlining constant with var siblings (const byte*) mulf_init::sqr2_hi#0
-Inlining constant with var siblings (const byte*) mulf_init::sqr2_lo#0
 Inlining constant with var siblings (const byte*) mulf_init::sqr1_hi#0
 Inlining constant with var siblings (const byte*) mulf_init::sqr1_lo#0
+Inlining constant with var siblings (const byte) mulf_init::x_255#0
+Inlining constant with var siblings (const byte) mulf_init::dir#0
+Inlining constant with var siblings (const byte*) mulf_init::sqr2_hi#0
+Inlining constant with var siblings (const byte*) mulf_init::sqr2_lo#0
+Inlining constant with var siblings (const byte) mulf_init::dir#1
 Inlining constant with var siblings (const byte*) print_char_cursor#0
 Constant inlined mulf_init::c#0 = (byte) 0
-Constant inlined mulf_init::sqr2_lo#0 = (const byte[$200]) mulf_sqr2_lo
-Constant inlined mulf_init::sqr#0 = (byte) 0
+Constant inlined mulf_init::sqr2_lo#0 = (const byte*) mulf_sqr2_lo
+Constant inlined mulf_init::sqr#0 = (word) 0
 Constant inlined mulf16u::b#0 = (const word) main::b
-Constant inlined mulf_init::sqr2_hi#0 = (const byte[$200]) mulf_sqr2_hi
+Constant inlined mulf_init::sqr2_hi#0 = (const byte*) mulf_sqr2_hi
 Constant inlined mulf16u::a#0 = (const word) main::a
 Constant inlined print_screen#1 = (const byte*) SCREEN
-Constant inlined mulf_init::$2 = (const byte[$200]) mulf_sqr2_lo+(word) $1ff
-Constant inlined $0 = (const byte[]) print_hextab
-Constant inlined mulf_init::$4 = (const byte[$200]) mulf_sqr2_hi+(word) $1ff
-Constant inlined mulf_init::$3 = (const byte[$200]) mulf_sqr1_lo+(word) $100
-Constant inlined mulf_init::$5 = (const byte[$200]) mulf_sqr1_hi+(word) $100
-Constant inlined mulf_init::$7 = (const byte[$200]) mulf_sqr1_lo+(word) $200
 Constant inlined mulf_init::dir#1 = (byte) 1
 Constant inlined print_char_cursor#0 = (byte*) 1024
 Constant inlined mulf_init::dir#0 = (byte) $ff
-Constant inlined mulf_init::sqr1_hi#0 = (const byte[$200]) mulf_sqr1_hi+(byte) 1
+Constant inlined mulf_init::sqr1_hi#0 = (const byte*) mulf_sqr1_hi+(byte) 1
 Constant inlined print_set_screen::screen#0 = (const byte*) SCREEN
-Constant inlined mulf_init::sqr1_lo#0 = (const byte[$200]) mulf_sqr1_lo+(byte) 1
-Constant inlined mulf_init::$15 = (const byte[$200]) mulf_sqr2_lo+(word) $1ff
+Constant inlined mulf_init::sqr1_lo#0 = (const byte*) mulf_sqr1_lo+(byte) 1
 Constant inlined mulf_init::x_255#0 = (byte) -1
 Constant inlined mulf_init::x_2#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting mulf_init::@17(between mulf_init::@2 and mulf_init::@4)
 Added new block during phi lifting mulf_init::@18(between mulf_init::@10 and mulf_init::@12)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @12
-Adding NOP phi() at start of @29
-Adding NOP phi() at start of @36
-Adding NOP phi() at start of @37
-Adding NOP phi() at start of @39
+Adding NOP phi() at start of @13
 Adding NOP phi() at start of @40
+Adding NOP phi() at start of @41
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@15
@@ -1011,45 +877,42 @@ Adding NOP phi() at start of mulf_init
 Adding NOP phi() at start of mulf_init::@3
 Adding NOP phi() at start of mulf_init::@15
 CALL GRAPH
-Calls in [] to main:6 
-Calls in [main] to mulf_init:10 mulf16u:15 print_dword:20 print_set_screen:22 
-Calls in [print_dword] to print_word:29 print_word:33 
-Calls in [print_word] to print_byte:40 print_byte:44 
-Calls in [print_byte] to print_char:52 print_char:57 
+Calls in [] to main:3 
+Calls in [main] to mulf_init:7 mulf16u:12 print_dword:17 print_set_screen:19 
+Calls in [print_dword] to print_word:26 print_word:30 
+Calls in [print_word] to print_byte:37 print_byte:41 
+Calls in [print_byte] to print_char:49 print_char:54 
 
 Created 19 initial phi equivalence classes
-Coalesced [27] print_word::w#4 ← print_word::w#0
-Coalesced [28] print_char_cursor#47 ← print_char_cursor#16
-Coalesced [31] print_word::w#5 ← print_word::w#1
-Coalesced [32] print_char_cursor#48 ← print_char_cursor#10
-Coalesced [38] print_byte::b#4 ← print_byte::b#0
-Coalesced [39] print_char_cursor#49 ← print_char_cursor#34
-Coalesced [42] print_byte::b#5 ← print_byte::b#1
-Coalesced (already) [43] print_char_cursor#50 ← print_char_cursor#10
-Coalesced [50] print_char::ch#3 ← print_char::ch#0
-Coalesced [51] print_char_cursor#51 ← print_char_cursor#36
-Coalesced [55] print_char::ch#4 ← print_char::ch#1
-Coalesced (already) [56] print_char_cursor#52 ← print_char_cursor#10
-Coalesced [86] mulf_init::sqr2_lo#6 ← mulf_init::sqr2_lo#1
-Coalesced [87] mulf_init::x_255#6 ← mulf_init::x_255#1
-Coalesced [88] mulf_init::sqr2_hi#6 ← mulf_init::sqr2_hi#1
-Coalesced [89] mulf_init::dir#5 ← mulf_init::dir#4
-Coalesced (already) [90] mulf_init::dir#6 ← mulf_init::dir#2
-Coalesced [96] mulf_init::sqr#9 ← mulf_init::sqr#2
-Coalesced [97] mulf_init::x_2#8 ← mulf_init::x_2#1
-Coalesced [106] mulf_init::sqr1_lo#6 ← mulf_init::sqr1_lo#1
-Coalesced [107] mulf_init::c#6 ← mulf_init::c#1
-Coalesced [108] mulf_init::sqr#7 ← mulf_init::sqr#1
-Coalesced [109] mulf_init::sqr1_hi#6 ← mulf_init::sqr1_hi#1
-Coalesced [110] mulf_init::x_2#6 ← mulf_init::x_2#2
-Coalesced [111] mulf_init::sqr#8 ← mulf_init::sqr#4
-Coalesced (already) [112] mulf_init::x_2#7 ← mulf_init::x_2#3
+Coalesced [24] print_word::w#4 ← print_word::w#0
+Coalesced [25] print_char_cursor#44 ← print_char_cursor#16
+Coalesced [28] print_word::w#5 ← print_word::w#1
+Coalesced [29] print_char_cursor#45 ← print_char_cursor#10
+Coalesced [35] print_byte::b#4 ← print_byte::b#0
+Coalesced [36] print_char_cursor#46 ← print_char_cursor#34
+Coalesced [39] print_byte::b#5 ← print_byte::b#1
+Coalesced (already) [40] print_char_cursor#47 ← print_char_cursor#10
+Coalesced [47] print_char::ch#3 ← print_char::ch#0
+Coalesced [48] print_char_cursor#48 ← print_char_cursor#36
+Coalesced [52] print_char::ch#4 ← print_char::ch#1
+Coalesced (already) [53] print_char_cursor#49 ← print_char_cursor#10
+Coalesced [83] mulf_init::sqr2_lo#6 ← mulf_init::sqr2_lo#1
+Coalesced [84] mulf_init::x_255#6 ← mulf_init::x_255#1
+Coalesced [85] mulf_init::sqr2_hi#6 ← mulf_init::sqr2_hi#1
+Coalesced [86] mulf_init::dir#5 ← mulf_init::dir#4
+Coalesced (already) [87] mulf_init::dir#6 ← mulf_init::dir#2
+Coalesced [93] mulf_init::sqr#9 ← mulf_init::sqr#2
+Coalesced [94] mulf_init::x_2#8 ← mulf_init::x_2#1
+Coalesced [103] mulf_init::sqr1_lo#6 ← mulf_init::sqr1_lo#1
+Coalesced [104] mulf_init::c#6 ← mulf_init::c#1
+Coalesced [105] mulf_init::sqr#7 ← mulf_init::sqr#1
+Coalesced [106] mulf_init::sqr1_hi#6 ← mulf_init::sqr1_hi#1
+Coalesced [107] mulf_init::x_2#6 ← mulf_init::x_2#2
+Coalesced [108] mulf_init::sqr#8 ← mulf_init::sqr#4
+Coalesced (already) [109] mulf_init::x_2#7 ← mulf_init::x_2#3
 Coalesced down to 13 phi equivalence classes
-Culled Empty Block (label) @12
-Culled Empty Block (label) @29
-Culled Empty Block (label) @36
-Culled Empty Block (label) @37
-Culled Empty Block (label) @40
+Culled Empty Block (label) @13
+Culled Empty Block (label) @41
 Culled Empty Block (label) main::@16
 Culled Empty Block (label) print_dword::@2
 Culled Empty Block (label) print_word::@2
@@ -1057,7 +920,7 @@ Culled Empty Block (label) print_byte::@2
 Culled Empty Block (label) mulf_init::@3
 Culled Empty Block (label) mulf_init::@15
 Culled Empty Block (label) mulf_init::@17
-Renumbering block @39 to @1
+Renumbering block @40 to @1
 Renumbering block main::@4 to main::@2
 Renumbering block main::@6 to main::@3
 Renumbering block main::@13 to main::@4
@@ -1161,12 +1024,12 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   [31] (byte*) print_char_cursor#36 ← phi( print_word/(byte*) print_char_cursor#34 print_word::@1/(byte*) print_char_cursor#10 )
   [31] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [32] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [33] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0)
+  [33] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
   [34] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [35] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [36] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2)
+  [36] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
   [37] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -1201,29 +1064,29 @@ mulf_init: scope:[mulf_init]  from main
   to:mulf_init::@1
 mulf_init::@1: scope:[mulf_init]  from mulf_init mulf_init::@3
   [49] (byte) mulf_init::x_2#3 ← phi( mulf_init/(byte) 0 mulf_init::@3/(byte) mulf_init::x_2#2 )
-  [49] (byte*) mulf_init::sqr1_hi#2 ← phi( mulf_init/(const byte[$200]) mulf_sqr1_hi+(byte) 1 mulf_init::@3/(byte*) mulf_init::sqr1_hi#1 )
-  [49] (word) mulf_init::sqr#4 ← phi( mulf_init/(byte) 0 mulf_init::@3/(word) mulf_init::sqr#1 )
+  [49] (byte*) mulf_init::sqr1_hi#2 ← phi( mulf_init/(const byte*) mulf_sqr1_hi+(byte) 1 mulf_init::@3/(byte*) mulf_init::sqr1_hi#1 )
+  [49] (word) mulf_init::sqr#4 ← phi( mulf_init/(word) 0 mulf_init::@3/(word) mulf_init::sqr#1 )
   [49] (byte) mulf_init::c#2 ← phi( mulf_init/(byte) 0 mulf_init::@3/(byte) mulf_init::c#1 )
-  [49] (byte*) mulf_init::sqr1_lo#2 ← phi( mulf_init/(const byte[$200]) mulf_sqr1_lo+(byte) 1 mulf_init::@3/(byte*) mulf_init::sqr1_lo#1 )
-  [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2
+  [49] (byte*) mulf_init::sqr1_lo#2 ← phi( mulf_init/(const byte*) mulf_sqr1_lo+(byte) 1 mulf_init::@3/(byte*) mulf_init::sqr1_lo#1 )
+  [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2
   to:mulf_init::@5
 mulf_init::@5: scope:[mulf_init]  from mulf_init::@1 mulf_init::@8
   [51] (byte) mulf_init::dir#2 ← phi( mulf_init::@8/(byte) mulf_init::dir#4 mulf_init::@1/(byte) $ff )
-  [51] (byte*) mulf_init::sqr2_hi#2 ← phi( mulf_init::@8/(byte*) mulf_init::sqr2_hi#1 mulf_init::@1/(const byte[$200]) mulf_sqr2_hi )
+  [51] (byte*) mulf_init::sqr2_hi#2 ← phi( mulf_init::@8/(byte*) mulf_init::sqr2_hi#1 mulf_init::@1/(const byte*) mulf_sqr2_hi )
   [51] (byte) mulf_init::x_255#2 ← phi( mulf_init::@8/(byte) mulf_init::x_255#1 mulf_init::@1/(byte) -1 )
-  [51] (byte*) mulf_init::sqr2_lo#2 ← phi( mulf_init::@8/(byte*) mulf_init::sqr2_lo#1 mulf_init::@1/(const byte[$200]) mulf_sqr2_lo )
-  [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6
+  [51] (byte*) mulf_init::sqr2_lo#2 ← phi( mulf_init::@8/(byte*) mulf_init::sqr2_lo#1 mulf_init::@1/(const byte*) mulf_sqr2_lo )
+  [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6
   to:mulf_init::@7
 mulf_init::@7: scope:[mulf_init]  from mulf_init::@5
-  [53] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100)
-  [54] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100)
+  [53] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100)
+  [54] *((const byte*) mulf_sqr2_hi+(word) $1ff) ← *((const byte*) mulf_sqr1_hi+(word) $100)
   to:mulf_init::@return
 mulf_init::@return: scope:[mulf_init]  from mulf_init::@7
   [55] return 
   to:@return
 mulf_init::@6: scope:[mulf_init]  from mulf_init::@5
-  [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2)
-  [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte[$200]) mulf_sqr1_hi + (byte) mulf_init::x_255#2)
+  [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte*) mulf_sqr1_lo + (byte) mulf_init::x_255#2)
+  [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte*) mulf_sqr1_hi + (byte) mulf_init::x_255#2)
   [58] (byte*) mulf_init::sqr2_hi#1 ← ++ (byte*) mulf_init::sqr2_hi#2
   [59] (byte) mulf_init::x_255#1 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2
   [60] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@9
@@ -1237,8 +1100,8 @@ mulf_init::@8: scope:[mulf_init]  from mulf_init::@6 mulf_init::@9
   to:mulf_init::@5
 mulf_init::@2: scope:[mulf_init]  from mulf_init::@1
   [64] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2
-  [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1
-  [66] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3
+  [65] (byte~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1
+  [66] if((byte~) mulf_init::$1!=(byte) 0) goto mulf_init::@3
   to:mulf_init::@4
 mulf_init::@4: scope:[mulf_init]  from mulf_init::@2
   [67] (byte) mulf_init::x_2#1 ← ++ (byte) mulf_init::x_2#3
@@ -1247,10 +1110,10 @@ mulf_init::@4: scope:[mulf_init]  from mulf_init::@2
 mulf_init::@3: scope:[mulf_init]  from mulf_init::@2 mulf_init::@4
   [69] (byte) mulf_init::x_2#2 ← phi( mulf_init::@2/(byte) mulf_init::x_2#3 mulf_init::@4/(byte) mulf_init::x_2#1 )
   [69] (word) mulf_init::sqr#3 ← phi( mulf_init::@2/(word) mulf_init::sqr#4 mulf_init::@4/(word) mulf_init::sqr#2 )
-  [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3
-  [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12
-  [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3
-  [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13
+  [70] (byte~) mulf_init::$4 ← < (word) mulf_init::sqr#3
+  [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$4
+  [72] (byte~) mulf_init::$5 ← > (word) mulf_init::sqr#3
+  [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5
   [74] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2
   [75] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2
   [76] (byte*) mulf_init::sqr1_lo#1 ← ++ (byte*) mulf_init::sqr1_lo#2
@@ -1268,9 +1131,9 @@ VARIABLE REGISTER WEIGHTS
 (dword) mulf16u::return#0 22.0
 (dword) mulf16u::return#1 4.333333333333333
 (void()) mulf_init()
-(byte~) mulf_init::$12 22.0
-(byte~) mulf_init::$13 22.0
-(byte~) mulf_init::$9 22.0
+(byte~) mulf_init::$1 22.0
+(byte~) mulf_init::$4 22.0
+(byte~) mulf_init::$5 22.0
 (byte) mulf_init::c
 (byte) mulf_init::c#1 2.5384615384615383
 (byte) mulf_init::c#2 11.0
@@ -1346,15 +1209,15 @@ Initial phi equivalence classes
 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
 [ mulf_init::dir#2 mulf_init::dir#4 ]
 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-Added variable mulf16u::return#0 to zero page equivalence class [ mulf16u::return#0 ]
-Added variable main::r#0 to zero page equivalence class [ main::r#0 ]
-Added variable print_dword::dw#0 to zero page equivalence class [ print_dword::dw#0 ]
-Added variable print_byte::$0 to zero page equivalence class [ print_byte::$0 ]
-Added variable print_byte::$2 to zero page equivalence class [ print_byte::$2 ]
-Added variable mulf16u::return#1 to zero page equivalence class [ mulf16u::return#1 ]
-Added variable mulf_init::$9 to zero page equivalence class [ mulf_init::$9 ]
-Added variable mulf_init::$12 to zero page equivalence class [ mulf_init::$12 ]
-Added variable mulf_init::$13 to zero page equivalence class [ mulf_init::$13 ]
+Added variable mulf16u::return#0 to live range equivalence class [ mulf16u::return#0 ]
+Added variable main::r#0 to live range equivalence class [ main::r#0 ]
+Added variable print_dword::dw#0 to live range equivalence class [ print_dword::dw#0 ]
+Added variable print_byte::$0 to live range equivalence class [ print_byte::$0 ]
+Added variable print_byte::$2 to live range equivalence class [ print_byte::$2 ]
+Added variable mulf16u::return#1 to live range equivalence class [ mulf16u::return#1 ]
+Added variable mulf_init::$1 to live range equivalence class [ mulf_init::$1 ]
+Added variable mulf_init::$4 to live range equivalence class [ mulf_init::$4 ]
+Added variable mulf_init::$5 to live range equivalence class [ mulf_init::$5 ]
 Complete equivalence classes
 [ print_word::w#2 print_word::w#0 print_word::w#1 ]
 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
@@ -1375,31 +1238,31 @@ Complete equivalence classes
 [ print_byte::$0 ]
 [ print_byte::$2 ]
 [ mulf16u::return#1 ]
-[ mulf_init::$9 ]
-[ mulf_init::$12 ]
-[ mulf_init::$13 ]
-Allocated zp ZP_WORD:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ]
-Allocated zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
-Allocated zp ZP_BYTE:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-Allocated zp ZP_WORD:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
-Allocated zp ZP_WORD:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ]
-Allocated zp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ]
-Allocated zp ZP_WORD:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ]
-Allocated zp ZP_BYTE:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-Allocated zp ZP_WORD:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
-Allocated zp ZP_BYTE:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-Allocated zp ZP_WORD:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
-Allocated zp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
-Allocated zp ZP_WORD:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-Allocated zp ZP_DWORD:22 [ mulf16u::return#0 ]
-Allocated zp ZP_DWORD:26 [ main::r#0 ]
-Allocated zp ZP_DWORD:30 [ print_dword::dw#0 ]
-Allocated zp ZP_BYTE:34 [ print_byte::$0 ]
-Allocated zp ZP_BYTE:35 [ print_byte::$2 ]
-Allocated zp ZP_DWORD:36 [ mulf16u::return#1 ]
-Allocated zp ZP_BYTE:40 [ mulf_init::$9 ]
-Allocated zp ZP_BYTE:41 [ mulf_init::$12 ]
-Allocated zp ZP_BYTE:42 [ mulf_init::$13 ]
+[ mulf_init::$1 ]
+[ mulf_init::$4 ]
+[ mulf_init::$5 ]
+Allocated zp[2]:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ]
+Allocated zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
+Allocated zp[1]:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
+Allocated zp[2]:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
+Allocated zp[2]:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ]
+Allocated zp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ]
+Allocated zp[2]:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ]
+Allocated zp[1]:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
+Allocated zp[2]:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
+Allocated zp[1]:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
+Allocated zp[2]:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
+Allocated zp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
+Allocated zp[2]:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
+Allocated zp[4]:22 [ mulf16u::return#0 ]
+Allocated zp[4]:26 [ main::r#0 ]
+Allocated zp[4]:30 [ print_dword::dw#0 ]
+Allocated zp[1]:34 [ print_byte::$0 ]
+Allocated zp[1]:35 [ print_byte::$2 ]
+Allocated zp[4]:36 [ mulf16u::return#1 ]
+Allocated zp[1]:40 [ mulf_init::$1 ]
+Allocated zp[1]:41 [ mulf_init::$4 ]
+Allocated zp[1]:42 [ mulf_init::$5 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1530,7 +1393,7 @@ print_set_screen: {
 }
   // print_dword
 // Print a dword as HEX
-// print_dword(dword zeropage($1e) dw)
+// print_dword(dword zp($1e) dw)
 print_dword: {
     .label dw = $1e
     // [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
@@ -1566,7 +1429,7 @@ print_dword: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     // [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuz1=_hi_vwuz2 
@@ -1598,7 +1461,7 @@ print_word: {
 }
   // print_byte
 // Print a byte as HEX
-// print_byte(byte zeropage(4) b)
+// print_byte(byte zp(4) b)
 print_byte: {
     .label __0 = $22
     .label __2 = $23
@@ -1610,7 +1473,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [33] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [33] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -1627,7 +1490,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [36] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [36] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -1645,7 +1508,7 @@ print_byte: {
 }
   // print_char
 // Print a single char
-// print_char(byte zeropage(5) ch)
+// print_char(byte zp(5) ch)
 print_char: {
     .label ch = 5
     // [40] *((byte*) print_char_cursor#27) ← (byte) print_char::ch#2 -- _deref_pbuz1=vbuz2 
@@ -1793,29 +1656,37 @@ mulf16u: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
-    .label __9 = $28
-    .label __12 = $29
-    .label __13 = $2a
+    .label __1 = $28
+    .label __4 = $29
+    .label __5 = $2a
+    // x/2
     .label c = $a
+    // Counter used for determining x%2==0
     .label sqr1_hi = $b
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $14
     .label sqr1_lo = 8
+    // sqr = (x*x)/4
     .label x_2 = $d
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $11
+    // Fill mulf_sqr2 = g(x) = f(x-255) : If x-255<0 then g(x)=f(255-x) (because x*x = -x*-x)
+    // g(0) = f(255), g(1) = f(254), ..., g(254) = f(1), g(255) = f(0), g(256) = f(1), ..., g(510) = f(255), g(511) = f(256)
     .label x_255 = $10
     .label sqr2_lo = $e
+    //Start with g(0)=f(255)
     .label dir = $13
     // [49] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   __b1_from_mulf_init:
     // [49] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x_2
-    // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte[$200]) mulf_sqr1_hi+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
+    // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte*) mulf_sqr1_hi+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
     sta.z sqr1_hi+1
-    // [49] phi (word) mulf_init::sqr#4 = (byte) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vbuc1 
+    // [49] phi (word) mulf_init::sqr#4 = (word) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vwuc1 
     lda #<0
     sta.z sqr
     lda #>0
@@ -1823,7 +1694,7 @@ mulf_init: {
     // [49] phi (byte) mulf_init::c#2 = (byte) 0 [phi:mulf_init->mulf_init::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte[$200]) mulf_sqr1_lo+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
+    // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte*) mulf_sqr1_lo+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_lo+1
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
@@ -1831,7 +1702,7 @@ mulf_init: {
     jmp __b1
     // mulf_init::@1
   __b1:
-    // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne __b2
@@ -1843,7 +1714,7 @@ mulf_init: {
     // [51] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
     sta.z dir
-    // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte[$200]) mulf_sqr2_hi [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
+    // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte*) mulf_sqr2_hi [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_hi
     sta.z sqr2_hi
     lda #>mulf_sqr2_hi
@@ -1851,7 +1722,7 @@ mulf_init: {
     // [51] phi (byte) mulf_init::x_255#2 = (byte) -1 [phi:mulf_init::@1->mulf_init::@5#2] -- vbuz1=vbuc1 
     lda #-1
     sta.z x_255
-    // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte[$200]) mulf_sqr2_lo [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
+    // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte*) mulf_sqr2_lo [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_lo
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
@@ -1859,7 +1730,7 @@ mulf_init: {
     jmp __b5
     // mulf_init::@5
   __b5:
-    // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
+    // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne __b6
@@ -1869,11 +1740,11 @@ mulf_init: {
     jmp __b7
     // mulf_init::@7
   __b7:
-    // [53] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
+    // [53] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
-    // [54] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
+    // [54] *((const byte*) mulf_sqr2_hi+(word) $1ff) ← *((const byte*) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     jmp __breturn
@@ -1883,12 +1754,12 @@ mulf_init: {
     rts
     // mulf_init::@6
   __b6:
-    // [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte*) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z x_255
     lda mulf_sqr1_lo,y
     ldy #0
     sta (sqr2_lo),y
-    // [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte[$200]) mulf_sqr1_hi + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte*) mulf_sqr1_hi + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z x_255
     lda mulf_sqr1_hi,y
     ldy #0
@@ -1940,12 +1811,12 @@ mulf_init: {
   __b2:
     // [64] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
-    // [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [65] (byte~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z c
-    sta.z __9
-    // [66] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuz1_neq_0_then_la1 
-    lda.z __9
+    sta.z __1
+    // [66] if((byte~) mulf_init::$1!=(byte) 0) goto mulf_init::@3 -- vbuz1_neq_0_then_la1 
+    lda.z __1
     cmp #0
     bne __b3_from___b2
     jmp __b4
@@ -1966,18 +1837,18 @@ mulf_init: {
     jmp __b3
     // mulf_init::@3
   __b3:
-    // [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuz1=_lo_vwuz2 
+    // [70] (byte~) mulf_init::$4 ← < (word) mulf_init::sqr#3 -- vbuz1=_lo_vwuz2 
     lda.z sqr
-    sta.z __12
-    // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuz2 
-    lda.z __12
+    sta.z __4
+    // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$4 -- _deref_pbuz1=vbuz2 
+    lda.z __4
     ldy #0
     sta (sqr1_lo),y
-    // [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 -- vbuz1=_hi_vwuz2 
+    // [72] (byte~) mulf_init::$5 ← > (word) mulf_init::sqr#3 -- vbuz1=_hi_vwuz2 
     lda.z sqr+1
-    sta.z __13
-    // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 -- _deref_pbuz1=vbuz2 
-    lda.z __13
+    sta.z __5
+    // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5 -- _deref_pbuz1=vbuz2 
+    lda.z __5
     ldy #0
     sta (sqr1_hi),y
     // [74] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2 -- pbuz1=_inc_pbuz1 
@@ -2033,34 +1904,34 @@ Statement [22] (word) print_word::w#1 ← < (dword) print_dword::dw#0 [ print_wo
 Statement [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 [ print_word::w#2 print_char_cursor#34 print_byte::b#0 ] ( main:2::print_dword:15::print_word:21 [ print_dword::dw#0 print_word::w#2 print_char_cursor#34 print_byte::b#0 ] main:2::print_dword:15::print_word:23 [ print_word::w#2 print_char_cursor#34 print_byte::b#0 ] ) always clobbers reg byte a 
 Statement [28] (byte) print_byte::b#1 ← < (word) print_word::w#2 [ print_char_cursor#10 print_byte::b#1 ] ( main:2::print_dword:15::print_word:21 [ print_dword::dw#0 print_char_cursor#10 print_byte::b#1 ] main:2::print_dword:15::print_word:23 [ print_char_cursor#10 print_byte::b#1 ] ) always clobbers reg byte a 
 Statement [32] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_char_cursor#36 print_byte::$0 ] ( main:2::print_dword:15::print_word:21::print_byte:27 [ print_dword::dw#0 print_word::w#2 print_byte::b#2 print_char_cursor#36 print_byte::$0 ] main:2::print_dword:15::print_word:23::print_byte:27 [ print_word::w#2 print_byte::b#2 print_char_cursor#36 print_byte::$0 ] main:2::print_dword:15::print_word:21::print_byte:29 [ print_dword::dw#0 print_byte::b#2 print_char_cursor#36 print_byte::$0 ] main:2::print_dword:15::print_word:23::print_byte:29 [ print_byte::b#2 print_char_cursor#36 print_byte::$0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [35] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#10 print_byte::$2 ] ( main:2::print_dword:15::print_word:21::print_byte:27 [ print_dword::dw#0 print_word::w#2 print_char_cursor#10 print_byte::$2 ] main:2::print_dword:15::print_word:23::print_byte:27 [ print_word::w#2 print_char_cursor#10 print_byte::$2 ] main:2::print_dword:15::print_word:21::print_byte:29 [ print_dword::dw#0 print_char_cursor#10 print_byte::$2 ] main:2::print_dword:15::print_word:23::print_byte:29 [ print_char_cursor#10 print_byte::$2 ] ) always clobbers reg byte a 
 Statement [40] *((byte*) print_char_cursor#27) ← (byte) print_char::ch#2 [ print_char_cursor#27 ] ( main:2::print_dword:15::print_word:21::print_byte:27::print_char:34 [ print_dword::dw#0 print_word::w#2 print_byte::b#2 print_char_cursor#27 ] main:2::print_dword:15::print_word:23::print_byte:27::print_char:34 [ print_word::w#2 print_byte::b#2 print_char_cursor#27 ] main:2::print_dword:15::print_word:21::print_byte:29::print_char:34 [ print_dword::dw#0 print_byte::b#2 print_char_cursor#27 ] main:2::print_dword:15::print_word:23::print_byte:29::print_char:34 [ print_byte::b#2 print_char_cursor#27 ] main:2::print_dword:15::print_word:21::print_byte:27::print_char:37 [ print_dword::dw#0 print_word::w#2 print_char_cursor#27 ] main:2::print_dword:15::print_word:23::print_byte:27::print_char:37 [ print_word::w#2 print_char_cursor#27 ] main:2::print_dword:15::print_word:21::print_byte:29::print_char:37 [ print_dword::dw#0 print_char_cursor#27 ] main:2::print_dword:15::print_word:23::print_byte:29::print_char:37 [ print_char_cursor#27 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement [43] *((const word*) mulf16u::memA) ← (const word) main::a [ ] ( main:2::mulf16u:10 [ print_char_cursor#16 ] ) always clobbers reg byte a 
 Statement [44] *((const word*) mulf16u::memB) ← (const word) main::b [ ] ( main:2::mulf16u:10 [ print_char_cursor#16 ] ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  } always clobbers reg byte a reg byte x 
 Statement [46] (dword) mulf16u::return#1 ← *((const dword*) mulf16u::memR) [ mulf16u::return#1 ] ( main:2::mulf16u:10 [ print_char_cursor#16 mulf16u::return#1 ] ) always clobbers reg byte a 
-Statement [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-Statement [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
-Statement [53] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
-Statement [54] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
-Statement [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
-Statement [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte[$200]) mulf_sqr1_hi + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
+Statement [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
+Statement [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
+Statement [53] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
+Statement [54] *((const byte*) mulf_sqr2_hi+(word) $1ff) ← *((const byte*) mulf_sqr1_hi+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
+Statement [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte*) mulf_sqr1_lo + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
+Statement [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte*) mulf_sqr1_hi + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
 Statement [59] (byte) mulf_init::x_255#1 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2 [ mulf_init::sqr2_lo#2 mulf_init::dir#2 mulf_init::x_255#1 mulf_init::sqr2_hi#1 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::dir#2 mulf_init::x_255#1 mulf_init::sqr2_hi#1 ] ) always clobbers reg byte a 
-Statement [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$9 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$9 ] ) always clobbers reg byte a 
-Statement [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$12 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$12 ] ) always clobbers reg byte a 
-Statement [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-Statement [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$13 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$13 ] ) always clobbers reg byte a 
-Statement [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
+Statement [65] (byte~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$1 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$1 ] ) always clobbers reg byte a 
+Statement [70] (byte~) mulf_init::$4 ← < (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$4 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$4 ] ) always clobbers reg byte a 
+Statement [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$4 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
+Statement [72] (byte~) mulf_init::$5 ← > (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$5 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$5 ] ) always clobbers reg byte a 
+Statement [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
 Statement [75] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] ) always clobbers reg byte a 
 Statement [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ print_char_cursor#16 ] ( main:2 [ print_char_cursor#16 ] ) always clobbers reg byte a 
 Statement [11] (dword) mulf16u::return#0 ← (dword) mulf16u::return#1 [ print_char_cursor#16 mulf16u::return#0 ] ( main:2 [ print_char_cursor#16 mulf16u::return#0 ] ) always clobbers reg byte a 
@@ -2077,84 +1948,84 @@ Statement [43] *((const word*) mulf16u::memA) ← (const word) main::a [ ] ( mai
 Statement [44] *((const word*) mulf16u::memB) ← (const word) main::b [ ] ( main:2::mulf16u:10 [ print_char_cursor#16 ] ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  } always clobbers reg byte a reg byte x 
 Statement [46] (dword) mulf16u::return#1 ← *((const dword*) mulf16u::memR) [ mulf16u::return#1 ] ( main:2::mulf16u:10 [ print_char_cursor#16 mulf16u::return#1 ] ) always clobbers reg byte a 
-Statement [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ) always clobbers reg byte a 
-Statement [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a 
-Statement [53] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
-Statement [54] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
-Statement [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
-Statement [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte[$200]) mulf_sqr1_hi + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
+Statement [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ) always clobbers reg byte a 
+Statement [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a 
+Statement [53] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
+Statement [54] *((const byte*) mulf_sqr2_hi+(word) $1ff) ← *((const byte*) mulf_sqr1_hi+(word) $100) [ ] ( main:2::mulf_init:5 [ ] ) always clobbers reg byte a 
+Statement [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte*) mulf_sqr1_lo + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
+Statement [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte*) mulf_sqr1_hi + (byte) mulf_init::x_255#2) [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ) always clobbers reg byte a reg byte y 
 Statement [59] (byte) mulf_init::x_255#1 ← (byte) mulf_init::x_255#2 + (byte) mulf_init::dir#2 [ mulf_init::sqr2_lo#2 mulf_init::dir#2 mulf_init::x_255#1 mulf_init::sqr2_hi#1 ] ( main:2::mulf_init:5 [ mulf_init::sqr2_lo#2 mulf_init::dir#2 mulf_init::x_255#1 mulf_init::sqr2_hi#1 ] ) always clobbers reg byte a 
-Statement [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$9 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$9 ] ) always clobbers reg byte a 
-Statement [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$12 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$12 ] ) always clobbers reg byte a 
-Statement [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
-Statement [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$13 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$13 ] ) always clobbers reg byte a 
-Statement [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
+Statement [65] (byte~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$1 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 mulf_init::c#1 mulf_init::$1 ] ) always clobbers reg byte a 
+Statement [70] (byte~) mulf_init::$4 ← < (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$4 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$4 ] ) always clobbers reg byte a 
+Statement [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$4 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
+Statement [72] (byte~) mulf_init::$5 ← > (word) mulf_init::sqr#3 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$5 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 mulf_init::$5 ] ) always clobbers reg byte a 
+Statement [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ) always clobbers reg byte y 
 Statement [75] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] ( main:2::mulf_init:5 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp ZP_BYTE:4 , reg byte x , 
-Potential registers zp ZP_BYTE:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ] : zp ZP_BYTE:10 , reg byte x , 
-Potential registers zp ZP_WORD:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] : zp ZP_WORD:11 , 
-Potential registers zp ZP_BYTE:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] : zp ZP_BYTE:13 , reg byte x , 
-Potential registers zp ZP_WORD:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] : zp ZP_WORD:14 , 
-Potential registers zp ZP_BYTE:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ] : zp ZP_BYTE:16 , reg byte x , 
-Potential registers zp ZP_WORD:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] : zp ZP_WORD:17 , 
-Potential registers zp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ] : zp ZP_BYTE:19 , reg byte x , 
-Potential registers zp ZP_WORD:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] : zp ZP_WORD:20 , 
-Potential registers zp ZP_DWORD:22 [ mulf16u::return#0 ] : zp ZP_DWORD:22 , 
-Potential registers zp ZP_DWORD:26 [ main::r#0 ] : zp ZP_DWORD:26 , 
-Potential registers zp ZP_DWORD:30 [ print_dword::dw#0 ] : zp ZP_DWORD:30 , 
-Potential registers zp ZP_BYTE:34 [ print_byte::$0 ] : zp ZP_BYTE:34 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:35 [ print_byte::$2 ] : zp ZP_BYTE:35 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_DWORD:36 [ mulf16u::return#1 ] : zp ZP_DWORD:36 , 
-Potential registers zp ZP_BYTE:40 [ mulf_init::$9 ] : zp ZP_BYTE:40 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:41 [ mulf_init::$12 ] : zp ZP_BYTE:41 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:42 [ mulf_init::$13 ] : zp ZP_BYTE:42 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] : zp[1]:4 , reg byte x , 
+Potential registers zp[1]:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] : zp[2]:8 , 
+Potential registers zp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ] : zp[1]:10 , reg byte x , 
+Potential registers zp[2]:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] : zp[2]:11 , 
+Potential registers zp[1]:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] : zp[1]:13 , reg byte x , 
+Potential registers zp[2]:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] : zp[2]:14 , 
+Potential registers zp[1]:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ] : zp[1]:16 , reg byte x , 
+Potential registers zp[2]:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] : zp[2]:17 , 
+Potential registers zp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ] : zp[1]:19 , reg byte x , 
+Potential registers zp[2]:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] : zp[2]:20 , 
+Potential registers zp[4]:22 [ mulf16u::return#0 ] : zp[4]:22 , 
+Potential registers zp[4]:26 [ main::r#0 ] : zp[4]:26 , 
+Potential registers zp[4]:30 [ print_dword::dw#0 ] : zp[4]:30 , 
+Potential registers zp[1]:34 [ print_byte::$0 ] : zp[1]:34 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:35 [ print_byte::$2 ] : zp[1]:35 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[4]:36 [ mulf16u::return#1 ] : zp[4]:36 , 
+Potential registers zp[1]:40 [ mulf_init::$1 ] : zp[1]:40 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:41 [ mulf_init::$4 ] : zp[1]:41 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:42 [ mulf_init::$5 ] : zp[1]:42 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [mulf_init] 47.67: zp ZP_WORD:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] 26.89: zp ZP_WORD:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] 25.14: zp ZP_WORD:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] 23.1: zp ZP_BYTE:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 22: zp ZP_BYTE:40 [ mulf_init::$9 ] 22: zp ZP_BYTE:41 [ mulf_init::$12 ] 22: zp ZP_BYTE:42 [ mulf_init::$13 ] 15.4: zp ZP_BYTE:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ] 15.12: zp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ] 13.54: zp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ] 11.92: zp ZP_WORD:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] 10.08: zp ZP_WORD:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
-Uplift Scope [mulf16u] 22: zp ZP_DWORD:22 [ mulf16u::return#0 ] 4.33: zp ZP_DWORD:36 [ mulf16u::return#1 ] 
-Uplift Scope [print_byte] 10: zp ZP_BYTE:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp ZP_BYTE:34 [ print_byte::$0 ] 4: zp ZP_BYTE:35 [ print_byte::$2 ] 
-Uplift Scope [print_char] 14: zp ZP_BYTE:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplift Scope [main] 11: zp ZP_DWORD:26 [ main::r#0 ] 
-Uplift Scope [print_word] 10.67: zp ZP_WORD:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] 
-Uplift Scope [] 9.84: zp ZP_WORD:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] 
-Uplift Scope [print_dword] 5: zp ZP_DWORD:30 [ print_dword::dw#0 ] 
+Uplift Scope [mulf_init] 47.67: zp[2]:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] 26.89: zp[2]:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] 25.14: zp[2]:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] 23.1: zp[1]:13 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 22: zp[1]:40 [ mulf_init::$1 ] 22: zp[1]:41 [ mulf_init::$4 ] 22: zp[1]:42 [ mulf_init::$5 ] 15.4: zp[1]:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ] 15.12: zp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ] 13.54: zp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ] 11.92: zp[2]:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] 10.08: zp[2]:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
+Uplift Scope [mulf16u] 22: zp[4]:22 [ mulf16u::return#0 ] 4.33: zp[4]:36 [ mulf16u::return#1 ] 
+Uplift Scope [print_byte] 10: zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] 4: zp[1]:34 [ print_byte::$0 ] 4: zp[1]:35 [ print_byte::$2 ] 
+Uplift Scope [print_char] 14: zp[1]:5 [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
+Uplift Scope [main] 11: zp[4]:26 [ main::r#0 ] 
+Uplift Scope [print_word] 10.67: zp[2]:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] 
+Uplift Scope [] 9.84: zp[2]:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] 
+Uplift Scope [print_dword] 5: zp[4]:30 [ print_dword::dw#0 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_set_screen] 
 
-Uplifting [mulf_init] best 6046 combination zp ZP_WORD:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] zp ZP_WORD:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp ZP_WORD:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$9 ] reg byte a [ mulf_init::$12 ] reg byte a [ mulf_init::$13 ] zp ZP_BYTE:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ] zp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ] zp ZP_WORD:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp ZP_WORD:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
+Uplifting [mulf_init] best 6046 combination zp[2]:20 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] zp[2]:14 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp[2]:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$1 ] reg byte a [ mulf_init::$4 ] reg byte a [ mulf_init::$5 ] zp[1]:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ] zp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ] zp[2]:17 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp[2]:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [mulf16u] best 6046 combination zp ZP_DWORD:22 [ mulf16u::return#0 ] zp ZP_DWORD:36 [ mulf16u::return#1 ] 
+Uplifting [mulf16u] best 6046 combination zp[4]:22 [ mulf16u::return#0 ] zp[4]:36 [ mulf16u::return#1 ] 
 Uplifting [print_byte] best 6032 combination reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ] reg byte a [ print_byte::$0 ] reg byte x [ print_byte::$2 ] 
 Uplifting [print_char] best 6023 combination reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ] 
-Uplifting [main] best 6023 combination zp ZP_DWORD:26 [ main::r#0 ] 
-Uplifting [print_word] best 6023 combination zp ZP_WORD:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] 
-Uplifting [] best 6023 combination zp ZP_WORD:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] 
-Uplifting [print_dword] best 6023 combination zp ZP_DWORD:30 [ print_dword::dw#0 ] 
+Uplifting [main] best 6023 combination zp[4]:26 [ main::r#0 ] 
+Uplifting [print_word] best 6023 combination zp[2]:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] 
+Uplifting [] best 6023 combination zp[2]:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] 
+Uplifting [print_dword] best 6023 combination zp[4]:30 [ print_dword::dw#0 ] 
 Uplifting [RADIX] best 6023 combination 
 Uplifting [print_set_screen] best 6023 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
+Attempting to uplift remaining variables inzp[1]:16 [ mulf_init::x_255#2 mulf_init::x_255#1 ]
 Uplifting [mulf_init] best 5883 combination reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
-Uplifting [mulf_init] best 5883 combination zp ZP_BYTE:19 [ mulf_init::dir#2 mulf_init::dir#4 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ]
-Uplifting [mulf_init] best 5883 combination zp ZP_BYTE:10 [ mulf_init::c#2 mulf_init::c#1 ] 
-Coalescing zero page register [ zp ZP_DWORD:22 [ mulf16u::return#0 ] ] with [ zp ZP_DWORD:26 [ main::r#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_DWORD:22 [ mulf16u::return#0 main::r#0 ] ] with [ zp ZP_DWORD:36 [ mulf16u::return#1 ] ] - score: 1
-Coalescing zero page register [ zp ZP_DWORD:22 [ mulf16u::return#0 main::r#0 mulf16u::return#1 ] ] with [ zp ZP_DWORD:30 [ print_dword::dw#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] ] with [ zp ZP_WORD:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] ] with [ zp ZP_WORD:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] ]
-Allocated (was zp ZP_WORD:8) zp ZP_WORD:2 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_word::w#2 print_word::w#0 print_word::w#1 ]
-Allocated (was zp ZP_BYTE:10) zp ZP_BYTE:4 [ mulf_init::c#2 mulf_init::c#1 ]
-Allocated (was zp ZP_WORD:11) zp ZP_WORD:5 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
-Allocated (was zp ZP_WORD:14) zp ZP_WORD:7 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
-Allocated (was zp ZP_WORD:17) zp ZP_WORD:9 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
-Allocated (was zp ZP_BYTE:19) zp ZP_BYTE:11 [ mulf_init::dir#2 mulf_init::dir#4 ]
-Allocated (was zp ZP_WORD:20) zp ZP_WORD:12 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-Allocated (was zp ZP_DWORD:22) zp ZP_DWORD:14 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
+Attempting to uplift remaining variables inzp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ]
+Uplifting [mulf_init] best 5883 combination zp[1]:19 [ mulf_init::dir#2 mulf_init::dir#4 ] 
+Attempting to uplift remaining variables inzp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ]
+Uplifting [mulf_init] best 5883 combination zp[1]:10 [ mulf_init::c#2 mulf_init::c#1 ] 
+Coalescing zero page register [ zp[4]:22 [ mulf16u::return#0 ] ] with [ zp[4]:26 [ main::r#0 ] ] - score: 1
+Coalescing zero page register [ zp[4]:22 [ mulf16u::return#0 main::r#0 ] ] with [ zp[4]:36 [ mulf16u::return#1 ] ] - score: 1
+Coalescing zero page register [ zp[4]:22 [ mulf16u::return#0 main::r#0 mulf16u::return#1 ] ] with [ zp[4]:30 [ print_dword::dw#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] ] with [ zp[2]:2 [ print_word::w#2 print_word::w#0 print_word::w#1 ] ]
+Coalescing zero page register [ zp[2]:11 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] ] with [ zp[2]:6 [ print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ] ]
+Allocated (was zp[2]:8) zp[2]:2 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_word::w#2 print_word::w#0 print_word::w#1 ]
+Allocated (was zp[1]:10) zp[1]:4 [ mulf_init::c#2 mulf_init::c#1 ]
+Allocated (was zp[2]:11) zp[2]:5 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
+Allocated (was zp[2]:14) zp[2]:7 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
+Allocated (was zp[2]:17) zp[2]:9 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
+Allocated (was zp[1]:19) zp[1]:11 [ mulf_init::dir#2 mulf_init::dir#4 ]
+Allocated (was zp[2]:20) zp[2]:12 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
+Allocated (was zp[4]:22) zp[4]:14 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2260,7 +2131,7 @@ print_set_screen: {
 }
   // print_dword
 // Print a dword as HEX
-// print_dword(dword zeropage($e) dw)
+// print_dword(dword zp($e) dw)
 print_dword: {
     .label dw = $e
     // [20] (word) print_word::w#0 ← > (dword) print_dword::dw#0 -- vwuz1=_hi_vduz2 
@@ -2296,7 +2167,7 @@ print_dword: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     // [26] (byte) print_byte::b#0 ← > (word) print_word::w#2 -- vbuxx=_hi_vwuz1 
@@ -2336,7 +2207,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [33] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [33] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [34] call print_char 
@@ -2351,7 +2222,7 @@ print_byte: {
     // [35] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [36] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [36] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [37] call print_char 
     // [39] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -2512,23 +2383,28 @@ mulf16u: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = 4
+    // Counter used for determining x%2==0
     .label sqr1_hi = 5
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $c
     .label sqr1_lo = 2
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = 9
     .label sqr2_lo = 7
+    //Start with g(0)=f(255)
     .label dir = $b
     // [49] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   __b1_from_mulf_init:
     // [49] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte[$200]) mulf_sqr1_hi+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
+    // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte*) mulf_sqr1_hi+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
     sta.z sqr1_hi+1
-    // [49] phi (word) mulf_init::sqr#4 = (byte) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vbuc1 
+    // [49] phi (word) mulf_init::sqr#4 = (word) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vwuc1 
     lda #<0
     sta.z sqr
     lda #>0
@@ -2536,7 +2412,7 @@ mulf_init: {
     // [49] phi (byte) mulf_init::c#2 = (byte) 0 [phi:mulf_init->mulf_init::@1#3] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte[$200]) mulf_sqr1_lo+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
+    // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte*) mulf_sqr1_lo+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_lo+1
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
@@ -2544,7 +2420,7 @@ mulf_init: {
     jmp __b1
     // mulf_init::@1
   __b1:
-    // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne __b2
@@ -2556,14 +2432,14 @@ mulf_init: {
     // [51] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
     sta.z dir
-    // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte[$200]) mulf_sqr2_hi [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
+    // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte*) mulf_sqr2_hi [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_hi
     sta.z sqr2_hi
     lda #>mulf_sqr2_hi
     sta.z sqr2_hi+1
     // [51] phi (byte) mulf_init::x_255#2 = (byte) -1 [phi:mulf_init::@1->mulf_init::@5#2] -- vbuxx=vbuc1 
     ldx #-1
-    // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte[$200]) mulf_sqr2_lo [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
+    // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte*) mulf_sqr2_lo [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_lo
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
@@ -2571,7 +2447,7 @@ mulf_init: {
     jmp __b5
     // mulf_init::@5
   __b5:
-    // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
+    // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne __b6
@@ -2581,11 +2457,11 @@ mulf_init: {
     jmp __b7
     // mulf_init::@7
   __b7:
-    // [53] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
+    // [53] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
-    // [54] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
+    // [54] *((const byte*) mulf_sqr2_hi+(word) $1ff) ← *((const byte*) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     jmp __breturn
@@ -2595,11 +2471,11 @@ mulf_init: {
     rts
     // mulf_init::@6
   __b6:
-    // [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte*) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
-    // [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte[$200]) mulf_sqr1_hi + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte*) mulf_sqr1_hi + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda mulf_sqr1_hi,x
     ldy #0
     sta (sqr2_hi),y
@@ -2649,10 +2525,10 @@ mulf_init: {
   __b2:
     // [64] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
-    // [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
+    // [65] (byte~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and.z c
-    // [66] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
+    // [66] if((byte~) mulf_init::$1!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne __b3_from___b2
     jmp __b4
@@ -2673,14 +2549,14 @@ mulf_init: {
     jmp __b3
     // mulf_init::@3
   __b3:
-    // [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
+    // [70] (byte~) mulf_init::$4 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
     lda.z sqr
-    // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuaa 
+    // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$4 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr1_lo),y
-    // [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 -- vbuaa=_hi_vwuz1 
+    // [72] (byte~) mulf_init::$5 ← > (word) mulf_init::sqr#3 -- vbuaa=_hi_vwuz1 
     lda.z sqr+1
-    // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 -- _deref_pbuz1=vbuaa 
+    // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr1_hi),y
     // [74] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2 -- pbuz1=_inc_pbuz1 
@@ -2820,13 +2696,13 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte) RADIX::BINARY BINARY = (number) 2
-(const byte) RADIX::DECIMAL DECIMAL = (number) $a
-(const byte) RADIX::HEXADECIMAL HEXADECIMAL = (number) $10
-(const byte) RADIX::OCTAL OCTAL = (number) 8
-(const byte*) RASTER RASTER = (byte*) 53266
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte) RADIX::BINARY = (number) 2
+(const byte) RADIX::DECIMAL = (number) $a
+(const byte) RADIX::HEXADECIMAL = (number) $10
+(const byte) RADIX::OCTAL = (number) 8
+(const byte*) RASTER = (byte*) 53266
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -2834,24 +2710,24 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@5
 (label) main::@6
-(const word) main::a a = (word) $4d2
-(const word) main::b b = (word) $929
+(const word) main::a = (word) $4d2
+(const word) main::b = (word) $929
 (dword) main::r
-(dword) main::r#0 r zp ZP_DWORD:14 11.0
+(dword) main::r#0 r zp[4]:14 11.0
 (dword()) mulf16u((word) mulf16u::a , (word) mulf16u::b)
 (label) mulf16u::@return
 (word) mulf16u::a
 (word) mulf16u::b
-(const word*) mulf16u::memA memA = (word*) 248
-(const word*) mulf16u::memB memB = (word*) 250
-(const dword*) mulf16u::memR memR = (dword*) 252
+(const word*) mulf16u::memA = (word*) 248
+(const word*) mulf16u::memB = (word*) 250
+(const dword*) mulf16u::memR = (dword*) 252
 (dword) mulf16u::return
-(dword) mulf16u::return#0 return zp ZP_DWORD:14 22.0
-(dword) mulf16u::return#1 return zp ZP_DWORD:14 4.333333333333333
+(dword) mulf16u::return#0 return zp[4]:14 22.0
+(dword) mulf16u::return#1 return zp[4]:14 4.333333333333333
 (void()) mulf_init()
-(byte~) mulf_init::$12 reg byte a 22.0
-(byte~) mulf_init::$13 reg byte a 22.0
-(byte~) mulf_init::$9 reg byte a 22.0
+(byte~) mulf_init::$1 reg byte a 22.0
+(byte~) mulf_init::$4 reg byte a 22.0
+(byte~) mulf_init::$5 reg byte a 22.0
 (label) mulf_init::@1
 (label) mulf_init::@2
 (label) mulf_init::@3
@@ -2863,28 +2739,28 @@ FINAL SYMBOL TABLE
 (label) mulf_init::@9
 (label) mulf_init::@return
 (byte) mulf_init::c
-(byte) mulf_init::c#1 c zp ZP_BYTE:4 2.5384615384615383
-(byte) mulf_init::c#2 c zp ZP_BYTE:4 11.0
+(byte) mulf_init::c#1 c zp[1]:4 2.5384615384615383
+(byte) mulf_init::c#2 c zp[1]:4 11.0
 (byte) mulf_init::dir
-(byte) mulf_init::dir#2 dir zp ZP_BYTE:11 4.125
-(byte) mulf_init::dir#4 dir zp ZP_BYTE:11 11.0
+(byte) mulf_init::dir#2 dir zp[1]:11 4.125
+(byte) mulf_init::dir#4 dir zp[1]:11 11.0
 (word) mulf_init::sqr
-(word) mulf_init::sqr#1 sqr zp ZP_WORD:12 11.0
-(word) mulf_init::sqr#2 sqr zp ZP_WORD:12 22.0
-(word) mulf_init::sqr#3 sqr zp ZP_WORD:12 9.166666666666666
-(word) mulf_init::sqr#4 sqr zp ZP_WORD:12 5.5
+(word) mulf_init::sqr#1 sqr zp[2]:12 11.0
+(word) mulf_init::sqr#2 sqr zp[2]:12 22.0
+(word) mulf_init::sqr#3 sqr zp[2]:12 9.166666666666666
+(word) mulf_init::sqr#4 sqr zp[2]:12 5.5
 (byte*) mulf_init::sqr1_hi
-(byte*) mulf_init::sqr1_hi#1 sqr1_hi zp ZP_WORD:5 7.333333333333333
-(byte*) mulf_init::sqr1_hi#2 sqr1_hi zp ZP_WORD:5 2.75
+(byte*) mulf_init::sqr1_hi#1 sqr1_hi zp[2]:5 7.333333333333333
+(byte*) mulf_init::sqr1_hi#2 sqr1_hi zp[2]:5 2.75
 (byte*) mulf_init::sqr1_lo
-(byte*) mulf_init::sqr1_lo#1 sqr1_lo zp ZP_WORD:2 22.0
-(byte*) mulf_init::sqr1_lo#2 sqr1_lo zp ZP_WORD:2 3.142857142857143
+(byte*) mulf_init::sqr1_lo#1 sqr1_lo zp[2]:2 22.0
+(byte*) mulf_init::sqr1_lo#2 sqr1_lo zp[2]:2 3.142857142857143
 (byte*) mulf_init::sqr2_hi
-(byte*) mulf_init::sqr2_hi#1 sqr2_hi zp ZP_WORD:9 3.6666666666666665
-(byte*) mulf_init::sqr2_hi#2 sqr2_hi zp ZP_WORD:9 8.25
+(byte*) mulf_init::sqr2_hi#1 sqr2_hi zp[2]:9 3.6666666666666665
+(byte*) mulf_init::sqr2_hi#2 sqr2_hi zp[2]:9 8.25
 (byte*) mulf_init::sqr2_lo
-(byte*) mulf_init::sqr2_lo#1 sqr2_lo zp ZP_WORD:7 22.0
-(byte*) mulf_init::sqr2_lo#2 sqr2_lo zp ZP_WORD:7 4.888888888888889
+(byte*) mulf_init::sqr2_lo#1 sqr2_lo zp[2]:7 22.0
+(byte*) mulf_init::sqr2_lo#2 sqr2_lo zp[2]:7 4.888888888888889
 (byte) mulf_init::x_2
 (byte) mulf_init::x_2#1 reg byte x 11.0
 (byte) mulf_init::x_2#2 reg byte x 5.5
@@ -2892,10 +2768,10 @@ FINAL SYMBOL TABLE
 (byte) mulf_init::x_255
 (byte) mulf_init::x_255#1 reg byte x 6.6000000000000005
 (byte) mulf_init::x_255#2 reg byte x 8.8
-(const byte[$200]) mulf_sqr1_hi mulf_sqr1_hi = { fill( $200, 0) }
-(const byte[$200]) mulf_sqr1_lo mulf_sqr1_lo = { fill( $200, 0) }
-(const byte[$200]) mulf_sqr2_hi mulf_sqr2_hi = { fill( $200, 0) }
-(const byte[$200]) mulf_sqr2_lo mulf_sqr2_lo = { fill( $200, 0) }
+(const byte*) mulf_sqr1_hi[(number) $200]  = { fill( $200, 0) }
+(const byte*) mulf_sqr1_lo[(number) $200]  = { fill( $200, 0) }
+(const byte*) mulf_sqr2_hi[(number) $200]  = { fill( $200, 0) }
+(const byte*) mulf_sqr2_lo[(number) $200]  = { fill( $200, 0) }
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 reg byte a 4.0
 (byte~) print_byte::$2 reg byte x 4.0
@@ -2912,17 +2788,17 @@ FINAL SYMBOL TABLE
 (byte) print_char::ch#1 reg byte a 4.0
 (byte) print_char::ch#2 reg byte a 6.0
 (byte*) print_char_cursor
-(byte*) print_char_cursor#10 print_char_cursor zp ZP_WORD:5 0.6153846153846154
-(byte*) print_char_cursor#16 print_char_cursor zp ZP_WORD:5 0.2222222222222222
-(byte*) print_char_cursor#27 print_char_cursor zp ZP_WORD:5 4.0
-(byte*) print_char_cursor#34 print_char_cursor zp ZP_WORD:5 3.0
-(byte*) print_char_cursor#36 print_char_cursor zp ZP_WORD:5 2.0
+(byte*) print_char_cursor#10 print_char_cursor zp[2]:5 0.6153846153846154
+(byte*) print_char_cursor#16 print_char_cursor zp[2]:5 0.2222222222222222
+(byte*) print_char_cursor#27 print_char_cursor zp[2]:5 4.0
+(byte*) print_char_cursor#34 print_char_cursor zp[2]:5 3.0
+(byte*) print_char_cursor#36 print_char_cursor zp[2]:5 2.0
 (void()) print_dword((dword) print_dword::dw)
 (label) print_dword::@1
 (label) print_dword::@return
 (dword) print_dword::dw
-(dword) print_dword::dw#0 dw zp ZP_DWORD:14 5.0
-(const byte[]) print_hextab print_hextab = (string) "0123456789abcdef"z
+(dword) print_dword::dw#0 dw zp[4]:14 5.0
+(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_screen
 (void()) print_set_screen((byte*) print_set_screen::screen)
@@ -2932,27 +2808,27 @@ FINAL SYMBOL TABLE
 (label) print_word::@1
 (label) print_word::@return
 (word) print_word::w
-(word) print_word::w#0 w zp ZP_WORD:2 4.0
-(word) print_word::w#1 w zp ZP_WORD:2 4.0
-(word) print_word::w#2 w zp ZP_WORD:2 2.6666666666666665
+(word) print_word::w#0 w zp[2]:2 4.0
+(word) print_word::w#1 w zp[2]:2 4.0
+(word) print_word::w#2 w zp[2]:2 2.6666666666666665
 
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-zp ZP_WORD:2 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_word::w#2 print_word::w#0 print_word::w#1 ]
-zp ZP_BYTE:4 [ mulf_init::c#2 mulf_init::c#1 ]
-zp ZP_WORD:5 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
+zp[2]:2 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 print_word::w#2 print_word::w#0 print_word::w#1 ]
+zp[1]:4 [ mulf_init::c#2 mulf_init::c#1 ]
+zp[2]:5 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 print_char_cursor#27 print_char_cursor#36 print_char_cursor#34 print_char_cursor#16 print_char_cursor#10 ]
 reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
-zp ZP_WORD:7 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
+zp[2]:7 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ]
 reg byte x [ mulf_init::x_255#2 mulf_init::x_255#1 ]
-zp ZP_WORD:9 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
-zp ZP_BYTE:11 [ mulf_init::dir#2 mulf_init::dir#4 ]
-zp ZP_WORD:12 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-zp ZP_DWORD:14 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
+zp[2]:9 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ]
+zp[1]:11 [ mulf_init::dir#2 mulf_init::dir#4 ]
+zp[2]:12 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
+zp[4]:14 [ mulf16u::return#0 main::r#0 mulf16u::return#1 print_dword::dw#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
-reg byte a [ mulf_init::$9 ]
-reg byte a [ mulf_init::$12 ]
-reg byte a [ mulf_init::$13 ]
+reg byte a [ mulf_init::$1 ]
+reg byte a [ mulf_init::$4 ]
+reg byte a [ mulf_init::$5 ]
 
 
 FINAL ASSEMBLER
@@ -3044,7 +2920,7 @@ print_set_screen: {
 }
   // print_dword
 // Print a dword as HEX
-// print_dword(dword zeropage($e) dw)
+// print_dword(dword zp($e) dw)
 print_dword: {
     .label dw = $e
     // print_word(>dw)
@@ -3077,7 +2953,7 @@ print_dword: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     // print_byte(>w)
@@ -3116,7 +2992,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [33] (byte) print_char::ch#0 ← *((const byte[]) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [33] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [34] call print_char 
@@ -3130,7 +3006,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [36] (byte) print_char::ch#1 ← *((const byte[]) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [36] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [37] call print_char 
     // [39] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -3293,28 +3169,33 @@ mulf16u: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = 4
+    // Counter used for determining x%2==0
     .label sqr1_hi = 5
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $c
     .label sqr1_lo = 2
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = 9
     .label sqr2_lo = 7
+    //Start with g(0)=f(255)
     .label dir = $b
     // [49] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
     // [49] phi (byte) mulf_init::x_2#3 = (byte) 0 [phi:mulf_init->mulf_init::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte[$200]) mulf_sqr1_hi+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
+    // [49] phi (byte*) mulf_init::sqr1_hi#2 = (const byte*) mulf_sqr1_hi+(byte) 1 [phi:mulf_init->mulf_init::@1#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
     lda #>mulf_sqr1_hi+1
     sta.z sqr1_hi+1
-    // [49] phi (word) mulf_init::sqr#4 = (byte) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vbuc1 
+    // [49] phi (word) mulf_init::sqr#4 = (word) 0 [phi:mulf_init->mulf_init::@1#2] -- vwuz1=vwuc1 
     txa
     sta.z sqr
     sta.z sqr+1
     // [49] phi (byte) mulf_init::c#2 = (byte) 0 [phi:mulf_init->mulf_init::@1#3] -- vbuz1=vbuc1 
     sta.z c
-    // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte[$200]) mulf_sqr1_lo+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
+    // [49] phi (byte*) mulf_init::sqr1_lo#2 = (const byte*) mulf_sqr1_lo+(byte) 1 [phi:mulf_init->mulf_init::@1#4] -- pbuz1=pbuc1 
     lda #<mulf_sqr1_lo+1
     sta.z sqr1_lo
     lda #>mulf_sqr1_lo+1
@@ -3322,7 +3203,7 @@ mulf_init: {
     // mulf_init::@1
   __b1:
     // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
-    // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte[$200]) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [50] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne __b2
@@ -3333,14 +3214,14 @@ mulf_init: {
     // [51] phi (byte) mulf_init::dir#2 = (byte) $ff [phi:mulf_init::@1->mulf_init::@5#0] -- vbuz1=vbuc1 
     lda #$ff
     sta.z dir
-    // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte[$200]) mulf_sqr2_hi [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
+    // [51] phi (byte*) mulf_init::sqr2_hi#2 = (const byte*) mulf_sqr2_hi [phi:mulf_init::@1->mulf_init::@5#1] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_hi
     sta.z sqr2_hi
     lda #>mulf_sqr2_hi
     sta.z sqr2_hi+1
     // [51] phi (byte) mulf_init::x_255#2 = (byte) -1 [phi:mulf_init::@1->mulf_init::@5#2] -- vbuxx=vbuc1 
     ldx #-1
-    // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte[$200]) mulf_sqr2_lo [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
+    // [51] phi (byte*) mulf_init::sqr2_lo#2 = (const byte*) mulf_sqr2_lo [phi:mulf_init::@1->mulf_init::@5#3] -- pbuz1=pbuc1 
     lda #<mulf_sqr2_lo
     sta.z sqr2_lo
     lda #>mulf_sqr2_lo
@@ -3348,7 +3229,7 @@ mulf_init: {
     // mulf_init::@5
   __b5:
     // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
-    // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte[$200]) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
+    // [52] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne __b6
@@ -3357,12 +3238,12 @@ mulf_init: {
     bne __b6
     // mulf_init::@7
     // *(mulf_sqr2_lo+511) = *(mulf_sqr1_lo+256)
-    // [53] *((const byte[$200]) mulf_sqr2_lo+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
+    // [53] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     // Set the very last value g(511) = f(256)
     lda mulf_sqr1_lo+$100
     sta mulf_sqr2_lo+$1ff
     // *(mulf_sqr2_hi+511) = *(mulf_sqr1_hi+256)
-    // [54] *((const byte[$200]) mulf_sqr2_hi+(word) $1ff) ← *((const byte[$200]) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
+    // [54] *((const byte*) mulf_sqr2_hi+(word) $1ff) ← *((const byte*) mulf_sqr1_hi+(word) $100) -- _deref_pbuc1=_deref_pbuc2 
     lda mulf_sqr1_hi+$100
     sta mulf_sqr2_hi+$1ff
     // mulf_init::@return
@@ -3372,12 +3253,12 @@ mulf_init: {
     // mulf_init::@6
   __b6:
     // *sqr2_lo = mulf_sqr1_lo[x_255]
-    // [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte[$200]) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [56] *((byte*) mulf_init::sqr2_lo#2) ← *((const byte*) mulf_sqr1_lo + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda mulf_sqr1_lo,x
     ldy #0
     sta (sqr2_lo),y
     // *sqr2_hi++ = mulf_sqr1_hi[x_255]
-    // [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte[$200]) mulf_sqr1_hi + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
+    // [57] *((byte*) mulf_init::sqr2_hi#2) ← *((const byte*) mulf_sqr1_hi + (byte) mulf_init::x_255#2) -- _deref_pbuz1=pbuc1_derefidx_vbuxx 
     lda mulf_sqr1_hi,x
     sta (sqr2_hi),y
     // *sqr2_hi++ = mulf_sqr1_hi[x_255];
@@ -3424,11 +3305,11 @@ mulf_init: {
     // [64] (byte) mulf_init::c#1 ← ++ (byte) mulf_init::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
     // ++c&1
-    // [65] (byte~) mulf_init::$9 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
+    // [65] (byte~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and.z c
     // if((++c&1)==0)
-    // [66] if((byte~) mulf_init::$9!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
+    // [66] if((byte~) mulf_init::$1!=(byte) 0) goto mulf_init::@3 -- vbuaa_neq_0_then_la1 
     cmp #0
     bne __b3
     // mulf_init::@4
@@ -3447,17 +3328,17 @@ mulf_init: {
     // mulf_init::@3
   __b3:
     // <sqr
-    // [70] (byte~) mulf_init::$12 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
+    // [70] (byte~) mulf_init::$4 ← < (word) mulf_init::sqr#3 -- vbuaa=_lo_vwuz1 
     lda.z sqr
     // *sqr1_lo = <sqr
-    // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$12 -- _deref_pbuz1=vbuaa 
+    // [71] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$4 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (sqr1_lo),y
     // >sqr
-    // [72] (byte~) mulf_init::$13 ← > (word) mulf_init::sqr#3 -- vbuaa=_hi_vwuz1 
+    // [72] (byte~) mulf_init::$5 ← > (word) mulf_init::sqr#3 -- vbuaa=_hi_vwuz1 
     lda.z sqr+1
     // *sqr1_hi++ = >sqr
-    // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$13 -- _deref_pbuz1=vbuaa 
+    // [73] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5 -- _deref_pbuz1=vbuaa 
     sta (sqr1_hi),y
     // *sqr1_hi++ = >sqr;
     // [74] (byte*) mulf_init::sqr1_hi#1 ← ++ (byte*) mulf_init::sqr1_hi#2 -- pbuz1=_inc_pbuz1 

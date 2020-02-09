@@ -2,11 +2,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label SCREEN = $400
   .const SIZEOF_BYTE = 1
   .const SIZEOF_NUMBER = $ff
   .const SIZEOF_WORD = 2
   .const SIZEOF_POINTER = 2
-  .label SCREEN = $400
 main: {
     .label b = 2
     .label w = 3

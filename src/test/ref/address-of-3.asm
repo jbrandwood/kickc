@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .label idx = 3
 main: {
     .label i = 2
@@ -37,7 +37,7 @@ main: {
     bne __b1
     rts
 }
-// print(signed word* zeropage(4) p)
+// print(signed word* zp(4) p)
 print: {
     .label p = 4
     lda.z idx

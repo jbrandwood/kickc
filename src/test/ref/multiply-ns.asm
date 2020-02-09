@@ -4,37 +4,37 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-    .label __31 = 2
-    .label __33 = 3
+    .label __16 = 2
+    .label __18 = 3
     ldx #0
   __b1:
     txa
     sta SCREEN,x
     txa
     asl
-    sta.z __31
+    sta.z __16
     sta SCREEN+1*$28,x
     txa
     clc
-    adc.z __31
+    adc.z __16
     sta SCREEN+2*$28,x
     txa
     asl
     asl
-    sta.z __33
+    sta.z __18
     sta SCREEN+3*$28,x
     txa
     clc
-    adc.z __33
+    adc.z __18
     sta SCREEN+4*$28,x
     txa
     clc
-    adc.z __31
+    adc.z __16
     asl
     sta SCREEN+5*$28,x
     txa
     clc
-    adc.z __31
+    adc.z __16
     asl
     stx.z $ff
     clc
@@ -51,12 +51,12 @@ main: {
     sta SCREEN+8*$28,x
     txa
     clc
-    adc.z __33
+    adc.z __18
     asl
     sta SCREEN+9*$28,x
     txa
     clc
-    adc.z __33
+    adc.z __18
     asl
     stx.z $ff
     clc
@@ -64,13 +64,13 @@ main: {
     sta SCREEN+$a*$28,x
     txa
     clc
-    adc.z __31
+    adc.z __16
     asl
     asl
     sta SCREEN+$b*$28,x
     txa
     clc
-    adc.z __31
+    adc.z __16
     asl
     asl
     stx.z $ff
@@ -79,7 +79,7 @@ main: {
     sta SCREEN+$c*$28,x
     txa
     clc
-    adc.z __31
+    adc.z __16
     asl
     stx.z $ff
     clc
@@ -88,7 +88,7 @@ main: {
     sta SCREEN+$d*$28,x
     txa
     clc
-    adc.z __31
+    adc.z __16
     asl
     stx.z $ff
     clc

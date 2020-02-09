@@ -3,6 +3,7 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @5
 Culled Empty Block (label) circle::@6
@@ -19,48 +20,25 @@ Culled Empty Block (label) fill::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) D011 ← ((byte*)) (number) $d011
-  (byte) VIC_BMM ← (number) $20
-  (byte) VIC_DEN ← (number) $10
-  (byte) VIC_RSEL ← (number) 8
-  (byte*) VIC_MEMORY ← ((byte*)) (number) $d018
-  (byte) BLUE ← (number) 6
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
-  (byte*) BITMAP ← ((byte*)) (number) $2000
-  (byte[]) bitmask ← { (number) $80, (number) $40, (number) $20, (number) $10, (number) 8, (number) 4, (number) 2, (number) 1 }
   to:@8
 
 (void()) main()
 main: scope:[main]  from @8
-  (byte*) fill::start#0 ← (byte*) BITMAP
+  (byte*) fill::start#0 ← (const byte*) BITMAP
   (signed word) fill::size#0 ← (number) $28*(number) $19*(number) 8
   (byte) fill::val#0 ← (number) 0
   call fill 
   to:main::@3
 main::@3: scope:[main]  from main
-  (byte*) fill::start#1 ← (byte*) SCREEN
+  (byte*) fill::start#1 ← (const byte*) SCREEN
   (signed word) fill::size#1 ← (number) $28*(number) $19
   (byte) fill::val#1 ← (number) $16
   call fill 
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  *((byte*) BORDERCOL) ← (byte) BLUE
-  (byte~) main::$2 ← (byte) VIC_BMM | (byte) VIC_DEN
-  (byte~) main::$3 ← (byte~) main::$2 | (byte) VIC_RSEL
-  (number~) main::$4 ← (byte~) main::$3 | (number) 3
-  *((byte*) D011) ← (number~) main::$4
-  (word~) main::$5 ← ((word)) (byte*) SCREEN
-  (number~) main::$6 ← (word~) main::$5 & (number) $3fff
-  (number~) main::$7 ← (number~) main::$6 / (number) $40
-  (word~) main::$8 ← ((word)) (byte*) BITMAP
-  (number~) main::$9 ← (word~) main::$8 & (number) $3fff
-  (number~) main::$10 ← (number~) main::$9 / (number) $400
-  (number~) main::$11 ← (number~) main::$7 | (number~) main::$10
-  (byte~) main::$12 ← ((byte)) (number~) main::$11
-  *((byte*) VIC_MEMORY) ← (byte~) main::$12
+  *((const byte*) BORDERCOL) ← (const byte) BLUE
+  *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+  *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(number) $3fff/(number) $40|(word)(const byte*) BITMAP&(number) $3fff/(number) $400
   (signed word) circle::xc#0 ← (number) $64
   (signed word) circle::yc#0 ← (number) $64
   (signed word) circle::r#0 ← (number) $32
@@ -84,7 +62,7 @@ circle: scope:[circle]  from main::@4
   (signed word~) circle::$0 ← (signed word) circle::r#1 << (number) 1
   (number~) circle::$1 ← (number) 3 - (signed word~) circle::$0
   (signed word) circle::p#0 ← (number~) circle::$1
-  (signed word) circle::x1#0 ← (number) 0
+  (signed word) circle::x1#0 ← (signed word) 0
   to:circle::@1
 circle::@1: scope:[circle]  from circle circle::@18
   (signed word) circle::yc#12 ← phi( circle/(signed word) circle::yc#13 circle::@18/(signed word) circle::yc#14 )
@@ -241,7 +219,7 @@ circle::@return: scope:[circle]  from circle::@1
 plot: scope:[plot]  from circle::@11 circle::@12 circle::@13 circle::@14 circle::@15 circle::@16 circle::@17 circle::@5
   (signed word) plot::y#8 ← phi( circle::@11/(signed word) plot::y#1 circle::@12/(signed word) plot::y#2 circle::@13/(signed word) plot::y#3 circle::@14/(signed word) plot::y#4 circle::@15/(signed word) plot::y#5 circle::@16/(signed word) plot::y#6 circle::@17/(signed word) plot::y#7 circle::@5/(signed word) plot::y#0 )
   (signed word) plot::x#8 ← phi( circle::@11/(signed word) plot::x#1 circle::@12/(signed word) plot::x#2 circle::@13/(signed word) plot::x#3 circle::@14/(signed word) plot::x#4 circle::@15/(signed word) plot::x#5 circle::@16/(signed word) plot::x#6 circle::@17/(signed word) plot::x#7 circle::@5/(signed word) plot::x#0 )
-  (byte*) plot::location#0 ← (byte*) BITMAP
+  (byte*) plot::location#0 ← (const byte*) BITMAP
   (number~) plot::$0 ← (signed word) plot::x#8 & (number) $fff8
   (byte*) plot::location#1 ← (byte*) plot::location#0 + (number~) plot::$0
   (byte~) plot::$1 ← < (signed word) plot::y#8
@@ -251,7 +229,7 @@ plot: scope:[plot]  from circle::@11 circle::@12 circle::@13 circle::@14 circle:
   (number~) plot::$4 ← (signed word~) plot::$3 * (number) $140
   (byte*) plot::location#3 ← (byte*) plot::location#2 + (number~) plot::$4
   (number~) plot::$5 ← (signed word) plot::x#8 & (number) 7
-  (byte~) plot::$6 ← *((byte*) plot::location#3) | *((byte[]) bitmask + (number~) plot::$5)
+  (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte*) bitmask + (number~) plot::$5)
   *((byte*) plot::location#3) ← (byte~) plot::$6
   to:plot::@return
 plot::@return: scope:[plot]  from plot
@@ -284,7 +262,7 @@ fill::@2: scope:[fill]  from fill::@1
 fill::@return: scope:[fill]  from fill::@1
   return 
   to:@return
-@8: scope:[]  from @4
+@8: scope:[]  from @begin
   call main 
   to:@9
 @9: scope:[]  from @8
@@ -292,21 +270,20 @@ fill::@return: scope:[fill]  from fill::@1
 @end: scope:[]  from @9
 
 SYMBOL TABLE SSA
-(label) @4
 (label) @8
 (label) @9
 (label) @begin
 (label) @end
-(byte*) BITMAP
-(byte) BLUE
-(byte*) BORDERCOL
-(byte*) D011
-(byte*) SCREEN
-(byte) VIC_BMM
-(byte) VIC_DEN
-(byte*) VIC_MEMORY
-(byte) VIC_RSEL
-(byte[]) bitmask
+(const byte*) BITMAP = (byte*)(number) $2000
+(const byte) BLUE = (byte) 6
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) D011 = (byte*)(number) $d011
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) VIC_BMM = (byte) $20
+(const byte) VIC_DEN = (byte) $10
+(const byte*) VIC_MEMORY = (byte*)(number) $d018
+(const byte) VIC_RSEL = (byte) 8
+(const byte*) bitmask[]  = { (byte) $80, (byte) $40, (byte) $20, (byte) $10, (byte) 8, (byte) 4, (byte) 2, (byte) 1 }
 (void()) circle((signed word) circle::xc , (signed word) circle::yc , (signed word) circle::r)
 (signed word~) circle::$0
 (number~) circle::$1
@@ -464,17 +441,6 @@ SYMBOL TABLE SSA
 (byte) fill::val#3
 (byte) fill::val#4
 (void()) main()
-(number~) main::$10
-(number~) main::$11
-(byte~) main::$12
-(byte~) main::$2
-(byte~) main::$3
-(number~) main::$4
-(word~) main::$5
-(number~) main::$6
-(number~) main::$7
-(word~) main::$8
-(number~) main::$9
 (label) main::@1
 (label) main::@3
 (label) main::@4
@@ -515,32 +481,20 @@ SYMBOL TABLE SSA
 (signed word) plot::y#7
 (signed word) plot::y#8
 
-Adding number conversion cast (unumber) $20 in (byte) VIC_BMM ← (number) $20
-Adding number conversion cast (unumber) $10 in (byte) VIC_DEN ← (number) $10
-Adding number conversion cast (unumber) 8 in (byte) VIC_RSEL ← (number) 8
-Adding number conversion cast (unumber) 6 in (byte) BLUE ← (number) 6
 Adding number conversion cast (snumber) $28*$19*8 in (signed word) fill::size#0 ← (number) $28*(number) $19*(number) 8
 Adding number conversion cast (unumber) 0 in (byte) fill::val#0 ← (number) 0
 Adding number conversion cast (snumber) $28*$19 in (signed word) fill::size#1 ← (number) $28*(number) $19
 Adding number conversion cast (unumber) $16 in (byte) fill::val#1 ← (number) $16
-Adding number conversion cast (unumber) 3 in (number~) main::$4 ← (byte~) main::$3 | (number) 3
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (byte~) main::$3 | (unumber)(number) 3
-Adding number conversion cast (unumber) $3fff in (number~) main::$6 ← (word~) main::$5 & (number) $3fff
-Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (word~) main::$5 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) $40 in (number~) main::$7 ← (unumber~) main::$6 / (number) $40
-Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (unumber~) main::$6 / (unumber)(number) $40
-Adding number conversion cast (unumber) $3fff in (number~) main::$9 ← (word~) main::$8 & (number) $3fff
-Adding number conversion cast (unumber) main::$9 in (number~) main::$9 ← (word~) main::$8 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) $400 in (number~) main::$10 ← (unumber~) main::$9 / (number) $400
-Adding number conversion cast (unumber) main::$10 in (number~) main::$10 ← (unumber~) main::$9 / (unumber)(number) $400
-Adding number conversion cast (unumber) main::$11 in (number~) main::$11 ← (unumber~) main::$7 | (unumber~) main::$10
+Adding number conversion cast (unumber) VIC_BMM|VIC_DEN|VIC_RSEL|3 in *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) 3 in *((const byte*) D011) ← ((unumber)) (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(number) 3
+Adding number conversion cast (unumber) $3fff in *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(number) $3fff/(number) $40|(word)(const byte*) BITMAP&(number) $3fff/(number) $400
+Adding number conversion cast (unumber) $3fff in *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(unumber)(number) $3fff/(number) $40|(word)(const byte*) BITMAP&(number) $3fff/(number) $400
 Adding number conversion cast (snumber) $64 in (signed word) circle::xc#0 ← (number) $64
 Adding number conversion cast (snumber) $64 in (signed word) circle::yc#0 ← (number) $64
 Adding number conversion cast (snumber) $32 in (signed word) circle::r#0 ← (number) $32
 Adding number conversion cast (snumber) 1 in (signed word~) circle::$0 ← (signed word) circle::r#1 << (number) 1
 Adding number conversion cast (snumber) 3 in (number~) circle::$1 ← (number) 3 - (signed word~) circle::$0
 Adding number conversion cast (snumber) circle::$1 in (number~) circle::$1 ← (snumber)(number) 3 - (signed word~) circle::$0
-Adding number conversion cast (snumber) 0 in (signed word) circle::x1#0 ← (number) 0
 Adding number conversion cast (snumber) 0 in (bool~) circle::$3 ← (signed word) circle::p#3 < (number) 0
 Adding number conversion cast (snumber) 2 in (signed word~) circle::$9 ← (signed word) circle::x1#3 << (number) 2
 Adding number conversion cast (snumber) 6 in (number~) circle::$11 ← (signed word~) circle::$10 + (number) 6
@@ -560,48 +514,26 @@ Adding number conversion cast (snumber) plot::$4 in (number~) plot::$4 ← (sign
 Adding number conversion cast (snumber) 7 in (number~) plot::$5 ← (signed word) plot::x#8 & (number) 7
 Adding number conversion cast (snumber) plot::$5 in (number~) plot::$5 ← (signed word) plot::x#8 & (snumber)(number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[]) bitmask ← (byte[]){ (byte)(number) $80, (byte)(number) $40, (byte)(number) $20, (byte)(number) $10, (byte)(number) 8, (byte)(number) 4, (byte)(number) 2, (byte)(number) 1 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) D011 ← (byte*)(number) $d011
-Inlining cast (byte) VIC_BMM ← (unumber)(number) $20
-Inlining cast (byte) VIC_DEN ← (unumber)(number) $10
-Inlining cast (byte) VIC_RSEL ← (unumber)(number) 8
-Inlining cast (byte*) VIC_MEMORY ← (byte*)(number) $d018
-Inlining cast (byte) BLUE ← (unumber)(number) 6
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*) BITMAP ← (byte*)(number) $2000
+Adding number conversion cast (unumber) $40 in *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(unumber)(number) $3fff/(number) $40|(word)(const byte*) BITMAP&(unumber)(number) $3fff/(number) $400
+Adding number conversion cast (unumber) $400 in *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(unumber)(number) $3fff/(unumber)(number) $40|(word)(const byte*) BITMAP&(unumber)(number) $3fff/(number) $400
+Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
 Inlining cast (byte) fill::val#0 ← (unumber)(number) 0
 Inlining cast (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
 Inlining cast (byte) fill::val#1 ← (unumber)(number) $16
-Inlining cast (word~) main::$5 ← (word)(byte*) SCREEN
-Inlining cast (word~) main::$8 ← (word)(byte*) BITMAP
-Inlining cast (byte~) main::$12 ← (byte)(unumber~) main::$11
+Inlining cast *((const byte*) D011) ← (unumber)(const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Inlining cast (signed word) circle::xc#0 ← (snumber)(number) $64
 Inlining cast (signed word) circle::yc#0 ← (snumber)(number) $64
 Inlining cast (signed word) circle::r#0 ← (snumber)(number) $32
-Inlining cast (signed word) circle::x1#0 ← (snumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53265
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
 Simplifying constant pointer cast (byte*) 53272
-Simplifying constant integer cast 6
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
-Simplifying constant integer cast $80
-Simplifying constant integer cast $40
-Simplifying constant integer cast $20
-Simplifying constant integer cast $10
-Simplifying constant integer cast 8
-Simplifying constant integer cast 4
-Simplifying constant integer cast 2
-Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast $16
+Simplifying constant integer cast (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(unumber)(number) 3
 Simplifying constant integer cast 3
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast $40
@@ -612,7 +544,6 @@ Simplifying constant integer cast $64
 Simplifying constant integer cast $32
 Simplifying constant integer cast 1
 Simplifying constant integer cast 3
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Simplifying constant integer cast 6
@@ -625,10 +556,6 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $140
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $20
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 6
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $16
 Finalized unsigned number type (byte) 3
@@ -642,7 +569,6 @@ Finalized signed number type (signed byte) $32
 Finalized signed number type (signed byte) 1
 Finalized signed number type (signed byte) 3
 Finalized signed number type (signed byte) 0
-Finalized signed number type (signed byte) 0
 Finalized signed number type (signed byte) 2
 Finalized signed number type (signed byte) 6
 Finalized signed number type (signed byte) 1
@@ -654,12 +580,6 @@ Finalized signed number type (signed byte) 3
 Finalized signed number type (signed word) $140
 Finalized signed number type (signed byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$4 ← (byte~) main::$3 | (byte) 3
-Inferred type updated to word in (unumber~) main::$6 ← (word~) main::$5 & (word) $3fff
-Inferred type updated to word in (unumber~) main::$7 ← (word~) main::$6 / (byte) $40
-Inferred type updated to word in (unumber~) main::$9 ← (word~) main::$8 & (word) $3fff
-Inferred type updated to word in (unumber~) main::$10 ← (word~) main::$9 / (word) $400
-Inferred type updated to word in (unumber~) main::$11 ← (word~) main::$7 | (word~) main::$10
 Inferred type updated to signed word in (snumber~) circle::$1 ← (signed byte) 3 - (signed word~) circle::$0
 Inferred type updated to signed word in (snumber~) circle::$11 ← (signed word~) circle::$10 + (signed byte) 6
 Inferred type updated to signed word in (snumber~) circle::$4 ← (signed word) circle::y#3 - (signed byte) 1
@@ -717,78 +637,36 @@ Identical Phi Values (signed word) circle::yc#1 (signed word) circle::yc#13
 Identical Phi Values (byte*) fill::end#1 (byte*) fill::end#0
 Identical Phi Values (byte) fill::val#2 (byte) fill::val#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) circle::$2 [46] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2
-Simple Condition (bool~) circle::$3 [49] if((signed word) circle::p#3<(signed byte) 0) goto circle::@4
-Simple Condition (bool~) fill::$1 [134] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2
+Simple Condition (bool~) circle::$2 [25] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2
+Simple Condition (bool~) circle::$3 [28] if((signed word) circle::p#3<(signed byte) 0) goto circle::@4
+Simple Condition (bool~) fill::$1 [113] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [11] (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
-Constant right-side identified [15] (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
+Constant right-side identified [1] (signed word) fill::size#0 ← (snumber)(number) $28*(number) $19*(number) 8
+Constant right-side identified [5] (signed word) fill::size#1 ← (snumber)(number) $28*(number) $19
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte[]) { (byte) $80, (byte) $40, (byte) $20, (byte) $10, (byte) 8, (byte) 4, (byte) 2, (byte) 1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) D011 = (byte*) 53265
-Constant (const byte) VIC_BMM = $20
-Constant (const byte) VIC_DEN = $10
-Constant (const byte) VIC_RSEL = 8
-Constant (const byte*) VIC_MEMORY = (byte*) 53272
-Constant (const byte) BLUE = 6
-Constant (const byte*) SCREEN = (byte*) 1024
-Constant (const byte*) BITMAP = (byte*) 8192
-Constant (const byte[]) bitmask = { $80, $40, $20, $10, 8, 4, 2, 1 }
+Constant (const byte*) fill::start#0 = BITMAP
 Constant (const signed word) fill::size#0 = (snumber)$28*$19*8
 Constant (const byte) fill::val#0 = 0
+Constant (const byte*) fill::start#1 = SCREEN
 Constant (const signed word) fill::size#1 = (snumber)$28*$19
 Constant (const byte) fill::val#1 = $16
 Constant (const signed word) circle::xc#0 = $64
 Constant (const signed word) circle::yc#0 = $64
 Constant (const signed word) circle::r#0 = $32
 Constant (const signed word) circle::x1#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) fill::start#0 = BITMAP
-Constant (const byte*) fill::start#1 = SCREEN
 Constant (const byte*) plot::location#0 = BITMAP
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)SCREEN in [23] (word~) main::$5 ← (word)(const byte*) SCREEN
-Constant value identified (word)BITMAP in [26] (word~) main::$8 ← (word)(const byte*) BITMAP
-Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [36] if(true) goto main::@1
+if() condition always true - replacing block destination [15] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant right-side identified [3] (byte~) main::$2 ← (const byte) VIC_BMM | (const byte) VIC_DEN
-Constant right-side identified [17] (signed word~) circle::$0 ← (const signed word) circle::r#0 << (signed byte) 1
+Constant right-side identified [6] (signed word~) circle::$0 ← (const signed word) circle::r#0 << (signed byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = VIC_BMM|VIC_DEN
-Constant (const word) main::$5 = (word)SCREEN
-Constant (const word) main::$8 = (word)BITMAP
 Constant (const signed word) circle::$0 = circle::r#0<<1
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [3] (byte~) main::$3 ← (const byte) main::$2 | (const byte) VIC_RSEL
-Constant right-side identified [6] (word~) main::$6 ← (const word) main::$5 & (word) $3fff
-Constant right-side identified [8] (word~) main::$9 ← (const word) main::$8 & (word) $3fff
-Constant right-side identified [14] (signed word) circle::p#0 ← (signed byte) 3 - (const signed word) circle::$0
+Constant right-side identified [6] (signed word) circle::p#0 ← (signed byte) 3 - (const signed word) circle::$0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$3 = main::$2|VIC_RSEL
-Constant (const word) main::$6 = main::$5&$3fff
-Constant (const word) main::$9 = main::$8&$3fff
 Constant (const signed word) circle::p#0 = 3-circle::$0
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [3] (byte~) main::$4 ← (const byte) main::$3 | (byte) 3
-Constant right-side identified [5] (word~) main::$7 ← (const word) main::$6 / (byte) $40
-Constant right-side identified [6] (word~) main::$10 ← (const word) main::$9 / (word) $400
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$4 = main::$3|3
-Constant (const word) main::$7 = main::$6/$40
-Constant (const word) main::$10 = main::$9/$400
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [4] (word~) main::$11 ← (const word) main::$7 | (const word) main::$10
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::$11 = main::$7|main::$10
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)main::$11 in [5] (byte~) main::$12 ← (byte)(const word) main::$11
-Successful SSA optimization Pass2ConstantValues
-Constant (const byte) main::$12 = (byte)main::$11
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift and addition[51] (signed word~) plot::$4 ← (signed word~) plot::$3 * (signed word) $140
 Inlining constant with var siblings (const signed word) circle::x1#0
@@ -801,29 +679,17 @@ Inlining constant with var siblings (const byte) fill::val#1
 Constant inlined fill::val#0 = (byte) 0
 Constant inlined circle::$0 = (const signed word) circle::r#0<<(signed byte) 1
 Constant inlined plot::location#0 = (const byte*) BITMAP
+Constant inlined fill::start#1 = (const byte*) SCREEN
+Constant inlined fill::start#0 = (const byte*) BITMAP
+Constant inlined circle::x1#0 = (signed word) 0
 Constant inlined fill::val#1 = (byte) $16
-Constant inlined main::$12 = (byte)(word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
 Constant inlined fill::size#1 = (signed word)(number) $28*(number) $19
 Constant inlined fill::size#0 = (signed word)(number) $28*(number) $19*(number) 8
 Constant inlined circle::p#0 = (signed byte) 3-(const signed word) circle::r#0<<(signed byte) 1
-Constant inlined main::$10 = (word)(const byte*) BITMAP&(word) $3fff/(word) $400
-Constant inlined main::$11 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400
-Constant inlined fill::start#1 = (const byte*) SCREEN
-Constant inlined fill::start#0 = (const byte*) BITMAP
-Constant inlined main::$2 = (const byte) VIC_BMM|(const byte) VIC_DEN
-Constant inlined circle::x1#0 = (signed byte) 0
-Constant inlined main::$5 = (word)(const byte*) SCREEN
-Constant inlined main::$6 = (word)(const byte*) SCREEN&(word) $3fff
-Constant inlined main::$3 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL
-Constant inlined main::$4 = (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3
-Constant inlined main::$9 = (word)(const byte*) BITMAP&(word) $3fff
-Constant inlined main::$7 = (word)(const byte*) SCREEN&(word) $3fff/(byte) $40
-Constant inlined main::$8 = (word)(const byte*) BITMAP
 Successful SSA optimization Pass2ConstantInlining
-Alias (signed word~) plot::$4 = (signed word) plot::$9 
+Alias (signed word~) plot::$4 = (signed word~) plot::$9 
 Successful SSA optimization Pass2AliasElimination
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @8
 Adding NOP phi() at start of @9
 Adding NOP phi() at start of @end
@@ -833,38 +699,37 @@ Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of circle
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to fill:7 fill:9 circle:13 
-Calls in [circle] to plot:33 plot:38 plot:43 plot:48 plot:53 plot:58 plot:63 plot:68 
+Calls in [] to main:2 
+Calls in [main] to fill:6 fill:8 circle:12 
+Calls in [circle] to plot:32 plot:37 plot:42 plot:47 plot:52 plot:57 plot:62 plot:67 
 
 Created 11 initial phi equivalence classes
-Coalesced [26] circle::y#17 ← circle::y#1
-Coalesced [27] circle::p#18 ← circle::p#2
-Coalesced [31] plot::x#16 ← plot::x#0
-Coalesced [32] plot::y#16 ← plot::y#0
-Coalesced [36] plot::x#9 ← plot::x#1
-Coalesced [37] plot::y#9 ← plot::y#1
-Coalesced [41] plot::x#10 ← plot::x#2
-Coalesced [42] plot::y#10 ← plot::y#2
-Coalesced [46] plot::x#11 ← plot::x#3
-Coalesced [47] plot::y#11 ← plot::y#3
-Coalesced [51] plot::x#12 ← plot::x#4
-Coalesced [52] plot::y#12 ← plot::y#4
-Coalesced [56] plot::x#13 ← plot::x#5
-Coalesced [57] plot::y#13 ← plot::y#5
-Coalesced [61] plot::x#14 ← plot::x#6
-Coalesced [62] plot::y#14 ← plot::y#6
-Coalesced [66] plot::x#15 ← plot::x#7
-Coalesced [67] plot::y#15 ← plot::y#7
-Coalesced [70] circle::x1#15 ← circle::x1#1
-Coalesced [71] circle::y#15 ← circle::y#10
-Coalesced [72] circle::p#16 ← circle::p#10
-Coalesced (already) [76] circle::y#16 ← circle::y#13
-Coalesced [77] circle::p#17 ← circle::p#1
-Coalesced [95] fill::addr#4 ← fill::addr#0
-Coalesced [101] fill::addr#5 ← fill::addr#1
+Coalesced [25] circle::y#17 ← circle::y#1
+Coalesced [26] circle::p#18 ← circle::p#2
+Coalesced [30] plot::x#16 ← plot::x#0
+Coalesced [31] plot::y#16 ← plot::y#0
+Coalesced [35] plot::x#9 ← plot::x#1
+Coalesced [36] plot::y#9 ← plot::y#1
+Coalesced [40] plot::x#10 ← plot::x#2
+Coalesced [41] plot::y#10 ← plot::y#2
+Coalesced [45] plot::x#11 ← plot::x#3
+Coalesced [46] plot::y#11 ← plot::y#3
+Coalesced [50] plot::x#12 ← plot::x#4
+Coalesced [51] plot::y#12 ← plot::y#4
+Coalesced [55] plot::x#13 ← plot::x#5
+Coalesced [56] plot::y#13 ← plot::y#5
+Coalesced [60] plot::x#14 ← plot::x#6
+Coalesced [61] plot::y#14 ← plot::y#6
+Coalesced [65] plot::x#15 ← plot::x#7
+Coalesced [66] plot::y#15 ← plot::y#7
+Coalesced [69] circle::x1#15 ← circle::x1#1
+Coalesced [70] circle::y#15 ← circle::y#10
+Coalesced [71] circle::p#16 ← circle::p#10
+Coalesced (already) [75] circle::y#16 ← circle::y#13
+Coalesced [76] circle::p#17 ← circle::p#1
+Coalesced [94] fill::addr#4 ← fill::addr#0
+Coalesced [100] fill::addr#5 ← fill::addr#1
 Coalesced down to 8 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @9
 Culled Empty Block (label) main::@5
 Renumbering block @8 to @1
@@ -926,7 +791,7 @@ circle: scope:[circle]  from main::@3
 circle::@1: scope:[circle]  from circle circle::@13
   [14] (signed word) circle::p#3 ← phi( circle/(signed byte) 3-(const signed word) circle::r#0<<(signed byte) 1 circle::@13/(signed word) circle::p#10 )
   [14] (signed word) circle::y#13 ← phi( circle/(const signed word) circle::r#0 circle::@13/(signed word) circle::y#10 )
-  [14] (signed word) circle::x1#10 ← phi( circle/(signed byte) 0 circle::@13/(signed word) circle::x1#1 )
+  [14] (signed word) circle::x1#10 ← phi( circle/(signed word) 0 circle::@13/(signed word) circle::x1#1 )
   [15] if((signed word) circle::x1#10<=(signed word) circle::y#13) goto circle::@2
   to:circle::@return
 circle::@return: scope:[circle]  from circle::@1
@@ -1003,12 +868,12 @@ plot: scope:[plot]  from circle::@10 circle::@11 circle::@12 circle::@4 circle::
   [56] (byte~) plot::$2 ← (byte~) plot::$1 & (byte) 7
   [57] (byte*) plot::location#2 ← (byte*) plot::location#1 + (byte~) plot::$2
   [58] (signed word~) plot::$3 ← (signed word) plot::y#8 >> (signed byte) 3
-  [59] (signed word) plot::$7 ← (signed word~) plot::$3 << (byte) 2
-  [60] (signed word) plot::$8 ← (signed word) plot::$7 + (signed word~) plot::$3
-  [61] (signed word~) plot::$4 ← (signed word) plot::$8 << (byte) 6
+  [59] (signed word~) plot::$7 ← (signed word~) plot::$3 << (byte) 2
+  [60] (signed word~) plot::$8 ← (signed word~) plot::$7 + (signed word~) plot::$3
+  [61] (signed word~) plot::$4 ← (signed word~) plot::$8 << (byte) 6
   [62] (byte*) plot::location#3 ← (byte*) plot::location#2 + (signed word~) plot::$4
   [63] (signed byte~) plot::$5 ← (signed word) plot::x#8 & (signed byte) 7
-  [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (signed byte~) plot::$5)
+  [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte*) bitmask + (signed byte~) plot::$5)
   [65] *((byte*) plot::location#3) ← (byte~) plot::$6
   to:plot::@return
 plot::@return: scope:[plot]  from plot
@@ -1078,8 +943,8 @@ VARIABLE REGISTER WEIGHTS
 (signed word~) plot::$4 4.0
 (signed byte~) plot::$5 4.0
 (byte~) plot::$6 4.0
-(signed word) plot::$7 4.0
-(signed word) plot::$8 4.0
+(signed word~) plot::$7 4.0
+(signed word~) plot::$8 4.0
 (byte*) plot::location
 (byte*) plot::location#1 1.3333333333333333
 (byte*) plot::location#2 0.8
@@ -1114,24 +979,24 @@ Initial phi equivalence classes
 [ fill::size#2 ]
 [ fill::val#4 ]
 [ fill::addr#2 fill::addr#0 fill::addr#1 ]
-Added variable circle::$5 to zero page equivalence class [ circle::$5 ]
-Added variable circle::$6 to zero page equivalence class [ circle::$6 ]
-Added variable circle::$7 to zero page equivalence class [ circle::$7 ]
-Added variable circle::$9 to zero page equivalence class [ circle::$9 ]
-Added variable circle::$10 to zero page equivalence class [ circle::$10 ]
-Added variable plot::$0 to zero page equivalence class [ plot::$0 ]
-Added variable plot::location#1 to zero page equivalence class [ plot::location#1 ]
-Added variable plot::$1 to zero page equivalence class [ plot::$1 ]
-Added variable plot::$2 to zero page equivalence class [ plot::$2 ]
-Added variable plot::location#2 to zero page equivalence class [ plot::location#2 ]
-Added variable plot::$3 to zero page equivalence class [ plot::$3 ]
-Added variable plot::$7 to zero page equivalence class [ plot::$7 ]
-Added variable plot::$8 to zero page equivalence class [ plot::$8 ]
-Added variable plot::$4 to zero page equivalence class [ plot::$4 ]
-Added variable plot::location#3 to zero page equivalence class [ plot::location#3 ]
-Added variable plot::$5 to zero page equivalence class [ plot::$5 ]
-Added variable plot::$6 to zero page equivalence class [ plot::$6 ]
-Added variable fill::end#0 to zero page equivalence class [ fill::end#0 ]
+Added variable circle::$5 to live range equivalence class [ circle::$5 ]
+Added variable circle::$6 to live range equivalence class [ circle::$6 ]
+Added variable circle::$7 to live range equivalence class [ circle::$7 ]
+Added variable circle::$9 to live range equivalence class [ circle::$9 ]
+Added variable circle::$10 to live range equivalence class [ circle::$10 ]
+Added variable plot::$0 to live range equivalence class [ plot::$0 ]
+Added variable plot::location#1 to live range equivalence class [ plot::location#1 ]
+Added variable plot::$1 to live range equivalence class [ plot::$1 ]
+Added variable plot::$2 to live range equivalence class [ plot::$2 ]
+Added variable plot::location#2 to live range equivalence class [ plot::location#2 ]
+Added variable plot::$3 to live range equivalence class [ plot::$3 ]
+Added variable plot::$7 to live range equivalence class [ plot::$7 ]
+Added variable plot::$8 to live range equivalence class [ plot::$8 ]
+Added variable plot::$4 to live range equivalence class [ plot::$4 ]
+Added variable plot::location#3 to live range equivalence class [ plot::location#3 ]
+Added variable plot::$5 to live range equivalence class [ plot::$5 ]
+Added variable plot::$6 to live range equivalence class [ plot::$6 ]
+Added variable fill::end#0 to live range equivalence class [ fill::end#0 ]
 Complete equivalence classes
 [ circle::x1#10 circle::x1#1 ]
 [ circle::y#13 circle::y#10 circle::y#1 ]
@@ -1159,32 +1024,32 @@ Complete equivalence classes
 [ plot::$5 ]
 [ plot::$6 ]
 [ fill::end#0 ]
-Allocated zp ZP_WORD:2 [ circle::x1#10 circle::x1#1 ]
-Allocated zp ZP_WORD:4 [ circle::y#13 circle::y#10 circle::y#1 ]
-Allocated zp ZP_WORD:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ]
-Allocated zp ZP_WORD:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ]
-Allocated zp ZP_WORD:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ]
-Allocated zp ZP_WORD:12 [ fill::size#2 ]
-Allocated zp ZP_BYTE:14 [ fill::val#4 ]
-Allocated zp ZP_WORD:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ]
-Allocated zp ZP_WORD:17 [ circle::$5 ]
-Allocated zp ZP_WORD:19 [ circle::$6 ]
-Allocated zp ZP_WORD:21 [ circle::$7 ]
-Allocated zp ZP_WORD:23 [ circle::$9 ]
-Allocated zp ZP_WORD:25 [ circle::$10 ]
-Allocated zp ZP_WORD:27 [ plot::$0 ]
-Allocated zp ZP_WORD:29 [ plot::location#1 ]
-Allocated zp ZP_BYTE:31 [ plot::$1 ]
-Allocated zp ZP_BYTE:32 [ plot::$2 ]
-Allocated zp ZP_WORD:33 [ plot::location#2 ]
-Allocated zp ZP_WORD:35 [ plot::$3 ]
-Allocated zp ZP_WORD:37 [ plot::$7 ]
-Allocated zp ZP_WORD:39 [ plot::$8 ]
-Allocated zp ZP_WORD:41 [ plot::$4 ]
-Allocated zp ZP_WORD:43 [ plot::location#3 ]
-Allocated zp ZP_BYTE:45 [ plot::$5 ]
-Allocated zp ZP_BYTE:46 [ plot::$6 ]
-Allocated zp ZP_WORD:47 [ fill::end#0 ]
+Allocated zp[2]:2 [ circle::x1#10 circle::x1#1 ]
+Allocated zp[2]:4 [ circle::y#13 circle::y#10 circle::y#1 ]
+Allocated zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ]
+Allocated zp[2]:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ]
+Allocated zp[2]:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ]
+Allocated zp[2]:12 [ fill::size#2 ]
+Allocated zp[1]:14 [ fill::val#4 ]
+Allocated zp[2]:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ]
+Allocated zp[2]:17 [ circle::$5 ]
+Allocated zp[2]:19 [ circle::$6 ]
+Allocated zp[2]:21 [ circle::$7 ]
+Allocated zp[2]:23 [ circle::$9 ]
+Allocated zp[2]:25 [ circle::$10 ]
+Allocated zp[2]:27 [ plot::$0 ]
+Allocated zp[2]:29 [ plot::location#1 ]
+Allocated zp[1]:31 [ plot::$1 ]
+Allocated zp[1]:32 [ plot::$2 ]
+Allocated zp[2]:33 [ plot::location#2 ]
+Allocated zp[2]:35 [ plot::$3 ]
+Allocated zp[2]:37 [ plot::$7 ]
+Allocated zp[2]:39 [ plot::$8 ]
+Allocated zp[2]:41 [ plot::$4 ]
+Allocated zp[2]:43 [ plot::location#3 ]
+Allocated zp[1]:45 [ plot::$5 ]
+Allocated zp[1]:46 [ plot::$6 ]
+Allocated zp[2]:47 [ fill::end#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1312,7 +1177,7 @@ circle: {
     sta.z y
     lda #>r
     sta.z y+1
-    // [14] phi (signed word) circle::x1#10 = (signed byte) 0 [phi:circle->circle::@1#2] -- vwsz1=vbsc1 
+    // [14] phi (signed word) circle::x1#10 = (signed word) 0 [phi:circle->circle::@1#2] -- vwsz1=vwsc1 
     lda #<0
     sta.z x1
     lda #>0
@@ -1632,7 +1497,7 @@ circle: {
     jmp __b4_from___b3
 }
   // plot
-// plot(signed word zeropage(8) x, signed word zeropage($a) y)
+// plot(signed word zp(8) x, signed word zp($a) y)
 plot: {
     .label __0 = $1b
     .label __1 = $1f
@@ -1644,8 +1509,8 @@ plot: {
     .label x = 8
     .label y = $a
     .label location = $1d
-    .label location_2 = $21
-    .label location_3 = $2b
+    .label location_1 = $21
+    .label location_2 = $2b
     .label __7 = $25
     .label __8 = $27
     // [53] (signed word~) plot::$0 ← (signed word) plot::x#8 & (signed dword) $fff8 -- vwsz1=vwsz2_band_vdsc1 
@@ -1674,10 +1539,10 @@ plot: {
     lda.z __2
     clc
     adc.z location
-    sta.z location_2
+    sta.z location_1
     lda #0
     adc.z location+1
-    sta.z location_2+1
+    sta.z location_1+1
     // [58] (signed word~) plot::$3 ← (signed word) plot::y#8 >> (signed byte) 3 -- vwsz1=vwsz2_ror_3 
     lda.z y+1
     cmp #$80
@@ -1694,7 +1559,7 @@ plot: {
     cmp #$80
     ror.z __3+1
     ror.z __3
-    // [59] (signed word) plot::$7 ← (signed word~) plot::$3 << (byte) 2 -- vwsz1=vwsz2_rol_2 
+    // [59] (signed word~) plot::$7 ← (signed word~) plot::$3 << (byte) 2 -- vwsz1=vwsz2_rol_2 
     lda.z __3
     asl
     sta.z __7
@@ -1703,7 +1568,7 @@ plot: {
     sta.z __7+1
     asl.z __7
     rol.z __7+1
-    // [60] (signed word) plot::$8 ← (signed word) plot::$7 + (signed word~) plot::$3 -- vwsz1=vwsz2_plus_vwsz3 
+    // [60] (signed word~) plot::$8 ← (signed word~) plot::$7 + (signed word~) plot::$3 -- vwsz1=vwsz2_plus_vwsz3 
     lda.z __7
     clc
     adc.z __3
@@ -1711,7 +1576,7 @@ plot: {
     lda.z __7+1
     adc.z __3+1
     sta.z __8+1
-    // [61] (signed word~) plot::$4 ← (signed word) plot::$8 << (byte) 6 -- vwsz1=vwsz2_rol_6 
+    // [61] (signed word~) plot::$4 ← (signed word~) plot::$8 << (byte) 6 -- vwsz1=vwsz2_rol_6 
     lda.z __8
     asl
     sta.z __4
@@ -1729,27 +1594,27 @@ plot: {
     asl.z __4
     rol.z __4+1
     // [62] (byte*) plot::location#3 ← (byte*) plot::location#2 + (signed word~) plot::$4 -- pbuz1=pbuz2_plus_vwsz3 
-    lda.z location_2
+    lda.z location_1
     clc
     adc.z __4
-    sta.z location_3
-    lda.z location_2+1
+    sta.z location_2
+    lda.z location_1+1
     adc.z __4+1
-    sta.z location_3+1
+    sta.z location_2+1
     // [63] (signed byte~) plot::$5 ← (signed word) plot::x#8 & (signed byte) 7 -- vbsz1=vwsz2_band_vbsc1 
     lda #7
     and.z x
     sta.z __5
-    // [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (signed byte~) plot::$5) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbsz3 
+    // [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte*) bitmask + (signed byte~) plot::$5) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbsz3 
     ldy #0
-    lda (location_3),y
+    lda (location_2),y
     ldy.z __5
     ora bitmask,y
     sta.z __6
     // [65] *((byte*) plot::location#3) ← (byte~) plot::$6 -- _deref_pbuz1=vbuz2 
     lda.z __6
     ldy #0
-    sta (location_3),y
+    sta (location_2),y
     jmp __breturn
     // plot::@return
   __breturn:
@@ -1758,7 +1623,7 @@ plot: {
 }
   // fill
 // Fill some memory with a value
-// fill(signed word zeropage($c) size, byte zeropage($e) val)
+// fill(signed word zp($c) size, byte zp($e) val)
 fill: {
     .label end = $2f
     .label addr = $f
@@ -1842,18 +1707,18 @@ Statement [54] (byte*) plot::location#1 ← (const byte*) BITMAP + (signed word~
 Statement [55] (byte~) plot::$1 ← < (signed word) plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$1 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] ) always clobbers reg byte a 
 Statement [57] (byte*) plot::location#2 ← (byte*) plot::location#1 + (byte~) plot::$2 [ plot::x#8 plot::y#8 plot::location#2 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] ) always clobbers reg byte a 
 Statement [58] (signed word~) plot::$3 ← (signed word) plot::y#8 >> (signed byte) 3 [ plot::x#8 plot::location#2 plot::$3 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] ) always clobbers reg byte a 
-Statement [59] (signed word) plot::$7 ← (signed word~) plot::$3 << (byte) 2 [ plot::x#8 plot::location#2 plot::$3 plot::$7 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] ) always clobbers reg byte a 
-Statement [60] (signed word) plot::$8 ← (signed word) plot::$7 + (signed word~) plot::$3 [ plot::x#8 plot::location#2 plot::$8 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] ) always clobbers reg byte a 
-Statement [61] (signed word~) plot::$4 ← (signed word) plot::$8 << (byte) 6 [ plot::x#8 plot::location#2 plot::$4 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] ) always clobbers reg byte a 
+Statement [59] (signed word~) plot::$7 ← (signed word~) plot::$3 << (byte) 2 [ plot::x#8 plot::location#2 plot::$3 plot::$7 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] ) always clobbers reg byte a 
+Statement [60] (signed word~) plot::$8 ← (signed word~) plot::$7 + (signed word~) plot::$3 [ plot::x#8 plot::location#2 plot::$8 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] ) always clobbers reg byte a 
+Statement [61] (signed word~) plot::$4 ← (signed word~) plot::$8 << (byte) 6 [ plot::x#8 plot::location#2 plot::$4 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] ) always clobbers reg byte a 
 Statement [62] (byte*) plot::location#3 ← (byte*) plot::location#2 + (signed word~) plot::$4 [ plot::x#8 plot::location#3 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] ) always clobbers reg byte a 
 Statement [63] (signed byte~) plot::$5 ← (signed word) plot::x#8 & (signed byte) 7 [ plot::location#3 plot::$5 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] ) always clobbers reg byte a 
-Statement [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (signed byte~) plot::$5) [ plot::location#3 plot::$6 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] ) always clobbers reg byte a reg byte y 
+Statement [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte*) bitmask + (signed byte~) plot::$5) [ plot::location#3 plot::$6 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] ) always clobbers reg byte a reg byte y 
 Statement [65] *((byte*) plot::location#3) ← (byte~) plot::$6 [ ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 ] ) always clobbers reg byte y 
 Statement [68] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (signed word) fill::size#2 [ fill::addr#0 fill::val#4 fill::end#0 ] ( main:2::fill:5 [ fill::addr#0 fill::val#4 fill::end#0 ] main:2::fill:7 [ fill::addr#0 fill::val#4 fill::end#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:14 [ fill::val#4 ]
+Removing always clobbered register reg byte a as potential for zp[1]:14 [ fill::val#4 ]
 Statement [70] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2 [ fill::val#4 fill::end#0 fill::addr#2 ] ( main:2::fill:5 [ fill::val#4 fill::end#0 fill::addr#2 ] main:2::fill:7 [ fill::val#4 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a 
 Statement [72] *((byte*) fill::addr#2) ← (byte) fill::val#4 [ fill::val#4 fill::end#0 fill::addr#2 ] ( main:2::fill:5 [ fill::val#4 fill::end#0 fill::addr#2 ] main:2::fill:7 [ fill::val#4 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:14 [ fill::val#4 ]
+Removing always clobbered register reg byte y as potential for zp[1]:14 [ fill::val#4 ]
 Statement [8] *((const byte*) BORDERCOL) ← (const byte) BLUE [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400 [ ] ( main:2 [ ] ) always clobbers reg byte a 
@@ -1888,77 +1753,77 @@ Statement [54] (byte*) plot::location#1 ← (const byte*) BITMAP + (signed word~
 Statement [55] (byte~) plot::$1 ← < (signed word) plot::y#8 [ plot::x#8 plot::y#8 plot::location#1 plot::$1 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#1 plot::$1 ] ) always clobbers reg byte a 
 Statement [57] (byte*) plot::location#2 ← (byte*) plot::location#1 + (byte~) plot::$2 [ plot::x#8 plot::y#8 plot::location#2 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::y#8 plot::location#2 ] ) always clobbers reg byte a 
 Statement [58] (signed word~) plot::$3 ← (signed word) plot::y#8 >> (signed byte) 3 [ plot::x#8 plot::location#2 plot::$3 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 ] ) always clobbers reg byte a 
-Statement [59] (signed word) plot::$7 ← (signed word~) plot::$3 << (byte) 2 [ plot::x#8 plot::location#2 plot::$3 plot::$7 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] ) always clobbers reg byte a 
-Statement [60] (signed word) plot::$8 ← (signed word) plot::$7 + (signed word~) plot::$3 [ plot::x#8 plot::location#2 plot::$8 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] ) always clobbers reg byte a 
-Statement [61] (signed word~) plot::$4 ← (signed word) plot::$8 << (byte) 6 [ plot::x#8 plot::location#2 plot::$4 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] ) always clobbers reg byte a 
+Statement [59] (signed word~) plot::$7 ← (signed word~) plot::$3 << (byte) 2 [ plot::x#8 plot::location#2 plot::$3 plot::$7 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$3 plot::$7 ] ) always clobbers reg byte a 
+Statement [60] (signed word~) plot::$8 ← (signed word~) plot::$7 + (signed word~) plot::$3 [ plot::x#8 plot::location#2 plot::$8 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$8 ] ) always clobbers reg byte a 
+Statement [61] (signed word~) plot::$4 ← (signed word~) plot::$8 << (byte) 6 [ plot::x#8 plot::location#2 plot::$4 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#2 plot::$4 ] ) always clobbers reg byte a 
 Statement [62] (byte*) plot::location#3 ← (byte*) plot::location#2 + (signed word~) plot::$4 [ plot::x#8 plot::location#3 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::x#8 plot::location#3 ] ) always clobbers reg byte a 
 Statement [63] (signed byte~) plot::$5 ← (signed word) plot::x#8 & (signed byte) 7 [ plot::location#3 plot::$5 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$5 ] ) always clobbers reg byte a 
-Statement [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (signed byte~) plot::$5) [ plot::location#3 plot::$6 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] ) always clobbers reg byte a reg byte y 
+Statement [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte*) bitmask + (signed byte~) plot::$5) [ plot::location#3 plot::$6 ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 plot::location#3 plot::$6 ] ) always clobbers reg byte a reg byte y 
 Statement [65] *((byte*) plot::location#3) ← (byte~) plot::$6 [ ] ( main:2::circle:11::plot:26 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:29 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:32 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:35 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:38 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:41 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:44 [ circle::x1#10 circle::y#10 circle::p#10 ] main:2::circle:11::plot:47 [ circle::x1#10 circle::y#10 circle::p#10 ] ) always clobbers reg byte y 
 Statement [68] (byte*) fill::end#0 ← (byte*) fill::addr#0 + (signed word) fill::size#2 [ fill::addr#0 fill::val#4 fill::end#0 ] ( main:2::fill:5 [ fill::addr#0 fill::val#4 fill::end#0 ] main:2::fill:7 [ fill::addr#0 fill::val#4 fill::end#0 ] ) always clobbers reg byte a 
 Statement [70] if((byte*) fill::addr#2!=(byte*) fill::end#0) goto fill::@2 [ fill::val#4 fill::end#0 fill::addr#2 ] ( main:2::fill:5 [ fill::val#4 fill::end#0 fill::addr#2 ] main:2::fill:7 [ fill::val#4 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a 
 Statement [72] *((byte*) fill::addr#2) ← (byte) fill::val#4 [ fill::val#4 fill::end#0 fill::addr#2 ] ( main:2::fill:5 [ fill::val#4 fill::end#0 fill::addr#2 ] main:2::fill:7 [ fill::val#4 fill::end#0 fill::addr#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ circle::x1#10 circle::x1#1 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ circle::y#13 circle::y#10 circle::y#1 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_WORD:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_WORD:12 [ fill::size#2 ] : zp ZP_WORD:12 , 
-Potential registers zp ZP_BYTE:14 [ fill::val#4 ] : zp ZP_BYTE:14 , reg byte x , 
-Potential registers zp ZP_WORD:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] : zp ZP_WORD:15 , 
-Potential registers zp ZP_WORD:17 [ circle::$5 ] : zp ZP_WORD:17 , 
-Potential registers zp ZP_WORD:19 [ circle::$6 ] : zp ZP_WORD:19 , 
-Potential registers zp ZP_WORD:21 [ circle::$7 ] : zp ZP_WORD:21 , 
-Potential registers zp ZP_WORD:23 [ circle::$9 ] : zp ZP_WORD:23 , 
-Potential registers zp ZP_WORD:25 [ circle::$10 ] : zp ZP_WORD:25 , 
-Potential registers zp ZP_WORD:27 [ plot::$0 ] : zp ZP_WORD:27 , 
-Potential registers zp ZP_WORD:29 [ plot::location#1 ] : zp ZP_WORD:29 , 
-Potential registers zp ZP_BYTE:31 [ plot::$1 ] : zp ZP_BYTE:31 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:32 [ plot::$2 ] : zp ZP_BYTE:32 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:33 [ plot::location#2 ] : zp ZP_WORD:33 , 
-Potential registers zp ZP_WORD:35 [ plot::$3 ] : zp ZP_WORD:35 , 
-Potential registers zp ZP_WORD:37 [ plot::$7 ] : zp ZP_WORD:37 , 
-Potential registers zp ZP_WORD:39 [ plot::$8 ] : zp ZP_WORD:39 , 
-Potential registers zp ZP_WORD:41 [ plot::$4 ] : zp ZP_WORD:41 , 
-Potential registers zp ZP_WORD:43 [ plot::location#3 ] : zp ZP_WORD:43 , 
-Potential registers zp ZP_BYTE:45 [ plot::$5 ] : zp ZP_BYTE:45 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:46 [ plot::$6 ] : zp ZP_BYTE:46 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:47 [ fill::end#0 ] : zp ZP_WORD:47 , 
+Potential registers zp[2]:2 [ circle::x1#10 circle::x1#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ circle::y#13 circle::y#10 circle::y#1 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ fill::size#2 ] : zp[2]:12 , 
+Potential registers zp[1]:14 [ fill::val#4 ] : zp[1]:14 , reg byte x , 
+Potential registers zp[2]:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] : zp[2]:15 , 
+Potential registers zp[2]:17 [ circle::$5 ] : zp[2]:17 , 
+Potential registers zp[2]:19 [ circle::$6 ] : zp[2]:19 , 
+Potential registers zp[2]:21 [ circle::$7 ] : zp[2]:21 , 
+Potential registers zp[2]:23 [ circle::$9 ] : zp[2]:23 , 
+Potential registers zp[2]:25 [ circle::$10 ] : zp[2]:25 , 
+Potential registers zp[2]:27 [ plot::$0 ] : zp[2]:27 , 
+Potential registers zp[2]:29 [ plot::location#1 ] : zp[2]:29 , 
+Potential registers zp[1]:31 [ plot::$1 ] : zp[1]:31 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:32 [ plot::$2 ] : zp[1]:32 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:33 [ plot::location#2 ] : zp[2]:33 , 
+Potential registers zp[2]:35 [ plot::$3 ] : zp[2]:35 , 
+Potential registers zp[2]:37 [ plot::$7 ] : zp[2]:37 , 
+Potential registers zp[2]:39 [ plot::$8 ] : zp[2]:39 , 
+Potential registers zp[2]:41 [ plot::$4 ] : zp[2]:41 , 
+Potential registers zp[2]:43 [ plot::location#3 ] : zp[2]:43 , 
+Potential registers zp[1]:45 [ plot::$5 ] : zp[1]:45 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:46 [ plot::$6 ] : zp[1]:46 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:47 [ fill::end#0 ] : zp[2]:47 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [plot] 191.33: zp ZP_WORD:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] 96.36: zp ZP_WORD:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] 4: zp ZP_WORD:27 [ plot::$0 ] 4: zp ZP_BYTE:31 [ plot::$1 ] 4: zp ZP_BYTE:32 [ plot::$2 ] 4: zp ZP_WORD:37 [ plot::$7 ] 4: zp ZP_WORD:39 [ plot::$8 ] 4: zp ZP_WORD:41 [ plot::$4 ] 4: zp ZP_BYTE:45 [ plot::$5 ] 4: zp ZP_BYTE:46 [ plot::$6 ] 3: zp ZP_WORD:35 [ plot::$3 ] 2: zp ZP_WORD:43 [ plot::location#3 ] 1.33: zp ZP_WORD:29 [ plot::location#1 ] 0.8: zp ZP_WORD:33 [ plot::location#2 ] 
-Uplift Scope [circle] 51.55: zp ZP_WORD:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] 25.97: zp ZP_WORD:2 [ circle::x1#10 circle::x1#1 ] 22: zp ZP_WORD:17 [ circle::$5 ] 22: zp ZP_WORD:19 [ circle::$6 ] 22: zp ZP_WORD:21 [ circle::$7 ] 22: zp ZP_WORD:23 [ circle::$9 ] 22: zp ZP_WORD:25 [ circle::$10 ] 18.59: zp ZP_WORD:4 [ circle::y#13 circle::y#10 circle::y#1 ] 
-Uplift Scope [fill] 39.33: zp ZP_WORD:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] 2.6: zp ZP_WORD:47 [ fill::end#0 ] 2: zp ZP_WORD:12 [ fill::size#2 ] 1.83: zp ZP_BYTE:14 [ fill::val#4 ] 
+Uplift Scope [plot] 191.33: zp[2]:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] 96.36: zp[2]:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] 4: zp[2]:27 [ plot::$0 ] 4: zp[1]:31 [ plot::$1 ] 4: zp[1]:32 [ plot::$2 ] 4: zp[2]:37 [ plot::$7 ] 4: zp[2]:39 [ plot::$8 ] 4: zp[2]:41 [ plot::$4 ] 4: zp[1]:45 [ plot::$5 ] 4: zp[1]:46 [ plot::$6 ] 3: zp[2]:35 [ plot::$3 ] 2: zp[2]:43 [ plot::location#3 ] 1.33: zp[2]:29 [ plot::location#1 ] 0.8: zp[2]:33 [ plot::location#2 ] 
+Uplift Scope [circle] 51.55: zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] 25.97: zp[2]:2 [ circle::x1#10 circle::x1#1 ] 22: zp[2]:17 [ circle::$5 ] 22: zp[2]:19 [ circle::$6 ] 22: zp[2]:21 [ circle::$7 ] 22: zp[2]:23 [ circle::$9 ] 22: zp[2]:25 [ circle::$10 ] 18.59: zp[2]:4 [ circle::y#13 circle::y#10 circle::y#1 ] 
+Uplift Scope [fill] 39.33: zp[2]:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] 2.6: zp[2]:47 [ fill::end#0 ] 2: zp[2]:12 [ fill::size#2 ] 1.83: zp[1]:14 [ fill::val#4 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [plot] best 6419 combination zp ZP_WORD:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] zp ZP_WORD:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] zp ZP_WORD:27 [ plot::$0 ] reg byte a [ plot::$1 ] reg byte a [ plot::$2 ] zp ZP_WORD:37 [ plot::$7 ] zp ZP_WORD:39 [ plot::$8 ] zp ZP_WORD:41 [ plot::$4 ] reg byte a [ plot::$5 ] reg byte a [ plot::$6 ] zp ZP_WORD:35 [ plot::$3 ] zp ZP_WORD:43 [ plot::location#3 ] zp ZP_WORD:29 [ plot::location#1 ] zp ZP_WORD:33 [ plot::location#2 ] 
+Uplifting [plot] best 6419 combination zp[2]:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] zp[2]:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] zp[2]:27 [ plot::$0 ] reg byte a [ plot::$1 ] reg byte a [ plot::$2 ] zp[2]:37 [ plot::$7 ] zp[2]:39 [ plot::$8 ] zp[2]:41 [ plot::$4 ] reg byte a [ plot::$5 ] reg byte a [ plot::$6 ] zp[2]:35 [ plot::$3 ] zp[2]:43 [ plot::location#3 ] zp[2]:29 [ plot::location#1 ] zp[2]:33 [ plot::location#2 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [circle] best 6419 combination zp ZP_WORD:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] zp ZP_WORD:2 [ circle::x1#10 circle::x1#1 ] zp ZP_WORD:17 [ circle::$5 ] zp ZP_WORD:19 [ circle::$6 ] zp ZP_WORD:21 [ circle::$7 ] zp ZP_WORD:23 [ circle::$9 ] zp ZP_WORD:25 [ circle::$10 ] zp ZP_WORD:4 [ circle::y#13 circle::y#10 circle::y#1 ] 
-Uplifting [fill] best 6403 combination zp ZP_WORD:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] zp ZP_WORD:47 [ fill::end#0 ] zp ZP_WORD:12 [ fill::size#2 ] reg byte x [ fill::val#4 ] 
+Uplifting [circle] best 6419 combination zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] zp[2]:2 [ circle::x1#10 circle::x1#1 ] zp[2]:17 [ circle::$5 ] zp[2]:19 [ circle::$6 ] zp[2]:21 [ circle::$7 ] zp[2]:23 [ circle::$9 ] zp[2]:25 [ circle::$10 ] zp[2]:4 [ circle::y#13 circle::y#10 circle::y#1 ] 
+Uplifting [fill] best 6403 combination zp[2]:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] zp[2]:47 [ fill::end#0 ] zp[2]:12 [ fill::size#2 ] reg byte x [ fill::val#4 ] 
 Uplifting [main] best 6403 combination 
 Uplifting [] best 6403 combination 
-Coalescing zero page register [ zp ZP_WORD:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] ] with [ zp ZP_WORD:21 [ circle::$7 ] ] - score: 2
-Coalescing zero page register [ zp ZP_WORD:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 ] ] with [ zp ZP_WORD:25 [ circle::$10 ] ] - score: 2
-Coalescing zero page register [ zp ZP_WORD:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] ] with [ zp ZP_WORD:35 [ plot::$3 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:12 [ fill::size#2 ] ] with [ zp ZP_WORD:47 [ fill::end#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:17 [ circle::$5 ] ] with [ zp ZP_WORD:19 [ circle::$6 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:27 [ plot::$0 ] ] with [ zp ZP_WORD:29 [ plot::location#1 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:33 [ plot::location#2 ] ] with [ zp ZP_WORD:43 [ plot::location#3 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:37 [ plot::$7 ] ] with [ zp ZP_WORD:39 [ plot::$8 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:27 [ plot::$0 plot::location#1 ] ] with [ zp ZP_WORD:33 [ plot::location#2 plot::location#3 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:37 [ plot::$7 plot::$8 ] ] with [ zp ZP_WORD:41 [ plot::$4 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:12 [ fill::size#2 fill::end#0 ] ] with [ zp ZP_WORD:2 [ circle::x1#10 circle::x1#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] ] with [ zp ZP_WORD:4 [ circle::y#13 circle::y#10 circle::y#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:17 [ circle::$5 circle::$6 ] ] with [ zp ZP_WORD:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] ]
-Coalescing zero page register [ zp ZP_WORD:23 [ circle::$9 ] ] with [ zp ZP_WORD:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::$3 ] ]
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:2 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 circle::$10 ]
-Allocated (was zp ZP_WORD:12) zp ZP_WORD:4 [ fill::size#2 fill::end#0 circle::x1#10 circle::x1#1 ]
-Allocated (was zp ZP_WORD:15) zp ZP_WORD:6 [ fill::addr#2 fill::addr#0 fill::addr#1 circle::y#13 circle::y#10 circle::y#1 ]
-Allocated (was zp ZP_WORD:17) zp ZP_WORD:8 [ circle::$5 circle::$6 plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ]
-Allocated (was zp ZP_WORD:23) zp ZP_WORD:10 [ circle::$9 plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::$3 ]
-Allocated (was zp ZP_WORD:27) zp ZP_WORD:12 [ plot::$0 plot::location#1 plot::location#2 plot::location#3 ]
-Allocated (was zp ZP_WORD:37) zp ZP_WORD:14 [ plot::$7 plot::$8 plot::$4 ]
+Coalescing zero page register [ zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 ] ] with [ zp[2]:21 [ circle::$7 ] ] - score: 2
+Coalescing zero page register [ zp[2]:6 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 ] ] with [ zp[2]:25 [ circle::$10 ] ] - score: 2
+Coalescing zero page register [ zp[2]:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 ] ] with [ zp[2]:35 [ plot::$3 ] ] - score: 1
+Coalescing zero page register [ zp[2]:12 [ fill::size#2 ] ] with [ zp[2]:47 [ fill::end#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:17 [ circle::$5 ] ] with [ zp[2]:19 [ circle::$6 ] ] - score: 1
+Coalescing zero page register [ zp[2]:27 [ plot::$0 ] ] with [ zp[2]:29 [ plot::location#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:33 [ plot::location#2 ] ] with [ zp[2]:43 [ plot::location#3 ] ] - score: 1
+Coalescing zero page register [ zp[2]:37 [ plot::$7 ] ] with [ zp[2]:39 [ plot::$8 ] ] - score: 1
+Coalescing zero page register [ zp[2]:27 [ plot::$0 plot::location#1 ] ] with [ zp[2]:33 [ plot::location#2 plot::location#3 ] ] - score: 1
+Coalescing zero page register [ zp[2]:37 [ plot::$7 plot::$8 ] ] with [ zp[2]:41 [ plot::$4 ] ] - score: 1
+Coalescing zero page register [ zp[2]:12 [ fill::size#2 fill::end#0 ] ] with [ zp[2]:2 [ circle::x1#10 circle::x1#1 ] ]
+Coalescing zero page register [ zp[2]:15 [ fill::addr#2 fill::addr#0 fill::addr#1 ] ] with [ zp[2]:4 [ circle::y#13 circle::y#10 circle::y#1 ] ]
+Coalescing zero page register [ zp[2]:17 [ circle::$5 circle::$6 ] ] with [ zp[2]:8 [ plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ] ]
+Coalescing zero page register [ zp[2]:23 [ circle::$9 ] ] with [ zp[2]:10 [ plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::$3 ] ]
+Allocated (was zp[2]:6) zp[2]:2 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 circle::$10 ]
+Allocated (was zp[2]:12) zp[2]:4 [ fill::size#2 fill::end#0 circle::x1#10 circle::x1#1 ]
+Allocated (was zp[2]:15) zp[2]:6 [ fill::addr#2 fill::addr#0 fill::addr#1 circle::y#13 circle::y#10 circle::y#1 ]
+Allocated (was zp[2]:17) zp[2]:8 [ circle::$5 circle::$6 plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ]
+Allocated (was zp[2]:23) zp[2]:10 [ circle::$9 plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::$3 ]
+Allocated (was zp[2]:27) zp[2]:12 [ plot::$0 plot::location#1 plot::location#2 plot::location#3 ]
+Allocated (was zp[2]:37) zp[2]:14 [ plot::$7 plot::$8 plot::$4 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2083,7 +1948,7 @@ circle: {
     sta.z y
     lda #>r
     sta.z y+1
-    // [14] phi (signed word) circle::x1#10 = (signed byte) 0 [phi:circle->circle::@1#2] -- vwsz1=vbsc1 
+    // [14] phi (signed word) circle::x1#10 = (signed word) 0 [phi:circle->circle::@1#2] -- vwsz1=vwsc1 
     lda #<0
     sta.z x1
     lda #>0
@@ -2399,7 +2264,7 @@ circle: {
     jmp __b4_from___b3
 }
   // plot
-// plot(signed word zeropage(8) x, signed word zeropage($a) y)
+// plot(signed word zp(8) x, signed word zp($a) y)
 plot: {
     .label __0 = $c
     .label __3 = $a
@@ -2448,7 +2313,7 @@ plot: {
     cmp #$80
     ror.z __3+1
     ror.z __3
-    // [59] (signed word) plot::$7 ← (signed word~) plot::$3 << (byte) 2 -- vwsz1=vwsz2_rol_2 
+    // [59] (signed word~) plot::$7 ← (signed word~) plot::$3 << (byte) 2 -- vwsz1=vwsz2_rol_2 
     lda.z __3
     asl
     sta.z __7
@@ -2457,7 +2322,7 @@ plot: {
     sta.z __7+1
     asl.z __7
     rol.z __7+1
-    // [60] (signed word) plot::$8 ← (signed word) plot::$7 + (signed word~) plot::$3 -- vwsz1=vwsz1_plus_vwsz2 
+    // [60] (signed word~) plot::$8 ← (signed word~) plot::$7 + (signed word~) plot::$3 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z __8
     clc
     adc.z __3
@@ -2465,7 +2330,7 @@ plot: {
     lda.z __8+1
     adc.z __3+1
     sta.z __8+1
-    // [61] (signed word~) plot::$4 ← (signed word) plot::$8 << (byte) 6 -- vwsz1=vwsz1_rol_6 
+    // [61] (signed word~) plot::$4 ← (signed word~) plot::$8 << (byte) 6 -- vwsz1=vwsz1_rol_6 
     lda.z __4+1
     sta.z $ff
     lda.z __4
@@ -2489,7 +2354,7 @@ plot: {
     // [63] (signed byte~) plot::$5 ← (signed word) plot::x#8 & (signed byte) 7 -- vbsaa=vwsz1_band_vbsc1 
     lda #7
     and.z x
-    // [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (signed byte~) plot::$5) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
+    // [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte*) bitmask + (signed byte~) plot::$5) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
     tay
     lda bitmask,y
     ldy #0
@@ -2505,7 +2370,7 @@ plot: {
 }
   // fill
 // Fill some memory with a value
-// fill(signed word zeropage(4) size, byte register(X) val)
+// fill(signed word zp(4) size, byte register(X) val)
 fill: {
     .label end = 4
     .label addr = 6
@@ -2634,22 +2499,22 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BITMAP BITMAP = (byte*) 8192
-(const byte) BLUE BLUE = (byte) 6
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) D011 D011 = (byte*) 53265
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte) VIC_BMM VIC_BMM = (byte) $20
-(const byte) VIC_DEN VIC_DEN = (byte) $10
-(const byte*) VIC_MEMORY VIC_MEMORY = (byte*) 53272
-(const byte) VIC_RSEL VIC_RSEL = (byte) 8
-(const byte[]) bitmask bitmask = { (byte) $80, (byte) $40, (byte) $20, (byte) $10, (byte) 8, (byte) 4, (byte) 2, (byte) 1 }
+(const byte*) BITMAP = (byte*) 8192
+(const byte) BLUE = (byte) 6
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) D011 = (byte*) 53265
+(const byte*) SCREEN = (byte*) 1024
+(const byte) VIC_BMM = (byte) $20
+(const byte) VIC_DEN = (byte) $10
+(const byte*) VIC_MEMORY = (byte*) 53272
+(const byte) VIC_RSEL = (byte) 8
+(const byte*) bitmask[]  = { (byte) $80, (byte) $40, (byte) $20, (byte) $10, (byte) 8, (byte) 4, (byte) 2, (byte) 1 }
 (void()) circle((signed word) circle::xc , (signed word) circle::yc , (signed word) circle::r)
-(signed word~) circle::$10 $10 zp ZP_WORD:2 22.0
-(signed word~) circle::$5 $5 zp ZP_WORD:8 22.0
-(signed word~) circle::$6 $6 zp ZP_WORD:8 22.0
-(signed word~) circle::$7 $7 zp ZP_WORD:2 22.0
-(signed word~) circle::$9 $9 zp ZP_WORD:10 22.0
+(signed word~) circle::$10 zp[2]:2 22.0
+(signed word~) circle::$5 zp[2]:8 22.0
+(signed word~) circle::$6 zp[2]:8 22.0
+(signed word~) circle::$7 zp[2]:2 22.0
+(signed word~) circle::$9 zp[2]:10 22.0
 (label) circle::@1
 (label) circle::@10
 (label) circle::@11
@@ -2665,21 +2530,21 @@ FINAL SYMBOL TABLE
 (label) circle::@9
 (label) circle::@return
 (signed word) circle::p
-(signed word) circle::p#1 p zp ZP_WORD:2 22.0
-(signed word) circle::p#10 p zp ZP_WORD:2 1.2692307692307692
-(signed word) circle::p#2 p zp ZP_WORD:2 22.0
-(signed word) circle::p#3 p zp ZP_WORD:2 6.285714285714286
+(signed word) circle::p#1 p zp[2]:2 22.0
+(signed word) circle::p#10 p zp[2]:2 1.2692307692307692
+(signed word) circle::p#2 p zp[2]:2 22.0
+(signed word) circle::p#3 p zp[2]:2 6.285714285714286
 (signed word) circle::r
 (const signed word) circle::r#0 r = (signed byte) $32
 (signed word) circle::x1
-(signed word) circle::x1#1 x1 zp ZP_WORD:4 22.0
-(signed word) circle::x1#10 x1 zp ZP_WORD:4 3.9722222222222214
+(signed word) circle::x1#1 x1 zp[2]:4 22.0
+(signed word) circle::x1#10 x1 zp[2]:4 3.9722222222222214
 (signed word) circle::xc
 (const signed word) circle::xc#0 xc = (signed byte) $64
 (signed word) circle::y
-(signed word) circle::y#1 y zp ZP_WORD:6 6.6000000000000005
-(signed word) circle::y#10 y zp ZP_WORD:6 4.653846153846153
-(signed word) circle::y#13 y zp ZP_WORD:6 7.333333333333333
+(signed word) circle::y#1 y zp[2]:6 6.6000000000000005
+(signed word) circle::y#10 y zp[2]:6 4.653846153846153
+(signed word) circle::y#13 y zp[2]:6 7.333333333333333
 (signed word) circle::yc
 (const signed word) circle::yc#0 yc = (signed byte) $64
 (void()) fill((byte*) fill::start , (signed word) fill::size , (byte) fill::val)
@@ -2687,13 +2552,13 @@ FINAL SYMBOL TABLE
 (label) fill::@2
 (label) fill::@return
 (byte*) fill::addr
-(byte*) fill::addr#0 addr zp ZP_WORD:6 2.0
-(byte*) fill::addr#1 addr zp ZP_WORD:6 22.0
-(byte*) fill::addr#2 addr zp ZP_WORD:6 15.333333333333332
+(byte*) fill::addr#0 addr zp[2]:6 2.0
+(byte*) fill::addr#1 addr zp[2]:6 22.0
+(byte*) fill::addr#2 addr zp[2]:6 15.333333333333332
 (byte*) fill::end
-(byte*) fill::end#0 end zp ZP_WORD:4 2.6
+(byte*) fill::end#0 end zp[2]:4 2.6
 (signed word) fill::size
-(signed word) fill::size#2 size zp ZP_WORD:4 2.0
+(signed word) fill::size#2 size zp[2]:4 2.0
 (byte*) fill::start
 (byte) fill::val
 (byte) fill::val#4 reg byte x 1.8333333333333333
@@ -2702,51 +2567,51 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (void()) plot((signed word) plot::x , (signed word) plot::y)
-(signed word~) plot::$0 $0 zp ZP_WORD:12 4.0
+(signed word~) plot::$0 zp[2]:12 4.0
 (byte~) plot::$1 reg byte a 4.0
 (byte~) plot::$2 reg byte a 4.0
-(signed word~) plot::$3 $3 zp ZP_WORD:10 3.0
-(signed word~) plot::$4 $4 zp ZP_WORD:14 4.0
+(signed word~) plot::$3 zp[2]:10 3.0
+(signed word~) plot::$4 zp[2]:14 4.0
 (signed byte~) plot::$5 reg byte a 4.0
 (byte~) plot::$6 reg byte a 4.0
-(signed word) plot::$7 $7 zp ZP_WORD:14 4.0
-(signed word) plot::$8 $8 zp ZP_WORD:14 4.0
+(signed word~) plot::$7 zp[2]:14 4.0
+(signed word~) plot::$8 zp[2]:14 4.0
 (label) plot::@return
 (byte*) plot::location
-(byte*) plot::location#1 location zp ZP_WORD:12 1.3333333333333333
-(byte*) plot::location#2 location zp ZP_WORD:12 0.8
-(byte*) plot::location#3 location zp ZP_WORD:12 2.0
+(byte*) plot::location#1 location zp[2]:12 1.3333333333333333
+(byte*) plot::location#2 location zp[2]:12 0.8
+(byte*) plot::location#3 location zp[2]:12 2.0
 (signed word) plot::x
-(signed word) plot::x#0 x zp ZP_WORD:8 11.0
-(signed word) plot::x#1 x zp ZP_WORD:8 11.0
-(signed word) plot::x#2 x zp ZP_WORD:8 11.0
-(signed word) plot::x#3 x zp ZP_WORD:8 11.0
-(signed word) plot::x#4 x zp ZP_WORD:8 11.0
-(signed word) plot::x#5 x zp ZP_WORD:8 11.0
-(signed word) plot::x#6 x zp ZP_WORD:8 11.0
-(signed word) plot::x#7 x zp ZP_WORD:8 11.0
-(signed word) plot::x#8 x zp ZP_WORD:8 8.363636363636363
+(signed word) plot::x#0 x zp[2]:8 11.0
+(signed word) plot::x#1 x zp[2]:8 11.0
+(signed word) plot::x#2 x zp[2]:8 11.0
+(signed word) plot::x#3 x zp[2]:8 11.0
+(signed word) plot::x#4 x zp[2]:8 11.0
+(signed word) plot::x#5 x zp[2]:8 11.0
+(signed word) plot::x#6 x zp[2]:8 11.0
+(signed word) plot::x#7 x zp[2]:8 11.0
+(signed word) plot::x#8 x zp[2]:8 8.363636363636363
 (signed word) plot::y
-(signed word) plot::y#0 y zp ZP_WORD:10 22.0
-(signed word) plot::y#1 y zp ZP_WORD:10 22.0
-(signed word) plot::y#2 y zp ZP_WORD:10 22.0
-(signed word) plot::y#3 y zp ZP_WORD:10 22.0
-(signed word) plot::y#4 y zp ZP_WORD:10 22.0
-(signed word) plot::y#5 y zp ZP_WORD:10 22.0
-(signed word) plot::y#6 y zp ZP_WORD:10 22.0
-(signed word) plot::y#7 y zp ZP_WORD:10 22.0
-(signed word) plot::y#8 y zp ZP_WORD:10 15.333333333333336
+(signed word) plot::y#0 y zp[2]:10 22.0
+(signed word) plot::y#1 y zp[2]:10 22.0
+(signed word) plot::y#2 y zp[2]:10 22.0
+(signed word) plot::y#3 y zp[2]:10 22.0
+(signed word) plot::y#4 y zp[2]:10 22.0
+(signed word) plot::y#5 y zp[2]:10 22.0
+(signed word) plot::y#6 y zp[2]:10 22.0
+(signed word) plot::y#7 y zp[2]:10 22.0
+(signed word) plot::y#8 y zp[2]:10 15.333333333333336
 
-zp ZP_WORD:2 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 circle::$10 ]
-zp ZP_WORD:4 [ fill::size#2 fill::end#0 circle::x1#10 circle::x1#1 ]
+zp[2]:2 [ circle::p#3 circle::p#10 circle::p#1 circle::p#2 circle::$7 circle::$10 ]
+zp[2]:4 [ fill::size#2 fill::end#0 circle::x1#10 circle::x1#1 ]
 reg byte x [ fill::val#4 ]
-zp ZP_WORD:6 [ fill::addr#2 fill::addr#0 fill::addr#1 circle::y#13 circle::y#10 circle::y#1 ]
-zp ZP_WORD:8 [ circle::$5 circle::$6 plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ]
-zp ZP_WORD:10 [ circle::$9 plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::$3 ]
-zp ZP_WORD:12 [ plot::$0 plot::location#1 plot::location#2 plot::location#3 ]
+zp[2]:6 [ fill::addr#2 fill::addr#0 fill::addr#1 circle::y#13 circle::y#10 circle::y#1 ]
+zp[2]:8 [ circle::$5 circle::$6 plot::x#8 plot::x#1 plot::x#2 plot::x#3 plot::x#4 plot::x#5 plot::x#6 plot::x#7 plot::x#0 ]
+zp[2]:10 [ circle::$9 plot::y#8 plot::y#1 plot::y#2 plot::y#3 plot::y#4 plot::y#5 plot::y#6 plot::y#7 plot::y#0 plot::$3 ]
+zp[2]:12 [ plot::$0 plot::location#1 plot::location#2 plot::location#3 ]
 reg byte a [ plot::$1 ]
 reg byte a [ plot::$2 ]
-zp ZP_WORD:14 [ plot::$7 plot::$8 plot::$4 ]
+zp[2]:14 [ plot::$7 plot::$8 plot::$4 ]
 reg byte a [ plot::$5 ]
 reg byte a [ plot::$6 ]
 
@@ -2861,7 +2726,7 @@ circle: {
     sta.z y
     lda #>r
     sta.z y+1
-    // [14] phi (signed word) circle::x1#10 = (signed byte) 0 [phi:circle->circle::@1#2] -- vwsz1=vbsc1 
+    // [14] phi (signed word) circle::x1#10 = (signed word) 0 [phi:circle->circle::@1#2] -- vwsz1=vwsc1 
     lda #<0
     sta.z x1
     sta.z x1+1
@@ -3165,7 +3030,7 @@ circle: {
     jmp __b4
 }
   // plot
-// plot(signed word zeropage(8) x, signed word zeropage($a) y)
+// plot(signed word zp(8) x, signed word zp($a) y)
 plot: {
     .label __0 = $c
     .label __3 = $a
@@ -3221,7 +3086,7 @@ plot: {
     ror.z __3+1
     ror.z __3
     // (y >> 3) * 320
-    // [59] (signed word) plot::$7 ← (signed word~) plot::$3 << (byte) 2 -- vwsz1=vwsz2_rol_2 
+    // [59] (signed word~) plot::$7 ← (signed word~) plot::$3 << (byte) 2 -- vwsz1=vwsz2_rol_2 
     lda.z __3
     asl
     sta.z __7
@@ -3230,7 +3095,7 @@ plot: {
     sta.z __7+1
     asl.z __7
     rol.z __7+1
-    // [60] (signed word) plot::$8 ← (signed word) plot::$7 + (signed word~) plot::$3 -- vwsz1=vwsz1_plus_vwsz2 
+    // [60] (signed word~) plot::$8 ← (signed word~) plot::$7 + (signed word~) plot::$3 -- vwsz1=vwsz1_plus_vwsz2 
     lda.z __8
     clc
     adc.z __3
@@ -3238,7 +3103,7 @@ plot: {
     lda.z __8+1
     adc.z __3+1
     sta.z __8+1
-    // [61] (signed word~) plot::$4 ← (signed word) plot::$8 << (byte) 6 -- vwsz1=vwsz1_rol_6 
+    // [61] (signed word~) plot::$4 ← (signed word~) plot::$8 << (byte) 6 -- vwsz1=vwsz1_rol_6 
     lda.z __4+1
     sta.z $ff
     lda.z __4
@@ -3265,7 +3130,7 @@ plot: {
     lda #7
     and.z x
     // (*location) | bitmask[x & 7]
-    // [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte[]) bitmask + (signed byte~) plot::$5) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
+    // [64] (byte~) plot::$6 ← *((byte*) plot::location#3) | *((const byte*) bitmask + (signed byte~) plot::$5) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbsaa 
     tay
     lda bitmask,y
     ldy #0
@@ -3280,7 +3145,7 @@ plot: {
 }
   // fill
 // Fill some memory with a value
-// fill(signed word zeropage(4) size, byte register(X) val)
+// fill(signed word zp(4) size, byte register(X) val)
 fill: {
     .label end = 4
     .label addr = 6

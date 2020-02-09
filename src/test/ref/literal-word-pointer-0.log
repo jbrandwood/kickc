@@ -6,7 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) print::str#0 ← (const string) main::str
+  (byte*) print::str#0 ← (const byte*) main::str
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -18,9 +18,8 @@ main::@return: scope:[main]  from main::@1
 (void()) print((byte*) print::str)
 print: scope:[print]  from main
   (byte*) print::str#1 ← phi( main/(byte*) print::str#0 )
-  (byte**~) print::$0 ← ((byte**)) (number) $80
-  (byte*~) print::$1 ← ((byte*)) (byte*) print::str#1
-  *((byte**~) print::$0) ← (byte*~) print::$1
+  (byte*~) print::$0 ← ((byte*)) (byte*) print::str#1
+  *((byte**)(number) $80) ← (byte*~) print::$0
   to:print::@return
 print::@return: scope:[print]  from print
   return 
@@ -40,30 +39,26 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const string) main::str = (string) "qwe"
+(const byte*) main::str[(byte) 4]  = (byte*) "qwe"
 (void()) print((byte*) print::str)
-(byte**~) print::$0
-(byte*~) print::$1
+(byte*~) print::$0
 (label) print::@return
 (byte*) print::str
 (byte*) print::str#0
 (byte*) print::str#1
 
-Inlining cast (byte**~) print::$0 ← (byte**)(number) $80
-Inlining cast (byte*~) print::$1 ← (byte*)(byte*) print::str#1
+Inlining cast (byte*~) print::$0 ← (byte*)(byte*) print::str#1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte**) 128
 Simplifying constant integer cast (byte*) print::str#1
+Simplifying constant pointer cast (byte**) 128
 Successful SSA optimization PassNCastSimplification
-Alias (byte*) print::str#1 = (byte*~) print::$1 
+Alias (byte*) print::str#1 = (byte*~) print::$0 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) print::str#1 (byte*) print::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte*) print::str#0 = main::str
-Constant (const byte**) print::$0 = (byte**) 128
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined print::str#0 = (const string) main::str
-Constant inlined print::$0 = (byte**) 128
+Constant inlined print::str#0 = (const byte*) main::str
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
@@ -107,7 +102,7 @@ main::@return: scope:[main]  from main
 
 (void()) print((byte*) print::str)
 print: scope:[print]  from main
-  [7] *((byte**) 128) ← (const string) main::str
+  [7] *((byte**) 128) ← (const byte*) main::str
   to:print::@return
 print::@return: scope:[print]  from print
   [8] return 
@@ -161,7 +156,7 @@ main: {
 }
   // print
 print: {
-    // [7] *((byte**) 128) ← (const string) main::str -- _deref_pptc1=pbuc2 
+    // [7] *((byte**) 128) ← (const byte*) main::str -- _deref_pptc1=pbuc2 
     lda #<main.str
     sta $80
     lda #>main.str
@@ -175,7 +170,7 @@ print: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((byte**) 128) ← (const string) main::str [ ] ( main:2::print:5 [ ] ) always clobbers reg byte a 
+Statement [7] *((byte**) 128) ← (const byte*) main::str [ ] ( main:2::print:5 [ ] ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -224,7 +219,7 @@ main: {
 }
   // print
 print: {
-    // [7] *((byte**) 128) ← (const string) main::str -- _deref_pptc1=pbuc2 
+    // [7] *((byte**) 128) ← (const byte*) main::str -- _deref_pptc1=pbuc2 
     lda #<main.str
     sta $80
     lda #>main.str
@@ -265,7 +260,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const string) main::str str = (string) "qwe"
+(const byte*) main::str[(byte) 4]  = (byte*) "qwe"
 (void()) print((byte*) print::str)
 (label) print::@return
 (byte*) print::str
@@ -304,7 +299,7 @@ main: {
   // print
 print: {
     // *(char**)0x80 = (char*)str
-    // [7] *((byte**) 128) ← (const string) main::str -- _deref_pptc1=pbuc2 
+    // [7] *((byte**) 128) ← (const byte*) main::str -- _deref_pptc1=pbuc2 
     lda #<main.str
     sta $80
     lda #>main.str

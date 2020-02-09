@@ -14,8 +14,8 @@
   .label COSTAB = SINTAB+$40
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __7 = $b
-    .label __11 = $f
+    .label __4 = $b
+    .label __8 = $f
     .label a = 2
     .label i = $1b
     jsr bitmap_init
@@ -37,9 +37,9 @@ main: {
   __b2:
     ldy.z a
     lda COSTAB,y
-    sta.z __7
+    sta.z __4
     lda #0
-    sta.z __7+1
+    sta.z __4+1
     lda #$78
     clc
     adc.z bitmap_line.x1
@@ -53,9 +53,9 @@ main: {
     lda #0
     sta.z bitmap_line.y1+1
     lda COSTAB+$20,y
-    sta.z __11
+    sta.z __8
     lda #0
-    sta.z __11+1
+    sta.z __8+1
     lda #$78
     clc
     adc.z bitmap_line.x2
@@ -76,7 +76,7 @@ main: {
     jmp __b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zeropage($b) x1, word zeropage(9) y1, word zeropage($f) x2, word zeropage($11) y2)
+// bitmap_line(word zp($b) x1, word zp(9) y1, word zp($f) x2, word zp($11) y2)
 bitmap_line: {
     .label dx = $13
     .label dy = 7
@@ -268,7 +268,7 @@ bitmap_line: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zeropage($b) x, byte register(X) y)
+// bitmap_plot(word zp($b) x, byte register(X) y)
 bitmap_plot: {
     .label __1 = $19
     .label plotter = $17
@@ -300,7 +300,7 @@ bitmap_plot: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zeropage(3) w)
+// sgn_u16(word zp(3) w)
 sgn_u16: {
     .label w = 3
     .label return = 5
@@ -316,12 +316,11 @@ sgn_u16: {
   __b1:
     lda #<-1
     sta.z return
-    lda #>-1
     sta.z return+1
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zeropage(7) w)
+// abs_u16(word zp(7) w)
 abs_u16: {
     .label w = 7
     .label return = 7
@@ -368,7 +367,7 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zeropage($b) str, byte register(X) c, word zeropage(9) num)
+// memset(void* zp($b) str, byte register(X) c, word zp(9) num)
 memset: {
     .label end = 9
     .label dst = $b

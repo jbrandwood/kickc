@@ -1,10 +1,12 @@
 Created struct value member variable (byte) main::p_x
 Created struct value member variable (byte) main::p_y
 Converted struct value to member variables (struct PointDef) main::p
-Adding struct value list initializer (byte) main::p_x ← (number) 4
-Adding struct value list initializer (byte) main::p_y ← (number) 7
-Adding struct value member variable copy *((byte*) main::$0) ← (byte) main::p_x
-Adding struct value member variable copy *((byte*) main::$1) ← (byte) main::p_y
+Unwinding value copy (struct PointDef) main::p ← { x: (byte) 4, y: (byte) 7 }
+Adding value simple copy (byte) main::p_x ← (byte) 4
+Adding value simple copy (byte) main::p_y ← (byte) 7
+Unwinding value copy *((struct PointDef*) main::SCREEN) ← (struct PointDef) main::p
+Adding value simple copy *((byte*~) main::$0) ← (byte) main::p_x
+Adding value simple copy *((byte*~) main::$1) ← (byte) main::p_y
 Identified constant variable (struct PointDef*) main::SCREEN
 Identified constant variable (byte) main::p_x
 Identified constant variable (byte) main::p_y
@@ -15,13 +17,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::p_x ← (number) 4
-  (byte) main::p_y ← (number) 7
-  (struct PointDef*) main::SCREEN ← ((struct PointDef*)) (number) $400
-  (byte*) main::$0 ← (byte*)(struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X
-  *((byte*) main::$0) ← (byte) main::p_x
-  (byte*) main::$1 ← (byte*)(struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_Y
-  *((byte*) main::$1) ← (byte) main::p_y
+  (byte*~) main::$0 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X
+  *((byte*~) main::$0) ← (const byte) main::p_x
+  (byte*~) main::$1 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_Y
+  *((byte*~) main::$1) ← (const byte) main::p_y
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -43,46 +42,28 @@ SYMBOL TABLE SSA
 (byte) PointDef::x
 (byte) PointDef::y
 (void()) main()
-(byte*) main::$0
-(byte*) main::$1
+(byte*~) main::$0
+(byte*~) main::$1
 (label) main::@return
-(struct PointDef*) main::SCREEN
-(byte) main::p_x
-(byte) main::p_y
+(const struct PointDef*) main::SCREEN = (struct PointDef*)(number) $400
+(const byte) main::p_x = (byte) 4
+(const byte) main::p_y = (byte) 7
 
-Adding number conversion cast (unumber) 4 in (byte) main::p_x ← (number) 4
-Adding number conversion cast (unumber) 7 in (byte) main::p_y ← (number) 7
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::p_x ← (unumber)(number) 4
-Inlining cast (byte) main::p_y ← (unumber)(number) 7
-Inlining cast (struct PointDef*) main::SCREEN ← (struct PointDef*)(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 4
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (struct PointDef*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 7
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte) main::p_x = 4
-Constant (const byte) main::p_y = 7
-Constant (const struct PointDef*) main::SCREEN = (struct PointDef*) 1024
+Constant right-side identified [0] (byte*~) main::$0 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X
+Constant right-side identified [2] (byte*~) main::$1 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_Y
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte*) main::$0 = (byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_X
+Constant (const byte*) main::$1 = (byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::SCREEN in [3] (byte*) main::$0 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X
-Constant value identified (byte*)main::SCREEN in [5] (byte*) main::$1 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_Y
-Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [4] *((byte*) main::$0) ← (const byte) main::p_x  -- *((byte*)main::SCREEN + OFFSET_STRUCT_POINTDEF_X)
-Converting *(pointer+n) to pointer[n] [6] *((byte*) main::$1) ← (const byte) main::p_y  -- *((byte*)main::SCREEN + OFFSET_STRUCT_POINTDEF_Y)
-Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)main::SCREEN in [3] (byte*) main::$0 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X
-Simplifying expression containing zero (byte*)main::SCREEN in [4] *((byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X) ← (const byte) main::p_x
+Simplifying expression containing zero (byte*)main::SCREEN in 
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*) main::$0 and assignment [0] (byte*) main::$0 ← (byte*)(const struct PointDef*) main::SCREEN
-Eliminating unused variable (byte*) main::$1 and assignment [2] (byte*) main::$1 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_Y
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINTDEF_X
 Successful SSA optimization PassNEliminateUnusedVars
-Consolidated array index constant in *((byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y)
-Successful SSA optimization Pass2ConstantAdditionElimination
+Constant inlined main::$1 = (byte*)(const struct PointDef*) main::SCREEN+(const byte) OFFSET_STRUCT_POINTDEF_Y
+Constant inlined main::$0 = (byte*)(const struct PointDef*) main::SCREEN
+Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -151,9 +132,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label SCREEN = $400
     .const p_x = 4
     .const p_y = 7
-    .label SCREEN = $400
     // [4] *((byte*)(const struct PointDef*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
@@ -205,9 +186,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label SCREEN = $400
     .const p_x = 4
     .const p_y = 7
-    .label SCREEN = $400
     // [4] *((byte*)(const struct PointDef*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
@@ -245,14 +226,14 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) OFFSET_STRUCT_POINTDEF_Y OFFSET_STRUCT_POINTDEF_Y = (byte) 1
+(const byte) OFFSET_STRUCT_POINTDEF_Y = (byte) 1
 (byte) PointDef::x
 (byte) PointDef::y
 (void()) main()
 (label) main::@return
-(const struct PointDef*) main::SCREEN SCREEN = (struct PointDef*) 1024
-(const byte) main::p_x p_x = (byte) 4
-(const byte) main::p_y p_y = (byte) 7
+(const struct PointDef*) main::SCREEN = (struct PointDef*) 1024
+(const byte) main::p_x = (byte) 4
+(const byte) main::p_y = (byte) 7
 
 
 
@@ -274,9 +255,9 @@ Score: 18
   // @end
   // main
 main: {
+    .label SCREEN = $400
     .const p_x = 4
     .const p_y = 7
-    .label SCREEN = $400
     // *SCREEN = p
     // [4] *((byte*)(const struct PointDef*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x

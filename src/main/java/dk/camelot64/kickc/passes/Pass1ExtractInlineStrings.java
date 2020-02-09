@@ -1,15 +1,18 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.StatementCallPrepare;
-import dk.camelot64.kickc.model.values.ConstantString;
-import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
+import dk.camelot64.kickc.model.statements.StatementCallPrepare;
+import dk.camelot64.kickc.model.symbols.ArraySpec;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
+import dk.camelot64.kickc.model.values.ConstantInteger;
+import dk.camelot64.kickc.model.values.ConstantString;
+import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.Value;
 
 import java.util.List;
@@ -55,14 +58,14 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
          Scope blockScope = Pass1ExtractInlineStrings.this.getProgram().getScope().getScope(currentBlock.getScope());
          Value value = programValue.get();
          if(value instanceof ConstantString) {
-            ConstantVar strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) programValue.get(), nameHint);
+            Variable strConst = Pass1ExtractInlineStrings.this.createStringConstantVar(blockScope, (ConstantString) programValue.get(), nameHint);
             programValue.set(strConst.getRef());
          }
       });
       return false;
    }
 
-   private ConstantVar createStringConstantVar(Scope blockScope, ConstantString constantString, String nameHint) {
+   private Variable createStringConstantVar(Scope blockScope, ConstantString constantString, String nameHint) {
       String name;
       if(nameHint == null) {
          name = blockScope.allocateIntermediateVariableName();
@@ -73,7 +76,9 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
             name = nameHint + nameHintIdx++;
          }
       }
-      ConstantVar strConst = new ConstantVar(name, blockScope, SymbolType.STRING, constantString, blockScope.getSegmentData());
+      final long stringLength = constantString.getStringLength();
+      final ConstantInteger arraySize = new ConstantInteger(stringLength, stringLength<256?SymbolType.BYTE : SymbolType.WORD);
+      Variable strConst = Variable.createConstant(name, new SymbolTypePointer(SymbolType.BYTE), blockScope, new ArraySpec(arraySize), constantString, blockScope.getSegmentData());
       blockScope.add(strConst);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Creating constant string variable for inline " + strConst.toString(getProgram()) + " \"" + constantString.getValue() + "\"");

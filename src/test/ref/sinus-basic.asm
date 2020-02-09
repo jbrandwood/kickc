@@ -97,7 +97,7 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(7) w)
+// print_word(word zp(7) w)
 print_word: {
     .label w = 7
     lda.z w+1
@@ -168,7 +168,7 @@ addMEMtoFAC: {
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
 // Reads 5 bytes from memory
-// mulFACbyMEM(byte* zeropage(7) mem)
+// mulFACbyMEM(byte* zp(7) mem)
 mulFACbyMEM: {
     .label mem = 7
     lda.z mem
@@ -203,7 +203,7 @@ divMEMbyFAC: {
 }
 // FAC = word
 // Set the FAC (floating point accumulator) to the integer value of a 16bit word
-// setFAC(word zeropage(7) w)
+// setFAC(word zp(7) w)
 setFAC: {
     .label prepareMEM1_mem = 7
     .label w = 7
@@ -219,7 +219,7 @@ setFAC: {
 // MEM = FAC
 // Stores the value of the FAC to memory
 // Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zeropage(7) mem)
+// setMEMtoFAC(byte* zp(7) mem)
 setMEMtoFAC: {
     .label mem = 7
     lda.z mem

@@ -39,7 +39,7 @@ main: {
     jsr print
     rts
 }
-// print(void* zeropage(2) ptr)
+// print(void* zp(2) ptr)
 print: {
     .label ptr = 2
     ldy #0

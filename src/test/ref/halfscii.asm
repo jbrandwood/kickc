@@ -116,9 +116,9 @@ main: {
     bne !+
     inc.z charset4+1
   !:
-    lda.z chargen
+    lda #2
     clc
-    adc #2
+    adc.z chargen
     sta.z chargen
     bcc !+
     inc.z chargen+1

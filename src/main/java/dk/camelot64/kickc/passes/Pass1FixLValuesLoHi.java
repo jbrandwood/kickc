@@ -1,16 +1,19 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
-import dk.camelot64.kickc.model.values.LvalueIntermediate;
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.LvalueIntermediate;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,11 +79,11 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
       Scope currentScope = intermediateVar.getScope();
       // Let assignment put value into a tmp Var
       Variable tmpVar = currentScope.addVariableIntermediate();
-      VariableRef tmpVarRef = tmpVar.getRef();
-      statementLValue.setlValue(tmpVarRef);
+      SymbolVariableRef tmpVarRef = tmpVar.getRef();
+      statementLValue.setlValue((LValue) tmpVarRef);
       PassNTypeInference.updateInferedTypeLValue(getProgram(), statementLValue);
       // Insert an extra "set low" assignment statement
-      Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, statementLValue.getSource(), new ArrayList<>());
+      Statement setLoHiAssignment = new StatementAssignment(loHiVar, loHiVar, loHiOperator, tmpVarRef, true, statementLValue.getSource(), new ArrayList<>());
       statementsIt.add(setLoHiAssignment);
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("Fixing lo/hi-lvalue with new tmpVar " + tmpVarRef + " " + statementLValue.toString());

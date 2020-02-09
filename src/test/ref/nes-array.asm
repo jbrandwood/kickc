@@ -6,10 +6,10 @@
   .const SIZEOF_SIGNED_WORD = 2
 main: {
     .label SCREEN = $400
-    .label __1 = 2
-    .label __3 = 2
     .label y1 = 4
     .label y2 = 6
+    .label __0 = 2
+    .label __1 = 2
     lda #<$1234
     sta.z y1
     lda #>$1234
@@ -24,9 +24,9 @@ main: {
     sta.z foo.y+1
     ldx #1
     jsr foo
-    lda.z __1
+    lda.z __0
     sta SCREEN
-    lda.z __1+1
+    lda.z __0+1
     sta SCREEN+1
     lda #<y2
     sta.z foo.y
@@ -34,13 +34,13 @@ main: {
     sta.z foo.y+1
     ldx #2
     jsr foo
-    lda.z __3
+    lda.z __1
     sta SCREEN+SIZEOF_SIGNED_WORD
-    lda.z __3+1
+    lda.z __1+1
     sta SCREEN+SIZEOF_SIGNED_WORD+1
     rts
 }
-// foo(byte register(X) x, signed word* zeropage(2) y)
+// foo(byte register(X) x, signed word* zp(2) y)
 foo: {
     .label return = 2
     .label y = 2

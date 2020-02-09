@@ -2,17 +2,10 @@ Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte~) main::$0 ← > (byte*) SCREEN
-  (byte*~) main::$1 ← (byte*) SCREEN + (number) $100
-  (byte~) main::$2 ← > (byte*~) main::$1
-  (byte*~) main::$3 ← (byte*) SCREEN + (number) $200
-  (byte~) main::$4 ← > (byte*~) main::$3
-  (byte[]) main::his ← { (byte~) main::$0, (byte~) main::$2, (byte~) main::$4 }
   (byte) main::h#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -22,19 +15,19 @@ main::@1: scope:[main]  from main main::@3
 main::@2: scope:[main]  from main::@1 main::@2
   (byte) main::l#2 ← phi( main::@1/(byte) main::l#0 main::@2/(byte) main::l#1 )
   (byte) main::h#2 ← phi( main::@1/(byte) main::h#4 main::@2/(byte) main::h#2 )
-  (word) main::w#0 ← ((word)) { *((byte[]) main::his + (byte) main::h#2), (byte) main::l#2 }
-  (byte*~) main::$5 ← ((byte*)) (word) main::w#0
-  (byte*) main::sc#0 ← (byte*~) main::$5
+  (word) main::w#0 ← (word){ *((const byte*) main::his + (byte) main::h#2), (byte) main::l#2 }
+  (byte*~) main::$0 ← ((byte*)) (word) main::w#0
+  (byte*) main::sc#0 ← (byte*~) main::$0
   *((byte*) main::sc#0) ← (byte) '*'
   (byte) main::l#1 ← (byte) main::l#2 + rangenext(4,7)
-  (bool~) main::$6 ← (byte) main::l#1 != rangelast(4,7)
-  if((bool~) main::$6) goto main::@2
+  (bool~) main::$1 ← (byte) main::l#1 != rangelast(4,7)
+  if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   (byte) main::h#3 ← phi( main::@2/(byte) main::h#2 )
   (byte) main::h#1 ← (byte) main::h#3 + rangenext(0,2)
-  (bool~) main::$7 ← (byte) main::h#1 != rangelast(0,2)
-  if((bool~) main::$7) goto main::@1
+  (bool~) main::$2 ← (byte) main::h#1 != rangelast(0,2)
+  if((bool~) main::$2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -51,16 +44,11 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
-(byte~) main::$0
-(byte*~) main::$1
-(byte~) main::$2
-(byte*~) main::$3
-(byte~) main::$4
-(byte*~) main::$5
-(bool~) main::$6
-(bool~) main::$7
+(byte*~) main::$0
+(bool~) main::$1
+(bool~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -71,7 +59,7 @@ SYMBOL TABLE SSA
 (byte) main::h#2
 (byte) main::h#3
 (byte) main::h#4
-(byte[]) main::his
+(const byte*) main::his[]  = { >(const byte*) SCREEN, >(const byte*) SCREEN+(number) $100, >(const byte*) SCREEN+(number) $200 }
 (byte) main::l
 (byte) main::l#0
 (byte) main::l#1
@@ -81,40 +69,38 @@ SYMBOL TABLE SSA
 (word) main::w
 (word) main::w#0
 
-Fixing inline constructor with main::$8 ← (byte)*(main::his + main::h#2) w= (byte)main::l#2
+Fixing inline constructor with main::$3 ← (byte)*(main::his + main::h#2) w= (byte)main::l#2
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) $100 in (byte*~) main::$1 ← (byte*) SCREEN + (number) $100
-Adding number conversion cast (unumber) $200 in (byte*~) main::$3 ← (byte*) SCREEN + (number) $200
+Adding number conversion cast (unumber) $100 in 
+Adding number conversion cast (unumber) $200 in 
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Inlining cast (byte*~) main::$5 ← (byte*)(word) main::w#0
+Inlining cast (byte*~) main::$0 ← (byte*)(word) main::w#0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $100
 Simplifying constant integer cast $200
-Simplifying constant integer cast *((byte[]) main::his + (byte) main::h#2)
+Simplifying constant integer cast *((const byte*) main::his + (byte) main::h#2)
 Simplifying constant integer cast (byte) main::l#2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $100
 Finalized unsigned number type (word) $200
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (word) main::w#0 = (word~) main::$8 
-Alias (byte*) main::sc#0 = (byte*~) main::$5 
+Alias (word) main::w#0 = (word~) main::$3 
+Alias (byte*) main::sc#0 = (byte*~) main::$0 
 Alias (byte) main::h#2 = (byte) main::h#3 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::h#2 (byte) main::h#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$6 [18] if((byte) main::l#1!=rangelast(4,7)) goto main::@2
-Simple Condition (bool~) main::$7 [22] if((byte) main::h#1!=rangelast(0,2)) goto main::@1
+Simple Condition (bool~) main::$1 [11] if((byte) main::l#1!=rangelast(4,7)) goto main::@2
+Simple Condition (bool~) main::$2 [15] if((byte) main::h#1!=rangelast(0,2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::h#0 = 0
 Constant (const byte) main::l#0 = 4
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [16] main::l#1 ← ++ main::l#2 to ++
-Resolved ranged comparison value [18] if(main::l#1!=rangelast(4,7)) goto main::@2 to (number) 8
-Resolved ranged next value [20] main::h#1 ← ++ main::h#4 to ++
-Resolved ranged comparison value [22] if(main::h#1!=rangelast(0,2)) goto main::@1 to (number) 3
+Resolved ranged next value [9] main::l#1 ← ++ main::l#2 to ++
+Resolved ranged comparison value [11] if(main::l#1!=rangelast(4,7)) goto main::@2 to (number) 8
+Resolved ranged next value [13] main::h#1 ← ++ main::h#4 to ++
+Resolved ranged comparison value [15] if(main::h#1!=rangelast(0,2)) goto main::@1 to (number) 3
 Adding number conversion cast (unumber) 8 in if((byte) main::l#1!=(number) 8) goto main::@2
 Adding number conversion cast (unumber) 3 in if((byte) main::h#1!=(number) 3) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -124,35 +110,12 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte~) main::$0 ← > (const byte*) SCREEN
-Constant right-side identified [1] (byte*~) main::$1 ← (const byte*) SCREEN + (word) $100
-Constant right-side identified [3] (byte*~) main::$3 ← (const byte*) SCREEN + (word) $200
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$0 = >SCREEN
-Constant (const byte*) main::$1 = SCREEN+$100
-Constant (const byte*) main::$3 = SCREEN+$200
-Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [0] (byte~) main::$2 ← > (const byte*) main::$1
-Constant right-side identified [1] (byte~) main::$4 ← > (const byte*) main::$3
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = >main::$1
-Constant (const byte) main::$4 = >main::$3
-Successful SSA optimization Pass2ConstantIdentification
-Identified constant from value list (byte[]) { (const byte) main::$0, (const byte) main::$2, (const byte) main::$4 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte[]) main::his = { main::$0, main::$2, main::$4 }
-Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [3] (byte*) main::sc#0 ← (byte*)(word) main::w#0 keeping main::w#0
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const byte) main::h#0
 Inlining constant with var siblings (const byte) main::l#0
-Constant inlined main::$1 = (const byte*) SCREEN+(word) $100
-Constant inlined main::$2 = >(const byte*) SCREEN+(word) $100
 Constant inlined main::l#0 = (byte) 4
-Constant inlined main::$0 = >(const byte*) SCREEN
 Constant inlined main::h#0 = (byte) 0
-Constant inlined main::$3 = (const byte*) SCREEN+(word) $200
-Constant inlined main::$4 = >(const byte*) SCREEN+(word) $200
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@3 and main::@1)
 Added new block during phi lifting main::@6(between main::@2 and main::@2)
@@ -196,7 +159,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
   [6] (byte) main::l#2 ← phi( main::@1/(byte) 4 main::@2/(byte) main::l#1 )
-  [7] (word) main::w#0 ← *((const byte[]) main::his + (byte) main::h#4) w= (byte) main::l#2
+  [7] (word) main::w#0 ← *((const byte*) main::his + (byte) main::h#4) w= (byte) main::l#2
   [8] *((byte*)(word) main::w#0) ← (byte) '*'
   [9] (byte) main::l#1 ← ++ (byte) main::l#2
   [10] if((byte) main::l#1!=(byte) 8) goto main::@2
@@ -225,14 +188,14 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::h#4 main::h#1 ]
 [ main::l#2 main::l#1 ]
-Added variable main::w#0 to zero page equivalence class [ main::w#0 ]
+Added variable main::w#0 to live range equivalence class [ main::w#0 ]
 Complete equivalence classes
 [ main::h#4 main::h#1 ]
 [ main::l#2 main::l#1 ]
 [ main::w#0 ]
-Allocated zp ZP_BYTE:2 [ main::h#4 main::h#1 ]
-Allocated zp ZP_BYTE:3 [ main::l#2 main::l#1 ]
-Allocated zp ZP_WORD:4 [ main::w#0 ]
+Allocated zp[1]:2 [ main::h#4 main::h#1 ]
+Allocated zp[1]:3 [ main::l#2 main::l#1 ]
+Allocated zp[2]:4 [ main::w#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -289,7 +252,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [7] (word) main::w#0 ← *((const byte[]) main::his + (byte) main::h#4) w= (byte) main::l#2 -- vwuz1=pbuc1_derefidx_vbuz2_word_vbuz3 
+    // [7] (word) main::w#0 ← *((const byte*) main::his + (byte) main::h#4) w= (byte) main::l#2 -- vwuz1=pbuc1_derefidx_vbuz2_word_vbuz3 
     ldy.z h
     lda his,y
     sta.z w+1
@@ -324,27 +287,27 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] (word) main::w#0 ← *((const byte[]) main::his + (byte) main::h#4) w= (byte) main::l#2 [ main::h#4 main::l#2 main::w#0 ] ( main:2 [ main::h#4 main::l#2 main::w#0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::h#4 main::h#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::l#2 main::l#1 ]
+Statement [7] (word) main::w#0 ← *((const byte*) main::his + (byte) main::h#4) w= (byte) main::l#2 [ main::h#4 main::l#2 main::w#0 ] ( main:2 [ main::h#4 main::l#2 main::w#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::h#4 main::h#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::l#2 main::l#1 ]
 Statement [8] *((byte*)(word) main::w#0) ← (byte) '*' [ main::h#4 main::l#2 ] ( main:2 [ main::h#4 main::l#2 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::h#4 main::h#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:3 [ main::l#2 main::l#1 ]
-Statement [7] (word) main::w#0 ← *((const byte[]) main::his + (byte) main::h#4) w= (byte) main::l#2 [ main::h#4 main::l#2 main::w#0 ] ( main:2 [ main::h#4 main::l#2 main::w#0 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::h#4 main::h#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:3 [ main::l#2 main::l#1 ]
+Statement [7] (word) main::w#0 ← *((const byte*) main::his + (byte) main::h#4) w= (byte) main::l#2 [ main::h#4 main::l#2 main::w#0 ] ( main:2 [ main::h#4 main::l#2 main::w#0 ] ) always clobbers reg byte a 
 Statement [8] *((byte*)(word) main::w#0) ← (byte) '*' [ main::h#4 main::l#2 ] ( main:2 [ main::h#4 main::l#2 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_BYTE:2 [ main::h#4 main::h#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers zp ZP_BYTE:3 [ main::l#2 main::l#1 ] : zp ZP_BYTE:3 , reg byte x , 
-Potential registers zp ZP_WORD:4 [ main::w#0 ] : zp ZP_WORD:4 , 
+Potential registers zp[1]:2 [ main::h#4 main::h#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[1]:3 [ main::l#2 main::l#1 ] : zp[1]:3 , reg byte x , 
+Potential registers zp[2]:4 [ main::w#0 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 252.5: zp ZP_BYTE:3 [ main::l#2 main::l#1 ] 101: zp ZP_WORD:4 [ main::w#0 ] 37: zp ZP_BYTE:2 [ main::h#4 main::h#1 ] 
+Uplift Scope [main] 252.5: zp[1]:3 [ main::l#2 main::l#1 ] 101: zp[2]:4 [ main::w#0 ] 37: zp[1]:2 [ main::h#4 main::h#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 4383 combination reg byte x [ main::l#2 main::l#1 ] zp ZP_WORD:4 [ main::w#0 ] zp ZP_BYTE:2 [ main::h#4 main::h#1 ] 
+Uplifting [main] best 4383 combination reg byte x [ main::l#2 main::l#1 ] zp[2]:4 [ main::w#0 ] zp[1]:2 [ main::h#4 main::h#1 ] 
 Uplifting [] best 4383 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::h#4 main::h#1 ]
-Uplifting [main] best 4383 combination zp ZP_BYTE:2 [ main::h#4 main::h#1 ] 
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:3 [ main::w#0 ]
+Attempting to uplift remaining variables inzp[1]:2 [ main::h#4 main::h#1 ]
+Uplifting [main] best 4383 combination zp[1]:2 [ main::h#4 main::h#1 ] 
+Allocated (was zp[2]:4) zp[2]:3 [ main::w#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -398,7 +361,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [7] (word) main::w#0 ← *((const byte[]) main::his + (byte) main::h#4) w= (byte) main::l#2 -- vwuz1=pbuc1_derefidx_vbuz2_word_vbuxx 
+    // [7] (word) main::w#0 ← *((const byte*) main::his + (byte) main::h#4) w= (byte) main::l#2 -- vwuz1=pbuc1_derefidx_vbuz2_word_vbuxx 
     ldy.z h
     lda his,y
     sta.z w+1
@@ -467,26 +430,26 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@return
 (byte) main::h
-(byte) main::h#1 h zp ZP_BYTE:2 16.5
-(byte) main::h#4 h zp ZP_BYTE:2 20.499999999999996
-(const byte[]) main::his his = { >(const byte*) SCREEN, >(const byte*) SCREEN+(word) $100, >(const byte*) SCREEN+(word) $200 }
+(byte) main::h#1 h zp[1]:2 16.5
+(byte) main::h#4 h zp[1]:2 20.499999999999996
+(const byte*) main::his[]  = { >(const byte*) SCREEN, >(const byte*) SCREEN+(word) $100, >(const byte*) SCREEN+(word) $200 }
 (byte) main::l
 (byte) main::l#1 reg byte x 151.5
 (byte) main::l#2 reg byte x 101.0
 (byte*) main::sc
 (word) main::w
-(word) main::w#0 w zp ZP_WORD:3 101.0
+(word) main::w#0 w zp[2]:3 101.0
 
-zp ZP_BYTE:2 [ main::h#4 main::h#1 ]
+zp[1]:2 [ main::h#4 main::h#1 ]
 reg byte x [ main::l#2 main::l#1 ]
-zp ZP_WORD:3 [ main::w#0 ]
+zp[2]:3 [ main::w#0 ]
 
 
 FINAL ASSEMBLER
@@ -527,7 +490,7 @@ main: {
     // main::@2
   __b2:
     // w = { his[h], l }
-    // [7] (word) main::w#0 ← *((const byte[]) main::his + (byte) main::h#4) w= (byte) main::l#2 -- vwuz1=pbuc1_derefidx_vbuz2_word_vbuxx 
+    // [7] (word) main::w#0 ← *((const byte*) main::his + (byte) main::h#4) w= (byte) main::l#2 -- vwuz1=pbuc1_derefidx_vbuz2_word_vbuxx 
     ldy.z h
     lda his,y
     sta.z w+1

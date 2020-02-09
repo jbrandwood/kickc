@@ -2,8 +2,7 @@ package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.ConstantVar;
-import dk.camelot64.kickc.model.types.SymbolTypeArray;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
 /**
@@ -393,26 +392,6 @@ public interface ProgramValue {
 
    }
 
-   /** Value inside a array filled expression. */
-   class ProgramValueArrayFilledSize implements ProgramValue {
-      private final ArrayFilled array;
-
-      ProgramValueArrayFilledSize(ArrayFilled array) {
-         this.array = array;
-      }
-
-      @Override
-      public Value get() {
-         return array.getSize();
-      }
-
-      @Override
-      public void set(Value val) {
-         array.setSize((RValue) val);
-      }
-
-   }
-
    /** A variable/constant referenced inside inline ASM. */
    class ProgramValueAsmReferenced implements ProgramValue {
       private StatementAsm statementAsm;
@@ -481,9 +460,9 @@ public interface ProgramValue {
    /** Member of a constant struct value. */
    class ProgramValueConstantStructMember implements ProgramValue {
       private final ConstantStructValue structValue;
-      private final VariableRef memberRef;
+      private final SymbolVariableRef memberRef;
 
-      public ProgramValueConstantStructMember(ConstantStructValue structValue, VariableRef memberRef) {
+      public ProgramValueConstantStructMember(ConstantStructValue structValue, SymbolVariableRef memberRef) {
          this.structValue = structValue;
          this.memberRef = memberRef;
       }
@@ -498,7 +477,7 @@ public interface ProgramValue {
          structValue.setValue(memberRef, (ConstantValue) value);
       }
 
-      public VariableRef getMemberRef() {
+      public SymbolVariableRef getMemberRef() {
          return memberRef;
       }
    }
@@ -629,21 +608,22 @@ public interface ProgramValue {
 
    }
 
-   class ProgramValueConstantVar implements ProgramValue {
-      private final ConstantVar constantVar;
+   /** The initial value of a variable. */
+   class ProgramValueInitValue implements ProgramValue {
+      private final Variable constantVar;
 
-      ProgramValueConstantVar(ConstantVar constantVar) {
+      ProgramValueInitValue(Variable constantVar) {
          this.constantVar = constantVar;
       }
 
       @Override
       public Value get() {
-         return constantVar.getValue();
+         return constantVar.getInitValue();
       }
 
       @Override
       public void set(Value val) {
-         constantVar.setValue((ConstantValue) val);
+         constantVar.setInitValue((ConstantValue) val);
       }
 
    }
@@ -815,6 +795,69 @@ public interface ProgramValue {
 
    }
 
+   /** Value inside a memset value . */
+   class ProgramValueMemsetValue implements ProgramValue {
+      private final MemsetValue memsetValue;
+
+      ProgramValueMemsetValue(MemsetValue memsetValue) {
+         this.memsetValue = memsetValue;
+      }
+
+      @Override
+      public Value get() {
+         return memsetValue.getSize();
+      }
+
+      @Override
+      public void set(Value val) {
+         memsetValue.setSize((ConstantRef) val);
+      }
+
+   }
+
+   /** Size inside a memcpy value . */
+   class ProgramValueMempySize implements ProgramValue {
+
+      private final MemcpyValue memcpyValue;
+
+      ProgramValueMempySize(MemcpyValue memcpyValue) {
+         this.memcpyValue = memcpyValue;
+      }
+
+      @Override
+      public Value get() {
+         return memcpyValue.getSize();
+      }
+
+      @Override
+      public void set(Value val) {
+         memcpyValue.setSize((ConstantRef) val);
+      }
+
+   }
+
+   /** Source inside a memcpy value . */
+   class ProgramValueMempySource implements ProgramValue {
+
+      private final MemcpyValue memcpyValue;
+
+      ProgramValueMempySource(MemcpyValue memcpyValue) {
+         this.memcpyValue = memcpyValue;
+      }
+
+      @Override
+      public Value get() {
+         return memcpyValue.getSource();
+      }
+
+      @Override
+      public void set(Value val) {
+         memcpyValue.setSource((RValue) val);
+      }
+
+   }
+
+
    /**
     * Pointer inside a pointer derefence value.
     */
@@ -948,24 +991,25 @@ public interface ProgramValue {
    }
 
    /** Size inside a fixed size array. */
-   class ProgramValueTypeArraySize implements ProgramValue {
-      private final SymbolTypeArray array;
+   class ProgramValueArraySize implements ProgramValue {
+      private final Variable variable;
 
-      ProgramValueTypeArraySize(SymbolTypeArray array) {
-         this.array = array;
+      ProgramValueArraySize(Variable variable) {
+         this.variable = variable;
       }
 
       @Override
       public Value get() {
-         return array.getSize();
+         return variable.getArraySize();
       }
 
       @Override
       public void set(Value val) {
-         array.setSize((RValue) val);
+         variable.getArraySpec().setArraySize((ConstantValue) val);
       }
 
    }
+
 
    /** Uses inside a constant array initialized using inline kickasm. */
    class ProgramValueConstantArrayKickAsmUses implements ProgramValue {

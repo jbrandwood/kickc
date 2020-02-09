@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label screen = $400
     .const w = 1*$100+2
+    .label screen = $400
     lda #<w
     sta screen
     lda #>w

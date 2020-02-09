@@ -7,21 +7,17 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  (byte*) BGCOL ← ((byte*)) (number) $d020
-  (byte*) FGCOL ← ((byte*)) (number) $d021
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((byte*) FGCOL) ← ++ *((byte*) FGCOL)
+  *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -29,7 +25,7 @@ main::@return: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  *((byte*) BGCOL) ← ++ *((byte*) BGCOL)
+  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   asm { lda$dc0d  }
   to:irq::@return
 irq::@return: scope:[irq]  from irq
@@ -47,38 +43,24 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) FGCOL
-(void()**) KERNEL_IRQ
+(const byte*) BGCOL = (byte*)(number) $d020
+(const byte*) FGCOL = (byte*)(number) $d021
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
-(void()*~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@return
 
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d020
-Inlining cast (byte*) FGCOL ← (byte*)(number) $d021
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [3] (void()*~) main::$0 ← & interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte*) BGCOL = (byte*) 53280
-Constant (const byte*) FGCOL = (byte*) 53281
-Constant (const void()*) main::$0 = &irq
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [5] if(true) goto main::@2
+if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Constant inlined main::$0 = &interrupt(KERNEL_MIN)(void()) irq()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
@@ -277,9 +259,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53280
-(const byte*) FGCOL FGCOL = (byte*) 53281
-(const void()**) KERNEL_IRQ KERNEL_IRQ = (void()**) 788
+(const byte*) BGCOL = (byte*) 53280
+(const byte*) FGCOL = (byte*) 53281
+(const void()**) KERNEL_IRQ = (void()**) 788
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()

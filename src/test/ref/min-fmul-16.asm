@@ -35,7 +35,7 @@ print_set_screen: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zeropage($e) dw)
+// print_dword(dword zp($e) dw)
 print_dword: {
     .label dw = $e
     lda.z dw+2
@@ -51,7 +51,7 @@ print_dword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(2) w)
+// print_word(word zp(2) w)
 print_word: {
     .label w = 2
     lda.z w+1
@@ -209,12 +209,17 @@ mulf16u: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
+    // x/2
     .label c = 4
+    // Counter used for determining x%2==0
     .label sqr1_hi = 5
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $c
     .label sqr1_lo = 2
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = 9
     .label sqr2_lo = 7
+    //Start with g(0)=f(255)
     .label dir = $b
     ldx #0
     lda #<mulf_sqr1_hi+1

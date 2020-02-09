@@ -3,8 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label cur_line = 2
-  .label cur_line_3 = 6
-  .label cur_line_10 = 6
+  .label cur_line_1 = 6
 main: {
     .const line1_xpos = 2
     .const line1_xadd = $40
@@ -43,9 +42,9 @@ main: {
     cpx #line1_ysize
     bcc line1___b2
     lda #<$400
-    sta.z cur_line_10
+    sta.z cur_line_1
     lda #>$400
-    sta.z cur_line_10+1
+    sta.z cur_line_1+1
     lda #<line2_xpos*$100
     sta.z line2_pos
     lda #>line2_xpos*$100
@@ -59,7 +58,7 @@ main: {
     lda.z line2_pos+1
     tay
     lda #line2_ch
-    sta (cur_line_10),y
+    sta (cur_line_1),y
     lda #line2_xadd
     clc
     adc.z line2_pos
@@ -69,10 +68,10 @@ main: {
   !:
     lda #$28
     clc
-    adc.z cur_line_3
-    sta.z cur_line_3
+    adc.z cur_line_1
+    sta.z cur_line_1
     bcc !+
-    inc.z cur_line_3+1
+    inc.z cur_line_1+1
   !:
     inx
     jmp line2___b1

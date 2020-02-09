@@ -10,12 +10,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::x#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
   (byte) main::x#5 ← phi( main/(byte) main::x#0 main::@4/(byte) main::x#1 )
-  (byte) main::line#0 ← (number) 0
+  (byte) main::line#0 ← (byte) 0
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
   (byte) main::x#4 ← phi( main::@1/(byte) main::x#5 main::@3/(byte) main::x#2 )
@@ -27,7 +26,7 @@ main::@3: scope:[main]  from main::@2
   (byte) main::x#2 ← phi( main::@2/(byte) main::x#4 )
   (byte) main::line#3 ← phi( main::@2/(byte) main::line#2 )
   (number~) main::$1 ← (byte) main::line#3 * (number) $28
-  (byte*~) main::$2 ← (byte*) main::SCREEN + (number~) main::$1
+  (byte*~) main::$2 ← (const byte*) main::SCREEN + (number~) main::$1
   *((byte*~) main::$2 + (byte) main::x#2) ← (byte) main::x#2
   (byte) main::line#1 ← ++ (byte) main::line#3
   to:main::@2
@@ -62,7 +61,7 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::line
 (byte) main::line#0
 (byte) main::line#1
@@ -76,20 +75,14 @@ SYMBOL TABLE SSA
 (byte) main::x#4
 (byte) main::x#5
 
-Adding number conversion cast (unumber) 0 in (byte) main::line#0 ← (number) 0
 Adding number conversion cast (unumber) $19 in (bool~) main::$0 ← (byte) main::line#2 != (number) $19
 Adding number conversion cast (unumber) $28 in (number~) main::$1 ← (byte) main::line#3 * (number) $28
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::line#3 * (unumber)(number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Inlining cast (byte) main::line#0 ← (unumber)(number) 0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
 Simplifying constant integer cast $19
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -99,15 +92,14 @@ Alias (byte) main::x#2 = (byte) main::x#4 (byte) main::x#3
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::x#2 (byte) main::x#5
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [6] unroll if((byte) main::line#2!=(byte) $19) goto main::@3
-Simple Condition (bool~) main::$3 [15] if((byte) main::x#1!=rangelast(0,$27)) goto main::@1
+Simple Condition (bool~) main::$0 [5] unroll if((byte) main::line#2!=(byte) $19) goto main::@3
+Simple Condition (bool~) main::$3 [14] if((byte) main::x#1!=rangelast(0,$27)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::x#0 = 0
 Constant (const byte) main::line#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [13] main::x#1 ← ++ main::x#5 to ++
-Resolved ranged comparison value [15] if(main::x#1!=rangelast(0,$27)) goto main::@1 to (number) $28
+Resolved ranged next value [12] main::x#1 ← ++ main::x#5 to ++
+Resolved ranged comparison value [14] if(main::x#1!=rangelast(0,$27)) goto main::@1 to (number) $28
 Adding number conversion cast (unumber) $28 in if((byte) main::x#1!=(number) $28) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $28
@@ -882,7 +874,7 @@ Initial phi equivalence classes
 [ main::x#5 main::x#1 ]
 Complete equivalence classes
 [ main::x#5 main::x#1 ]
-Allocated zp ZP_BYTE:2 [ main::x#5 main::x#1 ]
+Allocated zp[1]:2 [ main::x#5 main::x#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1118,10 +1110,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::x#5 main::x#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::x#5 main::x#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: zp ZP_BYTE:2 [ main::x#5 main::x#1 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::x#5 main::x#1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 2723 combination reg byte x [ main::x#5 main::x#1 ] 
@@ -1443,7 +1435,7 @@ FINAL SYMBOL TABLE
 (label) main::@3_8
 (label) main::@3_9
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::line
 (byte) main::x
 (byte) main::x#1 reg byte x 16.5

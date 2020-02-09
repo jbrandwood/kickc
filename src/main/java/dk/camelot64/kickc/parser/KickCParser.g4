@@ -92,17 +92,22 @@ globalDirective
     | (PRAGMA DATASEG) PAR_BEGIN NAME PAR_END #globalDirectiveDataSeg
     | (PRAGMA ENCODING) PAR_BEGIN NAME PAR_END #globalDirectiveEncoding
     | (PRAGMA CALLING) PAR_BEGIN CALLINGCONVENTION PAR_END #globalDirectiveCalling
+    | (PRAGMA VARMODEL) PAR_BEGIN NAME ( COMMA NAME )* PAR_END #globalDirectiveVarModel
     ;
 
 directive
     : CONST #directiveConst
+    | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
+    | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
+    | ADDRESS_ZEROPAGE #directiveMemoryAreaZp
+    | ADDRESS_MAINMEM #directiveMemoryAreaMain
+    | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
+    | VOLATILE #directiveVolatile
+    | FORM_SSA #directiveFormSsa
+    | FORM_MA #directiveFormMa
     | EXTERN #directiveExtern
     | EXPORT #directiveExport
-    | ALIGN PAR_BEGIN NUMBER PAR_END #directiveAlign
-    | REGISTER ( PAR_BEGIN ( NAME | NUMBER ) PAR_END)? #directiveRegister
-    | MEMORY ( PAR_BEGIN ( NUMBER ) PAR_END)? #directiveMemory
     | INLINE #directiveInline
-    | VOLATILE #directiveVolatile
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
     | RESERVE PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END  #directiveReserveZp
     | CALLINGCONVENTION #directiveCallingConvention

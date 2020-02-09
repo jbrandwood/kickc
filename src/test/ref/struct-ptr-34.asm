@@ -3,16 +3,30 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
+  .label idx = 2
 main: {
     .const jesper_id = 4
     .const henriette_id = 7
+    ldy #$10
+  !:
+    lda __0-1,y
+    sta jesper_name-1,y
+    dey
+    bne !-
     lda #<jesper_name
     sta.z print_person.person_name
     lda #>jesper_name
     sta.z print_person.person_name+1
-    ldy #0
+    lda #0
+    sta.z idx
     ldx #jesper_id
     jsr print_person
+    ldy #$10
+  !:
+    lda __1-1,y
+    sta henriette_name-1,y
+    dey
+    bne !-
     lda #<henriette_name
     sta.z print_person.person_name
     lda #>henriette_name
@@ -20,20 +34,16 @@ main: {
     ldx #henriette_id
     jsr print_person
     rts
-    jesper_name: .text "jesper"
-    .byte 0
-    .fill 9, 0
-    henriette_name: .text "henriette"
-    .byte 0
-    .fill 6, 0
+    jesper_name: .fill $10, 0
+    henriette_name: .fill $10, 0
 }
-// print_person(byte register(X) person_id, byte[$10] zeropage(2) person_name)
+// print_person(byte register(X) person_id, byte* zp(3) person_name)
 print_person: {
-    .label person_name = 2
+    .label person_name = 3
     lda DIGIT,x
+    ldy.z idx
     sta SCREEN,y
-    tya
-    tax
+    ldx.z idx
     inx
     lda #' '
     sta SCREEN,x
@@ -45,9 +55,8 @@ print_person: {
     bne __b2
     lda #' '
     sta SCREEN,x
-    txa
-    tay
-    iny
+    inx
+    stx.z idx
     rts
   __b2:
     lda (person_name),y
@@ -58,3 +67,9 @@ print_person: {
 }
   DIGIT: .text "0123456789"
   .byte 0
+  __0: .text "jesper"
+  .byte 0
+  .fill 9, 0
+  __1: .text "henriette"
+  .byte 0
+  .fill 6, 0

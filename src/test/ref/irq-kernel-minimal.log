@@ -8,17 +8,12 @@ Culled Empty Block (label) @5
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (void()**) KERNEL_IRQ ← ((void()**)) (number) $314
-  (byte) BLACK ← (number) 0
-  (byte) WHITE ← (number) 1
   to:@6
 
 (void()) main()
 main: scope:[main]  from @6
   asm { sei  }
-  (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq()
-  *((void()**) KERNEL_IRQ) ← (void()*~) main::$0
+  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -27,8 +22,8 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 irq: scope:[irq]  from
-  *((byte*) BGCOL) ← (byte) WHITE
-  *((byte*) BGCOL) ← (byte) BLACK
+  *((const byte*) BGCOL) ← (const byte) WHITE
+  *((const byte*) BGCOL) ← (const byte) BLACK
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -45,42 +40,18 @@ SYMBOL TABLE SSA
 (label) @7
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte) BLACK
-(void()**) KERNEL_IRQ
-(byte) WHITE
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte) BLACK = (byte) 0
+(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const byte) WHITE = (byte) 1
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 (label) irq::@return
 (void()) main()
-(void()*~) main::$0
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 1 in (byte) WHITE ← (number) 1
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (void()**) KERNEL_IRQ ← (void()**)(number) $314
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) WHITE ← (unumber)(number) 1
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (void()**) 788
-Simplifying constant integer cast 0
-Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [5] (void()*~) main::$0 ← & interrupt(KERNEL_KEYBOARD)(void()) irq()
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const void()**) KERNEL_IRQ = (void()**) 788
-Constant (const byte) BLACK = 0
-Constant (const byte) WHITE = 1
-Constant (const void()*) main::$0 = &irq
-Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = &interrupt(KERNEL_KEYBOARD)(void()) irq()
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @7
@@ -302,10 +273,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53281
-(const byte) BLACK BLACK = (byte) 0
-(const void()**) KERNEL_IRQ KERNEL_IRQ = (void()**) 788
-(const byte) WHITE WHITE = (byte) 1
+(const byte*) BGCOL = (byte*) 53281
+(const byte) BLACK = (byte) 0
+(const void()**) KERNEL_IRQ = (void()**) 788
+(const byte) WHITE = (byte) 1
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 (label) irq::@return
 (void()) main()

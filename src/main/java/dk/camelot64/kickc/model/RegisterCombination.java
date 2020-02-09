@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

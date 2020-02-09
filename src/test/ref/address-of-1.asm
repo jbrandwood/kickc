@@ -37,7 +37,7 @@ main: {
     sta SCREEN+2
     rts
 }
-// setByte(byte* zeropage(2) ptr, byte register(X) b)
+// setByte(byte* zp(2) ptr, byte register(X) b)
 setByte: {
     .label ptr = 2
     txa

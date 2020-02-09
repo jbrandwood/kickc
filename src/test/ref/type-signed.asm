@@ -84,7 +84,7 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(8) w)
+// print_word(word zp(8) w)
 print_word: {
     .label w = 8
     lda.z w+1
@@ -96,7 +96,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage($a) b)
+// print_byte(byte zp($a) b)
 print_byte: {
     .label b = $a
     lda.z b
@@ -126,7 +126,7 @@ print_char: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage(8) w)
+// print_sword(signed word zp(8) w)
 print_sword: {
     .label w = 8
     lda.z w+1

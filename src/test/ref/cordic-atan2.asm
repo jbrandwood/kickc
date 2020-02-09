@@ -11,6 +11,7 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
 main: {
+    .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label screen = 3
     .label x = $a
@@ -45,16 +46,13 @@ main: {
     cmp.z y
     bne __b1
   __b4:
-    lda COLS+$c*$28+$13
-    clc
-    adc #1
-    sta COLS+$c*$28+$13
+    inc col00
     jmp __b4
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_8
 // Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
-// atan2_8(signed byte zeropage($a) x, signed byte zeropage(5) y)
+// atan2_8(signed byte zp($a) x, signed byte zp(5) y)
 atan2_8: {
     .label __7 = $b
     .label xi = $b
@@ -105,9 +103,8 @@ atan2_8: {
     bpl __b7
     txa
     eor #$ff
-    clc
-    adc #$80+1
     tax
+    axs #-$80-1
   __b7:
     lda.z y
     cmp #0
@@ -190,7 +187,7 @@ atan2_8: {
     jmp __b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zeropage(6) charset)
+// init_font_hex(byte* zp(6) charset)
 init_font_hex: {
     .label __0 = $d
     .label idx = $b

@@ -23,7 +23,8 @@ public class Pass4RegisterUpliftRemains extends Pass2Base {
       Set<String> unknownFragments = new LinkedHashSet<>();
 
       for(LiveRangeEquivalenceClass equivalenceClass : equivalenceClasses) {
-         if(equivalenceClass.getRegister().getType().equals(Registers.RegisterType.ZP_BYTE)) {
+         Registers.Register register = equivalenceClass.getRegister();
+         if(register.isMem() && register.getBytes()==1) {
             getLog().append("Attempting to uplift remaining variables in" + equivalenceClass);
             RegisterCombinationIterator combinationIterator = new RegisterCombinationIterator(Arrays.asList(equivalenceClass), getProgram().getRegisterPotentials());
             VariableRef variableRef = equivalenceClass.getVariables().get(0);

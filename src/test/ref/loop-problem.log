@@ -5,12 +5,11 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@3
 
 (void()) main()
 main: scope:[main]  from @3
-  *((byte*) SCREEN) ← (byte) '0'
+  *((const byte*) SCREEN) ← (byte) '0'
   call d 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -42,7 +41,7 @@ b::@return: scope:[b]  from b::@3
 
 (void()) d()
 d: scope:[d]  from b::@1 main
-  *((byte*) SCREEN) ← ++ *((byte*) SCREEN)
+  *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
   to:d::@return
 d::@return: scope:[d]  from d
   return 
@@ -59,7 +58,7 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) b()
 (bool~) b::$1
 (label) b::@1
@@ -77,19 +76,16 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
 Alias (byte) b::i#2 = (byte) b::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) b::$1 [11] if((byte) b::i#1!=rangelast(0,3)) goto b::@1
+Simple Condition (bool~) b::$1 [10] if((byte) b::i#1!=rangelast(0,3)) goto b::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) b::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [9] b::i#1 ← ++ b::i#2 to ++
-Resolved ranged comparison value [11] if(b::i#1!=rangelast(0,3)) goto b::@1 to (number) 4
+Resolved ranged next value [8] b::i#1 ← ++ b::i#2 to ++
+Resolved ranged comparison value [10] if(b::i#1!=rangelast(0,3)) goto b::@1 to (number) 4
 Adding number conversion cast (unumber) 4 in if((byte) b::i#1!=(number) 4) goto b::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
@@ -188,7 +184,7 @@ Initial phi equivalence classes
 [ b::i#2 b::i#1 ]
 Complete equivalence classes
 [ b::i#2 b::i#1 ]
-Allocated zp ZP_BYTE:2 [ b::i#2 b::i#1 ]
+Allocated zp[1]:2 [ b::i#2 b::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -282,10 +278,10 @@ d: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) SCREEN) ← (byte) '0' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ b::i#2 b::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ b::i#2 b::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [b] 27.5: zp ZP_BYTE:2 [ b::i#2 b::i#1 ] 
+Uplift Scope [b] 27.5: zp[1]:2 [ b::i#2 b::i#1 ] 
 Uplift Scope [main] 
 Uplift Scope [d] 
 Uplift Scope [] 
@@ -420,7 +416,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) b()
 (label) b::@1
 (label) b::@2

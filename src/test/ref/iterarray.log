@@ -6,14 +6,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte[$10]) main::buf ← ((byte[$10])) (number) $1100
-  (byte) main::i#0 ← (number) 5
+  (byte) main::i#0 ← (byte) 5
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (number~) main::$0 ← (number) 2 + (byte) main::i#2
   (number~) main::$1 ← (number~) main::$0 + (number) 2
-  *((byte[$10]) main::buf + (byte) main::i#2) ← (number~) main::$1
+  *((const byte*) main::buf + (byte) main::i#2) ← (number~) main::$1
   (number~) main::$2 ← (byte) main::i#2 + (number) 1
   (byte) main::i#1 ← (number~) main::$2
   (bool~) main::$3 ← (byte) main::i#1 < (number) $a
@@ -41,13 +40,12 @@ SYMBOL TABLE SSA
 (bool~) main::$3
 (label) main::@1
 (label) main::@return
-(byte[$10]) main::buf
+(const byte*) main::buf[(number) $10]  = (byte*)(number) $1100
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
 
-Adding number conversion cast (unumber) 5 in (byte) main::i#0 ← (number) 5
 Adding number conversion cast (unumber) 2 in (number~) main::$0 ← (number) 2 + (byte) main::i#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 2 + (byte) main::i#2
 Adding number conversion cast (unumber) 2 in (number~) main::$1 ← (unumber~) main::$0 + (number) 2
@@ -56,17 +54,12 @@ Adding number conversion cast (unumber) 1 in (number~) main::$2 ← (byte) main:
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte) main::i#2 + (unumber)(number) 1
 Adding number conversion cast (unumber) $a in (bool~) main::$3 ← (byte) main::i#1 < (number) $a
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte[$10]) main::buf ← (byte[$10])(number) $1100
-Inlining cast (byte) main::i#0 ← (unumber)(number) 5
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 4352
-Simplifying constant integer cast 5
 Simplifying constant integer cast 2
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 1
@@ -77,9 +70,8 @@ Inferred type updated to byte in (unumber~) main::$1 ← (byte~) main::$0 + (byt
 Inferred type updated to byte in (unumber~) main::$2 ← (byte) main::i#2 + (byte) 1
 Alias (byte) main::i#1 = (byte~) main::$2 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$3 [9] if((byte) main::i#1<(byte) $a) goto main::@1
+Simple Condition (bool~) main::$3 [8] if((byte) main::i#1<(byte) $a) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte[$10]) main::buf = (byte*) 4352
 Constant (const byte) main::i#0 = 5
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) main::i#0
@@ -126,7 +118,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 5 main::@1/(byte) main::i#1 )
   [6] (byte~) main::$1 ← (byte) main::i#2 + (byte) 2+(byte) 2
-  [7] *((const byte[$10]) main::buf + (byte) main::i#2) ← (byte~) main::$1
+  [7] *((const byte*) main::buf + (byte) main::i#2) ← (byte~) main::$1
   [8] (byte) main::i#1 ← (byte) main::i#2 + (byte) 1
   [9] if((byte) main::i#1<(byte) $a) goto main::@1
   to:main::@return
@@ -144,12 +136,12 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::$1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::$1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -196,7 +188,7 @@ main: {
     lax.z i
     axs #-[2+2]
     stx.z __1
-    // [7] *((const byte[$10]) main::buf + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [7] *((const byte*) main::buf + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __1
     ldy.z i
     sta buf,y
@@ -215,11 +207,11 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::$1 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 31.17: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:3 [ main::$1 ] 
+Uplift Scope [main] 31.17: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:3 [ main::$1 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 303 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
@@ -266,7 +258,7 @@ main: {
     txa
     clc
     adc #2+2
-    // [7] *((const byte[$10]) main::buf + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [7] *((const byte*) main::buf + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta buf,x
     // [8] (byte) main::i#1 ← (byte) main::i#2 + (byte) 1 -- vbuxx=vbuxx_plus_1 
     inx
@@ -315,7 +307,7 @@ FINAL SYMBOL TABLE
 (byte~) main::$1 reg byte a 22.0
 (label) main::@1
 (label) main::@return
-(const byte[$10]) main::buf buf = (byte*) 4352
+(const byte*) main::buf[(number) $10]  = (byte*) 4352
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 14.666666666666666
@@ -356,7 +348,7 @@ main: {
     clc
     adc #2+2
     // buf[i] = 2+i+2
-    // [7] *((const byte[$10]) main::buf + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [7] *((const byte*) main::buf + (byte) main::i#2) ← (byte~) main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta buf,x
     // i = i+1
     // [8] (byte) main::i#1 ← (byte) main::i#2 + (byte) 1 -- vbuxx=vbuxx_plus_1 

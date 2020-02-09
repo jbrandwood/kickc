@@ -4,6 +4,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
+  // Remainder after unsigned 16-bit division
   .label rem16u = $17
   .label print_char_cursor = 3
   .label print_line_cursor = $b
@@ -174,13 +175,13 @@ main: {
     jsr print_ln
     inx
     jmp __b1
+    lintab1: .fill 2*$14, 0
+    lintab2: .fill 2*$14, 0
+    lintab3: .fill 2*$14, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
-    lintab1: .fill 2*$14, 0
-    lintab2: .fill 2*$14, 0
-    lintab3: .fill 2*$14, 0
 }
 // Print a newline
 print_ln: {
@@ -203,7 +204,7 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zeropage(5) w)
+// print_word(word zp(5) w)
 print_word: {
     .label w = 5
     lda.z w+1
@@ -215,7 +216,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage(2) b)
+// print_byte(byte zp(2) b)
 print_byte: {
     .label b = 2
     lda.z b
@@ -245,7 +246,7 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(5) str)
+// print_str(byte* zp(5) str)
 print_str: {
     .label str = 5
   __b1:
@@ -305,7 +306,7 @@ memset: {
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sinus wavelength (the size of the table)
-// lin16u_gen(word zeropage(5) min, word zeropage(3) max, word* zeropage($b) lintab)
+// lin16u_gen(word zp(5) min, word zp(3) max, word* zp($b) lintab)
 lin16u_gen: {
     .label __6 = $17
     .label ampl = 3
@@ -413,7 +414,7 @@ lin16u_gen: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zeropage(3) dividend, word zeropage($d) divisor, word zeropage($17) rem)
+// divr16u(word zp(3) dividend, word zp($d) divisor, word zp($17) rem)
 divr16u: {
     .label rem = $17
     .label dividend = 3

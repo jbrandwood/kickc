@@ -8,7 +8,6 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -27,7 +26,7 @@ main::@3: scope:[main]  from main::@1
 main::@4: scope:[main]  from main::@2 main::@3
   (byte) main::i#3 ← phi( main::@2/(byte) main::i#4 main::@3/(byte) main::i#5 )
   (byte~) main::$3 ← phi( main::@2/(byte~) main::$2 main::@3/(byte~) main::$1 )
-  *((byte*) main::SCREEN + (byte) main::i#3) ← (byte~) main::$3
+  *((const byte*) main::SCREEN + (byte) main::i#3) ← (byte~) main::$3
   (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,9)
   (bool~) main::$4 ← (byte) main::i#1 != rangelast(0,9)
   if((bool~) main::$4) goto main::@1
@@ -58,7 +57,7 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@4
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -69,8 +68,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 5 in (bool~) main::$0 ← (byte) main::i#2 < (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
@@ -80,16 +77,15 @@ Alias (byte) main::i#2 = (byte) main::i#4 (byte) main::i#5
 Successful SSA optimization Pass2AliasElimination
 Alias (byte) main::i#2 = (byte) main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [4] if((byte) main::i#2<(byte) 5) goto main::@2
-Simple Condition (bool~) main::$4 [13] if((byte) main::i#1!=rangelast(0,9)) goto main::@1
+Simple Condition (bool~) main::$0 [3] if((byte) main::i#2<(byte) 5) goto main::@2
+Simple Condition (bool~) main::$4 [12] if((byte) main::i#1!=rangelast(0,9)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::$2 = 'a'
 Constant (const byte) main::$1 = 'b'
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,9)) goto main::@1 to (number) $a
+Resolved ranged next value [10] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [12] if(main::i#1!=rangelast(0,9)) goto main::@1 to (number) $a
 Adding number conversion cast (unumber) $a in if((byte) main::i#1!=(number) $a) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $a
@@ -171,8 +167,8 @@ Initial phi equivalence classes
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::$3 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::$3 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::$3 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -258,11 +254,11 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::$3 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::$3 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 25.3: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 11: zp ZP_BYTE:3 [ main::$3 ] 
+Uplift Scope [main] 25.3: zp[1]:2 [ main::i#2 main::i#1 ] 11: zp[1]:3 [ main::$3 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 418 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$3 ] 
@@ -383,7 +379,7 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 8.8

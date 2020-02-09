@@ -2,8 +2,6 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) idx ← (byte) 0
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
@@ -12,7 +10,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((byte*) SCREEN + (byte) main::i#2) ← (byte) idx
+  *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx
   (byte) idx ← (byte) idx + (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,5)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
@@ -33,8 +31,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte) idx memory
+(const byte*) SCREEN = (byte*)(number) $400
+(byte) idx loadstore = (byte) 0
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -44,17 +42,14 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$0 [6] if((byte) main::i#1!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Adding number conversion cast (unumber) 6 in if((byte) main::i#1!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
@@ -65,6 +60,7 @@ Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -77,13 +73,14 @@ Coalesced [12] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) idx ← (byte) 0
+  [0] phi()
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -109,7 +106,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx memory 5.0
+(byte) idx loadstore 4.714285714285714 = (byte) 0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 16.5
@@ -117,17 +114,17 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-Added variable idx to zero page equivalence class [ idx ]
+Added variable idx to live range equivalence class [ idx ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ idx ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated mem idx [ idx ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated mem[1] [ idx ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
   // File Comments
-// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test declaring a variable as "__mem __notssa", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
@@ -136,9 +133,6 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -168,11 +162,11 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuz1=vbum1 
+    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuz1=vbum2 
     lda idx
     ldy.z i
     sta SCREEN,y
-    // [7] (byte) idx ← (byte) idx + (byte) main::i#2 -- vbum1=vbum1_plus_vbuz1 
+    // [7] (byte) idx ← (byte) idx + (byte) main::i#2 -- vbum1=vbum1_plus_vbuz2 
     lda idx
     clc
     adc.z i
@@ -193,26 +187,26 @@ main: {
   idx: .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ idx main::i#2 ] ( main:2 [ idx main::i#2 ] ) always clobbers reg byte a 
-Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 ] ( main:2 [ main::i#2 ] ) always clobbers reg byte a 
-Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ idx main::i#2 ] ( main:2 [ idx main::i#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers mem idx [ idx ] : mem idx , 
+Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers mem[1] [ idx ] : mem[1] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 31.17: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [] 5: mem idx [ idx ] 
+Uplift Scope [main] 31.17: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [] 4.71: mem[1] [ idx ] 
 
-Uplifting [main] best 409 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 409 combination mem idx [ idx ] 
+Uplifting [main] best 403 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 403 combination mem[1] [ idx ] 
+Attempting to uplift remaining variables inmem[1] [ idx ]
+Uplifting [] best 403 combination mem[1] [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
-// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test declaring a variable as "__mem __notssa", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
@@ -221,9 +215,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -279,28 +270,32 @@ Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
 Replacing label __b1_from___b1 with __b1
+Removing instruction __bbegin:
 Removing instruction __b1_from___bbegin:
 Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(byte) idx memory mem idx 5.0
+(const byte*) SCREEN = (byte*) 1024
+(byte) idx loadstore mem[1] 4.714285714285714 = (byte) 0
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -309,32 +304,25 @@ FINAL SYMBOL TABLE
 (byte) main::i#2 reg byte x 14.666666666666666
 
 reg byte x [ main::i#2 main::i#1 ]
-mem idx [ idx ]
+mem[1] [ idx ]
 
 
 FINAL ASSEMBLER
-Score: 319
+Score: 301
 
   // File Comments
-// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
+// Test declaring a variable as "__mem __notssa", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   // @begin
-__bbegin:
-  // idx
-  // [0] (byte) idx ← (byte) 0 -- vbum1=vbuc1 
-  lda #0
-  sta idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
-  jsr main
-  rts
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main

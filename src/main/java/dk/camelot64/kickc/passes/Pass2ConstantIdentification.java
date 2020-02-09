@@ -10,17 +10,17 @@ import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Compiler Pass propagating constants in expressions eliminating constant variables
@@ -45,7 +45,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       for(VariableRef constRef : constVars) {
          Variable variable = getProgram().getScope().getVariable(constRef);
          ConstantVariableValue constVarVal = constants.get(constRef);
-         Scope constScope = variable.getScope();
+         Scope scope = variable.getScope();
          ConstantValue constVal = constVarVal.getConstantValue();
          SymbolType valueType = SymbolTypeInference.inferType(getScope(), constVal);
          SymbolType variableType = variable.getType();
@@ -70,31 +70,12 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
                         "\n value definition: " + constVal.toString(getProgram())
             );
          }
-
-         ConstantVar constantVar = new ConstantVar(
-               variable.getName(),
-               constScope,
-               variableType,
-               constVal,
-               variable.getDataSegment()
-         );
-
-         constantVar.setInferredType(variable.isInferredType());
-         constantVar.setDeclaredAlignment(variable.getDeclaredAlignment());
-         constantVar.setDeclaredAsRegister(variable.isDeclaredAsRegister());
-         constantVar.setDeclaredRegister(variable.getDeclaredRegister());
-         constantVar.setDeclaredAsMemory(variable.isDeclaredAsMemory());
-         constantVar.setDeclaredMemoryAddress(variable.getDeclaredMemoryAddress());
-         constantVar.setDeclaredExport(variable.isDeclaredExport());
-         if(variable.getComments().size() > 0) {
-            constantVar.setComments(variable.getComments());
-         } else {
-            constantVar.setComments(constVarVal.getAssignment().getComments());
-         }
-         constScope.remove(variable);
-         constScope.add(constantVar);
-         constAliases.put(constRef, constantVar.getRef());
-         getLog().append("Constant " + constantVar.toString(getProgram()) + " = " + constantVar.getValue());
+         scope.remove(variable);
+         Variable constVar = Variable.createConstant(variable, constVal);
+         constVar.getComments().addAll(constVarVal.getAssignment().getComments());
+         scope.add(constVar);
+         constAliases.put(constRef, constVar.getRef());
+         getLog().append("Constant " + constVar.toString(getProgram()) + " = " + constVar.getInitValue());
       }
       // Remove assignments to constants in the code
       removeAssignments(getGraph(), constants.keySet());
@@ -146,52 +127,69 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
     */
    private Map<VariableRef, ConstantVariableValue> findConstantVariables() {
       final Map<VariableRef, ConstantVariableValue> constants = new LinkedHashMap<>();
+
+      // Look for constants among versions, intermediates & declared constants
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
                StatementAssignment assignment = (StatementAssignment) statement;
-               findConstantsAssignment(constants, assignment);
+               LValue lValue = assignment.getlValue();
+               if(lValue instanceof VariableRef) {
+                  VariableRef varRef = (VariableRef) lValue;
+                  Variable var = getScope().getVariable(varRef);
+                  if(var.isVolatile() || var.isKindLoadStore())
+                     // Do not examine volatiles and non-versioned variables
+                     continue;
+                  ConstantValue constant = getConstant(assignment.getrValue2());
+                  if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
+                     constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
+                  }
+               }
             } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock phi = (StatementPhiBlock) statement;
-               findConstantsPhi(constants, phi);
+               for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                  if(phiVariable.getValues().size() == 1) {
+                     StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
+                     if(getConstant(phiRValue.getrValue()) != null) {
+                        VariableRef varRef = phiVariable.getVariable();
+                        Variable var = getScope().getVariable(varRef);
+                        if(var.isVolatile() || var.isKindLoadStore())
+                           // Do not examine volatiles and non-versioned variables
+                           continue;
+                        ConstantValue constant = getConstant(phiRValue.getrValue());
+                        constants.put(varRef, new ConstantVariableValue(varRef, constant, phi));
+                     }
+                  }
+               }
             }
          }
       }
+
+      // Look for constants among non-versioned variables
+      for(Variable variable : getScope().getAllVariables(true)) {
+         if(variable.isVolatile() || !variable.isKindLoadStore())
+            // Do not examine volatiles, non-constants or versioned variables
+            continue;
+         List<StatementLValue> assignments = getGraph().getAssignments(variable.getRef());
+         if(assignments.size() == 1) {
+            StatementLValue statementLValue = assignments.get(0);
+            if(!(statementLValue instanceof StatementAssignment))
+               // Only look at assignments
+               continue;
+            StatementAssignment assignment = (StatementAssignment) statementLValue;
+            LValue lValue = assignment.getlValue();
+            if(lValue instanceof VariableRef) {
+               VariableRef varRef = (VariableRef) lValue;
+               ConstantValue constant = getConstant(assignment.getrValue2());
+               if(assignment.getrValue1() == null && assignment.getOperator() == null && constant != null) {
+                  constants.put(varRef, new ConstantVariableValue(varRef, constant, assignment));
+               }
+            }
+         }
+      }
+
 
       return constants;
-   }
-
-   private void findConstantsPhi(Map<VariableRef, ConstantVariableValue> constants, StatementPhiBlock phi) {
-      for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-         if(phiVariable.getValues().size() == 1) {
-            StatementPhiBlock.PhiRValue phiRValue = phiVariable.getValues().get(0);
-            if(getConstant(phiRValue.getrValue()) != null) {
-               VariableRef variable = phiVariable.getVariable();
-               Variable var = getScope().getVariable(variable);
-               if(var.isVolatile() || var.isStorageMemory()) {
-                  // Volatile variables cannot be constant
-                  continue;
-               }
-               ConstantValue constant = getConstant(phiRValue.getrValue());
-               constants.put(variable, new ConstantVariableValue(variable, constant, phi));
-            }
-         }
-      }
-   }
-
-   private void findConstantsAssignment(Map<VariableRef, ConstantVariableValue> constants, StatementAssignment assignment) {
-      LValue lValue = assignment.getlValue();
-      if(lValue instanceof VariableRef) {
-         VariableRef variable = (VariableRef) lValue;
-         Variable var = getScope().getVariable(variable);
-         if(var.isVolatile() || var.isStorageMemory()) {
-            // Volatile or memory variables cannot be constant
-            return;
-         }
-         if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof ConstantValue) {
-            constants.put(variable, new ConstantVariableValue(variable, (ConstantValue) assignment.getrValue2(), assignment));
-         }
-      }
    }
 
    /**
@@ -203,19 +201,14 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
    public static ConstantValue getConstant(RValue rValue) {
       if(rValue instanceof ConstantValue) {
          return (ConstantValue) rValue;
-      } else if(rValue instanceof ConstantVar) {
-         ConstantVar constantVar = (ConstantVar) rValue;
-         return constantVar.getRef();
+      } else if(rValue instanceof Variable && ((Variable) rValue).isKindConstant()) {
+         Variable constantVar = (Variable) rValue;
+         return constantVar.getConstantRef();
       } else if(rValue instanceof CastValue) {
          CastValue castValue = (CastValue) rValue;
          ConstantValue castConstant = getConstant(castValue.getValue());
          if(castConstant != null) {
             return new ConstantCastValue(castValue.getToType(), castConstant);
-         }
-      } else if(rValue instanceof ArrayFilled) {
-         ArrayFilled arrayFilled = (ArrayFilled) rValue;
-         if(arrayFilled.getSize() instanceof ConstantValue) {
-            return new ConstantArrayFilled(arrayFilled.getElementType(), (ConstantValue) arrayFilled.getSize());
          }
       }
       return null;

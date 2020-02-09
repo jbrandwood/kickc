@@ -2,16 +2,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const RED = 2
+  .const GREEN = 5
+  .label SCREEN = $400
+  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
-  .const RED = 2
-  .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
 main: {
     .label s = 2
     lda #<SCREEN
@@ -106,7 +106,7 @@ testSimpleTypes: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zeropage(4) t2)
+// assertType(byte register(Y) t1, byte zp(4) t2)
 assertType: {
     .label t2 = 4
     tya

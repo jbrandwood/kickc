@@ -114,7 +114,7 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(2) str)
+// print_str(byte* zp(2) str)
 print_str: {
     .label str = 2
   __b1:
@@ -295,11 +295,11 @@ mulf_init: {
     sta.z sqr+1
     lda.z add
     clc
-    adc #2
+    adc #<2
     sta.z add
-    bcc !+
-    inc.z add+1
-  !:
+    lda.z add+1
+    adc #>2
+    sta.z add+1
     iny
     cpy #$81
     bne __b1

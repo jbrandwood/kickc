@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((byte*[]) screens + (byte) getScreen::id)
+Fixing pointer array-indexing *((const byte**) screens + (byte) getScreen::id)
 Identified constant variable (byte*) main::DSP
 Inlined call (byte*~) main::$0 ← call getScreen (number) 0 
 Inlined call (byte~) main::$1 ← call spritePtr (byte*~) main::$0 
@@ -9,20 +9,16 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*~) $0 ← ((byte*)) (number) $400
-  (byte*~) $1 ← ((byte*)) (number) $1400
-  (byte*[]) screens ← { (byte*~) $0, (byte*~) $1 }
   to:@3
 
 (void()) main()
 main: scope:[main]  from @3
-  (byte*) main::DSP ← ((byte*)) (number) $400
   (byte) main::getScreen1_id#0 ← (number) 0
   to:main::getScreen1
 main::getScreen1: scope:[main]  from main
   (byte) main::getScreen1_id#1 ← phi( main/(byte) main::getScreen1_id#0 )
   (byte~) main::getScreen1_$0 ← (byte) main::getScreen1_id#1 * (const byte) SIZEOF_POINTER
-  (byte*) main::getScreen1_return#0 ← *((byte*[]) screens + (byte~) main::getScreen1_$0)
+  (byte*) main::getScreen1_return#0 ← *((const byte**) screens + (byte~) main::getScreen1_$0)
   to:main::getScreen1_@return
 main::getScreen1_@return: scope:[main]  from main::getScreen1
   (byte*) main::getScreen1_return#2 ← phi( main::getScreen1/(byte*) main::getScreen1_return#0 )
@@ -46,7 +42,7 @@ main::spritePtr1_@return: scope:[main]  from main::spritePtr1
 main::@2: scope:[main]  from main::spritePtr1_@return
   (byte) main::spritePtr1_return#3 ← phi( main::spritePtr1_@return/(byte) main::spritePtr1_return#1 )
   (byte~) main::$1 ← (byte) main::spritePtr1_return#3
-  *((byte*) main::DSP + (number) 0) ← (byte~) main::$1
+  *((const byte*) main::DSP + (number) 0) ← (byte~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -59,8 +55,6 @@ main::@return: scope:[main]  from main::@2
 @end: scope:[]  from @4
 
 SYMBOL TABLE SSA
-(byte*~) $0
-(byte*~) $1
 (label) @3
 (label) @4
 (label) @begin
@@ -72,7 +66,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) main::DSP
+(const byte*) main::DSP = (byte*)(number) $400
 (label) main::getScreen1
 (byte~) main::getScreen1_$0
 (label) main::getScreen1_@return
@@ -96,15 +90,12 @@ SYMBOL TABLE SSA
 (byte*) main::spritePtr1_screen
 (byte*) main::spritePtr1_screen#0
 (byte*) main::spritePtr1_screen#1
-(byte*[]) screens
+(const byte**) screens[]  = { (byte*)(number) $400, (byte*)(number) $1400 }
 
 Adding number conversion cast (unumber) 0 in (byte) main::getScreen1_id#0 ← (number) 0
 Adding number conversion cast (unumber) $378 in (byte*~) main::spritePtr1_$0 ← (byte*) main::spritePtr1_screen#1 + (number) $378
-Adding number conversion cast (unumber) 0 in *((byte*) main::DSP + (number) 0) ← (byte~) main::$1
+Adding number conversion cast (unumber) 0 in *((const byte*) main::DSP + (number) 0) ← (byte~) main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) $0 ← (byte*)(number) $400
-Inlining cast (byte*~) $1 ← (byte*)(number) $1400
-Inlining cast (byte*) main::DSP ← (byte*)(number) $400
 Inlining cast (byte) main::getScreen1_id#0 ← (unumber)(number) 0
 Inlining cast (byte~) main::spritePtr1_$1 ← (byte)*((byte*~) main::spritePtr1_$0)
 Successful SSA optimization Pass2InlineCast
@@ -124,31 +115,22 @@ Alias (byte) main::getScreen1_id#0 = (byte) main::getScreen1_id#1
 Alias (byte*) main::getScreen1_return#0 = (byte*) main::getScreen1_return#2 (byte*) main::getScreen1_return#1 (byte*) main::getScreen1_return#3 (byte*~) main::$0 (byte*) main::spritePtr1_screen#0 (byte*) main::spritePtr1_screen#1 
 Alias (byte) main::spritePtr1_return#0 = (byte~) main::spritePtr1_$1 (byte) main::spritePtr1_return#2 (byte) main::spritePtr1_return#1 (byte) main::spritePtr1_return#3 (byte~) main::$1 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) $0 = (byte*) 1024
-Constant (const byte*) $1 = (byte*) 5120
-Constant (const byte*) main::DSP = (byte*) 1024
 Constant (const byte) main::getScreen1_id#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::DSP in [21] *((const byte*) main::DSP + (byte) 0) ← (byte) main::spritePtr1_return#0
+Simplifying expression containing zero main::DSP in [17] *((const byte*) main::DSP + (byte) 0) ← (byte) main::spritePtr1_return#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant right-side identified [1] (byte~) main::getScreen1_$0 ← (const byte) main::getScreen1_id#0 * (const byte) SIZEOF_POINTER
+Constant right-side identified [0] (byte~) main::getScreen1_$0 ← (const byte) main::getScreen1_id#0 * (const byte) SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Identified constant from value list (byte*[]) { (const byte*) $0, (const byte*) $1 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*[]) screens = { $0, $1 }
 Constant (const byte) main::getScreen1_$0 = main::getScreen1_id#0*SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (const byte) main::getScreen1_id#0*(const byte) SIZEOF_POINTER in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero screens in [2] (byte*) main::getScreen1_return#0 ← *((const byte*[]) screens + (const byte) main::getScreen1_$0)
+Simplifying expression containing zero screens in [1] (byte*) main::getScreen1_return#0 ← *((const byte**) screens + (const byte) main::getScreen1_$0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::getScreen1_id#0
 Eliminating unused constant (const byte) main::getScreen1_$0
 Eliminating unused constant (const byte) SIZEOF_POINTER
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined $0 = (byte*) 1024
-Constant inlined $1 = (byte*) 5120
-Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @4
@@ -189,7 +171,7 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::getScreen1
 main::getScreen1: scope:[main]  from main
-  [5] (byte*) main::getScreen1_return#0 ← *((const byte*[]) screens)
+  [5] (byte*) main::getScreen1_return#0 ← *((const byte**) screens)
   to:main::spritePtr1
 main::spritePtr1: scope:[main]  from main::getScreen1
   [6] (byte*~) main::spritePtr1_$0 ← (byte*) main::getScreen1_return#0 + (word) $378
@@ -214,16 +196,16 @@ VARIABLE REGISTER WEIGHTS
 (byte*) main::spritePtr1_screen
 
 Initial phi equivalence classes
-Added variable main::getScreen1_return#0 to zero page equivalence class [ main::getScreen1_return#0 ]
-Added variable main::spritePtr1_$0 to zero page equivalence class [ main::spritePtr1_$0 ]
-Added variable main::spritePtr1_return#0 to zero page equivalence class [ main::spritePtr1_return#0 ]
+Added variable main::getScreen1_return#0 to live range equivalence class [ main::getScreen1_return#0 ]
+Added variable main::spritePtr1_$0 to live range equivalence class [ main::spritePtr1_$0 ]
+Added variable main::spritePtr1_return#0 to live range equivalence class [ main::spritePtr1_return#0 ]
 Complete equivalence classes
 [ main::getScreen1_return#0 ]
 [ main::spritePtr1_$0 ]
 [ main::spritePtr1_return#0 ]
-Allocated zp ZP_WORD:2 [ main::getScreen1_return#0 ]
-Allocated zp ZP_WORD:4 [ main::spritePtr1_$0 ]
-Allocated zp ZP_BYTE:6 [ main::spritePtr1_return#0 ]
+Allocated zp[2]:2 [ main::getScreen1_return#0 ]
+Allocated zp[2]:4 [ main::spritePtr1_$0 ]
+Allocated zp[1]:6 [ main::spritePtr1_return#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -259,7 +241,7 @@ main: {
     jmp getScreen1
     // main::getScreen1
   getScreen1:
-    // [5] (byte*) main::getScreen1_return#0 ← *((const byte*[]) screens) -- pbuz1=_deref_pptc1 
+    // [5] (byte*) main::getScreen1_return#0 ← *((const byte**) screens) -- pbuz1=_deref_pptc1 
     lda screens
     sta.z getScreen1_return
     lda screens+1
@@ -295,20 +277,20 @@ main: {
   screens: .word $400, $1400
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] (byte*) main::getScreen1_return#0 ← *((const byte*[]) screens) [ main::getScreen1_return#0 ] ( main:2 [ main::getScreen1_return#0 ] ) always clobbers reg byte a 
+Statement [5] (byte*) main::getScreen1_return#0 ← *((const byte**) screens) [ main::getScreen1_return#0 ] ( main:2 [ main::getScreen1_return#0 ] ) always clobbers reg byte a 
 Statement [6] (byte*~) main::spritePtr1_$0 ← (byte*) main::getScreen1_return#0 + (word) $378 [ main::spritePtr1_$0 ] ( main:2 [ main::spritePtr1_$0 ] ) always clobbers reg byte a 
 Statement [7] (byte) main::spritePtr1_return#0 ← *((byte*~) main::spritePtr1_$0) [ main::spritePtr1_return#0 ] ( main:2 [ main::spritePtr1_return#0 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_WORD:2 [ main::getScreen1_return#0 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ main::spritePtr1_$0 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_BYTE:6 [ main::spritePtr1_return#0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ main::getScreen1_return#0 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::spritePtr1_$0 ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ main::spritePtr1_return#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 4: zp ZP_WORD:2 [ main::getScreen1_return#0 ] 4: zp ZP_WORD:4 [ main::spritePtr1_$0 ] 4: zp ZP_BYTE:6 [ main::spritePtr1_return#0 ] 
+Uplift Scope [main] 4: zp[2]:2 [ main::getScreen1_return#0 ] 4: zp[2]:4 [ main::spritePtr1_$0 ] 4: zp[1]:6 [ main::spritePtr1_return#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 100 combination zp ZP_WORD:2 [ main::getScreen1_return#0 ] zp ZP_WORD:4 [ main::spritePtr1_$0 ] reg byte a [ main::spritePtr1_return#0 ] 
+Uplifting [main] best 100 combination zp[2]:2 [ main::getScreen1_return#0 ] zp[2]:4 [ main::spritePtr1_$0 ] reg byte a [ main::spritePtr1_return#0 ] 
 Uplifting [] best 100 combination 
-Coalescing zero page register [ zp ZP_WORD:2 [ main::getScreen1_return#0 ] ] with [ zp ZP_WORD:4 [ main::spritePtr1_$0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:2 [ main::getScreen1_return#0 ] ] with [ zp[2]:4 [ main::spritePtr1_$0 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -342,7 +324,7 @@ main: {
     jmp getScreen1
     // main::getScreen1
   getScreen1:
-    // [5] (byte*) main::getScreen1_return#0 ← *((const byte*[]) screens) -- pbuz1=_deref_pptc1 
+    // [5] (byte*) main::getScreen1_return#0 ← *((const byte**) screens) -- pbuz1=_deref_pptc1 
     lda screens
     sta.z getScreen1_return
     lda screens+1
@@ -408,19 +390,19 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte*) main::DSP DSP = (byte*) 1024
+(const byte*) main::DSP = (byte*) 1024
 (label) main::getScreen1
 (byte) main::getScreen1_id
 (byte*) main::getScreen1_return
-(byte*) main::getScreen1_return#0 getScreen1_return zp ZP_WORD:2 4.0
+(byte*) main::getScreen1_return#0 getScreen1_return zp[2]:2 4.0
 (label) main::spritePtr1
-(byte*~) main::spritePtr1_$0 spritePtr1_$0 zp ZP_WORD:2 4.0
+(byte*~) main::spritePtr1_$0 zp[2]:2 4.0
 (byte) main::spritePtr1_return
 (byte) main::spritePtr1_return#0 reg byte a 4.0
 (byte*) main::spritePtr1_screen
-(const byte*[]) screens screens = { (byte*) 1024, (byte*) 5120 }
+(const byte**) screens[]  = { (byte*) 1024, (byte*) 5120 }
 
-zp ZP_WORD:2 [ main::getScreen1_return#0 main::spritePtr1_$0 ]
+zp[2]:2 [ main::getScreen1_return#0 main::spritePtr1_$0 ]
 reg byte a [ main::spritePtr1_return#0 ]
 
 
@@ -448,7 +430,7 @@ main: {
     .label getScreen1_return = 2
     // main::getScreen1
     // return screens[id];
-    // [5] (byte*) main::getScreen1_return#0 ← *((const byte*[]) screens) -- pbuz1=_deref_pptc1 
+    // [5] (byte*) main::getScreen1_return#0 ← *((const byte**) screens) -- pbuz1=_deref_pptc1 
     lda screens
     sta.z getScreen1_return
     lda screens+1

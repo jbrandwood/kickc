@@ -33,7 +33,7 @@ main: {
     jmp __b2
 }
 .segment CodeHigh
-// fillscreen(byte zeropage(4) c)
+// fillscreen(byte zp(4) c)
 fillscreen: {
     .label c = 4
     .label screen = 2

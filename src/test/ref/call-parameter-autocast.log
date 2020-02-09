@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((word*) SCREEN + (byte) idx)
+Fixing pointer array-indexing *((const word*) SCREEN + (byte) idx)
 Identified constant variable (word) main::w
 
 CONTROL FLOW GRAPH SSA
@@ -8,14 +8,13 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#15 ← phi( @2/(byte) idx#16 )
-  (word) main::w ← (number) $1234
   (word) print::w#0 ← (number) $1234
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte) idx#8 ← phi( main/(byte) idx#6 )
   (byte) idx#0 ← (byte) idx#8
-  (word) print::w#1 ← (word) main::w
+  (word) print::w#1 ← (const word) main::w
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -34,8 +33,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
-  (word*) SCREEN ← ((word*)) (number) $400
-  (byte) idx#4 ← (number) 0
+  (byte) idx#4 ← (byte) 0
   to:@2
 
 (void()) print((word) print::w)
@@ -43,7 +41,7 @@ print: scope:[print]  from main main::@1 main::@2
   (word) print::w#3 ← phi( main/(word) print::w#0 main::@1/(word) print::w#1 main::@2/(word) print::w#2 )
   (byte) idx#12 ← phi( main/(byte) idx#15 main::@1/(byte) idx#0 main::@2/(byte) idx#1 )
   (byte~) print::$0 ← (byte) idx#12 * (const byte) SIZEOF_WORD
-  *((word*) SCREEN + (byte~) print::$0) ← (word) print::w#3
+  *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3
   (byte) idx#5 ← ++ (byte) idx#12
   to:print::@return
 print::@return: scope:[print]  from print
@@ -67,7 +65,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(word*) SCREEN
+(const word*) SCREEN = (word*)(number) $400
 (const byte) SIZEOF_WORD = (byte) 2
 (byte) idx
 (byte) idx#0
@@ -92,7 +90,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(word) main::w
+(const word) main::w = (word) $1234
 (void()) print((word) print::w)
 (byte~) print::$0
 (label) print::@return
@@ -104,25 +102,16 @@ SYMBOL TABLE SSA
 
 Fixing inline constructor with main::$3 ← (byte)$12 w= (byte)$34
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) $1234 in (word) main::w ← (number) $1234
 Adding number conversion cast (unumber) $1234 in (word) print::w#0 ← (number) $1234
-Adding number conversion cast (unumber) 0 in (byte) idx#4 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word) main::w ← (unumber)(number) $1234
 Inlining cast (word) print::w#0 ← (unumber)(number) $1234
-Inlining cast (word*) SCREEN ← (word*)(number) $400
-Inlining cast (byte) idx#4 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $1234
+Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast $1234
 Simplifying constant integer cast $12
 Simplifying constant integer cast $34
-Simplifying constant pointer cast (word*) 1024
-Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $1234
-Finalized unsigned number type (word) $1234
-Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) idx#0 = (byte) idx#8 
 Alias (byte) idx#1 = (byte) idx#9 
@@ -138,14 +127,11 @@ Identical Phi Values (byte) idx#1 (byte) idx#13
 Identical Phi Values (byte) idx#10 (byte) idx#13
 Identical Phi Values (byte) idx#14 (byte) idx#10
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [10] (word) print::w#2 ← (byte) $12 w= (byte) $34
+Constant right-side identified [9] (word) print::w#2 ← (byte) $12 w= (byte) $34
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::w = $1234
 Constant (const word) print::w#0 = $1234
-Constant (const word*) SCREEN = (word*) 1024
-Constant (const byte) idx#16 = 0
-Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) print::w#1 = main::w
+Constant (const byte) idx#16 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Adding number conversion cast (unumber) $12*$100+$34 in (word) print::w#2 ← (byte) $12*(number) $100+(byte) $34
 Adding number conversion cast (unumber) $12*$100 in (word) print::w#2 ← ((unumber)) (byte) $12*(number) $100+(byte) $34
@@ -254,14 +240,14 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ idx#12 idx#13 ]
 [ print::w#3 ]
-Added variable print::$0 to zero page equivalence class [ print::$0 ]
+Added variable print::$0 to live range equivalence class [ print::$0 ]
 Complete equivalence classes
 [ idx#12 idx#13 ]
 [ print::w#3 ]
 [ print::$0 ]
-Allocated zp ZP_BYTE:2 [ idx#12 idx#13 ]
-Allocated zp ZP_WORD:3 [ print::w#3 ]
-Allocated zp ZP_BYTE:5 [ print::$0 ]
+Allocated zp[1]:2 [ idx#12 idx#13 ]
+Allocated zp[2]:3 [ print::w#3 ]
+Allocated zp[1]:5 [ print::$0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -342,7 +328,7 @@ main: {
     rts
 }
   // print
-// print(word zeropage(3) w)
+// print(word zp(3) w)
 print: {
     .label __0 = 5
     .label w = 3
@@ -368,23 +354,23 @@ print: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::w#3 print::$0 ] ( main:2::print:5 [ idx#12 print::w#3 print::$0 ] main:2::print:7 [ idx#12 print::w#3 print::$0 ] main:2::print:9 [ idx#12 print::w#3 print::$0 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ idx#12 idx#13 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ idx#12 idx#13 ]
 Statement [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:9 [ idx#12 ] ) always clobbers reg byte a 
 Statement [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::w#3 print::$0 ] ( main:2::print:5 [ idx#12 print::w#3 print::$0 ] main:2::print:7 [ idx#12 print::w#3 print::$0 ] main:2::print:9 [ idx#12 print::w#3 print::$0 ] ) always clobbers reg byte a 
 Statement [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 [ idx#12 ] ( main:2::print:5 [ idx#12 ] main:2::print:7 [ idx#12 ] main:2::print:9 [ idx#12 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ idx#12 idx#13 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:3 [ print::w#3 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_BYTE:5 [ print::$0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ idx#12 idx#13 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[2]:3 [ print::w#3 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ print::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print] 4: zp ZP_BYTE:5 [ print::$0 ] 1: zp ZP_WORD:3 [ print::w#3 ] 
-Uplift Scope [] 3.67: zp ZP_BYTE:2 [ idx#12 idx#13 ] 
+Uplift Scope [print] 4: zp[1]:5 [ print::$0 ] 1: zp[2]:3 [ print::w#3 ] 
+Uplift Scope [] 3.67: zp[1]:2 [ idx#12 idx#13 ] 
 Uplift Scope [main] 
 
-Uplifting [print] best 117 combination reg byte a [ print::$0 ] zp ZP_WORD:3 [ print::w#3 ] 
+Uplifting [print] best 117 combination reg byte a [ print::$0 ] zp[2]:3 [ print::w#3 ] 
 Uplifting [] best 110 combination reg byte x [ idx#12 idx#13 ] 
 Uplifting [main] best 110 combination 
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ print::w#3 ]
+Allocated (was zp[2]:3) zp[2]:2 [ print::w#3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -462,7 +448,7 @@ main: {
     rts
 }
   // print
-// print(word zeropage(2) w)
+// print(word zp(2) w)
 print: {
     .label w = 2
     // [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuxx_rol_1 
@@ -519,7 +505,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const word*) SCREEN SCREEN = (word*) 1024
+(const word*) SCREEN = (word*) 1024
 (byte) idx
 (byte) idx#12 reg byte x 2.6666666666666665
 (byte) idx#13 reg byte x 1.0
@@ -527,15 +513,15 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const word) main::w w = (word) $1234
+(const word) main::w = (word) $1234
 (void()) print((word) print::w)
 (byte~) print::$0 reg byte a 4.0
 (label) print::@return
 (word) print::w
-(word) print::w#3 w zp ZP_WORD:2 1.0
+(word) print::w#3 w zp[2]:2 1.0
 
 reg byte x [ idx#12 idx#13 ]
-zp ZP_WORD:2 [ print::w#3 ]
+zp[2]:2 [ print::w#3 ]
 reg byte a [ print::$0 ]
 
 
@@ -601,7 +587,7 @@ main: {
     rts
 }
   // print
-// print(word zeropage(2) w)
+// print(word zp(2) w)
 print: {
     .label w = 2
     // SCREEN[idx++] = w

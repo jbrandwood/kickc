@@ -4,14 +4,14 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    .label __1 = 6
     .label i = 2
     .label j = 4
+    .label __1 = 6
     .label k = 6
-    lda #<0
+    lda #0
+    sta.z i
     sta.z j
     sta.z j+1
-    sta.z i
   __b1:
     lda.z i
     cmp #4

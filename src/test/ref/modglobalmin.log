@@ -2,8 +2,7 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) cnt#0 ← (number) 0
-  (byte[$100]) SCREEN ← ((byte[$100])) (number) $400
+  (byte) cnt#0 ← (byte) 0
   to:@2
 
 (void()) main()
@@ -14,7 +13,7 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) cnt#9 ← phi( main/(byte) cnt#7 )
   (byte) cnt#1 ← (byte) cnt#9
-  *((byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
+  *((const byte*) SCREEN + (number) 0) ← (byte) cnt#1
   (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt 
   to:main::@2
@@ -22,7 +21,7 @@ main::@2: scope:[main]  from main::@1
   (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
   (byte) cnt#3 ← (byte) cnt#10
   (byte) cnt#4 ← ++ (byte) cnt#3
-  *((byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
+  *((const byte*) SCREEN + (number) 1) ← (byte) cnt#4
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
@@ -55,7 +54,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte[$100]) SCREEN
+(const byte*) SCREEN[(number) $100]  = (byte*)(number) $400
 (byte) cnt
 (byte) cnt#0
 (byte) cnt#1
@@ -81,19 +80,13 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in (byte) cnt#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte[$100]) SCREEN + (number) 0) ← (byte) cnt#1
-Adding number conversion cast (unumber) 1 in *((byte[$100]) SCREEN + (number) 1) ← (byte) cnt#4
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) cnt#1
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) cnt#4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) cnt#0 ← (unumber)(number) 0
-Inlining cast (byte[$100]) SCREEN ← (byte[$100])(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
@@ -110,9 +103,8 @@ Identical Phi Values (byte) cnt#10 (byte) cnt#13
 Identical Phi Values (byte) cnt#14 (byte) cnt#11
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) cnt#0 = 0
-Constant (const byte[$100]) SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [6] *((const byte[$100]) SCREEN + (byte) 0) ← (byte) cnt#13
+Simplifying expression containing zero SCREEN in [5] *((const byte*) SCREEN + (byte) 0) ← (byte) cnt#13
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) cnt#0
 Constant inlined cnt#0 = (byte) 0
@@ -155,13 +147,13 @@ main: scope:[main]  from @1
   [5] call inccnt 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13
+  [6] *((const byte*) SCREEN) ← (byte) cnt#13
   [7] (byte) cnt#2 ← ++ (byte) cnt#13
   [8] call inccnt 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [9] (byte) cnt#11 ← ++ (byte) cnt#13
-  [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11
+  [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [11] return 
@@ -188,15 +180,15 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ cnt#12 cnt#2 ]
-Added variable cnt#11 to zero page equivalence class [ cnt#11 ]
-Added variable cnt#13 to zero page equivalence class [ cnt#13 ]
+Added variable cnt#11 to live range equivalence class [ cnt#11 ]
+Added variable cnt#13 to live range equivalence class [ cnt#13 ]
 Complete equivalence classes
 [ cnt#12 cnt#2 ]
 [ cnt#11 ]
 [ cnt#13 ]
-Allocated zp ZP_BYTE:2 [ cnt#12 cnt#2 ]
-Allocated zp ZP_BYTE:3 [ cnt#11 ]
-Allocated zp ZP_BYTE:4 [ cnt#13 ]
+Allocated zp[1]:2 [ cnt#12 cnt#2 ]
+Allocated zp[1]:3 [ cnt#11 ]
+Allocated zp[1]:4 [ cnt#13 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -208,8 +200,8 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   .label SCREEN = $400
   .label cnt = 2
-  .label cnt_11 = 3
-  .label cnt_13 = 4
+  .label cnt_1 = 3
+  .label cnt_2 = 4
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -238,11 +230,11 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
-    lda.z cnt_13
+    // [6] *((const byte*) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
+    lda.z cnt_2
     sta SCREEN
     // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
-    ldy.z cnt_13
+    ldy.z cnt_2
     iny
     sty.z cnt
     // [8] call inccnt 
@@ -254,11 +246,11 @@ main: {
     // main::@2
   __b2:
     // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
-    ldy.z cnt_13
+    ldy.z cnt_2
     iny
-    sty.z cnt_11
-    // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
-    lda.z cnt_11
+    sty.z cnt_1
+    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
+    lda.z cnt_1
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -271,7 +263,7 @@ inccnt: {
     // [13] (byte) cnt#13 ← ++ (byte) cnt#12 -- vbuz1=_inc_vbuz2 
     ldy.z cnt
     iny
-    sty.z cnt_13
+    sty.z cnt_2
     jmp __breturn
     // inccnt::@return
   __breturn:
@@ -281,12 +273,12 @@ inccnt: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ cnt#12 cnt#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ cnt#11 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ cnt#13 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ cnt#12 cnt#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ cnt#11 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ cnt#13 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 8: zp ZP_BYTE:2 [ cnt#12 cnt#2 ] 4: zp ZP_BYTE:3 [ cnt#11 ] 1.6: zp ZP_BYTE:4 [ cnt#13 ] 
+Uplift Scope [] 8: zp[1]:2 [ cnt#12 cnt#2 ] 4: zp[1]:3 [ cnt#11 ] 1.6: zp[1]:4 [ cnt#13 ] 
 Uplift Scope [main] 
 Uplift Scope [inccnt] 
 
@@ -329,7 +321,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+    // [6] *((const byte*) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
@@ -343,7 +335,7 @@ main: {
   __b2:
     // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp __breturn
     // main::@return
@@ -395,7 +387,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte[$100]) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN[(number) $100]  = (byte*) 1024
 (byte) cnt
 (byte) cnt#11 reg byte x 4.0
 (byte) cnt#12 reg byte x 4.0
@@ -440,7 +432,7 @@ main: {
     jsr inccnt
     // main::@1
     // SCREEN[0]=cnt++
-    // [6] *((const byte[$100]) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+    // [6] *((const byte*) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // SCREEN[0]=cnt++;
     // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
@@ -455,7 +447,7 @@ main: {
     // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[1]=++cnt
-    // [10] *((const byte[$100]) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     // main::@return
     // }

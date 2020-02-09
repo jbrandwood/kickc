@@ -2,26 +2,23 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) CIA2_PORT_B ← ((byte*)) (number) $dd01
-  to:@4
-@4: scope:[]  from @begin
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@5
 
 (void()) main()
 main: scope:[main]  from @5
-  *((byte*) CIA2_PORT_B) ← *((byte*) CIA2_PORT_B) & (number) $7f
+  *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (number) $7f
   asm { lda#0  }
-  (byte) main::port4Value#0 ← *((byte*) CIA2_PORT_B)
-  *((byte*) SCREEN) ← (byte) main::port4Value#0
+  (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B)
+  *((const byte*) SCREEN) ← (byte) main::port4Value#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
-@5: scope:[]  from @4
+@5: scope:[]  from @begin
   call main 
   to:@6
 @6: scope:[]  from @5
@@ -29,43 +26,34 @@ main::@return: scope:[main]  from main
 @end: scope:[]  from @6
 
 SYMBOL TABLE SSA
-(label) @4
 (label) @5
 (label) @6
 (label) @begin
 (label) @end
-(byte*) CIA2_PORT_B
-(byte*) SCREEN
+(const byte*) CIA2_PORT_B = (byte*)(number) $dd01
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@return
 (byte) main::port4Value
 (byte) main::port4Value#0
 
-Adding number conversion cast (unumber) $7f in *((byte*) CIA2_PORT_B) ← *((byte*) CIA2_PORT_B) & (number) $7f
+Adding number conversion cast (unumber) $7f in *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (number) $7f
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) CIA2_PORT_B ← (byte*)(number) $dd01
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 56577
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $7f
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $7f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte*) CIA2_PORT_B = (byte*) 56577
-Constant (const byte*) SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @5
 Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @4
 Culled Empty Block (label) @6
 Renumbering block @5 to @1
 Adding NOP phi() at start of @begin
@@ -101,10 +89,10 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::port4Value#0 4.0
 
 Initial phi equivalence classes
-Added variable main::port4Value#0 to zero page equivalence class [ main::port4Value#0 ]
+Added variable main::port4Value#0 to live range equivalence class [ main::port4Value#0 ]
 Complete equivalence classes
 [ main::port4Value#0 ]
-Allocated zp ZP_BYTE:2 [ main::port4Value#0 ]
+Allocated zp[1]:2 [ main::port4Value#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -159,10 +147,10 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (byte) $7f [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::port4Value#0 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::port4Value#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 4: zp ZP_BYTE:2 [ main::port4Value#0 ] 
+Uplift Scope [main] 4: zp[1]:2 [ main::port4Value#0 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 41 combination reg byte a [ main::port4Value#0 ] 
@@ -237,8 +225,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) CIA2_PORT_B CIA2_PORT_B = (byte*) 56577
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) CIA2_PORT_B = (byte*) 56577
+(const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 (byte) main::port4Value

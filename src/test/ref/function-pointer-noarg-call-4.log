@@ -13,7 +13,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @3
-  (byte) main::i#0 ← (number) 0
+  (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#4 )
@@ -38,8 +38,7 @@ main::@return: scope:[main]  from main::@1
 
 (void()*()) getfn((byte) getfn::b)
 getfn: scope:[getfn]  from main::@2
-  (void()*~) getfn::$0 ← & (void()) fn1()
-  (void()*) getfn::return#1 ← (void()*~) getfn::$0
+  (void()*) getfn::return#1 ← &(void()) fn1()
   to:getfn::@return
 getfn::@return: scope:[getfn]  from getfn
   (void()*) getfn::return#4 ← phi( getfn/(void()*) getfn::return#1 )
@@ -49,8 +48,7 @@ getfn::@return: scope:[getfn]  from getfn
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  (byte*) fn1::BORDERCOL ← ((byte*)) (number) $d020
-  *((byte*) fn1::BORDERCOL) ← ++ *((byte*) fn1::BORDERCOL)
+  *((const byte*) fn1::BORDERCOL) ← ++ *((const byte*) fn1::BORDERCOL)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
@@ -69,9 +67,8 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(byte*) fn1::BORDERCOL
+(const byte*) fn1::BORDERCOL = (byte*)(number) $d020
 (void()*()) getfn((byte) getfn::b)
-(void()*~) getfn::$0
 (label) getfn::@return
 (byte) getfn::b
 (byte) getfn::b#0
@@ -94,26 +91,15 @@ SYMBOL TABLE SSA
 (byte) main::i#3
 (byte) main::i#4
 
-Adding number conversion cast (unumber) 0 in (byte) main::i#0 ← (number) 0
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::i#0 ← (unumber)(number) 0
-Inlining cast (byte*) fn1::BORDERCOL ← (byte*)(number) $d020
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 53280
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (void()*) getfn::return#0 = (void()*) getfn::return#3 
 Alias (byte) main::i#1 = (byte) main::i#4 
-Alias (void()*) getfn::return#1 = (void()*~) getfn::$0 (void()*) getfn::return#4 (void()*) getfn::return#2 
+Alias (void()*) getfn::return#1 = (void()*) getfn::return#4 (void()*) getfn::return#2 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [12] (void()*) getfn::return#1 ← & (void()) fn1()
-Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
 Constant (const void()*) getfn::return#1 = &fn1
-Constant (const byte*) fn1::BORDERCOL = (byte*) 53280
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void()*) getfn::return#0 = getfn::return#1
 Successful SSA optimization Pass2ConstantIdentification
@@ -217,7 +203,7 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -298,10 +284,10 @@ getfn: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [getfn] 
 Uplift Scope [fn1] 
 Uplift Scope [] 
@@ -424,7 +410,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) fn1()
 (label) fn1::@return
-(const byte*) fn1::BORDERCOL BORDERCOL = (byte*) 53280
+(const byte*) fn1::BORDERCOL = (byte*) 53280
 (void()*()) getfn((byte) getfn::b)
 (label) getfn::@return
 (byte) getfn::b

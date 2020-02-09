@@ -1,30 +1,30 @@
 import "tetris-sprites"
 
-byte[256] SIN = kickasm {{
+char[256] SIN = kickasm {{
     .var AMPL = 200-21
     .for(var i=0; i<256; i++) {
   	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
     }
 }};
 
-byte* SIN_SPRITE = $2800;
+char* SIN_SPRITE = 0x2800;
 kickasm(pc SIN_SPRITE) {{
     .fill $40, $ff
 }}
 
-byte sin_idx = 0;
+char sin_idx = 0;
 
 void main() {
 	vicSelectGfxBank(PLAYFIELD_SCREEN_1);
 	*D018 = toD018(PLAYFIELD_SCREEN_1, PLAYFIELD_CHARSET);
 	sprites_init();
 
-	*SPRITES_ENABLE = $ff;
+	*SPRITES_ENABLE = 0xff;
 
-    byte xpos = 24;
-    byte ypos = 50;
-    for(byte s:4..7) {
-    	byte s2 = s*2;
+    char xpos = 24;
+    char ypos = 50;
+    for(char s:4..7) {
+    	char s2 = s*2;
 		SPRITES_XPOS[s2] = xpos;
 		SPRITES_YPOS[s2] = ypos;
 		SPRITES_COLS[s] = s-3;
@@ -40,9 +40,9 @@ void main() {
 
 void loop() {
     while(true) {
-        do {} while (*RASTER!=$ff);
-        byte idx = sin_idx;
-        for(byte s:4..7) {
+        do {} while (*RASTER!=0xff);
+        char idx = sin_idx;
+        for(char s:4..7) {
     		SPRITES_YPOS[s*2] = SIN[idx];
     		idx += 10;
         }

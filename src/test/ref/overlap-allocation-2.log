@@ -5,7 +5,6 @@ Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@3
 
 (void()) main()
@@ -62,7 +61,7 @@ line::@return: scope:[line]  from line::@2
 (void()) plot((byte) plot::x)
 plot: scope:[plot]  from line line::@1
   (byte) plot::x#2 ← phi( line/(byte) plot::x#0 line::@1/(byte) plot::x#1 )
-  *((byte*) SCREEN + (byte) plot::x#2) ← (byte) '*'
+  *((const byte*) SCREEN + (byte) plot::x#2) ← (byte) '*'
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   return 
@@ -79,7 +78,7 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(byte*) SCREEN
+(const byte*) SCREEN = (byte*)(number) $400
 (void()) line((byte) line::l)
 (number~) line::$1
 (label) line::@1
@@ -119,8 +118,6 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) $14 in (number~) line::$1 ← (byte) line::l#3 + (number) $14
 Adding number conversion cast (unumber) line::$1 in (number~) line::$1 ← (byte) line::l#3 + (unumber)(number) $14
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $14
 Successful SSA optimization PassNCastSimplification
@@ -132,17 +129,16 @@ Alias (byte) main::j#2 = (byte) main::j#3
 Alias (byte) line::l#2 = (byte) line::l#3 
 Alias (byte) plot::x#1 = (byte~) line::$1 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [8] if((byte) main::i#1!=rangelast(0,8)) goto main::@1
-Simple Condition (bool~) main::$3 [16] if((byte) main::j#1!=rangelast($a,$12)) goto main::@3
+Simple Condition (bool~) main::$1 [7] if((byte) main::i#1!=rangelast(0,8)) goto main::@1
+Simple Condition (bool~) main::$3 [15] if((byte) main::j#1!=rangelast($a,$12)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
 Constant (const byte) main::j#0 = $a
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,8)) goto main::@1 to (number) 9
-Resolved ranged next value [14] main::j#1 ← ++ main::j#2 to ++
-Resolved ranged comparison value [16] if(main::j#1!=rangelast($a,$12)) goto main::@3 to (number) $13
+Resolved ranged next value [5] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [7] if(main::i#1!=rangelast(0,8)) goto main::@1 to (number) 9
+Resolved ranged next value [13] main::j#1 ← ++ main::j#2 to ++
+Resolved ranged comparison value [15] if(main::j#1!=rangelast($a,$12)) goto main::@3 to (number) $13
 Adding number conversion cast (unumber) 9 in if((byte) main::i#1!=(number) 9) goto main::@1
 Adding number conversion cast (unumber) $13 in if((byte) main::j#1!=(number) $13) goto main::@3
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -283,10 +279,10 @@ Complete equivalence classes
 [ main::j#2 main::j#1 ]
 [ line::l#2 line::l#0 line::l#1 ]
 [ plot::x#2 plot::x#0 plot::x#1 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_BYTE:3 [ main::j#2 main::j#1 ]
-Allocated zp ZP_BYTE:4 [ line::l#2 line::l#0 line::l#1 ]
-Allocated zp ZP_BYTE:5 [ plot::x#2 plot::x#0 plot::x#1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::j#2 main::j#1 ]
+Allocated zp[1]:4 [ line::l#2 line::l#0 line::l#1 ]
+Allocated zp[1]:5 [ plot::x#2 plot::x#0 plot::x#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -383,7 +379,7 @@ main: {
     rts
 }
   // line
-// line(byte zeropage(4) l)
+// line(byte zp(4) l)
 line: {
     .label l = 4
     // [17] (byte) plot::x#0 ← (byte) line::l#2 -- vbuz1=vbuz2 
@@ -413,7 +409,7 @@ line: {
     rts
 }
   // plot
-// plot(byte zeropage(5) x)
+// plot(byte zp(5) x)
 plot: {
     .label x = 5
     // [23] *((const byte*) SCREEN + (byte) plot::x#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
@@ -430,29 +426,29 @@ plot: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [23] *((const byte*) SCREEN + (byte) plot::x#2) ← (byte) '*' [ ] ( main:2::line:7::plot:18 [ main::i#2 line::l#2 ] main:2::line:12::plot:18 [ main::j#2 line::l#2 ] main:2::line:7::plot:20 [ main::i#2 ] main:2::line:12::plot:20 [ main::j#2 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:4 [ line::l#2 line::l#0 line::l#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:3 [ main::j#2 main::j#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ line::l#2 line::l#0 line::l#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::j#2 main::j#1 ]
 Statement [19] (byte) plot::x#1 ← (byte) line::l#2 + (byte) $14 [ plot::x#1 ] ( main:2::line:7 [ main::i#2 plot::x#1 ] main:2::line:12 [ main::j#2 plot::x#1 ] ) always clobbers reg byte a 
 Statement [23] *((const byte*) SCREEN + (byte) plot::x#2) ← (byte) '*' [ ] ( main:2::line:7::plot:18 [ main::i#2 line::l#2 ] main:2::line:12::plot:18 [ main::j#2 line::l#2 ] main:2::line:7::plot:20 [ main::i#2 ] main:2::line:12::plot:20 [ main::j#2 ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ main::j#2 main::j#1 ] : zp ZP_BYTE:3 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ line::l#2 line::l#0 line::l#1 ] : zp ZP_BYTE:4 , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ plot::x#2 plot::x#0 plot::x#1 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::j#2 main::j#1 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ line::l#2 line::l#0 line::l#1 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ plot::x#2 plot::x#0 plot::x#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 27.5: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 27.5: zp ZP_BYTE:3 [ main::j#2 main::j#1 ] 
-Uplift Scope [line] 52.67: zp ZP_BYTE:4 [ line::l#2 line::l#0 line::l#1 ] 
-Uplift Scope [plot] 14: zp ZP_BYTE:5 [ plot::x#2 plot::x#0 plot::x#1 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 27.5: zp[1]:3 [ main::j#2 main::j#1 ] 
+Uplift Scope [line] 52.67: zp[1]:4 [ line::l#2 line::l#0 line::l#1 ] 
+Uplift Scope [plot] 14: zp[1]:5 [ plot::x#2 plot::x#0 plot::x#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 713 combination zp ZP_BYTE:2 [ main::i#2 main::i#1 ] zp ZP_BYTE:3 [ main::j#2 main::j#1 ] 
+Uplifting [main] best 713 combination zp[1]:2 [ main::i#2 main::i#1 ] zp[1]:3 [ main::j#2 main::j#1 ] 
 Uplifting [line] best 649 combination reg byte x [ line::l#2 line::l#0 line::l#1 ] 
 Uplifting [plot] best 640 combination reg byte x [ plot::x#2 plot::x#0 plot::x#1 ] 
 Uplifting [] best 640 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
 Uplifting [main] best 560 combination reg byte y [ main::i#2 main::i#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:3 [ main::j#2 main::j#1 ]
+Attempting to uplift remaining variables inzp[1]:3 [ main::j#2 main::j#1 ]
 Uplifting [main] best 480 combination reg byte y [ main::j#2 main::j#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -631,7 +627,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN = (byte*) 1024
 (void()) line((byte) line::l)
 (label) line::@1
 (label) line::@return

@@ -25,7 +25,7 @@ main: {
     bne __b1
     rts
 }
-// getValue(word zeropage(2) index)
+// getValue(word zp(2) index)
 getValue: {
     .label index = 2
     .label return = 4

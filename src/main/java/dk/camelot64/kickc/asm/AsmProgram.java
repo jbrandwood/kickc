@@ -106,10 +106,6 @@ public class AsmProgram {
       return instruction;
    }
 
-   public void addLabelDecl(String name, int address) {
-      addLabelDecl(name, AsmFormat.getAsmNumber(address));
-   }
-
    public void addLabelDecl(String name, String value) {
       addLine(new AsmLabelDecl(name, value));
    }

@@ -72,7 +72,7 @@ public class ProgramExpressionIterator {
                List<Variable> paramDefs = procedure.getParameters();
                if(paramValues != null && paramDefs.size() == paramValues.size()) {
                   for(int i = 0; i < paramDefs.size(); i++) {
-                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallParameter(call, i)), stmt, stmtIt, block);
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter((VariableRef) paramDefs.get(i).getRef(), new ProgramValue.CallParameter(call, i)), stmt, stmtIt, block);
                   }
                }
             } else if(stmt instanceof StatementCallPrepare) {
@@ -82,7 +82,7 @@ public class ProgramExpressionIterator {
                List<Variable> paramDefs = procedure.getParameters();
                if(paramValues != null && paramDefs.size() == paramValues.size()) {
                   for(int i = 0; i < paramDefs.size(); i++) {
-                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter(paramDefs.get(i).getRef(), new ProgramValue.CallPrepareParameter(call, i)), stmt, stmtIt, block);
+                     handler.execute(new ProgramExpressionBinary.ProgramExpressionBinaryCallParameter((VariableRef) paramDefs.get(i).getRef(), new ProgramValue.CallPrepareParameter(call, i)), stmt, stmtIt, block);
                   }
                }
             }

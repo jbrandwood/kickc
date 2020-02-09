@@ -2,15 +2,15 @@
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) CIA2_INTERRUPT CIA2_INTERRUPT = (byte*) 56589
-(const word*) CIA2_TIMER_A CIA2_TIMER_A = (word*) 56580
-(const byte*) CIA2_TIMER_A_CONTROL CIA2_TIMER_A_CONTROL = (byte*) 56590
-(const byte) CIA_INTERRUPT_CLEAR CIA_INTERRUPT_CLEAR = (byte) $7f
-(const void()**) KERNEL_NMI KERNEL_NMI = (void()**) 792
-(const byte[SAMPLE_SIZE]) SAMPLE SAMPLE = kickasm {{ .import binary "moments_sample.bin"  }}
-(const word) SAMPLE_SIZE SAMPLE_SIZE = (word) $6100
-(const byte*) SID_VOLUME SID_VOLUME = (byte*) 54296
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) CIA2_INTERRUPT = (byte*) 56589
+(const word*) CIA2_TIMER_A = (word*) 56580
+(const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
+(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const void()**) KERNEL_NMI = (void()**) 792
+(const byte*) SAMPLE[(const word) SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
+(const word) SAMPLE_SIZE = (word) $6100
+(const byte*) SID_VOLUME = (byte*) 54296
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmi()
@@ -22,13 +22,9 @@ interrupt(HARDWARE_ALL)(void()) nmi2()
 (label) nmi2::@1
 (label) nmi2::@2
 (label) nmi2::@return
-(byte*) sample
-(byte*) sample#0 sample zp ZP_WORD:2 1.3333333333333333
-(byte*) sample#1 sample zp ZP_WORD:2 2.0
-(byte*) sample#2 sample zp ZP_WORD:2 4.0
-(byte*) sample#3 sample zp ZP_WORD:2 40.0
+(byte*) sample loadstore zp[2]:2 2.8
 
-zp ZP_WORD:2 [ sample#0 sample#3 sample#1 sample#2 ]
+zp[2]:2 [ sample ]
 reg byte a [ nmi2::$1 ]
 reg byte a [ nmi2::$2 ]
 reg byte a [ nmi::$1 ]

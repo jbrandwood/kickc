@@ -1,0 +1,421 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+
+(void()) main()
+main: scope:[main]  from @2
+  (byte) print::ch ← (byte) 'c'
+  call print 
+  to:main::@1
+main::@1: scope:[main]  from main
+  (byte) print::ch ← (byte) 'm'
+  call print 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  (byte) print::ch ← (byte) 'l'
+  call print 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (byte) idx ← (byte) 0
+  to:@2
+
+(void()) print((byte) print::ch)
+print: scope:[print]  from main main::@1 main::@2
+  asm { ldxidx ldach staSCREEN,x incidx  }
+  to:print::@return
+print::@return: scope:[print]  from print
+  return 
+  to:@return
+@2: scope:[]  from @1
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*)(number) $400
+(byte) idx loadstore !zp[-1]:3
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(void()) print((byte) print::ch)
+(label) print::@return
+(byte) print::ch loadstore !zp[-1]:2
+
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@3
+CALL GRAPH
+Calls in [] to main:3 
+Calls in [main] to print:7 print:9 print:11 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@3
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] (byte) idx ← (byte) 0
+  to:@2
+@2: scope:[]  from @1
+  [2] phi()
+  [3] call main 
+  to:@end
+@end: scope:[]  from @2
+  [4] phi()
+
+(void()) main()
+main: scope:[main]  from @2
+  [5] (byte) print::ch ← (byte) 'c'
+  [6] call print 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [7] (byte) print::ch ← (byte) 'm'
+  [8] call print 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [9] (byte) print::ch ← (byte) 'l'
+  [10] call print 
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [11] return 
+  to:@return
+
+(void()) print((byte) print::ch)
+print: scope:[print]  from main main::@1 main::@2
+  asm { ldxidx ldach staSCREEN,x incidx  }
+  to:print::@return
+print::@return: scope:[print]  from print
+  [13] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) idx loadstore !zp[-1]:3 0.2222222222222222
+(void()) main()
+(void()) print((byte) print::ch)
+(byte) print::ch loadstore !zp[-1]:2 2.0
+
+Initial phi equivalence classes
+Added variable idx to live range equivalence class [ idx ]
+Added variable print::ch to live range equivalence class [ print::ch ]
+Complete equivalence classes
+[ idx ]
+[ print::ch ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test declaring a variable as at a hard-coded address
+// zero-page hard-coded address parameter
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 3
+  // @begin
+__bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z idx
+  // [2] phi from @1 to @2 [phi:@1->@2]
+__b2_from___b1:
+  jmp __b2
+  // @2
+__b2:
+  // [3] call main 
+  jsr main
+  // [4] phi from @2 to @end [phi:@2->@end]
+__bend_from___b2:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] (byte) print::ch ← (byte) 'c' -- vbuz1=vbuc1 
+    lda #'c'
+    sta.z print.ch
+    // [6] call print 
+    jsr print
+    jmp __b1
+    // main::@1
+  __b1:
+    // [7] (byte) print::ch ← (byte) 'm' -- vbuz1=vbuc1 
+    lda #'m'
+    sta.z print.ch
+    // [8] call print 
+    jsr print
+    jmp __b2
+    // main::@2
+  __b2:
+    // [9] (byte) print::ch ← (byte) 'l' -- vbuz1=vbuc1 
+    lda #'l'
+    sta.z print.ch
+    // [10] call print 
+    jsr print
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [11] return 
+    rts
+}
+  // print
+// print(byte zp(2) ch)
+print: {
+    .label ch = 2
+    // asm { ldxidx ldach staSCREEN,x incidx  }
+    ldx idx
+    lda ch
+    sta SCREEN,x
+    inc idx
+    jmp __breturn
+    // print::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] ) always clobbers reg byte a 
+Statement [5] (byte) print::ch ← (byte) 'c' [ idx print::ch ] ( main:3 [ idx print::ch ] ) always clobbers reg byte a 
+Statement [7] (byte) print::ch ← (byte) 'm' [ idx print::ch ] ( main:3 [ idx print::ch ] ) always clobbers reg byte a 
+Statement [9] (byte) print::ch ← (byte) 'l' [ idx print::ch ] ( main:3 [ idx print::ch ] ) always clobbers reg byte a 
+Statement asm { ldxidx ldach staSCREEN,x incidx  } always clobbers reg byte a reg byte x 
+Potential registers zp[1]:3 [ idx ] : zp[1]:3 , 
+Potential registers zp[1]:2 [ print::ch ] : zp[1]:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [print] 2: zp[1]:2 [ print::ch ] 
+Uplift Scope [] 0.22: zp[1]:3 [ idx ] 
+Uplift Scope [main] 
+
+Uplifting [print] best 123 combination zp[1]:2 [ print::ch ] 
+Uplifting [] best 123 combination zp[1]:3 [ idx ] 
+Uplifting [main] best 123 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ print::ch ]
+Uplifting [print] best 123 combination zp[1]:2 [ print::ch ] 
+Attempting to uplift remaining variables inzp[1]:3 [ idx ]
+Uplifting [] best 123 combination zp[1]:3 [ idx ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test declaring a variable as at a hard-coded address
+// zero-page hard-coded address parameter
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 3
+  // @begin
+__bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z idx
+  // [2] phi from @1 to @2 [phi:@1->@2]
+__b2_from___b1:
+  jmp __b2
+  // @2
+__b2:
+  // [3] call main 
+  jsr main
+  // [4] phi from @2 to @end [phi:@2->@end]
+__bend_from___b2:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] (byte) print::ch ← (byte) 'c' -- vbuz1=vbuc1 
+    lda #'c'
+    sta.z print.ch
+    // [6] call print 
+    jsr print
+    jmp __b1
+    // main::@1
+  __b1:
+    // [7] (byte) print::ch ← (byte) 'm' -- vbuz1=vbuc1 
+    lda #'m'
+    sta.z print.ch
+    // [8] call print 
+    jsr print
+    jmp __b2
+    // main::@2
+  __b2:
+    // [9] (byte) print::ch ← (byte) 'l' -- vbuz1=vbuc1 
+    lda #'l'
+    sta.z print.ch
+    // [10] call print 
+    jsr print
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [11] return 
+    rts
+}
+  // print
+// print(byte zp(2) ch)
+print: {
+    .label ch = 2
+    // asm { ldxidx ldach staSCREEN,x incidx  }
+    ldx idx
+    lda ch
+    sta SCREEN,x
+    inc idx
+    jmp __breturn
+    // print::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b2_from___b1:
+Removing instruction __bend_from___b2:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b2:
+Removing instruction __bend:
+Removing instruction __b1:
+Removing instruction __b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*) 1024
+(byte) idx loadstore !zp[-1]:3 zp[1]:3 0.2222222222222222
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(void()) print((byte) print::ch)
+(label) print::@return
+(byte) print::ch loadstore !zp[-1]:2 zp[1]:2 2.0
+
+zp[1]:3 [ idx ]
+zp[1]:2 [ print::ch ]
+
+
+FINAL ASSEMBLER
+Score: 81
+
+  // File Comments
+// Test declaring a variable as at a hard-coded address
+// zero-page hard-coded address parameter
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__b1)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label idx = 3
+  // @begin
+  // @1
+__b1:
+  // idx
+  // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z idx
+  // [2] phi from @1 to @2 [phi:@1->@2]
+  // @2
+  // [3] call main 
+  jsr main
+  rts
+  // [4] phi from @2 to @end [phi:@2->@end]
+  // @end
+  // main
+main: {
+    // print('c')
+    // [5] (byte) print::ch ← (byte) 'c' -- vbuz1=vbuc1 
+    lda #'c'
+    sta.z print.ch
+    // [6] call print 
+    jsr print
+    // main::@1
+    // print('m')
+    // [7] (byte) print::ch ← (byte) 'm' -- vbuz1=vbuc1 
+    lda #'m'
+    sta.z print.ch
+    // [8] call print 
+    jsr print
+    // main::@2
+    // print('l')
+    // [9] (byte) print::ch ← (byte) 'l' -- vbuz1=vbuc1 
+    lda #'l'
+    sta.z print.ch
+    // [10] call print 
+    jsr print
+    // main::@return
+    // }
+    // [11] return 
+    rts
+}
+  // print
+// print(byte zp(2) ch)
+print: {
+    .label ch = 2
+    // asm
+    // asm { ldxidx ldach staSCREEN,x incidx  }
+    ldx idx
+    lda ch
+    sta SCREEN,x
+    inc idx
+    // print::@return
+    // }
+    // [13] return 
+    rts
+}
+  // File Data
+

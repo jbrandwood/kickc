@@ -105,7 +105,7 @@ print_ln: {
     rts
 }
 // Compare two words using an operator
-// compare(signed word zeropage($a) w1, signed word zeropage($11) w2, byte register(X) op)
+// compare(signed word zp($a) w1, signed word zp($11) w2, byte register(X) op)
 compare: {
     .label w1 = $a
     .label w2 = $11
@@ -295,7 +295,7 @@ print_char: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zeropage($a) w)
+// print_sword(signed word zp($a) w)
 print_sword: {
     .label w = $a
     lda.z w+1
@@ -318,7 +318,7 @@ print_sword: {
     jmp __b2
 }
 // Print a word as HEX
-// print_word(word zeropage($a) w)
+// print_word(word zp($a) w)
 print_word: {
     .label w = $a
     lda.z w+1
@@ -330,7 +330,7 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zeropage($c) b)
+// print_byte(byte zp($c) b)
 print_byte: {
     .label b = $c
     lda.z b
@@ -349,7 +349,7 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zeropage(5) str)
+// print_str(byte* zp(5) str)
 print_str: {
     .label str = 5
   __b1:

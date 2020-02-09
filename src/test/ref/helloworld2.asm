@@ -17,7 +17,7 @@ main: {
     hello: .text "hello world!"
     .byte 0
 }
-// print2(byte* zeropage(2) at)
+// print2(byte* zp(2) at)
 print2: {
     .label at = 2
     ldy #0

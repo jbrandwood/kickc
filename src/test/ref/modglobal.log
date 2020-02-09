@@ -3,10 +3,9 @@ Culled Empty Block (label) inccnt::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) cnt#0 ← (number) 0
-  (byte) cnt2#0 ← (number) 0
-  (byte) cnt3#0 ← (number) 0
-  (byte[$100]) SCREEN ← ((byte[$100])) (number) $400
+  (byte) cnt#0 ← (byte) 0
+  (byte) cnt2#0 ← (byte) 0
+  (byte) cnt3#0 ← (byte) 0
   to:@2
 
 (void()) main()
@@ -26,7 +25,7 @@ main::@1: scope:[main]  from main
   (byte) cnt#1 ← (byte) cnt#8
   (byte) cnt2#1 ← (byte) cnt2#7
   (byte) cnt3#1 ← (byte) cnt3#7
-  *((byte[$100]) SCREEN + (number) 0) ← (byte~) main::$0
+  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
   (byte) cnt#2 ← ++ (byte) cnt#1
   call inccnt 
   (byte) inccnt::return#1 ← (byte) inccnt::return#3
@@ -40,9 +39,9 @@ main::@2: scope:[main]  from main::@1
   (byte) cnt#3 ← (byte) cnt#9
   (byte) cnt2#2 ← (byte) cnt2#8
   (byte) cnt3#2 ← (byte) cnt3#8
-  *((byte[$100]) SCREEN + (number) 1) ← (byte~) main::$1
-  *((byte[$100]) SCREEN + (number) 2) ← (byte) cnt2#2
-  *((byte[$100]) SCREEN + (number) 3) ← (byte) cnt3#2
+  *((const byte*) SCREEN + (number) 1) ← (byte~) main::$1
+  *((const byte*) SCREEN + (number) 2) ← (byte) cnt2#2
+  *((const byte*) SCREEN + (number) 3) ← (byte) cnt3#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte) cnt3#9 ← phi( main::@2/(byte) cnt3#2 )
@@ -96,7 +95,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte[$100]) SCREEN
+(const byte*) SCREEN[(number) $100]  = (byte*)(number) $400
 (byte) cnt
 (byte) cnt#0
 (byte) cnt#1
@@ -163,31 +162,17 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in (byte) cnt#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) cnt2#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) cnt3#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in *((byte[$100]) SCREEN + (number) 0) ← (byte~) main::$0
-Adding number conversion cast (unumber) 1 in *((byte[$100]) SCREEN + (number) 1) ← (byte~) main::$1
-Adding number conversion cast (unumber) 2 in *((byte[$100]) SCREEN + (number) 2) ← (byte) cnt2#2
-Adding number conversion cast (unumber) 3 in *((byte[$100]) SCREEN + (number) 3) ← (byte) cnt3#2
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← (byte) cnt2#2
+Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← (byte) cnt3#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) cnt#0 ← (unumber)(number) 0
-Inlining cast (byte) cnt2#0 ← (unumber)(number) 0
-Inlining cast (byte) cnt3#0 ← (unumber)(number) 0
-Inlining cast (byte[$100]) SCREEN ← (byte[$100])(number) $400
-Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
@@ -228,9 +213,8 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) cnt#0 = 0
 Constant (const byte) cnt2#0 = 0
 Constant (const byte) cnt3#0 = 0
-Constant (const byte[$100]) SCREEN = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [12] *((const byte[$100]) SCREEN + (byte) 0) ← (byte~) main::$0
+Simplifying expression containing zero SCREEN in [11] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) cnt#0
 Inlining constant with var siblings (const byte) cnt2#0
@@ -283,16 +267,16 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main
   [7] (byte~) main::$0 ← (byte) inccnt::return#0
-  [8] *((const byte[$100]) SCREEN) ← (byte~) main::$0
+  [8] *((const byte*) SCREEN) ← (byte~) main::$0
   [9] (byte) cnt#2 ← ++ (byte) cnt#12
   [10] call inccnt 
   [11] (byte) inccnt::return#1 ← (byte) inccnt::return#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
   [12] (byte~) main::$1 ← (byte) inccnt::return#1
-  [13] *((const byte[$100]) SCREEN+(byte) 1) ← (byte~) main::$1
-  [14] *((const byte[$100]) SCREEN+(byte) 2) ← (byte) cnt2#11
-  [15] *((const byte[$100]) SCREEN+(byte) 3) ← (byte) cnt3#11
+  [13] *((const byte*) SCREEN+(byte) 1) ← (byte~) main::$1
+  [14] *((const byte*) SCREEN+(byte) 2) ← (byte) cnt2#11
+  [15] *((const byte*) SCREEN+(byte) 3) ← (byte) cnt3#11
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [16] return 
@@ -337,12 +321,12 @@ Initial phi equivalence classes
 [ cnt#11 cnt#2 ]
 [ cnt2#10 cnt2#11 ]
 [ cnt3#10 cnt3#11 ]
-Added variable inccnt::return#0 to zero page equivalence class [ inccnt::return#0 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable inccnt::return#1 to zero page equivalence class [ inccnt::return#1 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
-Added variable cnt#12 to zero page equivalence class [ cnt#12 ]
-Added variable inccnt::return#2 to zero page equivalence class [ inccnt::return#2 ]
+Added variable inccnt::return#0 to live range equivalence class [ inccnt::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable inccnt::return#1 to live range equivalence class [ inccnt::return#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable cnt#12 to live range equivalence class [ cnt#12 ]
+Added variable inccnt::return#2 to live range equivalence class [ inccnt::return#2 ]
 Complete equivalence classes
 [ cnt#11 cnt#2 ]
 [ cnt2#10 cnt2#11 ]
@@ -353,15 +337,15 @@ Complete equivalence classes
 [ main::$1 ]
 [ cnt#12 ]
 [ inccnt::return#2 ]
-Allocated zp ZP_BYTE:2 [ cnt#11 cnt#2 ]
-Allocated zp ZP_BYTE:3 [ cnt2#10 cnt2#11 ]
-Allocated zp ZP_BYTE:4 [ cnt3#10 cnt3#11 ]
-Allocated zp ZP_BYTE:5 [ inccnt::return#0 ]
-Allocated zp ZP_BYTE:6 [ main::$0 ]
-Allocated zp ZP_BYTE:7 [ inccnt::return#1 ]
-Allocated zp ZP_BYTE:8 [ main::$1 ]
-Allocated zp ZP_BYTE:9 [ cnt#12 ]
-Allocated zp ZP_BYTE:10 [ inccnt::return#2 ]
+Allocated zp[1]:2 [ cnt#11 cnt#2 ]
+Allocated zp[1]:3 [ cnt2#10 cnt2#11 ]
+Allocated zp[1]:4 [ cnt3#10 cnt3#11 ]
+Allocated zp[1]:5 [ inccnt::return#0 ]
+Allocated zp[1]:6 [ main::$0 ]
+Allocated zp[1]:7 [ inccnt::return#1 ]
+Allocated zp[1]:8 [ main::$1 ]
+Allocated zp[1]:9 [ cnt#12 ]
+Allocated zp[1]:10 [ inccnt::return#2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -375,7 +359,7 @@ Target platform is c64basic / MOS6502X
   .label cnt = 2
   .label cnt2 = 3
   .label cnt3 = 4
-  .label cnt_12 = 9
+  .label cnt_1 = 9
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -418,11 +402,11 @@ main: {
     // [7] (byte~) main::$0 ← (byte) inccnt::return#0 -- vbuz1=vbuz2 
     lda.z inccnt.return
     sta.z __0
-    // [8] *((const byte[$100]) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
     sta SCREEN
     // [9] (byte) cnt#2 ← ++ (byte) cnt#12 -- vbuz1=_inc_vbuz2 
-    ldy.z cnt_12
+    ldy.z cnt_1
     iny
     sty.z cnt
     // [10] call inccnt 
@@ -441,13 +425,13 @@ main: {
     // [12] (byte~) main::$1 ← (byte) inccnt::return#1 -- vbuz1=vbuz2 
     lda.z inccnt.return_1
     sta.z __1
-    // [13] *((const byte[$100]) SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta SCREEN+1
-    // [14] *((const byte[$100]) SCREEN+(byte) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) SCREEN+(byte) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuz1 
     lda.z cnt2
     sta SCREEN+2
-    // [15] *((const byte[$100]) SCREEN+(byte) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuz1 
+    // [15] *((const byte*) SCREEN+(byte) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuz1 
     lda.z cnt3
     sta SCREEN+3
     jmp __breturn
@@ -464,13 +448,13 @@ inccnt: {
     // [18] (byte) cnt#12 ← ++ (byte) cnt#11 -- vbuz1=_inc_vbuz2 
     ldy.z cnt
     iny
-    sty.z cnt_12
+    sty.z cnt_1
     // [19] (byte) cnt2#11 ← ++ (byte) cnt2#10 -- vbuz1=_inc_vbuz1 
     inc.z cnt2
     // [20] (byte) cnt3#11 ← ++ (byte) cnt3#10 -- vbuz1=_inc_vbuz1 
     inc.z cnt3
     // [21] (byte) inccnt::return#2 ← (byte) cnt#12 -- vbuz1=vbuz2 
-    lda.z cnt_12
+    lda.z cnt_1
     sta.z return_2
     jmp __breturn
     // inccnt::@return
@@ -481,28 +465,28 @@ inccnt: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp ZP_BYTE:2 [ cnt#11 cnt#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:3 [ cnt2#10 cnt2#11 ] : zp ZP_BYTE:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:4 [ cnt3#10 cnt3#11 ] : zp ZP_BYTE:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:5 [ inccnt::return#0 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ main::$0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ inccnt::return#1 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:8 [ main::$1 ] : zp ZP_BYTE:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:9 [ cnt#12 ] : zp ZP_BYTE:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:10 [ inccnt::return#2 ] : zp ZP_BYTE:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ cnt#11 cnt#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ cnt2#10 cnt2#11 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ cnt3#10 cnt3#11 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ inccnt::return#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ inccnt::return#1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ main::$1 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ cnt#12 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ inccnt::return#2 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 8: zp ZP_BYTE:2 [ cnt#11 cnt#2 ] 2.46: zp ZP_BYTE:3 [ cnt2#10 cnt2#11 ] 1.79: zp ZP_BYTE:4 [ cnt3#10 cnt3#11 ] 0.67: zp ZP_BYTE:9 [ cnt#12 ] 
-Uplift Scope [inccnt] 4: zp ZP_BYTE:5 [ inccnt::return#0 ] 4: zp ZP_BYTE:7 [ inccnt::return#1 ] 1.5: zp ZP_BYTE:10 [ inccnt::return#2 ] 
-Uplift Scope [main] 4: zp ZP_BYTE:6 [ main::$0 ] 4: zp ZP_BYTE:8 [ main::$1 ] 
+Uplift Scope [] 8: zp[1]:2 [ cnt#11 cnt#2 ] 2.46: zp[1]:3 [ cnt2#10 cnt2#11 ] 1.79: zp[1]:4 [ cnt3#10 cnt3#11 ] 0.67: zp[1]:9 [ cnt#12 ] 
+Uplift Scope [inccnt] 4: zp[1]:5 [ inccnt::return#0 ] 4: zp[1]:7 [ inccnt::return#1 ] 1.5: zp[1]:10 [ inccnt::return#2 ] 
+Uplift Scope [main] 4: zp[1]:6 [ main::$0 ] 4: zp[1]:8 [ main::$1 ] 
 
-Uplifting [] best 124 combination reg byte a [ cnt#11 cnt#2 ] reg byte y [ cnt2#10 cnt2#11 ] reg byte x [ cnt3#10 cnt3#11 ] zp ZP_BYTE:9 [ cnt#12 ] 
+Uplifting [] best 124 combination reg byte a [ cnt#11 cnt#2 ] reg byte y [ cnt2#10 cnt2#11 ] reg byte x [ cnt3#10 cnt3#11 ] zp[1]:9 [ cnt#12 ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [inccnt] best 103 combination reg byte a [ inccnt::return#0 ] reg byte a [ inccnt::return#1 ] reg byte a [ inccnt::return#2 ] 
 Uplifting [main] best 91 combination reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:9 [ cnt#12 ]
-Uplifting [] best 91 combination zp ZP_BYTE:9 [ cnt#12 ] 
-Allocated (was zp ZP_BYTE:9) zp ZP_BYTE:2 [ cnt#12 ]
+Attempting to uplift remaining variables inzp[1]:9 [ cnt#12 ]
+Uplifting [] best 91 combination zp[1]:9 [ cnt#12 ] 
+Allocated (was zp[1]:9) zp[1]:2 [ cnt#12 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -546,7 +530,7 @@ main: {
     // main::@1
   __b1:
     // [7] (byte~) main::$0 ← (byte) inccnt::return#0
-    // [8] *((const byte[$100]) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [9] (byte) cnt#2 ← ++ (byte) cnt#12 -- vbuaa=_inc_vbuz1 
     lda.z cnt
@@ -564,11 +548,11 @@ main: {
     // main::@2
   __b2:
     // [12] (byte~) main::$1 ← (byte) inccnt::return#1
-    // [13] *((const byte[$100]) SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-    // [14] *((const byte[$100]) SCREEN+(byte) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuyy 
+    // [14] *((const byte*) SCREEN+(byte) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuyy 
     sty SCREEN+2
-    // [15] *((const byte[$100]) SCREEN+(byte) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuxx 
+    // [15] *((const byte*) SCREEN+(byte) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+3
     jmp __breturn
     // main::@return
@@ -631,10 +615,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte[$100]) SCREEN SCREEN = (byte*) 1024
+(const byte*) SCREEN[(number) $100]  = (byte*) 1024
 (byte) cnt
 (byte) cnt#11 reg byte a 4.0
-(byte) cnt#12 cnt zp ZP_BYTE:2 0.6666666666666666
+(byte) cnt#12 cnt zp[1]:2 0.6666666666666666
 (byte) cnt#2 reg byte a 4.0
 (byte) cnt2
 (byte) cnt2#10 reg byte y 2.0
@@ -662,7 +646,7 @@ reg byte a [ inccnt::return#0 ]
 reg byte a [ main::$0 ]
 reg byte a [ inccnt::return#1 ]
 reg byte a [ main::$1 ]
-zp ZP_BYTE:2 [ cnt#12 ]
+zp[1]:2 [ cnt#12 ]
 reg byte a [ inccnt::return#2 ]
 
 
@@ -701,7 +685,7 @@ main: {
     // main::@1
     // [7] (byte~) main::$0 ← (byte) inccnt::return#0
     // SCREEN[0]=inccnt()
-    // [8] *((const byte[$100]) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // cnt++;
     // [9] (byte) cnt#2 ← ++ (byte) cnt#12 -- vbuaa=_inc_vbuz1 
@@ -720,13 +704,13 @@ main: {
     // main::@2
     // [12] (byte~) main::$1 ← (byte) inccnt::return#1
     // SCREEN[1]=inccnt()
-    // [13] *((const byte[$100]) SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [13] *((const byte*) SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // SCREEN[2]=cnt2
-    // [14] *((const byte[$100]) SCREEN+(byte) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuyy 
+    // [14] *((const byte*) SCREEN+(byte) 2) ← (byte) cnt2#11 -- _deref_pbuc1=vbuyy 
     sty SCREEN+2
     // SCREEN[3]=cnt3
-    // [15] *((const byte[$100]) SCREEN+(byte) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuxx 
+    // [15] *((const byte*) SCREEN+(byte) 3) ← (byte) cnt3#11 -- _deref_pbuc1=vbuxx 
     stx SCREEN+3
     // main::@return
     // }

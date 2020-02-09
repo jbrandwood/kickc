@@ -1,10 +1,9 @@
-Fixing pointer array-indexing *((signed word*) SCREEN + (number) 0)
-Fixing pointer array-indexing *((signed word*) SCREEN + (number) 1)
+Fixing pointer array-indexing *((const signed word*) SCREEN + (number) 0)
+Fixing pointer array-indexing *((const signed word*) SCREEN + (number) 1)
 Culled Empty Block (label) next::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (signed word*) SCREEN ← ((signed word*)) (number) $400
   to:@1
 
 (void()) main()
@@ -12,10 +11,10 @@ main: scope:[main]  from @2
   (signed word) current#7 ← phi( @2/(signed word) current#8 )
   (signed word~) main::$0 ← call next 
   (number~) main::$2 ← (number) 0 * (const byte) SIZEOF_SIGNED_WORD
-  *((signed word*) SCREEN + (number~) main::$2) ← (signed word~) main::$0
+  *((const signed word*) SCREEN + (number~) main::$2) ← (signed word~) main::$0
   (signed word~) main::$1 ← call next 
   (number~) main::$3 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
-  *((signed word*) SCREEN + (number~) main::$3) ← (signed word~) main::$1
+  *((const signed word*) SCREEN + (number~) main::$3) ← (signed word~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   (signed word) current#4 ← phi( main/(signed word) current#7 )
@@ -23,7 +22,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 @1: scope:[]  from @begin
-  (signed word) current#1 ← (number) $30
+  (signed word) current#1 ← (signed word) $30
   to:@2
 
 __stackcall (signed word()) next()
@@ -52,7 +51,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(signed word*) SCREEN
+(const signed word*) SCREEN = (signed word*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (signed word) current
 (signed word) current#0
@@ -80,19 +79,13 @@ Adding number conversion cast (unumber) 0 in (number~) main::$2 ← (number) 0 *
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unumber)(number) 0 * (const byte) SIZEOF_SIGNED_WORD
 Adding number conversion cast (unumber) 1 in (number~) main::$3 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
 Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (unumber)(number) 1 * (const byte) SIZEOF_SIGNED_WORD
-Adding number conversion cast (snumber) $30 in (signed word) current#1 ← (number) $30
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (signed word*) SCREEN ← (signed word*)(number) $400
-Inlining cast (signed word) current#1 ← (snumber)(number) $30
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (signed word*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant integer cast $30
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
-Finalized signed number type (signed byte) $30
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$2 ← (byte) 0 * (const byte) SIZEOF_SIGNED_WORD
 Inferred type updated to byte in (unumber~) main::$3 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
@@ -104,17 +97,16 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (signed word) current#0 (signed word) current#1
 Identical Phi Values (signed word) current#3 (signed word) current#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] (byte~) main::$2 ← (byte) 0 * (const byte) SIZEOF_SIGNED_WORD
-Constant right-side identified [6] (byte~) main::$3 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
+Constant right-side identified [2] (byte~) main::$2 ← (byte) 0 * (const byte) SIZEOF_SIGNED_WORD
+Constant right-side identified [5] (byte~) main::$3 ← (byte) 1 * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const signed word*) SCREEN = (signed word*) 1024
 Constant (const byte) main::$2 = 0*SIZEOF_SIGNED_WORD
 Constant (const byte) main::$3 = 1*SIZEOF_SIGNED_WORD
 Constant (const signed word) current#1 = $30
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_SIGNED_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN in [4] *((const signed word*) SCREEN + (const byte) main::$2) ← (signed word~) main::$0
+Simplifying expression containing zero SCREEN in [3] *((const signed word*) SCREEN + (const byte) main::$2) ← (signed word~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (signed word) current#2 and assignment [7] (signed word) current#2 ← ++ (signed word) current#5
 Eliminating unused constant (const byte) main::$2
@@ -195,18 +187,18 @@ __stackcall (signed word()) next()
 
 Initial phi equivalence classes
 [ current#5 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
-Added variable main::$1 to zero page equivalence class [ main::$1 ]
-Added variable next::return#0 to zero page equivalence class [ next::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable next::return#0 to live range equivalence class [ next::return#0 ]
 Complete equivalence classes
 [ current#5 ]
 [ main::$0 ]
 [ main::$1 ]
 [ next::return#0 ]
-Allocated zp ZP_WORD:2 [ current#5 ]
-Allocated zp ZP_WORD:4 [ main::$0 ]
-Allocated zp ZP_WORD:6 [ main::$1 ]
-Allocated zp ZP_WORD:8 [ next::return#0 ]
+Allocated zp[2]:2 [ current#5 ]
+Allocated zp[2]:4 [ main::$0 ]
+Allocated zp[2]:6 [ main::$1 ]
+Allocated zp[2]:8 [ next::return#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -218,8 +210,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label current = 2
   // @begin
@@ -314,23 +306,23 @@ Statement [11] (signed word~) main::$1 ← callfinalize next  [ main::$1 ] ( mai
 Statement [12] *((const signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [15] (signed word) next::return#0 ← (signed word) current#5 [ next::return#0 ] ( main:2::next:6 [ next::return#0 ] main:2::next:10 [ next::return#0 ] ) always clobbers reg byte a 
 Statement [16] return (signed word) next::return#0 [ ] ( main:2::next:6 [ ] main:2::next:10 [ ] ) always clobbers reg byte a reg byte x 
-Potential registers zp ZP_WORD:2 [ current#5 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ main::$0 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ main::$1 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ next::return#0 ] : zp ZP_WORD:8 , 
+Potential registers zp[2]:2 [ current#5 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::$0 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::$1 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ next::return#0 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2: zp ZP_WORD:4 [ main::$0 ] 2: zp ZP_WORD:6 [ main::$1 ] 
-Uplift Scope [next] 2: zp ZP_WORD:8 [ next::return#0 ] 
-Uplift Scope [] 2: zp ZP_WORD:2 [ current#5 ] 
+Uplift Scope [main] 2: zp[2]:4 [ main::$0 ] 2: zp[2]:6 [ main::$1 ] 
+Uplift Scope [next] 2: zp[2]:8 [ next::return#0 ] 
+Uplift Scope [] 2: zp[2]:2 [ current#5 ] 
 
-Uplifting [main] best 140 combination zp ZP_WORD:4 [ main::$0 ] zp ZP_WORD:6 [ main::$1 ] 
-Uplifting [next] best 140 combination zp ZP_WORD:8 [ next::return#0 ] 
-Uplifting [] best 140 combination zp ZP_WORD:2 [ current#5 ] 
-Coalescing zero page register [ zp ZP_WORD:2 [ current#5 ] ] with [ zp ZP_WORD:8 [ next::return#0 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:4 [ main::$0 ] ] with [ zp ZP_WORD:2 [ current#5 next::return#0 ] ]
-Allocated (was zp ZP_WORD:4) zp ZP_WORD:2 [ main::$0 current#5 next::return#0 ]
-Allocated (was zp ZP_WORD:6) zp ZP_WORD:4 [ main::$1 ]
+Uplifting [main] best 140 combination zp[2]:4 [ main::$0 ] zp[2]:6 [ main::$1 ] 
+Uplifting [next] best 140 combination zp[2]:8 [ next::return#0 ] 
+Uplifting [] best 140 combination zp[2]:2 [ current#5 ] 
+Coalescing zero page register [ zp[2]:2 [ current#5 ] ] with [ zp[2]:8 [ next::return#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ main::$0 ] ] with [ zp[2]:2 [ current#5 next::return#0 ] ]
+Allocated (was zp[2]:4) zp[2]:2 [ main::$0 current#5 next::return#0 ]
+Allocated (was zp[2]:6) zp[2]:4 [ main::$1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -341,8 +333,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label current = 2
   // @begin
@@ -452,23 +444,23 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const signed word*) SCREEN SCREEN = (signed word*) 1024
-(const byte) SIZEOF_SIGNED_WORD SIZEOF_SIGNED_WORD = (byte) 2
-(const word) STACK_BASE STACK_BASE = (word) $103
+(const signed word*) SCREEN = (signed word*) 1024
+(const byte) SIZEOF_SIGNED_WORD = (byte) 2
+(const word) STACK_BASE = (word) $103
 (signed word) current
-(signed word) current#5 current zp ZP_WORD:2 2.0
+(signed word) current#5 current zp[2]:2 2.0
 (void()) main()
-(signed word~) main::$0 $0 zp ZP_WORD:2 2.0
-(signed word~) main::$1 $1 zp ZP_WORD:4 2.0
+(signed word~) main::$0 zp[2]:2 2.0
+(signed word~) main::$1 zp[2]:4 2.0
 (label) main::@return
 __stackcall (signed word()) next()
 (label) next::@return
-(const byte) next::OFFSET_STACK_RETURN OFFSET_STACK_RETURN = (byte) 0
+(const byte) next::OFFSET_STACK_RETURN = (byte) 0
 (signed word) next::return
-(signed word) next::return#0 return zp ZP_WORD:2 2.0
+(signed word) next::return#0 return zp[2]:2 2.0
 
-zp ZP_WORD:2 [ main::$0 current#5 next::return#0 ]
-zp ZP_WORD:4 [ main::$1 ]
+zp[2]:2 [ main::$0 current#5 next::return#0 ]
+zp[2]:4 [ main::$1 ]
 
 
 FINAL ASSEMBLER
@@ -482,8 +474,8 @@ Score: 110
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
+  .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label current = 2
   // @begin

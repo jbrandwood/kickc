@@ -6,18 +6,17 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← ((byte*)) (number) $400
   (byte) main::a#0 ← (byte) 0
   (byte) main::a#1 ← (byte) 'c'
-  *((byte*) main::screen + (number) 0) ← (byte) main::a#1
-  *((byte*) main::screen + (number) $28) ← (byte) main::a#1
-  *((byte*) main::screen + (number) 1) ← (byte) 'm'
-  (byte) main::a#2 ← *((byte*) main::screen + (number) 1)
-  *((byte*) main::screen + (number) $29) ← (byte) main::a#2
+  *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
+  *((const byte*) main::screen + (number) $28) ← (byte) main::a#1
+  *((const byte*) main::screen + (number) 1) ← (byte) 'm'
+  (byte) main::a#2 ← *((const byte*) main::screen + (number) 1)
+  *((const byte*) main::screen + (number) $29) ← (byte) main::a#2
   (byte) main::a#3 ← (byte) 'l'
   (number~) main::$0 ← (number) 1 + (byte) main::a#3
-  *((byte*) main::screen + (number) 2) ← (number~) main::$0
-  *((byte*) main::screen + (number) $2a) ← (byte) main::a#3
+  *((const byte*) main::screen + (number) 2) ← (number~) main::$0
+  *((const byte*) main::screen + (number) $2a) ← (byte) main::a#3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -42,19 +41,17 @@ SYMBOL TABLE SSA
 (byte) main::a#1
 (byte) main::a#2
 (byte) main::a#3
-(byte*) main::screen
+(const byte*) main::screen = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 0 in *((byte*) main::screen + (number) 0) ← (byte) main::a#1
-Adding number conversion cast (unumber) $28 in *((byte*) main::screen + (number) $28) ← (byte) main::a#1
-Adding number conversion cast (unumber) 1 in *((byte*) main::screen + (number) 1) ← (byte) 'm'
-Adding number conversion cast (unumber) $29 in *((byte*) main::screen + (number) $29) ← (byte) main::a#2
+Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
+Adding number conversion cast (unumber) $28 in *((const byte*) main::screen + (number) $28) ← (byte) main::a#1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte) 'm'
+Adding number conversion cast (unumber) $29 in *((const byte*) main::screen + (number) $29) ← (byte) main::a#2
 Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (number) 1 + (byte) main::a#3
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 1 + (byte) main::a#3
-Adding number conversion cast (unumber) 2 in *((byte*) main::screen + (number) 2) ← (unumber~) main::$0
-Adding number conversion cast (unumber) $2a in *((byte*) main::screen + (number) $2a) ← (byte) main::a#3
+Adding number conversion cast (unumber) 2 in *((const byte*) main::screen + (number) 2) ← (unumber~) main::$0
+Adding number conversion cast (unumber) $2a in *((const byte*) main::screen + (number) $2a) ← (byte) main::a#3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::screen ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
@@ -73,12 +70,11 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) $2a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) 1 + (byte) main::a#3
-Constant (const byte*) main::screen = (byte*) 1024
 Constant (const byte) main::a#0 = 0
 Constant (const byte) main::a#1 = 'c'
 Constant (const byte) main::a#3 = 'l'
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [3] *((const byte*) main::screen + (byte) 0) ← (const byte) main::a#1
+Simplifying expression containing zero main::screen in [2] *((const byte*) main::screen + (byte) 0) ← (const byte) main::a#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::a#0
 Successful SSA optimization PassNEliminateUnusedVars
@@ -145,10 +141,10 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::a#2 4.0
 
 Initial phi equivalence classes
-Added variable main::a#2 to zero page equivalence class [ main::a#2 ]
+Added variable main::a#2 to live range equivalence class [ main::a#2 ]
 Complete equivalence classes
 [ main::a#2 ]
-Allocated zp ZP_BYTE:2 [ main::a#2 ]
+Allocated zp[1]:2 [ main::a#2 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -213,10 +209,10 @@ Statement [5] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' [ ] ( main
 Statement [6] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [9] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp ZP_BYTE:2 [ main::a#2 ] : zp ZP_BYTE:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::a#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 4: zp ZP_BYTE:2 [ main::a#2 ] 
+Uplift Scope [main] 4: zp[1]:2 [ main::a#2 ] 
 Uplift Scope [] 
 
 Uplifting [main] best 59 combination reg byte a [ main::a#2 ] 
@@ -305,7 +301,7 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte) main::a
 (byte) main::a#2 reg byte a 4.0
-(const byte*) main::screen screen = (byte*) 1024
+(const byte*) main::screen = (byte*) 1024
 
 reg byte a [ main::a#2 ]
 

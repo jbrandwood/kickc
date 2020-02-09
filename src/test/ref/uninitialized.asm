@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const b = 0
   .label SCREEN = $400
+  .const b = 0
 main: {
     lda #b
     sta SCREEN

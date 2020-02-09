@@ -5,13 +5,11 @@ Culled Empty Block (label) next_char::@3
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) TEXT ← (const string) $0
   to:@1
 
 (void()) main()
 main: scope:[main]  from @2
   (byte*) nxt#15 ← phi( @2/(byte*) nxt#14 )
-  (byte*) main::SCREEN ← ((byte*)) (number) $400
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -26,7 +24,7 @@ main::@3: scope:[main]  from main::@1
   (byte) next_char::return#3 ← phi( main::@1/(byte) next_char::return#0 )
   (byte~) main::$0 ← (byte) next_char::return#3
   (byte*) nxt#0 ← (byte*) nxt#7
-  *((byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0
+  *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$ff)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$ff)
   if((bool~) main::$1) goto main::@1
@@ -37,7 +35,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) nxt#2 ← (byte*) TEXT
+  (byte*) nxt#2 ← (const byte*) TEXT
   to:@2
 
 (byte()) next_char()
@@ -55,7 +53,7 @@ next_char::@1: scope:[next_char]  from next_char next_char::@2
   (byte) next_char::return#1 ← (byte) next_char::c#2
   to:next_char::@return
 next_char::@2: scope:[next_char]  from next_char
-  (byte*) nxt#4 ← (byte*) TEXT
+  (byte*) nxt#4 ← (const byte*) TEXT
   (byte) next_char::c#1 ← *((byte*) nxt#4)
   to:next_char::@1
 next_char::@return: scope:[next_char]  from next_char::@1
@@ -76,20 +74,19 @@ next_char::@return: scope:[next_char]  from next_char::@1
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(const string) $0 = (string) "cml "
 (label) @1
 (label) @2
 (label) @3
 (label) @begin
 (label) @end
-(byte*) TEXT
+(const byte*) TEXT = (byte*) "cml "
 (void()) main()
 (byte~) main::$0
 (bool~) main::$1
 (label) main::@1
 (label) main::@3
 (label) main::@return
-(byte*) main::SCREEN
+(const byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -131,39 +128,35 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (bool~) next_char::$0 ← (byte) next_char::c#0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) main::SCREEN ← (byte*)(number) $400
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [21] (bool~) next_char::$1 ← (byte) next_char::c#0 != (byte) 0 from [20] (bool~) next_char::$0 ← (byte) next_char::c#0 == (byte) 0
+Inversing boolean not [19] (bool~) next_char::$1 ← (byte) next_char::c#0 != (byte) 0 from [18] (bool~) next_char::$0 ← (byte) next_char::c#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) next_char::return#0 = (byte) next_char::return#3 
 Alias (byte) main::i#2 = (byte) main::i#3 
 Alias (byte*) nxt#0 = (byte*) nxt#7 (byte*) nxt#8 (byte*) nxt#1 
-Alias (byte*) TEXT = (byte*) nxt#2 (byte*) nxt#14 
 Alias (byte) next_char::return#1 = (byte) next_char::c#2 (byte) next_char::return#4 (byte) next_char::return#2 
 Alias (byte*) nxt#11 = (byte*) nxt#3 (byte*) nxt#5 
+Alias (byte*) nxt#14 = (byte*) nxt#2 
 Alias (byte*) nxt#12 = (byte*) nxt#6 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) nxt#15 (byte*) TEXT
+Identical Phi Values (byte*) nxt#15 (byte*) nxt#14
 Identical Phi Values (byte*) nxt#0 (byte*) nxt#11
 Identical Phi Values (byte*) nxt#9 (byte*) nxt#13
 Identical Phi Values (byte*) nxt#12 (byte*) nxt#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [13] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
-Simple Condition (bool~) next_char::$1 [22] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
+Simple Condition (bool~) main::$1 [11] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
+Simple Condition (bool~) next_char::$1 [20] if((byte) next_char::c#0!=(byte) 0) goto next_char::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) TEXT = $0
-Constant (const byte*) main::SCREEN = (byte*) 1024
 Constant (const byte) main::i#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte*) nxt#14 = TEXT
 Constant (const byte*) nxt#4 = TEXT
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
+Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
 Adding number conversion cast (unumber) 0 in if((byte) main::i#1!=(number) 0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
@@ -171,9 +164,10 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
+Inlining constant with var siblings (const byte*) nxt#14
 Inlining constant with var siblings (const byte*) nxt#4
-Constant inlined $0 = (const byte*) TEXT
 Constant inlined main::i#0 = (byte) 0
+Constant inlined nxt#14 = (const byte*) TEXT
 Constant inlined nxt#4 = (const byte*) TEXT
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
@@ -277,19 +271,19 @@ Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ nxt#10 nxt#13 nxt#11 ]
 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
-Added variable next_char::return#0 to zero page equivalence class [ next_char::return#0 ]
-Added variable main::$0 to zero page equivalence class [ main::$0 ]
+Added variable next_char::return#0 to live range equivalence class [ next_char::return#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ nxt#10 nxt#13 nxt#11 ]
 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
 [ next_char::return#0 ]
 [ main::$0 ]
-Allocated zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Allocated zp ZP_WORD:3 [ nxt#10 nxt#13 nxt#11 ]
-Allocated zp ZP_BYTE:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
-Allocated zp ZP_BYTE:6 [ next_char::return#0 ]
-Allocated zp ZP_BYTE:7 [ main::$0 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:3 [ nxt#10 nxt#13 nxt#11 ]
+Allocated zp[1]:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ]
+Allocated zp[1]:6 [ next_char::return#0 ]
+Allocated zp[1]:7 [ main::$0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -420,24 +414,24 @@ next_char: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [13] (byte) next_char::c#0 ← *((byte*) nxt#13) [ nxt#13 next_char::c#0 ] ( main:2::next_char:6 [ main::i#2 nxt#13 next_char::c#0 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [13] (byte) next_char::c#0 ← *((byte*) nxt#13) [ nxt#13 next_char::c#0 ] ( main:2::next_char:6 [ main::i#2 nxt#13 next_char::c#0 ] ) always clobbers reg byte a reg byte y 
-Potential registers zp ZP_BYTE:2 [ main::i#2 main::i#1 ] : zp ZP_BYTE:2 , reg byte x , 
-Potential registers zp ZP_WORD:3 [ nxt#10 nxt#13 nxt#11 ] : zp ZP_WORD:3 , 
-Potential registers zp ZP_BYTE:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ] : zp ZP_BYTE:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:6 [ next_char::return#0 ] : zp ZP_BYTE:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:7 [ main::$0 ] : zp ZP_BYTE:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[2]:3 [ nxt#10 nxt#13 nxt#11 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ next_char::return#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ main::$0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 23.1: zp ZP_BYTE:2 [ main::i#2 main::i#1 ] 22: zp ZP_BYTE:7 [ main::$0 ] 
-Uplift Scope [next_char] 22: zp ZP_BYTE:6 [ next_char::return#0 ] 10.75: zp ZP_BYTE:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ] 
-Uplift Scope [] 10.62: zp ZP_WORD:3 [ nxt#10 nxt#13 nxt#11 ] 
+Uplift Scope [main] 23.1: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:7 [ main::$0 ] 
+Uplift Scope [next_char] 22: zp[1]:6 [ next_char::return#0 ] 10.75: zp[1]:5 [ next_char::return#1 next_char::c#0 next_char::c#1 ] 
+Uplift Scope [] 10.62: zp[2]:3 [ nxt#10 nxt#13 nxt#11 ] 
 
 Uplifting [main] best 587 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] 
 Uplifting [next_char] best 510 combination reg byte a [ next_char::return#0 ] reg byte y [ next_char::return#1 next_char::c#0 next_char::c#1 ] 
-Uplifting [] best 510 combination zp ZP_WORD:3 [ nxt#10 nxt#13 nxt#11 ] 
-Allocated (was zp ZP_WORD:3) zp ZP_WORD:2 [ nxt#10 nxt#13 nxt#11 ]
+Uplifting [] best 510 combination zp[2]:3 [ nxt#10 nxt#13 nxt#11 ] 
+Allocated (was zp[2]:3) zp[2]:2 [ nxt#10 nxt#13 nxt#11 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -592,13 +586,13 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) TEXT TEXT = (string) "cml "
+(const byte*) TEXT = (byte*) "cml "
 (void()) main()
 (byte~) main::$0 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const byte*) main::SCREEN SCREEN = (byte*) 1024
+(const byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 6.6000000000000005
@@ -613,12 +607,12 @@ FINAL SYMBOL TABLE
 (byte) next_char::return#0 reg byte a 22.0
 (byte) next_char::return#1 reg byte y 3.75
 (byte*) nxt
-(byte*) nxt#10 nxt zp ZP_WORD:2 4.0
-(byte*) nxt#11 nxt zp ZP_WORD:2 1.625
-(byte*) nxt#13 nxt zp ZP_WORD:2 5.0
+(byte*) nxt#10 nxt zp[2]:2 4.0
+(byte*) nxt#11 nxt zp[2]:2 1.625
+(byte*) nxt#13 nxt zp[2]:2 5.0
 
 reg byte x [ main::i#2 main::i#1 ]
-zp ZP_WORD:2 [ nxt#10 nxt#13 nxt#11 ]
+zp[2]:2 [ nxt#10 nxt#13 nxt#11 ]
 reg byte y [ next_char::return#1 next_char::c#0 next_char::c#1 ]
 reg byte a [ next_char::return#0 ]
 reg byte a [ main::$0 ]

@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+  .const OFFSET_STRUCT_POINT_Y = 1
   .label p0 = $a000
   .label p1 = $b000
   .label p2 = $e000

@@ -32,7 +32,7 @@ main: {
     jsr print
     rts
 }
-// print(byte* zeropage(4) msg)
+// print(byte* zp(4) msg)
 print: {
     .label msg = 4
   __b1:
@@ -53,46 +53,44 @@ print: {
     bne __b1
     rts
 }
-// strip(byte* zeropage(8) p, byte register(X) c)
+// strip(byte* zp(8) p, byte register(X) c)
 strip: {
     .label dest = 6
     .label p = 8
-    .label p_4 = 4
-    .label p_7 = 4
-    .label p_8 = 4
+    .label p_1 = 4
     lda.z dest
-    sta.z p_7
+    sta.z p_1
     lda.z dest+1
-    sta.z p_7+1
+    sta.z p_1+1
   __b1:
     txa
     ldy #0
-    cmp (p_4),y
+    cmp (p_1),y
     beq __b2
-    lda (p_4),y
+    lda (p_1),y
     sta (dest),y
     inc.z dest
     bne !+
     inc.z dest+1
   !:
   __b2:
-    lda.z p_4
+    lda.z p_1
     clc
     adc #1
     sta.z p
-    lda.z p_4+1
+    lda.z p_1+1
     adc #0
     sta.z p+1
     ldy #0
-    lda (p_4),y
+    lda (p_1),y
     cmp #0
     bne __b4
     rts
   __b4:
     lda.z p
-    sta.z p_8
+    sta.z p_1
     lda.z p+1
-    sta.z p_8+1
+    sta.z p_1+1
     jmp __b1
 }
   msg1: .text "hello world!"

@@ -4,25 +4,21 @@ Identified constant variable (byte*) ptr
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) b ← (byte) 0
-  (word) w ← (word) 0
-  (byte*) ptr ← (byte*) 0
-  (byte*) SCREEN ← ((byte*)) (number) $400
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  *((byte*) SCREEN + (number) 0) ← (byte) b
-  (byte~) main::$0 ← < (word) w
-  *((byte*) SCREEN + (number) 2) ← (byte~) main::$0
-  (byte~) main::$1 ← > (word) w
-  *((byte*) SCREEN + (number) 3) ← (byte~) main::$1
-  (byte~) main::$2 ← < (byte*) ptr
+  *((const byte*) SCREEN + (number) 0) ← (const byte) b
+  (byte~) main::$0 ← < (const word) w
+  *((const byte*) SCREEN + (number) 2) ← (byte~) main::$0
+  (byte~) main::$1 ← > (const word) w
+  *((const byte*) SCREEN + (number) 3) ← (byte~) main::$1
+  (byte~) main::$2 ← < (const byte*) ptr
   (byte~) main::$3 ← ((byte)) (byte~) main::$2
-  *((byte*) SCREEN + (number) 5) ← (byte~) main::$3
-  (byte~) main::$4 ← > (byte*) ptr
+  *((const byte*) SCREEN + (number) 5) ← (byte~) main::$3
+  (byte~) main::$4 ← > (const byte*) ptr
   (byte~) main::$5 ← ((byte)) (byte~) main::$4
-  *((byte*) SCREEN + (number) 5) ← (byte~) main::$5
+  *((const byte*) SCREEN + (number) 5) ← (byte~) main::$5
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -39,8 +35,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) SCREEN
-(byte) b
+(const byte*) SCREEN = (byte*)(number) $400
+(const byte) b = (byte) 0
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -49,16 +45,15 @@ SYMBOL TABLE SSA
 (byte~) main::$4
 (byte~) main::$5
 (label) main::@return
-(byte*) ptr
-(word) w
+(const byte*) ptr = (byte*) 0
+(const word) w = (word) 0
 
-Adding number conversion cast (unumber) 0 in *((byte*) SCREEN + (number) 0) ← (byte) b
-Adding number conversion cast (unumber) 2 in *((byte*) SCREEN + (number) 2) ← (byte~) main::$0
-Adding number conversion cast (unumber) 3 in *((byte*) SCREEN + (number) 3) ← (byte~) main::$1
-Adding number conversion cast (unumber) 5 in *((byte*) SCREEN + (number) 5) ← (byte~) main::$3
-Adding number conversion cast (unumber) 5 in *((byte*) SCREEN + (number) 5) ← (byte~) main::$5
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (const byte) b
+Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← (byte~) main::$0
+Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← (byte~) main::$1
+Adding number conversion cast (unumber) 5 in *((const byte*) SCREEN + (number) 5) ← (byte~) main::$3
+Adding number conversion cast (unumber) 5 in *((const byte*) SCREEN + (number) 5) ← (byte~) main::$5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) SCREEN ← (byte*)(number) $400
 Inlining cast (byte~) main::$3 ← (byte)(byte~) main::$2
 Inlining cast (byte~) main::$5 ← (byte)(byte~) main::$4
 Successful SSA optimization Pass2InlineCast
@@ -80,17 +75,10 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias (byte~) main::$3 = (byte~) main::$2 
 Alias (byte~) main::$5 = (byte~) main::$4 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte) b = 0
-Constant (const word) w = 0
-Constant (const byte*) ptr = (byte*) 0
-Constant (const byte*) SCREEN = (byte*) 1024
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [4] *((const byte*) SCREEN + (byte) 0) ← (const byte) b
-Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [1] (byte~) main::$0 ← < (const word) w
 Constant right-side identified [3] (byte~) main::$1 ← > (const word) w
 Constant right-side identified [5] (byte~) main::$3 ← < (const byte*) ptr
-Constant right-side identified [7] (byte~) main::$5 ← > (const byte*) ptr
+Constant right-side identified [8] (byte~) main::$5 ← > (const byte*) ptr
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$0 = <w
 Constant (const byte) main::$1 = >w
@@ -102,6 +90,8 @@ Simplifying constant evaluating to zero >(const word) w in
 Simplifying constant evaluating to zero <(const byte*) ptr in 
 Simplifying constant evaluating to zero >(const byte*) ptr in 
 Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← (const byte) b
+Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const word) w
 Eliminating unused constant (const byte*) ptr
 Successful SSA optimization PassNEliminateUnusedVars
@@ -168,8 +158,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const b = 0
   .label SCREEN = $400
+  .const b = 0
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -231,8 +221,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const b = 0
   .label SCREEN = $400
+  .const b = 0
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -299,8 +289,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN SCREEN = (byte*) 1024
-(const byte) b b = (byte) 0
+(const byte*) SCREEN = (byte*) 1024
+(const byte) b = (byte) 0
 (void()) main()
 (label) main::@return
 
@@ -316,8 +306,8 @@ Score: 30
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .const b = 0
   .label SCREEN = $400
+  .const b = 0
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1

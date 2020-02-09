@@ -3,13 +3,15 @@ Identified constant variable (byte*) SCREEN2
 Identified constant variable (byte*) BUFFER
 Identified constant variable (byte*) CHARSET
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$7 ← call toD018 (byte*) SCREEN1 (byte*) CHARSET 
-Inlined call (byte~) main::$9 ← call toD018 (byte*) SCREEN2 (byte*) CHARSET 
+Inlined call (byte~) main::$7 ← call toD018 (const byte*) SCREEN1 (const byte*) CHARSET 
+Inlined call (byte~) main::$9 ← call toD018 (const byte*) SCREEN2 (const byte*) CHARSET 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
+Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) sid_rnd::@1
+Culled Empty Block (label) @6
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) main::toD0182_@1
 Culled Empty Block (label) main::@4
@@ -46,24 +48,12 @@ Culled Empty Block (label) fillscreen::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) BORDERCOL ← ((byte*)) (number) $d020
-  (byte*) BGCOL ← ((byte*)) (number) $d021
-  (byte*) D018 ← ((byte*)) (number) $d018
-  (byte*) COLS ← ((byte*)) (number) $d800
-  (byte) BLACK ← (number) 0
-  (byte) YELLOW ← (number) 7
-  to:@4
-@4: scope:[]  from @begin
-  (word*) SID_VOICE3_FREQ ← ((word*)) (number) $d40e
-  (byte*) SID_VOICE3_CONTROL ← ((byte*)) (number) $d412
-  (byte) SID_CONTROL_NOISE ← (number) $80
-  (byte*) SID_VOICE3_OSC ← ((byte*)) (number) $d41b
-  to:@6
+  to:@10
 
 (void()) sid_rnd_init()
 sid_rnd_init: scope:[sid_rnd_init]  from main::@12
-  *((word*) SID_VOICE3_FREQ) ← (number) $ffff
-  *((byte*) SID_VOICE3_CONTROL) ← (byte) SID_CONTROL_NOISE
+  *((const word*) SID_VOICE3_FREQ) ← (number) $ffff
+  *((const byte*) SID_VOICE3_CONTROL) ← (const byte) SID_CONTROL_NOISE
   to:sid_rnd_init::@return
 sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
   return 
@@ -71,49 +61,43 @@ sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
 
 (byte()) sid_rnd()
 sid_rnd: scope:[sid_rnd]  from fire::@10
-  (byte) sid_rnd::return#0 ← *((byte*) SID_VOICE3_OSC)
+  (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC)
   to:sid_rnd::@return
 sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
   (byte) sid_rnd::return#3 ← phi( sid_rnd/(byte) sid_rnd::return#0 )
   (byte) sid_rnd::return#1 ← (byte) sid_rnd::return#3
   return 
   to:@return
-@6: scope:[]  from @4
-  (byte*) SCREEN1 ← ((byte*)) (number) $3800
-  (byte*) SCREEN2 ← ((byte*)) (number) $3c00
-  (byte*) BUFFER ← ((byte*)) (number) $4000
-  (byte*) CHARSET ← ((byte*)) (number) $3000
-  to:@10
 
 (void()) main()
 main: scope:[main]  from @10
   asm { sei  }
-  *((byte*) BORDERCOL) ← (byte) BLACK
-  *((byte*) BGCOL) ← (byte) BLACK
-  (byte*) fillscreen::screen#0 ← (byte*) BUFFER
+  *((const byte*) BORDERCOL) ← (const byte) BLACK
+  *((const byte*) BGCOL) ← (const byte) BLACK
+  (byte*) fillscreen::screen#0 ← (const byte*) BUFFER
   (byte) fillscreen::fill#0 ← (number) 0
   call fillscreen 
   to:main::@9
 main::@9: scope:[main]  from main
-  (byte*) fillscreen::screen#1 ← (byte*) SCREEN1
+  (byte*) fillscreen::screen#1 ← (const byte*) SCREEN1
   (byte) fillscreen::fill#1 ← (number) 0
   call fillscreen 
   to:main::@10
 main::@10: scope:[main]  from main::@9
-  (byte*) fillscreen::screen#2 ← (byte*) SCREEN2
+  (byte*) fillscreen::screen#2 ← (const byte*) SCREEN2
   (byte) fillscreen::fill#2 ← (number) 0
   call fillscreen 
   to:main::@11
 main::@11: scope:[main]  from main::@10
-  (byte*) fillscreen::screen#3 ← (byte*) COLS
-  (byte) fillscreen::fill#3 ← (byte) YELLOW
+  (byte*) fillscreen::screen#3 ← (const byte*) COLS
+  (byte) fillscreen::fill#3 ← (const byte) YELLOW
   call fillscreen 
   to:main::@12
 main::@12: scope:[main]  from main::@11
   call sid_rnd_init 
   to:main::@13
 main::@13: scope:[main]  from main::@12
-  (byte*) makecharset::charset#0 ← (byte*) CHARSET
+  (byte*) makecharset::charset#0 ← (const byte*) CHARSET
   call makecharset 
   to:main::@14
 main::@14: scope:[main]  from main::@13
@@ -122,12 +106,12 @@ main::@1: scope:[main]  from main::@14 main::@8
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) fire::screenbase#0 ← (byte*) SCREEN1
+  (byte*) fire::screenbase#0 ← (const byte*) SCREEN1
   call fire 
   to:main::@15
 main::@15: scope:[main]  from main::@2
-  (byte*) main::toD0181_screen#0 ← (byte*) SCREEN1
-  (byte*) main::toD0181_gfx#0 ← (byte*) CHARSET
+  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN1
+  (byte*) main::toD0181_gfx#0 ← (const byte*) CHARSET
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@15
   (byte*) main::toD0181_gfx#1 ← phi( main::@15/(byte*) main::toD0181_gfx#0 )
@@ -150,13 +134,13 @@ main::toD0181_@return: scope:[main]  from main::toD0181
 main::@7: scope:[main]  from main::toD0181_@return
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$7 ← (byte) main::toD0181_return#3
-  *((byte*) D018) ← (byte~) main::$7
-  (byte*) fire::screenbase#1 ← (byte*) SCREEN2
+  *((const byte*) D018) ← (byte~) main::$7
+  (byte*) fire::screenbase#1 ← (const byte*) SCREEN2
   call fire 
   to:main::@16
 main::@16: scope:[main]  from main::@7
-  (byte*) main::toD0182_screen#0 ← (byte*) SCREEN2
-  (byte*) main::toD0182_gfx#0 ← (byte*) CHARSET
+  (byte*) main::toD0182_screen#0 ← (const byte*) SCREEN2
+  (byte*) main::toD0182_gfx#0 ← (const byte*) CHARSET
   to:main::toD0182
 main::toD0182: scope:[main]  from main::@16
   (byte*) main::toD0182_gfx#1 ← phi( main::@16/(byte*) main::toD0182_gfx#0 )
@@ -179,7 +163,7 @@ main::toD0182_@return: scope:[main]  from main::toD0182
 main::@8: scope:[main]  from main::toD0182_@return
   (byte) main::toD0182_return#3 ← phi( main::toD0182_@return/(byte) main::toD0182_return#1 )
   (byte~) main::$9 ← (byte) main::toD0182_return#3
-  *((byte*) D018) ← (byte~) main::$9
+  *((const byte*) D018) ← (byte~) main::$9
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -189,13 +173,13 @@ main::@return: scope:[main]  from main::@1
 fire: scope:[fire]  from main::@2 main::@7
   (byte*) fire::screenbase#2 ← phi( main::@2/(byte*) fire::screenbase#0 main::@7/(byte*) fire::screenbase#1 )
   (byte*) fire::screen#0 ← (byte*) fire::screenbase#2
-  (byte*) fire::buffer#0 ← (byte*) BUFFER
+  (byte*) fire::buffer#0 ← (const byte*) BUFFER
   to:fire::@1
 fire::@1: scope:[fire]  from fire fire::@4
   (byte*) fire::screen#9 ← phi( fire/(byte*) fire::screen#0 fire::@4/(byte*) fire::screen#2 )
   (byte*) fire::screenbase#4 ← phi( fire/(byte*) fire::screenbase#2 fire::@4/(byte*) fire::screenbase#5 )
   (byte*) fire::buffer#4 ← phi( fire/(byte*) fire::buffer#0 fire::@4/(byte*) fire::buffer#2 )
-  (byte*~) fire::$2 ← (byte*) BUFFER + (number) $18*(number) $28
+  (byte*~) fire::$2 ← (const byte*) BUFFER + (number) $18*(number) $28
   (bool~) fire::$3 ← (byte*) fire::buffer#4 != (byte*~) fire::$2
   if((bool~) fire::$3) goto fire::@2
   to:fire::@3
@@ -216,7 +200,7 @@ fire::@3: scope:[fire]  from fire::@1
   (byte*) fire::screenbase#3 ← phi( fire::@1/(byte*) fire::screenbase#4 )
   (byte*~) fire::$0 ← (byte*) fire::screenbase#3 + (number) $18*(number) $28
   (byte*) fire::screen#1 ← (byte*~) fire::$0
-  (byte*~) fire::$1 ← (byte*) BUFFER + (number) $18*(number) $28
+  (byte*~) fire::$1 ← (const byte*) BUFFER + (number) $18*(number) $28
   (byte*) fire::buffer#1 ← (byte*~) fire::$1
   to:fire::@9
 fire::@4: scope:[fire]  from fire::@2 fire::@7
@@ -239,7 +223,7 @@ fire::@7: scope:[fire]  from fire::@2
 fire::@9: scope:[fire]  from fire::@15 fire::@3
   (byte*) fire::screen#10 ← phi( fire::@15/(byte*) fire::screen#3 fire::@3/(byte*) fire::screen#1 )
   (byte*) fire::buffer#7 ← phi( fire::@15/(byte*) fire::buffer#3 fire::@3/(byte*) fire::buffer#1 )
-  (byte*~) fire::$10 ← (byte*) BUFFER + (number) $19*(number) $28
+  (byte*~) fire::$10 ← (const byte*) BUFFER + (number) $19*(number) $28
   (bool~) fire::$11 ← (byte*) fire::buffer#7 != (byte*~) fire::$10
   if((bool~) fire::$11) goto fire::@10
   to:fire::@return
@@ -268,7 +252,6 @@ fire::@return: scope:[fire]  from fire::@9
 (void()) makecharset((byte*) makecharset::charset)
 makecharset: scope:[makecharset]  from main::@13
   (byte*) makecharset::charset#1 ← phi( main::@13/(byte*) makecharset::charset#0 )
-  (byte[8]) makecharset::bittab ← { (number) 1, (number) 2, (number) 4, (number) 8, (number) $10, (number) $20, (number) $40, (number) $80 }
   (byte*) makecharset::font#0 ← (byte*) makecharset::charset#1
   to:makecharset::@1
 makecharset::@1: scope:[makecharset]  from makecharset makecharset::@2
@@ -304,7 +287,7 @@ makecharset::@8: scope:[makecharset]  from makecharset::@7
   to:makecharset::@7
 makecharset::@9: scope:[makecharset]  from makecharset::@7
   (byte*) makecharset::charset#17 ← phi( makecharset::@7/(byte*) makecharset::charset#4 )
-  (byte) makecharset::c#0 ← (number) 0
+  (byte) makecharset::c#0 ← (byte) 0
   to:makecharset::@13
 makecharset::@13: scope:[makecharset]  from makecharset::@18 makecharset::@9
   (byte*) makecharset::charset#15 ← phi( makecharset::@18/(byte*) makecharset::charset#16 makecharset::@9/(byte*) makecharset::charset#17 )
@@ -315,8 +298,8 @@ makecharset::@13: scope:[makecharset]  from makecharset::@18 makecharset::@9
 makecharset::@14: scope:[makecharset]  from makecharset::@13
   (byte*) makecharset::charset#14 ← phi( makecharset::@13/(byte*) makecharset::charset#15 )
   (byte) makecharset::c#8 ← phi( makecharset::@13/(byte) makecharset::c#2 )
-  (byte) makecharset::bc#0 ← (number) 0
-  (byte) makecharset::i#0 ← (number) 0
+  (byte) makecharset::bc#0 ← (byte) 0
+  (byte) makecharset::i#0 ← (byte) 0
   to:makecharset::@16
 makecharset::@16: scope:[makecharset]  from makecharset::@14 makecharset::@21
   (byte*) makecharset::charset#11 ← phi( makecharset::@14/(byte*) makecharset::charset#14 makecharset::@21/(byte*) makecharset::charset#5 )
@@ -331,8 +314,8 @@ makecharset::@17: scope:[makecharset]  from makecharset::@16
   (byte*) makecharset::charset#9 ← phi( makecharset::@16/(byte*) makecharset::charset#11 )
   (byte) makecharset::c#9 ← phi( makecharset::@16/(byte) makecharset::c#6 )
   (byte) makecharset::bc#6 ← phi( makecharset::@16/(byte) makecharset::bc#8 )
-  (byte) makecharset::b#0 ← (number) 0
-  (byte) makecharset::ii#0 ← (number) 0
+  (byte) makecharset::b#0 ← (byte) 0
+  (byte) makecharset::ii#0 ← (byte) 0
   to:makecharset::@19
 makecharset::@18: scope:[makecharset]  from makecharset::@16
   (byte*) makecharset::charset#16 ← phi( makecharset::@16/(byte*) makecharset::charset#11 )
@@ -395,7 +378,7 @@ makecharset::@25: scope:[makecharset]  from makecharset::@20
   (number~) makecharset::$11 ← (byte) makecharset::i#4 & (number) 1
   (number~) makecharset::$12 ← (byte) makecharset::ii#4 + (number~) makecharset::$11
   (number~) makecharset::$13 ← (number~) makecharset::$12 & (number) 7
-  (byte) makecharset::b#1 ← (byte) makecharset::b#3 + *((byte[8]) makecharset::bittab + (number~) makecharset::$13)
+  (byte) makecharset::b#1 ← (byte) makecharset::b#3 + *((const byte*) makecharset::bittab + (number~) makecharset::$13)
   to:makecharset::@22
 makecharset::@return: scope:[makecharset]  from makecharset::@13
   return 
@@ -420,7 +403,7 @@ fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@1
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
   return 
   to:@return
-@10: scope:[]  from @6
+@10: scope:[]  from @begin
   call main 
   to:@11
 @11: scope:[]  from @10
@@ -430,24 +413,22 @@ fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
 SYMBOL TABLE SSA
 (label) @10
 (label) @11
-(label) @4
-(label) @6
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte) BLACK
-(byte*) BORDERCOL
-(byte*) BUFFER
-(byte*) CHARSET
-(byte*) COLS
-(byte*) D018
-(byte*) SCREEN1
-(byte*) SCREEN2
-(byte) SID_CONTROL_NOISE
-(byte*) SID_VOICE3_CONTROL
-(word*) SID_VOICE3_FREQ
-(byte*) SID_VOICE3_OSC
-(byte) YELLOW
+(const byte*) BGCOL = (byte*)(number) $d021
+(const byte) BLACK = (byte) 0
+(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) BUFFER = (byte*)(number) $4000
+(const byte*) CHARSET = (byte*)(number) $3000
+(const byte*) COLS = (byte*)(number) $d800
+(const byte*) D018 = (byte*)(number) $d018
+(const byte*) SCREEN1 = (byte*)(number) $3800
+(const byte*) SCREEN2 = (byte*)(number) $3c00
+(const byte) SID_CONTROL_NOISE = (byte) $80
+(const byte*) SID_VOICE3_CONTROL = (byte*)(number) $d412
+(const word*) SID_VOICE3_FREQ = (word*)(number) $d40e
+(const byte*) SID_VOICE3_OSC = (byte*)(number) $d41b
+(const byte) YELLOW = (byte) 7
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (bool~) fillscreen::$0
 (label) fillscreen::@1
@@ -649,7 +630,7 @@ SYMBOL TABLE SSA
 (byte) makecharset::bc#7
 (byte) makecharset::bc#8
 (byte) makecharset::bc#9
-(byte[8]) makecharset::bittab
+(const byte*) makecharset::bittab[(number) 8]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte) makecharset::c
 (byte) makecharset::c#0
 (byte) makecharset::c#1
@@ -720,10 +701,7 @@ SYMBOL TABLE SSA
 (void()) sid_rnd_init()
 (label) sid_rnd_init::@return
 
-Adding number conversion cast (unumber) 0 in (byte) BLACK ← (number) 0
-Adding number conversion cast (unumber) 7 in (byte) YELLOW ← (number) 7
-Adding number conversion cast (unumber) $80 in (byte) SID_CONTROL_NOISE ← (number) $80
-Adding number conversion cast (unumber) $ffff in *((word*) SID_VOICE3_FREQ) ← (number) $ffff
+Adding number conversion cast (unumber) $ffff in *((const word*) SID_VOICE3_FREQ) ← (number) $ffff
 Adding number conversion cast (unumber) 0 in (byte) fillscreen::fill#0 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) fillscreen::fill#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) fillscreen::fill#2 ← (number) 0
@@ -747,7 +725,7 @@ Adding number conversion cast (unumber) main::toD0182_$6 in (number~) main::toD0
 Adding number conversion cast (unumber) $f in (number~) main::toD0182_$7 ← (unumber~) main::toD0182_$6 & (number) $f
 Adding number conversion cast (unumber) main::toD0182_$7 in (number~) main::toD0182_$7 ← (unumber~) main::toD0182_$6 & (unumber)(number) $f
 Adding number conversion cast (unumber) main::toD0182_$8 in (number~) main::toD0182_$8 ← (unumber~) main::toD0182_$3 | (unumber~) main::toD0182_$7
-Adding number conversion cast (unumber) $18*$28 in (byte*~) fire::$2 ← (byte*) BUFFER + (number) $18*(number) $28
+Adding number conversion cast (unumber) $18*$28 in (byte*~) fire::$2 ← (const byte*) BUFFER + (number) $18*(number) $28
 Adding number conversion cast (unumber) $28-1 in (byte~) fire::$4 ← *((byte*) fire::buffer#5 + (number) $28-(number) 1) + *((byte*) fire::buffer#5 + (number) $28-(number) 1)
 Adding number conversion cast (unumber) $28-1 in (byte~) fire::$4 ← *((byte*) fire::buffer#5 + (unumber)(number) $28-(number) 1) + *((byte*) fire::buffer#5 + (number) $28-(number) 1)
 Adding number conversion cast (unumber) $28 in (byte~) fire::$5 ← (byte~) fire::$4 + *((byte*) fire::buffer#5 + (number) $28)
@@ -756,9 +734,9 @@ Adding number conversion cast (unumber) 4 in (number~) fire::$7 ← (byte~) fire
 Adding number conversion cast (unumber) fire::$7 in (number~) fire::$7 ← (byte~) fire::$6 / (unumber)(number) 4
 Adding number conversion cast (unumber) 2 in (bool~) fire::$8 ← (byte) fire::c#0 > (number) 2
 Adding number conversion cast (unumber) $18*$28 in (byte*~) fire::$0 ← (byte*) fire::screenbase#3 + (number) $18*(number) $28
-Adding number conversion cast (unumber) $18*$28 in (byte*~) fire::$1 ← (byte*) BUFFER + (number) $18*(number) $28
+Adding number conversion cast (unumber) $18*$28 in (byte*~) fire::$1 ← (const byte*) BUFFER + (number) $18*(number) $28
 Adding number conversion cast (unumber) 3 in (byte) fire::c#1 ← (byte) fire::c#3 - (number) 3
-Adding number conversion cast (unumber) $19*$28 in (byte*~) fire::$10 ← (byte*) BUFFER + (number) $19*(number) $28
+Adding number conversion cast (unumber) $19*$28 in (byte*~) fire::$10 ← (const byte*) BUFFER + (number) $19*(number) $28
 Adding number conversion cast (unumber) $10 in (number~) fire::$13 ← (byte~) fire::$12 / (number) $10
 Adding number conversion cast (unumber) fire::$13 in (number~) fire::$13 ← (byte~) fire::$12 / (unumber)(number) $10
 Adding number conversion cast (unumber) $30 in (number~) fire::$14 ← (number) $30 + (unumber~) fire::$13
@@ -768,13 +746,8 @@ Adding number conversion cast (unumber) 0 in *((byte*) makecharset::font#3) ← 
 Adding number conversion cast (unumber) $40*8 in (byte*~) makecharset::$2 ← (byte*) makecharset::charset#3 + (number) $40*(number) 8
 Adding number conversion cast (unumber) $100*8 in (byte*~) makecharset::$3 ← (byte*) makecharset::charset#4 + (number) $100*(number) 8
 Adding number conversion cast (unumber) $ff in *((byte*) makecharset::font1#3) ← (number) $ff
-Adding number conversion cast (unumber) 0 in (byte) makecharset::c#0 ← (number) 0
 Adding number conversion cast (unumber) $40 in (bool~) makecharset::$5 ← (byte) makecharset::c#2 < (number) $40
-Adding number conversion cast (unumber) 0 in (byte) makecharset::bc#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) makecharset::i#0 ← (number) 0
 Adding number conversion cast (unumber) 8 in (bool~) makecharset::$6 ← (byte) makecharset::i#2 < (number) 8
-Adding number conversion cast (unumber) 0 in (byte) makecharset::b#0 ← (number) 0
-Adding number conversion cast (unumber) 0 in (byte) makecharset::ii#0 ← (number) 0
 Adding number conversion cast (unumber) 8 in (bool~) makecharset::$7 ← (byte) makecharset::ii#2 < (number) 8
 Adding number conversion cast (unumber) $3f in (bool~) makecharset::$8 ← (byte) makecharset::bc#1 > (number) $3f
 Adding number conversion cast (unumber) 1*8 in (byte*~) makecharset::$14 ← (byte*) makecharset::charset#5 + (number) 1*(number) 8
@@ -787,23 +760,7 @@ Adding number conversion cast (unumber) makecharset::$12 in (number~) makecharse
 Adding number conversion cast (unumber) 7 in (number~) makecharset::$13 ← (unumber~) makecharset::$12 & (number) 7
 Adding number conversion cast (unumber) makecharset::$13 in (number~) makecharset::$13 ← (unumber~) makecharset::$12 & (unumber)(number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
-Added casts to value list in (byte[8]) makecharset::bittab ← (byte[8]){ (byte)(number) 1, (byte)(number) 2, (byte)(number) 4, (byte)(number) 8, (byte)(number) $10, (byte)(number) $20, (byte)(number) $40, (byte)(number) $80 }
-Successful SSA optimization PassNAddInitializerValueListTypeCasts
-Inlining cast (byte*) BORDERCOL ← (byte*)(number) $d020
-Inlining cast (byte*) BGCOL ← (byte*)(number) $d021
-Inlining cast (byte*) D018 ← (byte*)(number) $d018
-Inlining cast (byte*) COLS ← (byte*)(number) $d800
-Inlining cast (byte) BLACK ← (unumber)(number) 0
-Inlining cast (byte) YELLOW ← (unumber)(number) 7
-Inlining cast (word*) SID_VOICE3_FREQ ← (word*)(number) $d40e
-Inlining cast (byte*) SID_VOICE3_CONTROL ← (byte*)(number) $d412
-Inlining cast (byte) SID_CONTROL_NOISE ← (unumber)(number) $80
-Inlining cast (byte*) SID_VOICE3_OSC ← (byte*)(number) $d41b
-Inlining cast *((word*) SID_VOICE3_FREQ) ← (unumber)(number) $ffff
-Inlining cast (byte*) SCREEN1 ← (byte*)(number) $3800
-Inlining cast (byte*) SCREEN2 ← (byte*)(number) $3c00
-Inlining cast (byte*) BUFFER ← (byte*)(number) $4000
-Inlining cast (byte*) CHARSET ← (byte*)(number) $3000
+Inlining cast *((const word*) SID_VOICE3_FREQ) ← (unumber)(number) $ffff
 Inlining cast (byte) fillscreen::fill#0 ← (unumber)(number) 0
 Inlining cast (byte) fillscreen::fill#1 ← (unumber)(number) 0
 Inlining cast (byte) fillscreen::fill#2 ← (unumber)(number) 0
@@ -813,28 +770,20 @@ Inlining cast (word~) main::toD0182_$0 ← (word)(byte*) main::toD0182_screen#1
 Inlining cast (word~) main::toD0182_$4 ← (word)(byte*) main::toD0182_gfx#1
 Inlining cast *((byte*) makecharset::font#3) ← (unumber)(number) 0
 Inlining cast *((byte*) makecharset::font1#3) ← (unumber)(number) $ff
-Inlining cast (byte) makecharset::c#0 ← (unumber)(number) 0
-Inlining cast (byte) makecharset::bc#0 ← (unumber)(number) 0
-Inlining cast (byte) makecharset::i#0 ← (unumber)(number) 0
-Inlining cast (byte) makecharset::b#0 ← (unumber)(number) 0
-Inlining cast (byte) makecharset::ii#0 ← (unumber)(number) 0
 Inlining cast (word~) makecharset::$15 ← (word)(byte) makecharset::c#5
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant integer cast 0
-Simplifying constant integer cast 7
 Simplifying constant pointer cast (word*) 54286
 Simplifying constant pointer cast (byte*) 54290
-Simplifying constant integer cast $80
 Simplifying constant pointer cast (byte*) 54299
-Simplifying constant integer cast $ffff
 Simplifying constant pointer cast (byte*) 14336
 Simplifying constant pointer cast (byte*) 15360
 Simplifying constant pointer cast (byte*) 16384
 Simplifying constant pointer cast (byte*) 12288
+Simplifying constant integer cast $ffff
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -853,23 +802,10 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast $10
 Simplifying constant integer cast $30
-Simplifying constant integer cast 1
-Simplifying constant integer cast 2
-Simplifying constant integer cast 4
-Simplifying constant integer cast 8
-Simplifying constant integer cast $10
-Simplifying constant integer cast $20
-Simplifying constant integer cast $40
-Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Simplifying constant integer cast $ff
-Simplifying constant integer cast 0
 Simplifying constant integer cast $40
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 8
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast $3f
 Simplifying constant integer cast 3
@@ -877,9 +813,6 @@ Simplifying constant integer cast $40
 Simplifying constant integer cast 1
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) $80
 Finalized unsigned number type (word) $ffff
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -901,13 +834,8 @@ Finalized unsigned number type (byte) $10
 Finalized unsigned number type (byte) $30
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $40
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
 Finalized unsigned number type (byte) $3f
 Finalized unsigned number type (byte) 3
@@ -934,8 +862,8 @@ Inferred type updated to byte in (unumber~) makecharset::$10 ← (byte) makechar
 Inferred type updated to byte in (unumber~) makecharset::$11 ← (byte) makecharset::i#4 & (byte) 1
 Inferred type updated to byte in (unumber~) makecharset::$12 ← (byte) makecharset::ii#4 + (byte~) makecharset::$11
 Inferred type updated to byte in (unumber~) makecharset::$13 ← (byte~) makecharset::$12 & (byte) 7
-Inversing boolean not [95] (bool~) fire::$9 ← (byte) fire::c#0 <= (byte) 2 from [94] (bool~) fire::$8 ← (byte) fire::c#0 > (byte) 2
-Inversing boolean not [167] (bool~) makecharset::$9 ← (byte) makecharset::bc#1 <= (byte) $3f from [166] (bool~) makecharset::$8 ← (byte) makecharset::bc#1 > (byte) $3f
+Inversing boolean not [81] (bool~) fire::$9 ← (byte) fire::c#0 <= (byte) 2 from [80] (bool~) fire::$8 ← (byte) fire::c#0 > (byte) 2
+Inversing boolean not [152] (bool~) makecharset::$9 ← (byte) makecharset::bc#1 <= (byte) $3f from [151] (bool~) makecharset::$8 ← (byte) makecharset::bc#1 > (byte) $3f
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias (byte) sid_rnd::return#0 = (byte) sid_rnd::return#3 (byte) sid_rnd::return#1 
 Alias (byte*) main::toD0181_screen#0 = (byte*) main::toD0181_screen#1 
@@ -997,47 +925,27 @@ Identical Phi Values (byte*) makecharset::charset#11 (byte*) makecharset::charse
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) makecharset::charset#14 (byte*) makecharset::charset#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) fire::$3 [87] if((byte*) fire::buffer#4!=(byte*~) fire::$2) goto fire::@2
-Simple Condition (bool~) fire::$9 [96] if((byte) fire::c#0<=(byte) 2) goto fire::@4
-Simple Condition (bool~) fire::$11 [112] if((byte*) fire::buffer#10!=(byte*~) fire::$10) goto fire::@10
-Simple Condition (bool~) makecharset::$1 [131] if((byte*) makecharset::font#2!=(byte*~) makecharset::$0) goto makecharset::@2
-Simple Condition (bool~) makecharset::$4 [141] if((byte*) makecharset::font1#2!=(byte*~) makecharset::$3) goto makecharset::@8
-Simple Condition (bool~) makecharset::$5 [149] if((byte) makecharset::c#2<(byte) $40) goto makecharset::@14
-Simple Condition (bool~) makecharset::$6 [155] if((byte) makecharset::i#2<(byte) 8) goto makecharset::@17
-Simple Condition (bool~) makecharset::$7 [163] if((byte) makecharset::ii#2<(byte) 8) goto makecharset::@20
-Simple Condition (bool~) makecharset::$9 [168] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
-Simple Condition (bool~) fillscreen::$0 [193] if((word) fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1
+Simple Condition (bool~) fire::$3 [73] if((byte*) fire::buffer#4!=(byte*~) fire::$2) goto fire::@2
+Simple Condition (bool~) fire::$9 [82] if((byte) fire::c#0<=(byte) 2) goto fire::@4
+Simple Condition (bool~) fire::$11 [98] if((byte*) fire::buffer#10!=(byte*~) fire::$10) goto fire::@10
+Simple Condition (bool~) makecharset::$1 [116] if((byte*) makecharset::font#2!=(byte*~) makecharset::$0) goto makecharset::@2
+Simple Condition (bool~) makecharset::$4 [126] if((byte*) makecharset::font1#2!=(byte*~) makecharset::$3) goto makecharset::@8
+Simple Condition (bool~) makecharset::$5 [134] if((byte) makecharset::c#2<(byte) $40) goto makecharset::@14
+Simple Condition (bool~) makecharset::$6 [140] if((byte) makecharset::i#2<(byte) 8) goto makecharset::@17
+Simple Condition (bool~) makecharset::$7 [148] if((byte) makecharset::ii#2<(byte) 8) goto makecharset::@20
+Simple Condition (bool~) makecharset::$9 [153] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
+Simple Condition (bool~) fillscreen::$0 [178] if((word) fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Identified constant from value list (byte[8]) { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
-Successful SSA optimization Pass2ConstantInitializerValueLists
-Constant (const byte*) BORDERCOL = (byte*) 53280
-Constant (const byte*) BGCOL = (byte*) 53281
-Constant (const byte*) D018 = (byte*) 53272
-Constant (const byte*) COLS = (byte*) 55296
-Constant (const byte) BLACK = 0
-Constant (const byte) YELLOW = 7
-Constant (const word*) SID_VOICE3_FREQ = (word*) 54286
-Constant (const byte*) SID_VOICE3_CONTROL = (byte*) 54290
-Constant (const byte) SID_CONTROL_NOISE = $80
-Constant (const byte*) SID_VOICE3_OSC = (byte*) 54299
-Constant (const byte*) SCREEN1 = (byte*) 14336
-Constant (const byte*) SCREEN2 = (byte*) 15360
-Constant (const byte*) BUFFER = (byte*) 16384
-Constant (const byte*) CHARSET = (byte*) 12288
-Constant (const byte) fillscreen::fill#0 = 0
-Constant (const byte) fillscreen::fill#1 = 0
-Constant (const byte) fillscreen::fill#2 = 0
-Constant (const byte[8]) makecharset::bittab = { 1, 2, 4, 8, $10, $20, $40, $80 }
-Constant (const byte) makecharset::c#0 = 0
-Constant (const byte) makecharset::bc#0 = 0
-Constant (const byte) makecharset::i#0 = 0
-Constant (const byte) makecharset::b#0 = 0
-Constant (const byte) makecharset::ii#0 = 0
-Constant (const word) fillscreen::i#0 = 0
-Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [71] (byte*~) fire::$2 ← (const byte*) BUFFER + (word)(number) $18*(number) $28
+Constant right-side identified [86] (byte*) fire::buffer#1 ← (const byte*) BUFFER + (word)(number) $18*(number) $28
+Constant right-side identified [96] (byte*~) fire::$10 ← (const byte*) BUFFER + (word)(number) $19*(number) $28
+Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) fillscreen::screen#0 = BUFFER
+Constant (const byte) fillscreen::fill#0 = 0
 Constant (const byte*) fillscreen::screen#1 = SCREEN1
+Constant (const byte) fillscreen::fill#1 = 0
 Constant (const byte*) fillscreen::screen#2 = SCREEN2
+Constant (const byte) fillscreen::fill#2 = 0
 Constant (const byte*) fillscreen::screen#3 = COLS
 Constant (const byte) fillscreen::fill#3 = YELLOW
 Constant (const byte*) makecharset::charset#0 = CHARSET
@@ -1048,19 +956,28 @@ Constant (const byte*) fire::screenbase#1 = SCREEN2
 Constant (const byte*) main::toD0182_screen#0 = SCREEN2
 Constant (const byte*) main::toD0182_gfx#0 = CHARSET
 Constant (const byte*) fire::buffer#0 = BUFFER
+Constant (const byte*) fire::$2 = BUFFER+(word)$18*$28
+Constant (const byte*) fire::buffer#1 = BUFFER+(word)$18*$28
+Constant (const byte*) fire::$10 = BUFFER+(word)$19*$28
+Constant (const byte) makecharset::c#0 = 0
+Constant (const byte) makecharset::bc#0 = 0
+Constant (const byte) makecharset::i#0 = 0
+Constant (const byte) makecharset::b#0 = 0
+Constant (const byte) makecharset::ii#0 = 0
+Constant (const word) fillscreen::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::toD0181_screen#0 in [45] (word~) main::toD0181_$0 ← (word)(const byte*) main::toD0181_screen#0
-Constant value identified (word)main::toD0181_gfx#0 in [49] (word~) main::toD0181_$4 ← (word)(const byte*) main::toD0181_gfx#0
-Constant value identified (word)main::toD0182_screen#0 in [65] (word~) main::toD0182_$0 ← (word)(const byte*) main::toD0182_screen#0
-Constant value identified (word)main::toD0182_gfx#0 in [69] (word~) main::toD0182_$4 ← (word)(const byte*) main::toD0182_gfx#0
-Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [39] if(true) goto main::@2
+Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
+Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
+Constant (const word) main::toD0182_$0 = (word)main::toD0182_screen#0
+Constant (const word) main::toD0182_$4 = (word)main::toD0182_gfx#0
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [25] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [191] fillscreen::i#1 ← ++ fillscreen::i#2 to ++
-Resolved ranged comparison value [193] if(fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1 to (number) $3e8
-Rewriting conditional comparison [96] if((byte) fire::c#0<=(byte) 2) goto fire::@4
-Rewriting conditional comparison [168] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
-De-inlining pointer[w] to *(pointer+w)   [174] *((byte*~) makecharset::$14 + (word~) makecharset::$17) ← (byte) makecharset::b#2
+Resolved ranged next value [176] fillscreen::i#1 ← ++ fillscreen::i#2 to ++
+Resolved ranged comparison value [178] if(fillscreen::i#1!=rangelast(0,$3e7)) goto fillscreen::@1 to (number) $3e8
+Rewriting conditional comparison [82] if((byte) fire::c#0<=(byte) 2) goto fire::@4
+Rewriting conditional comparison [153] if((byte) makecharset::bc#1<=(byte) $3f) goto makecharset::@22
+De-inlining pointer[w] to *(pointer+w)   [159] *((byte*~) makecharset::$14 + (word~) makecharset::$17) ← (byte) makecharset::b#2
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -1080,35 +997,23 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (word) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [38] (byte*~) fire::$2 ← (const byte*) BUFFER + (word)(number) $18*(number) $28
-Constant right-side identified [46] (byte*) fire::buffer#1 ← (const byte*) BUFFER + (word)(number) $18*(number) $28
-Constant right-side identified [54] (byte*~) fire::$10 ← (const byte*) BUFFER + (word)(number) $19*(number) $28
-Constant right-side identified [67] (byte*~) makecharset::$0 ← (const byte*) makecharset::charset#0 + (byte)(number) 1*(number) 8
-Constant right-side identified [71] (byte*) makecharset::font1#0 ← (const byte*) makecharset::charset#0 + (word)(number) $40*(number) 8
-Constant right-side identified [73] (byte*~) makecharset::$3 ← (const byte*) makecharset::charset#0 + (word)(number) $100*(number) 8
-Constant right-side identified [86] (byte*~) makecharset::$14 ← (const byte*) makecharset::charset#0 + (byte)(number) 1*(number) 8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
-Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
-Constant (const word) main::toD0182_$0 = (word)main::toD0182_screen#0
-Constant (const word) main::toD0182_$4 = (word)main::toD0182_gfx#0
-Constant (const byte*) fire::$2 = BUFFER+(word)$18*$28
-Constant (const byte*) fire::buffer#1 = BUFFER+(word)$18*$28
-Constant (const byte*) fire::$10 = BUFFER+(word)$19*$28
-Constant (const byte*) makecharset::$0 = makecharset::charset#0+(byte)1*8
-Constant (const byte*) makecharset::font1#0 = makecharset::charset#0+(word)$40*8
-Constant (const byte*) makecharset::$3 = makecharset::charset#0+(word)$100*8
-Constant (const byte*) makecharset::$14 = makecharset::charset#0+(byte)1*8
-Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [15] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
 Constant right-side identified [18] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
 Constant right-side identified [24] (word~) main::toD0182_$1 ← (const word) main::toD0182_$0 & (word) $3fff
 Constant right-side identified [27] (byte~) main::toD0182_$5 ← > (const word) main::toD0182_$4
+Constant right-side identified [60] (byte*~) makecharset::$0 ← (const byte*) makecharset::charset#0 + (byte)(number) 1*(number) 8
+Constant right-side identified [64] (byte*) makecharset::font1#0 ← (const byte*) makecharset::charset#0 + (word)(number) $40*(number) 8
+Constant right-side identified [66] (byte*~) makecharset::$3 ← (const byte*) makecharset::charset#0 + (word)(number) $100*(number) 8
+Constant right-side identified [79] (byte*~) makecharset::$14 ← (const byte*) makecharset::charset#0 + (byte)(number) 1*(number) 8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
 Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
 Constant (const word) main::toD0182_$1 = main::toD0182_$0&$3fff
 Constant (const byte) main::toD0182_$5 = >main::toD0182_$4
+Constant (const byte*) makecharset::$0 = makecharset::charset#0+(byte)1*8
+Constant (const byte*) makecharset::font1#0 = makecharset::charset#0+(word)$40*8
+Constant (const byte*) makecharset::$3 = makecharset::charset#0+(word)$100*8
+Constant (const byte*) makecharset::$14 = makecharset::charset#0+(byte)1*8
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [15] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
 Constant right-side identified [17] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
@@ -1147,15 +1052,15 @@ Inlining constant with var siblings (const byte) makecharset::i#0
 Inlining constant with var siblings (const byte) makecharset::b#0
 Inlining constant with var siblings (const byte) makecharset::ii#0
 Inlining constant with var siblings (const byte*) makecharset::font1#0
-Inlining constant with var siblings (const byte) fillscreen::fill#0
-Inlining constant with var siblings (const byte) fillscreen::fill#1
-Inlining constant with var siblings (const byte) fillscreen::fill#2
-Inlining constant with var siblings (const word) fillscreen::i#0
 Inlining constant with var siblings (const byte*) fillscreen::screen#0
+Inlining constant with var siblings (const byte) fillscreen::fill#0
 Inlining constant with var siblings (const byte*) fillscreen::screen#1
+Inlining constant with var siblings (const byte) fillscreen::fill#1
 Inlining constant with var siblings (const byte*) fillscreen::screen#2
+Inlining constant with var siblings (const byte) fillscreen::fill#2
 Inlining constant with var siblings (const byte*) fillscreen::screen#3
 Inlining constant with var siblings (const byte) fillscreen::fill#3
+Inlining constant with var siblings (const word) fillscreen::i#0
 Constant inlined fillscreen::fill#2 = (byte) 0
 Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN1
 Constant inlined main::toD0181_gfx#0 = (const byte*) CHARSET
@@ -1206,8 +1111,6 @@ Added new block during phi lifting fire::@16(between fire::@2 and fire::@4)
 Added new block during phi lifting makecharset::@33(between makecharset::@20 and makecharset::@22)
 Added new block during phi lifting fillscreen::@3(between fillscreen::@1 and fillscreen::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @4
-Adding NOP phi() at start of @6
 Adding NOP phi() at start of @10
 Adding NOP phi() at start of @11
 Adding NOP phi() at start of @end
@@ -1231,38 +1134,36 @@ Adding NOP phi() at start of makecharset::@3
 Adding NOP phi() at start of makecharset::@9
 Adding NOP phi() at start of makecharset::@14
 CALL GRAPH
-Calls in [] to main:4 
-Calls in [main] to fillscreen:10 fillscreen:12 fillscreen:14 fillscreen:16 sid_rnd_init:18 makecharset:20 fire:24 fire:29 
-Calls in [fire] to sid_rnd:44 
+Calls in [] to main:2 
+Calls in [main] to fillscreen:8 fillscreen:10 fillscreen:12 fillscreen:14 sid_rnd_init:16 makecharset:18 fire:22 fire:27 
+Calls in [fire] to sid_rnd:42 
 
 Created 20 initial phi equivalence classes
-Not coalescing [35] fire::screen#11 ← fire::screen#0
-Coalesced [39] fire::screen#14 ← fire::screen#1
-Coalesced [53] fire::buffer#12 ← fire::buffer#3
-Coalesced [54] fire::screen#13 ← fire::screen#3
-Coalesced [61] fire::c#5 ← fire::c#1
-Coalesced [67] fire::buffer#11 ← fire::buffer#2
-Coalesced [68] fire::screen#12 ← fire::screen#2
-Coalesced [69] fire::c#4 ← fire::c#0
-Coalesced [86] makecharset::c#12 ← makecharset::c#1
-Coalesced [87] makecharset::bc#11 ← makecharset::bc#6
-Coalesced [96] makecharset::i#9 ← makecharset::i#1
-Coalesced (already) [97] makecharset::bc#10 ← makecharset::bc#3
-Coalesced [105] makecharset::bc#14 ← makecharset::bc#2
-Coalesced [106] makecharset::b#9 ← makecharset::b#1
-Coalesced [109] makecharset::ii#6 ← makecharset::ii#1
-Coalesced [110] makecharset::bc#12 ← makecharset::bc#7
-Coalesced [111] makecharset::b#7 ← makecharset::b#6
-Coalesced [112] makecharset::bc#13 ← makecharset::bc#1
-Coalesced (already) [113] makecharset::b#8 ← makecharset::b#2
-Coalesced [116] makecharset::font1#4 ← makecharset::font1#1
-Coalesced [119] makecharset::font#4 ← makecharset::font#1
-Coalesced [124] fillscreen::screen#7 ← fillscreen::screen#6
-Coalesced [131] fillscreen::screen#8 ← fillscreen::screen#4
-Coalesced [132] fillscreen::i#3 ← fillscreen::i#1
+Not coalescing [33] fire::screen#11 ← fire::screen#0
+Coalesced [37] fire::screen#14 ← fire::screen#1
+Coalesced [51] fire::buffer#12 ← fire::buffer#3
+Coalesced [52] fire::screen#13 ← fire::screen#3
+Coalesced [59] fire::c#5 ← fire::c#1
+Coalesced [65] fire::buffer#11 ← fire::buffer#2
+Coalesced [66] fire::screen#12 ← fire::screen#2
+Coalesced [67] fire::c#4 ← fire::c#0
+Coalesced [84] makecharset::c#12 ← makecharset::c#1
+Coalesced [85] makecharset::bc#11 ← makecharset::bc#6
+Coalesced [94] makecharset::i#9 ← makecharset::i#1
+Coalesced (already) [95] makecharset::bc#10 ← makecharset::bc#3
+Coalesced [103] makecharset::bc#14 ← makecharset::bc#2
+Coalesced [104] makecharset::b#9 ← makecharset::b#1
+Coalesced [107] makecharset::ii#6 ← makecharset::ii#1
+Coalesced [108] makecharset::bc#12 ← makecharset::bc#7
+Coalesced [109] makecharset::b#7 ← makecharset::b#6
+Coalesced [110] makecharset::bc#13 ← makecharset::bc#1
+Coalesced (already) [111] makecharset::b#8 ← makecharset::b#2
+Coalesced [114] makecharset::font1#4 ← makecharset::font1#1
+Coalesced [117] makecharset::font#4 ← makecharset::font#1
+Coalesced [122] fillscreen::screen#7 ← fillscreen::screen#6
+Coalesced [129] fillscreen::screen#8 ← fillscreen::screen#4
+Coalesced [130] fillscreen::i#3 ← fillscreen::i#1
 Coalesced down to 16 phi equivalence classes
-Culled Empty Block (label) @4
-Culled Empty Block (label) @6
 Culled Empty Block (label) @11
 Culled Empty Block (label) main::@14
 Culled Empty Block (label) main::@1
@@ -1373,10 +1274,10 @@ main::@3: scope:[main]  from main::toD0182
 (void()) fire((byte*) fire::screenbase)
 fire: scope:[fire]  from main::@1 main::@2
   [25] (byte*) fire::screen#0 ← phi( main::@1/(const byte*) SCREEN1 main::@2/(const byte*) SCREEN2 )
-  [26] (byte*~) fire::screen#11 ← (byte*) fire::screen#0
+  [26] (byte*) fire::screen#11 ← (byte*) fire::screen#0
   to:fire::@1
 fire::@1: scope:[fire]  from fire fire::@4
-  [27] (byte*) fire::screen#4 ← phi( fire/(byte*~) fire::screen#11 fire::@4/(byte*) fire::screen#2 )
+  [27] (byte*) fire::screen#4 ← phi( fire/(byte*) fire::screen#11 fire::@4/(byte*) fire::screen#2 )
   [27] (byte*) fire::buffer#4 ← phi( fire/(const byte*) BUFFER fire::@4/(byte*) fire::buffer#2 )
   [28] if((byte*) fire::buffer#4!=(const byte*) BUFFER+(word)(number) $18*(number) $28) goto fire::@2
   to:fire::@3
@@ -1481,7 +1382,7 @@ makecharset::@12: scope:[makecharset]  from makecharset::@9
   [78] (byte~) makecharset::$11 ← (byte) makecharset::i#2 & (byte) 1
   [79] (byte~) makecharset::$12 ← (byte) makecharset::ii#2 + (byte~) makecharset::$11
   [80] (byte~) makecharset::$13 ← (byte~) makecharset::$12 & (byte) 7
-  [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab + (byte~) makecharset::$13)
+  [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte*) makecharset::bittab + (byte~) makecharset::$13)
   to:makecharset::@11
 makecharset::@11: scope:[makecharset]  from makecharset::@12 makecharset::@9
   [82] (byte) makecharset::b#6 ← phi( makecharset::@9/(byte) makecharset::b#2 makecharset::@12/(byte) makecharset::b#1 )
@@ -1555,7 +1456,7 @@ VARIABLE REGISTER WEIGHTS
 (byte*) fire::screen#0 0.26666666666666666
 (byte*) fire::screen#1 4.0
 (byte*) fire::screen#10 30.5
-(byte*~) fire::screen#11 4.0
+(byte*) fire::screen#11 4.0
 (byte*) fire::screen#2 101.0
 (byte*) fire::screen#3 101.0
 (byte*) fire::screen#4 27.727272727272727
@@ -1624,21 +1525,21 @@ Initial phi equivalence classes
 [ fillscreen::fill#5 ]
 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ]
 [ fillscreen::i#2 fillscreen::i#1 ]
-Added variable sid_rnd::return#2 to zero page equivalence class [ sid_rnd::return#2 ]
-Added variable fire::$12 to zero page equivalence class [ fire::$12 ]
-Added variable fire::$13 to zero page equivalence class [ fire::$13 ]
-Added variable fire::$14 to zero page equivalence class [ fire::$14 ]
-Added variable fire::$4 to zero page equivalence class [ fire::$4 ]
-Added variable fire::$5 to zero page equivalence class [ fire::$5 ]
-Added variable fire::$6 to zero page equivalence class [ fire::$6 ]
-Added variable sid_rnd::return#0 to zero page equivalence class [ sid_rnd::return#0 ]
-Added variable makecharset::$15 to zero page equivalence class [ makecharset::$15 ]
-Added variable makecharset::$16 to zero page equivalence class [ makecharset::$16 ]
-Added variable makecharset::$17 to zero page equivalence class [ makecharset::$17 ]
-Added variable makecharset::$18 to zero page equivalence class [ makecharset::$18 ]
-Added variable makecharset::$11 to zero page equivalence class [ makecharset::$11 ]
-Added variable makecharset::$12 to zero page equivalence class [ makecharset::$12 ]
-Added variable makecharset::$13 to zero page equivalence class [ makecharset::$13 ]
+Added variable sid_rnd::return#2 to live range equivalence class [ sid_rnd::return#2 ]
+Added variable fire::$12 to live range equivalence class [ fire::$12 ]
+Added variable fire::$13 to live range equivalence class [ fire::$13 ]
+Added variable fire::$14 to live range equivalence class [ fire::$14 ]
+Added variable fire::$4 to live range equivalence class [ fire::$4 ]
+Added variable fire::$5 to live range equivalence class [ fire::$5 ]
+Added variable fire::$6 to live range equivalence class [ fire::$6 ]
+Added variable sid_rnd::return#0 to live range equivalence class [ sid_rnd::return#0 ]
+Added variable makecharset::$15 to live range equivalence class [ makecharset::$15 ]
+Added variable makecharset::$16 to live range equivalence class [ makecharset::$16 ]
+Added variable makecharset::$17 to live range equivalence class [ makecharset::$17 ]
+Added variable makecharset::$18 to live range equivalence class [ makecharset::$18 ]
+Added variable makecharset::$11 to live range equivalence class [ makecharset::$11 ]
+Added variable makecharset::$12 to live range equivalence class [ makecharset::$12 ]
+Added variable makecharset::$13 to live range equivalence class [ makecharset::$13 ]
 Complete equivalence classes
 [ fire::screen#0 ]
 [ fire::buffer#4 fire::buffer#2 ]
@@ -1671,37 +1572,37 @@ Complete equivalence classes
 [ makecharset::$11 ]
 [ makecharset::$12 ]
 [ makecharset::$13 ]
-Allocated zp ZP_WORD:2 [ fire::screen#0 ]
-Allocated zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ]
-Allocated zp ZP_WORD:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ]
-Allocated zp ZP_WORD:8 [ fire::buffer#10 fire::buffer#3 ]
-Allocated zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ]
-Allocated zp ZP_BYTE:12 [ fire::c#2 fire::c#0 fire::c#1 ]
-Allocated zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ]
-Allocated zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ]
-Allocated zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ]
-Allocated zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ]
-Allocated zp ZP_BYTE:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ]
-Allocated zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ]
-Allocated zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ]
-Allocated zp ZP_BYTE:22 [ fillscreen::fill#5 ]
-Allocated zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ]
-Allocated zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ]
-Allocated zp ZP_BYTE:27 [ sid_rnd::return#2 ]
-Allocated zp ZP_BYTE:28 [ fire::$12 ]
-Allocated zp ZP_BYTE:29 [ fire::$13 ]
-Allocated zp ZP_BYTE:30 [ fire::$14 ]
-Allocated zp ZP_BYTE:31 [ fire::$4 ]
-Allocated zp ZP_BYTE:32 [ fire::$5 ]
-Allocated zp ZP_BYTE:33 [ fire::$6 ]
-Allocated zp ZP_BYTE:34 [ sid_rnd::return#0 ]
-Allocated zp ZP_WORD:35 [ makecharset::$15 ]
-Allocated zp ZP_WORD:37 [ makecharset::$16 ]
-Allocated zp ZP_WORD:39 [ makecharset::$17 ]
-Allocated zp ZP_WORD:41 [ makecharset::$18 ]
-Allocated zp ZP_BYTE:43 [ makecharset::$11 ]
-Allocated zp ZP_BYTE:44 [ makecharset::$12 ]
-Allocated zp ZP_BYTE:45 [ makecharset::$13 ]
+Allocated zp[2]:2 [ fire::screen#0 ]
+Allocated zp[2]:4 [ fire::buffer#4 fire::buffer#2 ]
+Allocated zp[2]:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ]
+Allocated zp[2]:8 [ fire::buffer#10 fire::buffer#3 ]
+Allocated zp[2]:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ]
+Allocated zp[1]:12 [ fire::c#2 fire::c#0 fire::c#1 ]
+Allocated zp[2]:13 [ makecharset::font#2 makecharset::font#1 ]
+Allocated zp[2]:15 [ makecharset::font1#2 makecharset::font1#1 ]
+Allocated zp[1]:17 [ makecharset::c#2 makecharset::c#1 ]
+Allocated zp[1]:18 [ makecharset::i#2 makecharset::i#1 ]
+Allocated zp[1]:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ]
+Allocated zp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ]
+Allocated zp[1]:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ]
+Allocated zp[1]:22 [ fillscreen::fill#5 ]
+Allocated zp[2]:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ]
+Allocated zp[2]:25 [ fillscreen::i#2 fillscreen::i#1 ]
+Allocated zp[1]:27 [ sid_rnd::return#2 ]
+Allocated zp[1]:28 [ fire::$12 ]
+Allocated zp[1]:29 [ fire::$13 ]
+Allocated zp[1]:30 [ fire::$14 ]
+Allocated zp[1]:31 [ fire::$4 ]
+Allocated zp[1]:32 [ fire::$5 ]
+Allocated zp[1]:33 [ fire::$6 ]
+Allocated zp[1]:34 [ sid_rnd::return#0 ]
+Allocated zp[2]:35 [ makecharset::$15 ]
+Allocated zp[2]:37 [ makecharset::$16 ]
+Allocated zp[2]:39 [ makecharset::$17 ]
+Allocated zp[2]:41 [ makecharset::$18 ]
+Allocated zp[1]:43 [ makecharset::$11 ]
+Allocated zp[1]:44 [ makecharset::$12 ]
+Allocated zp[1]:45 [ makecharset::$13 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1900,20 +1801,15 @@ fire: {
     .label screen_1 = $a
     .label screen_2 = 6
     .label buffer = 4
-    .label screen_3 = $a
-    .label buffer_3 = 8
-    .label screen_4 = 6
-    .label buffer_10 = 8
-    .label screen_10 = $a
-    .label screen_11 = 6
-    // [26] (byte*~) fire::screen#11 ← (byte*) fire::screen#0 -- pbuz1=pbuz2 
+    .label buffer_1 = 8
+    // [26] (byte*) fire::screen#11 ← (byte*) fire::screen#0 -- pbuz1=pbuz2 
     lda.z screen
-    sta.z screen_11
+    sta.z screen_2
     lda.z screen+1
-    sta.z screen_11+1
+    sta.z screen_2+1
     // [27] phi from fire to fire::@1 [phi:fire->fire::@1]
   __b1_from_fire:
-    // [27] phi (byte*) fire::screen#4 = (byte*~) fire::screen#11 [phi:fire->fire::@1#0] -- register_copy 
+    // [27] phi (byte*) fire::screen#4 = (byte*) fire::screen#11 [phi:fire->fire::@1#0] -- register_copy 
     // [27] phi (byte*) fire::buffer#4 = (const byte*) BUFFER [phi:fire->fire::@1#1] -- pbuz1=pbuc1 
     lda #<BUFFER
     sta.z buffer
@@ -1945,17 +1841,17 @@ fire: {
     // [30] phi (byte*) fire::screen#10 = (byte*) fire::screen#1 [phi:fire::@3->fire::@6#0] -- register_copy 
     // [30] phi (byte*) fire::buffer#10 = (const byte*) BUFFER+(word)(number) $18*(number) $28 [phi:fire::@3->fire::@6#1] -- pbuz1=pbuc1 
     lda #<BUFFER+$18*$28
-    sta.z buffer_10
+    sta.z buffer_1
     lda #>BUFFER+$18*$28
-    sta.z buffer_10+1
+    sta.z buffer_1+1
     jmp __b6
     // fire::@6
   __b6:
     // [31] if((byte*) fire::buffer#10!=(const byte*) BUFFER+(word)(number) $19*(number) $28) goto fire::@7 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z buffer_10+1
+    lda.z buffer_1+1
     cmp #>BUFFER+$19*$28
     bne __b7_from___b6
-    lda.z buffer_10
+    lda.z buffer_1
     cmp #<BUFFER+$19*$28
     bne __b7_from___b6
     jmp __breturn
@@ -1972,12 +1868,12 @@ fire: {
     jsr sid_rnd
     // [35] (byte) sid_rnd::return#2 ← (byte) sid_rnd::return#0 -- vbuz1=vbuz2 
     lda.z sid_rnd.return
-    sta.z sid_rnd.return_2
+    sta.z sid_rnd.return_1
     jmp __b8
     // fire::@8
   __b8:
     // [36] (byte~) fire::$12 ← (byte) sid_rnd::return#2 -- vbuz1=vbuz2 
-    lda.z sid_rnd.return_2
+    lda.z sid_rnd.return_1
     sta.z __12
     // [37] (byte~) fire::$13 ← (byte~) fire::$12 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda.z __12
@@ -1993,21 +1889,21 @@ fire: {
     // [39] *((byte*) fire::buffer#10) ← (byte~) fire::$14 -- _deref_pbuz1=vbuz2 
     lda.z __14
     ldy #0
-    sta (buffer_10),y
+    sta (buffer_1),y
     // [40] *((byte*) fire::screen#10) ← *((byte*) fire::buffer#10) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
-    lda (buffer_10),y
+    lda (buffer_1),y
     ldy #0
-    sta (screen_10),y
+    sta (screen_1),y
     // [41] (byte*) fire::screen#3 ← ++ (byte*) fire::screen#10 -- pbuz1=_inc_pbuz1 
-    inc.z screen_3
+    inc.z screen_1
     bne !+
-    inc.z screen_3+1
+    inc.z screen_1+1
   !:
     // [42] (byte*) fire::buffer#3 ← ++ (byte*) fire::buffer#10 -- pbuz1=_inc_pbuz1 
-    inc.z buffer_3
+    inc.z buffer_1
     bne !+
-    inc.z buffer_3+1
+    inc.z buffer_1+1
   !:
     // [30] phi from fire::@8 to fire::@6 [phi:fire::@8->fire::@6]
   __b6_from___b8:
@@ -2066,7 +1962,7 @@ fire: {
     ldy #0
     lda (buffer),y
     ldy #0
-    sta (screen_4),y
+    sta (screen_2),y
     // [52] (byte*) fire::screen#2 ← ++ (byte*) fire::screen#4 -- pbuz1=_inc_pbuz1 
     inc.z screen_2
     bne !+
@@ -2088,7 +1984,7 @@ fire: {
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
     .label return = $22
-    .label return_2 = $1b
+    .label return_1 = $1b
     // [54] (byte) sid_rnd::return#0 ← *((const byte*) SID_VOICE3_OSC) -- vbuz1=_deref_pbuc1 
     lda SID_VOICE3_OSC
     sta.z return
@@ -2283,7 +2179,7 @@ makecharset: {
     lda #7
     and.z __12
     sta.z __13
-    // [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab + (byte~) makecharset::$13) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuz2 
+    // [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte*) makecharset::bittab + (byte~) makecharset::$13) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuz2 
     lda.z b
     ldy.z __13
     clc
@@ -2356,7 +2252,7 @@ sid_rnd_init: {
 }
   // fillscreen
 // Fill a screen (1000 bytes) with a specific byte
-// fillscreen(byte* zeropage($17) screen, byte zeropage($16) fill)
+// fillscreen(byte* zp($17) screen, byte zp($16) fill)
 fillscreen: {
     .label screen = $17
     .label i = $19
@@ -2411,7 +2307,7 @@ Statement [5] *((const byte*) BORDERCOL) ← (const byte) BLACK [ ] ( main:2 [ ]
 Statement [6] *((const byte*) BGCOL) ← (const byte) BLACK [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [21] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [24] *((const byte*) D018) ← (const byte) main::toD0182_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [26] (byte*~) fire::screen#11 ← (byte*) fire::screen#0 [ fire::screen#0 fire::screen#11 ] ( main:2::fire:19 [ fire::screen#0 fire::screen#11 ] main:2::fire:22 [ fire::screen#0 fire::screen#11 ] ) always clobbers reg byte a 
+Statement [26] (byte*) fire::screen#11 ← (byte*) fire::screen#0 [ fire::screen#0 fire::screen#11 ] ( main:2::fire:19 [ fire::screen#0 fire::screen#11 ] main:2::fire:22 [ fire::screen#0 fire::screen#11 ] ) always clobbers reg byte a 
 Statement [28] if((byte*) fire::buffer#4!=(const byte*) BUFFER+(word)(number) $18*(number) $28) goto fire::@2 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ) always clobbers reg byte a 
 Statement [29] (byte*) fire::screen#1 ← (byte*) fire::screen#0 + (word)(number) $18*(number) $28 [ fire::screen#1 ] ( main:2::fire:19 [ fire::screen#1 ] main:2::fire:22 [ fire::screen#1 ] ) always clobbers reg byte a 
 Statement [31] if((byte*) fire::buffer#10!=(const byte*) BUFFER+(word)(number) $19*(number) $28) goto fire::@7 [ fire::buffer#10 fire::screen#10 ] ( main:2::fire:19 [ fire::buffer#10 fire::screen#10 ] main:2::fire:22 [ fire::buffer#10 fire::screen#10 ] ) always clobbers reg byte a 
@@ -2428,40 +2324,40 @@ Statement [51] *((byte*) fire::screen#4) ← *((byte*) fire::buffer#4) [ fire::s
 Statement [58] if((byte*) makecharset::font#2!=(const byte*) CHARSET+(byte)(number) 1*(number) 8) goto makecharset::@2 [ makecharset::font#2 ] ( main:2::makecharset:17 [ makecharset::font#2 ] ) always clobbers reg byte a 
 Statement [60] if((byte*) makecharset::font1#2!=(const byte*) CHARSET+(word)(number) $100*(number) 8) goto makecharset::@4 [ makecharset::font1#2 ] ( main:2::makecharset:17 [ makecharset::font1#2 ] ) always clobbers reg byte a 
 Statement [69] (word~) makecharset::$15 ← (word)(byte) makecharset::c#2 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$15 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$15 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ]
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:17 [ makecharset::c#2 makecharset::c#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:18 [ makecharset::i#2 makecharset::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ]
+Removing always clobbered register reg byte a as potential for zp[1]:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ]
 Statement [70] (word~) makecharset::$16 ← (word~) makecharset::$15 << (byte) 3 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$16 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$16 ] ) always clobbers reg byte a 
 Statement [71] (word~) makecharset::$17 ← (word~) makecharset::$16 + (byte) makecharset::i#2 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$17 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$17 ] ) always clobbers reg byte a 
 Statement [72] (byte*~) makecharset::$18 ← (const byte*) CHARSET+(byte)(number) 1*(number) 8 + (word~) makecharset::$17 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$18 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 makecharset::b#2 makecharset::$18 ] ) always clobbers reg byte a 
 Statement [73] *((byte*~) makecharset::$18) ← (byte) makecharset::b#2 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::bc#3 ] ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ]
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ]
+Removing always clobbered register reg byte y as potential for zp[1]:17 [ makecharset::c#2 makecharset::c#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:18 [ makecharset::i#2 makecharset::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ]
 Statement [75] (byte) makecharset::bc#1 ← (byte) makecharset::bc#3 + (byte) makecharset::c#2 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#1 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#1 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ]
 Statement [77] (byte) makecharset::bc#2 ← (byte) makecharset::bc#1 - (byte) $40 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ) always clobbers reg byte a reg byte x 
-Removing always clobbered register reg byte x as potential for zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ]
-Removing always clobbered register reg byte x as potential for zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ]
-Removing always clobbered register reg byte x as potential for zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ]
-Removing always clobbered register reg byte x as potential for zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:17 [ makecharset::c#2 makecharset::c#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:18 [ makecharset::i#2 makecharset::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ]
 Statement [78] (byte~) makecharset::$11 ← (byte) makecharset::i#2 & (byte) 1 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ) always clobbers reg byte a 
 Statement [79] (byte~) makecharset::$12 ← (byte) makecharset::ii#2 + (byte~) makecharset::$11 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ) always clobbers reg byte a 
-Statement [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab + (byte~) makecharset::$13) [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ) always clobbers reg byte a 
+Statement [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte*) makecharset::bittab + (byte~) makecharset::$13) [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ) always clobbers reg byte a 
 Statement [84] *((byte*) makecharset::font1#2) ← (byte) $ff [ makecharset::font1#2 ] ( main:2::makecharset:17 [ makecharset::font1#2 ] ) always clobbers reg byte a reg byte y 
 Statement [86] *((byte*) makecharset::font#2) ← (byte) 0 [ makecharset::font#2 ] ( main:2::makecharset:17 [ makecharset::font#2 ] ) always clobbers reg byte a reg byte y 
 Statement [88] *((const word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
 Statement [89] *((const byte*) SID_VOICE3_CONTROL) ← (const byte) SID_CONTROL_NOISE [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
 Statement [93] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ) always clobbers reg byte y 
-Removing always clobbered register reg byte y as potential for zp ZP_BYTE:22 [ fillscreen::fill#5 ]
+Removing always clobbered register reg byte y as potential for zp[1]:22 [ fillscreen::fill#5 ]
 Statement [96] if((word) fillscreen::i#1!=(word) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp ZP_BYTE:22 [ fillscreen::fill#5 ]
+Removing always clobbered register reg byte a as potential for zp[1]:22 [ fillscreen::fill#5 ]
 Statement [5] *((const byte*) BORDERCOL) ← (const byte) BLACK [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [6] *((const byte*) BGCOL) ← (const byte) BLACK [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [21] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [24] *((const byte*) D018) ← (const byte) main::toD0182_return#0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [26] (byte*~) fire::screen#11 ← (byte*) fire::screen#0 [ fire::screen#0 fire::screen#11 ] ( main:2::fire:19 [ fire::screen#0 fire::screen#11 ] main:2::fire:22 [ fire::screen#0 fire::screen#11 ] ) always clobbers reg byte a 
+Statement [26] (byte*) fire::screen#11 ← (byte*) fire::screen#0 [ fire::screen#0 fire::screen#11 ] ( main:2::fire:19 [ fire::screen#0 fire::screen#11 ] main:2::fire:22 [ fire::screen#0 fire::screen#11 ] ) always clobbers reg byte a 
 Statement [28] if((byte*) fire::buffer#4!=(const byte*) BUFFER+(word)(number) $18*(number) $28) goto fire::@2 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ( main:2::fire:19 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] main:2::fire:22 [ fire::screen#0 fire::buffer#4 fire::screen#4 ] ) always clobbers reg byte a 
 Statement [29] (byte*) fire::screen#1 ← (byte*) fire::screen#0 + (word)(number) $18*(number) $28 [ fire::screen#1 ] ( main:2::fire:19 [ fire::screen#1 ] main:2::fire:22 [ fire::screen#1 ] ) always clobbers reg byte a 
 Statement [31] if((byte*) fire::buffer#10!=(const byte*) BUFFER+(word)(number) $19*(number) $28) goto fire::@7 [ fire::buffer#10 fire::screen#10 ] ( main:2::fire:19 [ fire::buffer#10 fire::screen#10 ] main:2::fire:22 [ fire::buffer#10 fire::screen#10 ] ) always clobbers reg byte a 
@@ -2488,94 +2384,94 @@ Statement [75] (byte) makecharset::bc#1 ← (byte) makecharset::bc#3 + (byte) ma
 Statement [77] (byte) makecharset::bc#2 ← (byte) makecharset::bc#1 - (byte) $40 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 ] ) always clobbers reg byte a reg byte x 
 Statement [78] (byte~) makecharset::$11 ← (byte) makecharset::i#2 & (byte) 1 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$11 ] ) always clobbers reg byte a 
 Statement [79] (byte~) makecharset::$12 ← (byte) makecharset::ii#2 + (byte~) makecharset::$11 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::b#2 makecharset::bc#2 makecharset::$12 ] ) always clobbers reg byte a 
-Statement [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab + (byte~) makecharset::$13) [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ) always clobbers reg byte a 
+Statement [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte*) makecharset::bittab + (byte~) makecharset::$13) [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ( main:2::makecharset:17 [ makecharset::c#2 makecharset::i#2 makecharset::ii#2 makecharset::bc#2 makecharset::b#1 ] ) always clobbers reg byte a 
 Statement [84] *((byte*) makecharset::font1#2) ← (byte) $ff [ makecharset::font1#2 ] ( main:2::makecharset:17 [ makecharset::font1#2 ] ) always clobbers reg byte a reg byte y 
 Statement [86] *((byte*) makecharset::font#2) ← (byte) 0 [ makecharset::font#2 ] ( main:2::makecharset:17 [ makecharset::font#2 ] ) always clobbers reg byte a reg byte y 
 Statement [88] *((const word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
 Statement [89] *((const byte*) SID_VOICE3_CONTROL) ← (const byte) SID_CONTROL_NOISE [ ] ( main:2::sid_rnd_init:15 [ ] ) always clobbers reg byte a 
 Statement [93] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#5 fillscreen::i#2 ] ) always clobbers reg byte a reg byte y 
 Statement [96] if((word) fillscreen::i#1!=(word) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ) always clobbers reg byte a 
-Potential registers zp ZP_WORD:2 [ fire::screen#0 ] : zp ZP_WORD:2 , 
-Potential registers zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] : zp ZP_WORD:4 , 
-Potential registers zp ZP_WORD:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] : zp ZP_WORD:6 , 
-Potential registers zp ZP_WORD:8 [ fire::buffer#10 fire::buffer#3 ] : zp ZP_WORD:8 , 
-Potential registers zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] : zp ZP_WORD:10 , 
-Potential registers zp ZP_BYTE:12 [ fire::c#2 fire::c#0 fire::c#1 ] : zp ZP_BYTE:12 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] : zp ZP_WORD:13 , 
-Potential registers zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] : zp ZP_WORD:15 , 
-Potential registers zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ] : zp ZP_BYTE:17 , 
-Potential registers zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ] : zp ZP_BYTE:18 , 
-Potential registers zp ZP_BYTE:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ] : zp ZP_BYTE:19 , reg byte x , 
-Potential registers zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] : zp ZP_BYTE:20 , reg byte y , 
-Potential registers zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] : zp ZP_BYTE:21 , reg byte y , 
-Potential registers zp ZP_BYTE:22 [ fillscreen::fill#5 ] : zp ZP_BYTE:22 , reg byte x , 
-Potential registers zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] : zp ZP_WORD:23 , 
-Potential registers zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] : zp ZP_WORD:25 , 
-Potential registers zp ZP_BYTE:27 [ sid_rnd::return#2 ] : zp ZP_BYTE:27 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:28 [ fire::$12 ] : zp ZP_BYTE:28 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:29 [ fire::$13 ] : zp ZP_BYTE:29 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:30 [ fire::$14 ] : zp ZP_BYTE:30 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:31 [ fire::$4 ] : zp ZP_BYTE:31 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:32 [ fire::$5 ] : zp ZP_BYTE:32 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:33 [ fire::$6 ] : zp ZP_BYTE:33 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:34 [ sid_rnd::return#0 ] : zp ZP_BYTE:34 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_WORD:35 [ makecharset::$15 ] : zp ZP_WORD:35 , 
-Potential registers zp ZP_WORD:37 [ makecharset::$16 ] : zp ZP_WORD:37 , 
-Potential registers zp ZP_WORD:39 [ makecharset::$17 ] : zp ZP_WORD:39 , 
-Potential registers zp ZP_WORD:41 [ makecharset::$18 ] : zp ZP_WORD:41 , 
-Potential registers zp ZP_BYTE:43 [ makecharset::$11 ] : zp ZP_BYTE:43 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:44 [ makecharset::$12 ] : zp ZP_BYTE:44 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp ZP_BYTE:45 [ makecharset::$13 ] : zp ZP_BYTE:45 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:2 [ fire::screen#0 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ fire::buffer#4 fire::buffer#2 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ fire::buffer#10 fire::buffer#3 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] : zp[2]:10 , 
+Potential registers zp[1]:12 [ fire::c#2 fire::c#0 fire::c#1 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:13 [ makecharset::font#2 makecharset::font#1 ] : zp[2]:13 , 
+Potential registers zp[2]:15 [ makecharset::font1#2 makecharset::font1#1 ] : zp[2]:15 , 
+Potential registers zp[1]:17 [ makecharset::c#2 makecharset::c#1 ] : zp[1]:17 , 
+Potential registers zp[1]:18 [ makecharset::i#2 makecharset::i#1 ] : zp[1]:18 , 
+Potential registers zp[1]:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ] : zp[1]:19 , reg byte x , 
+Potential registers zp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ] : zp[1]:20 , reg byte y , 
+Potential registers zp[1]:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] : zp[1]:21 , reg byte y , 
+Potential registers zp[1]:22 [ fillscreen::fill#5 ] : zp[1]:22 , reg byte x , 
+Potential registers zp[2]:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] : zp[2]:23 , 
+Potential registers zp[2]:25 [ fillscreen::i#2 fillscreen::i#1 ] : zp[2]:25 , 
+Potential registers zp[1]:27 [ sid_rnd::return#2 ] : zp[1]:27 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:28 [ fire::$12 ] : zp[1]:28 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:29 [ fire::$13 ] : zp[1]:29 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:30 [ fire::$14 ] : zp[1]:30 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:31 [ fire::$4 ] : zp[1]:31 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:32 [ fire::$5 ] : zp[1]:32 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:33 [ fire::$6 ] : zp[1]:33 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:34 [ sid_rnd::return#0 ] : zp[1]:34 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:35 [ makecharset::$15 ] : zp[2]:35 , 
+Potential registers zp[2]:37 [ makecharset::$16 ] : zp[2]:37 , 
+Potential registers zp[2]:39 [ makecharset::$17 ] : zp[2]:39 , 
+Potential registers zp[2]:41 [ makecharset::$18 ] : zp[2]:41 , 
+Potential registers zp[1]:43 [ makecharset::$11 ] : zp[1]:43 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:44 [ makecharset::$12 ] : zp[1]:44 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:45 [ makecharset::$13 ] : zp[1]:45 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [makecharset] 4,280.4: zp ZP_BYTE:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ] 3,762.17: zp ZP_BYTE:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] 2,402.4: zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 2,002: zp ZP_BYTE:43 [ makecharset::$11 ] 2,002: zp ZP_BYTE:44 [ makecharset::$12 ] 2,002: zp ZP_BYTE:45 [ makecharset::$13 ] 280.06: zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ] 202: zp ZP_WORD:35 [ makecharset::$15 ] 202: zp ZP_WORD:37 [ makecharset::$16 ] 202: zp ZP_WORD:39 [ makecharset::$17 ] 202: zp ZP_WORD:41 [ makecharset::$18 ] 71.24: zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ] 36.67: zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] 36.67: zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
-Uplift Scope [fire] 707: zp ZP_BYTE:12 [ fire::c#2 fire::c#0 fire::c#1 ] 277.75: zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] 247.91: zp ZP_WORD:8 [ fire::buffer#10 fire::buffer#3 ] 202: zp ZP_BYTE:28 [ fire::$12 ] 202: zp ZP_BYTE:29 [ fire::$13 ] 202: zp ZP_BYTE:30 [ fire::$14 ] 202: zp ZP_BYTE:31 [ fire::$4 ] 202: zp ZP_BYTE:32 [ fire::$5 ] 202: zp ZP_BYTE:33 [ fire::$6 ] 135.5: zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] 132.73: zp ZP_WORD:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] 0.27: zp ZP_WORD:2 [ fire::screen#0 ] 
-Uplift Scope [sid_rnd] 202: zp ZP_BYTE:27 [ sid_rnd::return#2 ] 34.33: zp ZP_BYTE:34 [ sid_rnd::return#0 ] 
-Uplift Scope [fillscreen] 26.83: zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] 23.83: zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] 1.83: zp ZP_BYTE:22 [ fillscreen::fill#5 ] 
+Uplift Scope [makecharset] 4,280.4: zp[1]:19 [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ] 3,762.17: zp[1]:21 [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] 2,402.4: zp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ] 2,002: zp[1]:43 [ makecharset::$11 ] 2,002: zp[1]:44 [ makecharset::$12 ] 2,002: zp[1]:45 [ makecharset::$13 ] 280.06: zp[1]:18 [ makecharset::i#2 makecharset::i#1 ] 202: zp[2]:35 [ makecharset::$15 ] 202: zp[2]:37 [ makecharset::$16 ] 202: zp[2]:39 [ makecharset::$17 ] 202: zp[2]:41 [ makecharset::$18 ] 71.24: zp[1]:17 [ makecharset::c#2 makecharset::c#1 ] 36.67: zp[2]:13 [ makecharset::font#2 makecharset::font#1 ] 36.67: zp[2]:15 [ makecharset::font1#2 makecharset::font1#1 ] 
+Uplift Scope [fire] 707: zp[1]:12 [ fire::c#2 fire::c#0 fire::c#1 ] 277.75: zp[2]:4 [ fire::buffer#4 fire::buffer#2 ] 247.91: zp[2]:8 [ fire::buffer#10 fire::buffer#3 ] 202: zp[1]:28 [ fire::$12 ] 202: zp[1]:29 [ fire::$13 ] 202: zp[1]:30 [ fire::$14 ] 202: zp[1]:31 [ fire::$4 ] 202: zp[1]:32 [ fire::$5 ] 202: zp[1]:33 [ fire::$6 ] 135.5: zp[2]:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] 132.73: zp[2]:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] 0.27: zp[2]:2 [ fire::screen#0 ] 
+Uplift Scope [sid_rnd] 202: zp[1]:27 [ sid_rnd::return#2 ] 34.33: zp[1]:34 [ sid_rnd::return#0 ] 
+Uplift Scope [fillscreen] 26.83: zp[2]:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] 23.83: zp[2]:25 [ fillscreen::i#2 fillscreen::i#1 ] 1.83: zp[1]:22 [ fillscreen::fill#5 ] 
 Uplift Scope [sid_rnd_init] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [makecharset] best 125295 combination reg byte x [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ] reg byte y [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] reg byte a [ makecharset::$11 ] reg byte a [ makecharset::$12 ] zp ZP_BYTE:45 [ makecharset::$13 ] zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ] zp ZP_WORD:35 [ makecharset::$15 ] zp ZP_WORD:37 [ makecharset::$16 ] zp ZP_WORD:39 [ makecharset::$17 ] zp ZP_WORD:41 [ makecharset::$18 ] zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ] zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] 
+Uplifting [makecharset] best 125295 combination reg byte x [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ] reg byte y [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] zp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ] reg byte a [ makecharset::$11 ] reg byte a [ makecharset::$12 ] zp[1]:45 [ makecharset::$13 ] zp[1]:18 [ makecharset::i#2 makecharset::i#1 ] zp[2]:35 [ makecharset::$15 ] zp[2]:37 [ makecharset::$16 ] zp[2]:39 [ makecharset::$17 ] zp[2]:41 [ makecharset::$18 ] zp[1]:17 [ makecharset::c#2 makecharset::c#1 ] zp[2]:13 [ makecharset::font#2 makecharset::font#1 ] zp[2]:15 [ makecharset::font1#2 makecharset::font1#1 ] 
 Limited combination testing to 100 combinations of 512 possible.
-Uplifting [fire] best 122395 combination reg byte a [ fire::c#2 fire::c#0 fire::c#1 ] zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] zp ZP_WORD:8 [ fire::buffer#10 fire::buffer#3 ] reg byte a [ fire::$12 ] reg byte a [ fire::$13 ] reg byte a [ fire::$14 ] zp ZP_BYTE:31 [ fire::$4 ] zp ZP_BYTE:32 [ fire::$5 ] zp ZP_BYTE:33 [ fire::$6 ] zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] zp ZP_WORD:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] zp ZP_WORD:2 [ fire::screen#0 ] 
+Uplifting [fire] best 122395 combination reg byte a [ fire::c#2 fire::c#0 fire::c#1 ] zp[2]:4 [ fire::buffer#4 fire::buffer#2 ] zp[2]:8 [ fire::buffer#10 fire::buffer#3 ] reg byte a [ fire::$12 ] reg byte a [ fire::$13 ] reg byte a [ fire::$14 ] zp[1]:31 [ fire::$4 ] zp[1]:32 [ fire::$5 ] zp[1]:33 [ fire::$6 ] zp[2]:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] zp[2]:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] zp[2]:2 [ fire::screen#0 ] 
 Limited combination testing to 100 combinations of 16384 possible.
 Uplifting [sid_rnd] best 121492 combination reg byte a [ sid_rnd::return#2 ] reg byte a [ sid_rnd::return#0 ] 
-Uplifting [fillscreen] best 121470 combination zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] reg byte x [ fillscreen::fill#5 ] 
+Uplifting [fillscreen] best 121470 combination zp[2]:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] zp[2]:25 [ fillscreen::i#2 fillscreen::i#1 ] reg byte x [ fillscreen::fill#5 ] 
 Uplifting [sid_rnd_init] best 121470 combination 
 Uplifting [main] best 121470 combination 
 Uplifting [] best 121470 combination 
-Attempting to uplift remaining variables inzp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ]
-Uplifting [makecharset] best 121470 combination zp ZP_BYTE:20 [ makecharset::ii#2 makecharset::ii#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:45 [ makecharset::$13 ]
-Uplifting [makecharset] best 121470 combination zp ZP_BYTE:45 [ makecharset::$13 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ]
-Uplifting [makecharset] best 121470 combination zp ZP_BYTE:18 [ makecharset::i#2 makecharset::i#1 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:31 [ fire::$4 ]
+Attempting to uplift remaining variables inzp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ]
+Uplifting [makecharset] best 121470 combination zp[1]:20 [ makecharset::ii#2 makecharset::ii#1 ] 
+Attempting to uplift remaining variables inzp[1]:45 [ makecharset::$13 ]
+Uplifting [makecharset] best 121470 combination zp[1]:45 [ makecharset::$13 ] 
+Attempting to uplift remaining variables inzp[1]:18 [ makecharset::i#2 makecharset::i#1 ]
+Uplifting [makecharset] best 121470 combination zp[1]:18 [ makecharset::i#2 makecharset::i#1 ] 
+Attempting to uplift remaining variables inzp[1]:31 [ fire::$4 ]
 Uplifting [fire] best 120870 combination reg byte a [ fire::$4 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:32 [ fire::$5 ]
+Attempting to uplift remaining variables inzp[1]:32 [ fire::$5 ]
 Uplifting [fire] best 120270 combination reg byte a [ fire::$5 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:33 [ fire::$6 ]
+Attempting to uplift remaining variables inzp[1]:33 [ fire::$6 ]
 Uplifting [fire] best 119670 combination reg byte a [ fire::$6 ] 
-Attempting to uplift remaining variables inzp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ]
-Uplifting [makecharset] best 119670 combination zp ZP_BYTE:17 [ makecharset::c#2 makecharset::c#1 ] 
-Coalescing zero page register [ zp ZP_WORD:2 [ fire::screen#0 ] ] with [ zp ZP_WORD:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:35 [ makecharset::$15 ] ] with [ zp ZP_WORD:37 [ makecharset::$16 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:39 [ makecharset::$17 ] ] with [ zp ZP_WORD:41 [ makecharset::$18 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:35 [ makecharset::$15 makecharset::$16 ] ] with [ zp ZP_WORD:39 [ makecharset::$17 makecharset::$18 ] ] - score: 1
-Coalescing zero page register [ zp ZP_WORD:13 [ makecharset::font#2 makecharset::font#1 ] ] with [ zp ZP_WORD:2 [ fire::screen#0 fire::screen#10 fire::screen#3 fire::screen#1 ] ]
-Coalescing zero page register [ zp ZP_WORD:15 [ makecharset::font1#2 makecharset::font1#1 ] ] with [ zp ZP_WORD:4 [ fire::buffer#4 fire::buffer#2 ] ]
-Coalescing zero page register [ zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] ] with [ zp ZP_WORD:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] ]
-Coalescing zero page register [ zp ZP_WORD:25 [ fillscreen::i#2 fillscreen::i#1 ] ] with [ zp ZP_WORD:8 [ fire::buffer#10 fire::buffer#3 ] ]
-Coalescing zero page register [ zp ZP_WORD:35 [ makecharset::$15 makecharset::$16 makecharset::$17 makecharset::$18 ] ] with [ zp ZP_WORD:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 fire::screen#4 fire::screen#11 fire::screen#2 ] ]
-Allocated (was zp ZP_WORD:13) zp ZP_WORD:2 [ makecharset::font#2 makecharset::font#1 fire::screen#0 fire::screen#10 fire::screen#3 fire::screen#1 ]
-Allocated (was zp ZP_WORD:15) zp ZP_WORD:4 [ makecharset::font1#2 makecharset::font1#1 fire::buffer#4 fire::buffer#2 ]
-Allocated (was zp ZP_BYTE:17) zp ZP_BYTE:6 [ makecharset::c#2 makecharset::c#1 ]
-Allocated (was zp ZP_BYTE:18) zp ZP_BYTE:7 [ makecharset::i#2 makecharset::i#1 ]
-Allocated (was zp ZP_BYTE:20) zp ZP_BYTE:8 [ makecharset::ii#2 makecharset::ii#1 ]
-Allocated (was zp ZP_WORD:25) zp ZP_WORD:9 [ fillscreen::i#2 fillscreen::i#1 fire::buffer#10 fire::buffer#3 ]
-Allocated (was zp ZP_WORD:35) zp ZP_WORD:11 [ makecharset::$15 makecharset::$16 makecharset::$17 makecharset::$18 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 fire::screen#4 fire::screen#11 fire::screen#2 ]
-Allocated (was zp ZP_BYTE:45) zp ZP_BYTE:13 [ makecharset::$13 ]
+Attempting to uplift remaining variables inzp[1]:17 [ makecharset::c#2 makecharset::c#1 ]
+Uplifting [makecharset] best 119670 combination zp[1]:17 [ makecharset::c#2 makecharset::c#1 ] 
+Coalescing zero page register [ zp[2]:2 [ fire::screen#0 ] ] with [ zp[2]:10 [ fire::screen#10 fire::screen#3 fire::screen#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:35 [ makecharset::$15 ] ] with [ zp[2]:37 [ makecharset::$16 ] ] - score: 1
+Coalescing zero page register [ zp[2]:39 [ makecharset::$17 ] ] with [ zp[2]:41 [ makecharset::$18 ] ] - score: 1
+Coalescing zero page register [ zp[2]:35 [ makecharset::$15 makecharset::$16 ] ] with [ zp[2]:39 [ makecharset::$17 makecharset::$18 ] ] - score: 1
+Coalescing zero page register [ zp[2]:13 [ makecharset::font#2 makecharset::font#1 ] ] with [ zp[2]:2 [ fire::screen#0 fire::screen#10 fire::screen#3 fire::screen#1 ] ]
+Coalescing zero page register [ zp[2]:15 [ makecharset::font1#2 makecharset::font1#1 ] ] with [ zp[2]:4 [ fire::buffer#4 fire::buffer#2 ] ]
+Coalescing zero page register [ zp[2]:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 ] ] with [ zp[2]:6 [ fire::screen#4 fire::screen#11 fire::screen#2 ] ]
+Coalescing zero page register [ zp[2]:25 [ fillscreen::i#2 fillscreen::i#1 ] ] with [ zp[2]:8 [ fire::buffer#10 fire::buffer#3 ] ]
+Coalescing zero page register [ zp[2]:35 [ makecharset::$15 makecharset::$16 makecharset::$17 makecharset::$18 ] ] with [ zp[2]:23 [ fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 fire::screen#4 fire::screen#11 fire::screen#2 ] ]
+Allocated (was zp[2]:13) zp[2]:2 [ makecharset::font#2 makecharset::font#1 fire::screen#0 fire::screen#10 fire::screen#3 fire::screen#1 ]
+Allocated (was zp[2]:15) zp[2]:4 [ makecharset::font1#2 makecharset::font1#1 fire::buffer#4 fire::buffer#2 ]
+Allocated (was zp[1]:17) zp[1]:6 [ makecharset::c#2 makecharset::c#1 ]
+Allocated (was zp[1]:18) zp[1]:7 [ makecharset::i#2 makecharset::i#1 ]
+Allocated (was zp[1]:20) zp[1]:8 [ makecharset::ii#2 makecharset::ii#1 ]
+Allocated (was zp[2]:25) zp[2]:9 [ fillscreen::i#2 fillscreen::i#1 fire::buffer#10 fire::buffer#3 ]
+Allocated (was zp[2]:35) zp[2]:11 [ makecharset::$15 makecharset::$16 makecharset::$17 makecharset::$18 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 fire::screen#4 fire::screen#11 fire::screen#2 ]
+Allocated (was zp[1]:45) zp[1]:13 [ makecharset::$13 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2759,20 +2655,17 @@ main: {
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
     .label screen = 2
-    .label screen_2 = $b
+    .label screen_1 = $b
     .label buffer = 4
-    .label buffer_3 = 9
-    .label screen_4 = $b
-    .label buffer_10 = 9
-    .label screen_11 = $b
-    // [26] (byte*~) fire::screen#11 ← (byte*) fire::screen#0 -- pbuz1=pbuz2 
+    .label buffer_1 = 9
+    // [26] (byte*) fire::screen#11 ← (byte*) fire::screen#0 -- pbuz1=pbuz2 
     lda.z screen
-    sta.z screen_11
+    sta.z screen_1
     lda.z screen+1
-    sta.z screen_11+1
+    sta.z screen_1+1
     // [27] phi from fire to fire::@1 [phi:fire->fire::@1]
   __b1_from_fire:
-    // [27] phi (byte*) fire::screen#4 = (byte*~) fire::screen#11 [phi:fire->fire::@1#0] -- register_copy 
+    // [27] phi (byte*) fire::screen#4 = (byte*) fire::screen#11 [phi:fire->fire::@1#0] -- register_copy 
     // [27] phi (byte*) fire::buffer#4 = (const byte*) BUFFER [phi:fire->fire::@1#1] -- pbuz1=pbuc1 
     lda #<BUFFER
     sta.z buffer
@@ -2804,17 +2697,17 @@ fire: {
     // [30] phi (byte*) fire::screen#10 = (byte*) fire::screen#1 [phi:fire::@3->fire::@6#0] -- register_copy 
     // [30] phi (byte*) fire::buffer#10 = (const byte*) BUFFER+(word)(number) $18*(number) $28 [phi:fire::@3->fire::@6#1] -- pbuz1=pbuc1 
     lda #<BUFFER+$18*$28
-    sta.z buffer_10
+    sta.z buffer_1
     lda #>BUFFER+$18*$28
-    sta.z buffer_10+1
+    sta.z buffer_1+1
     jmp __b6
     // fire::@6
   __b6:
     // [31] if((byte*) fire::buffer#10!=(const byte*) BUFFER+(word)(number) $19*(number) $28) goto fire::@7 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z buffer_10+1
+    lda.z buffer_1+1
     cmp #>BUFFER+$19*$28
     bne __b7_from___b6
-    lda.z buffer_10
+    lda.z buffer_1
     cmp #<BUFFER+$19*$28
     bne __b7_from___b6
     jmp __breturn
@@ -2844,10 +2737,10 @@ fire: {
     adc #$30
     // [39] *((byte*) fire::buffer#10) ← (byte~) fire::$14 -- _deref_pbuz1=vbuaa 
     ldy #0
-    sta (buffer_10),y
+    sta (buffer_1),y
     // [40] *((byte*) fire::screen#10) ← *((byte*) fire::buffer#10) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
-    lda (buffer_10),y
+    lda (buffer_1),y
     ldy #0
     sta (screen),y
     // [41] (byte*) fire::screen#3 ← ++ (byte*) fire::screen#10 -- pbuz1=_inc_pbuz1 
@@ -2856,9 +2749,9 @@ fire: {
     inc.z screen+1
   !:
     // [42] (byte*) fire::buffer#3 ← ++ (byte*) fire::buffer#10 -- pbuz1=_inc_pbuz1 
-    inc.z buffer_3
+    inc.z buffer_1
     bne !+
-    inc.z buffer_3+1
+    inc.z buffer_1+1
   !:
     // [30] phi from fire::@8 to fire::@6 [phi:fire::@8->fire::@6]
   __b6_from___b8:
@@ -2907,11 +2800,11 @@ fire: {
     ldy #0
     lda (buffer),y
     ldy #0
-    sta (screen_4),y
+    sta (screen_1),y
     // [52] (byte*) fire::screen#2 ← ++ (byte*) fire::screen#4 -- pbuz1=_inc_pbuz1 
-    inc.z screen_2
+    inc.z screen_1
     bne !+
-    inc.z screen_2+1
+    inc.z screen_1+1
   !:
     // [53] (byte*) fire::buffer#2 ← ++ (byte*) fire::buffer#4 -- pbuz1=_inc_pbuz1 
     inc.z buffer
@@ -3105,7 +2998,7 @@ makecharset: {
     // [80] (byte~) makecharset::$13 ← (byte~) makecharset::$12 & (byte) 7 -- vbuz1=vbuaa_band_vbuc1 
     and #7
     sta.z __13
-    // [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab + (byte~) makecharset::$13) -- vbuyy=vbuyy_plus_pbuc1_derefidx_vbuz1 
+    // [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte*) makecharset::bittab + (byte~) makecharset::$13) -- vbuyy=vbuyy_plus_pbuc1_derefidx_vbuz1 
     tya
     ldy.z __13
     clc
@@ -3178,7 +3071,7 @@ sid_rnd_init: {
 }
   // fillscreen
 // Fill a screen (1000 bytes) with a specific byte
-// fillscreen(byte* zeropage($b) screen, byte register(X) fill)
+// fillscreen(byte* zp($b) screen, byte register(X) fill)
 fillscreen: {
     .label screen = $b
     .label i = 9
@@ -3353,41 +3246,41 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [196] bne __b2 to beq
-Fixing long branch [201] bne __b2 to beq
-Fixing long branch [211] bne __b4 to beq
-Fixing long branch [216] bne __b4 to beq
+Fixing long branch [193] bne __b2 to beq
+Fixing long branch [198] bne __b2 to beq
+Fixing long branch [208] bne __b4 to beq
+Fixing long branch [213] bne __b4 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL BGCOL = (byte*) 53281
-(const byte) BLACK BLACK = (byte) 0
-(const byte*) BORDERCOL BORDERCOL = (byte*) 53280
-(const byte*) BUFFER BUFFER = (byte*) 16384
-(const byte*) CHARSET CHARSET = (byte*) 12288
-(const byte*) COLS COLS = (byte*) 55296
-(const byte*) D018 D018 = (byte*) 53272
-(const byte*) SCREEN1 SCREEN1 = (byte*) 14336
-(const byte*) SCREEN2 SCREEN2 = (byte*) 15360
-(const byte) SID_CONTROL_NOISE SID_CONTROL_NOISE = (byte) $80
-(const byte*) SID_VOICE3_CONTROL SID_VOICE3_CONTROL = (byte*) 54290
-(const word*) SID_VOICE3_FREQ SID_VOICE3_FREQ = (word*) 54286
-(const byte*) SID_VOICE3_OSC SID_VOICE3_OSC = (byte*) 54299
-(const byte) YELLOW YELLOW = (byte) 7
+(const byte*) BGCOL = (byte*) 53281
+(const byte) BLACK = (byte) 0
+(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) BUFFER = (byte*) 16384
+(const byte*) CHARSET = (byte*) 12288
+(const byte*) COLS = (byte*) 55296
+(const byte*) D018 = (byte*) 53272
+(const byte*) SCREEN1 = (byte*) 14336
+(const byte*) SCREEN2 = (byte*) 15360
+(const byte) SID_CONTROL_NOISE = (byte) $80
+(const byte*) SID_VOICE3_CONTROL = (byte*) 54290
+(const word*) SID_VOICE3_FREQ = (word*) 54286
+(const byte*) SID_VOICE3_OSC = (byte*) 54299
+(const byte) YELLOW = (byte) 7
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (label) fillscreen::@1
 (label) fillscreen::@return
 (byte) fillscreen::fill
 (byte) fillscreen::fill#5 reg byte x 1.8333333333333333
 (word) fillscreen::i
-(word) fillscreen::i#1 i zp ZP_WORD:9 16.5
-(word) fillscreen::i#2 i zp ZP_WORD:9 7.333333333333333
+(word) fillscreen::i#1 i zp[2]:9 16.5
+(word) fillscreen::i#2 i zp[2]:9 7.333333333333333
 (byte*) fillscreen::screen
-(byte*) fillscreen::screen#4 screen zp ZP_WORD:11 7.333333333333333
-(byte*) fillscreen::screen#5 screen zp ZP_WORD:11 17.5
-(byte*) fillscreen::screen#6 screen zp ZP_WORD:11 2.0
+(byte*) fillscreen::screen#4 screen zp[2]:11 7.333333333333333
+(byte*) fillscreen::screen#5 screen zp[2]:11 17.5
+(byte*) fillscreen::screen#6 screen zp[2]:11 2.0
 (void()) fire((byte*) fire::screenbase)
 (byte~) fire::$12 reg byte a 202.0
 (byte~) fire::$13 reg byte a 202.0
@@ -3405,22 +3298,22 @@ FINAL SYMBOL TABLE
 (label) fire::@8
 (label) fire::@return
 (byte*) fire::buffer
-(byte*) fire::buffer#10 buffer#10 zp ZP_WORD:9 45.90909090909091
-(byte*) fire::buffer#2 buffer zp ZP_WORD:4 202.0
-(byte*) fire::buffer#3 buffer#3 zp ZP_WORD:9 202.0
-(byte*) fire::buffer#4 buffer zp ZP_WORD:4 75.75
+(byte*) fire::buffer#10 buffer_1 zp[2]:9 45.90909090909091
+(byte*) fire::buffer#2 buffer zp[2]:4 202.0
+(byte*) fire::buffer#3 buffer_1 zp[2]:9 202.0
+(byte*) fire::buffer#4 buffer zp[2]:4 75.75
 (byte) fire::c
 (byte) fire::c#0 reg byte a 202.0
 (byte) fire::c#1 reg byte a 202.0
 (byte) fire::c#2 reg byte a 303.0
 (byte*) fire::screen
-(byte*) fire::screen#0 screen zp ZP_WORD:2 0.26666666666666666
-(byte*) fire::screen#1 screen zp ZP_WORD:2 4.0
-(byte*) fire::screen#10 screen zp ZP_WORD:2 30.5
-(byte*~) fire::screen#11 screen#11 zp ZP_WORD:11 4.0
-(byte*) fire::screen#2 screen#2 zp ZP_WORD:11 101.0
-(byte*) fire::screen#3 screen zp ZP_WORD:2 101.0
-(byte*) fire::screen#4 screen#4 zp ZP_WORD:11 27.727272727272727
+(byte*) fire::screen#0 screen zp[2]:2 0.26666666666666666
+(byte*) fire::screen#1 screen zp[2]:2 4.0
+(byte*) fire::screen#10 screen zp[2]:2 30.5
+(byte*) fire::screen#11 screen_1 zp[2]:11 4.0
+(byte*) fire::screen#2 screen_1 zp[2]:11 101.0
+(byte*) fire::screen#3 screen zp[2]:2 101.0
+(byte*) fire::screen#4 screen_1 zp[2]:11 27.727272727272727
 (byte*) fire::screenbase
 (void()) main()
 (label) main::@1
@@ -3444,11 +3337,11 @@ FINAL SYMBOL TABLE
 (void()) makecharset((byte*) makecharset::charset)
 (byte~) makecharset::$11 reg byte a 2002.0
 (byte~) makecharset::$12 reg byte a 2002.0
-(byte~) makecharset::$13 $13 zp ZP_BYTE:13 2002.0
-(word~) makecharset::$15 $15 zp ZP_WORD:11 202.0
-(word~) makecharset::$16 $16 zp ZP_WORD:11 202.0
-(word~) makecharset::$17 $17 zp ZP_WORD:11 202.0
-(byte*~) makecharset::$18 $18 zp ZP_WORD:11 202.0
+(byte~) makecharset::$13 zp[1]:13 2002.0
+(word~) makecharset::$15 zp[2]:11 202.0
+(word~) makecharset::$16 zp[2]:11 202.0
+(word~) makecharset::$17 zp[2]:11 202.0
+(byte*~) makecharset::$18 zp[2]:11 202.0
 (label) makecharset::@1
 (label) makecharset::@10
 (label) makecharset::@11
@@ -3472,23 +3365,23 @@ FINAL SYMBOL TABLE
 (byte) makecharset::bc#3 reg byte x 275.5
 (byte) makecharset::bc#6 reg byte x 101.0
 (byte) makecharset::bc#7 reg byte x 1501.5
-(const byte[8]) makecharset::bittab bittab = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
+(const byte*) makecharset::bittab[(number) 8]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte) makecharset::c
-(byte) makecharset::c#1 c zp ZP_BYTE:6 22.0
-(byte) makecharset::c#2 c zp ZP_BYTE:6 49.238095238095234
+(byte) makecharset::c#1 c zp[1]:6 22.0
+(byte) makecharset::c#2 c zp[1]:6 49.238095238095234
 (byte*) makecharset::charset
 (byte*) makecharset::font
-(byte*) makecharset::font#1 font zp ZP_WORD:2 22.0
-(byte*) makecharset::font#2 font zp ZP_WORD:2 14.666666666666666
+(byte*) makecharset::font#1 font zp[2]:2 22.0
+(byte*) makecharset::font#2 font zp[2]:2 14.666666666666666
 (byte*) makecharset::font1
-(byte*) makecharset::font1#1 font1 zp ZP_WORD:4 22.0
-(byte*) makecharset::font1#2 font1 zp ZP_WORD:4 14.666666666666666
+(byte*) makecharset::font1#1 font1 zp[2]:4 22.0
+(byte*) makecharset::font1#2 font1 zp[2]:4 14.666666666666666
 (byte) makecharset::i
-(byte) makecharset::i#1 i zp ZP_BYTE:7 202.0
-(byte) makecharset::i#2 i zp ZP_BYTE:7 78.05555555555556
+(byte) makecharset::i#1 i zp[1]:7 202.0
+(byte) makecharset::i#2 i zp[1]:7 78.05555555555556
 (byte) makecharset::ii
-(byte) makecharset::ii#1 ii zp ZP_BYTE:8 2002.0
-(byte) makecharset::ii#2 ii zp ZP_BYTE:8 400.4
+(byte) makecharset::ii#1 ii zp[1]:8 2002.0
+(byte) makecharset::ii#2 ii zp[1]:8 400.4
 (byte()) sid_rnd()
 (label) sid_rnd::@return
 (byte) sid_rnd::return
@@ -3498,15 +3391,15 @@ FINAL SYMBOL TABLE
 (label) sid_rnd_init::@return
 
 reg byte a [ fire::c#2 fire::c#0 fire::c#1 ]
-zp ZP_WORD:2 [ makecharset::font#2 makecharset::font#1 fire::screen#0 fire::screen#10 fire::screen#3 fire::screen#1 ]
-zp ZP_WORD:4 [ makecharset::font1#2 makecharset::font1#1 fire::buffer#4 fire::buffer#2 ]
-zp ZP_BYTE:6 [ makecharset::c#2 makecharset::c#1 ]
-zp ZP_BYTE:7 [ makecharset::i#2 makecharset::i#1 ]
+zp[2]:2 [ makecharset::font#2 makecharset::font#1 fire::screen#0 fire::screen#10 fire::screen#3 fire::screen#1 ]
+zp[2]:4 [ makecharset::font1#2 makecharset::font1#1 fire::buffer#4 fire::buffer#2 ]
+zp[1]:6 [ makecharset::c#2 makecharset::c#1 ]
+zp[1]:7 [ makecharset::i#2 makecharset::i#1 ]
 reg byte x [ makecharset::bc#6 makecharset::bc#3 makecharset::bc#7 makecharset::bc#1 makecharset::bc#2 ]
-zp ZP_BYTE:8 [ makecharset::ii#2 makecharset::ii#1 ]
+zp[1]:8 [ makecharset::ii#2 makecharset::ii#1 ]
 reg byte y [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ]
 reg byte x [ fillscreen::fill#5 ]
-zp ZP_WORD:9 [ fillscreen::i#2 fillscreen::i#1 fire::buffer#10 fire::buffer#3 ]
+zp[2]:9 [ fillscreen::i#2 fillscreen::i#1 fire::buffer#10 fire::buffer#3 ]
 reg byte a [ sid_rnd::return#2 ]
 reg byte a [ fire::$12 ]
 reg byte a [ fire::$13 ]
@@ -3515,10 +3408,10 @@ reg byte a [ fire::$4 ]
 reg byte a [ fire::$5 ]
 reg byte a [ fire::$6 ]
 reg byte a [ sid_rnd::return#0 ]
-zp ZP_WORD:11 [ makecharset::$15 makecharset::$16 makecharset::$17 makecharset::$18 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 fire::screen#4 fire::screen#11 fire::screen#2 ]
+zp[2]:11 [ makecharset::$15 makecharset::$16 makecharset::$17 makecharset::$18 fillscreen::screen#5 fillscreen::screen#6 fillscreen::screen#4 fire::screen#4 fire::screen#11 fire::screen#2 ]
 reg byte a [ makecharset::$11 ]
 reg byte a [ makecharset::$12 ]
-zp ZP_BYTE:13 [ makecharset::$13 ]
+zp[1]:13 [ makecharset::$13 ]
 
 
 FINAL ASSEMBLER
@@ -3674,19 +3567,16 @@ main: {
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
     .label screen = 2
-    .label screen_2 = $b
+    .label screen_1 = $b
     .label buffer = 4
-    .label buffer_3 = 9
-    .label screen_4 = $b
-    .label buffer_10 = 9
-    .label screen_11 = $b
-    // [26] (byte*~) fire::screen#11 ← (byte*) fire::screen#0 -- pbuz1=pbuz2 
+    .label buffer_1 = 9
+    // [26] (byte*) fire::screen#11 ← (byte*) fire::screen#0 -- pbuz1=pbuz2 
     lda.z screen
-    sta.z screen_11
+    sta.z screen_1
     lda.z screen+1
-    sta.z screen_11+1
+    sta.z screen_1+1
     // [27] phi from fire to fire::@1 [phi:fire->fire::@1]
-    // [27] phi (byte*) fire::screen#4 = (byte*~) fire::screen#11 [phi:fire->fire::@1#0] -- register_copy 
+    // [27] phi (byte*) fire::screen#4 = (byte*) fire::screen#11 [phi:fire->fire::@1#0] -- register_copy 
     // [27] phi (byte*) fire::buffer#4 = (const byte*) BUFFER [phi:fire->fire::@1#1] -- pbuz1=pbuc1 
     lda #<BUFFER
     sta.z buffer
@@ -3716,17 +3606,17 @@ fire: {
     // [30] phi (byte*) fire::screen#10 = (byte*) fire::screen#1 [phi:fire::@3->fire::@6#0] -- register_copy 
     // [30] phi (byte*) fire::buffer#10 = (const byte*) BUFFER+(word)(number) $18*(number) $28 [phi:fire::@3->fire::@6#1] -- pbuz1=pbuc1 
     lda #<BUFFER+$18*$28
-    sta.z buffer_10
+    sta.z buffer_1
     lda #>BUFFER+$18*$28
-    sta.z buffer_10+1
+    sta.z buffer_1+1
     // fire::@6
   __b6:
     // for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer)
     // [31] if((byte*) fire::buffer#10!=(const byte*) BUFFER+(word)(number) $19*(number) $28) goto fire::@7 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z buffer_10+1
+    lda.z buffer_1+1
     cmp #>BUFFER+$19*$28
     bne __b7
-    lda.z buffer_10
+    lda.z buffer_1
     cmp #<BUFFER+$19*$28
     bne __b7
     // fire::@return
@@ -3755,10 +3645,10 @@ fire: {
     // *buffer = 0x30 + (sid_rnd())/$10
     // [39] *((byte*) fire::buffer#10) ← (byte~) fire::$14 -- _deref_pbuz1=vbuaa 
     ldy #0
-    sta (buffer_10),y
+    sta (buffer_1),y
     // *screen = *buffer = 0x30 + (sid_rnd())/$10
     // [40] *((byte*) fire::screen#10) ← *((byte*) fire::buffer#10) -- _deref_pbuz1=_deref_pbuz2 
-    lda (buffer_10),y
+    lda (buffer_1),y
     sta (screen),y
     // for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer)
     // [41] (byte*) fire::screen#3 ← ++ (byte*) fire::screen#10 -- pbuz1=_inc_pbuz1 
@@ -3767,9 +3657,9 @@ fire: {
     inc.z screen+1
   !:
     // [42] (byte*) fire::buffer#3 ← ++ (byte*) fire::buffer#10 -- pbuz1=_inc_pbuz1 
-    inc.z buffer_3
+    inc.z buffer_1
     bne !+
-    inc.z buffer_3+1
+    inc.z buffer_1+1
   !:
     // [30] phi from fire::@8 to fire::@6 [phi:fire::@8->fire::@6]
     // [30] phi (byte*) fire::screen#10 = (byte*) fire::screen#3 [phi:fire::@8->fire::@6#0] -- register_copy 
@@ -3817,12 +3707,12 @@ fire: {
     // *screen = *buffer = c
     // [51] *((byte*) fire::screen#4) ← *((byte*) fire::buffer#4) -- _deref_pbuz1=_deref_pbuz2 
     lda (buffer),y
-    sta (screen_4),y
+    sta (screen_1),y
     // ++screen;
     // [52] (byte*) fire::screen#2 ← ++ (byte*) fire::screen#4 -- pbuz1=_inc_pbuz1 
-    inc.z screen_2
+    inc.z screen_1
     bne !+
-    inc.z screen_2+1
+    inc.z screen_1+1
   !:
     // ++buffer;
     // [53] (byte*) fire::buffer#2 ← ++ (byte*) fire::buffer#4 -- pbuz1=_inc_pbuz1 
@@ -4025,7 +3915,7 @@ makecharset: {
     and #7
     sta.z __13
     // b += bittab[(ii + (i & 1)) & 0x7]
-    // [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte[8]) makecharset::bittab + (byte~) makecharset::$13) -- vbuyy=vbuyy_plus_pbuc1_derefidx_vbuz1 
+    // [81] (byte) makecharset::b#1 ← (byte) makecharset::b#2 + *((const byte*) makecharset::bittab + (byte~) makecharset::$13) -- vbuyy=vbuyy_plus_pbuc1_derefidx_vbuz1 
     tya
     ldy.z __13
     clc
@@ -4098,7 +3988,7 @@ sid_rnd_init: {
 }
   // fillscreen
 // Fill a screen (1000 bytes) with a specific byte
-// fillscreen(byte* zeropage($b) screen, byte register(X) fill)
+// fillscreen(byte* zp($b) screen, byte register(X) fill)
 fillscreen: {
     .label screen = $b
     .label i = 9

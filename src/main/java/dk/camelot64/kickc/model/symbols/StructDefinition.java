@@ -24,7 +24,7 @@ public class StructDefinition extends Scope {
     * @return The member variable
     */
    public Variable getMember(String name) {
-      for(Variable member : getAllVariables(false)) {
+      for(Variable member : getAllVars(false)) {
          if(member.getLocalName().equals(name)) {
             return member;
          }
@@ -39,11 +39,11 @@ public class StructDefinition extends Scope {
     */
    public long getMemberByteOffset(Variable member, ProgramScope programScope) {
       long byteOffset=0;
-      for(Variable structMember : getAllVariables(false)) {
+      for(Variable structMember : getAllVars(false)) {
          if(structMember.equals(member)) {
             break;
          } else {
-            byteOffset += SymbolTypeStruct.getMemberSizeBytes(structMember.getType(), programScope);
+            byteOffset += SymbolTypeStruct.getMemberSizeBytes(structMember.getType(), structMember.getArraySize(), programScope);
          }
       }
       return byteOffset;

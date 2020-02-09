@@ -76,16 +76,13 @@ main: {
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
     .label screen = 2
-    .label screen_2 = $b
+    .label screen_1 = $b
     .label buffer = 4
-    .label buffer_3 = 9
-    .label screen_4 = $b
-    .label buffer_10 = 9
-    .label screen_11 = $b
+    .label buffer_1 = 9
     lda.z screen
-    sta.z screen_11
+    sta.z screen_1
     lda.z screen+1
-    sta.z screen_11+1
+    sta.z screen_1+1
     lda #<BUFFER
     sta.z buffer
     lda #>BUFFER
@@ -105,14 +102,14 @@ fire: {
     adc #>$18*$28
     sta.z screen+1
     lda #<BUFFER+$18*$28
-    sta.z buffer_10
+    sta.z buffer_1
     lda #>BUFFER+$18*$28
-    sta.z buffer_10+1
+    sta.z buffer_1+1
   __b6:
-    lda.z buffer_10+1
+    lda.z buffer_1+1
     cmp #>BUFFER+$19*$28
     bne __b7
-    lda.z buffer_10
+    lda.z buffer_1
     cmp #<BUFFER+$19*$28
     bne __b7
     rts
@@ -125,16 +122,16 @@ fire: {
     clc
     adc #$30
     ldy #0
-    sta (buffer_10),y
-    lda (buffer_10),y
+    sta (buffer_1),y
+    lda (buffer_1),y
     sta (screen),y
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    inc.z buffer_3
+    inc.z buffer_1
     bne !+
-    inc.z buffer_3+1
+    inc.z buffer_1+1
   !:
     jmp __b6
   __b2:
@@ -158,10 +155,10 @@ fire: {
     ldy #0
     sta (buffer),y
     lda (buffer),y
-    sta (screen_4),y
-    inc.z screen_2
+    sta (screen_1),y
+    inc.z screen_1
     bne !+
-    inc.z screen_2+1
+    inc.z screen_1+1
   !:
     inc.z buffer
     bne !+
@@ -325,7 +322,7 @@ sid_rnd_init: {
     rts
 }
 // Fill a screen (1000 bytes) with a specific byte
-// fillscreen(byte* zeropage($b) screen, byte register(X) fill)
+// fillscreen(byte* zp($b) screen, byte register(X) fill)
 fillscreen: {
     .label screen = $b
     .label i = 9

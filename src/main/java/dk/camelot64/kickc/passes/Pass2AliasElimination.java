@@ -128,7 +128,6 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
                      // Alias assignment
                      VariableRef alias = (VariableRef) assignment.getrValue2();
-
                      List<ControlFlowGraph.VarAssignment> assignments = ControlFlowGraph.getVarAssignments(alias, program.getGraph(), program.getScope());
                      if(assignments.size() == 0)
                         throw new InternalError("Error! Var is never assigned! " + variable);
@@ -136,11 +135,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                         // Multiple assignments exist
                         continue;
                      // assignments.size()==1
-                     // Examine if the alias is assigned inside another scope
                      ControlFlowGraph.VarAssignment varAssignment = assignments.get(0);
                      if(ControlFlowGraph.VarAssignment.Type.INIT_VALUE.equals(varAssignment.type)) {
                         aliases.add(variable, alias);
                      } else {
+                        // Examine if the alias is assigned inside another scope
                         ScopeRef varAssignmentScope = block.getScope();
                         ScopeRef aliasAssignmentScope = varAssignment.block.getScope();
                         if(!alias.isIntermediate() && (!varAssignmentScope.equals(aliasAssignmentScope) || !variable.getScopeNames().equals(alias.getScopeNames()))) {
@@ -151,21 +150,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                            aliases.add(variable, alias);
                         }
                      }
-
-                     /*
-                     // Examine if the alis is assigned inside another scope
-                     ControlFlowBlock aliasAssignmentBlock = program.getGraph().getAssignmentBlock(alias);
-                     ScopeRef aliasScope = aliasAssignmentBlock.getScope();
-                     ScopeRef varScope = block.getScope();
-                     if(!alias.isIntermediate() && (!varScope.equals(aliasScope) || !variable.getScopeNames().equals(alias.getScopeNames()))) {
-                        if(program.getLog().isVerboseNonOptimization()) {
-                           program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
-                        }
-                     } else {
-                        aliases.add(variable, alias);
-                     }
-                      */
-                  }
+                 }
                }
             } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock phi = (StatementPhiBlock) statement;
@@ -177,6 +162,38 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                         // First rValue
                         if(phiRValue.getrValue() instanceof VariableRef) {
                            alias = (VariableRef) phiRValue.getrValue();
+                           if(variable.equals(alias)) {
+                              if(program.getLog().isVerboseNonOptimization()) {
+                                 program.getLog().append("Not aliassing identity: " + variable + " " + alias);
+                              }
+                              alias = null;
+                              break;
+                           }
+                           List<ControlFlowGraph.VarAssignment> assignments = ControlFlowGraph.getVarAssignments(alias, program.getGraph(), program.getScope());
+                           if(assignments.size() == 0)
+                              throw new InternalError("Error! Var is never assigned! " + variable);
+                           if(assignments.size() > 1) {
+                              // Multiple assignments exist
+                              alias = null;
+                              break;
+                           }
+                           // assignments.size()==1
+                           ControlFlowGraph.VarAssignment varAssignment = assignments.get(0);
+                           if(!ControlFlowGraph.VarAssignment.Type.INIT_VALUE.equals(varAssignment.type)) {
+                              // Examine if the alias is assigned inside another scope
+                              ScopeRef varAssignmentScope = block.getScope();
+                              ScopeRef aliasAssignmentScope = varAssignment.block.getScope();
+                              if(!alias.isIntermediate() && (!varAssignmentScope.equals(aliasAssignmentScope) || !variable.getScopeNames().equals(alias.getScopeNames()))) {
+                                 if(program.getLog().isVerboseNonOptimization()) {
+                                    program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                                 }
+                                 alias = null;
+                                 break;
+                              }
+                           }
+
+
+                           /*
                            // Examine if the alis is assigned inside another scope
                            ControlFlowBlock aliasAssignmentBlock = program.getGraph().getAssignmentBlock(alias);
                            ScopeRef aliasScope = aliasAssignmentBlock.getScope();
@@ -194,6 +211,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                               alias = null;
                               break;
                            }
+                           */
                         } else {
                            // Not aliasing non-variables
                            break;

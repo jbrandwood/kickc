@@ -668,14 +668,14 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZM1, "sta $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
 
       // Synthesize some constant pointers as constant words (remove when the above section can be included)
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([cz].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)_(lt|gt|le|ge|eq|neq)_(.*)", null, null, "vwu$1_$2_$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([zc].)", null, null, "$1=vwu$2", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(plus|minus|bor|bxor)_p..([cz].)", null, null, "$1=$2_$3_vwu$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(plus|minus|bor|bxor)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([cz].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("p..([cz].)=_(inc|dec)_p..([cz].)", null, null, "vwu$1=_$2_vwu$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([czm].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("p..([czm].)_(lt|gt|le|ge|eq|neq)_(.*)", null, null, "vwu$1_$2_$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([czm].)", null, null, "$1=vwu$2", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)_(plus|minus|bor|bxor)_p..([czm].)", null, null, "$1=$2_$3_vwu$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([czm].)_(plus|minus|bor|bxor)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("p..([czm].)=(.*)_(sethi|setlo|plus|minus)_(.*)", null, null, "vwu$1=$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=p..([czm].)_(sethi|setlo|plus|minus)_(.*)", null, null, "$1=vwu$2_$3_$4", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("p..([czm].)=_(inc|dec)_p..([czm].)", null, null, "vwu$1=_$2_vwu$3", null, null));
 
       // Synthesize constants using AA/XX/YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)vb(.)c1(.*)", rvalAa+"|"+ derefC1, "lda #{c1}", "$1vb$2aa$3", null, null));
@@ -774,7 +774,6 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_inc_(.*)", null, null, "vb$1aa=$2_plus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_dec_(.*)", null, null, "vb$1aa=$2_minus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vw(.)z1=_inc_vw(.z.)", null, null, "vw$1z1=vw$2_plus_1", null, null));
-
 
       return synths;
    }

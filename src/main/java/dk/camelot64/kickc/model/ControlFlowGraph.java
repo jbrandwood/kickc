@@ -1,11 +1,12 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
 
@@ -102,6 +103,75 @@ public class ControlFlowGraph implements Serializable {
          }
       }
       return assignments;
+   }
+
+   /** Any assignment of a value to a SymbolVariable.
+    * Potential assignments include StatementLValue, StatementPhi and Variable.initValue
+    * */
+   public static class VarAssignment {
+
+      public enum Type {
+         STATEMENT_LVALUE,
+         STATEMENT_PHI,
+         INIT_VALUE
+      }
+
+      /** The type of assignment. */
+      public final Type type;
+
+      /** The block  containing the assignment statement. Null if type is not STATEMENT_LVALUE or STATEMENT_PHI */
+      public final ControlFlowBlock block;
+
+      /* The LValue-statement. Null if type is not STATEMENT_LVALUE. */
+      public final StatementLValue statementLValue;
+
+      /* The PHI-statement. Null if type is not STATEMENT_PHI. */
+      public final StatementPhiBlock statementPhi;
+      public final StatementPhiBlock.PhiVariable statementPhiVariable;
+
+      /* The Variable with initValue. Null if type is not INIT_VALUE. */
+      public final Variable variableInitValue;
+
+      public VarAssignment(Type type, ControlFlowBlock block, StatementLValue statementLValue, StatementPhiBlock statementPhi, StatementPhiBlock.PhiVariable statementPhiVariable, Variable variableInitValue) {
+         this.type = type;
+         this.block = block;
+         this.statementLValue = statementLValue;
+         this.statementPhi = statementPhi;
+         this.statementPhiVariable = statementPhiVariable;
+         this.variableInitValue = variableInitValue;
+      }
+
+   }
+
+   /**
+    * Get all assignments of value to a variable.
+    *
+    * @param variable The variable to find the assignment for
+    * @return All assignments of values to the variable
+    */
+   public static List<VarAssignment> getVarAssignments(SymbolVariableRef variable, ControlFlowGraph graph, ProgramScope programScope) {
+      ArrayList<VarAssignment> varAssignments = new ArrayList<>();
+      Variable varDef = programScope.getVariable(variable);
+      if(varDef.getInitValue()!=null) {
+         varAssignments.add(new VarAssignment(VarAssignment.Type.INIT_VALUE, null, null, null, null, varDef));
+      }
+      for(ControlFlowBlock block : graph.getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementLValue) {
+               StatementLValue assignment = (StatementLValue) statement;
+               if(variable.equals(assignment.getlValue())) {
+                  varAssignments.add(new VarAssignment(VarAssignment.Type.STATEMENT_LVALUE, block, assignment, null, null, null));
+               }
+            } else if(statement instanceof StatementPhiBlock) {
+               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+                  if(phiVariable.getVariable().equals(variable)) {
+                     varAssignments.add(new VarAssignment(VarAssignment.Type.STATEMENT_PHI, block, null, (StatementPhiBlock) statement, phiVariable, null));
+                  }
+               }
+            }
+         }
+      }
+      return varAssignments;
    }
 
    /**

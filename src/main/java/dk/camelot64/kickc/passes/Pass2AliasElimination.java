@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -126,6 +128,31 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
                      // Alias assignment
                      VariableRef alias = (VariableRef) assignment.getrValue2();
+
+                     List<ControlFlowGraph.VarAssignment> assignments = ControlFlowGraph.getVarAssignments(alias, program.getGraph(), program.getScope());
+                     if(assignments.size() == 0)
+                        throw new InternalError("Error! Var is never assigned! " + variable);
+                     else if(assignments.size() > 1)
+                        // Multiple assignments exist
+                        continue;
+                     // assignments.size()==1
+                     // Examine if the alias is assigned inside another scope
+                     ControlFlowGraph.VarAssignment varAssignment = assignments.get(0);
+                     if(ControlFlowGraph.VarAssignment.Type.INIT_VALUE.equals(varAssignment.type)) {
+                        aliases.add(variable, alias);
+                     } else {
+                        ScopeRef varAssignmentScope = block.getScope();
+                        ScopeRef aliasAssignmentScope = varAssignment.block.getScope();
+                        if(!alias.isIntermediate() && (!varAssignmentScope.equals(aliasAssignmentScope) || !variable.getScopeNames().equals(alias.getScopeNames()))) {
+                           if(program.getLog().isVerboseNonOptimization()) {
+                              program.getLog().append("Not aliassing across scopes: " + variable + " " + alias);
+                           }
+                        } else {
+                           aliases.add(variable, alias);
+                        }
+                     }
+
+                     /*
                      // Examine if the alis is assigned inside another scope
                      ControlFlowBlock aliasAssignmentBlock = program.getGraph().getAssignmentBlock(alias);
                      ScopeRef aliasScope = aliasAssignmentBlock.getScope();
@@ -137,6 +164,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                      } else {
                         aliases.add(variable, alias);
                      }
+                      */
                   }
                }
             } else if(statement instanceof StatementPhiBlock) {

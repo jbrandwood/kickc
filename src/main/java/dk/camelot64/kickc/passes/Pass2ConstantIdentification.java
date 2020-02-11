@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.ConstantNotLiteral;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorBinary;
 import dk.camelot64.kickc.model.operators.OperatorUnary;
@@ -170,13 +167,13 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          if(variable.isVolatile() || !variable.isKindLoadStore())
             // Do not examine volatiles, non-constants or versioned variables
             continue;
-         List<StatementLValue> assignments = getGraph().getAssignments(variable.getRef());
-         if(assignments.size() == 1) {
-            StatementLValue statementLValue = assignments.get(0);
-            if(!(statementLValue instanceof StatementAssignment))
+         final List<ControlFlowGraph.VarAssignment> varAssignments = ControlFlowGraph.getVarAssignments(variable.getRef(), getGraph(), getScope());
+         if(varAssignments.size() == 1) {
+            final ControlFlowGraph.VarAssignment varAssignment = varAssignments.get(0);
+            if(!ControlFlowGraph.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type) || !(varAssignment.statementLValue instanceof StatementAssignment))
                // Only look at assignments
                continue;
-            StatementAssignment assignment = (StatementAssignment) statementLValue;
+            StatementAssignment assignment = (StatementAssignment) varAssignment.statementLValue;
             LValue lValue = assignment.getlValue();
             if(lValue instanceof VariableRef) {
                VariableRef varRef = (VariableRef) lValue;

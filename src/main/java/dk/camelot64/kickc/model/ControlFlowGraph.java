@@ -84,27 +84,6 @@ public class ControlFlowGraph implements Serializable {
       return null;
    }
 
-   /**
-    * Get all assignments of the passed variable.
-    *
-    * @param variable The variable to find the assignment for
-    * @return All assignments.
-    */
-   public List<StatementLValue> getAssignments(SymbolVariableRef variable) {
-      ArrayList<StatementLValue> assignments = new ArrayList<>();
-      for(ControlFlowBlock block : getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementLValue) {
-               StatementLValue assignment = (StatementLValue) statement;
-               if(variable.equals(assignment.getlValue())) {
-                  assignments.add(assignment);
-               }
-            }
-         }
-      }
-      return assignments;
-   }
-
    /** Any assignment of a value to a SymbolVariable.
     * Potential assignments include StatementLValue, StatementPhi and Variable.initValue
     * */
@@ -173,33 +152,6 @@ public class ControlFlowGraph implements Serializable {
       }
       return varAssignments;
    }
-
-   /**
-    * Get the block containing the assignment of the passed variable. Assumes that only a single assignment exists.
-    *
-    * @param variable The variable to find the assignment for
-    * @return The block containing the assignment. null if the variable is not assigned.
-    */
-   public ControlFlowBlock getAssignmentBlock(VariableRef variable) {
-      for(ControlFlowBlock block : getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementLValue) {
-               StatementLValue assignment = (StatementLValue) statement;
-               if(variable.equals(assignment.getlValue())) {
-                  return block;
-               }
-            } else if(statement instanceof StatementPhiBlock) {
-               for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
-                  if(phiVariable.getVariable().equals(variable)) {
-                     return block;
-                  }
-               }
-            }
-         }
-      }
-      return null;
-   }
-
 
    public ControlFlowBlock getDefaultSuccessor(ControlFlowBlock block) {
       if(block.getDefaultSuccessor() != null) {

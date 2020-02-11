@@ -297,6 +297,9 @@ class AsmFragmentTemplateSynthesisRule {
       mapSToU.put("vdsz1", "vduz1");
       mapSToU.put("vdsz2", "vduz2");
       mapSToU.put("vdsz3", "vduz3");
+      mapSToU.put("vdsm1", "vdum1");
+      mapSToU.put("vdsm2", "vdum2");
+      mapSToU.put("vdsm3", "vdum3");
       mapSToU.put("vdsc1", "vduc1");
       mapSToU.put("vdsc2", "vduc2");
       mapSToU.put("vdsc3", "vduc3");
@@ -758,7 +761,7 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=(v.s..)_(band|bxor|bor)_(v.s..)", null, null, "$1=$2_$3_$4", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=(p.s..)_derefidx_(vbu..)", null, null, "$1=$2_derefidx_$3", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=_(inc|dec)_(v.s..)", null, null, "$1=_$2_$3", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vbuz.|vbuaa|vbuxx|vbuyy)=_(lo|hi)_vws(z.|c.)", null, null, "$1=_$2_vwu$3", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbuz.|vbuaa|vbuxx|vbuyy)=_(lo|hi)_vws(z.|c.|m.)", null, null, "$1=_$2_vwu$3", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vb[su]..)=(vb[su]..)_(plus|minus)_(vb[su]..)", null, null, "$1=$2_$3_$4", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vw[su]..)=(vw[su]..)_(plus|minus)_(vw[su]..)", null, null, "$1=$2_$3_$4", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vd[su]..)=(vd[su]..)_(plus|minus)_(vd[su]..)", null, null, "$1=$2_$3_$4", null, mapSToU));

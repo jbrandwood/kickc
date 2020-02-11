@@ -53,8 +53,12 @@ public class VariableBuilder {
 
    public static VariableBuilderConfig getDefaultConfig(CompileLog log) {
       VariableBuilderConfig config = new VariableBuilderConfig();
-      //config.addSetting("ma_mem", log, null);
-      //config.addSetting("parameter_ssa_mem", log, null);
+      //config.addSetting("ssa_mem", log, null);
+      //config.addSetting("pointer_ssa_zp", log, null);
+      //config.addSetting("array_ma_mem", log, null);
+      //config.addSetting("global_struct_ma_mem", log, null);
+
+      config.addSetting("parameter_ssa_mem", log, null);
       config.addSetting("ssa_zp", log, null);
       config.addSetting("array_ma_mem", log, null);
       config.addSetting("global_struct_ma_mem", log, null);

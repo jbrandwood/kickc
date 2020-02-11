@@ -386,7 +386,7 @@ class AsmFragmentTemplateSynthesisRule {
       String threeAa = ".*aa.*aa.*aa.*";
 
       // Presence of unwanted single symbols
-      String oneZ2 = ".*z2.*";
+      String oneZM2 = ".*[zm]2.*";
       String derefC1 = ".*c1_deref.*";
       String derefC2 = ".*c2_deref.*";
       String derefC3 = ".*c3_deref.*";
@@ -767,16 +767,16 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(vd[su]..)=(vd[su]..)_(plus|minus)_(vd[su]..)", null, null, "$1=$2_$3_$4", null, mapSToU));
 
       // Use Z1/Z2 ASM to synthesize Z1-only code ( ...z1...z1... -> ...z1...z2... )
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(v..)z1_(plus|minus|band|bxor|bor)_(.*)", oneZ2, null, "$1z1=$2z2_$3_$4", null, mapZM1, false));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(.*)_(plus|minus|band|bxor|bor)_(v..)z1", oneZ2, null, "$1z1=$2_$3_$4z2", null, mapZM1, false));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=_(neg|lo|hi)_(v..)z1", oneZ2, null, "$1z1=_$2_$3z2", null, mapZM1, false));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(v..[zm])1=(v..[zm])1_(plus|minus|band|bxor|bor)_(.*)", oneZM2, null, "$11=$22_$3_$4", null, mapZM1, false));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(v..[zm])1=(.*)_(plus|minus|band|bxor|bor)_(v..[zm])1", oneZM2, null, "$11=$2_$3_$42", null, mapZM1, false));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(v..[zm])1=_(neg|lo|hi)_(v..[zm])1", oneZM2, null, "$11=_$2_$32", null, mapZM1, false));
 
       //synths.add(new AsmFragmentTemplateSynthesisRule("(v..)z1=(v..)z1_(plus|minus|band|bxor|bor)_(v..)z2", null, null, "$1z1=$2z2_$3_$4z3", null, mapZ1, false));
 
       // Convert INC/DEC to +1/-1 ( ..._inc_xxx... -> ...xxx_plus_1_... / ..._dec_xxx... -> ...xxx_minus_1_... )
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_inc_(.*)", null, null, "vb$1aa=$2_plus_1", null, null));
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)aa=_dec_(.*)", null, null, "vb$1aa=$2_minus_1", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("vw(.)z1=_inc_vw(.z.)", null, null, "vw$1z1=vw$2_plus_1", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(v..[zm].)=_inc_(v..[zm].)", null, null, "$1=$2_plus_1", null, null));
 
       return synths;
    }

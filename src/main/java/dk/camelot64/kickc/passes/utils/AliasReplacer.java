@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.passes;
+package dk.camelot64.kickc.passes.utils;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.iterator.ProgramValue;

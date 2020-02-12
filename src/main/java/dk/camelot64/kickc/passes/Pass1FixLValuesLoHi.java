@@ -1,7 +1,6 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -15,6 +14,7 @@ import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.LvalueIntermediate;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
 import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.passes.utils.VarAssignments;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +44,10 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
             if(statement instanceof StatementLValue && ((StatementLValue) statement).getlValue() instanceof LvalueIntermediate) {
                StatementLValue statementLValue = (StatementLValue) statement;
                LvalueIntermediate intermediate = (LvalueIntermediate) statementLValue.getlValue();
-               final List<ControlFlowGraph.VarAssignment> varAssignments = ControlFlowGraph.getVarAssignments(intermediate.getVariable(), getGraph(), programScope);
+               final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(intermediate.getVariable(), getGraph(), programScope);
                if(varAssignments.size() == 1) {
-                  final ControlFlowGraph.VarAssignment varAssignment = varAssignments.get(0);
-                  if(varAssignment.type.equals(ControlFlowGraph.VarAssignment.Type.STATEMENT_LVALUE) && varAssignment.statementLValue instanceof StatementAssignment) {
+                  final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
+                  if(varAssignment.type.equals(VarAssignments.VarAssignment.Type.STATEMENT_LVALUE) && varAssignment.statementLValue instanceof StatementAssignment) {
                      StatementAssignment intermediateAssignment = (StatementAssignment) varAssignment.statementLValue;
                      if(Operators.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
                         // Found assignment to an intermediate low byte lValue <x = ...

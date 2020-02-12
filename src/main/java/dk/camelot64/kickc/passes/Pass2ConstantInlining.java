@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.utils.AliasReplacer;
 
 import java.util.*;
 

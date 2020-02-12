@@ -1,13 +1,13 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.utils.VarAssignments;
 
 import java.util.*;
 
@@ -128,15 +128,15 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                   if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {
                      // Alias assignment
                      VariableRef alias = (VariableRef) assignment.getrValue2();
-                     List<ControlFlowGraph.VarAssignment> assignments = ControlFlowGraph.getVarAssignments(alias, program.getGraph(), program.getScope());
+                     List<VarAssignments.VarAssignment> assignments = VarAssignments.get(alias, program.getGraph(), program.getScope());
                      if(assignments.size() == 0)
                         throw new InternalError("Error! Var is never assigned! " + variable);
                      else if(assignments.size() > 1)
                         // Multiple assignments exist
                         continue;
                      // assignments.size()==1
-                     ControlFlowGraph.VarAssignment varAssignment = assignments.get(0);
-                     if(ControlFlowGraph.VarAssignment.Type.INIT_VALUE.equals(varAssignment.type)) {
+                     VarAssignments.VarAssignment varAssignment = assignments.get(0);
+                     if(VarAssignments.VarAssignment.Type.INIT_VALUE.equals(varAssignment.type)) {
                         aliases.add(variable, alias);
                      } else {
                         // Examine if the alias is assigned inside another scope
@@ -169,7 +169,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                               alias = null;
                               break;
                            }
-                           List<ControlFlowGraph.VarAssignment> assignments = ControlFlowGraph.getVarAssignments(alias, program.getGraph(), program.getScope());
+                           List<VarAssignments.VarAssignment> assignments = VarAssignments.get(alias, program.getGraph(), program.getScope());
                            if(assignments.size() == 0)
                               throw new InternalError("Error! Var is never assigned! " + variable);
                            if(assignments.size() > 1) {
@@ -178,8 +178,8 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                               break;
                            }
                            // assignments.size()==1
-                           ControlFlowGraph.VarAssignment varAssignment = assignments.get(0);
-                           if(!ControlFlowGraph.VarAssignment.Type.INIT_VALUE.equals(varAssignment.type)) {
+                           VarAssignments.VarAssignment varAssignment = assignments.get(0);
+                           if(!VarAssignments.VarAssignment.Type.INIT_VALUE.equals(varAssignment.type)) {
                               // Examine if the alias is assigned inside another scope
                               ScopeRef varAssignmentScope = block.getScope();
                               ScopeRef aliasAssignmentScope = varAssignment.block.getScope();
@@ -247,9 +247,13 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          StatementSource bestSource = null;
          List<Statement> assignments = new ArrayList<>();
          for(VariableRef aliasVar : aliasSet.getVars()) {
-
-            Statement assignment = getGraph().getAssignment(aliasVar);
-
+            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(aliasVar, getGraph(), getScope());
+            if(varAssignments.size()!=1)
+               continue;
+            final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
+            if(!VarAssignments.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type))
+               continue;
+            Statement assignment = varAssignment.statementLValue;
             if(assignment != null) {
                assignments.add(assignment);
                StatementSource source = assignment.getSource();

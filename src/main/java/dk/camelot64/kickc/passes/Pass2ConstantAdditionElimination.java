@@ -10,6 +10,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.utils.VarAssignments;
 
 import java.util.Collection;
 import java.util.List;
@@ -191,11 +192,11 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
       final Variable var = getScope().getVar(variable);
       if(var.isKindLoadStore())
          return null;
-      final List<ControlFlowGraph.VarAssignment> varAssignments = ControlFlowGraph.getVarAssignments(variable, getGraph(), getScope());
+      final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variable, getGraph(), getScope());
       if(varAssignments.size()!=1)
          return null;
-      final ControlFlowGraph.VarAssignment varAssignment = varAssignments.get(0);
-      if(!ControlFlowGraph.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type))
+      final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
+      if(!VarAssignments.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type))
          return null;
       StatementLValue statementLValue = varAssignment.statementLValue;
       if(statementLValue instanceof StatementAssignment) {

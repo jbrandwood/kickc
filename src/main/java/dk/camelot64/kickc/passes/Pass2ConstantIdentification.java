@@ -7,7 +7,6 @@ import dk.camelot64.kickc.model.operators.OperatorUnary;
 import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
-import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
@@ -16,6 +15,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.utils.VarAssignments;
 
 import java.util.*;
 
@@ -167,10 +167,10 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
          if(variable.isVolatile() || !variable.isKindLoadStore())
             // Do not examine volatiles, non-constants or versioned variables
             continue;
-         final List<ControlFlowGraph.VarAssignment> varAssignments = ControlFlowGraph.getVarAssignments(variable.getRef(), getGraph(), getScope());
+         final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(variable.getRef(), getGraph(), getScope());
          if(varAssignments.size() == 1) {
-            final ControlFlowGraph.VarAssignment varAssignment = varAssignments.get(0);
-            if(!ControlFlowGraph.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type) || !(varAssignment.statementLValue instanceof StatementAssignment))
+            final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
+            if(!VarAssignments.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type) || !(varAssignment.statementLValue instanceof StatementAssignment))
                // Only look at assignments
                continue;
             StatementAssignment assignment = (StatementAssignment) varAssignment.statementLValue;

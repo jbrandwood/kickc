@@ -18,6 +18,7 @@ import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.utils.AliasReplacer;
 
 import java.util.ArrayList;
 import java.util.Collection;

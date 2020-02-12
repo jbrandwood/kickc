@@ -24,6 +24,8 @@ public class Initializers {
       if(typeSpec.getType() instanceof SymbolTypeIntegerFixed) {
          // Add an zero value initializer
          return new ConstantInteger(0L, typeSpec.getType());
+      } else if(typeSpec.getType().equals(SymbolType.BOOLEAN)) {
+         return new ConstantBool(false);
       } else if(typeSpec.getType() instanceof SymbolTypeStruct) {
          // Add an zero-struct initializer
          SymbolTypeStruct typeStruct = (SymbolTypeStruct) typeSpec.getType();

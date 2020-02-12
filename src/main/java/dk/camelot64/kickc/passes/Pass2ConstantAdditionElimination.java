@@ -1,9 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.ConstantNotLiteral;
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.VariableReferenceInfos;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.Operator;
@@ -15,6 +12,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Compiler Pass eliminating several additions of constants by consolidating them to a single (compile time) constant c1+v+c2 => (c1+c2)+v
@@ -188,13 +186,18 @@ public class Pass2ConstantAdditionElimination extends Pass2SsaOptimization {
     */
    private ConstantValue consolidateSubConstants(VariableRef variable) {
       if(getUsages(variable) > 1) {
-         //getLog().append("Multiple usages for variable. Not optimizing sub-constant " + variable.toString(getProgram()));
          return null;
       }
       final Variable var = getScope().getVar(variable);
       if(var.isKindLoadStore())
          return null;
-      StatementLValue statementLValue = getGraph().getAssignment(variable);
+      final List<ControlFlowGraph.VarAssignment> varAssignments = ControlFlowGraph.getVarAssignments(variable, getGraph(), getScope());
+      if(varAssignments.size()!=1)
+         return null;
+      final ControlFlowGraph.VarAssignment varAssignment = varAssignments.get(0);
+      if(!ControlFlowGraph.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type))
+         return null;
+      StatementLValue statementLValue = varAssignment.statementLValue;
       if(statementLValue instanceof StatementAssignment) {
          StatementAssignment assignment = (StatementAssignment) statementLValue;
          if(assignment.getOperator() != null && "+".equals(assignment.getOperator().getOperator())) {

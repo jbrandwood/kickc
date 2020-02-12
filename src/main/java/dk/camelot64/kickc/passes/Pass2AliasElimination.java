@@ -245,9 +245,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       for(AliasSet aliasSet : aliases.getAliasSets()) {
          // Find the best statement source among the aliases
          StatementSource bestSource = null;
-         List<StatementLValue> assignments = new ArrayList<>();
+         List<Statement> assignments = new ArrayList<>();
          for(VariableRef aliasVar : aliasSet.getVars()) {
-            StatementLValue assignment = getGraph().getAssignment(aliasVar);
+
+            Statement assignment = getGraph().getAssignment(aliasVar);
+
             if(assignment != null) {
                assignments.add(assignment);
                StatementSource source = assignment.getSource();
@@ -267,7 +269,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          }
          if(bestSource != null) {
             // Found a best source - update all statements
-            for(StatementLValue assignment : assignments) {
+            for(Statement assignment : assignments) {
                assignment.setSource(bestSource);
             }
          }

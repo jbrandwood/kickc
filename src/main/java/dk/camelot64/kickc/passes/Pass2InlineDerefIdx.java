@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.operators.OperatorCastPtr;
@@ -14,6 +15,7 @@ import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Identify derefs of pointers that are defined as pointer + value - and inline them as derefidx instead */
@@ -52,7 +54,13 @@ public class Pass2InlineDerefIdx extends Pass2SsaOptimization {
          final Variable var = getScope().getVar(derefVar);
          if(var.isKindLoadStore())
             return null;
-         StatementLValue derefVarDefined = getGraph().getAssignment(derefVar);
+         final List<ControlFlowGraph.VarAssignment> varAssignments = ControlFlowGraph.getVarAssignments(derefVar, getGraph(), getScope());
+         if(varAssignments.size()!=1)
+            return null;
+         final ControlFlowGraph.VarAssignment varAssignment = varAssignments.get(0);
+         if(!ControlFlowGraph.VarAssignment.Type.STATEMENT_LVALUE.equals(varAssignment.type))
+            return null;
+         StatementLValue derefVarDefined = varAssignment.statementLValue;
          if(derefVarDefined instanceof StatementAssignment) {
             StatementAssignment derefAssignment = (StatementAssignment) derefVarDefined;
             return attemptInlineDeref(derefAssignment);

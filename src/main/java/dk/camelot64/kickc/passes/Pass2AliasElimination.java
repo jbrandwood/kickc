@@ -47,40 +47,40 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
    // Remove all candidates that are used after assignment in phi blocks
    private static void cleanupCandidates(Aliases candidates, Program program) {
-         ListIterator<AliasSet> aliasSetListIterator = candidates.getAliasSets().listIterator();
-         while(aliasSetListIterator.hasNext()) {
-            AliasSet aliasSet = aliasSetListIterator.next();
-            boolean removeSet = false;
-            for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
-               if(block.hasPhiBlock()) {
-                  StatementPhiBlock phi = block.getPhiBlock();
-                  boolean lMatch = false;
-                  for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
-                     if(lMatch) {
-                        if(aliasSet.contains(phiVariable.getVariable())) {
-                           // Assigning inside tha alias set again - no need to check the variables
-                           continue;
+      ListIterator<AliasSet> aliasSetListIterator = candidates.getAliasSets().listIterator();
+      while(aliasSetListIterator.hasNext()) {
+         AliasSet aliasSet = aliasSetListIterator.next();
+         boolean removeSet = false;
+         for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+            if(block.hasPhiBlock()) {
+               StatementPhiBlock phi = block.getPhiBlock();
+               boolean lMatch = false;
+               for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+                  if(lMatch) {
+                     if(aliasSet.contains(phiVariable.getVariable())) {
+                        // Assigning inside tha alias set again - no need to check the variables
+                        continue;
+                     }
+                     for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
+                        RValue rValue = phiRValue.getrValue();
+                        if(aliasSet.contains(rValue)) {
+                           removeSet = true;
+                           break;
                         }
-                        for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                           RValue rValue = phiRValue.getrValue();
-                           if(aliasSet.contains(rValue)) {
-                              removeSet = true;
-                              break;
-                           }
-                        }
-                     } else {
-                        if(aliasSet.contains(phiVariable.getVariable())) {
-                           lMatch = true;
-                        }
+                     }
+                  } else {
+                     if(aliasSet.contains(phiVariable.getVariable())) {
+                        lMatch = true;
                      }
                   }
                }
             }
-            if(removeSet) {
-               program.getLog().append("Alias candidate removed (phi-usage) " + aliasSet.toString(program));
-               aliasSetListIterator.remove();
-            }
          }
+         if(removeSet) {
+            program.getLog().append("Alias candidate removed (phi-usage) " + aliasSet.toString(program));
+            aliasSetListIterator.remove();
+         }
+      }
    }
 
    // Remove all candidates that are volatile and not assigned to the same variable
@@ -95,7 +95,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          String unversionedFullName = null;
          for(VariableRef variableRef : aliasSet.getVars()) {
             Variable variable = programScope.getVariable(variableRef);
-            if(variable.isVolatile()  || variable.isKindLoadStore()) {
+            if(variable.isVolatile() || variable.isKindLoadStore()) {
                anyVolatile = true;
             }
             if(unversionedFullName == null) {
@@ -150,7 +150,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
                            aliases.add(variable, alias);
                         }
                      }
-                 }
+                  }
                }
             } else if(statement instanceof StatementPhiBlock) {
                StatementPhiBlock phi = (StatementPhiBlock) statement;

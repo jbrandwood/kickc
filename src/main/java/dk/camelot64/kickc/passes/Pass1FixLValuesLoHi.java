@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.Operator;
 import dk.camelot64.kickc.model.operators.Operators;
@@ -32,7 +33,7 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
 
    @Override
    public boolean step() {
-      List<VariableRef> intermediates  = new ArrayList<>();
+      List<VariableRef> intermediates = new ArrayList<>();
 
       ProgramScope programScope = getProgram().getScope();
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
@@ -43,17 +44,20 @@ public class Pass1FixLValuesLoHi extends Pass1Base {
             if(statement instanceof StatementLValue && ((StatementLValue) statement).getlValue() instanceof LvalueIntermediate) {
                StatementLValue statementLValue = (StatementLValue) statement;
                LvalueIntermediate intermediate = (LvalueIntermediate) statementLValue.getlValue();
-               StatementLValue intermediateStmtLValue = getProgram().getGraph().getAssignment(intermediate.getVariable());
-               if(intermediateStmtLValue instanceof StatementAssignment) {
-                  StatementAssignment intermediateAssignment = (StatementAssignment) intermediateStmtLValue;
-                  if(Operators.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
-                     // Found assignment to an intermediate low byte lValue <x = ...
-                     fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_LOWBYTE);
-                     intermediates.add(intermediate.getVariable());
-                  } else if(Operators.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
-                     // Found assignment to an intermediate low byte lValue >x = ...
-                     fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_HIBYTE);
-                     intermediates.add(intermediate.getVariable());
+               final List<ControlFlowGraph.VarAssignment> varAssignments = ControlFlowGraph.getVarAssignments(intermediate.getVariable(), getGraph(), programScope);
+               if(varAssignments.size() == 1) {
+                  final ControlFlowGraph.VarAssignment varAssignment = varAssignments.get(0);
+                  if(varAssignment.type.equals(ControlFlowGraph.VarAssignment.Type.STATEMENT_LVALUE) && varAssignment.statementLValue instanceof StatementAssignment) {
+                     StatementAssignment intermediateAssignment = (StatementAssignment) varAssignment.statementLValue;
+                     if(Operators.LOWBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue <x = ...
+                        fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_LOWBYTE);
+                        intermediates.add(intermediate.getVariable());
+                     } else if(Operators.HIBYTE.equals(intermediateAssignment.getOperator()) && intermediateAssignment.getrValue1() == null) {
+                        // Found assignment to an intermediate low byte lValue >x = ...
+                        fixLoHiLValue(programScope, statementsIt, statementLValue, intermediate, intermediateAssignment, Operators.SET_HIBYTE);
+                        intermediates.add(intermediate.getVariable());
+                     }
                   }
                }
             }

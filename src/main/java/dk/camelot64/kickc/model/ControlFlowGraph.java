@@ -3,6 +3,7 @@ package dk.camelot64.kickc.model;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -118,6 +119,30 @@ public class ControlFlowGraph implements Serializable {
          this.statementPhi = statementPhi;
          this.statementPhiVariable = statementPhiVariable;
          this.variableInitValue = variableInitValue;
+      }
+
+      @Override
+      public String toString() {
+         StringBuilder s = new StringBuilder();
+         if(block!=null)
+            s.append(block.getLabel()).append("::");
+         if(statementLValue!=null)
+            s.append(statementLValue.toString());
+         if(statementPhi!=null)
+            s.append(statementPhi.toString()).append(" ");
+         if(statementPhiVariable!=null)
+            s.append(statementPhiVariable.toString());
+         if(variableInitValue!=null)
+            s.append(variableInitValue.toString());
+         return s.toString();
+      }
+
+      public StatementSource getSource() {
+         if(statementLValue!=null)
+            return statementLValue.getSource();
+         if(statementPhi!=null)
+            return statementPhi.getSource();
+         return null;
       }
 
    }

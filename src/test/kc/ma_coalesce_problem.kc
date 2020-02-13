@@ -1,0 +1,26 @@
+// Demonstrates problem with __ma coalescing
+// c1a is erroneously zp-coalesced with c1A
+
+#pragma var_model(ma_mem, pointer_ma_zp, parameter_ssa_mem)
+
+const char* SCREEN = 0x0400;
+
+// Plasma state variables
+char c1A = 0;
+
+void main() {
+    while(true) {
+        char c1a = c1A;
+        for (char i = 0; i < 40; ++i) {
+            SCREEN[i] = SINTABLE[c1a];
+            c1a += 4;
+        }
+        c1A += 3;
+    }
+}
+
+const char[0x100] align(0x100) SINTABLE = kickasm {{
+    .for(var i=0;i<$100;i++)
+        .byte round(127.5+127.5*sin(2*PI*i/256))
+}};
+

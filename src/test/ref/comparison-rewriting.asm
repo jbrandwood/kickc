@@ -3,11 +3,12 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    .label SCREEN = $400
     .label sc = 2
     .label screen = 4
-    lda #<$400
+    lda #<SCREEN
     sta.z sc
-    lda #>$400
+    lda #>SCREEN
     sta.z sc+1
   __b1:
     lda #' '
@@ -18,19 +19,19 @@ main: {
     inc.z sc+1
   !:
     lda.z sc+1
-    cmp #>$400+$3e8+1
+    cmp #>SCREEN+$3e8+1
     bne __b1
     lda.z sc
-    cmp #<$400+$3e8+1
+    cmp #<SCREEN+$3e8+1
     bne __b1
     ldx #0
   __b2:
     lda header,x
     cmp #0
     bne __b3
-    lda #<$400
+    lda #<SCREEN
     sta.z screen
-    lda #>$400
+    lda #>SCREEN
     sta.z screen+1
     ldx #0
   __b4:
@@ -84,7 +85,7 @@ main: {
     jmp __b4
   __b3:
     lda header,x
-    sta $400,x
+    sta SCREEN,x
     inx
     jmp __b2
     header: .text "  <  <= == >= >"

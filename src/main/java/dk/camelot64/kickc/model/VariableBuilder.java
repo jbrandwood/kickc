@@ -79,6 +79,7 @@ public class VariableBuilder {
       variable.setNoModify(this.isNoModify());
       variable.setVolatile(this.isVolatile());
       variable.setExport(this.isExport());
+      variable.setPermanent(this.isPermanent());
       variable.setOptimize(this.isOptimize());
       variable.setRegister(this.getRegister());
       if(variable.getRegister() instanceof Registers.RegisterMainMem) {

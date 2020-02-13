@@ -68,6 +68,10 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                   }
                   if(isNopCast && assignment.getlValue() instanceof VariableRef) {
 
+                     final Variable assignmentVar = getScope().getVariable((VariableRef) assignment.getlValue());
+                     if(assignmentVar.isKindLoadStore())
+                        continue;
+
                      boolean isIntermediateVar = false;
                      if(castValue.getValue() instanceof VariableRef && ((VariableRef) castValue.getValue()).isIntermediate()) {
                         isIntermediateVar = true;
@@ -86,7 +90,6 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                               // 3. Delete the cast variable
                               delete.add((SymbolRef) castValue.getValue());
                               // Change the type of the assignment variable
-                              Variable assignmentVar = getScope().getVariable((VariableRef) assignment.getlValue());
                               Variable castVar = getScope().getVariable((VariableRef) castValue.getValue());
                               assignmentVar.setType(castVar.getType());
                               // Remove the assignment

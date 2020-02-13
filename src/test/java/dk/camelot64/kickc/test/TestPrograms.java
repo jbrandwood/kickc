@@ -37,6 +37,12 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+
+   @Test
+   public void testMaCoalesceProblem() throws IOException, URISyntaxException {
+      compileAndCompare("ma_coalesce_problem");
+   }
+
    @Test
    public void testVarModelMaMem3() throws IOException, URISyntaxException {
       compileAndCompare("varmodel-ma_mem-3");

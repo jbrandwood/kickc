@@ -89,8 +89,6 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
             Collection<PreviousStatement> previousStmts = getPreviousStatements(nextStmt);
             for(PreviousStatement previousStmt : previousStmts) {
                if(PreviousStatement.Type.NORMAL.equals(previousStmt.getType())) {
-                  // Add all used variables to the previous statement (taking into account phi from blocks)
-                  modified |= initUsedVars(liveRanges, nextStmt, previousStmt);
                   // Add all vars alive in the next statement
                   for(VariableRef aliveVar : aliveNextStmt) {
                      if(!definedNextStmt.contains(aliveVar)) {
@@ -101,6 +99,8 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                         }
                      }
                   }
+                  // Add all used variables to the previous statement (taking into account phi from blocks)
+                  modified |= initUsedVars(liveRanges, nextStmt, previousStmt);
                } else if(PreviousStatement.Type.LAST_IN_METHOD.equals(previousStmt.getType())) {
                   // Add all vars that are referenced in the method
                   StatementCalling call = (StatementCalling) nextStmt;
@@ -134,8 +134,6 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                      }
                   }
                } else if(PreviousStatement.Type.BEFORE_METHOD.equals(previousStmt.getType())) {
-                  // Add all used variables to the previous statement (taking into account phi from blocks)
-                  modified |= initUsedVars(liveRanges, nextStmt, previousStmt);
                   // Add all alive variables to previous that are used inside the method
                   ControlFlowBlock procBlock = getProgram().getStatementInfos().getBlock(nextStmt);
                   Procedure procedure = (Procedure) getProgram().getScope().getSymbol(procBlock.getLabel());
@@ -156,6 +154,8 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
                         // getLog().append("Not propagating "+aliveVar.toString(getProgram()) +" in BEFORE_METHOD case from "+nextStmt.toString(getProgram(), false)+ " to "+previousStmt.getStatement().toString(getProgram(), false));
                      }
                   }
+                  // Add all used variables to the previous statement (taking into account phi from blocks)
+                  modified |= initUsedVars(liveRanges, nextStmt, previousStmt);
                }
             }
          }
@@ -167,20 +167,20 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     * Adds variables used in the next statement to the alive vars of the previous statement
     *
     * @param liveRanges The live ranges to be updated
-    * @param stmt The next statement
+    * @param nextStmt The next statement
     * @param previousStmt The previous statement
     * @return true if any live range modification was made
     */
    private boolean initUsedVars(
          LiveRangeVariables liveRanges,
-         Statement stmt,
+         Statement nextStmt,
          PreviousStatement previousStmt) {
       boolean modified = false;
       VariableReferenceInfos referenceInfo = getProgram().getVariableReferenceInfos();
-      Collection<VariableRef> usedNextStmt = referenceInfo.getUsedVars(stmt);
-      if(stmt instanceof StatementPhiBlock) {
-         // If current statement is a phi add the used variables to previous based on the phi entries
-         StatementPhiBlock phi = (StatementPhiBlock) stmt;
+      Collection<VariableRef> usedNextStmt = referenceInfo.getUsedVars(nextStmt);
+      if(nextStmt instanceof StatementPhiBlock) {
+         // If next statement is a phi add the used variables to previous based on the phi entries
+         StatementPhiBlock phi = (StatementPhiBlock) nextStmt;
          ControlFlowBlock previousBlock =
                getProgram().getStatementInfos().getBlock(previousStmt.getStatementIdx());
          for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {

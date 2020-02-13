@@ -3,12 +3,14 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    ldx #0
+    ldy #0
+    ldx #'a'
   __b1:
     lda #'a'
     sta SCREEN
     inx
-    cpx #4
+    iny
+    cpy #4
     bne __b1
     rts
 }

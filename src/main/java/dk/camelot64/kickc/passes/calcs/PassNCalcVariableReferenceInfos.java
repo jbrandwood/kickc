@@ -5,9 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementLValue;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
@@ -34,13 +32,7 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
          blockVarReferences.putIfAbsent(block.getLabel(), new ArrayList<>());
          Collection<VariableReferenceInfos.ReferenceToSymbolVar> blockSymbols = blockVarReferences.get(block.getLabel());
          for(Statement statement : block.getStatements()) {
-            LinkedHashSet<SymbolVariableRef> stmtSymbolVarRefs = new LinkedHashSet<>();
-            ProgramValueIterator.execute(statement,
-                  (programValue, currentStmt, stmtIt, currentBlock) -> {
-                     if(programValue.get() instanceof SymbolVariableRef)
-                        stmtSymbolVarRefs.add((SymbolVariableRef) programValue.get());
-                  }
-                  , null, null);
+            Collection<SymbolVariableRef> stmtUsedVars = getUsedVars(statement);
             Collection<VariableRef> stmtDefinedVars = getDefinedVars(statement);
             // Add variable definitions to the statement
             statementVarReferences.putIfAbsent(statement.getIndex(), new ArrayList<>());
@@ -55,15 +47,13 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
                if(!blockSymbols.contains(referenceInStmt)) blockSymbols.add(referenceInStmt);
             }
             // Gather statements referencing variables/constants
-            for(SymbolVariableRef referencedVarRef : stmtSymbolVarRefs) {
-               if(!stmtDefinedVars.contains(referencedVarRef)) {
-                  symbolVarReferences.putIfAbsent(referencedVarRef, new ArrayList<>());
-                  Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(referencedVarRef);
-                  VariableReferenceInfos.ReferenceInStatement referenceInStmt = new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, referencedVarRef);
-                  references.add(referenceInStmt);
-                  stmtSymbols.add(referenceInStmt);
-                  if(!blockSymbols.contains(referenceInStmt)) blockSymbols.add(referenceInStmt);
-               }
+            for(SymbolVariableRef referencedVarRef : stmtUsedVars) {
+               symbolVarReferences.putIfAbsent(referencedVarRef, new ArrayList<>());
+               Collection<VariableReferenceInfos.ReferenceToSymbolVar> references = symbolVarReferences.get(referencedVarRef);
+               VariableReferenceInfos.ReferenceInStatement referenceInStmt = new VariableReferenceInfos.ReferenceInStatement(statement.getIndex(), VariableReferenceInfos.ReferenceToSymbolVar.ReferenceType.USE, referencedVarRef);
+               references.add(referenceInStmt);
+               stmtSymbols.add(referenceInStmt);
+               if(!blockSymbols.contains(referenceInStmt)) blockSymbols.add(referenceInStmt);
             }
          }
       }
@@ -88,6 +78,58 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
                });
       }
       return new VariableReferenceInfos(blockSuccessors, symbolVarReferences, blockVarReferences, statementVarReferences);
+   }
+
+   /**
+    * Get all used vars in a statement.
+    * This is all referenced vars - but not the variable that is assigned (unless it is also referenced elsewhere in the statement).
+    *
+    * @param statement The statement
+    * @return All used vars
+    */
+   public static Collection<SymbolVariableRef> getUsedVars(Statement statement) {
+      LinkedHashSet<SymbolVariableRef> usedVars = new LinkedHashSet<>();
+      if(statement instanceof StatementLValue) {
+         final StatementLValue statementLValue = (StatementLValue) statement;
+         if(!((statementLValue).getlValue() instanceof VariableRef)) {
+            // No assignments - find all vars referenced
+            usedVars.addAll(getReferenced((statementLValue).getlValue()));
+         }
+         if(statementLValue instanceof StatementAssignment) {
+            usedVars.addAll(getReferenced(((StatementAssignment) statementLValue).getrValue1()));
+            usedVars.addAll(getReferenced(((StatementAssignment) statementLValue).getrValue2()));
+         } else if(statementLValue instanceof StatementCall) {
+            if(((StatementCall) statement).getParameters() != null)
+               for(RValue parameter : ((StatementCall) statementLValue).getParameters()) {
+                  usedVars.addAll(getReferenced(parameter));
+               }
+         } else if(statementLValue instanceof StatementCallPointer) {
+            usedVars.addAll(getReferenced(((StatementCallPointer) statementLValue).getProcedure()));
+            if(((StatementCallPointer) statement).getParameters() != null)
+            for(RValue parameter : ((StatementCallPointer) statementLValue).getParameters()) {
+               usedVars.addAll(getReferenced(parameter));
+            }
+         } else if(statementLValue instanceof StatementCallFinalize) {
+            // No vars
+         } else {
+            throw new InternalError("Statement type not handled " + statementLValue);
+         }
+      } else if(statement instanceof StatementPhiBlock) {
+         for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) statement).getPhiVariables()) {
+            for(StatementPhiBlock.PhiRValue value : phiVariable.getValues()) {
+               usedVars.addAll(getReferenced(value.getrValue()));
+            }
+         }
+      } else {
+         // No assignments - find all vars referenced
+         ProgramValueIterator.execute(statement,
+               (programValue, currentStmt, stmtIt, currentBlock) -> {
+                  if(programValue.get() instanceof SymbolVariableRef)
+                     usedVars.add((SymbolVariableRef) programValue.get());
+               }
+               , null, null);
+      }
+      return usedVars;
    }
 
    /**

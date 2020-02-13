@@ -44,7 +44,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   if(variable == null) {
                      // Already deleted
                      eliminate = true;
-                  } else if(!variable.isVolatile() && !variable.isExport()) {
+                  } else if(!variable.isExport()) {
                      // Not volatile
                      eliminate = true;
                   } else if(variable.isStruct()) {

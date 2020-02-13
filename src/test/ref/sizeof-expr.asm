@@ -8,13 +8,6 @@
   .const SIZEOF_WORD = 2
   .const SIZEOF_POINTER = 2
 main: {
-    .label b = 2
-    .label w = 3
-    // Simple types
-    lda #0
-    sta.z b
-    sta.z w
-    sta.z w+1
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN
     lda #'0'+SIZEOF_BYTE

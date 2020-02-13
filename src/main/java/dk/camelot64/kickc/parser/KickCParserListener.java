@@ -382,6 +382,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code directiveStatic}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveStatic(KickCParser.DirectiveStaticContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveStatic}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveStatic(KickCParser.DirectiveStaticContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveFormSsa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

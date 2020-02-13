@@ -51,9 +51,6 @@ testSignedVals: {
     rts
 }
 testSigned: {
-    .label sbv1 = 3
-    lda #-$78
-    sta.z sbv1
     lda #0
     sta SCREEN+$28*2
     lda #TYPEID_SIGNED_BYTE
@@ -73,7 +70,7 @@ testSigned: {
 }
 testUnsignedVals: {
     .const ubc1 = $fa
-    .label ubv1 = 4
+    .label ubv1 = 3
     lda #$fa
     sta.z ubv1
     sta SCREEN+$28
@@ -107,9 +104,6 @@ testUnsignedVals: {
     rts
 }
 testUnsigned: {
-    .label ubv1 = 5
-    lda #$fa
-    sta.z ubv1
     lda #0
     sta SCREEN
     lda #TYPEID_BYTE

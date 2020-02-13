@@ -62,6 +62,9 @@ public class Variable implements Symbol {
    /** Specifies that the variable is not allowed to be modified (const keyword) */
    private boolean noModify;
 
+   /** Specifies that the variable is a local permanent variable (local variable static keyword) */
+   private boolean permanent;
+
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). (volatile keyword) [Only Variables] */
    private boolean isVolatile;
 
@@ -185,6 +188,7 @@ public class Variable implements Symbol {
       version.setNoModify(phiMaster.isNoModify());
       version.setRegister(phiMaster.getRegister());
       version.setVolatile(phiMaster.isVolatile());
+      version.setPermanent(phiMaster.isPermanent());
       version.setExport(phiMaster.isExport());
       version.setComments(phiMaster.getComments());
       return version;
@@ -228,6 +232,7 @@ public class Variable implements Symbol {
       constVar.setNoModify(variable.isNoModify());
       constVar.setRegister(variable.getRegister());
       constVar.setVolatile(variable.isVolatile());
+      constVar.setPermanent(variable.isPermanent());
       constVar.setExport(variable.isExport());
       constVar.setComments(variable.getComments());
       return constVar;
@@ -245,6 +250,7 @@ public class Variable implements Symbol {
       copy.setMemoryAlignment(original.getMemoryAlignment());
       copy.setOptimize(original.isOptimize());
       copy.setNoModify(original.isNoModify());
+      copy.setPermanent(original.isPermanent());
       copy.setVolatile(original.isVolatile());
       copy.setExport(original.isExport());
       copy.setRegister(original.getRegister());
@@ -277,6 +283,7 @@ public class Variable implements Symbol {
       memberVariable.setVolatile(structVar.isVolatile());
       memberVariable.setNoModify(structVar.isNoModify());
       memberVariable.setExport(structVar.isExport());
+      memberVariable.setPermanent(structVar.isPermanent());
       return memberVariable;
    }
 
@@ -466,6 +473,14 @@ public class Variable implements Symbol {
 
    public void setNoModify(boolean noModify) {
       this.noModify = noModify;
+   }
+
+   public boolean isPermanent() {
+      return permanent;
+   }
+
+   public void setPermanent(boolean permanent) {
+      this.permanent = permanent;
    }
 
    public boolean isVolatile() {

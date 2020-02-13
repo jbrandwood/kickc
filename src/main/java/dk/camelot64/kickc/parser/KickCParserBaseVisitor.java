@@ -250,6 +250,13 @@ public class KickCParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitDirectiveStatic(KickCParser.DirectiveStaticContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitDirectiveFormSsa(KickCParser.DirectiveFormSsaContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

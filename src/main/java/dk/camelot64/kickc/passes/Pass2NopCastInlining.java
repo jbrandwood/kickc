@@ -16,7 +16,7 @@ import dk.camelot64.kickc.model.values.VariableRef;
 import java.util.*;
 
 /**
- * Compiler Pass inlineng cast assignments that has no effect (byte to/from signed byte, word to/from signed word)
+ * Compiler Pass inlining cast assignments that has no effect (byte to/from signed byte, word to/from signed word)
  */
 public class Pass2NopCastInlining extends Pass2SsaOptimization {
 

@@ -582,8 +582,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(declVarType, declArraySpec), program, statementSource);
          VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment, variableBuilderConfig);
          Variable variable = varBuilder.build();
-         if(variable.isKindConstant() || (variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember && variable.getRegister()==null)) {
-               // Set constant value
+         boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
+         if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember && variable.getRegister()==null)) {
+               // Set initial value
                ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
                variable.setInitValue(constInitValue);
                // Add comments to constant
@@ -791,6 +792,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Directive visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx) {
       return new Directive.Volatile();
+   }
+
+   @Override
+   public Object visitDirectiveStatic(KickCParser.DirectiveStaticContext ctx) {
+      return new Directive.Static();
    }
 
    @Override

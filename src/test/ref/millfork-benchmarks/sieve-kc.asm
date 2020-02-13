@@ -4,17 +4,14 @@
   .const COUNT = $4000
   .const SQRT_COUNT = $80
   .label last_time = 6
-  .label rand_seed = 8
   .label print_line_cursor = 2
   .label print_char_cursor = 4
-  .label Ticks = $a
-  .label Ticks_1 = $c
+  .label Ticks = 8
+  .label Ticks_1 = $a
 __b1:
   lda #<0
   sta.z last_time
   sta.z last_time+1
-  sta.z rand_seed
-  sta.z rand_seed+1
   jsr main
   rts
 main: {
@@ -78,9 +75,9 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($c) w)
+// print_word(word zp($a) w)
 print_word: {
-    .label w = $c
+    .label w = $a
     lda.z w+1
     tax
     lda #<$400
@@ -126,10 +123,6 @@ start: {
     jsr $ffde
     sta LAST_TIME
     stx LAST_TIME+1
-    lda #<$194a
-    sta.z rand_seed
-    lda #>$194a
-    sta.z rand_seed+1
     rts
 }
 round: {

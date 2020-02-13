@@ -79,6 +79,7 @@ EXPORT: 'export' ;
 ALIGN: 'align' ;
 INLINE: 'inline' ;
 VOLATILE: 'volatile' ;
+STATIC: 'static' ;
 INTERRUPT: 'interrupt' ;
 REGISTER: 'register' ;
 ADDRESS: '__address' ;

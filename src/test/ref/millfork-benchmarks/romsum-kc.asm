@@ -3,21 +3,18 @@
 .pc = $80d "Program"
   .label rom = $e000
   .label last_time = $b
-  .label rand_seed = $d
   .label print_char_cursor = 9
   .label print_line_cursor = 2
-  .label Ticks = $f
-  .label Ticks_1 = $11
+  .label Ticks = $d
+  .label Ticks_1 = $f
 __b1:
   lda #<0
   sta.z last_time
   sta.z last_time+1
-  sta.z rand_seed
-  sta.z rand_seed+1
   jsr main
   rts
 main: {
-    .label i = $f
+    .label i = $d
     jsr start
     lda #<$400
     sta.z print_line_cursor
@@ -119,7 +116,7 @@ print_str: {
 // utoa(word zp(5) value, byte* zp(7) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $11
+    .label digit_value = $f
     .label buffer = 7
     .label digit = 4
     .label value = 5
@@ -184,11 +181,11 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp(7) buffer, word zp(5) value, word zp($11) sub)
+// utoa_append(byte* zp(7) buffer, word zp(5) value, word zp($f) sub)
 utoa_append: {
     .label buffer = 7
     .label value = 5
-    .label sub = $11
+    .label sub = $f
     .label return = 5
     ldx #0
   __b1:
@@ -277,9 +274,9 @@ end: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($11) w)
+// print_word(word zp($f) w)
 print_word: {
-    .label w = $11
+    .label w = $f
     lda.z w+1
     tax
     jsr print_byte
@@ -321,10 +318,6 @@ start: {
     jsr $ffde
     sta LAST_TIME
     stx LAST_TIME+1
-    lda #<$194a
-    sta.z rand_seed
-    lda #>$194a
-    sta.z rand_seed+1
     rts
 }
   // The digits used for numbers

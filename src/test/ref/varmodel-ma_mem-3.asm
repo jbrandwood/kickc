@@ -30,6 +30,11 @@ model_ssa_zp: {
     rts
 }
 model_ma_mem: {
+    // A local pointer
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
     lda #0
     sta i
   // A local counter
@@ -50,7 +55,6 @@ model_ma_mem: {
     cmp i
     bne __b1
     rts
-    // A local pointer
-    screen: .word $400
+    screen: .word 0
     i: .byte 0
 }

@@ -3,19 +3,16 @@
 .pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label last_time = $a
-  .label rand_seed = $c
   .label print_line_cursor = 4
   .label print_char_cursor = 6
-  .label Ticks = $10
+  .label Ticks = $e
   .label free_ = 8
   .label root = 2
-  .label Ticks_1 = $e
+  .label Ticks_1 = $c
 __b1:
   lda #<0
   sta.z last_time
   sta.z last_time+1
-  sta.z rand_seed
-  sta.z rand_seed+1
   jsr main
   rts
 main: {
@@ -103,9 +100,9 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($e) w)
+// print_word(word zp($c) w)
 print_word: {
-    .label w = $e
+    .label w = $c
     lda.z w+1
     tax
     jsr print_byte
@@ -147,10 +144,6 @@ start: {
     jsr $ffde
     sta LAST_TIME
     stx LAST_TIME+1
-    lda #<$194a
-    sta.z rand_seed
-    lda #>$194a
-    sta.z rand_seed+1
     rts
 }
 sum: {
@@ -190,7 +183,7 @@ sum: {
 }
 // prepend(word zp(4) x)
 prepend: {
-    .label new = $10
+    .label new = $e
     .label x = 4
     jsr alloc
     ldy #0
@@ -212,8 +205,8 @@ prepend: {
     rts
 }
 alloc: {
-    .label __1 = $10
-    .label return = $10
+    .label __1 = $e
+    .label return = $e
     lda.z free_
     asl
     sta.z __1

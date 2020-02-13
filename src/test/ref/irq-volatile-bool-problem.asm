@@ -1,7 +1,7 @@
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(main)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
@@ -12,12 +12,6 @@
   .label BGCOL = $d020
   .label CIA1_INTERRUPT = $dc0d
   .const CIA_INTERRUPT_CLEAR = $7f
-  .label framedone = 2
-__b1:
-  lda #0
-  sta.z framedone
-  jsr main
-  rts
 main: {
     sei
     // Disable CIA 1 Timer IRQ
@@ -42,8 +36,6 @@ main: {
     lda RASTER
     cmp #$14
     bcs __b1
-    lda #1
-    sta.z framedone
     jmp __b1
 }
 irq: {
@@ -52,10 +44,6 @@ irq: {
     sta IRQ_STATUS
     lda RASTER
     cmp #$32+1
-    bcc __b1
-    lda #0
-    sta.z framedone
-  __b1:
     dec BGCOL
     jmp $ea81
 }

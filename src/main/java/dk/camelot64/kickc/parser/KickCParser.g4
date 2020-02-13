@@ -103,6 +103,7 @@ directive
     | ADDRESS_MAINMEM #directiveMemoryAreaMain
     | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
     | VOLATILE #directiveVolatile
+    | STATIC #directiveStatic
     | FORM_SSA #directiveFormSsa
     | FORM_MA #directiveFormMa
     | EXTERN #directiveExtern

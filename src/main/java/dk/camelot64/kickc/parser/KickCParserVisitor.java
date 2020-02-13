@@ -232,6 +232,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDirectiveVolatile(KickCParser.DirectiveVolatileContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code directiveStatic}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDirectiveStatic(KickCParser.DirectiveStaticContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code directiveFormSsa}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

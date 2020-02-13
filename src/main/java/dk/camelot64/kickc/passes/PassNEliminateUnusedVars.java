@@ -139,6 +139,15 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
          }
       }
 
+      for(Variable variable : getScope().getAllVariables(true)) {
+         if(referenceInfos.isUnused(variable.getRef())) {
+            if(!variable.isExport() && !variable.isKindPhiMaster()) {
+               getLog().append("Eliminating unused variable with no statement " + variable.getRef().toString(getProgram()));
+               variable.getScope().remove(variable);
+            }
+         }
+      }
+
       Collection<Variable> allConstants = getScope().getAllConstants(true);
       for(Variable constant : allConstants) {
          if(!(constant.getScope() instanceof EnumDefinition) && !(constant.getScope() instanceof StructDefinition)) {

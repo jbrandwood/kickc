@@ -5,9 +5,12 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementLValue;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -27,13 +30,15 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
          if(!referencedBlocks.contains(block.getLabel())) {
             unusedBlocks.add(block.getLabel());
             for(Statement stmt : block.getStatements()) {
-               if(stmt instanceof StatementAssignment) {
-                  StatementAssignment assignment = (StatementAssignment) stmt;
+               if(stmt instanceof StatementLValue) {
+                  StatementLValue assignment = (StatementLValue) stmt;
                   LValue lValue = assignment.getlValue();
                   if(lValue instanceof VariableRef) {
-                     getLog().append("Eliminating variable " + lValue.toString(getProgram()) + " from unused block " + block.getLabel());
                      Variable variable = getScope().getVariable((VariableRef) lValue);
-                     variable.getScope().remove(variable);
+                     if(variable.isKindPhiVersion() || variable.isKindIntermediate()) {
+                        getLog().append("Eliminating variable " + lValue.toString(getProgram()) + " from unused block " + block.getLabel());
+                        variable.getScope().remove(variable);
+                     }
                   }
                } else if(stmt instanceof StatementPhiBlock) {
                   for(StatementPhiBlock.PhiVariable phiVariable : ((StatementPhiBlock) stmt).getPhiVariables()) {

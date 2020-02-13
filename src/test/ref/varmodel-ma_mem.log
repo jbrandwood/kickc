@@ -6,6 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
+  (byte*) main::screen ← (byte*)(number) $400
   (byte) main::i ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -35,14 +36,14 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (byte) main::i loadstore
-(byte*) main::screen loadstore = (byte*)(number) $400
+(byte*) main::screen loadstore
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [5] if((byte) main::i!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) main::$0 [6] if((byte) main::i!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Resolved ranged next value [3] main::i ← ++ main::i to ++
-Resolved ranged comparison value [5] if(main::i!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [4] main::i ← ++ main::i to ++
+Resolved ranged comparison value [6] if(main::i!=rangelast(0,5)) goto main::@1 to (number) 6
 Adding number conversion cast (unumber) 6 in if((byte) main::i!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
@@ -76,32 +77,33 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte) main::i ← (byte) 0
+  [4] (byte*) main::screen ← (byte*) 1024
+  [5] (byte) main::i ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] *((byte*) main::screen) ← (byte) 'a'
-  [6] (byte*) main::screen ← ++ (byte*) main::screen
-  [7] (byte) main::i ← ++ (byte) main::i
-  [8] if((byte) main::i!=(byte) 6) goto main::@1
+  [6] *((byte*) main::screen) ← (byte) 'a'
+  [7] (byte*) main::screen ← ++ (byte*) main::screen
+  [8] (byte) main::i ← ++ (byte) main::i
+  [9] if((byte) main::i!=(byte) 6) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [9] return 
+  [10] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::i loadstore 35.0
-(byte*) main::screen loadstore 5.5 = (byte*) 1024
+(byte*) main::screen loadstore 7.000000000000001
 
 Initial phi equivalence classes
-Added variable main::i to live range equivalence class [ main::i ]
 Added variable main::screen to live range equivalence class [ main::screen ]
+Added variable main::i to live range equivalence class [ main::i ]
 Complete equivalence classes
-[ main::i ]
 [ main::screen ]
-Allocated mem[1] [ main::i ]
+[ main::i ]
 Allocated mem[2] [ main::screen ]
+Allocated mem[1] [ main::i ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -128,14 +130,20 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [4] (byte*) main::screen ← (byte*) 1024 -- pbum1=pbuc1 
+    // A local pointer 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+    // [5] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
     lda #0
     sta i
     jmp __b1
   // A local counter
     // main::@1
   __b1:
-    // [5] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    // [6] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
     lda #'a'
     ldy screen
     sty.z $fe
@@ -143,43 +151,43 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [6] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
+    // [7] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
     inc screen
     bne !+
     inc screen+1
   !:
-    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [8] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
     inc i
-    // [8] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
     lda #6
     cmp i
     bne __b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [10] return 
     rts
-    // A local pointer 
-    screen: .word $400
+    screen: .word 0
     i: .byte 0
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) main::i ← (byte) 0 [ main::screen ] ( main:2 [ main::screen ] ) always clobbers reg byte a 
-Statement [5] *((byte*) main::screen) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
-Statement [8] if((byte) main::i!=(byte) 6) goto main::@1 [ main::screen ] ( main:2 [ main::screen ] ) always clobbers reg byte a 
-Potential registers mem[1] [ main::i ] : mem[1] , 
+Statement [4] (byte*) main::screen ← (byte*) 1024 [ main::screen ] ( main:2 [ main::screen ] ) always clobbers reg byte a 
+Statement [5] (byte) main::i ← (byte) 0 [ main::screen ] ( main:2 [ main::screen ] ) always clobbers reg byte a 
+Statement [6] *((byte*) main::screen) ← (byte) 'a' [ ] ( main:2 [ ] ) always clobbers reg byte a reg byte y 
+Statement [9] if((byte) main::i!=(byte) 6) goto main::@1 [ main::screen ] ( main:2 [ main::screen ] ) always clobbers reg byte a 
 Potential registers mem[2] [ main::screen ] : mem[2] , 
+Potential registers mem[1] [ main::i ] : mem[1] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 35: mem[1] [ main::i ] 5.5: mem[2] [ main::screen ] 
+Uplift Scope [main] 35: mem[1] [ main::i ] 7: mem[2] [ main::screen ] 
 Uplift Scope [] 
 
-Uplifting [main] best 587 combination mem[1] [ main::i ] mem[2] [ main::screen ] 
-Uplifting [] best 587 combination 
+Uplifting [main] best 599 combination mem[1] [ main::i ] mem[2] [ main::screen ] 
+Uplifting [] best 599 combination 
 Attempting to uplift remaining variables inmem[1] [ main::i ]
-Uplifting [main] best 587 combination mem[1] [ main::i ] 
+Uplifting [main] best 599 combination mem[1] [ main::i ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -205,14 +213,20 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [4] (byte*) main::screen ← (byte*) 1024 -- pbum1=pbuc1 
+    // A local pointer 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
+    // [5] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
     lda #0
     sta i
     jmp __b1
   // A local counter
     // main::@1
   __b1:
-    // [5] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    // [6] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
     lda #'a'
     ldy screen
     sty.z $fe
@@ -220,24 +234,23 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [6] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
+    // [7] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
     inc screen
     bne !+
     inc screen+1
   !:
-    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [8] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
     inc i
-    // [8] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
     lda #6
     cmp i
     bne __b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [10] return 
     rts
-    // A local pointer 
-    screen: .word $400
+    screen: .word 0
     i: .byte 0
 }
   // File Data
@@ -270,14 +283,14 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (byte) main::i loadstore mem[1] 35.0
-(byte*) main::screen loadstore mem[2] 5.5 = (byte*) 1024
+(byte*) main::screen loadstore mem[2] 7.000000000000001
 
-mem[1] [ main::i ]
 mem[2] [ main::screen ]
+mem[1] [ main::i ]
 
 
 FINAL ASSEMBLER
-Score: 542
+Score: 554
 
   // File Comments
 // Test memory model multiple-assignment/main memory for all variables (here  local variables)
@@ -294,15 +307,22 @@ Score: 542
   // @end
   // main
 main: {
+    // screen = 0x0400
+    // [4] (byte*) main::screen ← (byte*) 1024 -- pbum1=pbuc1 
+    // A local pointer 
+    lda #<$400
+    sta screen
+    lda #>$400
+    sta screen+1
     // for( char i: 0..5 )
-    // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [5] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
     lda #0
     sta i
   // A local counter
     // main::@1
   __b1:
     // *(screen++) = 'a'
-    // [5] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    // [6] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
     lda #'a'
     ldy screen
     sty.z $fe
@@ -311,24 +331,23 @@ main: {
     ldy #0
     sta ($fe),y
     // *(screen++) = 'a';
-    // [6] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
+    // [7] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
     inc screen
     bne !+
     inc screen+1
   !:
     // for( char i: 0..5 )
-    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [8] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
     inc i
-    // [8] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
     lda #6
     cmp i
     bne __b1
     // main::@return
     // }
-    // [9] return 
+    // [10] return 
     rts
-    // A local pointer 
-    screen: .word $400
+    screen: .word 0
     i: .byte 0
 }
   // File Data

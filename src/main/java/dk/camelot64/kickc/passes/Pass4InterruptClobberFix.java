@@ -115,9 +115,10 @@ public class Pass4InterruptClobberFix extends Pass2Base {
       while(entryLines.hasNext()) {
          AsmLine line = entryLines.next();
          for(String notClobberedReg : notClobberedRegisters) {
-            if(line.getAsm().contains(notClobberedReg)) {
+            final String lineAsm = line.getAsm();
+            if(lineAsm.contains("ld"+notClobberedReg) || lineAsm.contains("st"+notClobberedReg) || lineAsm.contains("reg"+notClobberedReg)) {
                // Found an A/X/Y in the asm where A/X/Y is not clobbered - remove the line
-               getLog().append("Removing interrupt register storage "+line.toString()+" in CHU"+interruptEntryExit.getIndex()+" "+interruptEntryExit.getSource());
+               getLog().append("Removing interrupt register storage "+line.toString()+" in "+interruptEntryExit.getIndex()+" "+interruptEntryExit.getSource());
                entryLines.remove();
             }
          }

@@ -71,6 +71,12 @@ public interface ProgramExpressionBinary extends ProgramExpression {
     */
    ProgramValue getRightValue();
 
+   /**
+    * Set the binary operator
+    * @param operator new binary operator
+    */
+   void setOperator(OperatorBinary operator);
+
    /** Binary expression assignment rvalue. */
    class ProgramExpressionBinaryAssignmentRValue implements ProgramExpressionBinary {
 
@@ -88,6 +94,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       @Override
       public OperatorBinary getOperator() {
          return (OperatorBinary) assignment.getOperator();
+      }
+
+      @Override
+      public void setOperator(OperatorBinary operator) {
+         assignment.setOperator(operator);
       }
 
       @Override
@@ -166,6 +177,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
+      public void setOperator(OperatorBinary operator) {
+         throw new InternalError("Not supported!");
+      }
+
+      @Override
       public RValue getRight() {
          return (RValue) parameterValue.get();
       }
@@ -231,6 +247,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
 
       @Override
       public void set(Value value) {
+         throw new InternalError("Not supported!");
+      }
+
+      @Override
+      public void setOperator(OperatorBinary operator) {
          throw new InternalError("Not supported!");
       }
 
@@ -303,6 +324,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
+      public void setOperator(OperatorBinary operator) {
+         conditionalJump.setOperator(operator);
+      }
+
+      @Override
       public RValue getRight() {
          return conditionalJump.getrValue2();
       }
@@ -369,6 +395,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       }
 
       @Override
+      public void setOperator(OperatorBinary operator) {
+         getConstantBinary().setOperator(operator);
+      }
+
+      @Override
       public RValue getRight() {
          return getConstantBinary().getRight();
       }
@@ -420,6 +451,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       @Override
       public OperatorBinary getOperator() {
          return Operators.PLUS;
+      }
+
+      @Override
+      public void setOperator(OperatorBinary operator) {
+         throw new InternalError("Not supported!");
       }
 
       @Override
@@ -490,6 +526,11 @@ public interface ProgramExpressionBinary extends ProgramExpression {
       @Override
       public OperatorBinary getOperator() {
          return Operators.ASSIGNMENT;
+      }
+
+      @Override
+      public void setOperator(OperatorBinary operator) {
+         throw new InternalError("Not supported!");
       }
 
       @Override

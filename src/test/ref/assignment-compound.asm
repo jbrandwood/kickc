@@ -29,27 +29,27 @@ main: {
     sta.z test.a
     jsr test
     ldx #5
-    lda #mod((3+1-1)*6/2,2)
+    lda #(3+1-1)*6/2&2-1
     sta.z test.a
     jsr test
     ldx #6
-    lda #mod((3+1-1)*6/2,2)<<2
+    lda #((3+1-1)*6/2&2-1)<<2
     sta.z test.a
     jsr test
     ldx #7
-    lda #mod((3+1-1)*6/2,2)<<2>>1
+    lda #((3+1-1)*6/2&2-1)<<2>>1
     sta.z test.a
     jsr test
     ldx #8
-    lda #mod((3+1-1)*6/2,2)<<2>>1^6
+    lda #((3+1-1)*6/2&2-1)<<2>>1^6
     sta.z test.a
     jsr test
     ldx #9
-    lda #mod((3+1-1)*6/2,2)<<2>>1^6|1
+    lda #((3+1-1)*6/2&2-1)<<2>>1^6|1
     sta.z test.a
     jsr test
     ldx #$a
-    lda #(mod((3+1-1)*6/2,2)<<2>>1^6|1)&1
+    lda #(((3+1-1)*6/2&2-1)<<2>>1^6|1)&1
     sta.z test.a
     jsr test
     rts

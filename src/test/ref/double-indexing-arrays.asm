@@ -5,35 +5,35 @@
   .label SCREEN = $400
   .label COLS = $d800
 main: {
-    ldy #0
+    ldx #0
   __b1:
-    lda MAPDATA,y
-    sta SCREEN,y
-    ldx MAPDATA,y
-    lda COLORMAP1,x
-    sta COLS,y
-    lda MAPDATA+$c8,y
-    sta SCREEN+$c8,y
-    ldx MAPDATA+$c8,y
-    lda COLORMAP1,x
-    sta COLS+$c8,y
-    lda MAPDATA+$190,y
-    sta SCREEN+$190,y
-    ldx MAPDATA+$190,y
-    lda COLORMAP1,x
-    sta COLS+$190,y
-    lda MAPDATA+$258,y
-    sta SCREEN+$258,y
-    ldx MAPDATA+$258,y
-    lda COLORMAP2,x
-    sta COLS+$258,y
-    lda MAPDATA+$320,y
-    sta SCREEN+$320,y
-    ldx MAPDATA+$320,y
-    lda COLORMAP2,x
-    sta COLS+$320,y
-    iny
-    cpy #$c9
+    lda MAPDATA,x
+    sta SCREEN,x
+    ldy MAPDATA,x
+    lda COLORMAP1,y
+    sta COLS,x
+    lda MAPDATA+$c8,x
+    sta SCREEN+$c8,x
+    ldy MAPDATA+$c8,x
+    lda COLORMAP1,y
+    sta COLS+$c8,x
+    lda MAPDATA+$190,x
+    sta SCREEN+$190,x
+    ldy MAPDATA+$190,x
+    lda COLORMAP1,y
+    sta COLS+$190,x
+    lda MAPDATA+$258,x
+    sta SCREEN+$258,x
+    ldy MAPDATA+$258,x
+    lda COLORMAP2,y
+    sta COLS+$258,x
+    lda MAPDATA+$320,x
+    sta SCREEN+$320,x
+    ldy MAPDATA+$320,x
+    lda COLORMAP2,y
+    sta COLS+$320,x
+    inx
+    cpx #$c9
     bne __b1
     rts
 }

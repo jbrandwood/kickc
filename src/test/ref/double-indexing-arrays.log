@@ -82,10 +82,10 @@ SYMBOL TABLE SSA
 (number~) main::$9
 (label) main::@1
 (label) main::@return
-(byte) main::x !reg byte y
-(byte) main::x#0 !reg byte y
-(byte) main::x#1 !reg byte y
-(byte) main::x#2 !reg byte y
+(byte) main::x
+(byte) main::x#0
+(byte) main::x#1
+(byte) main::x#2
 
 Adding number conversion cast (unumber) $c8 in (number~) main::$0 ← (number) $c8 + (byte) main::x#2
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) $c8 + (byte) main::x#2
@@ -301,14 +301,15 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::x !reg byte y
-(byte) main::x#1 !reg byte y 16.5
-(byte) main::x#2 !reg byte y 22.0
+(byte) main::x
+(byte) main::x#1 16.5
+(byte) main::x#2 22.0
 
 Initial phi equivalence classes
 [ main::x#2 main::x#1 ]
 Complete equivalence classes
 [ main::x#2 main::x#1 ]
+Allocated zp[1]:2 [ main::x#2 main::x#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -339,10 +340,12 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label x = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z x
     jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
@@ -350,45 +353,56 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    // [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z x
     lda MAPDATA,y
     sta SCREEN,y
-    // [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA,y
-    lda COLORMAP1,x
-    sta COLS,y
-    // [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    // [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(pbuc3_derefidx_vbuz1) 
+    ldx.z x
+    ldy MAPDATA,x
+    lda COLORMAP1,y
+    sta COLS,x
+    // [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z x
     lda MAPDATA+$c8,y
     sta SCREEN+$c8,y
-    // [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$c8,y
-    lda COLORMAP1,x
-    sta COLS+$c8,y
-    // [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    // [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(pbuc3_derefidx_vbuz1) 
+    ldx.z x
+    ldy MAPDATA+$c8,x
+    lda COLORMAP1,y
+    sta COLS+$c8,x
+    // [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z x
     lda MAPDATA+$190,y
     sta SCREEN+$190,y
-    // [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$190,y
-    lda COLORMAP1,x
-    sta COLS+$190,y
-    // [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    // [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(pbuc3_derefidx_vbuz1) 
+    ldx.z x
+    ldy MAPDATA+$190,x
+    lda COLORMAP1,y
+    sta COLS+$190,x
+    // [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z x
     lda MAPDATA+$258,y
     sta SCREEN+$258,y
-    // [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$258,y
-    lda COLORMAP2,x
-    sta COLS+$258,y
-    // [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
+    // [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(pbuc3_derefidx_vbuz1) 
+    ldx.z x
+    ldy MAPDATA+$258,x
+    lda COLORMAP2,y
+    sta COLS+$258,x
+    // [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z x
     lda MAPDATA+$320,y
     sta SCREEN+$320,y
-    // [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$320,y
-    lda COLORMAP2,x
-    sta COLS+$320,y
-    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [17] if((byte) main::x#1!=(byte) $c9) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #$c9
+    // [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_(pbuc3_derefidx_vbuz1) 
+    ldx.z x
+    ldy MAPDATA+$320,x
+    lda COLORMAP2,y
+    sta COLS+$320,x
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
+    inc.z x
+    // [17] if((byte) main::x#1!=(byte) $c9) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$c9
+    cmp.z x
     bne __b1_from___b1
     jmp __breturn
     // main::@return
@@ -403,23 +417,33 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::x#2 main::x#1 ]
+Statement [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
 Statement [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
-Statement [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a reg byte x 
+Statement [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
 Statement [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
-Statement [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a reg byte x 
+Statement [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
 Statement [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a reg byte x 
+Statement [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
 Statement [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
-Statement [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a reg byte x 
-Statement [16] (byte) main::x#1 ← ++ (byte) main::x#2 [ main::x#1 ] ( main:2 [ main::x#1 ] ) always clobbers reg byte y 
-Potential registers reg byte y [ main::x#2 main::x#1 ] : reg byte y , 
+Statement [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) [ main::x#2 ] ( main:2 [ main::x#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::x#2 main::x#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 38.5: reg byte y [ main::x#2 main::x#1 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::x#2 main::x#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1368 combination reg byte y [ main::x#2 main::x#1 ] 
+Uplifting [main] best 1368 combination reg byte x [ main::x#2 main::x#1 ] 
 Uplifting [] best 1368 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -452,8 +476,8 @@ __bend:
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
@@ -461,45 +485,45 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA,y
-    sta SCREEN,y
-    // [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA,y
-    lda COLORMAP1,x
-    sta COLS,y
-    // [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$c8,y
-    sta SCREEN+$c8,y
-    // [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$c8,y
-    lda COLORMAP1,x
-    sta COLS+$c8,y
-    // [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$190,y
-    sta SCREEN+$190,y
-    // [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$190,y
-    lda COLORMAP1,x
-    sta COLS+$190,y
-    // [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$258,y
-    sta SCREEN+$258,y
-    // [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$258,y
-    lda COLORMAP2,x
-    sta COLS+$258,y
-    // [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$320,y
-    sta SCREEN+$320,y
-    // [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$320,y
-    lda COLORMAP2,x
-    sta COLS+$320,y
-    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [17] if((byte) main::x#1!=(byte) $c9) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #$c9
+    // [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA,x
+    sta SCREEN,x
+    // [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA,x
+    lda COLORMAP1,y
+    sta COLS,x
+    // [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$c8,x
+    sta SCREEN+$c8,x
+    // [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$c8,x
+    lda COLORMAP1,y
+    sta COLS+$c8,x
+    // [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$190,x
+    sta SCREEN+$190,x
+    // [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$190,x
+    lda COLORMAP1,y
+    sta COLS+$190,x
+    // [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$258,x
+    sta SCREEN+$258,x
+    // [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$258,x
+    lda COLORMAP2,y
+    sta COLS+$258,x
+    // [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$320,x
+    sta SCREEN+$320,x
+    // [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$320,x
+    lda COLORMAP2,y
+    sta COLS+$320,x
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [17] if((byte) main::x#1!=(byte) $c9) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$c9
     bne __b1_from___b1
     jmp __breturn
     // main::@return
@@ -550,11 +574,11 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(byte) main::x !reg byte y
-(byte) main::x#1 !reg byte y 16.5
-(byte) main::x#2 !reg byte y 22.0
+(byte) main::x
+(byte) main::x#1 reg byte x 16.5
+(byte) main::x#2 reg byte x 22.0
 
-reg byte y [ main::x#2 main::x#1 ]
+reg byte x [ main::x#2 main::x#1 ]
 
 
 FINAL ASSEMBLER
@@ -579,62 +603,62 @@ Score: 1266
   // main
 main: {
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // SCREEN[x] = MAPDATA[x]
-    // [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA,y
-    sta SCREEN,y
+    // [6] *((const byte*) SCREEN + (byte) main::x#2) ← *((const byte*) MAPDATA + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA,x
+    sta SCREEN,x
     // COLS[x] = COLORMAP1[MAPDATA[x]]
-    // [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA,y
-    lda COLORMAP1,x
-    sta COLS,y
+    // [7] *((const byte*) COLS + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA,x
+    lda COLORMAP1,y
+    sta COLS,x
     // SCREEN[200+x] = MAPDATA[200+x]
-    // [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$c8,y
-    sta SCREEN+$c8,y
+    // [8] *((const byte*) SCREEN+(byte) $c8 + (byte) main::x#2) ← *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$c8,x
+    sta SCREEN+$c8,x
     // COLS[200+x] = COLORMAP1[MAPDATA[200+x]]
-    // [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$c8,y
-    lda COLORMAP1,x
-    sta COLS+$c8,y
+    // [9] *((const byte*) COLS+(byte) $c8 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(byte) $c8 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$c8,x
+    lda COLORMAP1,y
+    sta COLS+$c8,x
     // SCREEN[400+x] = MAPDATA[400+x]
-    // [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$190,y
-    sta SCREEN+$190,y
+    // [10] *((const byte*) SCREEN+(word) $190 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$190,x
+    sta SCREEN+$190,x
     // COLS[400+x] = COLORMAP1[MAPDATA[400+x]]
-    // [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$190,y
-    lda COLORMAP1,x
-    sta COLS+$190,y
+    // [11] *((const byte*) COLS+(word) $190 + (byte) main::x#2) ← *((const byte*) COLORMAP1 + *((const byte*) MAPDATA+(word) $190 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$190,x
+    lda COLORMAP1,y
+    sta COLS+$190,x
     // SCREEN[600+x] = MAPDATA[600+x]
-    // [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$258,y
-    sta SCREEN+$258,y
+    // [12] *((const byte*) SCREEN+(word) $258 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$258,x
+    sta SCREEN+$258,x
     // COLS[600+x] = COLORMAP2[MAPDATA[600+x]]
-    // [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$258,y
-    lda COLORMAP2,x
-    sta COLS+$258,y
+    // [13] *((const byte*) COLS+(word) $258 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $258 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$258,x
+    lda COLORMAP2,y
+    sta COLS+$258,x
     // SCREEN[800+x] = MAPDATA[800+x]
-    // [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy 
-    lda MAPDATA+$320,y
-    sta SCREEN+$320,y
+    // [14] *((const byte*) SCREEN+(word) $320 + (byte) main::x#2) ← *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MAPDATA+$320,x
+    sta SCREEN+$320,x
     // COLS[800+x] = COLORMAP2[MAPDATA[800+x]]
-    // [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_(pbuc3_derefidx_vbuyy) 
-    ldx MAPDATA+$320,y
-    lda COLORMAP2,x
-    sta COLS+$320,y
-    // for (byte register(y) x: 0..200)
-    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [17] if((byte) main::x#1!=(byte) $c9) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #$c9
+    // [15] *((const byte*) COLS+(word) $320 + (byte) main::x#2) ← *((const byte*) COLORMAP2 + *((const byte*) MAPDATA+(word) $320 + (byte) main::x#2)) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_(pbuc3_derefidx_vbuxx) 
+    ldy MAPDATA+$320,x
+    lda COLORMAP2,y
+    sta COLS+$320,x
+    // for (byte x: 0..200)
+    // [16] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [17] if((byte) main::x#1!=(byte) $c9) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$c9
     bne __b1
     // main::@return
     // }

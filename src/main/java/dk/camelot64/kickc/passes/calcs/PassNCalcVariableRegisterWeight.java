@@ -80,7 +80,7 @@ public class PassNCalcVariableRegisterWeight extends PassNCalcBase<VariableRegis
       int depth = loopSet.getMaxLoopDepth(block);
       double w = 1.0 + Math.pow(10.0, depth);
       LiveRange liveRange = liveRangeVariables.getLiveRange(variable);
-      double s = liveRange.size();
+      double s = liveRange==null?0.0:liveRange.size();
       if(s < 0.01) {
          s = 0.1;
       }

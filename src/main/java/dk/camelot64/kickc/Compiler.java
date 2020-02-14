@@ -398,6 +398,7 @@ public class Compiler {
       });
       constantOptimizations.add(new Pass2NopCastInlining(program));
       constantOptimizations.add(new Pass2MultiplyToShiftRewriting(program));
+      constantOptimizations.add(new Pass2ModuloToAndRewriting(program));
       constantOptimizations.add(new Pass2ConstantInlining(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
@@ -553,10 +554,10 @@ public class Compiler {
 
       // Initial Code generation
       new Pass4CodeGeneration(program, false, program.isWarnFragmentMissing()).generate();
-      new Pass4AssertNoCpuClobber(program).check();
       getLog().append("\nINITIAL ASM");
       getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " + program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
       getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
+      new Pass4AssertNoCpuClobber(program).check();
 
       if(disableUplift) {
          getLog().append("REGISTER UPLIFT DISABLED!");

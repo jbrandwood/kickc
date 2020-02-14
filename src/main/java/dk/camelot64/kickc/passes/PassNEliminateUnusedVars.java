@@ -4,8 +4,10 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolTypeStruct;
+import dk.camelot64.kickc.model.symbols.EnumDefinition;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.StructUnwoundPlaceholder;
 import dk.camelot64.kickc.model.values.VariableRef;
@@ -36,29 +38,12 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               LValue lValue = assignment.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+               LValue lValue = ((StatementAssignment) statement).getlValue();
+               if(lValue instanceof VariableRef) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  boolean eliminate = false;
-                  if(variable == null) {
-                     // Already deleted
-                     eliminate = true;
-                  } else if(!variable.isExport()) {
-                     // Not volatile
-                     eliminate = true;
-                  } else if(variable.isStruct()) {
-                     if(assignment.getOperator()==null && assignment.getrValue2() instanceof StructUnwoundPlaceholder) {
-                        eliminate = true;
-                     }
-                  }
-                  if(eliminate) {
-                     if(!pass2 && isReturnValue(variable)) {
-                        // Do not eliminate return variables in pass 1
-                        continue;
-                     }
+                  if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
-                        getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + assignment.toString(getProgram(), false));
+                        getLog().append("Eliminating unused variable " + lValue.toString(getProgram()) + " and assignment " + statement.toString(getProgram(), false));
                      }
                      stmtIt.remove();
                      if(variable != null) {
@@ -68,50 +53,47 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                   }
                }
             } else if(statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
-               LValue lValue = call.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+               LValue lValue = ((StatementCall) statement).getlValue();
+               if(lValue instanceof VariableRef) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(!variable.isVolatile()) {
+                  if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                      }
                      if(variable != null) {
                         variable.getScope().remove(variable);
                      }
-                     call.setlValue(null);
+                     ((StatementCall) statement).setlValue(null);
                      modified = true;
                   }
                }
             } else if(statement instanceof StatementCallFinalize) {
-               StatementCallFinalize call = (StatementCallFinalize) statement;
-               LValue lValue = call.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+               LValue lValue = ((StatementCallFinalize) statement).getlValue();
+               if(lValue instanceof VariableRef) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(!variable.isVolatile()) {
+                  if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                      }
                      if(variable != null) {
                         variable.getScope().remove(variable);
                      }
-                     call.setlValue(null);
+                     ((StatementCallFinalize) statement).setlValue(null);
                      modified = true;
                   }
                }
             } else if(statement instanceof StatementCallPointer) {
-               StatementCallPointer call = (StatementCallPointer) statement;
-               LValue lValue = call.getlValue();
-               if(lValue instanceof VariableRef && referenceInfos.isUnused((VariableRef) lValue)) {
+               LValue lValue = ((StatementCallPointer) statement).getlValue();
+               if(lValue instanceof VariableRef) {
                   Variable variable = getScope().getVariable((VariableRef) lValue);
-                  if(!variable.isVolatile()) {
+                  if(eliminate(variable, referenceInfos, statement)) {
                      if(pass2 || getLog().isVerbosePass1CreateSsa()) {
                         getLog().append("Eliminating unused variable - keeping the call " + lValue.toString(getProgram()));
                      }
                      if(variable != null) {
                         variable.getScope().remove(variable);
                      }
-                     call.setlValue(null);
+                     ((StatementCallPointer) statement).setlValue(null);
                      modified = true;
                   }
                }
@@ -121,18 +103,16 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
                while(phiVarIt.hasNext()) {
                   StatementPhiBlock.PhiVariable phiVariable = phiVarIt.next();
                   VariableRef variableRef = phiVariable.getVariable();
-                  if(referenceInfos.isUnused(variableRef)) {
-                     Variable variable = getScope().getVariable(variableRef);
-                     if(!variable.isVolatile()) {
-                        if(pass2 || getLog().isVerbosePass1CreateSsa()) {
-                           getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
-                        }
-                        if(variable != null) {
-                           variable.getScope().remove(variable);
-                        }
-                        phiVarIt.remove();
-                        modified = true;
+                  Variable variable = getScope().getVariable(variableRef);
+                  if(eliminate(variable, referenceInfos, statement)) {
+                     if(pass2 || getLog().isVerbosePass1CreateSsa()) {
+                        getLog().append("Eliminating unused variable - keeping the phi block " + variableRef.toString(getProgram()));
                      }
+                     if(variable != null) {
+                        variable.getScope().remove(variable);
+                     }
+                     phiVarIt.remove();
+                     modified = true;
                   }
                }
             }
@@ -140,34 +120,60 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       }
 
       for(Variable variable : getScope().getAllVariables(true)) {
-         if(referenceInfos.isUnused(variable.getRef())) {
-            if(!variable.isExport() && !variable.isKindPhiMaster()) {
-               getLog().append("Eliminating unused variable with no statement " + variable.getRef().toString(getProgram()));
-               variable.getScope().remove(variable);
-            }
+         if(eliminate(variable, referenceInfos, null) && !variable.isKindPhiMaster()) {
+            getLog().append("Eliminating unused variable with no statement " + variable.getRef().toString(getProgram()));
+            variable.getScope().remove(variable);
          }
       }
 
       Collection<Variable> allConstants = getScope().getAllConstants(true);
       for(Variable constant : allConstants) {
-         if(!(constant.getScope() instanceof EnumDefinition) && !(constant.getScope() instanceof StructDefinition)) {
-            if(referenceInfos.isUnused(constant.getRef())) {
-               if(constant.isExport()) {
-                  // Do not eliminate constants declared as export
-                  continue;
-               }
-               if(pass2 || getLog().isVerbosePass1CreateSsa()) {
-                  getLog().append("Eliminating unused constant " + constant.toString(getProgram()));
-               }
-               constant.getScope().remove(constant);
-               modified = true;
+         if(eliminate(constant, referenceInfos, null)) {
+            if(pass2 || getLog().isVerbosePass1CreateSsa()) {
+               getLog().append("Eliminating unused constant " + constant.toString(getProgram()));
             }
+            constant.getScope().remove(constant);
+            modified = true;
          }
       }
 
       getProgram().clearVariableReferenceInfos();
       getProgram().clearStatementIndices();
       return modified;
+   }
+
+   /**
+    * Is the variable an unused variable that should be eliminated
+    *
+    * @param variable The variable
+    * @param referenceInfos The reference info
+    * @param statement The statement
+    * @return true if the variable & statement should be eliminated
+    */
+   private boolean eliminate(Variable variable, VariableReferenceInfos referenceInfos, Statement statement) {
+      if(variable == null)
+         // Eliminate if already deleted
+         return true;
+      if(variable.getScope() instanceof EnumDefinition || variable.getScope() instanceof StructDefinition)
+         // Do not eliminate inside enums or structs
+         return false;
+      if(!pass2 && isReturnValue(variable)) {
+         // Do not eliminate return variables in pass 1
+         return false;
+      }
+      final boolean unused = referenceInfos.isUnused(variable.getRef());
+      if(!unused)
+         // Do not eliminate is not unused
+         return false;
+      if(!variable.isExport())
+         // Eliminate if unused and not exported
+         return true;
+      if(variable.isStruct() && statement instanceof StatementAssignment) {
+         StatementAssignment assignment = (StatementAssignment) statement;
+         // Eliminate is a simple assignment of a struct-unwound-placeholder
+         return assignment.getOperator() == null && assignment.getrValue2() instanceof StructUnwoundPlaceholder;
+      }
+      return false;
    }
 
    /**

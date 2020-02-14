@@ -256,8 +256,31 @@ public class VariableReferenceInfos {
     */
    public boolean isUnused(SymbolVariableRef variableRef) {
       Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(variableRef);
-      if(refs == null) return true;
-      return refs.stream().noneMatch(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()));
+      if(refs == null)
+         return true;
+      final boolean noUses = refs.stream().noneMatch(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()));
+      if(noUses)
+         return true;
+
+      // Some USEs exits - examine if the variable is DEFINEd in the same statement
+      for(ReferenceToSymbolVar useRef : refs) {
+         if(ReferenceToSymbolVar.ReferenceType.USE.equals(useRef.getReferenceType())) {
+            // Found a USE - examine if it is also a DEFINE
+            boolean unused = false;
+            if(useRef instanceof ReferenceInStatement) {
+               for(ReferenceToSymbolVar defRef : refs) {
+                  if(defRef instanceof ReferenceInStatement && ReferenceToSymbolVar.ReferenceType.DEFINE.equals(defRef.getReferenceType())) {
+                     if(((ReferenceInStatement) defRef).getStatementIdx().equals(((ReferenceInStatement) useRef).getStatementIdx()))
+                        unused = true;
+                  }
+               }
+            }
+            if(!unused)
+               return false;
+         }
+      }
+      // All USE-references were inside DEFINE-statements - effectively the var is unused!
+      return true;
    }
 
    /**
@@ -279,6 +302,7 @@ public class VariableReferenceInfos {
 
    /**
     * Get the index of the statement defining a variable
+    *
     * @param variableRef The variable to look for
     * @return Index of the defining statement
     */
@@ -291,12 +315,11 @@ public class VariableReferenceInfos {
                .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.DEFINE.equals(referenceToSymbolVar.getReferenceType()))
                .findFirst();
          if(refDefine.isPresent()) {
-            return ((ReferenceInStatement)refDefine.get()).getStatementIdx();
+            return ((ReferenceInStatement) refDefine.get()).getStatementIdx();
          }
       }
       return null;
    }
-
 
 
    /**

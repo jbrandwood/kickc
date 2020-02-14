@@ -2,14 +2,12 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label ba = 2
-  .label be = 6
   .label bb = 3
   .label bb_1 = 4
   .label bc = 5
 main: {
     lda #0
     sta.z ba
-    sta.z be
     tay
     tax
     sta.z bb
@@ -254,46 +252,14 @@ fb: {
 }
 fc: {
     cmp #0
-    bne __b1
-    inc.z be
-  __b1:
     cmp #1
-    bne __b2
-    inc.z be
-  __b2:
     cmp #2
-    bne __b3
-    inc.z be
-  __b3:
     cmp #3
-    bne __b4
-    inc.z be
-  __b4:
     cmp #4
-    bne __b5
-    inc.z be
-  __b5:
     cmp #5
-    bne __b6
-    inc.z be
-  __b6:
     cmp #6
-    bne __b7
-    inc.z be
-  __b7:
     cmp #7
-    bne __b8
-    inc.z be
-  __b8:
     cmp #8
-    bne __b9
-    inc.z be
-  __b9:
     cmp #9
-    bne __b19
-    lda #0
-    sta.z be
-    rts
-  __b19:
     rts
 }

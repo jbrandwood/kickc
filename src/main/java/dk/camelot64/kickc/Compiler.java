@@ -225,6 +225,8 @@ public class Compiler {
       new Pass1ExtractInlineStrings(program).execute();
       new PassNCullEmptyBlocks(program).execute();
 
+      new Pass1UnrollConditionVariableSsa(program).step();
+
       new Pass1ModifiedVarsAnalysis(program).execute();
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("PROCEDURE MODIFY VARIABLE ANALYSIS");

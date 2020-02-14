@@ -306,6 +306,10 @@ public class Variable implements Symbol {
 
    public void setKind(Kind kind) {
       this.kind = kind;
+      if(kind.equals(Kind.PHI_MASTER)) {
+         this.nextPhiVersionNumber = 0;
+      } else
+         this.nextPhiVersionNumber = null;
    }
 
    public boolean isKindConstant() {

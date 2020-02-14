@@ -106,9 +106,9 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
          } else if(statementLValue instanceof StatementCallPointer) {
             usedVars.addAll(getReferenced(((StatementCallPointer) statementLValue).getProcedure()));
             if(((StatementCallPointer) statement).getParameters() != null)
-            for(RValue parameter : ((StatementCallPointer) statementLValue).getParameters()) {
-               usedVars.addAll(getReferenced(parameter));
-            }
+               for(RValue parameter : ((StatementCallPointer) statementLValue).getParameters()) {
+                  usedVars.addAll(getReferenced(parameter));
+               }
          } else if(statementLValue instanceof StatementCallFinalize) {
             // No vars
          } else {
@@ -172,11 +172,12 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
     */
    private static Collection<SymbolVariableRef> getReferenced(RValue rValue) {
       Collection<SymbolVariableRef> referenced = new LinkedHashSet<>();
-      ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         if(programValue.get() instanceof SymbolVariableRef) {
-            referenced.add((SymbolVariableRef) programValue.get());
-         }
-      }, null, null, null);
+      if(rValue != null)
+         ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue), (programValue, currentStmt, stmtIt, currentBlock) -> {
+            if(programValue.get() instanceof SymbolVariableRef) {
+               referenced.add((SymbolVariableRef) programValue.get());
+            }
+         }, null, null, null);
       return referenced;
    }
 

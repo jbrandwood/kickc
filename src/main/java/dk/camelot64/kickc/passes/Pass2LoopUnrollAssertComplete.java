@@ -23,7 +23,7 @@ public class Pass2LoopUnrollAssertComplete extends Pass2SsaOptimization {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementConditionalJump) {
                if(((StatementConditionalJump) statement).isWasUnrolled()) {
-                  throw new CompileError("Loop cannot be unrolled. Condition not resolvable to a constant true/false. "+statement.toString(getProgram(), false));
+                  throw new CompileError("Loop cannot be unrolled. Condition not resolvable to a constant true/false. ", statement);
                }
             }
          }

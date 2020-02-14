@@ -165,28 +165,20 @@ class AsmFragmentTemplateSynthesisRule {
    public boolean equals(Object o) {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
-
       AsmFragmentTemplateSynthesisRule that = (AsmFragmentTemplateSynthesisRule) o;
-
-      if(mapSignature != that.mapSignature) return false;
-      if(sigMatch != null ? !sigMatch.equals(that.sigMatch) : that.sigMatch != null) return false;
-      if(sigAvoid != null ? !sigAvoid.equals(that.sigAvoid) : that.sigAvoid != null) return false;
-      if(asmPrefix != null ? !asmPrefix.equals(that.asmPrefix) : that.asmPrefix != null) return false;
-      if(sigReplace != null ? !sigReplace.equals(that.sigReplace) : that.sigReplace != null) return false;
-      if(asmPostfix != null ? !asmPostfix.equals(that.asmPostfix) : that.asmPostfix != null) return false;
-      return bindMappings != null ? bindMappings.equals(that.bindMappings) : that.bindMappings == null;
+      return mapSignature == that.mapSignature &&
+            Objects.equals(sigMatch, that.sigMatch) &&
+            Objects.equals(sigAvoid, that.sigAvoid) &&
+            Objects.equals(asmPrefix, that.asmPrefix) &&
+            Objects.equals(sigReplace, that.sigReplace) &&
+            Objects.equals(asmPostfix, that.asmPostfix) &&
+            Objects.equals(bindMappings, that.bindMappings) &&
+            Objects.equals(subDontClobber, that.subDontClobber);
    }
 
    @Override
    public int hashCode() {
-      int result = sigMatch != null ? sigMatch.hashCode() : 0;
-      result = 31 * result + (sigAvoid != null ? sigAvoid.hashCode() : 0);
-      result = 31 * result + (asmPrefix != null ? asmPrefix.hashCode() : 0);
-      result = 31 * result + (sigReplace != null ? sigReplace.hashCode() : 0);
-      result = 31 * result + (asmPostfix != null ? asmPostfix.hashCode() : 0);
-      result = 31 * result + (bindMappings != null ? bindMappings.hashCode() : 0);
-      result = 31 * result + (mapSignature ? 1 : 0);
-      return result;
+      return Objects.hash(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, mapSignature, subDontClobber);
    }
 
    /** All the synthesize rules available. */

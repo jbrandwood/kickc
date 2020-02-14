@@ -218,7 +218,7 @@ public class Unroller {
    }
 
    /**
-    * Create new versions of all symbols assigned inside some blocks to be unrolled
+    * Create new versions of all symbols defined inside some blocks to be unrolled
     *
     * @param unrollBlocks The blocks being unrolled
     * @return A map from variables assigned inside the unroll blocks to the new copy of the variable
@@ -233,12 +233,15 @@ public class Unroller {
             String name = scope.allocateIntermediateVariableName();
             newVar = Variable.createCopy(name, scope, definedVar);
             scope.add(newVar);
+            definedToNewVar.put(definedVarRef, newVar.getRef());
          } else if(definedVarRef.isVersion()) {
             newVar = (definedVar).getPhiMaster().createVersion();
+            definedToNewVar.put(definedVarRef, newVar.getRef());
+         } else if(definedVar.isKindLoadStore()) {
+            // New version not needed for load/store
          } else {
             throw new RuntimeException("Error! Variable is not versioned or intermediate " + definedVar.toString(program));
          }
-         definedToNewVar.put(definedVarRef, newVar.getRef());
          //getLog().append("Defined in loop: " + definedVarRef.getFullName() + " -> " + newVar.getRef().getFullName());
       }
       return definedToNewVar;

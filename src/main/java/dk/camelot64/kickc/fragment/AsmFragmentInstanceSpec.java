@@ -182,20 +182,15 @@ public class AsmFragmentInstanceSpec {
    public boolean equals(Object o) {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
-
       AsmFragmentInstanceSpec that = (AsmFragmentInstanceSpec) o;
-
-      if(signature != null ? !signature.equals(that.signature) : that.signature != null) return false;
-      if(bindings != null ? !bindings.equals(that.bindings) : that.bindings != null) return false;
-      return codeScopeRef != null ? codeScopeRef.equals(that.codeScopeRef) : that.codeScopeRef == null;
+      return
+            Objects.equals(signature, that.signature) &&
+            Objects.equals(bindings, that.bindings) &&
+            Objects.equals(codeScopeRef, that.codeScopeRef);
    }
 
    @Override
    public int hashCode() {
-      int result = signature != null ? signature.hashCode() : 0;
-      result = 31 * result + (bindings != null ? bindings.hashCode() : 0);
-      result = 31 * result + (codeScopeRef != null ? codeScopeRef.hashCode() : 0);
-      return result;
+      return Objects.hash(signature, bindings, codeScopeRef);
    }
-
 }

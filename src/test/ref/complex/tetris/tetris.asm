@@ -91,7 +91,7 @@
   // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // Address of the original playscreen chars
-  .label PLAYFIELD_SCREEN_ORIGINAL = $1800
+  .label PLAYFIELD_SCREEN_ORIGINAL = $3000
   // Address of the original playscreen colors
   .label PLAYFIELD_COLORS_ORIGINAL = $1c00
   // Address of the sprites covering the playfield

@@ -954,11 +954,15 @@ init_squares: {
     sta.z squares
     lda.z SQUARES+1
     sta.z squares+1
-    ldx #0
-    txa
+    lda #<0
     sta.z sqr
     sta.z sqr+1
+    tax
   __b1:
+    cpx #NUM_SQUARES
+    bcc __b2
+    rts
+  __b2:
     ldy #0
     lda.z sqr
     sta (squares),y
@@ -983,9 +987,7 @@ init_squares: {
     inc.z sqr+1
   !:
     inx
-    cpx #NUM_SQUARES-1+1
-    bne __b1
-    rts
+    jmp __b1
 }
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:

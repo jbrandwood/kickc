@@ -389,15 +389,19 @@ init_squares: {
     .label squares = 9
     .label sqr = 4
     jsr malloc
-    ldx #0
     lda #<SQUARES
     sta.z squares
     lda #>SQUARES
     sta.z squares+1
-    txa
+    lda #<0
     sta.z sqr
     sta.z sqr+1
+    tax
   __b1:
+    cpx #NUM_SQUARES
+    bcc __b2
+    rts
+  __b2:
     ldy #0
     lda.z sqr
     sta (squares),y
@@ -422,9 +426,7 @@ init_squares: {
     inc.z sqr+1
   !:
     inx
-    cpx #NUM_SQUARES-1+1
-    bne __b1
-    rts
+    jmp __b1
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.

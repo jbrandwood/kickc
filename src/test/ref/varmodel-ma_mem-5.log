@@ -1,0 +1,322 @@
+Culled Empty Block (label) main::@2
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+
+(void()) main()
+main: scope:[main]  from @1
+  (byte) main::i ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  *((const byte*) SCREEN + (byte) main::i) ← (byte) '*'
+  (bool~) main::$0 ← (byte) main::i < (number) 4
+  (byte) main::i ← ++ (byte) main::i
+  if((bool~) main::$0) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*)(number) $400
+(void()) main()
+(bool~) main::$0
+(label) main::@1
+(label) main::@return
+(byte) main::i loadstore
+
+Adding number conversion cast (unumber) 4 in (bool~) main::$0 ← (byte) main::i < (number) 4
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Condition not simple (bool~) main::$0 [4] if((bool~) main::$0) goto main::@1
+Condition not simple (bool~) main::$0 [4] if((bool~) main::$0) goto main::@1
+Condition not simple (bool~) main::$0 [4] if((bool~) main::$0) goto main::@1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] (byte) main::i ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [5] *((const byte*) SCREEN + (byte) main::i) ← (byte) '*'
+  [6] (bool~) main::$0 ← (byte) main::i < (byte) 4
+  [7] (byte) main::i ← ++ (byte) main::i
+  [8] if((bool~) main::$0) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [9] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(bool~) main::$0 11.0
+(byte) main::i loadstore 9.200000000000001
+
+Initial phi equivalence classes
+Added variable main::i to live range equivalence class [ main::i ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
+Complete equivalence classes
+[ main::i ]
+[ main::$0 ]
+Allocated mem[1] [ main::i ]
+Allocated zp[1]:2 [ main::$0 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test memory model
+// Demonstrates problem where post-increase on __ma memory variables is performed to early
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    .label __0 = 2
+    // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    lda #0
+    sta i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [5] *((const byte*) SCREEN + (byte) main::i) ← (byte) '*' -- pbuc1_derefidx_vbum1=vbuc2 
+    lda #'*'
+    ldy i
+    sta SCREEN,y
+    // [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 -- vboz1=vbum2_lt_vbuc1 
+    lda i
+    cmp #4
+    lda #0
+    rol
+    eor #1
+    sta.z __0
+    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    inc i
+    // [8] if((bool~) main::$0) goto main::@1 -- vboz1_then_la1 
+    lda.z __0
+    cmp #0
+    bne __b1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [9] return 
+    rts
+    i: .byte 0
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] (byte) main::i ← (byte) 0 [ main::i ] ( main:2 [ main::i ] ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN + (byte) main::i) ← (byte) '*' [ main::i ] ( main:2 [ main::i ] ) always clobbers reg byte a reg byte y 
+Statement [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 [ main::i main::$0 ] ( main:2 [ main::i main::$0 ] ) always clobbers reg byte a 
+Potential registers mem[1] [ main::i ] : mem[1] , 
+Potential registers zp[1]:2 [ main::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 11: zp[1]:2 [ main::$0 ] 9.2: mem[1] [ main::i ] 
+Uplift Scope [] 
+
+Uplifting [main] best 392 combination reg byte a [ main::$0 ] mem[1] [ main::i ] 
+Uplifting [] best 392 combination 
+Attempting to uplift remaining variables inmem[1] [ main::i ]
+Uplifting [main] best 392 combination mem[1] [ main::i ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test memory model
+// Demonstrates problem where post-increase on __ma memory variables is performed to early
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    lda #0
+    sta i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [5] *((const byte*) SCREEN + (byte) main::i) ← (byte) '*' -- pbuc1_derefidx_vbum1=vbuc2 
+    lda #'*'
+    ldy i
+    sta SCREEN,y
+    // [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 -- vboaa=vbum1_lt_vbuc1 
+    lda i
+    cmp #4
+    lda #0
+    rol
+    eor #1
+    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    inc i
+    // [8] if((bool~) main::$0) goto main::@1 -- vboaa_then_la1 
+    cmp #0
+    bne __b1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [9] return 
+    rts
+    i: .byte 0
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction lda i with TYA
+Replacing label __bbegin with __b1
+Removing instruction __bbegin:
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __bend:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*) 1024
+(void()) main()
+(bool~) main::$0 reg byte a 11.0
+(label) main::@1
+(label) main::@return
+(byte) main::i loadstore mem[1] 9.200000000000001
+
+mem[1] [ main::i ]
+reg byte a [ main::$0 ]
+
+
+FINAL ASSEMBLER
+Score: 327
+
+  // File Comments
+// Test memory model
+// Demonstrates problem where post-increase on __ma memory variables is performed to early
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // i=0
+    // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    lda #0
+    sta i
+    // main::@1
+  __b1:
+    // SCREEN[i] = '*'
+    // [5] *((const byte*) SCREEN + (byte) main::i) ← (byte) '*' -- pbuc1_derefidx_vbum1=vbuc2 
+    lda #'*'
+    ldy i
+    sta SCREEN,y
+    // i++<4
+    // [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 -- vboaa=vbum1_lt_vbuc1 
+    tya
+    cmp #4
+    lda #0
+    rol
+    eor #1
+    // while(i++<4)
+    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    inc i
+    // [8] if((bool~) main::$0) goto main::@1 -- vboaa_then_la1 
+    cmp #0
+    bne __b1
+    // main::@return
+    // }
+    // [9] return 
+    rts
+    i: .byte 0
+}
+  // File Data
+

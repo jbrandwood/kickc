@@ -44,6 +44,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVarModelMaMem5() throws IOException, URISyntaxException {
+      compileAndCompare("varmodel-ma_mem-5");
+   }
+
+   @Test
    public void testVarModelMaMem4() throws IOException, URISyntaxException {
       compileAndCompare("varmodel-ma_mem-4");
    }

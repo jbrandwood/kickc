@@ -44,8 +44,9 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Condition not simple (bool~) main::$0 [4] if((bool~) main::$0) goto main::@1
-Condition not simple (bool~) main::$0 [4] if((bool~) main::$0) goto main::@1
-Condition not simple (bool~) main::$0 [4] if((bool~) main::$0) goto main::@1
+Introduced intermediate condition variable (byte~) main::$1 ← (byte) main::i
+Simple Condition (bool~) main::$0 [4] if((byte~) main::$1<(byte) 4) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -77,9 +78,9 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] *((const byte*) SCREEN + (byte) main::i) ← (byte) '*'
-  [6] (bool~) main::$0 ← (byte) main::i < (byte) 4
+  [6] (byte~) main::$1 ← (byte) main::i
   [7] (byte) main::i ← ++ (byte) main::i
-  [8] if((bool~) main::$0) goto main::@1
+  [8] if((byte~) main::$1<(byte) 4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [9] return 
@@ -88,17 +89,17 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(bool~) main::$0 11.0
+(byte~) main::$1 11.0
 (byte) main::i loadstore 9.200000000000001
 
 Initial phi equivalence classes
 Added variable main::i to live range equivalence class [ main::i ]
-Added variable main::$0 to live range equivalence class [ main::$0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
 Complete equivalence classes
 [ main::i ]
-[ main::$0 ]
+[ main::$1 ]
 Allocated mem[1] [ main::i ]
-Allocated zp[1]:2 [ main::$0 ]
+Allocated zp[1]:2 [ main::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -127,7 +128,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label __0 = 2
+    .label __1 = 2
     // [4] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
     lda #0
     sta i
@@ -138,19 +139,15 @@ main: {
     lda #'*'
     ldy i
     sta SCREEN,y
-    // [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 -- vboz1=vbum2_lt_vbuc1 
+    // [6] (byte~) main::$1 ← (byte) main::i -- vbuz1=vbum2 
     lda i
-    cmp #4
-    lda #0
-    rol
-    eor #1
-    sta.z __0
+    sta.z __1
     // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
     inc i
-    // [8] if((bool~) main::$0) goto main::@1 -- vboz1_then_la1 
-    lda.z __0
-    cmp #0
-    bne __b1
+    // [8] if((byte~) main::$1<(byte) 4) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z __1
+    cmp #4
+    bcc __b1
     jmp __breturn
     // main::@return
   __breturn:
@@ -163,18 +160,17 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::i ← (byte) 0 [ main::i ] ( main:2 [ main::i ] ) always clobbers reg byte a 
 Statement [5] *((const byte*) SCREEN + (byte) main::i) ← (byte) '*' [ main::i ] ( main:2 [ main::i ] ) always clobbers reg byte a reg byte y 
-Statement [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 [ main::i main::$0 ] ( main:2 [ main::i main::$0 ] ) always clobbers reg byte a 
 Potential registers mem[1] [ main::i ] : mem[1] , 
-Potential registers zp[1]:2 [ main::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ main::$1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 11: zp[1]:2 [ main::$0 ] 9.2: mem[1] [ main::i ] 
+Uplift Scope [main] 11: zp[1]:2 [ main::$1 ] 9.2: mem[1] [ main::i ] 
 Uplift Scope [] 
 
-Uplifting [main] best 392 combination reg byte a [ main::$0 ] mem[1] [ main::i ] 
-Uplifting [] best 392 combination 
+Uplifting [main] best 312 combination reg byte a [ main::$1 ] mem[1] [ main::i ] 
+Uplifting [] best 312 combination 
 Attempting to uplift remaining variables inmem[1] [ main::i ]
-Uplifting [main] best 392 combination mem[1] [ main::i ] 
+Uplifting [main] best 312 combination mem[1] [ main::i ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -212,17 +208,13 @@ main: {
     lda #'*'
     ldy i
     sta SCREEN,y
-    // [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 -- vboaa=vbum1_lt_vbuc1 
+    // [6] (byte~) main::$1 ← (byte) main::i -- vbuaa=vbum1 
     lda i
-    cmp #4
-    lda #0
-    rol
-    eor #1
     // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
     inc i
-    // [8] if((bool~) main::$0) goto main::@1 -- vboaa_then_la1 
-    cmp #0
-    bne __b1
+    // [8] if((byte~) main::$1<(byte) 4) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #4
+    bcc __b1
     jmp __breturn
     // main::@return
   __breturn:
@@ -259,17 +251,17 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
-(bool~) main::$0 reg byte a 11.0
+(byte~) main::$1 reg byte a 11.0
 (label) main::@1
 (label) main::@return
 (byte) main::i loadstore mem[1] 9.200000000000001
 
 mem[1] [ main::i ]
-reg byte a [ main::$0 ]
+reg byte a [ main::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 327
+Score: 247
 
   // File Comments
 // Test memory model
@@ -300,18 +292,14 @@ main: {
     ldy i
     sta SCREEN,y
     // i++<4
-    // [6] (bool~) main::$0 ← (byte) main::i < (byte) 4 -- vboaa=vbum1_lt_vbuc1 
+    // [6] (byte~) main::$1 ← (byte) main::i -- vbuaa=vbum1 
     tya
-    cmp #4
-    lda #0
-    rol
-    eor #1
     // while(i++<4)
     // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
     inc i
-    // [8] if((bool~) main::$0) goto main::@1 -- vboaa_then_la1 
-    cmp #0
-    bne __b1
+    // [8] if((byte~) main::$1<(byte) 4) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #4
+    bcc __b1
     // main::@return
     // }
     // [9] return 

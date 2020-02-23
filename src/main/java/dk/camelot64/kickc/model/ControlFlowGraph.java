@@ -199,7 +199,7 @@ public class ControlFlowGraph implements Serializable {
    public Statement getStatementByIndex(int statementIdx) {
       for(ControlFlowBlock block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            if(statementIdx == statement.getIndex()) {
+            if(statement.getIndex()!=null && statementIdx == statement.getIndex()) {
                return statement;
             }
          }

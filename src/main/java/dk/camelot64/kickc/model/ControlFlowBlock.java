@@ -92,7 +92,25 @@ public class ControlFlowBlock implements Serializable {
             return;
          }
       }
-      throw new RuntimeException("No call statement in block " + getLabel().getFullName());
+      throw new InternalError("No call statement in block " + getLabel().getFullName());
+   }
+
+   /**
+    * Adds a new statement after an existing predecessor statement
+    * @param newStatement The new statement to add
+    * @param predecessor The existing predecessor statement
+    */
+   public void addStatementAfter(Statement newStatement, Statement predecessor) {
+      ListIterator<Statement> listIterator = statements.listIterator();
+      while(listIterator.hasNext()) {
+         Statement statement = listIterator.next();
+         if(statement.equals(predecessor)) {
+            listIterator.previous();
+            listIterator.add(newStatement);
+            return;
+         }
+      }
+      throw new InternalError("Predecessor not found in block " +getLabel().getFullName() + " predecessor: "+ predecessor.toString());
    }
 
    public LabelRef getDefaultSuccessor() {

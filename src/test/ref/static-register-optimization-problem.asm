@@ -15,6 +15,7 @@ main: {
     sta.z i
     sta.z i+1
   __b1:
+    // for(int i=0;i<10;i++)
     lda.z i+1
     bmi __b2
     cmp #>$a
@@ -24,10 +25,13 @@ main: {
     cmp #<$a
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // <lasti
     lda.z lasti
     tax
+    // screen[i] = <lasti
     lda #<screen
     clc
     adc.z i
@@ -38,10 +42,12 @@ main: {
     txa
     ldy #0
     sta (__2),y
+    // lasti = i
     lda.z i
     sta.z lasti
     lda.z i+1
     sta.z lasti+1
+    // for(int i=0;i<10;i++)
     inc.z i
     bne !+
     inc.z i+1

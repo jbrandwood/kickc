@@ -9,28 +9,38 @@
   .label SCREEN_1 = 4
   .label SCREEN_2 = 6
 __b1:
+  // malloc()
   lda #<$400
   sta.z MEM
   lda #>$400
   sta.z MEM+1
   jsr malloc
+  // malloc()
   lda.z malloc.return
   sta.z malloc.return_1
   lda.z malloc.return+1
   sta.z malloc.return_1+1
+  // SCREEN_1 = malloc()
+  // malloc()
   jsr malloc
+  // malloc()
+  // SCREEN_2 = malloc()
   jsr main
   rts
 main: {
+    // *SCREEN_1 = 0
     lda #0
     tay
     sta (SCREEN_1),y
+    // *SCREEN_2 = 0
     sta (SCREEN_2),y
+    // }
     rts
 }
 malloc: {
     .label return = 6
     .label return_1 = 4
+    // return ++MEM;
     inc.z MEM
     bne !+
     inc.z MEM+1
@@ -39,5 +49,6 @@ malloc: {
     sta.z return
     lda.z MEM+1
     sta.z return+1
+    // }
     rts
 }

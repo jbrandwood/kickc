@@ -9,11 +9,17 @@
   // Remainder after signed 16 bit division
   .label rem16s = $b
 main: {
+    // print_cls()
     jsr print_cls
+    // test_8u()
     jsr test_8u
+    // test_16u()
     jsr test_16u
+    // test_8s()
     jsr test_8s
+    // test_16s()
     jsr test_16s
+    // }
     rts
 }
 test_16s: {
@@ -24,6 +30,7 @@ test_16s: {
     lda #0
     sta.z i
   __b1:
+    // dividend = dividends[i]
     lda.z i
     asl
     tax
@@ -31,51 +38,65 @@ test_16s: {
     sta.z dividend
     lda dividends+1,x
     sta.z dividend+1
+    // divisor = divisors[i]
     lda divisors,x
     sta.z divisor
     lda divisors+1,x
     sta.z divisor+1
+    // div16s(dividend, divisor)
     jsr div16s
+    // res = div16s(dividend, divisor)
+    // print_sword(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_sword(dividend)
     jsr print_sword
+    // print_str(" / ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_sword(divisor)
     lda.z divisor
     sta.z print_sword.w
     lda.z divisor+1
     sta.z print_sword.w+1
     jsr print_sword
+    // print_str(" = ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_sword(res)
     lda.z res
     sta.z print_sword.w
     lda.z res+1
     sta.z print_sword.w+1
     jsr print_sword
+    // print_str(" ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
+    // print_sword(rem16s)
     lda.z rem16s
     sta.z print_sword.w
     lda.z rem16s+1
     sta.z print_sword.w+1
     jsr print_sword
+    // print_ln()
     jsr print_ln
+    // for( byte i: 0..5)
     inc.z i
     lda #6
     cmp.z i
     bne __b1
+    // }
     rts
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
@@ -83,6 +104,7 @@ test_16s: {
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -90,6 +112,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -98,22 +121,29 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Print a signed word as HEX
 // print_sword(signed word zp(3) w)
 print_sword: {
     .label w = 3
+    // if(w<0)
     lda.z w+1
     bmi __b1
+    // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
+    // print_word((word)w)
     jsr print_word
+    // }
     rts
   __b1:
+    // print_char('-')
     lda #'-'
     jsr print_char
+    // w = -w
     sec
     lda #0
     sbc.z w
@@ -126,43 +156,54 @@ print_sword: {
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Print a word as HEX
 // print_word(word zp(3) w)
 print_word: {
     .label w = 3
+    // print_byte(>w)
     lda.z w+1
     sta.z print_byte.b
     jsr print_byte
+    // print_byte(<w)
     lda.z w
     sta.z print_byte.b
     jsr print_byte
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte zp(2) b)
 print_byte: {
     .label b = 2
+    // b>>4
     lda.z b
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     and.z b
+    // print_char(print_hextab[b&$f])
     tay
     lda print_hextab,y
     jsr print_char
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -170,15 +211,19 @@ print_byte: {
 print_str: {
     .label str = 3
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -200,6 +245,7 @@ div16s: {
     .label return = 9
     .label dividend = 3
     .label divisor = $11
+    // divr16s(dividend, divisor, 0)
     lda.z dividend
     sta.z divr16s.dividend
     lda.z dividend+1
@@ -209,6 +255,7 @@ div16s: {
     lda.z divisor+1
     sta.z divr16s.divisor+1
     jsr divr16s
+    // }
     rts
 }
 // Perform division on two signed 16-bit numbers with an initial remainder.
@@ -225,16 +272,24 @@ divr16s: {
     .label return = 9
     .label dividend = 5
     .label divisor = 7
+    // if(dividend<0 || rem<0)
     lda.z dividend+1
     bmi __b1
     ldy #0
   __b2:
+    // if(divisor<0)
     lda.z divisor+1
     bmi __b3
   __b4:
+    // divr16u(dividendu, divisoru, remu)
     jsr divr16u
+    // divr16u(dividendu, divisoru, remu)
+    // resultu = divr16u(dividendu, divisoru, remu)
+    // if(neg==0)
     cpy #0
     beq __breturn
+    // (signed word)rem16u
+    // rem16s = -(signed word)rem16u
     sec
     lda #0
     sbc.z rem16s
@@ -242,6 +297,7 @@ divr16s: {
     lda #0
     sbc.z rem16s+1
     sta.z rem16s+1
+    // return -(signed word)resultu;
     sec
     lda #0
     sbc.z return
@@ -250,8 +306,10 @@ divr16s: {
     sbc.z return+1
     sta.z return+1
   __breturn:
+    // }
     rts
   __b3:
+    // -divisor
     sec
     lda #0
     sbc.z divisoru
@@ -259,11 +317,13 @@ divr16s: {
     lda #0
     sbc.z divisoru+1
     sta.z divisoru+1
+    // neg = neg ^ 1
     tya
     eor #1
     tay
     jmp __b4
   __b1:
+    // -dividend
     sec
     lda #0
     sbc.z dividendu
@@ -292,20 +352,28 @@ divr16u: {
     sta.z rem
     sta.z rem+1
   __b1:
+    // rem = rem << 1
     asl.z rem
     rol.z rem+1
+    // >dividend
     lda.z dividend+1
+    // >dividend & $80
     and #$80
+    // if( (>dividend & $80) != 0 )
     cmp #0
     beq __b2
+    // rem = rem | 1
     lda #1
     ora.z rem
     sta.z rem
   __b2:
+    // dividend = dividend << 1
     asl.z dividend
     rol.z dividend+1
+    // quotient = quotient << 1
     asl.z quotient
     rol.z quotient+1
+    // if(rem>=divisor)
     lda.z rem+1
     cmp.z divisor+1
     bcc __b3
@@ -314,10 +382,12 @@ divr16u: {
     cmp.z divisor
     bcc __b3
   !:
+    // quotient++;
     inc.z quotient
     bne !+
     inc.z quotient+1
   !:
+    // rem = rem - divisor
     lda.z rem
     sec
     sbc.z divisor
@@ -326,9 +396,12 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
   __b3:
+    // for( byte i : 0..15)
     inx
     cpx #$10
     bne __b1
+    // rem16u = rem
+    // }
     rts
 }
 test_8s: {
@@ -339,48 +412,63 @@ test_8s: {
     lda #0
     sta.z i
   __b1:
+    // dividend = dividends[i]
     ldy.z i
     lda dividends,y
     sta.z dividend
+    // divisor = divisors[i]
     lda divisors,y
     sta.z divisor
+    // div8s(dividend, divisor)
     ldy.z dividend
     tax
     jsr div8s
+    // res = div8s(dividend, divisor)
     sta.z res
+    // print_sbyte(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_sbyte(dividend)
     jsr print_sbyte
+    // print_str(" / ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_sbyte(divisor)
     lda.z divisor
     sta.z print_sbyte.b
     jsr print_sbyte
+    // print_str(" = ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_sbyte(res)
     lda.z res
     sta.z print_sbyte.b
     jsr print_sbyte
+    // print_str(" ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
+    // print_sbyte(rem8s)
     stx.z print_sbyte.b
     jsr print_sbyte
+    // print_ln()
     jsr print_ln
+    // for( byte i: 0..5 )
     inc.z i
     lda #6
     cmp.z i
     bne __b1
+    // }
     rts
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
     divisors: .byte 5, 7, -$b, -$d, $11, $13
@@ -389,16 +477,22 @@ test_8s: {
 // print_sbyte(signed byte zp(2) b)
 print_sbyte: {
     .label b = 2
+    // if(b<0)
     lda.z b
     bmi __b1
+    // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
+    // print_byte((byte)b)
     jsr print_byte
+    // }
     rts
   __b1:
+    // print_char('-')
     lda #'-'
     jsr print_char
+    // b = -b
     lda.z b
     eor #$ff
     clc
@@ -415,44 +509,57 @@ print_sbyte: {
 // div8s(signed byte register(Y) dividend, signed byte register(X) divisor)
 div8s: {
     .label neg = $e
+    // if(dividend<0)
     cpy #0
     bmi __b1
     lda #0
     sta.z neg
   __b2:
+    // if(divisor<0)
     cpx #0
     bmi __b3
   __b4:
+    // div8u(dividendu, divisoru)
     tya
     jsr div8u
+    // div8u(dividendu, divisoru)
+    // resultu = div8u(dividendu, divisoru)
     tay
+    // if(neg==0)
     lda.z neg
     cmp #0
     beq __b5
+    // (signed byte)rem8u
     txa
+    // rem8s = -(signed byte)rem8u
     eor #$ff
     clc
     adc #1
     tax
+    // return -(signed byte)resultu;
     tya
     eor #$ff
     clc
     adc #1
+    // }
     rts
   __b5:
     tya
     rts
   __b3:
+    // -divisor
     txa
     eor #$ff
     clc
     adc #1
     tax
+    // neg = neg ^ 1
     lda #1
     eor.z neg
     sta.z neg
     jmp __b4
   __b1:
+    // -dividend
     tya
     eor #$ff
     clc
@@ -468,10 +575,13 @@ div8s: {
 // Implemented using simple binary division
 // div8u(byte register(A) dividend, byte register(X) divisor)
 div8u: {
+    // divr8u(dividend, divisor, 0)
     sta.z divr8u.dividend
     stx.z divr8u.divisor
     jsr divr8u
+    // divr8u(dividend, divisor, 0)
     lda.z divr8u.return
+    // }
     rts
 }
 // Performs division on two 8 bit unsigned bytes and an initial remainder
@@ -489,32 +599,44 @@ divr8u: {
     sta.z quotient
     tay
   __b1:
+    // rem = rem << 1
     tya
     asl
     tay
+    // dividend & $80
     lda #$80
     and.z dividend
+    // if( (dividend & $80) != 0 )
     cmp #0
     beq __b2
+    // rem = rem | 1
     tya
     ora #1
     tay
   __b2:
+    // dividend = dividend << 1
     asl.z dividend
+    // quotient = quotient << 1
     asl.z quotient
+    // if(rem>=divisor)
     cpy.z divisor
     bcc __b3
+    // quotient++;
     inc.z quotient
+    // rem = rem - divisor
     tya
     sec
     sbc.z divisor
     tay
   __b3:
+    // for( byte i : 0..7)
     inx
     cpx #8
     bne __b1
+    // rem8u = rem
     tya
     tax
+    // }
     rts
 }
 test_16u: {
@@ -525,6 +647,7 @@ test_16u: {
     lda #0
     sta.z i
   __b1:
+    // dividend = dividends[i]
     lda.z i
     asl
     tax
@@ -532,51 +655,65 @@ test_16u: {
     sta.z dividend
     lda dividends+1,x
     sta.z dividend+1
+    // divisor = divisors[i]
     lda divisors,x
     sta.z divisor
     lda divisors+1,x
     sta.z divisor+1
+    // div16u(dividend, divisor)
     jsr div16u
+    // res = div16u(dividend, divisor)
+    // print_word(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_word(dividend)
     jsr print_word
+    // print_str(" / ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_word(divisor)
     lda.z divisor
     sta.z print_word.w
     lda.z divisor+1
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" = ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word(res)
     lda.z res
     sta.z print_word.w
     lda.z res+1
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
+    // print_word(rem16u)
     lda.z rem16u
     sta.z print_word.w
     lda.z rem16u+1
     sta.z print_word.w+1
     jsr print_word
+    // print_ln()
     jsr print_ln
+    // for( byte i : 0..5)
     inc.z i
     lda #6
     cmp.z i
     bne __b1
+    // }
     rts
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
     divisors: .word 5, 7, $b, $d, $11, $13
@@ -590,11 +727,14 @@ div16u: {
     .label return = 9
     .label dividend = 3
     .label divisor = 7
+    // divr16u(dividend, divisor, 0)
     lda.z dividend
     sta.z divr16u.dividend
     lda.z dividend+1
     sta.z divr16u.dividend+1
     jsr divr16u
+    // divr16u(dividend, divisor, 0)
+    // }
     rts
 }
 test_8u: {
@@ -613,44 +753,59 @@ test_8u: {
     lda #0
     sta.z i
   __b1:
+    // dividend = dividends[i]
     ldy.z i
     lda dividends,y
     sta.z dividend
+    // divisor = divisors[i]
     lda divisors,y
     sta.z divisor
+    // div8u(dividend, divisor)
     lda.z dividend
     ldx.z divisor
     jsr div8u
+    // div8u(dividend, divisor)
+    // res = div8u(dividend, divisor)
     sta.z res
+    // print_byte(dividend)
     jsr print_byte
+    // print_str(" / ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(divisor)
     lda.z divisor
     sta.z print_byte.b
     jsr print_byte
+    // print_str(" = ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(res)
     lda.z res
     sta.z print_byte.b
     jsr print_byte
+    // print_str(" ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(rem8u)
     stx.z print_byte.b
     jsr print_byte
+    // print_ln()
     jsr print_ln
+    // for( byte i: 0..5 )
     inc.z i
     lda #6
     cmp.z i
     bne __b11
+    // }
     rts
   __b11:
     lda.z print_line_cursor
@@ -663,7 +818,9 @@ test_8u: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -678,17 +835,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1

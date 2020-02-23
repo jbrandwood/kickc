@@ -7,6 +7,7 @@
   /** The screen. */
   .label SCREEN = $400
 main: {
+    // asm
     // Push a few values to the stack
     lda #'1'
     pha
@@ -14,15 +15,19 @@ main: {
     pha
     lda #'3'
     pha
+    // peek_stack()
     jsr peek_stack
+    // asm
     // Clean up the stack
     pla
     pla
     pla
+    // }
     rts
 }
 // Peek values from the stack using stack-relative addressing
 peek_stack: {
+    // asm
     tsx
     lda STACK,x
     sta SCREEN
@@ -30,5 +35,6 @@ peek_stack: {
     sta SCREEN+1
     lda STACK+2,x
     sta SCREEN+2
+    // }
     rts
 }

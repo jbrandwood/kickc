@@ -6,7 +6,9 @@
   .label SCREEN = $400
 main: {
   __b1:
+    // key = *RASTER
     lda RASTER
+    // if (key > $20 || key < $40)
     cmp #$20+1
     bcs b1
     cmp #$40
@@ -14,6 +16,7 @@ main: {
   b1:
     lda #0
   __b2:
+    // *SCREEN = key
     sta SCREEN
     jmp __b1
 }

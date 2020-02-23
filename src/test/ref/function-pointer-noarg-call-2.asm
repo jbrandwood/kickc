@@ -8,9 +8,12 @@ main: {
     lda #0
     sta.z i
   __b2:
+    // ++i;
     inc.z i
+    // i&1
     lda #1
     and.z i
+    // if((i&1)==0)
     cmp #0
     beq __b3
     lda #<fn2
@@ -24,6 +27,7 @@ main: {
     lda #>fn1
     sta.z f+1
   __b4:
+    // (*f)()
     jsr bi_f
     jmp __b2
   bi_f:
@@ -31,11 +35,15 @@ main: {
 }
 fn2: {
     .label BGCOL = $d021
+    // (*BGCOL)++;
     inc BGCOL
+    // }
     rts
 }
 fn1: {
     .label BORDERCOL = $d020
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // }
     rts
 }

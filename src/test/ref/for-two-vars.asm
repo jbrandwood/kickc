@@ -12,13 +12,17 @@ main: {
     sta.z sc+1
     ldx #0
   __b1:
+    // for( byte i=0; i<40; i++, sc--)
     cpx #$28
     bcc __b2
+    // }
     rts
   __b2:
+    // *sc = i
     txa
     ldy #0
     sta (sc),y
+    // for( byte i=0; i<40; i++, sc--)
     inx
     lda.z sc
     bne !+

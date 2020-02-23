@@ -7,10 +7,13 @@
 main: {
     .label SCREEN = $400
     .label barp = bar
+    // SCREEN[i++] = barp->thing1
     lda barp
     sta SCREEN
+    // SCREEN[i++] = barp->thing2
     lda barp+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
+    // }
     rts
 }
   bar: .byte 'a', 'b'

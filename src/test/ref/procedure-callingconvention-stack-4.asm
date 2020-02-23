@@ -8,9 +8,11 @@
 main: {
     ldy #0
   __b1:
+    // v = a+1
     tya
     tax
     inx
+    // w = plus('0', v)
     lda #'0'
     pha
     txa
@@ -18,13 +20,17 @@ main: {
     jsr plus
     pla
     pla
+    // w+a
     sty.z $ff
     clc
     adc.z $ff
+    // SCREEN[i] = w+a
     sta SCREEN
+    // for(char a:0..1)
     iny
     cpy #2
     bne __b1
+    // }
     rts
 }
 // plus(byte zp(2) a, byte register(A) b)
@@ -38,8 +44,10 @@ plus: {
     sta.z a
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
+    // return a+b;
     clc
     adc.z a
+    // }
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     rts

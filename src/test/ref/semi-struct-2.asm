@@ -44,13 +44,17 @@ main: {
     .label fileEntry2___0 = 6
     .label entry1 = 2
     .label entry2 = 6
+    // keyboard_init()
     jsr keyboard_init
+    // mul8u(idx, SIZEOF_ENTRY)
     ldx #fileEntry1_idx
     jsr mul8u
+    // mul8u(idx, SIZEOF_ENTRY)
     lda.z mul8u.return
     sta.z fileEntry1___0
     lda.z mul8u.return+1
     sta.z fileEntry1___0+1
+    // files+mul8u(idx, SIZEOF_ENTRY)
     clc
     lda.z entry1
     adc #<files
@@ -58,8 +62,11 @@ main: {
     lda.z entry1+1
     adc #>files
     sta.z entry1+1
+    // mul8u(idx, SIZEOF_ENTRY)
     ldx #fileEntry2_idx
     jsr mul8u
+    // mul8u(idx, SIZEOF_ENTRY)
+    // files+mul8u(idx, SIZEOF_ENTRY)
     clc
     lda.z entry2
     adc #<files
@@ -67,19 +74,23 @@ main: {
     lda.z entry2+1
     adc #>files
     sta.z entry2+1
+    // initEntry(entry1,0x00)
     lda.z entry1
     sta.z initEntry.entry
     lda.z entry1+1
     sta.z initEntry.entry+1
     ldx #0
     jsr initEntry
+    // initEntry(entry2,0x11)
     lda.z entry2
     sta.z initEntry.entry
     lda.z entry2+1
     sta.z initEntry.entry+1
     ldx #$11
     jsr initEntry
+    // print_cls()
     jsr print_cls
+    // print_str("** entry 1 **")
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -89,6 +100,7 @@ main: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     lda #<$400
     sta.z print_line_cursor_1
     lda #>$400
@@ -102,7 +114,9 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_ln()
     jsr print_ln
+    // printEntry(entry1)
     jsr printEntry
     lda.z print_line_cursor
     sta.z print_line_cursor_1
@@ -112,21 +126,28 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("- press space -")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
   __b1:
+    // keyboard_key_pressed(KEY_SPACE)
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_SPACE)
+    // while(keyboard_key_pressed(KEY_SPACE)==0)
     cmp #0
     beq __b1
+    // print_cls()
     jsr print_cls
+    // print_str("** entry 2 **")
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -136,6 +157,7 @@ main: {
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     lda #<$400
     sta.z print_line_cursor_1
     lda #>$400
@@ -149,7 +171,9 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_ln()
     jsr print_ln
+    // printEntry(entry2)
     lda.z entry2
     sta.z printEntry.entry
     lda.z entry2+1
@@ -163,21 +187,28 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("- press space -")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
   __b3:
+    // keyboard_key_pressed(KEY_SPACE)
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_SPACE)
+    // while(keyboard_key_pressed(KEY_SPACE)==0)
     cmp #0
     beq __b3
+    // print_cls()
     jsr print_cls
+    // }
     rts
     str: .text "** entry 1 **"
     .byte 0
@@ -188,7 +219,9 @@ main: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -203,17 +236,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1
@@ -227,8 +264,11 @@ memset: {
 keyboard_key_pressed: {
     .const colidx = KEY_SPACE&7
     .label rowidx = KEY_SPACE>>3
+    // keyboard_matrix_read(rowidx)
     jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
     and keyboard_matrix_col_bitmask+colidx
+    // }
     rts
 }
 // Read a single row of the keyboard matrix
@@ -237,10 +277,13 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
+    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
     lda CIA1_PORT_B
     eor #$ff
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -248,15 +291,19 @@ keyboard_matrix_read: {
 print_str: {
     .label str = $a
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -270,6 +317,7 @@ print_str: {
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor_1
@@ -277,6 +325,7 @@ print_ln: {
     lda #0
     adc.z print_line_cursor_1+1
     sta.z print_line_cursor+1
+    // while (print_line_cursor<print_char_cursor)
     cmp.z print_char_cursor+1
     bcc __b2
     bne !+
@@ -284,6 +333,7 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b2
   !:
+    // }
     rts
   __b2:
     lda.z print_line_cursor
@@ -300,6 +350,7 @@ printEntry: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("bufdisk   ")
     lda #<str
     sta.z print_str.str
     lda #>str
@@ -311,16 +362,19 @@ printEntry: {
     iny
     lda (entry),y
     sta.z print_word.w+1
+    // print_word((word)*entryBufDisk(entry))
     jsr print_word
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("bufedit   ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
@@ -332,21 +386,25 @@ printEntry: {
     iny
     lda (entry),y
     sta.z print_word.w+1
+    // print_word((word)*entryBufEdit(entry))
     jsr print_word
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("tslen     ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
+    // print_word(*entryTsLen(entry))
     ldy #4
     lda (entry),y
     sta.z print_word.w
@@ -358,11 +416,13 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("tsorder   ")
     lda #<str3
     sta.z print_str.str
     lda #>str3
@@ -374,21 +434,25 @@ printEntry: {
     iny
     lda (entry),y
     sta.z print_word.w+1
+    // print_word((word)*entryTsOrder(entry))
     jsr print_word
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("tlastlink   ")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entryTLastLink(entry))
     ldy #8
     lda (entry),y
     tax
@@ -397,16 +461,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("slastlink   ")
     lda #<str5
     sta.z print_str.str
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entrySLastLink(entry))
     ldy #9
     lda (entry),y
     tax
@@ -415,16 +482,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("bflag       ")
     lda #<str6
     sta.z print_str.str
     lda #>str6
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entryBFlag(entry))
     ldy #$a
     lda (entry),y
     tax
@@ -433,16 +503,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("berror      ")
     lda #<str7
     sta.z print_str.str
     lda #>str7
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entryBError(entry))
     ldy #$b
     lda (entry),y
     tax
@@ -451,16 +524,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("ucross    ")
     lda #<str8
     sta.z print_str.str
     lda #>str8
     sta.z print_str.str+1
     jsr print_str
+    // print_word(*entryUCross(entry))
     ldy #$c
     lda (entry),y
     sta.z print_word.w
@@ -472,16 +548,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("baddrlo     ")
     lda #<str9
     sta.z print_str.str
     lda #>str9
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entryBAddrLo(entry))
     ldy #$e
     lda (entry),y
     tax
@@ -490,16 +569,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("baddrhi     ")
     lda #<str10
     sta.z print_str.str
     lda #>str10
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entryBAddrHi(entry))
     ldy #$f
     lda (entry),y
     tax
@@ -508,16 +590,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("thi         ")
     lda #<str11
     sta.z print_str.str
     lda #>str11
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entryTHi(entry))
     ldy #$10
     lda (entry),y
     tax
@@ -526,16 +611,19 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("tlo         ")
     lda #<str12
     sta.z print_str.str
     lda #>str12
     sta.z print_str.str+1
     jsr print_str
+    // print_byte(*entryTLo(entry))
     ldy #$11
     lda (entry),y
     tax
@@ -544,7 +632,9 @@ printEntry: {
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
     sta.z print_line_cursor_1+1
+    // print_ln()
     jsr print_ln
+    // }
     rts
     str: .text "bufdisk   "
     .byte 0
@@ -576,41 +666,52 @@ printEntry: {
 // Print a byte as HEX
 // print_byte(byte register(X) b)
 print_byte: {
+    // b>>4
     txa
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     axs #0
+    // print_char(print_hextab[b&$f])
     lda print_hextab,x
     jsr print_char
+    // }
     rts
 }
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Print a word as HEX
 // print_word(word zp($a) w)
 print_word: {
     .label w = $a
+    // print_byte(>w)
     lda.z w+1
     tax
     jsr print_byte
+    // print_byte(<w)
     lda.z w
     tax
     jsr print_byte
+    // }
     rts
 }
 // Set all values in the passed struct
@@ -623,6 +724,7 @@ initEntry: {
     .label __7 = $e
     .label __17 = $10
     .label entry = 4
+    // 0x1111+n
     txa
     clc
     adc #<$1111
@@ -630,12 +732,14 @@ initEntry: {
     lda #>$1111
     adc #0
     sta.z __1+1
+    // *entryBufDisk(entry) = 0x1111+n
     ldy #0
     lda.z __1
     sta (entry),y
     iny
     lda.z __1+1
     sta (entry),y
+    // 0x2222+n
     txa
     clc
     adc #<$2222
@@ -643,12 +747,14 @@ initEntry: {
     lda #>$2222
     adc #0
     sta.z __3+1
+    // *entryBufEdit(entry) = 0x2222+n
     ldy #2
     lda.z __3
     sta (entry),y
     iny
     lda.z __3+1
     sta (entry),y
+    // 0x3333+n
     txa
     clc
     adc #<$3333
@@ -656,12 +762,14 @@ initEntry: {
     lda #>$3333
     adc #0
     sta.z __5+1
+    // *entryTsLen(entry) = 0x3333+n
     ldy #4
     lda.z __5
     sta (entry),y
     iny
     lda.z __5+1
     sta (entry),y
+    // 0x4444+n
     txa
     clc
     adc #<$4444
@@ -669,32 +777,42 @@ initEntry: {
     lda #>$4444
     adc #0
     sta.z __7+1
+    // *entryTsOrder(entry) = 0x4444+n
     ldy #6
     lda.z __7
     sta (entry),y
     iny
     lda.z __7+1
     sta (entry),y
+    // 0x55+n
     txa
     clc
     adc #$55
+    // *entryTLastLink(entry) = 0x55+n
     ldy #8
     sta (entry),y
+    // 0x66+n
     txa
     clc
     adc #$66
+    // *entrySLastLink(entry) = 0x66+n
     ldy #9
     sta (entry),y
+    // 0x77+n
     txa
     clc
     adc #$77
+    // *entryBFlag(entry) = 0x77+n
     ldy #$a
     sta (entry),y
+    // 0x88+n
     txa
     clc
     adc #$88
+    // *entryBError(entry) = 0x88+n
     ldy #$b
     sta (entry),y
+    // 0x9999+n
     txa
     clc
     adc #<$9999
@@ -702,32 +820,42 @@ initEntry: {
     lda #>$9999
     adc #0
     sta.z __17+1
+    // *entryUCross(entry) = 0x9999+n
     ldy #$c
     lda.z __17
     sta (entry),y
     iny
     lda.z __17+1
     sta (entry),y
+    // 0xaa+n
     txa
     clc
     adc #$aa
+    // *entryBAddrLo(entry) = 0xaa+n
     ldy #$e
     sta (entry),y
+    // 0xbb+n
     txa
     clc
     adc #$bb
+    // *entryBAddrHi(entry) = 0xbb+n
     ldy #$f
     sta (entry),y
+    // 0xcc+n
     txa
     clc
     adc #$cc
+    // *entryTHi(entry) = 0xcc+n
     ldy #$10
     sta (entry),y
+    // 0xdd+n
     txa
     clc
     adc #$dd
+    // *entryTLo(entry) = 0xdd+n
     ldy #$11
     sta (entry),y
+    // }
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -744,14 +872,19 @@ mul8u: {
     sta.z res
     sta.z res+1
   __b1:
+    // while(a!=0)
     cpx #0
     bne __b2
+    // }
     rts
   __b2:
+    // a&1
     txa
     and #1
+    // if( (a&1) != 0)
     cmp #0
     beq __b3
+    // res = res + mb
     lda.z res
     clc
     adc.z mb
@@ -760,21 +893,26 @@ mul8u: {
     adc.z mb+1
     sta.z res+1
   __b3:
+    // a = a>>1
     txa
     lsr
     tax
+    // mb = mb<<1
     asl.z mb
     rol.z mb+1
     jmp __b1
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
+    // *CIA1_PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
+    // *CIA1_PORT_B_DDR = $00
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
+    // }
     rts
 }
   print_hextab: .text "0123456789abcdef"

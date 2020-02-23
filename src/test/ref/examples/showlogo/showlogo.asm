@@ -17,19 +17,27 @@
   .const DARK_GREY = $b
   .label SCREEN = $400
   .label LOGO = $2000
+  // kickasm
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
+    // *BORDERCOL = WHITE
     lda #WHITE
     sta BORDERCOL
+    // *BGCOL2 = DARK_GREY
     lda #DARK_GREY
     sta BGCOL2
+    // *BGCOL = *BGCOL2 = DARK_GREY
     sta BGCOL
+    // *BGCOL3 = BLACK
     lda #BLACK
     sta BGCOL3
+    // *D018 = toD018(SCREEN, LOGO)
     lda #toD0181_return
     sta D018
+    // *D016 = VIC_MCM | VIC_CSEL
     lda #VIC_MCM|VIC_CSEL
     sta D016
+    // memset(SCREEN, BLACK, 40*25)
     ldx #BLACK
     lda #<SCREEN
     sta.z memset.str
@@ -40,6 +48,7 @@ main: {
     lda #>$28*$19
     sta.z memset.num+1
     jsr memset
+    // memset(COLS, WHITE|8, 40*25)
     ldx #WHITE|8
     lda #<COLS
     sta.z memset.str
@@ -52,13 +61,17 @@ main: {
     jsr memset
     ldx #0
   __b1:
+    // SCREEN[ch] = ch
     txa
     sta SCREEN,x
+    // for(byte ch: 0..239)
     inx
     cpx #$f0
     bne __b1
   __b2:
+    // (*(SCREEN+999))++;
     inc SCREEN+$3e7
+    // kickasm
     inc $d020 
     jmp __b2
 }
@@ -69,11 +82,13 @@ memset: {
     .label dst = 4
     .label num = 2
     .label str = 4
+    // if(num>0)
     lda.z num
     bne !+
     lda.z num+1
     beq __breturn
   !:
+    // end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -82,6 +97,7 @@ memset: {
     adc.z str+1
     sta.z end+1
   __b2:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -89,11 +105,14 @@ memset: {
     cmp.z end
     bne __b3
   __breturn:
+    // }
     rts
   __b3:
+    // *dst = c
     txa
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1

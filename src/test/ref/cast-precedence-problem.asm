@@ -11,17 +11,23 @@ main: {
     .const sumb = min+max
     .const midw = (sumw>>1)+1
     .const midb = (sumb>>1)+1
+    // SCREEN[0] = midw
     lda #midw
     sta SCREEN
+    // SCREEN[1] = midb
     lda #midb
     sta SCREEN+1
+    // if(SCREEN[0]==SCREEN[1])
     lda SCREEN
     cmp SCREEN+1
     beq __b1
+    // *BGCOL = 2
     lda #2
     sta BGCOL
+    // }
     rts
   __b1:
+    // *BGCOL = 5
     lda #5
     sta BGCOL
     rts

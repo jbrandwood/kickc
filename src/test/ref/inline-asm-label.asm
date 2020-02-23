@@ -4,6 +4,7 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
+    // asm
     ldx #0
   nxt:
     lda table,x
@@ -11,6 +12,7 @@ main: {
     inx
     cpx #4
     bne nxt
+    // }
     rts
 }
   table: .text "cml!"

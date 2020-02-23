@@ -16,6 +16,7 @@ main: {
     lda #>words
     sta.z wp+1
   __b1:
+    // w = *(wp++)
     ldy #0
     lda (wp),y
     sta.z w
@@ -29,20 +30,29 @@ main: {
     bcc !+
     inc.z wp+1
   !:
+    // <w
     lda.z w
+    // SCREEN[idx++] = <w
     ldy.z idx
     sta SCREEN,y
+    // SCREEN[idx++] = <w;
     iny
+    // >w
     lda.z w+1
+    // SCREEN[idx++] = >w
     sta SCREEN,y
+    // SCREEN[idx++] = >w;
     iny
     tya
+    // idx++;
     clc
     adc #1
     sta.z idx
+    // for( byte i: 0..3)
     inx
     cpx #4
     bne __b1
+    // }
     rts
     // Clever word array that represents C64 numbers 0-7
     words: .word $3130, $3332, $3534, $3736

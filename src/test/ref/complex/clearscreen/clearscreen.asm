@@ -81,16 +81,19 @@
   .label SCREEN_COPY = 7
   .label SCREEN_DIST = 9
 __b1:
+  // malloc(1000)
   lda #<HEAP_TOP
   sta.z heap_head
   lda #>HEAP_TOP
   sta.z heap_head+1
   jsr malloc
+  // malloc(1000)
   lda.z malloc.mem
   sta.z SCREEN_COPY
   lda.z malloc.mem+1
   sta.z SCREEN_COPY+1
   jsr malloc
+  // malloc(1000)
   jsr main
   rts
 main: {
@@ -98,11 +101,13 @@ main: {
     .label src = $1c
     .label i = 2
     .label center_y = $b
+    // init_angle_screen(SCREEN_DIST)
     lda.z SCREEN_DIST
     sta.z init_angle_screen.screen
     lda.z SCREEN_DIST+1
     sta.z init_angle_screen.screen+1
     jsr init_angle_screen
+    // dst=SCREEN_COPY
     lda.z SCREEN_COPY
     sta.z dst
     lda.z SCREEN_COPY+1
@@ -113,6 +118,7 @@ main: {
     sta.z src+1
   // Copy screen to screen copy
   __b1:
+    // for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
     lda.z src+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -123,6 +129,7 @@ main: {
     sta.z i
   // Init processing array
   __b3:
+    // PROCESSING[i] = { 0, 0, 0, 0, 0, 0, 0, STATUS_FREE, 0}
     lda.z i
     asl
     clc
@@ -140,34 +147,45 @@ main: {
     iny
     cpy #SIZEOF_STRUCT_PROCESSINGSPRITE
     bne !-
+    // for( byte i: 0..NUM_PROCESSING-1 )
     inc.z i
     lda #NUM_PROCESSING-1+1
     cmp.z i
     bne __b3
+    // initSprites()
     jsr initSprites
+    // setupRasterIrq(RASTER_IRQ_TOP, &irqTop)
     jsr setupRasterIrq
   b1:
   // Main loop
+    // getCharToProcess()
     jsr getCharToProcess
     ldy.z getCharToProcess.return_x
     lda.z getCharToProcess.return_y
+    // center = getCharToProcess()
     sta.z center_y
     txa
+    // if(center.dist==NOT_FOUND)
     cmp #NOT_FOUND
     bne __b6
+    // (*(SCREEN+999)) = '.'
     lda #'.'
     sta SCREEN+$3e7
   __b8:
+    // (*(COLS+999))++;
     inc COLS+$3e7
     jmp __b8
   __b6:
+    // startProcessing(center)
     sty.z startProcessing.center_x
     jsr startProcessing
     jmp b1
   __b2:
+    // *dst = *src
     ldy #0
     lda (src),y
     sta (dst),y
+    // for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
     inc.z src
     bne !+
     inc.z src+1
@@ -215,6 +233,7 @@ startProcessing: {
     lda #0
     sta.z i
   __b2:
+    // PROCESSING[i].status==STATUS_FREE
     lda.z i
     asl
     clc
@@ -223,6 +242,7 @@ startProcessing: {
     clc
     adc.z i
     asl
+    // if(PROCESSING[i].status==STATUS_FREE)
     tay
     lda #STATUS_FREE
     cmp PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_STATUS,y
@@ -230,15 +250,18 @@ startProcessing: {
     jmp __b3
   !__b3:
   __b4:
+    // while (freeIdx==0xff)
     lda #$ff
     cmp.z freeIdx
     bne !__b8+
     jmp __b8
   !__b8:
+    // (word)center.y
     lda.z center_y
     sta.z __0
     lda #0
     sta.z __0+1
+    // (word)center.y*40
     lda.z __0
     asl
     sta.z __34
@@ -260,6 +283,7 @@ startProcessing: {
     rol.z __1+1
     asl.z __1
     rol.z __1+1
+    // offset = (word)center.y*40+center.x
     lda.z center_x
     clc
     adc.z offset
@@ -267,6 +291,7 @@ startProcessing: {
     bcc !+
     inc.z offset+1
   !:
+    // colPtr = COLS+offset
     lda.z offset
     clc
     adc #<COLS
@@ -274,9 +299,11 @@ startProcessing: {
     lda.z offset+1
     adc #>COLS
     sta.z colPtr+1
+    // spriteCol = *colPtr
     ldy #0
     lda (colPtr),y
     sta.z spriteCol
+    // screenPtr = SCREEN+offset
     clc
     lda.z screenPtr
     adc #<SCREEN
@@ -284,10 +311,12 @@ startProcessing: {
     lda.z screenPtr+1
     adc #>SCREEN
     sta.z screenPtr+1
+    // (word)spriteIdx
     lda.z freeIdx
     sta.z __5
     tya
     sta.z __5+1
+    // (word)spriteIdx*64
     asl.z __6
     rol.z __6+1
     asl.z __6
@@ -300,6 +329,7 @@ startProcessing: {
     rol.z __6+1
     asl.z __6
     rol.z __6+1
+    // spriteData = SPRITE_DATA+(word)spriteIdx*64
     clc
     lda.z spriteData
     adc #<SPRITE_DATA
@@ -307,16 +337,20 @@ startProcessing: {
     lda.z spriteData+1
     adc #>SPRITE_DATA
     sta.z spriteData+1
+    // ch = (*screenPtr)
     lda (screenPtr),y
+    // (word)ch
     sta.z __8
     tya
     sta.z __8+1
+    // (word)ch*8
     asl.z __9
     rol.z __9+1
     asl.z __9
     rol.z __9+1
     asl.z __9
     rol.z __9+1
+    // chargenData = CHARGEN+(word)ch*8
     clc
     lda.z chargenData
     adc #<CHARGEN
@@ -324,14 +358,18 @@ startProcessing: {
     lda.z chargenData+1
     adc #>CHARGEN
     sta.z chargenData+1
+    // asm
     sei
+    // *PROCPORT = PROCPORT_RAM_CHARROM
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     ldx #0
   __b6:
+    // *spriteData = *chargenData
     ldy #0
     lda (chargenData),y
     sta (spriteData),y
+    // spriteData += 3
     lda #3
     clc
     adc.z spriteData
@@ -339,26 +377,33 @@ startProcessing: {
     bcc !+
     inc.z spriteData+1
   !:
+    // chargenData++;
     inc.z chargenData
     bne !+
     inc.z chargenData+1
   !:
+    // for( byte i: 0..7)
     inx
     cpx #8
     bne __b6
+    // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    // asm
     cli
+    // (word)center.x
     lda.z center_x
     sta.z __11
     lda #0
     sta.z __11+1
+    // (word)center.x*8
     asl.z __12
     rol.z __12+1
     asl.z __12
     rol.z __12+1
     asl.z __12
     rol.z __12+1
+    // BORDER_XPOS_LEFT + (word)center.x*8
     lda #BORDER_XPOS_LEFT
     clc
     adc.z __13
@@ -366,6 +411,7 @@ startProcessing: {
     bcc !+
     inc.z __13+1
   !:
+    // spriteX = (BORDER_XPOS_LEFT + (word)center.x*8) << 4
     asl.z spriteX
     rol.z spriteX+1
     asl.z spriteX
@@ -374,16 +420,19 @@ startProcessing: {
     rol.z spriteX+1
     asl.z spriteX
     rol.z spriteX+1
+    // (word)center.y
     lda.z center_y
     sta.z __15
     lda #0
     sta.z __15+1
+    // (word)center.y*8
     asl.z __16
     rol.z __16+1
     asl.z __16
     rol.z __16+1
     asl.z __16
     rol.z __16+1
+    // BORDER_YPOS_TOP + (word)center.y*8
     lda #BORDER_YPOS_TOP
     clc
     adc.z __17
@@ -391,6 +440,7 @@ startProcessing: {
     bcc !+
     inc.z __17+1
   !:
+    // spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4
     asl.z spriteY
     rol.z spriteY+1
     asl.z spriteY
@@ -399,16 +449,20 @@ startProcessing: {
     rol.z spriteY+1
     asl.z spriteY
     rol.z spriteY+1
+    // spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx
     lax.z freeIdx
     axs #-[SPRITE_DATA/$40]
     stx.z spritePtr
+    // spriteIdx*8
     lda.z freeIdx
     asl
     asl
     asl
+    // (word)(spriteIdx*8)
     sta.z __21
     lda #0
     sta.z __21+1
+    // PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr }
     lda.z freeIdx
     asl
     clc
@@ -446,11 +500,13 @@ startProcessing: {
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR,x
     lda.z screenPtr+1
     sta PROCESSING+OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR+1,x
+    // }
     rts
   __b8:
     ldx.z freeIdx
     jmp __b1
   __b3:
+    // for( byte i: 0..NUM_PROCESSING-1 )
     inc.z i
     lda #NUM_PROCESSING-1+1
     cmp.z i
@@ -476,10 +532,12 @@ getCharToProcess: {
     .label closest_y = $b
     .label __12 = $1a
     .label __13 = $18
+    // screen_line = SCREEN_COPY
     lda.z SCREEN_COPY
     sta.z screen_line
     lda.z SCREEN_COPY+1
     sta.z screen_line+1
+    // dist_line = SCREEN_DIST
     lda.z SCREEN_DIST
     sta.z dist_line
     lda.z SCREEN_DIST+1
@@ -493,22 +551,27 @@ getCharToProcess: {
   __b1:
     ldy #0
   __b2:
+    // if(screen_line[x]!=' ')
     lda #' '
     cmp (screen_line),y
     bne !__b11+
     jmp __b11
   !__b11:
+    // dist = dist_line[x]
     lda (dist_line),y
     tax
+    // if(dist<closest.dist)
     cpx.z closest_dist
     bcs __b12
     sty.z return_x
     lda.z y
     sta.z return_y
   __b3:
+    // for( byte x: 0..39)
     iny
     cpy #$28
     bne __b10
+    // screen_line += 40
     lda #$28
     clc
     adc.z screen_line
@@ -516,6 +579,7 @@ getCharToProcess: {
     bcc !+
     inc.z screen_line+1
   !:
+    // dist_line += 40
     lda #$28
     clc
     adc.z dist_line
@@ -523,16 +587,20 @@ getCharToProcess: {
     bcc !+
     inc.z dist_line+1
   !:
+    // for( byte y: 0..24)
     inc.z y
     lda #$19
     cmp.z y
     bne __b9
+    // if(closest.dist != NOT_FOUND)
     cpx #NOT_FOUND
     beq __breturn
+    // (word)closest.y
     lda.z return_y
     sta.z __8
     lda #0
     sta.z __8+1
+    // (word)closest.y*40
     lda.z __8
     asl
     sta.z __12
@@ -554,6 +622,7 @@ getCharToProcess: {
     rol.z __9+1
     asl.z __9
     rol.z __9+1
+    // SCREEN_COPY+(word)closest.y*40
     lda.z __10
     clc
     adc.z SCREEN_COPY
@@ -561,11 +630,13 @@ getCharToProcess: {
     lda.z __10+1
     adc.z SCREEN_COPY+1
     sta.z __10+1
+    // *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' '
     // clear the found char on the screen copy
     lda #' '
     ldy.z return_x
     sta (__10),y
   __breturn:
+    // }
     rts
   __b9:
     stx.z closest_dist
@@ -583,29 +654,39 @@ getCharToProcess: {
 // Setup Raster IRQ
 setupRasterIrq: {
     .label irqRoutine = irqTop
+    // asm
     sei
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
+    // *VIC_CONTROL &=0x7f
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
+    // *RASTER = <raster
     lda #RASTER_IRQ_TOP
     sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
+    // *HARDWARE_IRQ = irqRoutine
     // Set the IRQ routine
     lda #<irqRoutine
     sta HARDWARE_IRQ
     lda #>irqRoutine
     sta HARDWARE_IRQ+1
+    // asm
     cli
+    // }
     rts
 }
 // Initialize sprites
@@ -617,6 +698,7 @@ initSprites: {
     sta.z sp+1
   // Clear sprite data
   __b1:
+    // for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
     lda.z sp+1
     cmp #>SPRITE_DATA+NUM_PROCESSING*$40
     bcc __b2
@@ -628,20 +710,28 @@ initSprites: {
     ldx #0
   // Initialize sprite registers
   __b3:
+    // SPRITES_COLS[i] = LIGHT_BLUE
     lda #LIGHT_BLUE
     sta SPRITES_COLS,x
+    // for( byte i: 0..7)
     inx
     cpx #8
     bne __b3
+    // *SPRITES_MC = 0
     lda #0
     sta SPRITES_MC
+    // *SPRITES_EXPAND_X = 0
     sta SPRITES_EXPAND_X
+    // *SPRITES_EXPAND_Y = 0
     sta SPRITES_EXPAND_Y
+    // }
     rts
   __b2:
+    // *sp = 0
     lda #0
     tay
     sta (sp),y
+    // for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
     inc.z sp
     bne !+
     inc.z sp+1
@@ -663,6 +753,7 @@ init_angle_screen: {
     .label x = $12
     .label xb = $17
     .label y = 2
+    // screen_topline = screen+40*12
     lda.z screen
     clc
     adc #<$28*$c
@@ -670,6 +761,7 @@ init_angle_screen: {
     lda.z screen+1
     adc #>$28*$c
     sta.z screen_topline+1
+    // screen_bottomline = screen+40*12
     clc
     lda.z screen_bottomline
     adc #<$28*$c
@@ -685,9 +777,11 @@ init_angle_screen: {
     lda #0
     sta.z x
   __b2:
+    // for( byte x=0,xb=39; x<=19; x++, xb--)
     lda.z x
     cmp #$13+1
     bcc __b3
+    // screen_topline -= 40
     lda.z screen_topline
     sec
     sbc #<$28
@@ -695,6 +789,7 @@ init_angle_screen: {
     lda.z screen_topline+1
     sbc #>$28
     sta.z screen_topline+1
+    // screen_bottomline += 40
     lda #$28
     clc
     adc.z screen_bottomline
@@ -702,25 +797,35 @@ init_angle_screen: {
     bcc !+
     inc.z screen_bottomline+1
   !:
+    // for(byte y: 0..12)
     inc.z y
     lda #$d
     cmp.z y
     bne __b1
+    // }
     rts
   __b3:
+    // x*2
     lda.z x
     asl
+    // 39-x*2
     eor #$ff
     clc
     adc #$27+1
+    // (word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
     sty.z xw
+    // y*2
     lda.z y
     asl
+    // (word){ y*2, 0 }
     sta.z yw+1
     sty.z yw
+    // atan2_16(xw, yw)
     jsr atan2_16
+    // angle_w = atan2_16(xw, yw)
+    // angle_w+0x0080
     lda #$80
     clc
     adc.z __11
@@ -728,23 +833,32 @@ init_angle_screen: {
     bcc !+
     inc.z __11+1
   !:
+    // ang_w = >(angle_w+0x0080)
     lda.z __11+1
     sta.z ang_w
+    // screen_bottomline[xb] = ang_w
     ldy.z xb
     sta (screen_bottomline),y
+    // -ang_w
     eor #$ff
     clc
     adc #1
+    // screen_topline[xb] = -ang_w
     sta (screen_topline),y
+    // 0x80+ang_w
     lda #$80
     clc
     adc.z ang_w
+    // screen_topline[x] = 0x80+ang_w
     ldy.z x
     sta (screen_topline),y
+    // 0x80-ang_w
     lda #$80
     sec
     sbc.z ang_w
+    // screen_bottomline[x] = 0x80-ang_w
     sta (screen_bottomline),y
+    // for( byte x=0,xb=39; x<=19; x++, xb--)
     inc.z x
     dec.z xb
     jmp __b2
@@ -764,6 +878,7 @@ atan2_16: {
     .label return = $10
     .label x = $1a
     .label y = $1c
+    // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
     jmp __b1
@@ -776,6 +891,7 @@ atan2_16: {
     sbc.z y+1
     sta.z __2+1
   __b3:
+    // (x>=0)?x:-x
     lda.z x+1
     bmi !__b4+
     jmp __b4
@@ -793,15 +909,19 @@ atan2_16: {
     sta.z angle+1
     tax
   __b10:
+    // if(yi==0)
     lda.z yi+1
     bne __b11
     lda.z yi
     bne __b11
   __b12:
+    // angle /=2
     lsr.z angle+1
     ror.z angle
+    // if(x<0)
     lda.z x+1
     bpl __b7
+    // angle = 0x8000-angle
     sec
     lda #<$8000
     sbc.z angle
@@ -810,8 +930,10 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
   __b7:
+    // if(y<0)
     lda.z y+1
     bpl __b8
+    // angle = -angle
     sec
     lda #0
     sbc.z angle
@@ -820,6 +942,7 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
   __b8:
+    // }
     rts
   __b11:
     txa
@@ -833,21 +956,27 @@ atan2_16: {
     lda.z yi+1
     sta.z yd+1
   __b13:
+    // while(shift>=2)
     cpy #2
     bcs __b14
+    // if(shift)
     cpy #0
     beq __b17
+    // xd >>= 1
     lda.z xd+1
     cmp #$80
     ror.z xd+1
     ror.z xd
+    // yd >>= 1
     lda.z yd+1
     cmp #$80
     ror.z yd+1
     ror.z yd
   __b17:
+    // if(yi>=0)
     lda.z yi+1
     bpl __b18
+    // xi -= yd
     lda.z xi
     sec
     sbc.z yd
@@ -855,6 +984,7 @@ atan2_16: {
     lda.z xi+1
     sbc.z yd+1
     sta.z xi+1
+    // yi += xd
     lda.z yi
     clc
     adc.z xd
@@ -862,6 +992,7 @@ atan2_16: {
     lda.z yi+1
     adc.z xd+1
     sta.z yi+1
+    // angle -= CORDIC_ATAN2_ANGLES_16[i]
     txa
     asl
     tay
@@ -873,6 +1004,7 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
   __b19:
+    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+
@@ -880,6 +1012,7 @@ atan2_16: {
   !__b12:
     jmp __b10
   __b18:
+    // xi += yd
     lda.z xi
     clc
     adc.z yd
@@ -887,6 +1020,7 @@ atan2_16: {
     lda.z xi+1
     adc.z yd+1
     sta.z xi+1
+    // yi -= xd
     lda.z yi
     sec
     sbc.z xd
@@ -894,6 +1028,7 @@ atan2_16: {
     lda.z yi+1
     sbc.z xd+1
     sta.z yi+1
+    // angle += CORDIC_ATAN2_ANGLES_16[i]
     txa
     asl
     tay
@@ -906,6 +1041,7 @@ atan2_16: {
     sta.z angle+1
     jmp __b19
   __b14:
+    // xd >>= 2
     lda.z xd+1
     cmp #$80
     ror.z xd+1
@@ -914,6 +1050,7 @@ atan2_16: {
     cmp #$80
     ror.z xd+1
     ror.z xd
+    // yd >>= 2
     lda.z yd+1
     cmp #$80
     ror.z yd+1
@@ -922,6 +1059,7 @@ atan2_16: {
     cmp #$80
     ror.z yd+1
     ror.z yd
+    // shift -=2
     dey
     dey
     jmp __b13
@@ -942,6 +1080,7 @@ atan2_16: {
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = 9
+    // mem = heap_head-size
     lda.z heap_head
     sec
     sbc #<$3e8
@@ -949,10 +1088,12 @@ malloc: {
     lda.z heap_head+1
     sbc #>$3e8
     sta.z mem+1
+    // heap_head = mem
     lda.z mem
     sta.z heap_head
     lda.z mem+1
     sta.z heap_head+1
+    // }
     rts
 }
 // Raster Interrupt at the bottom of the screen
@@ -960,17 +1101,22 @@ irqBottom: {
     sta rega+1
     stx regx+1
     sty regy+1
+    // processChars()
     jsr processChars
+    // *RASTER = RASTER_IRQ_TOP
     // Trigger IRQ at the top of the screen
     lda #RASTER_IRQ_TOP
     sta RASTER
+    // *HARDWARE_IRQ = &irqTop
     lda #<irqTop
     sta HARDWARE_IRQ
     lda #>irqTop
     sta HARDWARE_IRQ+1
+    // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
+    // }
   rega:
     lda #00
   regx:
@@ -993,6 +1139,7 @@ processChars: {
     sta.z numActive
     sta.z i
   __b1:
+    // PROCESSING+i
     lda.z i
     asl
     clc
@@ -1001,12 +1148,14 @@ processChars: {
     clc
     adc.z i
     asl
+    // processing = PROCESSING+i
     clc
     adc #<PROCESSING
     sta.z processing
     lda #>PROCESSING
     adc #0
     sta.z processing+1
+    // bitmask = 1<<processing->id
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_ID
     lda (processing),y
     tay
@@ -1019,15 +1168,18 @@ processChars: {
     bne !-
   !e:
     sta.z bitmask
+    // if(processing->status!=STATUS_FREE)
     lda #STATUS_FREE
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
     cmp (processing),y
     bne !__b2+
     jmp __b2
   !__b2:
+    // if(processing->status==STATUS_NEW)
     lda (processing),y
     cmp #STATUS_NEW
     bne __b3
+    // *(processing->screenPtr) = ' '
     // Clear the char on the screen
     ldx #' '
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR
@@ -1038,10 +1190,12 @@ processChars: {
     sta !+ +2
   !:
     stx $ffff
+    // *SPRITES_ENABLE |= bitmask
     // Enable the sprite
     lda SPRITES_ENABLE
     ora.z bitmask
     sta SPRITES_ENABLE
+    // SPRITES_COLS[processing->id] = processing->col
     // Set the sprite color
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_COL
     lda (processing),y
@@ -1051,6 +1205,7 @@ processChars: {
     tay
     pla
     sta SPRITES_COLS,y
+    // *(SCREEN+SPRITE_PTRS+processing->id) = processing->ptr
     // Set sprite pointer
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_PTR
     lda (processing),y
@@ -1060,11 +1215,13 @@ processChars: {
     tay
     pla
     sta SCREEN+SPRITE_PTRS,y
+    // processing->status = STATUS_PROCESSING
     // Set status
     lda #STATUS_PROCESSING
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
     sta (processing),y
   __b3:
+    // xpos = processing->x >> 4
     ldy #0
     lda (processing),y
     sta.z xpos
@@ -1079,22 +1236,30 @@ processChars: {
     ror.z xpos
     lsr.z xpos+1
     ror.z xpos
+    // >xpos
     lda.z xpos+1
+    // if(>xpos)
     // Set sprite position
     cmp #0
     beq !__b4+
     jmp __b4
   !__b4:
+    // 0xff ^ bitmask
     lda #$ff
     eor.z bitmask
+    // *SPRITES_XMSB &= 0xff ^ bitmask
     and SPRITES_XMSB
     sta SPRITES_XMSB
   __b5:
+    // i*2
     lda.z i
     asl
     tax
+    // (byte)xpos
     lda.z xpos
+    // SPRITES_XPOS[i*2] = (byte)xpos
     sta SPRITES_XPOS,x
+    // processing->y>>4
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
     sta.z __13
@@ -1109,9 +1274,12 @@ processChars: {
     ror.z __13
     lsr.z __13+1
     ror.z __13
+    // ypos = (byte)(processing->y>>4)
     lda.z __13
     sta.z ypos
+    // SPRITES_YPOS[i*2] = ypos
     sta SPRITES_YPOS,x
+    // if(processing->x < XPOS_LEFTMOST || processing->x > XPOS_RIGHTMOST || processing->y < YPOS_TOPMOST|| processing->y > YPOS_BOTTOMMOST  )
     // Move sprite
     ldy #1
     lda (processing),y
@@ -1169,15 +1337,19 @@ processChars: {
     cmp (processing),y
     bcc __b6
   !:
+    // xpos/8
     lsr.z __23+1
     ror.z __23
     lsr.z __23+1
     ror.z __23
     lsr.z __23+1
     ror.z __23
+    // (byte)(xpos/8)
     lda.z __23
+    // xchar = (byte)(xpos/8) - BORDER_XPOS_LEFT/8
     sec
     sbc #BORDER_XPOS_LEFT/8
+    // processing->vx += VXSIN[xchar]
     asl
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
     tax
@@ -1189,6 +1361,7 @@ processChars: {
     lda (processing),y
     adc VXSIN+1,x
     sta (processing),y
+    // processing->x += processing->vx
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VX
     sty.z $ff
     clc
@@ -1202,12 +1375,15 @@ processChars: {
     ldy #1
     adc (processing),y
     sta (processing),y
+    // (byte)(ypos/8)
     lda.z ypos
     lsr
     lsr
     lsr
+    // ychar = (byte)(ypos/8) - BORDER_YPOS_TOP/8
     sec
     sbc #BORDER_YPOS_TOP/8
+    // processing->vy +=   VYSIN[ychar]
     asl
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
     tax
@@ -1219,6 +1395,7 @@ processChars: {
     lda (processing),y
     adc VYSIN+1,x
     sta (processing),y
+    // processing->y += processing->vy
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_VY
     clc
     lda (processing),y
@@ -1231,27 +1408,34 @@ processChars: {
     adc (processing),y
     sta (processing),y
   __b7:
+    // numActive++;
     inc.z numActive
   __b2:
+    // for( byte i: 0..NUM_PROCESSING-1 )
     inc.z i
     lda #NUM_PROCESSING-1+1
     cmp.z i
     beq !__b1+
     jmp __b1
   !__b1:
+    // }
     rts
   __b6:
+    // processing->status = STATUS_FREE
     // Set status to FREE
     lda #STATUS_FREE
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
     sta (processing),y
+    // 0xff ^ bitmask
     lda #$ff
     eor.z bitmask
+    // *SPRITES_ENABLE &= 0xff ^ bitmask
     // Disable the sprite
     and SPRITES_ENABLE
     sta SPRITES_ENABLE
     jmp __b7
   __b4:
+    // *SPRITES_XMSB |= bitmask
     lda SPRITES_XMSB
     ora.z bitmask
     sta SPRITES_XMSB
@@ -1262,16 +1446,20 @@ irqTop: {
     sta rega+1
     stx regx+1
     sty regy+1
+    // *RASTER = RASTER_IRQ_MIDDLE
     // Trigger IRQ at the middle of the screen
     lda #RASTER_IRQ_MIDDLE
     sta RASTER
+    // *HARDWARE_IRQ = &irqBottom
     lda #<irqBottom
     sta HARDWARE_IRQ
     lda #>irqBottom
     sta HARDWARE_IRQ+1
+    // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
+    // }
   rega:
     lda #00
   regx:

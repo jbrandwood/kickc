@@ -5,7 +5,9 @@
 main: {
     .const ON = 1
     .label SCREEN = $400
+    // *SCREEN = state
     lda #ON
     sta SCREEN
+    // }
     rts
 }

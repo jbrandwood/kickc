@@ -8,20 +8,27 @@
 main: {
     ldx #0
   __b1:
+    // b2 = 200-b
     txa
     eor #$ff
     clc
     adc #$c8+1
+    // SCREEN[b] = b2
     sta SCREEN,x
+    // sb = - (signed byte)b
     txa
     eor #$ff
     clc
     adc #1
+    // SCREEN2[b] = (byte)sb
     sta SCREEN2,x
+    // for( byte b: 0..100)
     inx
     cpx #$65
     bne __b1
+    // w()
     jsr w
+    // }
     rts
 }
 w: {
@@ -30,15 +37,20 @@ w: {
     .const b = w1-w2
     ldy #0
   __b1:
+    // b2 = 1400-1350+i
     tya
     tax
     axs #-[$578-$546]
+    // SCREEN3[i] = b
     lda #b
     sta SCREEN3,y
+    // SCREEN4[i] = b2
     txa
     sta SCREEN4,y
+    // for(byte i : 0..10)
     iny
     cpy #$b
     bne __b1
+    // }
     rts
 }

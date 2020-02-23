@@ -8,37 +8,48 @@
   .label w2 = 2
 main: {
     .label SCREEN = $400
+    // incw1()
     lda #<0
     sta.z w1
     sta.z w1+1
     jsr incw1
+    // incw2()
     lda #<0
     sta.z w2
     sta.z w2+1
     jsr incw2
+    // incw1()
     jsr incw1
+    // incw2()
     jsr incw2
+    // SCREEN[0] = w1
     lda.z w1
     sta SCREEN
     lda.z w1+1
     sta SCREEN+1
+    // SCREEN[2] = w2
     lda.z w2
     sta SCREEN+2*SIZEOF_WORD
     lda.z w2+1
     sta SCREEN+2*SIZEOF_WORD+1
+    // }
     rts
 }
 incw2: {
+    // w2++;
     inc.z w2
     bne !+
     inc.z w2+1
   !:
+    // }
     rts
 }
 incw1: {
+    // w1++;
     inc.z w1
     bne !+
     inc.z w1+1
   !:
+    // }
     rts
 }

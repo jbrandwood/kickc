@@ -6,6 +6,7 @@ main: {
     .label SCREEN = $400
     ldx #0
   __b1:
+    // i<5?'a':'b'
     cpx #5
     bcc __b2
     lda #'b'
@@ -13,9 +14,12 @@ main: {
   __b2:
     lda #'a'
   __b3:
+    // SCREEN[i] = i<5?'a':'b'
     sta SCREEN,x
+    // for( byte i: 0..9)
     inx
     cpx #$a
     bne __b1
+    // }
     rts
 }

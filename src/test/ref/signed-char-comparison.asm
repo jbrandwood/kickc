@@ -7,14 +7,18 @@
 main: {
     ldx #-$80
   __b1:
+    // debug(dy)
     jsr debug
+    // for(signed char dy:-128..127)
     inx
     cpx #-$80
     bne __b1
+    // }
     rts
 }
 // debug(signed byte register(X) dy)
 debug: {
+    // if (dy > -120)
     txa
     sec
     sbc #-$78
@@ -23,8 +27,10 @@ debug: {
     eor #$80
   !:
     bmi __breturn
+    // SCREEN[i] = 10
     lda #$a
     sta SCREEN,x
   __breturn:
+    // }
     rts
 }

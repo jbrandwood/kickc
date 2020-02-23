@@ -6,7 +6,9 @@ main: {
     .label D018 = $d018
     .label screen = $400
     .const d018val = >screen&$3fff
+    // *D018 = d018val
     lda #d018val
     sta D018
+    // }
     rts
 }

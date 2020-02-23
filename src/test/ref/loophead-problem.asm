@@ -8,22 +8,30 @@
   .label screen = $400
 // Offending unroll variable
 main: {
+    // screen[40] = opcode
     lda #'a'
     sta screen+$28
+    // popup_selector()
     jsr popup_selector
+    // screen[41] = opcode
     sta screen+$29
+    // }
     rts
 }
 popup_selector: {
     lda #'a'
     ldx #0
   __b1:
+    // for (byte k = 0; k <= 2; k++)
     cpx #2+1
     bcc __b2
+    // }
     rts
   __b2:
+    // screen[k] = opcode
     lda #'b'
     sta screen,x
+    // for (byte k = 0; k <= 2; k++)
     inx
     jmp __b1
 }

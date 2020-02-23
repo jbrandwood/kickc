@@ -5,15 +5,20 @@
 main: {
     .const ON = 1
     .label SCREEN = $400
+    // *SCREEN = state
     lda #ON
     sta SCREEN
+    // test()
     jsr test
+    // }
     rts
 }
 test: {
     .const ON = 8
     .label SCREEN = $428
+    // *SCREEN = state
     lda #ON
     sta SCREEN
+    // }
     rts
 }

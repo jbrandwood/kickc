@@ -16,6 +16,7 @@ main: {
     sta.z j
     sta.z i
   __b1:
+    // to = letter_c[i].to
     lda.z i
     asl
     asl
@@ -31,6 +32,7 @@ main: {
     iny
     cpy #SIZEOF_STRUCT_VECTOR
     bne !-
+    // SCREEN[j++] = to.x
     lda.z j
     asl
     tay
@@ -38,8 +40,10 @@ main: {
     sta SCREEN,y
     lda.z to+1
     sta SCREEN+1,y
+    // SCREEN[j++] = to.x;
     ldx.z j
     inx
+    // SCREEN[j++] = to.y
     txa
     asl
     tay
@@ -47,12 +51,15 @@ main: {
     sta SCREEN,y
     lda to+OFFSET_STRUCT_VECTOR_Y+1
     sta SCREEN+1,y
+    // SCREEN[j++] = to.y;
     inx
     stx.z j
+    // for( byte i: 0..2)
     inc.z i
     lda #3
     cmp.z i
     bne __b1
+    // }
     rts
 }
   // True type letter c

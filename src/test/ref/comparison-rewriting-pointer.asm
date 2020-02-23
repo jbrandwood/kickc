@@ -12,6 +12,7 @@ main: {
     lda #>screen
     sta.z sc+1
   __b1:
+    // for(byte* sc =screen;sc<=screen+999;sc++)
     lda.z sc+1
     cmp #>screen+$3e7
     bne !+
@@ -25,6 +26,7 @@ main: {
     lda #>cols+$3e7
     sta.z cc+1
   __b3:
+    // for(byte* cc =cols+999;cc>cols-1;cc--)
     lda #>cols-1
     cmp.z cc+1
     bcc __b4
@@ -33,11 +35,14 @@ main: {
     cmp.z cc
     bcc __b4
   !:
+    // }
     rts
   __b4:
+    // *cc=2
     lda #2
     ldy #0
     sta (cc),y
+    // for(byte* cc =cols+999;cc>cols-1;cc--)
     lda.z cc
     bne !+
     dec.z cc+1
@@ -45,9 +50,11 @@ main: {
     dec.z cc
     jmp __b3
   __b2:
+    // *sc='a'
     lda #'a'
     ldy #0
     sta (sc),y
+    // for(byte* sc =screen;sc<=screen+999;sc++)
     inc.z sc
     bne !+
     inc.z sc+1

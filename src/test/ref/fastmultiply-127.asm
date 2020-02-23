@@ -9,7 +9,9 @@
   .label print_char_cursor = 7
   .label print_line_cursor = 5
 main: {
+    // print_cls()
     jsr print_cls
+    // print_str("unsigned")
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -19,39 +21,48 @@ main: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
     sta.z print_line_cursor+1
     jsr print_ln
+    // print_mulf8u127(0,0)
     lda #0
     sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
+    // print_mulf8u127(127,127)
     lda #$7f
     sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
+    // print_mulf8u127(64,64)
     lda #$40
     sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
+    // print_mulf8u127(64,127)
     lda #$7f
     sta.z print_mulf8u127.b
     ldy #$40
     jsr print_mulf8u127
+    // print_mulf8u127(64,192)
     lda #$c0
     sta.z print_mulf8u127.b
     ldy #$40
     jsr print_mulf8u127
+    // print_mulf8u127(255,127)
     lda #$7f
     sta.z print_mulf8u127.b
     ldy #$ff
     jsr print_mulf8u127
+    // print_mulf8u127(192,192)
     lda #$c0
     sta.z print_mulf8u127.b
     tay
     jsr print_mulf8u127
+    // print_mulf8u127(255,255)
     lda #$ff
     sta.z print_mulf8u127.b
     tay
@@ -60,52 +71,65 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("signed")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     jsr print_ln
+    // print_mulf8s127(0,0)
     lda #0
     sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
+    // print_mulf8s127(64,64)
     lda #$40
     sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
+    // print_mulf8s127(64,127)
     lda #$7f
     sta.z print_mulf8s127.b
     ldy #$40
     jsr print_mulf8s127
+    // print_mulf8s127(-64,64)
     lda #$40
     sta.z print_mulf8s127.b
     ldy #-$40
     jsr print_mulf8s127
+    // print_mulf8s127(64,-64)
     lda #-$40
     sta.z print_mulf8s127.b
     ldy #$40
     jsr print_mulf8s127
+    // print_mulf8s127(-64,-64)
     lda #-$40
     sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
+    // print_mulf8s127(127,127)
     lda #$7f
     sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
+    // print_mulf8s127(-127,127)
     lda #$7f
     sta.z print_mulf8s127.b
     ldy #-$7f
     jsr print_mulf8s127
+    // print_mulf8s127(127,-127)
     lda #-$7f
     sta.z print_mulf8s127.b
     ldy #$7f
     jsr print_mulf8s127
+    // print_mulf8s127(-127,-127)
     lda #-$7f
     sta.z print_mulf8s127.b
     tay
     jsr print_mulf8s127
+    // }
     rts
     str: .text "unsigned"
     .byte 0
@@ -116,27 +140,38 @@ main: {
 print_mulf8s127: {
     .label c = 2
     .label b = 4
+    // mulf8s127(a,b)
     jsr mulf8s127
+    // c = mulf8s127(a,b)
+    // print_sbyte(a)
     tya
     tax
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_sbyte(a)
     jsr print_sbyte
+    // print_char('*')
     lda #'*'
     jsr print_char
+    // print_sbyte(b)
     ldx.z b
     jsr print_sbyte
+    // print_char('=')
     lda #'='
     jsr print_char
+    // print_sword(c)
     jsr print_sword
+    // print_ln()
     jsr print_ln
+    // }
     rts
 }
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -144,6 +179,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -152,22 +188,29 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Print a signed word as HEX
 // print_sword(signed word zp(2) w)
 print_sword: {
     .label w = 2
+    // if(w<0)
     lda.z w+1
     bmi __b1
+    // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
+    // print_word((word)w)
     jsr print_word
+    // }
     rts
   __b1:
+    // print_char('-')
     lda #'-'
     jsr print_char
+    // w = -w
     sec
     lda #0
     sbc.z w
@@ -180,56 +223,73 @@ print_sword: {
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Print a word as HEX
 // print_word(word zp(2) w)
 print_word: {
     .label w = 2
+    // print_byte(>w)
     lda.z w+1
     tax
     jsr print_byte
+    // print_byte(<w)
     lda.z w
     tax
     jsr print_byte
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte register(X) b)
 print_byte: {
+    // b>>4
     txa
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     axs #0
+    // print_char(print_hextab[b&$f])
     lda print_hextab,x
     jsr print_char
+    // }
     rts
 }
 // Print a signed byte as HEX
 // print_sbyte(signed byte register(X) b)
 print_sbyte: {
+    // if(b<0)
     cpx #0
     bmi __b1
+    // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
+    // print_byte((byte)b)
     jsr print_byte
+    // }
     rts
   __b1:
+    // print_char('-')
     lda #'-'
     jsr print_char
+    // b = -b
     txa
     eor #$ff
     clc
@@ -246,11 +306,15 @@ mulf8s127: {
     .label b = 4
     .label return = 2
     .label c = 2
+    // mulf8u127((unsigned char)a, (unsigned char)b)
     tya
     ldx.z b
     jsr mulf8u127
+    // mulf8u127((unsigned char)a, (unsigned char)b)
+    // if(a<0)
     cpy #0
     bpl __b1
+    // (signed word)b
     lda.z b
     sta.z __12
     ora #$7f
@@ -258,8 +322,10 @@ mulf8s127: {
     lda #0
   !:
     sta.z __12+1
+    // (signed word)b*2
     asl.z __13
     rol.z __13+1
+    // c -= (signed word)b*2
     lda.z c
     sec
     sbc.z __13
@@ -268,9 +334,11 @@ mulf8s127: {
     sbc.z __13+1
     sta.z c+1
   __b1:
+    // if(b<0)
     lda.z b
     cmp #0
     bpl __b2
+    // (signed word)a
     tya
     sta.z __14
     ora #$7f
@@ -278,8 +346,10 @@ mulf8s127: {
     lda #0
   !:
     sta.z __14+1
+    // (signed word)a*2
     asl.z __15
     rol.z __15+1
+    // c -= (signed word)a*2
     lda.z c
     sec
     sbc.z __15
@@ -288,11 +358,13 @@ mulf8s127: {
     sbc.z __15+1
     sta.z c+1
   __b2:
+    // if(a<0 && b<0)
     cpy #0
     bpl __b3
     lda.z b
     cmp #0
     bpl __b3
+    // c -= 0x200
     lda.z c
     sec
     sbc #<$200
@@ -302,6 +374,7 @@ mulf8s127: {
     sta.z c+1
     rts
   __b3:
+    // }
     rts
 }
 // mulf8u127(byte register(A) a, byte register(X) b)
@@ -312,8 +385,11 @@ mulf8u127: {
     .label resL = $fe
     .label resH = $ff
     .label return = 2
+    // *memA = a
     sta memA
+    // *memB = b
     stx memB
+    // asm
     sta sm1+1
     sta sm3+1
     eor #$ff
@@ -330,10 +406,12 @@ mulf8u127: {
   sm4:
     sbc mulf127_sqr2_hi,x
     sta resH
+    // return *res;
     lda res
     sta.z return
     lda res+1
     sta.z return+1
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -341,15 +419,19 @@ mulf8u127: {
 print_str: {
     .label str = 2
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -364,29 +446,42 @@ print_str: {
 print_mulf8u127: {
     .label c = 2
     .label b = 4
+    // mulf8u127(a,b)
     tya
     ldx.z b
     jsr mulf8u127
+    // mulf8u127(a,b)
+    // c = mulf8u127(a,b)
+    // print_byte(a)
     tya
     tax
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_byte(a)
     jsr print_byte
+    // print_char('*')
     lda #'*'
     jsr print_char
+    // print_byte(b)
     ldx.z b
     jsr print_byte
+    // print_char('=')
     lda #'='
     jsr print_char
+    // print_word(c)
     jsr print_word
+    // print_ln()
     jsr print_ln
+    // }
     rts
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -401,17 +496,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1

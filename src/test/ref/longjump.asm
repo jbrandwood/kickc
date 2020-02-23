@@ -6,6 +6,7 @@ main: {
     .label SCREEN = $400
     ldx #0
   __b1:
+    // asm
     nop
     nop
     nop
@@ -262,12 +263,15 @@ main: {
     nop
     nop
     nop
+    // SCREEN[i] = i
     txa
     sta SCREEN,x
+    // for(byte i : 0..10)
     inx
     cpx #$b
     beq !__b1+
     jmp __b1
   !__b1:
+    // }
     rts
 }

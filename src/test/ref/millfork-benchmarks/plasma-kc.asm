@@ -16,9 +16,11 @@
   .label Ticks = $10
   .label Ticks_1 = $13
 __b1:
+  // last_time
   lda #<0
   sta.z last_time
   sta.z last_time+1
+  // rand_seed
   sta.z rand_seed
   sta.z rand_seed+1
   jsr main
@@ -27,17 +29,24 @@ main: {
     .label block = $e
     .label v = $f
     .label count = 4
+    // rand_seed = 6474
     lda #<$194a
     sta.z rand_seed
     lda #>$194a
     sta.z rand_seed+1
+    // makechar()
     jsr makechar
+    // start()
     jsr start
+    // block = *CIA2_PORT_A
     lda CIA2_PORT_A
     sta.z block
+    // tmp = block & 0xFC
     lda #$fc
     and.z block
+    // *CIA2_PORT_A = tmp
     sta CIA2_PORT_A
+    // v = *VIC_MEMORY
     lda VIC_MEMORY
     sta.z v
     lda #<$1f4
@@ -46,33 +55,43 @@ main: {
     sta.z count+1
   /* Run the demo until a key was hit */
   __b1:
+    // while (count)
     lda.z count+1
     cmp #>0
     bne __b2
     lda.z count
     cmp #<0
     bne __b2
+    // *VIC_MEMORY = v
     lda.z v
     sta VIC_MEMORY
+    // *CIA2_PORT_A = block
     lda.z block
     sta CIA2_PORT_A
+    // end()
     jsr end
+    // }
     rts
   __b2:
+    // doplasma ((char*)SCREEN1)
     lda #<SCREEN1
     sta.z doplasma.scrn
     lda #>SCREEN1
     sta.z doplasma.scrn+1
     jsr doplasma
+    // *VIC_MEMORY = PAGE1
     lda #PAGE1
     sta VIC_MEMORY
+    // doplasma ((char*)SCREEN2)
     lda #<SCREEN2
     sta.z doplasma.scrn
     lda #>SCREEN2
     sta.z doplasma.scrn+1
     jsr doplasma
+    // *VIC_MEMORY = PAGE2
     lda #PAGE2
     sta VIC_MEMORY
+    // --count;
     lda.z count
     bne !+
     dec.z count+1
@@ -96,6 +115,7 @@ doplasma: {
     sta.z c1a
     sta.z ii
   __b1:
+    // for (ii = 0; ii < 25; ++ii)
     lda.z ii
     cmp #$19
     bcc __b2
@@ -106,19 +126,24 @@ doplasma: {
     lda #0
     sta.z i
   __b3:
+    // for (i = 0; i < 40; ++i)
     lda.z i
     cmp #$28
     bcc __b4
     ldx #0
   __b5:
+    // for (jj = 0; jj < 25; ++jj)
     cpx #$19
     bcc b1
+    // }
     rts
   b1:
     ldy #0
   __b6:
+    // for (j = 0; j < 40; ++j)
     cpy #$28
     bcc __b7
+    // scrn += 40
     lda #$28
     clc
     adc.z scrn
@@ -126,54 +151,71 @@ doplasma: {
     bcc !+
     inc.z scrn+1
   !:
+    // for (jj = 0; jj < 25; ++jj)
     inx
     jmp __b5
   __b7:
+    // xbuf[j] + ybuf[jj]
     lda xbuf,y
     clc
     adc ybuf,x
+    // scrn[j] = (xbuf[j] + ybuf[jj])
     sta (scrn),y
+    // for (j = 0; j < 40; ++j)
     iny
     jmp __b6
   __b4:
+    // sinustable[c2a] + sinustable[c2b]
     ldy.z c2a
     lda sinustable,y
     ldy.z c2b
     clc
     adc sinustable,y
+    // xbuf[i] = (sinustable[c2a] + sinustable[c2b])
     ldy.z i
     sta xbuf,y
+    // c2a += 3
     lax.z c2a
     axs #-[3]
     stx.z c2a
+    // c2b += 7
     lax.z c2b
     axs #-[7]
     stx.z c2b
+    // for (i = 0; i < 40; ++i)
     inc.z i
     jmp __b3
   __b2:
+    // sinustable[c1a] + sinustable[c1b]
     ldy.z c1a
     lda sinustable,y
     ldy.z c1b
     clc
     adc sinustable,y
+    // ybuf[ii] = (sinustable[c1a] + sinustable[c1b])
     ldy.z ii
     sta ybuf,y
+    // c1a += 4
     lax.z c1a
     axs #-[4]
     stx.z c1a
+    // c1b += 9
     lax.z c1b
     axs #-[9]
     stx.z c1b
+    // for (ii = 0; ii < 25; ++ii)
     inc.z ii
     jmp __b1
 }
 end: {
+    // Ticks = last_time
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
     sta.z Ticks+1
+    // start()
     jsr start
+    // last_time -= Ticks
     lda.z last_time
     sec
     sbc.z Ticks
@@ -181,12 +223,16 @@ end: {
     lda.z last_time+1
     sbc.z Ticks+1
     sta.z last_time+1
+    // Ticks = last_time
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
     sta.z Ticks_1+1
+    // print_word(Ticks)
     jsr print_word
+    // print_ln()
     jsr print_ln
+    // }
     rts
 }
 // Print a newline
@@ -196,6 +242,7 @@ print_ln: {
     lda #>$400
     sta.z print_line_cursor+1
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -203,6 +250,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -211,12 +259,14 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Print a word as HEX
 // print_word(word zp($13) w)
 print_word: {
     .label w = $13
+    // print_byte(>w)
     lda.z w+1
     tax
     lda #<$400
@@ -224,48 +274,61 @@ print_word: {
     lda #>$400
     sta.z print_char_cursor+1
     jsr print_byte
+    // print_byte(<w)
     lda.z w
     tax
     jsr print_byte
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte register(X) b)
 print_byte: {
+    // b>>4
     txa
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     axs #0
+    // print_char(print_hextab[b&$f])
     lda print_hextab,x
     jsr print_char
+    // }
     rts
 }
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 start: {
     .label LAST_TIME = last_time
+    // asm
     jsr $ffde
     sta LAST_TIME
     stx LAST_TIME+1
+    // rand_seed = 6474
     lda #<$194a
     sta.z rand_seed
     lda #>$194a
     sta.z rand_seed+1
+    // }
     rts
 }
 makechar: {
@@ -281,6 +344,7 @@ makechar: {
     sta.z c
     sta.z c+1
   __b1:
+    // for (c = 0; c < 0x100; ++c)
     lda.z c+1
     cmp #>$100
     bcc __b2
@@ -289,18 +353,23 @@ makechar: {
     cmp #<$100
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // (char)c
     lda.z c
+    // s = sinustable[(char)c]
     tay
     lda sinustable,y
     sta.z s
     lda #0
     sta.z i
   __b3:
+    // for (i = 0; i < 8; ++i)
     lda.z i
     cmp #8
     bcc b1
+    // for (c = 0; c < 0x100; ++c)
     inc.z c
     bne !+
     inc.z c+1
@@ -311,8 +380,10 @@ makechar: {
     sta.z b
     tay
   __b5:
+    // for (ii = 0; ii < 8; ++ii)
     cpy #8
     bcc __b6
+    // c<<3
     lda.z c
     asl
     sta.z __8
@@ -323,6 +394,7 @@ makechar: {
     rol.z __8+1
     asl.z __8
     rol.z __8+1
+    // (c<<3) + i
     lda.z i
     clc
     adc.z __9
@@ -330,6 +402,7 @@ makechar: {
     bcc !+
     inc.z __9+1
   !:
+    // ((char*)CHARSET) [(c<<3) + i] = b
     clc
     lda.z __10
     adc #<CHARSET
@@ -340,24 +413,31 @@ makechar: {
     lda.z b
     ldy #0
     sta (__10),y
+    // for (i = 0; i < 8; ++i)
     inc.z i
     jmp __b3
   __b6:
+    // rand()
     jsr rand
+    // rand() & 0xFF
     and #$ff
     sta.z __5
+    // if ((rand() & 0xFF) > s)
     lda.z s
     cmp.z __5
     bcs __b8
+    // b |= bittab[ii]
     lda bittab,y
     ora.z b
     sta.z b
   __b8:
+    // for (ii = 0; ii < 8; ++ii)
     iny
     jmp __b5
 }
 rand: {
     .label RAND_SEED = rand_seed
+    // asm
     ldx #8
     lda RAND_SEED+0
   __rand_loop:
@@ -369,7 +449,9 @@ rand: {
     dex
     bne __rand_loop
     sta RAND_SEED+0
+    // (char)rand_seed
     lda.z rand_seed
+    // }
     rts
 }
   print_hextab: .text "0123456789abcdef"

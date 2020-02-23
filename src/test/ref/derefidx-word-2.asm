@@ -6,10 +6,13 @@ main: {
     .label screen = $400
     ldx #0
   __b1:
+    // screen[40*10+i] = 'a'
     lda #'a'
     sta screen+$28*$a,x
+    // for( byte i : 0..39)
     inx
     cpx #$28
     bne __b1
+    // }
     rts
 }

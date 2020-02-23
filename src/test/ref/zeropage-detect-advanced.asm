@@ -6,6 +6,7 @@
 main: {
     .label c = t
     .label t = 2
+    // t
     lda #<0
     sta.z t
     sta.z t+1
@@ -13,7 +14,9 @@ main: {
     sta.z t+2
     lda #>0>>$10
     sta.z t+3
+    // *(unsigned char *)0x0400 = c[0]
     lda.z c
     sta $400
+    // }
     rts
 }

@@ -3,6 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label sintab = $1000
+  // kickasm
 main: {
     .label screen = 2
     .label cols = 4
@@ -16,9 +17,12 @@ main: {
     sta.z screen+1
     ldx #0
   __b1:
+    // sin = sintab[i]
     ldy sintab,x
+    // screen[sin] = '*'
     lda #'*'
     sta (screen),y
+    // screen += 40
     lda #$28
     clc
     adc.z screen
@@ -26,8 +30,10 @@ main: {
     bcc !+
     inc.z screen+1
   !:
+    // cols[sin] = 1
     lda #1
     sta (cols),y
+    // cols += 40
     lda #$28
     clc
     adc.z cols
@@ -35,9 +41,11 @@ main: {
     bcc !+
     inc.z cols+1
   !:
+    // for(byte i:0..24)
     inx
     cpx #$19
     bne __b1
+    // }
     rts
 }
 .pc = sintab "sintab"

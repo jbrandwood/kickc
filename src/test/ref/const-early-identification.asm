@@ -5,6 +5,7 @@
   .label SCREEN = $400
   .label A = 2
 __bbegin:
+  // A = 'a'
   // Not an early constant (address-of is used)
   lda #'a'
   sta.z A
@@ -13,21 +14,30 @@ __bbegin:
 main: {
     .const B = 'b'
     .label addrA = A
+    // SCREEN[0] = A
     lda.z A
     sta SCREEN
+    // SCREEN[1] = B
     lda #B
     sta SCREEN+1
+    // SCREEN[2] = *addrA
     lda.z addrA
     sta SCREEN+2
+    // sub()
     jsr sub
+    // }
     rts
 }
 sub: {
     .const C = 'c'
+    // SCREEN[3] = C
     lda #C
     sta SCREEN+3
+    // D = A+1
     ldx.z A
     inx
+    // SCREEN[4] = D
     stx SCREEN+4
+    // }
     rts
 }

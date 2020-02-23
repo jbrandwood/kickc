@@ -10,34 +10,47 @@
   .label SPRITES_ENABLE = $d015
   .label SCREEN = $400
 main: {
+    // asm
     // Stop interrupts
     sei
+    // *SPRITES_ENABLE = 1
     // Show sprite
     lda #1
     sta SPRITES_ENABLE
+    // SPRITES_YPOS[0] = 100
     lda #$64
     sta SPRITES_YPOS
+    // SPRITES_XPOS[0] = 100
     sta SPRITES_XPOS
+    // *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40)
     lda #$ff&SPRITE/$40
     sta SCREEN+SPRITE_PTRS
+    // saveZeropage()
     jsr saveZeropage
+    // sinZeropage()
     jsr sinZeropage
+    // animSprite()
     jsr animSprite
+    // restoreZeropage()
     jsr restoreZeropage
+    // }
     rts
 }
 // Save all values on zeropage
 restoreZeropage: {
+    // asm
     ldx #0
   !:
     lda ZP_STORAGE,x
     sta.z 0,x
     inx
     bne !-
+    // }
     rts
 }
 // Move a sprite in the sinus on zeropage
 animSprite: {
+    // kickasm
     ldx #$00
     repeat:
         lda #$fe
@@ -59,26 +72,31 @@ animSprite: {
         inx
         jmp repeat
     
+    // }
     rts
 }
 // Move the SINUS values to zeropage
 sinZeropage: {
+    // asm
     ldx #0
   !:
     lda SINTABLE,x
     sta.z 0,x
     inx
     bne !-
+    // }
     rts
 }
 // Save all values on zeropage
 saveZeropage: {
+    // asm
     ldx #0
   !:
     lda.z 0,x
     sta ZP_STORAGE,x
     inx
     bne !-
+    // }
     rts
 }
   // A 256-byte (co)sinus (with $ff in the first two entries)

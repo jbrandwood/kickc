@@ -17,33 +17,44 @@ main: {
     sta.z x
     sta.z line
   __b1:
+    // for (line=0;line<8;++line)
     lda.z line
     cmp #8
     bcc __b2
+    // }
     rts
   __b2:
+    // ++x;
     inc.z x
     ldy #0
   __b3:
+    // for (row=0;row<8;++row)
     cpy #8
     bcc __b4
+    // y+=YSPACE
     lax.z y
     axs #-[YSPACE]
     stx.z y
+    // for (line=0;line<8;++line)
     inc.z line
     jmp __b1
   __b4:
+    // p[idx].y=y
     lda.z idx
     asl
     tax
     lda.z y
     sta p+OFFSET_STRUCT_POS_Y,x
+    // p[idx].x=x
     lda.z x
     sta p,x
+    // ++idx;
     inc.z idx
+    // x+=XSPACE
     lax.z x
     axs #-[XSPACE]
     stx.z x
+    // for (row=0;row<8;++row)
     iny
     jmp __b3
 }

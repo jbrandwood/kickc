@@ -5,7 +5,9 @@
 main: {
     .label SCREEN = $400
     .const c = 1+3
+    // SCREEN[1,0] = c
     lda #c
     sta SCREEN
+    // }
     rts
 }

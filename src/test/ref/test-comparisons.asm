@@ -7,6 +7,7 @@ main: {
     .label b = $c
     .label a = 2
     .label i = 3
+    // print_cls()
     jsr print_cls
     lda #<$400
     sta.z print_line_cursor
@@ -21,10 +22,12 @@ main: {
     lda #7
     sta.z a
   __b1:
+    // b = $ce-a
     lda #$ce
     sec
     sbc.z a
     sta.z b
+    // if(a<b)
     lda.z a
     cmp.z b
     bcs b1
@@ -33,6 +36,7 @@ main: {
   b1:
     ldx #'-'
   __b2:
+    // printu(a, "< ", b, r)
     lda.z b
     sta.z printu.b
     lda #<op
@@ -40,6 +44,7 @@ main: {
     lda #>op
     sta.z printu.op+1
     jsr printu
+    // if(a<$37)
     lda.z a
     cmp #$37
     bcs b2
@@ -48,6 +53,7 @@ main: {
   b2:
     ldx #'-'
   __b3:
+    // printu(a, "< ", $37, r)
     lda #$37
     sta.z printu.b
     lda #<op
@@ -55,6 +61,7 @@ main: {
     lda #>op
     sta.z printu.op+1
     jsr printu
+    // if(a<cs[i])
     lda.z a
     ldy.z i
     cmp cs,y
@@ -64,6 +71,7 @@ main: {
   b3:
     ldx #'-'
   __b4:
+    // printu(a, "< ", cs[i], r)
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -72,6 +80,7 @@ main: {
     lda #>op
     sta.z printu.op+1
     jsr printu
+    // if(a<a)
     lda.z a
     cmp.z a
     bcs b4
@@ -80,6 +89,7 @@ main: {
   b4:
     ldx #'-'
   __b5:
+    // printu(a, "< ", a, r)
     lda.z a
     sta.z printu.b
     lda #<op
@@ -87,7 +97,9 @@ main: {
     lda #>op
     sta.z printu.op+1
     jsr printu
+    // print_ln()
     jsr print_ln
+    // if(a>b)
     lda.z b
     cmp.z a
     bcs b5
@@ -96,17 +108,20 @@ main: {
   b5:
     ldx #'-'
   __b6:
+    // printu(a, "> ", b, r)
     lda.z b
     sta.z printu.b
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // printu(a, "> ", b, r)
     lda #<op4
     sta.z printu.op
     lda #>op4
     sta.z printu.op+1
     jsr printu
+    // if(a>$37)
     lda.z a
     cmp #$37+1
     bcc b6
@@ -115,6 +130,7 @@ main: {
   b6:
     ldx #'-'
   __b7:
+    // printu(a, "> ", $37, r)
     lda #$37
     sta.z printu.b
     lda #<op4
@@ -122,6 +138,7 @@ main: {
     lda #>op4
     sta.z printu.op+1
     jsr printu
+    // if(a>cs[i])
     ldy.z i
     lda cs,y
     cmp.z a
@@ -131,6 +148,7 @@ main: {
   b7:
     ldx #'-'
   __b8:
+    // printu(a, "> ", cs[i], r)
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -139,6 +157,7 @@ main: {
     lda #>op4
     sta.z printu.op+1
     jsr printu
+    // if(a>a)
     lda.z a
     cmp.z a
     bcs b8
@@ -147,6 +166,7 @@ main: {
   b8:
     ldx #'-'
   __b9:
+    // printu(a, "> ", a, r)
     lda.z a
     sta.z printu.b
     lda #<op4
@@ -154,7 +174,9 @@ main: {
     lda #>op4
     sta.z printu.op+1
     jsr printu
+    // print_ln()
     jsr print_ln
+    // if(a<=b)
     lda.z b
     cmp.z a
     bcc b9
@@ -163,17 +185,20 @@ main: {
   b9:
     ldx #'-'
   __b10:
+    // printu(a, "<=", b, r)
     lda.z b
     sta.z printu.b
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // printu(a, "<=", b, r)
     lda #<op8
     sta.z printu.op
     lda #>op8
     sta.z printu.op+1
     jsr printu
+    // if(a<=$37)
     lda.z a
     cmp #$37+1
     bcs b10
@@ -182,6 +207,7 @@ main: {
   b10:
     ldx #'-'
   __b11:
+    // printu(a, "<=", $37, r)
     lda #$37
     sta.z printu.b
     lda #<op8
@@ -189,6 +215,7 @@ main: {
     lda #>op8
     sta.z printu.op+1
     jsr printu
+    // if(a<=cs[i])
     ldy.z i
     lda cs,y
     cmp.z a
@@ -198,6 +225,7 @@ main: {
   b11:
     ldx #'-'
   __b12:
+    // printu(a, "<=", cs[i], r)
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -206,6 +234,7 @@ main: {
     lda #>op8
     sta.z printu.op+1
     jsr printu
+    // if(a<=a)
     lda.z a
     cmp.z a
     bcc b12
@@ -214,6 +243,7 @@ main: {
   b12:
     ldx #'-'
   __b13:
+    // printu(a, "<=", a, r)
     lda.z a
     sta.z printu.b
     lda #<op8
@@ -221,7 +251,9 @@ main: {
     lda #>op8
     sta.z printu.op+1
     jsr printu
+    // print_ln()
     jsr print_ln
+    // if(a>=b)
     lda.z a
     cmp.z b
     bcc b13
@@ -230,17 +262,20 @@ main: {
   b13:
     ldx #'-'
   __b14:
+    // printu(a, ">=", b, r)
     lda.z b
     sta.z printu.b
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // printu(a, ">=", b, r)
     lda #<op12
     sta.z printu.op
     lda #>op12
     sta.z printu.op+1
     jsr printu
+    // if(a>=$37)
     lda.z a
     cmp #$37
     bcc b14
@@ -249,6 +284,7 @@ main: {
   b14:
     ldx #'-'
   __b15:
+    // printu(a, ">=", $37, r)
     lda #$37
     sta.z printu.b
     lda #<op12
@@ -256,6 +292,7 @@ main: {
     lda #>op12
     sta.z printu.op+1
     jsr printu
+    // if(a>=cs[i])
     lda.z a
     ldy.z i
     cmp cs,y
@@ -265,6 +302,7 @@ main: {
   b15:
     ldx #'-'
   __b16:
+    // printu(a, ">=", cs[i], r)
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -273,6 +311,7 @@ main: {
     lda #>op12
     sta.z printu.op+1
     jsr printu
+    // if(a>=a)
     lda.z a
     cmp.z a
     bcc b16
@@ -281,6 +320,7 @@ main: {
   b16:
     ldx #'-'
   __b17:
+    // printu(a, ">=", a, r)
     lda.z a
     sta.z printu.b
     lda #<op12
@@ -288,7 +328,9 @@ main: {
     lda #>op12
     sta.z printu.op+1
     jsr printu
+    // print_ln()
     jsr print_ln
+    // if(a==b)
     lda.z a
     cmp.z b
     bne b17
@@ -297,17 +339,20 @@ main: {
   b17:
     ldx #'-'
   __b18:
+    // printu(a, "==", b, r)
     lda.z b
     sta.z printu.b
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // printu(a, "==", b, r)
     lda #<op16
     sta.z printu.op
     lda #>op16
     sta.z printu.op+1
     jsr printu
+    // if(a==$37)
     lda #$37
     cmp.z a
     bne b18
@@ -316,6 +361,7 @@ main: {
   b18:
     ldx #'-'
   __b19:
+    // printu(a, "==", $37, r)
     lda #$37
     sta.z printu.b
     lda #<op16
@@ -323,6 +369,7 @@ main: {
     lda #>op16
     sta.z printu.op+1
     jsr printu
+    // if(a==cs[i])
     lda.z a
     ldy.z i
     cmp cs,y
@@ -332,6 +379,7 @@ main: {
   b19:
     ldx #'-'
   __b20:
+    // printu(a, "==", cs[i], r)
     ldy.z i
     lda cs,y
     sta.z printu.b
@@ -340,6 +388,7 @@ main: {
     lda #>op16
     sta.z printu.op+1
     jsr printu
+    // if(a==a)
     lda.z a
     cmp.z a
     bne b20
@@ -348,6 +397,7 @@ main: {
   b20:
     ldx #'-'
   __b21:
+    // printu(a, "==", a, r)
     lda.z a
     sta.z printu.b
     lda #<op16
@@ -355,10 +405,13 @@ main: {
     lda #>op16
     sta.z printu.op+1
     jsr printu
+    // print_ln()
     jsr print_ln
+    // a=a+$30
     lax.z a
     axs #-[$30]
     stx.z a
+    // for( byte i : 0..4 )
     inc.z i
     lda #5
     cmp.z i
@@ -386,6 +439,7 @@ main: {
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -393,6 +447,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -401,6 +456,7 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // printu(byte zp(2) a, byte* zp(4) op, byte zp(6) b, byte register(X) res)
@@ -408,49 +464,64 @@ printu: {
     .label a = 2
     .label b = 6
     .label op = 4
+    // print_char(' ')
     lda #' '
     jsr print_char
+    // print_byte(a)
     lda.z a
     sta.z print_byte.b
     jsr print_byte
+    // print_str(op)
     jsr print_str
+    // print_byte(b)
     lda.z b
     sta.z print_byte.b
     jsr print_byte
+    // print_char(' ')
     lda #' '
     jsr print_char
+    // print_char(res)
     txa
     jsr print_char
+    // }
     rts
 }
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte zp(9) b)
 print_byte: {
     .label b = 9
+    // b>>4
     lda.z b
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     and.z b
+    // print_char(print_hextab[b&$f])
     tay
     lda print_hextab,y
     jsr print_char
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -458,15 +529,19 @@ print_byte: {
 print_str: {
     .label str = 4
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -479,7 +554,9 @@ print_str: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -494,17 +571,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1

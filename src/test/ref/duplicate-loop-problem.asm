@@ -6,9 +6,12 @@
   .label DC00 = $dc00
 main: {
   __b1:
+    // key = *DC00
     ldx DC00
+    // key & %00011111
     txa
     and #$1f
+    // while(key == 0 && ((key & %00011111) == %00011111))
     cpx #0
     bne __b1
     cmp #$1f

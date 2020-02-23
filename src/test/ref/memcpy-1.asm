@@ -19,9 +19,11 @@ main: {
     lda #>CAMELOT
     sta.z camelot+1
   __b1:
+    // *sc++ = *camelot++
     ldy #0
     lda (camelot),y
     sta (sc),y
+    // *sc++ = *camelot++;
     inc.z sc
     bne !+
     inc.z sc+1
@@ -30,6 +32,7 @@ main: {
     bne !+
     inc.z camelot+1
   !:
+    // for( char i: 0..6)
     inx
     cpx #7
     bne __b1
@@ -43,9 +46,11 @@ main: {
     lda #>reigns_1
     sta.z reigns+1
   __b2:
+    // *sc2++ = *reigns++
     ldy #0
     lda (reigns),y
     sta (sc2),y
+    // *sc2++ = *reigns++;
     inc.z sc2
     bne !+
     inc.z sc2+1
@@ -54,9 +59,11 @@ main: {
     bne !+
     inc.z reigns+1
   !:
+    // for( char i: 0..5)
     inx
     cpx #6
     bne __b2
+    // memcpy(SCREEN+10, CAMELOT, 7)
     lda #<7
     sta.z memcpy.num
     lda #>7
@@ -70,6 +77,7 @@ main: {
     lda #>CAMELOT
     sta.z memcpy.source+1
     jsr memcpy
+    // memcpy(SCREEN+50, "rules", 5)
     lda #<5
     sta.z memcpy.num
     lda #>5
@@ -83,6 +91,7 @@ main: {
     lda #>__5
     sta.z memcpy.source+1
     jsr memcpy
+    // }
     rts
     __5: .text "rules"
     .byte 0
@@ -99,6 +108,7 @@ memcpy: {
     .label source = 4
     .label destination = 6
     .label num = 8
+    // src_end = (char*)source+num
     lda.z src_end
     clc
     adc.z source
@@ -107,17 +117,21 @@ memcpy: {
     adc.z source+1
     sta.z src_end+1
   __b1:
+    // while(src!=src_end)
     lda.z src+1
     cmp.z src_end+1
     bne __b2
     lda.z src
     cmp.z src_end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst++ = *src++
     ldy #0
     lda (src),y
     sta (dst),y
+    // *dst++ = *src++;
     inc.z dst
     bne !+
     inc.z dst+1

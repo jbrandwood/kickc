@@ -6,13 +6,17 @@ main: {
     .label screen = $400
     ldx #0
   __b1:
+    // while(msg[i])
     lda msg,x
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // screen[i++] = msg[i]
     lda msg,x
     sta screen,x
+    // screen[i++] = msg[i];
     inx
     jmp __b1
     msg: .text "message 2 "

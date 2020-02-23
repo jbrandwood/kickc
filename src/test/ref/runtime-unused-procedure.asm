@@ -4,7 +4,9 @@
 .pc = $80d "Program"
   .label screen = $400
 main: {
+    // screen[0] = 'a'
     lda #'a'
     sta screen
+    // }
     rts
 }

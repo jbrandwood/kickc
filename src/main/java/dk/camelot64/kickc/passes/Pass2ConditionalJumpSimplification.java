@@ -79,6 +79,8 @@ public class Pass2ConditionalJumpSimplification extends Pass2SsaOptimization {
                                     }
                                  }
                               }
+                              
+
 
                               if(isSimple) {
                                  conditionalJump.setrValue1(conditionAssignment.getrValue1());

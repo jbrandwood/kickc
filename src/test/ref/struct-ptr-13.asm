@@ -6,17 +6,22 @@
   .label points = $1000
 main: {
     .label SCREEN = $400
+    // points->x += 5
     lda #5
     clc
     adc points
     sta points
+    // points->y += 5
     lda #5
     clc
     adc points+OFFSET_STRUCT_POINT_Y
     sta points+OFFSET_STRUCT_POINT_Y
+    // SCREEN[0] = points->x
     lda points
     sta SCREEN
+    // SCREEN[1] = points->y
     lda points+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
+    // }
     rts
 }

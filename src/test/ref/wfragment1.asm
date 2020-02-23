@@ -6,14 +6,18 @@
 main: {
     ldy #0
   __b1:
+    // move_enemy(i)
     jsr move_enemy
+    // for(byte i:0..5)
     iny
     cpy #6
     bne __b1
+    // }
     rts
 }
 // move_enemy(byte register(Y) obj_slot)
 move_enemy: {
+    // OBJ_WORLD_X[obj_slot] -= 1
     tya
     asl
     tax
@@ -22,6 +26,7 @@ move_enemy: {
     dec OBJ_WORLD_X+1,x
   !:
     dec OBJ_WORLD_X,x
+    // }
     rts
 }
   OBJ_WORLD_X: .fill 2*MAX_OBJECTS, 0

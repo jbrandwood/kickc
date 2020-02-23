@@ -3,11 +3,15 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // (*f)()
     jsr fn1
+    // }
     rts
 }
 fn1: {
     .label BORDERCOL = $d020
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // }
     rts
 }

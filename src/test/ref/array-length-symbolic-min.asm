@@ -7,11 +7,14 @@
 main: {
     ldx #0
   __b1:
+    // cur_item[sub] = sub
     txa
     sta items,x
+    // for( byte sub: 0..SZ)
     inx
     cpx #SZ+1
     bne __b1
+    // }
     rts
 }
   items: .fill SZ, 0

@@ -17,12 +17,14 @@ main: {
     lda #>$400
     sta.z pos_ptr+1
   __b1:
+    // *pos_ptr=(int)0x55AA
     ldy #0
     lda #<$55aa
     sta (pos_ptr),y
     iny
     lda #>$55aa
     sta (pos_ptr),y
+    // *pos_ptr&(int)0xAA55
     ldy #0
     lda (pos_ptr),y
     and #<$aa55
@@ -31,22 +33,29 @@ main: {
     lda (pos_ptr),y
     and #>$aa55
     sta.z __0+1
+    // <(*pos_ptr&(int)0xAA55)
     lda.z __0
+    // *vram_ptr++=<(*pos_ptr&(int)0xAA55)
     ldy #0
     sta (vram_ptr),y
+    // *vram_ptr++=<(*pos_ptr&(int)0xAA55);
     inc.z vram_ptr
     bne !+
     inc.z vram_ptr+1
   !:
+    // >*pos_ptr
     ldy #1
     lda (pos_ptr),y
+    // *vram_ptr++=>*pos_ptr
     // stores 0x00
     ldy #0
     sta (vram_ptr),y
+    // *vram_ptr++=>*pos_ptr;
     inc.z vram_ptr
     bne !+
     inc.z vram_ptr+1
   !:
+    // pos_ptr++;
     lda #SIZEOF_SIGNED_WORD
     clc
     adc.z pos_ptr
@@ -54,8 +63,10 @@ main: {
     bcc !+
     inc.z pos_ptr+1
   !:
+    // for( char i:0..2)
     inx
     cpx #3
     bne __b1
+    // }
     rts
 }

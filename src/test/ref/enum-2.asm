@@ -5,7 +5,9 @@
   .const B = 'b'
 main: {
     .label SCREEN = $400
+    // *SCREEN = letter
     lda #B
     sta SCREEN
+    // }
     rts
 }

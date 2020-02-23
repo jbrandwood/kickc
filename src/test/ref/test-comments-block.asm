@@ -14,14 +14,19 @@ main: {
     ldx #0
   // Do some sums
   __b1:
+    // sum(a, b)
     txa
     jsr sum
+    // SCREEN[i++] = sum(a, b)
     // Output the result on the screen
     sta SCREEN,y
+    // SCREEN[i++] = sum(a, b);
     iny
+    // for(byte b: 0..10 )
     inx
     cpx #$b
     bne __b1
+    // }
     rts
 }
 /** Adds up two bytes and returns the result
@@ -31,7 +36,9 @@ main: {
  */
 // sum(byte register(A) b)
 sum: {
+    // a+b
     clc
     adc #a
+    // }
     rts
 }

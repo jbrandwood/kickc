@@ -11,6 +11,7 @@ main: {
     sta.z sw+1
     ldx #0
   __b1:
+    // sw += (signed byte)i
     txa
     sta.z $fe
     ora #$7f
@@ -25,6 +26,7 @@ main: {
     lda.z sw+1
     adc.z $ff
     sta.z sw+1
+    // screen[i] = sw
     txa
     asl
     tay
@@ -32,8 +34,10 @@ main: {
     sta screen,y
     lda.z sw+1
     sta screen+1,y
+    // for( byte i: 0..10)
     inx
     cpx #$b
     bne __b1
+    // }
     rts
 }

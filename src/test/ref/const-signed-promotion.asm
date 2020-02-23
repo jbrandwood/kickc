@@ -6,6 +6,7 @@ main: {
     .label screen = $400
     ldx #0
   __b1:
+    // world[i]= 400
     txa
     asl
     tay
@@ -13,13 +14,16 @@ main: {
     sta world,y
     lda #>$190
     sta world+1,y
+    // for(byte i:0..2)
     inx
     cpx #3
     bne __b1
+    // *screen = world[0]
     lda world
     sta screen
     lda world+1
     sta screen+1
+    // }
     rts
 }
   world: .fill 2*3, 0

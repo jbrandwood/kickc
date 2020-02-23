@@ -33,12 +33,18 @@ main: {
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
     .label __4 = $d
     .label cyclecount = $d
+    // init_font_hex(CHARSET)
     jsr init_font_hex
+    // *D018 = toD018(SCREEN, CHARSET)
     lda #toD0181_return
     sta D018
+    // clock_start()
     jsr clock_start
+    // init_dist_screen(SCREEN)
     jsr init_dist_screen
+    // clock()
     jsr clock
+    // cyclecount = clock()-CLOCKS_PER_INIT
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -52,15 +58,19 @@ main: {
     lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
+    // print_dword_at(cyclecount, BASE_SCREEN)
     jsr print_dword_at
+    // *D018 = toD018(BASE_SCREEN, BASE_CHARSET)
     lda #toD0182_return
     sta D018
+    // }
     rts
 }
 // Print a dword as HEX at a specific position
 // print_dword_at(dword zp($d) dw)
 print_dword_at: {
     .label dw = $d
+    // print_word_at(>dw, at)
     lda.z dw+2
     sta.z print_word_at.w
     lda.z dw+3
@@ -70,6 +80,7 @@ print_dword_at: {
     lda #>main.BASE_SCREEN
     sta.z print_word_at.at+1
     jsr print_word_at
+    // print_word_at(<dw, at+4)
     lda.z dw
     sta.z print_word_at.w
     lda.z dw+1
@@ -79,6 +90,7 @@ print_dword_at: {
     lda #>main.BASE_SCREEN+4
     sta.z print_word_at.at+1
     jsr print_word_at
+    // }
     rts
 }
 // Print a word as HEX at a specific position
@@ -86,9 +98,11 @@ print_dword_at: {
 print_word_at: {
     .label w = 4
     .label at = 9
+    // print_byte_at(>w, at)
     lda.z w+1
     sta.z print_byte_at.b
     jsr print_byte_at
+    // print_byte_at(<w, at+2)
     lda.z w
     sta.z print_byte_at.b
     lda #2
@@ -99,6 +113,7 @@ print_word_at: {
     inc.z print_byte_at.at+1
   !:
     jsr print_byte_at
+    // }
     rts
 }
 // Print a byte as HEX at a specific position
@@ -106,11 +121,13 @@ print_word_at: {
 print_byte_at: {
     .label b = $c
     .label at = 9
+    // b>>4
     lda.z b
     lsr
     lsr
     lsr
     lsr
+    // print_char_at(print_hextab[b>>4], at)
     tay
     ldx print_hextab,y
     lda.z at
@@ -118,9 +135,11 @@ print_byte_at: {
     lda.z at+1
     sta.z print_char_at.at+1
     jsr print_char_at
+    // b&$f
     lda #$f
     and.z b
     tay
+    // print_char_at(print_hextab[b&$f], at+1)
     lda.z at
     clc
     adc #1
@@ -130,21 +149,25 @@ print_byte_at: {
     sta.z print_char_at.at+1
     ldx print_hextab,y
     jsr print_char_at
+    // }
     rts
 }
 // Print a single char
 // print_char_at(byte register(X) ch, byte* zp(2) at)
 print_char_at: {
     .label at = 2
+    // *(at) = ch
     txa
     ldy #0
     sta (at),y
+    // }
     rts
 }
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $d
+    // 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -158,6 +181,7 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // }
     rts
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
@@ -171,6 +195,7 @@ init_dist_screen: {
     .label ds = $13
     .label x = 6
     .label xb = $b
+    // init_squares()
     jsr init_squares
     lda #<SCREEN+$28*$18
     sta.z screen_bottomline
@@ -183,27 +208,34 @@ init_dist_screen: {
     lda #0
     sta.z y
   __b1:
+    // y2 = y*2
     lda.z y
     asl
+    // (y2>=24)?(y2-24):(24-y2)
     cmp #$18
     bcs __b2
     eor #$ff
     clc
     adc #$18+1
   __b4:
+    // sqr(yd)
     jsr sqr
+    // sqr(yd)
     lda.z sqr.return
     sta.z sqr.return_1
     lda.z sqr.return+1
     sta.z sqr.return_1+1
+    // yds = sqr(yd)
     lda #$27
     sta.z xb
     lda #0
     sta.z x
   __b5:
+    // for( byte x=0,xb=39; x<=19; x++, xb--)
     lda.z x
     cmp #$13+1
     bcc __b6
+    // screen_topline += 40
     lda #$28
     clc
     adc.z screen_topline
@@ -211,6 +243,7 @@ init_dist_screen: {
     bcc !+
     inc.z screen_topline+1
   !:
+    // screen_bottomline -= 40
     lda.z screen_bottomline
     sec
     sbc #<$28
@@ -218,21 +251,29 @@ init_dist_screen: {
     lda.z screen_bottomline+1
     sbc #>$28
     sta.z screen_bottomline+1
+    // for(byte y: 0..12)
     inc.z y
     lda #$d
     cmp.z y
     bne __b1
+    // }
     rts
   __b6:
+    // x2 = x*2
     lda.z x
     asl
+    // (x2>=39)?(x2-39):(39-x2)
     cmp #$27
     bcs __b8
     eor #$ff
     clc
     adc #$27+1
   __b10:
+    // sqr(xd)
     jsr sqr
+    // sqr(xd)
+    // xds = sqr(xd)
+    // ds = xds+yds
     lda.z ds
     clc
     adc.z yds
@@ -240,21 +281,30 @@ init_dist_screen: {
     lda.z ds+1
     adc.z yds+1
     sta.z ds+1
+    // sqrt(ds)
     jsr sqrt
+    // d = sqrt(ds)
+    // screen_topline[x] = d
     ldy.z x
     sta (screen_topline),y
+    // screen_bottomline[x] = d
     sta (screen_bottomline),y
+    // screen_topline[xb] = d
     ldy.z xb
     sta (screen_topline),y
+    // screen_bottomline[xb] = d
     sta (screen_bottomline),y
+    // for( byte x=0,xb=39; x<=19; x++, xb--)
     inc.z x
     dec.z xb
     jmp __b5
   __b8:
+    // (x2>=39)?(x2-39):(39-x2)
     sec
     sbc #$27
     jmp __b10
   __b2:
+    // (y2>=24)?(y2-24):(24-y2)
     sec
     sbc #$18
     jmp __b4
@@ -268,7 +318,11 @@ sqrt: {
     .label __3 = 2
     .label found = 2
     .label val = $13
+    // bsearch16u(val, SQUARES, NUM_SQUARES)
     jsr bsearch16u
+    // bsearch16u(val, SQUARES, NUM_SQUARES)
+    // found = bsearch16u(val, SQUARES, NUM_SQUARES)
+    // found-SQUARES
     lda.z __3
     sec
     sbc #<SQUARES
@@ -278,7 +332,9 @@ sqrt: {
     sta.z __3+1
     lsr.z __1+1
     ror.z __1
+    // (byte)(found-SQUARES)
     lda.z __1
+    // }
     rts
 }
 // Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
@@ -300,8 +356,10 @@ bsearch16u: {
     sta.z items+1
     ldx #NUM_SQUARES
   __b3:
+    // while (num > 0)
     cpx #0
     bne __b4
+    // *items<=key?items:items-1
     ldy #1
     lda (items),y
     cmp.z key+1
@@ -320,10 +378,13 @@ bsearch16u: {
     sbc #>1*SIZEOF_WORD
     sta.z __2+1
   __b2:
+    // }
     rts
   __b4:
+    // num >> 1
     txa
     lsr
+    // items + (num >> 1)
     asl
     clc
     adc.z items
@@ -331,6 +392,7 @@ bsearch16u: {
     lda #0
     adc.z items+1
     sta.z pivot+1
+    // result = (signed int)key-(signed int)*pivot
     sec
     lda.z key
     ldy #0
@@ -340,6 +402,7 @@ bsearch16u: {
     iny
     sbc (pivot),y
     sta.z result+1
+    // if (result == 0)
     bne __b6
     lda.z result
     bne __b6
@@ -349,12 +412,14 @@ bsearch16u: {
     sta.z return+1
     rts
   __b6:
+    // if (result > 0)
     lda.z result+1
     bmi __b7
     bne !+
     lda.z result
     beq __b7
   !:
+    // items = pivot+1
     lda #1*SIZEOF_WORD
     clc
     adc.z pivot
@@ -362,8 +427,10 @@ bsearch16u: {
     lda #0
     adc.z pivot+1
     sta.z items+1
+    // num--;
     dex
   __b7:
+    // num >>= 1
     txa
     lsr
     tax
@@ -375,12 +442,14 @@ bsearch16u: {
 sqr: {
     .label return = $13
     .label return_1 = $11
+    // return SQUARES[val];
     asl
     tay
     lda SQUARES,y
     sta.z return
     lda SQUARES+1,y
     sta.z return+1
+    // }
     rts
 }
 // Initialize squares table
@@ -388,6 +457,7 @@ sqr: {
 init_squares: {
     .label squares = 9
     .label sqr = 4
+    // malloc(NUM_SQUARES*sizeof(word))
     jsr malloc
     lda #<SQUARES
     sta.z squares
@@ -398,16 +468,20 @@ init_squares: {
     sta.z sqr+1
     tax
   __b1:
+    // for(byte i=0;i<NUM_SQUARES;i++)
     cpx #NUM_SQUARES
     bcc __b2
+    // }
     rts
   __b2:
+    // *squares++ = sqr
     ldy #0
     lda.z sqr
     sta (squares),y
     iny
     lda.z sqr+1
     sta (squares),y
+    // *squares++ = sqr;
     lda #SIZEOF_WORD
     clc
     adc.z squares
@@ -415,16 +489,20 @@ init_squares: {
     bcc !+
     inc.z squares+1
   !:
+    // i*2
     txa
     asl
+    // i*2+1
     clc
     adc #1
+    // sqr += i*2+1
     clc
     adc.z sqr
     sta.z sqr
     bcc !+
     inc.z sqr+1
   !:
+    // for(byte i=0;i<NUM_SQUARES;i++)
     inx
     jmp __b1
 }
@@ -434,16 +512,20 @@ malloc: {
     .const size = NUM_SQUARES*SIZEOF_WORD
     .label mem = HEAP_TOP-size
     .label return = mem
+    // }
     rts
 }
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
+    // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2_TIMER_A_CONTROL
+    // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -452,10 +534,13 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
+    // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
+    // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
+    // }
     rts
 }
 // Make charset from proto chars
@@ -486,6 +571,7 @@ init_font_hex: {
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
   __b2:
+    // charset[idx++] = 0
     lda #0
     tay
     sta (charset),y
@@ -493,6 +579,7 @@ init_font_hex: {
     sta.z idx
     ldx #0
   __b3:
+    // proto_hi[i]<<4
     txa
     tay
     lda (proto_hi),y
@@ -501,22 +588,31 @@ init_font_hex: {
     asl
     asl
     sta.z __0
+    // proto_lo[i]<<1
     txa
     tay
     lda (proto_lo),y
     asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
     ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
     ldy.z idx
     sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
     inc.z idx
+    // for( byte i: 0..4)
     inx
     cpx #5
     bne __b3
+    // charset[idx++] = 0
     lda #0
     ldy.z idx
     sta (charset),y
+    // charset[idx++] = 0;
     iny
+    // charset[idx++] = 0
     sta (charset),y
+    // proto_lo += 5
     lda #5
     clc
     adc.z proto_lo
@@ -524,6 +620,7 @@ init_font_hex: {
     bcc !+
     inc.z proto_lo+1
   !:
+    // charset += 8
     lda #8
     clc
     adc.z charset
@@ -531,10 +628,12 @@ init_font_hex: {
     bcc !+
     inc.z charset+1
   !:
+    // for( byte c: 0..15 )
     inc.z c1
     lda #$10
     cmp.z c1
     bne __b2
+    // proto_hi += 5
     lda #5
     clc
     adc.z proto_hi
@@ -542,10 +641,12 @@ init_font_hex: {
     bcc !+
     inc.z proto_hi+1
   !:
+    // for( byte c: 0..15 )
     inc.z c
     lda #$10
     cmp.z c
     bne __b1
+    // }
     rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex

@@ -4,8 +4,10 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
+    // SCREEN[0] = SINTAB[0]
     lda SINTAB
     sta SCREEN
+    // }
     rts
 }
 // Sinus table

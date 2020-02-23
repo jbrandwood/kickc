@@ -15,24 +15,32 @@
   .label print_char_cursor = 4
   .label print_line_cursor = 2
 main: {
+    // asm
     sei
+    // mulf_init()
     jsr mulf_init
+    // *psp1 = (word)mulf_sqr1
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
     sta psp1+1
+    // *psp2 = (word)mulf_sqr2
     lda #<mulf_sqr2
     sta psp2
     lda #>mulf_sqr2
     sta psp2+1
+    // print_cls()
     jsr print_cls
+    // do_perspective($39, -$47, $36)
     jsr do_perspective
+    // }
     rts
 }
 do_perspective: {
     .label x = $39
     .label y = -$47
     .label z = $36
+    // print_str("(")
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -42,43 +50,56 @@ do_perspective: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_sbyte(x)
     ldx #x
     jsr print_sbyte
+    // print_str(",")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_sbyte(y)
     ldx #y
     jsr print_sbyte
+    // print_str(",")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_sbyte(z)
     ldx #z
     jsr print_sbyte
+    // print_str(") -> (")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
+    // perspective(x, y, z)
     jsr perspective
     ldx xr
+    // print_byte((byte)*xr)
     jsr print_byte
+    // print_str(",")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
     ldx yr
+    // print_byte((byte)*yr)
     jsr print_byte
+    // print_str(")")
     lda #<str5
     sta.z print_str.str
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     jsr print_ln
+    // }
     rts
     str: .text "("
     .byte 0
@@ -96,6 +117,7 @@ print_ln: {
     lda #>$400
     sta.z print_line_cursor+1
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -103,6 +125,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -111,6 +134,7 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -118,15 +142,19 @@ print_ln: {
 print_str: {
     .label str = 2
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -140,40 +168,52 @@ print_str: {
 // Print a byte as HEX
 // print_byte(byte register(X) b)
 print_byte: {
+    // b>>4
     txa
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     axs #0
+    // print_char(print_hextab[b&$f])
     lda print_hextab,x
     jsr print_char
+    // }
     rts
 }
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 // Implemented in assembler to utilize seriously fast multiplication 
 perspective: {
+    // *xr = x
     lda #do_perspective.x
     sta xr
+    // *yr = y
     lda #do_perspective.y
     sta yr
+    // *zr = z
     lda #do_perspective.z
     sta zr
+    // asm
     sta PP+1
   PP:
     lda PERSP_Z
@@ -192,21 +232,28 @@ perspective: {
     sbc (psp2),y
     adc #$80
     sta xr
+    // }
     rts
 }
 // Print a signed byte as HEX
 // print_sbyte(signed byte register(X) b)
 print_sbyte: {
+    // if(b<0)
     cpx #0
     bmi __b1
+    // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
+    // print_byte((byte)b)
     jsr print_byte
+    // }
     rts
   __b1:
+    // print_char('-')
     lda #'-'
     jsr print_char
+    // b = -b
     txa
     eor #$ff
     clc
@@ -216,7 +263,9 @@ print_sbyte: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -231,17 +280,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1
@@ -261,31 +314,44 @@ mulf_init: {
     sta.z sqr
     sta.z sqr+1
   __b1:
+    // val = >sqr
     lda.z sqr+1
     sta.z val
+    // mulf_sqr1[i] = val
     sta mulf_sqr1,y
+    // (mulf_sqr1+$100)[i] = val
     sta mulf_sqr1+$100,y
+    // -i
     tya
     eor #$ff
     tax
     inx
+    // mulf_sqr1[-i] = val
     lda.z val
     sta mulf_sqr1,x
+    // (mulf_sqr1+$100)[-i] = val
     sta mulf_sqr1+$100,x
+    // mulf_sqr2[i+1] = val
     sta mulf_sqr2+1,y
+    // (mulf_sqr2+$100)[i+1] = val
     sta mulf_sqr2+$100+1,y
+    // 1-i
     tya
     eor #$ff
     tax
     axs #-1-1
+    // mulf_sqr2[1-i] = val
     lda.z val
     sta mulf_sqr2,x
+    // 1-i
     tya
     eor #$ff
     tax
     axs #-1-1
+    // (mulf_sqr2+$100)[1-i] = val
     lda.z val
     sta mulf_sqr2+$100,x
+    // sqr += add
     lda.z sqr
     clc
     adc.z add
@@ -293,6 +359,7 @@ mulf_init: {
     lda.z sqr+1
     adc.z add+1
     sta.z sqr+1
+    // add +=2
     lda.z add
     clc
     adc #<2
@@ -300,9 +367,11 @@ mulf_init: {
     lda.z add+1
     adc #>2
     sta.z add+1
+    // for( byte i:0..128)
     iny
     cpy #$81
     bne __b1
+    // }
     rts
 }
   print_hextab: .text "0123456789abcdef"

@@ -18,43 +18,57 @@
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label MUSIC = $1000
+  // kickasm
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
 // Place the SID into memory
 // Setup Raster IRQ and initialize SID player
 main: {
+    // asm
     sei
     jsr music.init
+    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
+    // *VIC_CONTROL &=$7f
     // Set raster line to $fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
+    // *RASTER = $fd
     lda #$fd
     sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
+    // *KERNEL_IRQ = &irq_play
     // Set the IRQ routine
     lda #<irq_play
     sta KERNEL_IRQ
     lda #>irq_play
     sta KERNEL_IRQ+1
+    // asm
     cli
+    // }
     rts
 }
 // Raster IRQ Routine playing music
 irq_play: {
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // asm
     // Play SID
     jsr music.play
+    // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
+    // (*BORDERCOL)--;
     dec BORDERCOL
+    // }
     jmp $ea31
 }
 .pc = MUSIC "MUSIC"

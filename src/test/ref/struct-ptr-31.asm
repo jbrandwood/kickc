@@ -6,17 +6,20 @@
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
 main: {
+    // print_person(persons)
     ldx #0
     lda #<persons
     sta.z print_person.person
     lda #>persons
     sta.z print_person.person+1
     jsr print_person
+    // print_person(persons+1)
     lda #<persons+1*SIZEOF_STRUCT_PERSON
     sta.z print_person.person
     lda #>persons+1*SIZEOF_STRUCT_PERSON
     sta.z print_person.person+1
     jsr print_person
+    // }
     rts
 }
 // print_person(struct Person* zp(2) person)
@@ -24,17 +27,22 @@ print_person: {
     .label __1 = 4
     .label __2 = 6
     .label person = 2
+    // SCREEN[idx++] = DIGIT[person->id]
     ldy #0
     lda (person),y
     tay
     lda DIGIT,y
     sta SCREEN,x
+    // SCREEN[idx++] = DIGIT[person->id];
     inx
+    // SCREEN[idx++] = ' '
     lda #' '
     sta SCREEN,x
+    // SCREEN[idx++] = ' ';
     inx
     ldy #0
   __b1:
+    // for(byte i=0; person->name[i]; i++)
     lda #OFFSET_STRUCT_PERSON_NAME
     clc
     adc.z person
@@ -45,11 +53,15 @@ print_person: {
     lda (__1),y
     cmp #0
     bne __b2
+    // SCREEN[idx++] = ' '
     lda #' '
     sta SCREEN,x
+    // SCREEN[idx++] = ' ';
     inx
+    // }
     rts
   __b2:
+    // SCREEN[idx++] = person->name[i]
     lda #OFFSET_STRUCT_PERSON_NAME
     clc
     adc.z person
@@ -59,7 +71,9 @@ print_person: {
     sta.z __2+1
     lda (__2),y
     sta SCREEN,x
+    // SCREEN[idx++] = person->name[i];
     inx
+    // for(byte i=0; person->name[i]; i++)
     iny
     jmp __b1
 }

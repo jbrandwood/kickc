@@ -10,18 +10,21 @@ main: {
     .label p1 = 2
     .label p2 = 4
     .label v = 6
+    // p1 = { 2, 3 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
     sta p1-1,y
     dey
     bne !-
+    // p2 = { 4, 5 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __1-1,y
     sta p2-1,y
     dey
     bne !-
+    // v = { p1, p2 }
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda p1-1,y
@@ -34,14 +37,19 @@ main: {
     sta v+OFFSET_STRUCT_VECTOR_Q-1,y
     dey
     bne !-
+    // SCREEN[0] = v.p.x
     lda.z v
     sta SCREEN
+    // SCREEN[1] = v.p.y
     lda v+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
+    // SCREEN[2] = v.q.x
     lda v+OFFSET_STRUCT_VECTOR_Q
     sta SCREEN+2
+    // SCREEN[3] = v.q.y
     lda v+OFFSET_STRUCT_VECTOR_Q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+3
+    // }
     rts
 }
   __0: .byte 2, 3

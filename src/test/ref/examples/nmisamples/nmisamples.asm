@@ -20,6 +20,7 @@
   .const SAMPLE_SIZE = $6100
   .label sample = 2
 __b1:
+  // sample = SAMPLE
   lda #<SAMPLE
   sta.z sample
   lda #>SAMPLE
@@ -27,6 +28,7 @@ __b1:
   jsr main
   rts
 main: {
+    // asm
     // Boosting 8580 Digis
     // See https://gist.github.com/munshkr/30f35e39905e63876ff7 (line 909)
     lda #$ff
@@ -38,54 +40,72 @@ main: {
     sta $d40b
     sta $d412
     sei
+    // *CIA2_INTERRUPT = CIA_INTERRUPT_CLEAR
     lda #CIA_INTERRUPT_CLEAR
     sta CIA2_INTERRUPT
+    // *KERNEL_NMI = &nmi
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
+    // *CIA2_TIMER_A = 0x88
     lda #0
     sta CIA2_TIMER_A+1
     lda #<$88
     sta CIA2_TIMER_A
+    // *CIA2_INTERRUPT = 0x81
     // speed
     lda #$81
     sta CIA2_INTERRUPT
+    // *CIA2_TIMER_A_CONTROL = 0x01
     lda #1
     sta CIA2_TIMER_A_CONTROL
+    // asm
     cli
+    // }
     rts
 }
 nmi2: {
     sta rega+1
     stx regx+1
     sty regy+1
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // asm
     lda CIA2_INTERRUPT
+    // *sample >> 4
     ldy #0
     lda (sample),y
     lsr
     lsr
     lsr
     lsr
+    // *SID_VOLUME = *sample >> 4
     sta SID_VOLUME
+    // sample++;
     inc.z sample
     bne !+
     inc.z sample+1
   !:
+    // >sample
     lda.z sample+1
+    // if (>sample == >(SAMPLE+$6100))
     cmp #>SAMPLE+$6100
     bne __b1
+    // sample = SAMPLE
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
     sta.z sample+1
   __b1:
+    // *KERNEL_NMI = &nmi
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
+    // (*BORDERCOL)--;
     dec BORDERCOL
+    // }
   rega:
     lda #00
   regx:
@@ -98,17 +118,24 @@ nmi: {
     sta rega+1
     stx regx+1
     sty regy+1
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // asm
     lda CIA2_INTERRUPT
+    // *sample & $0f
     lda #$f
     ldy #0
     and (sample),y
+    // *SID_VOLUME = *sample & $0f
     sta SID_VOLUME
+    // *KERNEL_NMI = &nmi2
     lda #<nmi2
     sta KERNEL_NMI
     lda #>nmi2
     sta KERNEL_NMI+1
+    // (*BORDERCOL)--;
     dec BORDERCOL
+    // }
   rega:
     lda #00
   regx:

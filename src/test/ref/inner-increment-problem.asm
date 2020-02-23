@@ -14,6 +14,7 @@ main: {
     lda #>$400
     sta.z screen+1
   __b1:
+    // CHAR_COUNTS[*screen++]++;
     ldy #0
     lda (screen),y
     asl
@@ -34,6 +35,7 @@ main: {
     bne !+
     inc.z screen+1
   !:
+    // for( word i:0..999)
     inc.z i
     bne !+
     inc.z i+1
@@ -44,6 +46,7 @@ main: {
     lda.z i
     cmp #<$3e8
     bne __b1
+    // }
     rts
 }
   CHAR_COUNTS: .fill 2*$100, 0

@@ -7,11 +7,16 @@
   .label CIA2_PORT_B = $dd01
   .label SCREEN = $400
 main: {
+    // (*CIA2_PORT_B) &= 0x7f
     lda #$7f
     and CIA2_PORT_B
     sta CIA2_PORT_B
+    // asm
     lda #0
+    // port4Value = *CIA2_PORT_B
     lda CIA2_PORT_B
+    // *SCREEN = port4Value
     sta SCREEN
+    // }
     rts
 }

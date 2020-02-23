@@ -9,6 +9,7 @@ main: {
     .label i1 = 2
     ldy #0
   __b1:
+    // points[i] = { 2, i }
     tya
     asl
     tax
@@ -16,12 +17,14 @@ main: {
     sta points,x
     tya
     sta points+OFFSET_STRUCT_POINT_Y,x
+    // for( byte i: 0..1)
     iny
     cpy #2
     bne __b1
     lda #0
     sta.z i1
   __b2:
+    // SCREEN[i] = points[i]
     lda.z i1
     asl
     ldx #SIZEOF_STRUCT_POINT
@@ -32,10 +35,12 @@ main: {
     iny
     dex
     bne !-
+    // for( byte i: 0..1)
     inc.z i1
     lda #2
     cmp.z i1
     bne __b2
+    // }
     rts
 }
   points: .fill 2*2, 0

@@ -5,7 +5,9 @@
 main: {
     .label sb_screen = $400
     .const sb = $ff
+    // *sb_screen = sb
     lda #sb
     sta sb_screen
+    // }
     rts
 }

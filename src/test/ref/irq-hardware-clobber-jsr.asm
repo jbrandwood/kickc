@@ -30,49 +30,65 @@
   .const BLACK = 0
   .const WHITE = 1
 main: {
+    // asm
     sei
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
+    // *VIC_CONTROL |=$80
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
+    // *RASTER = $00
     lda #0
     sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
+    // *HARDWARE_IRQ = &irq
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
     lda #>irq
     sta HARDWARE_IRQ+1
+    // asm
     cli
   __b1:
+    // (*BORDERCOL)++;
     inc BORDERCOL
     jmp __b1
 }
 // Interrupt Routine
 irq: {
     sta rega+1
+    // do_irq()
     jsr do_irq
+    // }
   rega:
     lda #00
     rti
 }
 do_irq: {
+    // *BGCOL = WHITE
     lda #WHITE
     sta BGCOL
+    // *BGCOL = BLACK
     lda #BLACK
     sta BGCOL
+    // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
+    // }
     rts
 }

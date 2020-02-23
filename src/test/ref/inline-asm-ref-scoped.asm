@@ -3,14 +3,19 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // asm
     lda #'c'
     sta sub.ll+1
+    // sub()
     jsr sub
+    // }
     rts
 }
 sub: {
+    // asm
   ll:
     lda #0
     sta $400
+    // }
     rts
 }

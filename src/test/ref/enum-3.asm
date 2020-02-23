@@ -5,7 +5,9 @@
   .const BROKEN = 4*4+2+1
 main: {
     .label SCREEN = $400
+    // *SCREEN = state
     lda #BROKEN
     sta SCREEN
+    // }
     rts
 }

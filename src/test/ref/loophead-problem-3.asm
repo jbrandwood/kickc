@@ -8,15 +8,24 @@
 main: {
     .label result = 2
     .label kaputt = $a
+    // mul16u(4,123)
     jsr mul16u
+    // mul16u(4,123)
+    // result = mul16u(4,123)
+    // kaputt = <result
     lda.z result
     sta.z kaputt
     lda.z result+1
     sta.z kaputt+1
+    // <kaputt
     lda.z kaputt
+    // *BORDERCOL = <kaputt
     sta BORDERCOL
+    // >kaputt
     lda.z kaputt+1
+    // *BGCOL = >kaputt
     sta BGCOL
+    // }
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
@@ -47,16 +56,21 @@ mul16u: {
     lda #>4
     sta.z a+1
   __b1:
+    // while(a!=0)
     lda.z a
     bne __b2
     lda.z a+1
     bne __b2
+    // }
     rts
   __b2:
+    // a&1
     lda #1
     and.z a
+    // if( (a&1) != 0)
     cmp #0
     beq __b3
+    // res = res + mb
     lda.z res
     clc
     adc.z mb
@@ -71,8 +85,10 @@ mul16u: {
     adc.z mb+3
     sta.z res+3
   __b3:
+    // a = a>>1
     lsr.z a+1
     ror.z a
+    // mb = mb<<1
     asl.z mb
     rol.z mb+1
     rol.z mb+2

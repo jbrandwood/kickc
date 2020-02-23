@@ -7,14 +7,20 @@
   .label SPRITES_ENABLE = $d015
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
+  // kickasm
 main: {
+    // *(SCREEN+$3f8) = (byte)((word)SPRITE/$40)
     lda #SPRITE/$40
     sta SCREEN+$3f8
+    // *SPRITES_ENABLE = 1
     lda #1
     sta SPRITES_ENABLE
+    // *SPRITES_XPOS = 100
     lda #$64
     sta SPRITES_XPOS
+    // *SPRITES_YPOS = 100
     sta SPRITES_YPOS
+    // }
     rts
 }
 .pc = SPRITE "SPRITE"

@@ -15,6 +15,7 @@ main: {
     sta.z j
     tax
   __b1:
+    // to = letter_c[i].to
     txa
     asl
     asl
@@ -31,6 +32,7 @@ main: {
     sta.z to_y
     lda letter_c+OFFSET_STRUCT_SEGMENT_TO+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,y
     sta.z to_y+1
+    // SCREEN[j++] = to.x
     lda.z j
     asl
     tay
@@ -38,7 +40,9 @@ main: {
     sta SCREEN,y
     lda.z to_x+1
     sta SCREEN+1,y
+    // SCREEN[j++] = to.x;
     inc.z j
+    // SCREEN[j++] = to.y
     lda.z j
     asl
     tay
@@ -46,10 +50,13 @@ main: {
     sta SCREEN,y
     lda.z to_y+1
     sta SCREEN+1,y
+    // SCREEN[j++] = to.y;
     inc.z j
+    // for( byte i: 0..2)
     inx
     cpx #3
     bne __b1
+    // }
     rts
 }
   // True type letter c

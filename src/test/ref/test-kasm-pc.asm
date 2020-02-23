@@ -3,12 +3,15 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label TABLE = $2000
+  // kickasm
 main: {
     .label BORDERCOL = $d020
     ldx #0
   __b2:
+    // *BORDERCOL = TABLE[i++]
     lda TABLE,x
     sta BORDERCOL
+    // *BORDERCOL = TABLE[i++];
     inx
     jmp __b2
 }

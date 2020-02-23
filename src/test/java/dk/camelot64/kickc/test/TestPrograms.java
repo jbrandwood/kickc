@@ -3756,7 +3756,7 @@ public class TestPrograms {
 
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
-      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, false, false, false), program));
+      success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, true, false, false), program));
       success &= helper.testOutput(fileName, ".sym", program.getScope().toString(program, false));
       success &= helper.testOutput(fileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(fileName, ".log", program.getLog().toString());

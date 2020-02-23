@@ -10,11 +10,14 @@ main: {
   __b1:
     lda #0
   __b2:
+    // SCREEN[i] = j
     sta SCREEN,x
+    // for(byte j: 0..100)
     clc
     adc #1
     cmp #$65
     bne __b2
+    // for(byte i : 0..100)
     inx
     cpx #$65
     bne __b1
@@ -24,16 +27,21 @@ main: {
     lda #0
     sta.z l
   __b5:
+    // asm
     eor #$55
     tax
+    // SCREEN[k] = l
     lda.z l
     sta SCREEN,y
+    // for(byte l: 0..100)
     inc.z l
     lda #$65
     cmp.z l
     bne __b5
+    // for(byte k : 0..100)
     iny
     cpy #$65
     bne __b4
+    // }
     rts
 }

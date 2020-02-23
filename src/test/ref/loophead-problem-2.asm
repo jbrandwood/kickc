@@ -6,15 +6,24 @@
 .pc = $80d "Program"
 main: {
     .label screen = $400
+    // scan_for_lowest()
     jsr scan_for_lowest
+    // scan_for_lowest()
     lda.z scan_for_lowest.lowest
+    // hit_check=scan_for_lowest()
+    // screen[0] = hit_check
     sta screen
+    // <ball_y[hit_check]
     asl
     tax
     lda ball_y,x
+    // screen[2] = <ball_y[hit_check]
     sta screen+2
+    // >ball_y[hit_check]
     lda ball_y+1,x
+    // screen[3] = >ball_y[hit_check]
     sta screen+3
+    // }
     rts
 }
 scan_for_lowest: {
@@ -28,12 +37,16 @@ scan_for_lowest: {
     sta.z height+1
     ldx #0
   __b1:
+    // for (char i=0;i<8;i++)
     cpx #8
     bcc __b2
+    // }
     rts
   __b2:
+    // ball_y[i]<height
     txa
     asl
+    // if (ball_y[i]<height)
     tay
     lda ball_y,y
     cmp.z height
@@ -43,6 +56,7 @@ scan_for_lowest: {
     eor #$80
   !:
     bpl __b3
+    // height=ball_y[i]
     txa
     asl
     tay
@@ -52,6 +66,7 @@ scan_for_lowest: {
     sta.z height+1
     stx.z lowest
   __b3:
+    // for (char i=0;i<8;i++)
     inx
     jmp __b1
 }

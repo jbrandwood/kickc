@@ -4,6 +4,7 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
+    // kickasm
     ldx #0
         !:
         lda table,x
@@ -12,6 +13,7 @@ main: {
         cpx #4
         bne !-
     
+    // }
     rts
 }
   table: .text "cml!"

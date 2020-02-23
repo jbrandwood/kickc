@@ -15,13 +15,17 @@ main: {
     lda #0
     sta.z c
   __b1:
+    // for(byte c=0;c!=4;c++)
     lda #4
     cmp.z c
     bne __b2
+    // *VIC_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400))
     lda #SCREEN/$40|CHARSET/$400
     sta VIC_MEMORY
+    // }
     rts
   __b2:
+    // gen_char3(charset, charset_spec_row[c])
     lda.z c
     asl
     tax
@@ -30,6 +34,7 @@ main: {
     lda charset_spec_row+1,x
     sta.z gen_char3.spec+1
     jsr gen_char3
+    // charset = charset+8
     lda #8
     clc
     adc.z charset
@@ -37,6 +42,7 @@ main: {
     bcc !+
     inc.z charset+1
   !:
+    // for(byte c=0;c!=4;c++)
     inc.z c
     jmp __b1
 }
@@ -53,29 +59,39 @@ gen_char3: {
     ldx #0
     ldy #0
   __b2:
+    // >spec
     lda.z spec+1
+    // >spec&$80
     and #$80
+    // if((>spec&$80)!=0)
     cmp #0
     beq __b3
+    // b = b|1
     tya
     ora #1
     tay
   __b3:
+    // b = b*2
     tya
     asl
     tay
+    // spec = spec*2
     asl.z spec
     rol.z spec+1
+    // for(byte c: 0..2 )
     inx
     cpx #3
     bne __b2
+    // dst[r] = b
     tya
     ldy.z r
     sta (dst),y
+    // for(byte r : 0..4 )
     inc.z r
     lda #5
     cmp.z r
     bne __b1
+    // }
     rts
 }
   // Stores chars as 15 bits (in 2 bytes) specifying the 3x5

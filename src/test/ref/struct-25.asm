@@ -5,7 +5,9 @@
   .label SCREEN = $400
   .const SIZEOF_STRUCT_POINT = 4
 main: {
+    // SCREEN[0] = sizeof(struct Point)
     lda #SIZEOF_STRUCT_POINT
     sta SCREEN
+    // }
     rts
 }

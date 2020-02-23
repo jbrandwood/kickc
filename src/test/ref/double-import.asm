@@ -4,7 +4,9 @@
   .label BGCOL = $d021
   .const RED = 2
 main: {
+    // *BGCOL = RED
     lda #RED
     sta BGCOL
+    // }
     rts
 }

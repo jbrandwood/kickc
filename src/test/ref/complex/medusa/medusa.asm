@@ -10,8 +10,10 @@
   .const BLACK = 0
   .label SCREEN = $400
 main: {
+    // *BGCOL = BLACK
     lda #BLACK
     sta BGCOL
+    // memcpy(SCREEN, MEDUSA_SCREEN, 1000)
     lda #<SCREEN
     sta.z memcpy.destination
     lda #>SCREEN
@@ -21,6 +23,7 @@ main: {
     lda #>MEDUSA_SCREEN
     sta.z memcpy.source+1
     jsr memcpy
+    // memcpy(COLS, MEDUSA_COLORS, 1000)
     lda #<COLS
     sta.z memcpy.destination
     lda #>COLS
@@ -31,6 +34,7 @@ main: {
     sta.z memcpy.source+1
     jsr memcpy
   __b1:
+    // (*(SCREEN+999)) ^= 0x0e
     lda #$e
     eor SCREEN+$3e7
     sta SCREEN+$3e7
@@ -45,6 +49,7 @@ memcpy: {
     .label src = 2
     .label source = 2
     .label destination = 4
+    // src_end = (char*)source+num
     lda.z source
     clc
     adc #<$3e8
@@ -53,17 +58,21 @@ memcpy: {
     adc #>$3e8
     sta.z src_end+1
   __b1:
+    // while(src!=src_end)
     lda.z src+1
     cmp.z src_end+1
     bne __b2
     lda.z src
     cmp.z src_end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst++ = *src++
     ldy #0
     lda (src),y
     sta (dst),y
+    // *dst++ = *src++;
     inc.z dst
     bne !+
     inc.z dst+1

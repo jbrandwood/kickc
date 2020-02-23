@@ -13,10 +13,12 @@ main: {
     lda #5
     sta.z y
   __b1:
+    // (word)y
     lda.z y
     sta.z __0
     lda #0
     sta.z __0+1
+    // (word)y*40
     lda.z __0
     asl
     sta.z __6
@@ -38,6 +40,7 @@ main: {
     rol.z __1+1
     asl.z __1
     rol.z __1+1
+    // line = SCREEN+(word)y*40
     clc
     lda.z line
     adc #<SCREEN
@@ -47,16 +50,21 @@ main: {
     sta.z line+1
     ldy #5
   __b2:
+    // x+y
     tya
     clc
     adc.z y
+    // line[x] = x+y
     sta (line),y
+    // for( byte x: 5..15)
     iny
     cpy #$10
     bne __b2
+    // for( byte y: 5..15)
     inc.z y
     lda #$10
     cmp.z y
     bne __b1
+    // }
     rts
 }

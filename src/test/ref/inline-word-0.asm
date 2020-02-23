@@ -5,9 +5,11 @@
 main: {
     .const w = 2*$100+1
     .label screen = $400
+    // screen[0] = w
     lda #<w
     sta screen
     lda #>w
     sta screen+1
+    // }
     rts
 }

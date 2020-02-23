@@ -19,14 +19,18 @@ main: {
     lda #>POINTS
     sta.z points+1
   __b1:
+    // (*points).x = i
     txa
     ldy #0
     sta (points),y
+    // i+5
     txa
     clc
     adc #5
+    // (*points).y = i+5
     ldy #OFFSET_STRUCT_POINT_Y
     sta (points),y
+    // points++;
     lda #SIZEOF_STRUCT_POINT
     clc
     adc.z points
@@ -34,6 +38,7 @@ main: {
     bcc !+
     inc.z points+1
   !:
+    // for( byte i: 0..3)
     inx
     cpx #4
     bne __b1
@@ -45,17 +50,24 @@ main: {
     lda #>POINTS
     sta.z points_1+1
   __b2:
+    // SCREEN[idx++] = (*points).x
     ldy #0
     lda (points_1),y
     sta SCREEN,x
+    // SCREEN[idx++] = (*points).x;
     inx
+    // SCREEN[idx++] = (*points).y
     ldy #OFFSET_STRUCT_POINT_Y
     lda (points_1),y
     sta SCREEN,x
+    // SCREEN[idx++] = (*points).y;
     inx
+    // SCREEN[idx++] = ' '
     lda #' '
     sta SCREEN,x
+    // SCREEN[idx++] = ' ';
     inx
+    // points++;
     lda #SIZEOF_STRUCT_POINT
     clc
     adc.z points_1
@@ -63,9 +75,11 @@ main: {
     bcc !+
     inc.z points_1+1
   !:
+    // for( byte i: 0..3)
     inc.z i1
     lda #4
     cmp.z i1
     bne __b2
+    // }
     rts
 }

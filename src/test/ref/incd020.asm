@@ -6,7 +6,9 @@
   .label BGCOL = $d020
 main: {
   __b1:
+    // ++*BGCOL;
     inc BGCOL
+    // (*BGCOL)--;
     dec BGCOL
     jmp __b1
 }

@@ -10,8 +10,11 @@
   .label BODY1 = SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT
   .label BODY2 = SCREEN+OFFSET
 main: {
+    // *BODY1 = '*'
     lda #'*'
     sta BODY1
+    // *BODY2 = '*'
     sta BODY2
+    // }
     rts
 }

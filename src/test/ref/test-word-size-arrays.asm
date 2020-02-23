@@ -14,6 +14,7 @@ main: {
     sta.z line
     sta.z line+1
   __b1:
+    // for (line = 0; line < 40*24; line += 40)
     lda.z line+1
     cmp #>$28*$18
     bcc b1
@@ -25,10 +26,13 @@ main: {
     ldx #0
   // Cleare the bottom line
   __b5:
+    // for (byte c=0; c<40; ++c)
     cpx #$28
     bcc __b6
+    // }
     rts
   __b6:
+    // line+c
     txa
     clc
     adc.z line
@@ -36,6 +40,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z __6+1
+    // screen[line+c] = ' '
     clc
     lda.z __9
     adc #<screen
@@ -46,13 +51,16 @@ main: {
     lda #' '
     ldy #0
     sta (__9),y
+    // for (byte c=0; c<40; ++c)
     inx
     jmp __b5
   b1:
     ldx #0
   __b2:
+    // for (byte c=0; c<40; ++c)
     cpx #$28
     bcc __b3
+    // line += 40
     lda #$28
     clc
     adc.z line
@@ -62,6 +70,7 @@ main: {
   !:
     jmp __b1
   __b3:
+    // line+c
     txa
     clc
     adc.z line
@@ -69,6 +78,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z __2+1
+    // line+c+40
     txa
     clc
     adc.z line
@@ -76,6 +86,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z __4+1
+    // screen[line+c] = screen[line+c+40]
     clc
     lda.z __7
     adc #<screen+$28
@@ -93,6 +104,7 @@ main: {
     ldy #0
     lda (__7),y
     sta (__8),y
+    // for (byte c=0; c<40; ++c)
     inx
     jmp __b2
 }

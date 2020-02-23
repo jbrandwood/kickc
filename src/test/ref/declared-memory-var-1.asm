@@ -8,15 +8,19 @@
 main: {
     ldx #0
   __b1:
+    // SCREEN[i] = *idx_p
     lda idx_p
     sta SCREEN,x
+    // *idx_p +=i
     txa
     clc
     adc idx_p
     sta idx_p
+    // for( char i: 0..5 )
     inx
     cpx #6
     bne __b1
+    // }
     rts
 }
   idx: .byte 0

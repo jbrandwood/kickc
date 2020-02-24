@@ -64,12 +64,21 @@
 (const byte*) PIECE_Z[(number) $40]  = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 1, (byte) 0, (byte) 0, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 1, (byte) 0, (byte) 0, (byte) 1, (byte) 1, (byte) 0, (byte) 0, (byte) 1, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
 (const byte) PINK = (byte) $a
 (const byte*) PLAYFIELD_CHARSET = (byte*) 10240
-(const byte*) PLAYFIELD_COLORS_ORIGINAL = (byte*) 7168
+(const byte*) PLAYFIELD_COLORS_ORIGINAL[]  = kickasm {{ .import binary "playfield-screen.col"
+ }}
 (const byte) PLAYFIELD_COLS = (byte) $a
 (const byte) PLAYFIELD_LINES = (byte) $16
 (const byte*) PLAYFIELD_SCREEN_1 = (byte*) 1024
 (const byte*) PLAYFIELD_SCREEN_2 = (byte*) 11264
-(const byte*) PLAYFIELD_SCREEN_ORIGINAL = (byte*) 12288
+(const byte*) PLAYFIELD_SCREEN_ORIGINAL[]  = kickasm {{ // Load chars for the screen
+  .var screen = LoadBinary("playfield-screen.iscr")
+   // Load extended colors for the screen
+  .var extended = LoadBinary("playfield-extended.col")
+  // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8
+  // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)
+  // <<6 to move extended colors to the upper 2 bits
+  .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )
+ }}
 (const byte*) PLAYFIELD_SPRITES = (byte*) 8192
 (const byte*) PLAYFIELD_SPRITE_PTRS_1 = (const byte*) PLAYFIELD_SCREEN_1+(const word) SPRITE_PTRS
 (const byte*) PLAYFIELD_SPRITE_PTRS_2 = (const byte*) PLAYFIELD_SCREEN_2+(const word) SPRITE_PTRS
@@ -855,7 +864,7 @@
 (const byte) render_show::toD0182_return#0 toD0182_return = >(word)(const byte*) PLAYFIELD_SCREEN_2&(word) $3fff*(byte) 4|>(word)(const byte*) PLAYFIELD_CHARSET/(byte) 4&(byte) $f
 (byte*) render_show::toD0182_screen
 (const dword*) score_add_bcd[(number) 5]  = { fill( 5, 0) }
-(dword) score_bcd loadstore zp[4]:23 0.04316546762589928
+(dword) score_bcd loadstore zp[4]:23 0.043795620437956206
 (const byte**) screen_lines_1[(const byte) PLAYFIELD_LINES]  = { fill( PLAYFIELD_LINES, 0) }
 (const byte**) screen_lines_2[(const byte) PLAYFIELD_LINES]  = { fill( PLAYFIELD_LINES, 0) }
 (void()) sid_rnd_init()

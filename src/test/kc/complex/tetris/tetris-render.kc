@@ -10,8 +10,9 @@ kickasm(pc PLAYFIELD_CHARSET, resource "playfield-screen.imap") {{
     .import binary "playfield-screen.imap"
 }}
 
+// Address of the original playscreen chars
 const char PLAYFIELD_SCREEN_ORIGINAL_WIDTH=32;
-kickasm(pc PLAYFIELD_SCREEN_ORIGINAL, resource "playfield-screen.iscr", resource "playfield-extended.col" ) {{
+const char[] PLAYFIELD_SCREEN_ORIGINAL = kickasm(resource "playfield-screen.iscr", resource "playfield-extended.col" ) {{
    // Load chars for the screen
   .var screen = LoadBinary("playfield-screen.iscr")
    // Load extended colors for the screen
@@ -20,12 +21,12 @@ kickasm(pc PLAYFIELD_SCREEN_ORIGINAL, resource "playfield-screen.iscr", resource
   // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)
   // <<6 to move extended colors to the upper 2 bits
   .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )
-}}
+}};
 
 // Original Color Data
-kickasm(pc PLAYFIELD_COLORS_ORIGINAL, resource "playfield-screen.col") {{
+const char[] PLAYFIELD_COLORS_ORIGINAL = kickasm(resource "playfield-screen.col") {{
   .import binary "playfield-screen.col"
-}}
+}};
 
 // The color #1 to use for the pieces for each level
 char[] PIECES_COLORS_1 = {
@@ -194,7 +195,6 @@ void render_moving() {
 
 // Render the next tetromino in the "next" area
 void render_next() {
-
     // Find the screen area
 	unsigned int next_area_offset = 40*12 + 24 + 4;
     char* screen_next_area;

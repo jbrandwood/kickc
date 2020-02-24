@@ -90,10 +90,6 @@
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  // Address of the original playscreen chars
-  .label PLAYFIELD_SCREEN_ORIGINAL = $3000
-  // Address of the original playscreen colors
-  .label PLAYFIELD_COLORS_ORIGINAL = $1c00
   // Address of the sprites covering the playfield
   .label PLAYFIELD_SPRITES = $2000
   // Address of the charset
@@ -181,7 +177,6 @@ __b1:
   lda #>0>>$10
   sta.z score_bcd+3
   // kickasm
-// Original Color Data
   // irq_raster_next = IRQ_RASTER_FIRST
   // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST
@@ -2081,6 +2076,20 @@ sprites_irq: {
   // The initial X/Y for each piece
   PIECES_START_X: .byte 4, 4, 4, 4, 4, 4, 4
   PIECES_START_Y: .byte 1, 1, 1, 1, 1, 0, 1
+PLAYFIELD_SCREEN_ORIGINAL:
+// Load chars for the screen
+  .var screen = LoadBinary("playfield-screen.iscr")
+   // Load extended colors for the screen
+  .var extended = LoadBinary("playfield-extended.col")
+  // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8
+  // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)
+  // <<6 to move extended colors to the upper 2 bits
+  .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )
+
+  // Original Color Data
+PLAYFIELD_COLORS_ORIGINAL:
+.import binary "playfield-screen.col"
+
   // The color #1 to use for the pieces for each level
   PIECES_COLORS_1: .byte BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED, BLUE, GREEN, PURPLE, BLUE, RED, LIGHT_GREEN, RED, BLUE, LIGHT_BLUE, RED
   // The color #2 to use for the pieces for each level
@@ -2107,19 +2116,6 @@ sprites_irq: {
 .pc = PLAYFIELD_CHARSET "PLAYFIELD_CHARSET"
   .fill 8,$00 // Place a filled char at the start of the charset
     .import binary "playfield-screen.imap"
-
-.pc = PLAYFIELD_SCREEN_ORIGINAL "PLAYFIELD_SCREEN_ORIGINAL"
-  // Load chars for the screen
-  .var screen = LoadBinary("playfield-screen.iscr")
-   // Load extended colors for the screen
-  .var extended = LoadBinary("playfield-extended.col")
-  // screen.get(i)+1 because the charset is loaded into PLAYFIELD_CHARSET+8
-  // extended.get(i)-1 because the extended colors are 1-based (1/2/3/4)
-  // <<6 to move extended colors to the upper 2 bits
-  .fill screen.getSize(), ( (screen.get(i)+1) | (extended.get(i)-1)<<6 )
-
-.pc = PLAYFIELD_COLORS_ORIGINAL "PLAYFIELD_COLORS_ORIGINAL"
-  .import binary "playfield-screen.col"
 
 .pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
   .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))

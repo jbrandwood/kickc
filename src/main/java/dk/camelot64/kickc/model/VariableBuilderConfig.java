@@ -10,19 +10,69 @@ import java.util.*;
  * Holds settings specified using <code>#pragma var_model(...)</code>
  * The parameters to the pragma has the form <i>scope</i>_<i>type</i>_<i>optimization</i>_<i>memoryarea</i>.
  * <ul>
- *    <li><i>scope</i> is one of <i>global</i>, <i>local</i></li>
+ *    <li><i>scope</i> is one of <i>global</i>, <i>local</i> or <i>parameter</i></li>
  *    <li><i>type</i> is one of <i>struct</i>, <i>array</i>, <i>integer</i>, <i>pointer</i></li>
  *    <li><i>optimization</i> is one of <i>ma</i> (meaning multiple-assignment or load/store), <i>ssa</i> (meaning single-static-assignment)</li>
  *    <li><i>memoryarea</i> is one of <i>zp</i> (meaning zeropage), <i>mem</i> (meaning main memory)</li>
  * </ul>
  * <p>
  * For instance the parameter <i>local_pointer_ssa_zp</i> specifies that local pointer variables must be SSA-optimized and placed on zeropage.
+ * Multiple parameters can be added to the pragma to apply settings for many types/scopes. All applied parameters are processed in order potentially overwriting each other.
+ * </p><p>
  * The scope or type sub-element of the pragma parameter can be left out to apply to all scopes/types.
- * For instance the parameter <i>pointer_ssa_zp</i> specifies that all pointer variables regardless of scope must be SSA-optimized and placed on zeropage.
- * <p>
- * Multiple parameters can be added to the pragma to apply settings for many types/scopes.
+ * For instance the parameter <i>integer_ssa_mem</i> specifies that all integer variables regardless of scope must be SSA-optimized and placed in main memory.
+ * </p><p>
+ * Optimization or memoryarea can also be left out to only change that one setting for the scope/type combinations.
+ * For instance the parameter <i>parameter_ssa</i> specifies that all parameters must be single-static-assignment but does not specify what memory area they should be placed in.
+ * </p><p>
+ * If the very first parameter is <i>full</i> no default settings are applied. This means the parameters must configure all scopes/types.
+ * If the first parameter is not <i>full</i> then default settings are automatically added before and after the settings passed as parameters.
+ * The default settings are
+ * <ul>
+ *    <li><i>ssa_zp</i> Applied before the passed parameters (defaulting everything to single static assignment on zeropage)</li>
+ *    <li>... The passed parameters are then applied modifying the default</li>
+ *    <li><i>array_ma_mem</i> Applied after the passed parameters (forcing arrays to load/store in main-memory)</li>
+ *    <li><i>global_struct_ma_mem</i> Applied after the passed parameters (forcing global structs to load/store in main-memory)</li>
+ *    <li><i>parameter_ssa</i> Applied after the passed parameters (forcing parameters to single static assignment)</li>
+ *    <li><i>pointer_zp</i> Applied after the passed parameters (forcing pointers to zeropage)</li>
+ * </ul>
+ * </p>
  */
 public class VariableBuilderConfig {
+
+   /** Setting specifying that the Variable Builder config is "full" and the default pre/post should not be applied. */
+   public static final String SETTING_FULL = "full";
+
+   /**
+    * Apply any default pre configuration of the variable builder configuration.
+    * Done as the first step when initializing a variable builder configuration
+    * @param config The variable builder configuration
+    * @param log The compile log
+    */
+   public static void defaultPreConfig(VariableBuilderConfig config, CompileLog log) {
+      config.addSetting("ssa_zp", log, StatementSource.NONE);
+   }
+
+   /**
+    * Apply any default post configuration of the variable builder configuration.
+    * Done as the last step when initializing a variable builder configuration
+    * @param config The variable builder configuration
+    * @param log The compile log
+    */
+   public static void defaultPostConfig(VariableBuilderConfig config, CompileLog log) {
+      // Arrays are always load/store variables in main memory
+      // TODO: Theoretically some program may want an array on ZP. How to support that?
+      config.addSetting("array_ma_mem", log, StatementSource.NONE);
+      // Global struct values are always load/store variables in main memory
+      // TODO: Global structs can be SSA (and then unwound) which can optimize some programs. How to support that?
+      config.addSetting("global_struct_ma_mem", log, StatementSource.NONE);
+      // Parameters are always passed using single-static-assignment
+      // TODO: Compilation Unit support will require parameters that are not SSA. How to specify that?
+      config.addSetting("parameter_ssa", log, StatementSource.NONE);
+      // Pointers are always on zeropage
+      // TODO: Pointers can technically exist in main-memory and be moved to ZP on every use. How to specify that?
+      config.addSetting("pointer_zp", log, StatementSource.NONE);
+   }
 
    /** The different scopes. */
    public enum Scope {
@@ -89,7 +139,7 @@ public class VariableBuilderConfig {
     */
    private Map<ScopeType, Setting> settings;
 
-   VariableBuilderConfig() {
+   public VariableBuilderConfig() {
       this.settings = new HashMap<>();
    }
 
@@ -99,10 +149,14 @@ public class VariableBuilderConfig {
       List<Type> types = getTypes(paramElements);
       Optimization optimization = getOptimization(paramElements);
       MemoryArea memoryArea = getMemoryArea(paramElements);
-      if(memoryArea == null || optimization == null || paramElements.size() > 0)
+      if((memoryArea == null && optimization == null) || paramElements.size() > 0)
          throw new CompileError("Warning: Malformed var_model parameter " + pragmaParam, statementSource);
       for(Scope scope : scopes) {
          for(Type type : types) {
+            if(memoryArea == null)
+               memoryArea = getSetting(scope, type).memoryArea;
+            if(optimization == null)
+               optimization = getSetting(scope, type).optimization;
             settings.put(new ScopeType(scope, type), new Setting(scope, type, memoryArea, optimization));
          }
       }
@@ -166,6 +220,8 @@ public class VariableBuilderConfig {
     * @return The matched memory area.
     */
    private MemoryArea getMemoryArea(List<String> paramElements) {
+      if(paramElements.size() == 0)
+         return null;
       final String paramElement = paramElements.get(0);
       if(paramElement.equals("mem")) {
          paramElements.remove(0);
@@ -185,6 +241,8 @@ public class VariableBuilderConfig {
     * @return The matched optimization.
     */
    private Optimization getOptimization(List<String> paramElements) {
+      if(paramElements.size() == 0)
+         return null;
       final String paramElement = paramElements.get(0);
       if(paramElement.equals("ssa")) {
          paramElements.remove(0);

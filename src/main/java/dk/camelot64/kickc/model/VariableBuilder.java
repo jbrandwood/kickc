@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -49,24 +48,6 @@ public class VariableBuilder {
       this.directives = directives;
       this.dataSegment = dataSegment;
       this.config = config;
-   }
-
-   public static VariableBuilderConfig getDefaultConfig(CompileLog log) {
-      VariableBuilderConfig config = new VariableBuilderConfig();
-
-      //config.addSetting("ssa_mem", log, null);
-      //config.addSetting("pointer_ssa_zp", log, null);
-      //config.addSetting("array_ma_mem", log, null);
-      //config.addSetting("global_struct_ma_mem", log, null);
-
-      //config.addSetting("ma_mem", log, null);
-      //config.addSetting("pointer_ma_zp", log, null);
-      //config.addSetting("parameter_ssa_mem", log, null);
-
-      config.addSetting("ssa_zp", log, null);
-      config.addSetting("array_ma_mem", log, null);
-      config.addSetting("global_struct_ma_mem", log, null);
-      return config;
    }
 
    /**

@@ -58,7 +58,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
-      this.variableBuilderConfig = VariableBuilder.getDefaultConfig(program.getLog());
+      VariableBuilderConfig config = new VariableBuilderConfig();
+      VariableBuilderConfig.defaultPreConfig(config, program.getLog());
+      VariableBuilderConfig.defaultPostConfig(config, program.getLog());
+      this.variableBuilderConfig = config;
       scopeStack.push(program.getScope());
    }
 
@@ -104,10 +107,22 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) {
-      this.variableBuilderConfig = VariableBuilder.getDefaultConfig(program.getLog());
-      for(TerminalNode varModel : ctx.NAME()) {
-         variableBuilderConfig.addSetting(varModel.getText(), program.getLog(), new StatementSource(ctx));
+      List<TerminalNode> settings = new ArrayList<>(ctx.NAME());
+      // Detect if the first setting is "full"
+      boolean full = false;
+      if(settings.size() > 0 && settings.get(0).getText().equals(VariableBuilderConfig.SETTING_FULL)) {
+         full = true;
+         settings = settings.subList(1, settings.size());
       }
+      VariableBuilderConfig config = new VariableBuilderConfig();
+      if(!full)
+         VariableBuilderConfig.defaultPreConfig(config, program.getLog());
+      for(TerminalNode varModel : settings) {
+         config.addSetting(varModel.getText(), program.getLog(), new StatementSource(ctx));
+      }
+      if(!full)
+         VariableBuilderConfig.defaultPostConfig(config, program.getLog());
+      this.variableBuilderConfig = config;
       return null;
    }
 
@@ -583,16 +598,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment, variableBuilderConfig);
          Variable variable = varBuilder.build();
          boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
-         if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember && variable.getRegister()==null)) {
-               // Set initial value
-               ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
-               variable.setInitValue(constInitValue);
-               // Add comments to constant
-               variable.setComments(ensureUnusedComments(declVarComments));
-            } else if(!variable.isKindConstant() && !declVarStructMember) {
-               Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(declVarComments));
-               sequence.addStatement(initStmt);
-            }
+         if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember && variable.getRegister() == null)) {
+            // Set initial value
+            ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
+            variable.setInitValue(constInitValue);
+            // Add comments to constant
+            variable.setComments(ensureUnusedComments(declVarComments));
+         } else if(!variable.isKindConstant() && !declVarStructMember) {
+            Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(declVarComments));
+            sequence.addStatement(initStmt);
+         }
          if(initializer != null)
             PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
          return null;

@@ -33,6 +33,9 @@ public class StatementSource implements Serializable {
       this.stopIndex = stopIndex;
    }
 
+   /** An empty statement source. */
+   public static StatementSource NONE = new StatementSource(null, null, null, 0, 0);
+
    public StatementSource(Token tokenStart, Token tokenStop) {
       if(tokenStart != null) {
          this.startIndex = tokenStart.getStartIndex();

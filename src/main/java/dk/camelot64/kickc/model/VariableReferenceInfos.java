@@ -4,7 +4,10 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -209,6 +212,9 @@ public class VariableReferenceInfos {
     */
    public Collection<VariableRef> getDefinedVars(Statement stmt) {
       Collection<ReferenceToSymbolVar> referenceToSymbolVars = statementVarReferences.get(stmt.getIndex());
+      // TODO: This may cause problems since it is a sign that the maps are out of date!
+      if(referenceToSymbolVars==null)
+         return new ArrayList<>();
       return referenceToSymbolVars
             .stream()
             .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
@@ -301,24 +307,36 @@ public class VariableReferenceInfos {
    }
 
    /**
-    * Get the index of the statement defining a variable
+    * Get the index of the statement defining a variable. Only returns if there is exactly one defining statement.
     *
     * @param variableRef The variable to look for
     * @return Index of the defining statement
     */
    public Integer getVarDefineStatement(VariableRef variableRef) {
-      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(variableRef);
+      final Collection<Integer> stmts = getVarDefineStatements(variableRef);
+      if(stmts.size() == 1)
+         return stmts.iterator().next();
+      else
+         return null;
+   }
+
+
+   /**
+    * Get all statements defining a variable
+    *
+    * @param varRef The variable to look for
+    * @return Index of all statements defining the variable (ie. assigning a value to it)
+    */
+   public Collection<Integer> getVarDefineStatements(VariableRef varRef) {
       LinkedHashSet<Integer> stmts = new LinkedHashSet<>();
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(varRef);
       if(refs != null) {
-         Optional<ReferenceToSymbolVar> refDefine = refs.stream()
+         refs.stream()
                .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInStatement)
                .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.DEFINE.equals(referenceToSymbolVar.getReferenceType()))
-               .findFirst();
-         if(refDefine.isPresent()) {
-            return ((ReferenceInStatement) refDefine.get()).getStatementIdx();
-         }
+               .forEach(referenceToSymbolVar -> stmts.add(((ReferenceInStatement) referenceToSymbolVar).statementIdx));
       }
-      return null;
+      return stmts;
    }
 
 

@@ -11,7 +11,9 @@
   .label print_line_cursor = $400
   .label print_char_cursor = 2
 main: {
+    // sin8s_gen(sintab2, wavelength)
     jsr sin8s_gen
+    // print_cls()
     jsr print_cls
     lda #<print_line_cursor
     sta.z print_char_cursor
@@ -19,15 +21,20 @@ main: {
     sta.z print_char_cursor+1
     ldx #0
   __b1:
+    // sb = sintab2[i]-(signed byte)sintabref[i]
     lda sintab2,x
     sec
     sbc sintabref,x
+    // print_sbyte(sb)
     sta.z print_sbyte.b
     jsr print_sbyte
+    // print_str("  ")
     jsr print_str
+    // for(byte i: 0..191)
     inx
     cpx #$c0
     bne __b1
+    // }
     rts
     str: .text "  "
     .byte 0
@@ -41,15 +48,19 @@ print_str: {
     lda #>main.str
     sta.z str+1
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -64,16 +75,22 @@ print_str: {
 // print_sbyte(signed byte zp(4) b)
 print_sbyte: {
     .label b = 4
+    // if(b<0)
     lda.z b
     bmi __b1
+    // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
+    // print_byte((byte)b)
     jsr print_byte
+    // }
     rts
   __b1:
+    // print_char('-')
     lda #'-'
     jsr print_char
+    // b = -b
     lda.z b
     eor #$ff
     clc
@@ -84,36 +101,46 @@ print_sbyte: {
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte zp(4) b)
 print_byte: {
     .label b = 4
+    // b>>4
     lda.z b
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     and.z b
+    // print_char(print_hextab[b&$f])
     tay
     lda print_hextab,y
     jsr print_char
+    // }
     rts
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -128,17 +155,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1
@@ -156,7 +187,10 @@ sin8s_gen: {
     // Iterate over the table
     .label x = $a
     .label i = 2
+    // div16u(PI2_u4f12, wavelength)
     jsr div16u
+    // div16u(PI2_u4f12, wavelength)
+    // step = div16u(PI2_u4f12, wavelength)
     lda #<sintab2
     sta.z sintab
     lda #>sintab2
@@ -168,6 +202,7 @@ sin8s_gen: {
     sta.z i+1
   // u[4.12]
   __b1:
+    // for( word i=0; i<wavelength; i++)
     lda.z i+1
     cmp #>wavelength
     bcc __b2
@@ -176,19 +211,24 @@ sin8s_gen: {
     cmp #<wavelength
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // sin8s(x)
     lda.z x
     sta.z sin8s.x
     lda.z x+1
     sta.z sin8s.x+1
     jsr sin8s
+    // *sintab++ = sin8s(x)
     ldy #0
     sta (sintab),y
+    // *sintab++ = sin8s(x);
     inc.z sintab
     bne !+
     inc.z sintab+1
   !:
+    // x = x + step
     lda.z x
     clc
     adc.z step
@@ -196,6 +236,7 @@ sin8s_gen: {
     lda.z x+1
     adc.z step+1
     sta.z x+1
+    // for( word i=0; i<wavelength; i++)
     inc.z i
     bne !+
     inc.z i+1
@@ -216,6 +257,7 @@ sin8s: {
     .label usinx = $12
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = 4
+    // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
     bcc b1
@@ -224,6 +266,7 @@ sin8s: {
     cmp #<PI_u4f12
     bcc b1
   !:
+    // x = x - PI_u4f12
     lda.z x
     sec
     sbc #<PI_u4f12
@@ -238,6 +281,7 @@ sin8s: {
     lda #0
     sta.z isUpper
   __b1:
+    // if(x >= PI_HALF_u4f12 )
     lda.z x+1
     cmp #>PI_HALF_u4f12
     bcc __b2
@@ -246,6 +290,7 @@ sin8s: {
     cmp #<PI_HALF_u4f12
     bcc __b2
   !:
+    // x = PI_u4f12 - x
     sec
     lda #<PI_u4f12
     sbc.z x
@@ -254,62 +299,87 @@ sin8s: {
     sbc.z x+1
     sta.z x+1
   __b2:
+    // x<<3
     asl.z __4
     rol.z __4+1
     asl.z __4
     rol.z __4+1
     asl.z __4
     rol.z __4+1
+    // x1 = >x<<3
     lda.z __4+1
     sta.z x1
+    // mulu8_sel(x1, x1, 0)
     tax
     tay
     lda #0
     sta.z mulu8_sel.select
     jsr mulu8_sel
+    // mulu8_sel(x1, x1, 0)
+    // x2 = mulu8_sel(x1, x1, 0)
+    // mulu8_sel(x2, x1, 1)
     tax
     ldy.z x1
     lda #1
     sta.z mulu8_sel.select
     jsr mulu8_sel
+    // mulu8_sel(x2, x1, 1)
+    // x3 = mulu8_sel(x2, x1, 1)
     sta.z x3
+    // mulu8_sel(x3, DIV_6, 1)
     tax
     lda #1
     sta.z mulu8_sel.select
     ldy #DIV_6
     jsr mulu8_sel
+    // mulu8_sel(x3, DIV_6, 1)
+    // x3_6 = mulu8_sel(x3, DIV_6, 1)
+    // usinx = x1 - x3_6
     eor #$ff
     sec
     adc.z x1
     sta.z usinx
+    // mulu8_sel(x3, x1, 0)
     ldx.z x3
     ldy.z x1
     lda #0
     sta.z mulu8_sel.select
     jsr mulu8_sel
+    // mulu8_sel(x3, x1, 0)
+    // x4 = mulu8_sel(x3, x1, 0)
+    // mulu8_sel(x4, x1, 0)
     tax
     ldy.z x1
     lda #0
     sta.z mulu8_sel.select
     jsr mulu8_sel
+    // mulu8_sel(x4, x1, 0)
+    // x5 = mulu8_sel(x4, x1, 0)
+    // x5_128 = x5>>4
     lsr
     lsr
     lsr
     lsr
+    // usinx = usinx + x5_128
     clc
     adc.z usinx
     tax
+    // if(usinx>=128)
     cpx #$80
     bcc __b3
+    // usinx--;
     dex
   __b3:
+    // if(isUpper!=0)
     lda.z isUpper
     cmp #0
     beq __b14
+    // sinx = -(signed byte)usinx
     txa
     eor #$ff
     clc
     adc #1
+    // }
     rts
   __b14:
     txa
@@ -322,8 +392,10 @@ mulu8_sel: {
     .label __0 = 6
     .label __1 = 6
     .label select = 5
+    // mul8u(v1, v2)
     tya
     jsr mul8u
+    // mul8u(v1, v2)<<select
     ldy.z select
     beq !e+
   !:
@@ -332,7 +404,9 @@ mulu8_sel: {
     dey
     bne !-
   !e:
+    // >mul8u(v1, v2)<<select
     lda.z __1+1
+    // }
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -341,20 +415,26 @@ mul8u: {
     .label mb = 8
     .label res = 6
     .label return = 6
+    // mb = b
     sta.z mb
     lda #0
     sta.z mb+1
     sta.z res
     sta.z res+1
   __b1:
+    // while(a!=0)
     cpx #0
     bne __b2
+    // }
     rts
   __b2:
+    // a&1
     txa
     and #1
+    // if( (a&1) != 0)
     cmp #0
     beq __b3
+    // res = res + mb
     lda.z res
     clc
     adc.z mb
@@ -363,9 +443,11 @@ mul8u: {
     adc.z mb+1
     sta.z res+1
   __b3:
+    // a = a>>1
     txa
     lsr
     tax
+    // mb = mb<<1
     asl.z mb
     rol.z mb+1
     jmp __b1
@@ -376,7 +458,10 @@ mul8u: {
 // Implemented using simple binary division
 div16u: {
     .label return = $e
+    // divr16u(dividend, divisor, 0)
     jsr divr16u
+    // divr16u(dividend, divisor, 0)
+    // }
     rts
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -401,20 +486,28 @@ divr16u: {
     sta.z rem
     sta.z rem+1
   __b1:
+    // rem = rem << 1
     asl.z rem
     rol.z rem+1
+    // >dividend
     lda.z dividend+1
+    // >dividend & $80
     and #$80
+    // if( (>dividend & $80) != 0 )
     cmp #0
     beq __b2
+    // rem = rem | 1
     lda #1
     ora.z rem
     sta.z rem
   __b2:
+    // dividend = dividend << 1
     asl.z dividend
     rol.z dividend+1
+    // quotient = quotient << 1
     asl.z quotient
     rol.z quotient+1
+    // if(rem>=divisor)
     lda.z rem+1
     cmp #>wavelength
     bcc __b3
@@ -423,10 +516,12 @@ divr16u: {
     cmp #<wavelength
     bcc __b3
   !:
+    // quotient++;
     inc.z quotient
     bne !+
     inc.z quotient+1
   !:
+    // rem = rem - divisor
     lda.z rem
     sec
     sbc #<wavelength
@@ -435,9 +530,11 @@ divr16u: {
     sbc #>wavelength
     sta.z rem+1
   __b3:
+    // for( byte i : 0..15)
     inx
     cpx #$10
     bne __b1
+    // }
     rts
 }
   print_hextab: .text "0123456789abcdef"

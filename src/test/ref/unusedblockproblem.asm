@@ -5,6 +5,7 @@
 main: {
     .label SCREEN = $400
   __b1:
+    // (*SCREEN)++;
     inc SCREEN
     jmp __b1
 }

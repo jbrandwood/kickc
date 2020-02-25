@@ -18,8 +18,10 @@ main: {
     sta.z i
     sta.z i+1
   __b1:
+    // (byte)i
     lda.z i
     tax
+    // points[i] = { 2, (byte)i }
     asl
     sta.z __3
     lda.z i+1
@@ -44,6 +46,7 @@ main: {
     sta.z __6+1
     txa
     sta (__6),y
+    // for( word i: 0..499)
     inc.z i
     bne !+
     inc.z i+1
@@ -58,6 +61,7 @@ main: {
     sta.z i1
     sta.z i1+1
   __b2:
+    // SCREEN[i] = points[i]
     lda.z i1
     asl
     sta.z __4
@@ -85,6 +89,7 @@ main: {
     iny
     cpy #SIZEOF_STRUCT_POINT
     bne !-
+    // for( word i: 0..499)
     inc.z i1
     bne !+
     inc.z i1+1
@@ -95,6 +100,7 @@ main: {
     lda.z i1
     cmp #<$1f4
     bne __b2
+    // }
     rts
 }
   points: .fill 2*$1f4, 0

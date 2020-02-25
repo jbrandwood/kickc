@@ -12,6 +12,7 @@ main: {
     lda #>-$a
     sta.z i+1
   __b1:
+    // sc = SCREEN + i
     lda #<SCREEN
     clc
     adc.z i
@@ -19,9 +20,12 @@ main: {
     lda #>SCREEN
     adc.z i+1
     sta.z sc+1
+    // (char)i
     lda.z i
+    // *sc = (char)i
     ldy #0
     sta (sc),y
+    // for (signed word i : -10..10 )
     inc.z i
     bne !+
     inc.z i+1
@@ -32,5 +36,6 @@ main: {
     lda.z i
     cmp #<$b
     bne __b1
+    // }
     rts
 }

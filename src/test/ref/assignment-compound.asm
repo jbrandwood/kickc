@@ -8,66 +8,84 @@
   .const RED = 2
   .label screen2 = screen1+$28
 main: {
+    // test(i++, a)
     ldx #0
     lda #3
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #1
     lda #3+1
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #2
     lda #3+1-1
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #3
     lda #(3+1-1)*6
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #4
     lda #(3+1-1)*6/2
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #5
     lda #(3+1-1)*6/2&2-1
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #6
     lda #((3+1-1)*6/2&2-1)<<2
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #7
     lda #((3+1-1)*6/2&2-1)<<2>>1
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #8
     lda #((3+1-1)*6/2&2-1)<<2>>1^6
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #9
     lda #((3+1-1)*6/2&2-1)<<2>>1^6|1
     sta.z test.a
     jsr test
+    // test(i++, a)
     ldx #$a
     lda #(((3+1-1)*6/2&2-1)<<2>>1^6|1)&1
     sta.z test.a
     jsr test
+    // }
     rts
 }
 // test(byte register(X) i, byte zp(2) a)
 test: {
     .label a = 2
+    // screen1[i] = a
     lda.z a
     sta screen1,x
+    // screen2[i] = ref[i]
     lda ref,x
     sta screen2,x
+    // if(ref[i]==a)
     lda ref,x
     cmp.z a
     beq __b1
+    // cols[i] = RED
     lda #RED
     sta cols,x
+    // }
     rts
   __b1:
+    // cols[i] = GREEN
     lda #GREEN
     sta cols,x
     rts

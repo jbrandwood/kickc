@@ -6,17 +6,23 @@
   .label lda = $400
 main: {
     .label jmp = 1
+    // *lda = jmp
     lda #jmp
     sta lda
+    // bne(jmp)
     jsr bne
+    // asm
     // Inline asm using the mnemonics
     lda a
     rts
   a:
+    // }
     rts
 }
 bne: {
+    // lda[1] = jsr
     lda #main.jmp
     sta lda+1
+    // }
     rts
 }

@@ -6,9 +6,11 @@ main: {
     .label SCREEN = $400
     .const p_x = 4
     .const p_y = 7
+    // *SCREEN = p
     lda #p_x
     sta SCREEN
     lda #p_y
     sta SCREEN+OFFSET_STRUCT_POINTDEF_Y
+    // }
     rts
 }

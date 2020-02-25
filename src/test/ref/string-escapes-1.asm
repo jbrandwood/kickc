@@ -19,29 +19,39 @@ main: {
     lda #>MESSAGE
     sta.z msg+1
   __b1:
+    // while(*msg)
     ldy #0
     lda (msg),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // case '\n':
+    //                 line += 0x28;
+    //                 cursor = line;
+    //                 break;
     lda #'\n'
     ldy #0
     cmp (msg),y
     beq __b3
+    // *cursor++ = *msg
     lda (msg),y
     sta (cursor),y
+    // *cursor++ = *msg;
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
   __b5:
+    // msg++;
     inc.z msg
     bne !+
     inc.z msg+1
   !:
     jmp __b1
   __b3:
+    // line += 0x28
     lda #$28
     clc
     adc.z line

@@ -9,9 +9,12 @@
   .const DVAL = $20000
   .label SCREEN = $400
 main: {
+    // SCREEN[0] = <(word)(DVAL/$400)
     lda #<DVAL/$400
     sta SCREEN
+    // SCREEN[1] = >(word)(DVAL/$400)
     lda #0
     sta SCREEN+1
+    // }
     rts
 }

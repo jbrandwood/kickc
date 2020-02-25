@@ -5,10 +5,12 @@
 main: {
     .label getScreen1_return = 2
     .label spritePtr1_return = 2
+    // return screens[id];
     lda screens
     sta.z getScreen1_return
     lda screens+1
     sta.z getScreen1_return+1
+    // screen+$378
     clc
     lda.z spritePtr1_return
     adc #<$378
@@ -16,9 +18,11 @@ main: {
     lda.z spritePtr1_return+1
     adc #>$378
     sta.z spritePtr1_return+1
+    // *spritePtr(screen) = $22
     lda #$22
     ldy #0
     sta (spritePtr1_return),y
+    // }
     rts
 }
   screens: .word $400, $1400

@@ -9,6 +9,7 @@ main: {
     sta.z w
     sta.z w+1
   __b1:
+    // w = w + j
     txa
     clc
     adc.z w
@@ -16,8 +17,10 @@ main: {
     bcc !+
     inc.z w+1
   !:
+    // for ( byte j : 0..10)
     inx
     cpx #$b
     bne __b1
+    // }
     rts
 }

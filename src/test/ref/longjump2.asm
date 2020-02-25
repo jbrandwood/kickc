@@ -3,14 +3,18 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // long1()
     jsr long1
+    // long2()
     jsr long2
+    // }
     rts
 }
 long2: {
     .label SCREEN = $400
     ldx #0
   __b1:
+    // asm
     nop
     nop
     nop
@@ -267,19 +271,23 @@ long2: {
     nop
     nop
     nop
+    // SCREEN[i] = i
     txa
     sta SCREEN,x
+    // for(byte i : 0..10)
     inx
     cpx #$b
     beq !__b1+
     jmp __b1
   !__b1:
+    // }
     rts
 }
 long1: {
     .label SCREEN = $400
     ldx #0
   __b1:
+    // asm
     nop
     nop
     nop
@@ -536,12 +544,15 @@ long1: {
     nop
     nop
     nop
+    // SCREEN[i] = i
     txa
     sta SCREEN,x
+    // for(byte i : 0..10)
     inx
     cpx #$b
     beq !__b1+
     jmp __b1
   !__b1:
+    // }
     rts
 }

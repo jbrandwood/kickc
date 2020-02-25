@@ -21,6 +21,7 @@ main: {
     sta.z idx
     sta.z idx+1
   __b1:
+    // screen[idx] = STAR
     lda.z idx
     clc
     adc #<screen
@@ -31,17 +32,23 @@ main: {
     lda #STAR
     ldy #0
     sta (__15),y
+    // x = x + 1
     inc.z x
+    // idx = idx + 1
     inc.z idx
     bne !+
     inc.z idx+1
   !:
+    // e = e+yd
     txa
     axs #-[y1]
+    // if(xd<e)
     cpx #x1
     bcc __b2
     beq __b2
+    // y = y+1
     inc.z y
+    // idx  = idx + 40
     lda #$28
     clc
     adc.z idx
@@ -49,11 +56,14 @@ main: {
     bcc !+
     inc.z idx+1
   !:
+    // e = e - xd
     txa
     axs #x1
   __b2:
+    // while (x<(x1+1))
     lda.z x
     cmp #x1+1
     bcc __b1
+    // }
     rts
 }

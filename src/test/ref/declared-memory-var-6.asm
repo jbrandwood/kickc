@@ -14,32 +14,46 @@ main: {
     .const default_zp_abs = '.'
     .const default_mem_flex = '.'
     .const default_mem_abs = '.'
+    // out(reg_zp_flex)
     ldx #0
     lda #reg_zp_flex
     jsr out
+    // out(reg_zp_abs)
     lda #reg_zp_abs
     jsr out
+    // out(reg_mem_flex)
     lda #reg_mem_flex
     jsr out
+    // out(reg_mem_abs)
     lda #reg_mem_abs
     jsr out
+    // out(default_default)
     lda #default_default
     jsr out
+    // out(reg_default)
     lda #reg_default
     jsr out
+    // out(default_zp_flex)
     lda #default_zp_flex
     jsr out
+    // out(default_zp_abs)
     lda #default_zp_abs
     jsr out
+    // out(default_mem_flex)
     lda #default_mem_flex
     jsr out
+    // out(default_mem_abs)
     lda #default_mem_abs
     jsr out
+    // }
     rts
 }
 // out(byte register(A) c)
 out: {
+    // SCREEN[i++] = c
     sta SCREEN,x
+    // SCREEN[i++] = c;
     inx
+    // }
     rts
 }

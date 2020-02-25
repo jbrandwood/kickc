@@ -13,36 +13,50 @@
   .label SCREEN = $400
   .const plots_cnt = 8
 main: {
+    // *BGCOL = 0
     lda #0
     sta BGCOL
+    // *FGCOL = 0
     sta FGCOL
+    // *D011 = BMM|DEN|RSEL|3
     lda #BMM|DEN|RSEL|3
     sta D011
+    // *D018 = (byte)(((word)SCREEN/$40)|((word)BITMAP/$400))
     lda #SCREEN/$40|BITMAP/$400
     sta D018
+    // init_screen()
     jsr init_screen
+    // init_plot_tables()
     jsr init_plot_tables
   __b1:
+    // while (*RASTER!=$ff)
     lda #$ff
     cmp RASTER
     bne __b1
+    // (*BGCOL)++;
     inc BGCOL
+    // plots()
     jsr plots
+    // (*BGCOL)--;
     dec BGCOL
     jmp __b1
 }
 plots: {
     ldx #0
   __b1:
+    // for(byte i=0; i<plots_cnt;i++)
     cpx #plots_cnt
     bcc __b2
+    // }
     rts
   __b2:
+    // plot(plots_x[i], plots_y[i])
     lda plots_x,x
     sta.z plot.x
     lda plots_y,x
     sta.z plot.y
     jsr plot
+    // for(byte i=0; i<plots_cnt;i++)
     inx
     jmp __b1
 }
@@ -53,20 +67,25 @@ plot: {
     .label plotter_x = 3
     .label plotter_y = 5
     .label plotter = 3
+    // >plotter_x = plot_xhi[x]
     ldy.z x
     lda plot_xhi,y
     sta.z plotter_x+1
     lda #<0
     sta.z plotter_x
+    // <plotter_x = plot_xlo[x]
     lda plot_xlo,y
     sta.z plotter_x
+    // >plotter_y = plot_yhi[y]
     ldy.z y
     lda plot_yhi,y
     sta.z plotter_y+1
     lda #<0
     sta.z plotter_y
+    // <plotter_y = plot_ylo[y]
     lda plot_ylo,y
     sta.z plotter_y
+    // plotter = plotter_x+plotter_y
     lda.z plotter
     clc
     adc.z plotter_y
@@ -74,12 +93,15 @@ plot: {
     lda.z plotter+1
     adc.z plotter_y+1
     sta.z plotter+1
+    // *plotter | plot_bit[x]
     ldy #0
     lda (plotter),y
     ldy.z x
     ora plot_bit,y
+    // *plotter = *plotter | plot_bit[x]
     ldy #0
     sta (plotter),y
+    // }
     rts
 }
 init_plot_tables: {
@@ -88,20 +110,27 @@ init_plot_tables: {
     ldy #$80
     ldx #0
   __b1:
+    // x&$f8
     txa
     and #$f8
+    // plot_xlo[x] = x&$f8
     sta plot_xlo,x
+    // plot_xhi[x] = >BITMAP
     lda #>BITMAP
     sta plot_xhi,x
+    // plot_bit[x] = bits
     tya
     sta plot_bit,x
+    // bits = bits/2
     tya
     lsr
     tay
+    // if(bits==0)
     cpy #0
     bne __b2
     ldy #$80
   __b2:
+    // for(byte x : 0..255)
     inx
     cpx #0
     bne __b1
@@ -110,16 +139,24 @@ init_plot_tables: {
     sta.z yoffs+1
     tax
   __b3:
+    // y&$7
     lda #7
     sax.z __9
+    // <yoffs
     lda.z yoffs
+    // y&$7 | <yoffs
     ora.z __9
+    // plot_ylo[y] = y&$7 | <yoffs
     sta plot_ylo,x
+    // >yoffs
     lda.z yoffs+1
+    // plot_yhi[y] = >yoffs
     sta plot_yhi,x
+    // if((y&$7)==7)
     lda #7
     cmp.z __9
     bne __b4
+    // yoffs = yoffs + 40*8
     clc
     lda.z yoffs
     adc #<$28*8
@@ -128,9 +165,11 @@ init_plot_tables: {
     adc #>$28*8
     sta.z yoffs+1
   __b4:
+    // for(byte y : 0..255)
     inx
     cpx #0
     bne __b3
+    // }
     rts
 }
 init_screen: {
@@ -141,6 +180,7 @@ init_screen: {
     lda #>BITMAP
     sta.z b+1
   __b1:
+    // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
     lda.z b+1
     cmp #>BITMAP+$2000
     bne __b2
@@ -152,26 +192,32 @@ init_screen: {
     lda #>SCREEN
     sta.z c+1
   __b3:
+    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
     lda.z c+1
     cmp #>SCREEN+$400
     bne __b4
     lda.z c
     cmp #<SCREEN+$400
     bne __b4
+    // }
     rts
   __b4:
+    // *c = $14
     lda #$14
     ldy #0
     sta (c),y
+    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
     inc.z c
     bne !+
     inc.z c+1
   !:
     jmp __b3
   __b2:
+    // *b = 0
     lda #0
     tay
     sta (b),y
+    // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
     inc.z b
     bne !+
     inc.z b+1

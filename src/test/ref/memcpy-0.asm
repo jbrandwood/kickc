@@ -16,8 +16,10 @@
   .label SCREEN_COPY = $2400
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
+    // *D018 = toD018(SCREEN_COPY, CHARSET)
     lda #toD0181_return
     sta D018
+    // memcpy(SCREEN_COPY, SCREEN, 0x0400)
     lda #<$400
     sta.z memcpy.num
     lda #>$400
@@ -31,9 +33,12 @@ main: {
     lda #>SCREEN
     sta.z memcpy.source+1
     jsr memcpy
+    // asm
     sei
+    // *PROCPORT = PROCPORT_RAM_CHARROM
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
+    // memcpy(CHARSET, CHARGEN, 0x0800)
     lda #<$800
     sta.z memcpy.num
     lda #>$800
@@ -47,9 +52,12 @@ main: {
     lda #>CHARGEN
     sta.z memcpy.source+1
     jsr memcpy
+    // *PROCPORT = PROCPORT_BASIC_KERNEL_IO
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
+    // asm
     cli
+    // }
     rts
 }
 // Copy block of memory (forwards)
@@ -62,6 +70,7 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
+    // src_end = (char*)source+num
     lda.z src_end
     clc
     adc.z source
@@ -70,17 +79,21 @@ memcpy: {
     adc.z source+1
     sta.z src_end+1
   __b1:
+    // while(src!=src_end)
     lda.z src+1
     cmp.z src_end+1
     bne __b2
     lda.z src
     cmp.z src_end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst++ = *src++
     ldy #0
     lda (src),y
     sta (dst),y
+    // *dst++ = *src++;
     inc.z dst
     bne !+
     inc.z dst+1

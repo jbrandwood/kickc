@@ -11,11 +11,13 @@ main: {
     .label i1 = 2
     ldx #0
   __b1:
+    // -(signed byte)i
     txa
     eor #$ff
     clc
     adc #1
     sta.z __2
+    // points[i] = { (signed byte)i, -(signed byte)i, (signed byte)i }
     txa
     asl
     stx.z $ff
@@ -28,12 +30,14 @@ main: {
     sta points+OFFSET_STRUCT_POINT_Y,y
     txa
     sta points+OFFSET_STRUCT_POINT_Z,y
+    // for( byte i: 0..3)
     inx
     cpx #4
     bne __b1
     lda #0
     sta.z i1
   __b2:
+    // SCREEN[i] = points[i]
     lda.z i1
     asl
     clc
@@ -46,10 +50,12 @@ main: {
     iny
     dex
     bne !-
+    // for( byte i: 0..3)
     inc.z i1
     lda #4
     cmp.z i1
     bne __b2
+    // }
     rts
 }
   points: .fill 3*4, 0

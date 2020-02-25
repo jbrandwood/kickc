@@ -8,11 +8,14 @@ main: {
     .label vp = wp
     .label bp = vp
     .label w = 2
+    // w = 1234
     lda #<$4d2
     sta.z w
     lda #>$4d2
     sta.z w+1
+    // *SCREEN = *bp
     lda.z bp
     sta SCREEN
+    // }
     rts
 }

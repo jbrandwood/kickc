@@ -23,6 +23,7 @@
   .label ypos = 8
   .label xvel = $a
 main: {
+    // init()
     jsr init
     lda #<$64
     sta.z yvel_init
@@ -42,9 +43,11 @@ main: {
     lda #>$64
     sta.z yvel_1+1
   __b1:
+    // while (*RASTER!=$ff)
     lda #$ff
     cmp RASTER
     bne __b1
+    // anim()
     jsr anim
     jmp __b1
 }
@@ -53,8 +56,10 @@ anim: {
     .label __7 = $e
     .label sprite_x = $c
     .label sprite_y = $e
+    // if(ypos<0)
     lda.z ypos+1
     bpl __b1
+    // xvel = -xvel
     sec
     lda #0
     sbc.z xvel
@@ -62,6 +67,7 @@ anim: {
     lda #0
     sbc.z xvel+1
     sta.z xvel+1
+    // yvel_init = yvel_init-10
     lda.z yvel_init
     sec
     sbc #$a
@@ -69,6 +75,7 @@ anim: {
     lda.z yvel_init+1
     sbc #>$a
     sta.z yvel_init+1
+    // if(yvel_init<-200)
     lda.z yvel_init
     cmp #<-$c8
     lda.z yvel_init+1
@@ -92,6 +99,7 @@ anim: {
     sta.z xpos
     sta.z xpos+1
   __b1:
+    // yvel + g
     clc
     lda.z yvel_1
     adc #<g
@@ -99,6 +107,7 @@ anim: {
     lda.z yvel_1+1
     adc #>g
     sta.z yvel_1+1
+    // xpos + xvel
     lda.z xpos
     clc
     adc.z xvel
@@ -106,6 +115,7 @@ anim: {
     lda.z xpos+1
     adc.z xvel+1
     sta.z xpos+1
+    // ypos + yvel
     lda.z ypos
     clc
     adc.z yvel_1
@@ -113,6 +123,7 @@ anim: {
     lda.z ypos+1
     adc.z yvel_1+1
     sta.z ypos+1
+    // xpos>>7
     lda.z xpos
     sta.z $ff
     lda.z xpos+1
@@ -126,6 +137,7 @@ anim: {
     rol.z $ff
     rol.z __5
     rol.z __5+1
+    // sprite_x = xpos>>7 + 160
     clc
     lda.z sprite_x
     adc #<$a0
@@ -133,6 +145,7 @@ anim: {
     lda.z sprite_x+1
     adc #>$a0
     sta.z sprite_x+1
+    // ypos>>5
     lda.z ypos
     sta.z $ff
     lda.z ypos+1
@@ -152,6 +165,7 @@ anim: {
     rol.z $ff
     rol.z __7
     rol.z __7+1
+    // sprite_y = 230 - ypos>>5
     lda #<$e6
     sec
     sbc.z sprite_y
@@ -159,27 +173,41 @@ anim: {
     lda #>$e6
     sbc.z sprite_y+1
     sta.z sprite_y+1
+    // (byte)sprite_x
     lda.z sprite_x
+    // SPRITES_XPOS[0] = (byte)sprite_x
     sta SPRITES_XPOS
+    // (byte)sprite_y
     lda.z sprite_y
+    // SPRITES_YPOS[0] = (byte)sprite_y
     sta SPRITES_YPOS
+    // >sprite_x
     lda.z sprite_x+1
+    // *SPRITES_XMSB = >sprite_x
     sta SPRITES_XMSB
+    // }
     rts
 }
 // Fill and show a sprite, clear the screen
 init: {
     .label sc = $a
+    // *SPRITES_ENABLE = %00000001
     lda #1
     sta SPRITES_ENABLE
+    // *SPRITES_EXPAND_X = 0
     lda #0
     sta SPRITES_EXPAND_X
+    // *SPRITES_EXPAND_Y = 0
     sta SPRITES_EXPAND_Y
+    // SPRITES_XPOS[0] = 100
     lda #$64
     sta SPRITES_XPOS
+    // SPRITES_YPOS[0] = 100
     sta SPRITES_YPOS
+    // SPRITES_COLS[0] = WHITE
     lda #WHITE
     sta SPRITES_COLS
+    // SPRITES_PTR[0] = (byte)(SPRITE/$40)
     lda #SPRITE/$40
     sta SPRITES_PTR
     lda #<SCREEN
@@ -187,6 +215,7 @@ init: {
     lda #>SCREEN
     sta.z sc+1
   __b1:
+    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -195,16 +224,21 @@ init: {
     bne __b2
     ldx #0
   __b3:
+    // SPRITE[i] = $ff
     lda #$ff
     sta SPRITE,x
+    // for(byte i : 0..63)
     inx
     cpx #$40
     bne __b3
+    // }
     rts
   __b2:
+    // *sc = ' '
     lda #' '
     ldy #0
     sta (sc),y
+    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
     inc.z sc
     bne !+
     inc.z sc+1

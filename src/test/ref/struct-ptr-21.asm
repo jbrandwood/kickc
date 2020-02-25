@@ -7,10 +7,13 @@
 main: {
     ldx #0
   __b1:
+    // for( char i=0;i<setting->len;i++)
     cpx settings
     bcc __b2
+    // }
     rts
   __b2:
+    // SCREEN[i] = setting->buf[i]
     txa
     asl
     tay
@@ -23,6 +26,7 @@ main: {
     iny
     lda ($fe),y
     sta SCREEN,y
+    // for( char i=0;i<setting->len;i++)
     inx
     jmp __b1
 }

@@ -5,7 +5,9 @@
   .label screen = $400
   .const b = 'a'
 main: {
+    // *screen = b
     lda #b
     sta screen
+    // }
     rts
 }

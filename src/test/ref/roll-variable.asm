@@ -8,6 +8,7 @@ main: {
     lda #0
     sta.z b
   __b1:
+    // $55 << b
     lda #$55
     ldy.z b
     cpy #0
@@ -17,11 +18,14 @@ main: {
     dey
     bne !-
   !e:
+    // screen[b] = $55 << b
     ldy.z b
     sta screen,y
+    // for( byte b: 0..7)
     inc.z b
     lda #8
     cmp.z b
     bne __b1
+    // }
     rts
 }

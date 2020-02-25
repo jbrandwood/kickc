@@ -6,10 +6,13 @@
   .const OFFSET_STRUCT_FOO_THING2 = 1
 main: {
     .label SCREEN = $400
+    // SCREEN[i++] = bar.thing1
     lda bar
     sta SCREEN
+    // SCREEN[i++] = bar.thing2
     lda bar+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
+    // }
     rts
 }
   bar: .byte 'a', 'b'

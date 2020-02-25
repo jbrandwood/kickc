@@ -10,6 +10,7 @@ main: {
     sta.z i
     sta.z i+1
   __b1:
+    // for( word i=0;i<1000;i+=40)
     lda.z i+1
     cmp #>$3e8
     bcc __b2
@@ -18,8 +19,10 @@ main: {
     cmp #<$3e8
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // screen[i] = 'a'
     lda.z i
     clc
     adc #<screen
@@ -30,6 +33,7 @@ main: {
     lda #'a'
     ldy #0
     sta (__1),y
+    // i+=40
     lda #$28
     clc
     adc.z i

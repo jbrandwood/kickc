@@ -2,6 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // asm
     lda #'a'
     ldx #$ff
   !:
@@ -11,5 +12,6 @@ main: {
     sta $700,x
     dex
     bne !-
+    // }
     rts
 }

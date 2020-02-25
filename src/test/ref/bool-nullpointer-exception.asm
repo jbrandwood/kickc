@@ -8,6 +8,7 @@ main: {
   b1:
     lda #0
   __b2:
+    // while(!framedone)
     cmp #0
     bne b1
     jmp __b2

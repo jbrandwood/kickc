@@ -17,23 +17,31 @@
 main: {
     // Transfer ZP-code to zeropage
     .label zpCode = zpLoop
+    // asm
     sei
     ldx #0
   __b1:
+    // for(char i=0;i<20;i++)
     cpx #$14
     bcc __b2
   __b3:
+    // while(*RASTER!=0xff)
     lda #$ff
     cmp RASTER
     bne __b3
+    // loop()
     jsr loop
+    // zpLoop()
     jsr zpLoop
+    // *BGCOL = 0
     lda #0
     sta BGCOL
     jmp __b3
   __b2:
+    // zpCode[i] = zpCodeData[i]
     lda zpCodeData,x
     sta zpCode,x
+    // for(char i=0;i<20;i++)
     inx
     jmp __b1
 }
@@ -41,10 +49,13 @@ main: {
 zpLoop: {
     ldx #0
   __b1:
+    // (*BGCOL)++;
     inc BGCOL
+    // for(char i:0..100)
     inx
     cpx #$65
     bne __b1
+    // }
     rts
 }
 .segment Code
@@ -52,10 +63,13 @@ zpLoop: {
 loop: {
     ldx #0
   __b1:
+    // (*BGCOL)--;
     dec BGCOL
+    // for(char i:0..100)
     inx
     cpx #$65
     bne __b1
+    // }
     rts
 }
 .segment Data

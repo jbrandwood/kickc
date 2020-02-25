@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // kickasm
   ff:
     jmp (main.f)
 
@@ -9,9 +10,12 @@ main: {
     .label f = 2
     ldx #0
   __b2:
+    // ++i;
     inx
+    // i&1
     txa
     and #1
+    // if((i&1)==0)
     cmp #0
     beq __b3
     lda #<fn2
@@ -25,17 +29,22 @@ main: {
     lda #>fn1
     sta.z f+1
   __b4:
+    // kickasm
     jsr ff
         
     jmp __b2
 }
 fn2: {
     .label BGCOL = $d021
+    // (*BGCOL)++;
     inc BGCOL
+    // }
     rts
 }
 fn1: {
     .label BORDERCOL = $d020
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // }
     rts
 }

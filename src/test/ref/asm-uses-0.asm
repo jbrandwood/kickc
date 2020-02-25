@@ -4,12 +4,16 @@
 .pc = $80d "Program"
   .label BGCOL = $d020
 main: {
+    // asm
     jsr init
+    // }
     rts
 }
 // Function only used inside the inline asm
 init: {
+    // *BGCOL = 0
     lda #0
     sta BGCOL
+    // }
     rts
 }

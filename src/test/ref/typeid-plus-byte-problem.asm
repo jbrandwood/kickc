@@ -6,7 +6,9 @@
 main: {
     .const ubc1 = $c+$d+$e
     .const ubc2 = $fa
+    // SCREEN[0] = ubc1+ubc2
     lda #ubc1+ubc2
     sta SCREEN
+    // }
     rts
 }

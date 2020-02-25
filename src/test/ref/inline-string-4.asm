@@ -5,12 +5,15 @@
   .label screen = $400
 main: {
     .label dw = msg
+    // output(dw)
     jsr output
+    // }
     rts
     msg: .text "camelot"
     .byte 0
 }
 output: {
+    // *screen = dw
     lda #<main.dw
     sta screen
     lda #>main.dw
@@ -19,5 +22,6 @@ output: {
     sta screen+2
     lda #>main.dw>>$10
     sta screen+3
+    // }
     rts
 }

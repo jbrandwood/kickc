@@ -293,14 +293,15 @@ public class Compiler {
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(() -> {
-         program.clearVariableReferenceInfos();
-         return false;
-      });
+      optimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
+      optimizations.add(() -> { program.clearStatementIndices(); return false; });
+      optimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
+      optimizations.add(() -> { program.clearStatementInfos(); return false; });
+      optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new PassNAddBooleanCasts(program));

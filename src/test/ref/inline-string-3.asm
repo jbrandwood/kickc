@@ -8,17 +8,22 @@ main: {
     .label PTR = $9ffe
     .label SCREEN = $400
     .label ptr = 2
+    // *PTR = <STRING
     lda #<STRING
     sta PTR
+    // *(PTR+1)= >STRING
     lda #>STRING
     sta PTR+1
+    // (byte*) { *(PTR+1), *PTR }
     lda PTR
     sta.z ptr
     lda PTR+1
     sta.z ptr+1
+    // *SCREEN = *ptr
     ldy #0
     lda (ptr),y
     sta SCREEN
+    // }
     rts
     STRING: .text "camelot"
 }

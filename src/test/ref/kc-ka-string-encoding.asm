@@ -2,11 +2,14 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // strTemp[2] = 'e'
   .encoding "petscii_mixed"
     lda #'e'
     sta strTemp+2
+    // strTemp[3] = 0
     lda #0
     sta strTemp+3
+    // asm
     tay
   loop:
     lda strTemp,y
@@ -15,6 +18,7 @@ main: {
     iny
     jmp loop
   done:
+    // }
     rts
 }
   strTemp: .text "v=X"

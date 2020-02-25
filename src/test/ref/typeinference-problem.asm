@@ -6,15 +6,19 @@
 main: {
     ldy #0
   __b1:
+    // 255-i
     tya
     eor #$ff
     tax
     axs #-$ff-1
+    // table[255-i] = 0
     lda #0
     sta table,x
+    // for( byte i:0..128)
     iny
     cpy #$81
     bne __b1
+    // }
     rts
 }
   table: .fill $100, 0

@@ -6,10 +6,13 @@ main: {
     ldx #0
   // Do some sums
   __b1:
+    // SCREEN[b] = 'a'
     lda #'a'
     sta SCREEN,x
+    // for(byte b: 0..10 )
     inx
     cpx #$b
     bne __b1
+    // }
     rts
 }

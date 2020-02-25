@@ -20,6 +20,7 @@ main: {
     .label s = 4
     .label j = 3
     .label i = 2
+    // print_cls()
     jsr print_cls
     lda #<$400
     sta.z print_line_cursor
@@ -34,6 +35,7 @@ main: {
     lda #0
     sta.z i
   __b1:
+    // w1 = swords[i]
     lda.z i
     asl
     tay
@@ -44,6 +46,7 @@ main: {
     lda #0
     sta.z j
   __b2:
+    // w2 = swords[j]
     lda.z j
     asl
     tay
@@ -53,15 +56,18 @@ main: {
     sta.z w2+1
     ldx #0
   __b3:
+    // compare(w1,w2,op)
     lda.z w1
     sta.z compare.w1
     lda.z w1+1
     sta.z compare.w1+1
     jsr compare
+    // if(++s==3)
     inc.z s
     lda #3
     cmp.z s
     bne __b4
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -70,13 +76,16 @@ main: {
     lda #0
     sta.z s
   __b4:
+    // for( byte op: 0..5 )
     inx
     cpx #6
     bne __b3
+    // for( byte j: 0..2)
     inc.z j
     lda #3
     cmp.z j
     bne __b2
+    // for( byte i: 0..2)
     inc.z i
     cmp.z i
     bne __b1
@@ -87,6 +96,7 @@ main: {
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -94,6 +104,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -102,6 +113,7 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Compare two words using an operator
@@ -111,24 +123,31 @@ compare: {
     .label w2 = $11
     .label ops = 5
     .label r = 7
+    // if(op==LT)
     cpx #LT
     bne !__b1+
     jmp __b1
   !__b1:
+    // if(op==LE)
     cpx #LE
     bne !__b2+
     jmp __b2
   !__b2:
+    // if(op==GT)
     cpx #GT
     bne !__b3+
     jmp __b3
   !__b3:
+    // if(op==GE)
     cpx #GE
     beq __b4
+    // if(op==EQ)
     cpx #EQ
     beq __b5
+    // if(op==NE)
     cpx #NE
     bne b2
+    // if(w1!=w2)
     lda.z w1
     cmp.z w2
     bne !+
@@ -155,17 +174,23 @@ compare: {
     sta.z ops
     sta.z ops+1
   __b6:
+    // print_sword(w1)
     jsr print_sword
+    // print_str(ops)
     jsr print_str
+    // print_sword(w2)
     lda.z w2
     sta.z print_sword.w
     lda.z w2+1
     sta.z print_sword.w+1
     jsr print_sword
+    // print_char(r)
     lda.z r
     jsr print_char
+    // }
     rts
   __b5:
+    // if(w1==w2)
     lda.z w1+1
     cmp.z w2+1
     bne b3
@@ -185,6 +210,7 @@ compare: {
     sta.z ops+1
     jmp __b6
   __b4:
+    // if(w1>=w2)
     lda.z w1
     cmp.z w2
     lda.z w1+1
@@ -207,6 +233,7 @@ compare: {
     sta.z ops+1
     jmp __b6
   __b3:
+    // if(w1>w2)
     lda.z w2
     cmp.z w1
     lda.z w2+1
@@ -228,6 +255,7 @@ compare: {
     sta.z ops+1
     jmp __b6
   __b2:
+    // if(w1<=w2)
     lda.z w2
     cmp.z w1
     lda.z w2+1
@@ -250,6 +278,7 @@ compare: {
     sta.z ops+1
     jmp __b6
   __b1:
+    // if(w1<w2)
     lda.z w1
     cmp.z w2
     lda.z w1+1
@@ -286,28 +315,37 @@ compare: {
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Print a signed word as HEX
 // print_sword(signed word zp($a) w)
 print_sword: {
     .label w = $a
+    // if(w<0)
     lda.z w+1
     bmi __b1
+    // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
+    // print_word((word)w)
     jsr print_word
+    // }
     rts
   __b1:
+    // print_char('-')
     lda #'-'
     jsr print_char
+    // w = -w
     sec
     lda #0
     sbc.z w
@@ -321,31 +359,39 @@ print_sword: {
 // print_word(word zp($a) w)
 print_word: {
     .label w = $a
+    // print_byte(>w)
     lda.z w+1
     sta.z print_byte.b
     jsr print_byte
+    // print_byte(<w)
     lda.z w
     sta.z print_byte.b
     jsr print_byte
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte zp($c) b)
 print_byte: {
     .label b = $c
+    // b>>4
     lda.z b
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     and.z b
+    // print_char(print_hextab[b&$f])
     tay
     lda print_hextab,y
     jsr print_char
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -353,15 +399,19 @@ print_byte: {
 print_str: {
     .label str = 5
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -374,7 +424,9 @@ print_str: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -389,17 +441,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1

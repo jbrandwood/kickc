@@ -5,7 +5,9 @@
   .label SCREEN = $400
 // The program entry point
 main: {
+    // *SCREEN = 'a'
     lda #'a'
     sta SCREEN
+    // }
     rts
 }

@@ -6,14 +6,18 @@
 main: {
     .label SCREEN = $400
     .label a = aa
+    // if(!a->b)
     lda #0
     cmp a
     bne !a+
+    // *SCREEN = 'a'
     lda #'a'
     sta SCREEN
+    // asm
     // ASMREL labels
     jmp !a+
   !a:
+    // }
     rts
 }
   aa: .byte 1

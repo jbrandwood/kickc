@@ -8,19 +8,25 @@
 main: {
     .label SCREEN = $400
     .label barp = bar
+    // SCREEN[i++] = barp->thing1
     lda barp
     sta SCREEN
+    // SCREEN[i++] = barp->thing2
     lda barp+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     ldx #2
     ldy #0
   __b1:
+    // SCREEN[i++] = barp->thing3[j]
     lda barp+OFFSET_STRUCT_FOO_THING3,y
     sta SCREEN,x
+    // SCREEN[i++] = barp->thing3[j];
     inx
+    // for( char j: 0..11)
     iny
     cpy #$c
     bne __b1
+    // }
     rts
 }
   bar: .byte 'a', 'b'

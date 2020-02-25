@@ -6,6 +6,7 @@
   .const STACK_BASE = $103
 main: {
     .label __0 = 2
+    // plus(0x1234, 0x2345)
     lda #>$1234
     pha
     lda #<$1234
@@ -21,10 +22,12 @@ main: {
     sta.z __0
     pla
     sta.z __0+1
+    // SCREEN[0] = plus(0x1234, 0x2345)
     lda.z __0
     sta SCREEN
     lda.z __0+1
     sta SCREEN+1
+    // }
     rts
 }
 // plus(word zp(2) a, word zp(4) b)
@@ -45,6 +48,7 @@ plus: {
     sta.z b
     lda STACK_BASE+OFFSET_STACK_B+1,x
     sta.z b+1
+    // return a+b;
     lda.z return
     clc
     adc.z b
@@ -52,6 +56,7 @@ plus: {
     lda.z return+1
     adc.z b+1
     sta.z return+1
+    // }
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x

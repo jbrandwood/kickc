@@ -4,6 +4,7 @@
   .label print_char_cursor = 6
   .label print_line_cursor = 2
 main: {
+    // print_str(msg)
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -13,6 +14,7 @@ main: {
     lda #>msg
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -22,27 +24,33 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str(msg2)
     lda #<msg2
     sta.z print_str.str
     lda #>msg2
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     jsr print_ln
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str(msg3)
     lda #<msg3
     sta.z print_str.str
     lda #>msg3
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     jsr print_ln
+    // }
     rts
 }
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -50,6 +58,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -58,6 +67,7 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -65,15 +75,19 @@ print_ln: {
 print_str: {
     .label str = 4
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1

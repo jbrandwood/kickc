@@ -28,26 +28,36 @@
   // Remainder after unsigned 16-bit division
   .label rem16u = $c
   .label xsin_idx = $23
+  // kickasm
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
+    // asm
     sei
+    // *BORDERCOL = WHITE
     lda #WHITE
     sta BORDERCOL
+    // *BGCOL2 = DARK_GREY
     lda #DARK_GREY
     sta BGCOL2
+    // *BGCOL = *BGCOL2 = DARK_GREY
     sta BGCOL
+    // *BGCOL3 = BLACK
     lda #BLACK
     sta BGCOL3
+    // *D018 = toD018(SCREEN, LOGO)
     lda #toD0181_return
     sta D018
+    // *D016 = VIC_MCM
     lda #VIC_MCM
     sta D016
+    // memset(SCREEN, BLACK, 1000)
     ldx #BLACK
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
     sta.z memset.str+1
     jsr memset
+    // memset(COLS, WHITE|8, 1000)
     ldx #WHITE|8
     lda #<COLS
     sta.z memset.str
@@ -56,13 +66,18 @@ main: {
     jsr memset
     ldx #0
   __b1:
+    // SCREEN[ch] = ch
     txa
     sta SCREEN,x
+    // for(byte ch: 0..239)
     inx
     cpx #$f0
     bne __b1
+    // sin16s_gen2(xsin, XSIN_SIZE, -320, 320)
     jsr sin16s_gen2
+    // loop()
     jsr loop
+    // }
     rts
 }
 loop: {
@@ -75,10 +90,13 @@ loop: {
   __b1:
   // Wait for the raster to reach the bottom of the screen
   __b2:
+    // while(*RASTER!=$ff)
     lda #$ff
     cmp RASTER
     bne __b2
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // xsin+xsin_idx
     lda.z xsin_idx
     asl
     sta.z __7
@@ -92,6 +110,7 @@ loop: {
     lda.z __2+1
     adc #>xsin
     sta.z __2+1
+    // xpos = *(xsin+xsin_idx)
     ldy #0
     lda (xpos),y
     pha
@@ -100,7 +119,9 @@ loop: {
     sta.z xpos+1
     pla
     sta.z xpos
+    // render_logo(xpos)
     jsr render_logo
+    // if(++xsin_idx==XSIN_SIZE)
     inc.z xsin_idx
     bne !+
     inc.z xsin_idx+1
@@ -115,6 +136,7 @@ loop: {
     sta.z xsin_idx
     sta.z xsin_idx+1
   __b4:
+    // (*BORDERCOL)--;
     dec BORDERCOL
     jmp __b1
 }
@@ -125,10 +147,15 @@ render_logo: {
     .label x_char = $14
     .label logo_idx = 2
     .label logo_idx_1 = 3
+    // (byte)xpos
     lda.z xpos
+    // (byte)xpos&7
     and #7
+    // VIC_MCM|((byte)xpos&7)
     ora #VIC_MCM
+    // *D016 = VIC_MCM|((byte)xpos&7)
     sta D016
+    // xpos/8
     lda.z xpos+1
     cmp #$80
     ror
@@ -144,47 +171,66 @@ render_logo: {
     cmp #$80
     ror.z __3+1
     ror.z __3
+    // x_char = (signed byte)(xpos/8)
     lda.z __3
     sta.z x_char
+    // if(xpos<0)
     lda.z xpos+1
     bmi __b1
     ldy #0
   __b2:
+    // while(screen_idx!=logo_start)
     cpy.z x_char
     bne __b3
     lda #0
     sta.z logo_idx
   __b5:
+    // while(screen_idx!=40)
     cpy #$28
     bne __b6
+    // }
     rts
   __b6:
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     lda.z logo_idx
     sta SCREEN,y
+    // logo_idx+40*line
     lda #$28*1
     clc
     adc.z logo_idx
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*1,y
+    // logo_idx+40*line
     lda #$28*2
     clc
     adc.z logo_idx
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*2,y
+    // logo_idx+40*line
     lda #$28*3
     clc
     adc.z logo_idx
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*3,y
+    // logo_idx+40*line
     lda #$28*4
     clc
     adc.z logo_idx
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*4,y
+    // logo_idx+40*line
     lda #$28*5
     clc
     adc.z logo_idx
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*5,y
+    // screen_idx++;
     iny
+    // logo_idx++;
     inc.z logo_idx
     jmp __b5
   __b3:
+    // (SCREEN+40*line)[screen_idx] = $00
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -192,9 +238,11 @@ render_logo: {
     sta SCREEN+$28*3,y
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
+    // screen_idx++;
     iny
     jmp __b2
   __b1:
+    // -x_char
     lda.z x_char
     eor #$ff
     clc
@@ -202,14 +250,17 @@ render_logo: {
     sta.z logo_idx_1
     ldy #0
   __b8:
+    // while(logo_idx!=40)
     lda #$28
     cmp.z logo_idx_1
     bne __b9
   __b11:
+    // while(screen_idx!=40)
     cpy #$28
     bne __b12
     rts
   __b12:
+    // (SCREEN+40*line)[screen_idx] = $00
     lda #0
     sta SCREEN,y
     sta SCREEN+$28*1,y
@@ -217,32 +268,46 @@ render_logo: {
     sta SCREEN+$28*3,y
     sta SCREEN+$28*4,y
     sta SCREEN+$28*5,y
+    // screen_idx++;
     iny
     jmp __b11
   __b9:
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     lda.z logo_idx_1
     sta SCREEN,y
+    // logo_idx+40*line
     lda #$28*1
     clc
     adc.z logo_idx_1
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*1,y
+    // logo_idx+40*line
     lda #$28*2
     clc
     adc.z logo_idx_1
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*2,y
+    // logo_idx+40*line
     lda #$28*3
     clc
     adc.z logo_idx_1
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*3,y
+    // logo_idx+40*line
     lda #$28*4
     clc
     adc.z logo_idx_1
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*4,y
+    // logo_idx+40*line
     lda #$28*5
     clc
     adc.z logo_idx_1
+    // (SCREEN+40*line)[screen_idx] = logo_idx+40*line
     sta SCREEN+$28*5,y
+    // screen_idx++;
     iny
+    // logo_idx++;
     inc.z logo_idx_1
     jmp __b8
 }
@@ -262,7 +327,10 @@ sin16s_gen2: {
     // Iterate over the table
     .label x = 4
     .label i = $23
+    // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
+    // div32u16u(PI2_u4f28, wavelength)
+    // step = div32u16u(PI2_u4f28, wavelength)
     lda #<xsin
     sta.z sintab
     lda #>xsin
@@ -279,6 +347,7 @@ sin16s_gen2: {
     sta.z i+1
   // u[4.28]
   __b1:
+    // for( word i=0; i<wavelength; i++)
     lda.z i+1
     cmp #>XSIN_SIZE
     bcc __b2
@@ -287,8 +356,10 @@ sin16s_gen2: {
     cmp #<XSIN_SIZE
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // sin16s(x)
     lda.z x
     sta.z sin16s.x
     lda.z x+1
@@ -298,17 +369,21 @@ sin16s_gen2: {
     lda.z x+3
     sta.z sin16s.x+3
     jsr sin16s
+    // mul16s(sin16s(x), ampl)
     jsr mul16s
+    // >mul16s(sin16s(x), ampl)
     lda.z __6+2
     sta.z __9
     lda.z __6+3
     sta.z __9+1
+    // *sintab++ = offs + (signed word)>mul16s(sin16s(x), ampl)
     ldy #0
     lda.z __9
     sta (sintab),y
     iny
     lda.z __9+1
     sta (sintab),y
+    // *sintab++ = offs + (signed word)>mul16s(sin16s(x), ampl);
     lda #SIZEOF_SIGNED_WORD
     clc
     adc.z sintab
@@ -316,6 +391,7 @@ sin16s_gen2: {
     bcc !+
     inc.z sintab+1
   !:
+    // x = x + step
     lda.z x
     clc
     adc.z step
@@ -329,6 +405,7 @@ sin16s_gen2: {
     lda.z x+3
     adc.z step+3
     sta.z x+3
+    // for( word i=0; i<wavelength; i++)
     inc.z i
     bne !+
     inc.z i+1
@@ -344,6 +421,7 @@ mul16s: {
     .label m = 8
     .label return = 8
     .label a = $10
+    // mul16u((word)a, (word) b)
     lda.z a
     sta.z mul16u.a
     lda.z a+1
@@ -353,12 +431,17 @@ mul16s: {
     lda #>sin16s_gen2.ampl
     sta.z mul16u.b+1
     jsr mul16u
+    // mul16u((word)a, (word) b)
+    // m = mul16u((word)a, (word) b)
+    // if(a<0)
     lda.z a+1
     bpl __b2
+    // >m
     lda.z m+2
     sta.z __9
     lda.z m+3
     sta.z __9+1
+    // >m = (>m)-(word)b
     lda.z __16
     sec
     sbc #<sin16s_gen2.ampl
@@ -371,6 +454,8 @@ mul16s: {
     lda.z __16+1
     sta.z m+3
   __b2:
+    // (signed dword)m
+    // }
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
@@ -381,6 +466,7 @@ mul16u: {
     .label res = 8
     .label return = 8
     .label b = $19
+    // mb = b
     lda.z b
     sta.z mb
     lda.z b+1
@@ -395,16 +481,21 @@ mul16u: {
     lda #>0>>$10
     sta.z res+3
   __b1:
+    // while(a!=0)
     lda.z a
     bne __b2
     lda.z a+1
     bne __b2
+    // }
     rts
   __b2:
+    // a&1
     lda #1
     and.z a
+    // if( (a&1) != 0)
     cmp #0
     beq __b3
+    // res = res + mb
     lda.z res
     clc
     adc.z mb
@@ -419,8 +510,10 @@ mul16u: {
     adc.z mb+3
     sta.z res+3
   __b3:
+    // a = a>>1
     lsr.z a+1
     ror.z a
+    // mb = mb<<1
     asl.z mb
     rol.z mb+1
     rol.z mb+2
@@ -444,6 +537,7 @@ sin16s: {
     .label x5 = $21
     .label x5_128 = $21
     .label sinx = $10
+    // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
     bcc b1
@@ -460,6 +554,7 @@ sin16s: {
     cmp #<PI_u4f28
     bcc b1
   !:
+    // x = x - PI_u4f28
     lda.z x
     sec
     sbc #<PI_u4f28
@@ -478,6 +573,7 @@ sin16s: {
   b1:
     ldy #0
   __b1:
+    // if(x >= PI_HALF_u4f28 )
     lda.z x+3
     cmp #>PI_HALF_u4f28>>$10
     bcc __b2
@@ -494,6 +590,7 @@ sin16s: {
     cmp #<PI_HALF_u4f28
     bcc __b2
   !:
+    // x = PI_u4f28 - x
     lda #<PI_u4f28
     sec
     sbc.z x
@@ -508,6 +605,7 @@ sin16s: {
     sbc.z x+3
     sta.z x+3
   __b2:
+    // x<<3
     lda.z x
     asl
     sta.z __4
@@ -528,10 +626,12 @@ sin16s: {
     rol.z __4+1
     rol.z __4+2
     rol.z __4+3
+    // x1 = >x<<3
     lda.z __4+2
     sta.z x1
     lda.z __4+3
     sta.z x1+1
+    // mulu16_sel(x1, x1, 0)
     lda.z x1
     sta.z mulu16_sel.v1
     lda.z x1+1
@@ -542,26 +642,35 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
+    // mulu16_sel(x1, x1, 0)
+    // x2 = mulu16_sel(x1, x1, 0)
     lda.z mulu16_sel.return
     sta.z x2
     lda.z mulu16_sel.return+1
     sta.z x2+1
+    // mulu16_sel(x2, x1, 1)
     lda.z x1
     sta.z mulu16_sel.v2
     lda.z x1+1
     sta.z mulu16_sel.v2+1
     ldx #1
     jsr mulu16_sel
+    // mulu16_sel(x2, x1, 1)
     lda.z mulu16_sel.return
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
+    // x3 = mulu16_sel(x2, x1, 1)
+    // mulu16_sel(x3, $10000/6, 1)
     ldx #1
     lda #<$10000/6
     sta.z mulu16_sel.v2
     lda #>$10000/6
     sta.z mulu16_sel.v2+1
     jsr mulu16_sel
+    // mulu16_sel(x3, $10000/6, 1)
+    // x3_6 = mulu16_sel(x3, $10000/6, 1)
+    // usinx = x1 - x3_6
     lda.z x1
     sec
     sbc.z x3_6
@@ -569,22 +678,29 @@ sin16s: {
     lda.z x1+1
     sbc.z x3_6+1
     sta.z usinx+1
+    // mulu16_sel(x3, x1, 0)
     lda.z x1
     sta.z mulu16_sel.v2
     lda.z x1+1
     sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
+    // mulu16_sel(x3, x1, 0)
     lda.z mulu16_sel.return
     sta.z mulu16_sel.return_1
     lda.z mulu16_sel.return+1
     sta.z mulu16_sel.return_1+1
+    // x4 = mulu16_sel(x3, x1, 0)
+    // mulu16_sel(x4, x1, 0)
     lda.z x1
     sta.z mulu16_sel.v2
     lda.z x1+1
     sta.z mulu16_sel.v2+1
     ldx #0
     jsr mulu16_sel
+    // mulu16_sel(x4, x1, 0)
+    // x5 = mulu16_sel(x4, x1, 0)
+    // x5_128 = x5>>4
     lsr.z x5_128+1
     ror.z x5_128
     lsr.z x5_128+1
@@ -593,6 +709,7 @@ sin16s: {
     ror.z x5_128
     lsr.z x5_128+1
     ror.z x5_128
+    // usinx = usinx + x5_128
     lda.z usinx
     clc
     adc.z x5_128
@@ -600,8 +717,10 @@ sin16s: {
     lda.z usinx+1
     adc.z x5_128+1
     sta.z usinx+1
+    // if(isUpper!=0)
     cpy #0
     beq __b3
+    // sinx = -(signed word)usinx
     sec
     lda #0
     sbc.z sinx
@@ -610,6 +729,7 @@ sin16s: {
     sbc.z sinx+1
     sta.z sinx+1
   __b3:
+    // }
     rts
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
@@ -622,11 +742,14 @@ mulu16_sel: {
     .label v2 = $19
     .label return = $21
     .label return_1 = $12
+    // mul16u(v1, v2)
     lda.z v1
     sta.z mul16u.a
     lda.z v1+1
     sta.z mul16u.a+1
     jsr mul16u
+    // mul16u(v1, v2)
+    // mul16u(v1, v2)<<select
     cpx #0
     beq !e+
   !:
@@ -637,10 +760,12 @@ mulu16_sel: {
     dex
     bne !-
   !e:
+    // >mul16u(v1, v2)<<select
     lda.z __1+2
     sta.z return
     lda.z __1+3
     sta.z return+1
+    // }
     rts
 }
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
@@ -649,6 +774,7 @@ div32u16u: {
     .label quotient_hi = $21
     .label quotient_lo = $e
     .label return = $15
+    // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
     lda #>PI2_u4f28>>$10
@@ -657,15 +783,21 @@ div32u16u: {
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
+    // divr16u(>dividend, divisor, 0)
+    // quotient_hi = divr16u(>dividend, divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
     sta.z quotient_hi+1
+    // divr16u(<dividend, divisor, rem16u)
     lda #<PI2_u4f28&$ffff
     sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
     sta.z divr16u.dividend+1
     jsr divr16u
+    // divr16u(<dividend, divisor, rem16u)
+    // quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1
@@ -674,6 +806,7 @@ div32u16u: {
     sta.z return
     lda.z quotient_lo+1
     sta.z return+1
+    // }
     rts
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -691,20 +824,28 @@ divr16u: {
     sta.z quotient
     sta.z quotient+1
   __b1:
+    // rem = rem << 1
     asl.z rem
     rol.z rem+1
+    // >dividend
     lda.z dividend+1
+    // >dividend & $80
     and #$80
+    // if( (>dividend & $80) != 0 )
     cmp #0
     beq __b2
+    // rem = rem | 1
     lda #1
     ora.z rem
     sta.z rem
   __b2:
+    // dividend = dividend << 1
     asl.z dividend
     rol.z dividend+1
+    // quotient = quotient << 1
     asl.z quotient
     rol.z quotient+1
+    // if(rem>=divisor)
     lda.z rem+1
     cmp #>XSIN_SIZE
     bcc __b3
@@ -713,10 +854,12 @@ divr16u: {
     cmp #<XSIN_SIZE
     bcc __b3
   !:
+    // quotient++;
     inc.z quotient
     bne !+
     inc.z quotient+1
   !:
+    // rem = rem - divisor
     lda.z rem
     sec
     sbc #<XSIN_SIZE
@@ -725,9 +868,12 @@ divr16u: {
     sbc #>XSIN_SIZE
     sta.z rem+1
   __b3:
+    // for( byte i : 0..15)
     inx
     cpx #$10
     bne __b1
+    // rem16u = rem
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -736,6 +882,7 @@ memset: {
     .label end = $23
     .label dst = $10
     .label str = $10
+    // end = (char*)str + num
     lda.z str
     clc
     adc #<$3e8
@@ -744,17 +891,21 @@ memset: {
     adc #>$3e8
     sta.z end+1
   __b2:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp.z end+1
     bne __b3
     lda.z dst
     cmp.z end
     bne __b3
+    // }
     rts
   __b3:
+    // *dst = c
     txa
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1

@@ -7,21 +7,28 @@ main: {
     .label screen = $400
     ldx #0
   __b1:
+    // while(c<100)
     cpx #$64
     bcc __b2
+    // }
     rts
   __b2:
+    // screen[c] = '*'
     lda #'*'
     sta screen,x
+    // c&4
     txa
     and #4
+    // if((c&4)==0)
     cmp #0
     bne __b3
+    // c+=5
     txa
     clc
     adc #5
     tax
   __b3:
+    // c++;
     inx
     jmp __b1
 }

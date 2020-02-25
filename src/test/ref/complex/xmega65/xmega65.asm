@@ -22,9 +22,11 @@ main: {
     // Print message
     .label sc = 4
     .label msg = 2
+    // *VIC_MEMORY = 0x14
     // Initialize screen memory
     lda #$14
     sta VIC_MEMORY
+    // memset(SCREEN, ' ', 40*25)
     ldx #' '
     lda #<SCREEN
     sta.z memset.str
@@ -35,6 +37,7 @@ main: {
     lda #>$28*$19
     sta.z memset.num+1
     jsr memset
+    // memset(COLS, WHITE, 40*25)
     ldx #WHITE
     lda #<COLS
     sta.z memset.str
@@ -54,28 +57,34 @@ main: {
     lda #>MESSAGE
     sta.z msg+1
   __b1:
+    // while(*msg)
     ldy #0
     lda (msg),y
     cmp #0
     bne __b2
   __b3:
+    // if(*RASTER==54 || *RASTER==66)
     lda #$36
     cmp RASTER
     beq __b4
     lda #$42
     cmp RASTER
     beq __b4
+    // *BGCOL = BLACK
     lda #BLACK
     sta BGCOL
     jmp __b3
   __b4:
+    // *BGCOL = WHITE
     lda #WHITE
     sta BGCOL
     jmp __b3
   __b2:
+    // *sc++ = *msg++
     ldy #0
     lda (msg),y
     sta (sc),y
+    // *sc++ = *msg++;
     inc.z sc
     bne !+
     inc.z sc+1
@@ -93,11 +102,13 @@ memset: {
     .label dst = 4
     .label num = 2
     .label str = 4
+    // if(num>0)
     lda.z num
     bne !+
     lda.z num+1
     beq __breturn
   !:
+    // end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -106,6 +117,7 @@ memset: {
     adc.z str+1
     sta.z end+1
   __b2:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -113,11 +125,14 @@ memset: {
     cmp.z end
     bne __b3
   __breturn:
+    // }
     rts
   __b3:
+    // *dst = c
     txa
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1
@@ -125,13 +140,17 @@ memset: {
     jmp __b2
 }
 syscall2: {
+    // *(SCREEN+78) = '<'
     lda #'<'
     sta SCREEN+$4e
+    // }
     rts
 }
 syscall1: {
+    // *(SCREEN+79) = '>'
     lda #'>'
     sta SCREEN+$4f
+    // }
     rts
 }
 .segment Data

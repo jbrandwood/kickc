@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.statements.StatementInfos;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
-import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.ProgramScope;
-import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
 
 import java.io.Serializable;
@@ -200,7 +200,7 @@ public class ControlFlowGraph implements Serializable {
    public Statement getStatementByIndex(int statementIdx) {
       for(ControlFlowBlock block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            if(statementIdx == statement.getIndex()) {
+            if(statement.getIndex()!=null && statementIdx == statement.getIndex()) {
                return statement;
             }
          }
@@ -238,4 +238,53 @@ public class ControlFlowGraph implements Serializable {
       return sizeInfo.toString();
    }
 
+   /**
+    * Get all statements executed between two statements (none of these are included in the result)
+    * @param from The statement to start at
+    * @param to The statement to end at
+    * @return All statements executed between the two passed statements
+    */
+   public Collection<Statement> getStatementsBetween(Statement from, Statement to, StatementInfos statementInfos) {
+      Collection<Statement> between = new LinkedHashSet<>();
+      final ControlFlowBlock block = statementInfos.getBlock(from);
+      populateStatementsBetween(from, to, false, between, block);
+      return between;
+   }
+
+   /**
+    * Fill the between collection with all statements executed between two statements (none of these are included in the result)
+    * @param from The statement to start at
+    * @param to The statement to end at
+    * @param between The between collection
+    * @param block The block to start from
+    */
+   private void populateStatementsBetween(Statement from, Statement to, boolean isBetween, Collection<Statement> between, ControlFlowBlock block) {
+      for(Statement statement : block.getStatements()) {
+         if(between.contains(statement))
+            // Stop infinite recursion
+            return;
+         if(isBetween) {
+            if(statement.equals(to))
+               // The end was reached!
+               isBetween = false;
+            else
+               // We are between - add the statement
+               between.add(statement);
+         } else {
+            if(statement.equals(from))
+               // We are now between!
+               isBetween = true;
+         }
+      }
+      if(isBetween) {
+         // Recurse to successor blocks
+         final Collection<LabelRef> successors = block.getSuccessors();
+         for(LabelRef successor : successors) {
+            if(successor.getFullName().equals(ProcedureRef.PROCEXIT_BLOCK_NAME))
+               continue;
+            final ControlFlowBlock successorBlock = getBlock(successor);
+            populateStatementsBetween(from, to, true, between, successorBlock);
+         }
+      }
+   }
 }

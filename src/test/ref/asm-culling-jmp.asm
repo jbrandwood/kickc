@@ -4,11 +4,14 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // asm
     jmp qwe
     .byte 0, 25, 51, 76, 102, 128, 153, 179, 204, 230
   qwe:
     lda #$32
+    // *((char*)0x0400) = 'c'
     lda #'c'
     sta $400
+    // }
     rts
 }

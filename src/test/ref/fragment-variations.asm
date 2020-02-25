@@ -8,6 +8,7 @@ main: {
     .label screen = $400
     .label __0 = 6
     .label __1 = 6
+    // mul16u(w, w)
     lda #<$a
     sta.z mul16u.a
     lda #>$a
@@ -17,6 +18,8 @@ main: {
     lda #>$a
     sta.z mul16u.b+1
     jsr mul16u
+    // mul16u(w, w)
+    // screen[0] = mul16u(w, w)
     lda.z __0
     sta screen
     lda.z __0+1
@@ -25,6 +28,7 @@ main: {
     sta screen+2
     lda.z __0+3
     sta screen+3
+    // mul16u(w, w)
     lda #<$3e8
     sta.z mul16u.a
     lda #>$3e8
@@ -34,6 +38,8 @@ main: {
     lda #>$3e8
     sta.z mul16u.b+1
     jsr mul16u
+    // mul16u(w, w)
+    // screen[1] = mul16u(w, w)
     lda.z __1
     sta screen+1*SIZEOF_DWORD
     lda.z __1+1
@@ -42,6 +48,7 @@ main: {
     sta screen+1*SIZEOF_DWORD+2
     lda.z __1+3
     sta screen+1*SIZEOF_DWORD+3
+    // }
     rts
 }
 // mul16u(word zp(2) b, word zp(4) a)
@@ -50,6 +57,7 @@ mul16u: {
     .label mb = 6
     .label b = 2
     .label a = 4
+    // mb = b
     lda.z b
     sta.z mb
     lda.z b+1
@@ -57,6 +65,7 @@ mul16u: {
     lda #0
     sta.z mb+2
     sta.z mb+3
+    // mb+a
     lda.z return
     clc
     adc.z a
@@ -70,5 +79,6 @@ mul16u: {
     lda.z return+3
     adc #0
     sta.z return+3
+    // }
     rts
 }

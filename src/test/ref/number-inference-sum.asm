@@ -10,11 +10,14 @@ main: {
     .const b1 = $fa
     .const b2 = b1+$fa
     .const w = b2+1
+    // screen[0] = w
     lda #<w
     sta screen
     lda #>w
     sta screen+1
+    // *bgcol = RED
     lda #RED
     sta bgcol
+    // }
     rts
 }

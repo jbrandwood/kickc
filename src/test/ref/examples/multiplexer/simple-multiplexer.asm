@@ -32,10 +32,15 @@
   // The index in the PLEX tables of the next sprite to show
   // Prepare for showing the sprites
   .label plex_show_idx = $a
+  // kickasm
 main: {
+    // asm
     sei
+    // init()
     jsr init
+    // loop()
     jsr loop
+    // }
     rts
 }
 // The raster loop
@@ -47,28 +52,39 @@ loop: {
     lda #0
     sta.z sin_idx
   __b2:
+    // while(*RASTER!=$ff)
     lda #$ff
     cmp RASTER
     bne __b2
+    // (*BORDERCOL)++;
     inc BORDERCOL
     ldx.z sin_idx
     ldy #0
   __b4:
+    // PLEX_YPOS[sy] = YSIN[y_idx]
     lda YSIN,x
     sta PLEX_YPOS,y
+    // y_idx += 8
     txa
     axs #-[8]
+    // for(byte sy: 0..PLEX_COUNT-1)
     iny
     cpy #PLEX_COUNT-1+1
     bne __b4
+    // sin_idx +=1
     inc.z sin_idx
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // plexSort()
     jsr plexSort
+    // *BORDERCOL = BLACK
     lda #BLACK
     sta BORDERCOL
   __b6:
+    // *D011&VIC_RST8
     lda #VIC_RST8
     and D011
+    // while((*D011&VIC_RST8)!=0)
     cmp #0
     bne __b6
     lda #0
@@ -81,21 +97,28 @@ loop: {
     sta.z plex_free_next
   // Show the sprites
   __b7:
+    // *BORDERCOL = BLACK
     lda #BLACK
     sta BORDERCOL
+    // return PLEX_FREE_YPOS[plex_free_next];
     ldy.z plex_free_next
     lda PLEX_FREE_YPOS,y
     sta.z plexFreeNextYpos1_return
   __b8:
+    // while(*RASTER<rasterY)
     lda RASTER
     cmp.z plexFreeNextYpos1_return
     bcc __b8
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // plexShowSprite()
     jsr plexShowSprite
+    // for( byte ss: 0..PLEX_COUNT-1)
     inc.z ss
     lda #PLEX_COUNT-1+1
     cmp.z ss
     bne __b7
+    // *BORDERCOL = BLACK
     lda #BLACK
     sta BORDERCOL
     jmp __b2
@@ -104,48 +127,68 @@ loop: {
 // plexSort() prepares showing the sprites
 plexShowSprite: {
     .label plex_sprite_idx2 = 8
+    // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
     sta.z plex_sprite_idx2
+    // ypos = PLEX_YPOS[PLEX_SORTED_IDX[plex_show_idx]]
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_YPOS,y
+    // SPRITES_YPOS[plex_sprite_idx2] = ypos
     ldy.z plex_sprite_idx2
     sta SPRITES_YPOS,y
+    // ypos+21
     clc
     adc #$15
+    // PLEX_FREE_YPOS[plex_free_next] =  ypos+21
     ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
+    // plex_free_next+1
     ldx.z plex_free_next
     inx
+    // plex_free_next = (plex_free_next+1)&7
     lda #7
     sax.z plex_free_next
+    // PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
     ldx.z plex_sprite_idx
     sta PLEX_SCREEN_PTR,x
+    // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y
+    // <PLEX_XPOS[xpos_idx]
     asl
     tax
     lda PLEX_XPOS,x
+    // SPRITES_XPOS[plex_sprite_idx2] = <PLEX_XPOS[xpos_idx]
     ldy.z plex_sprite_idx2
     sta SPRITES_XPOS,y
+    // >PLEX_XPOS[xpos_idx]
     lda PLEX_XPOS+1,x
+    // if(>PLEX_XPOS[xpos_idx]!=0)
     cmp #0
     bne __b1
+    // $ff^plex_sprite_msb
     lda #$ff
     eor.z plex_sprite_msb
+    // *SPRITES_XMSB &= ($ff^plex_sprite_msb)
     and SPRITES_XMSB
     sta SPRITES_XMSB
   __b2:
+    // plex_sprite_idx+1
     ldx.z plex_sprite_idx
     inx
+    // plex_sprite_idx = (plex_sprite_idx+1)&7
     lda #7
     sax.z plex_sprite_idx
+    // plex_show_idx++;
     inc.z plex_show_idx
+    // plex_sprite_msb *=2
     asl.z plex_sprite_msb
+    // if(plex_sprite_msb==0)
     lda.z plex_sprite_msb
     cmp #0
     bne __b5
@@ -153,8 +196,10 @@ plexShowSprite: {
     sta.z plex_sprite_msb
     rts
   __b5:
+    // }
     rts
   __b1:
+    // *SPRITES_XMSB |= plex_sprite_msb
     lda SPRITES_XMSB
     ora.z plex_sprite_msb
     sta SPRITES_XMSB
@@ -176,20 +221,26 @@ plexSort: {
     lda #0
     sta.z m
   __b1:
+    // nxt_idx = PLEX_SORTED_IDX[m+1]
     ldy.z m
     lda PLEX_SORTED_IDX+1,y
     sta.z nxt_idx
+    // nxt_y = PLEX_YPOS[nxt_idx]
     tay
     lda PLEX_YPOS,y
     sta.z nxt_y
+    // if(nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[m]])
     ldx.z m
     ldy PLEX_SORTED_IDX,x
     cmp PLEX_YPOS,y
     bcs __b2
   __b3:
+    // PLEX_SORTED_IDX[s+1] = PLEX_SORTED_IDX[s]
     lda PLEX_SORTED_IDX,x
     sta PLEX_SORTED_IDX+1,x
+    // s--;
     dex
+    // while((s!=$ff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
     cpx #$ff
     beq __b4
     lda.z nxt_y
@@ -197,29 +248,37 @@ plexSort: {
     cmp PLEX_YPOS,y
     bcc __b3
   __b4:
+    // s++;
     inx
+    // PLEX_SORTED_IDX[s] = nxt_idx
     lda.z nxt_idx
     sta PLEX_SORTED_IDX,x
   __b2:
+    // for(byte m: 0..PLEX_COUNT-2)
     inc.z m
     lda #PLEX_COUNT-2+1
     cmp.z m
     bne __b1
     ldx #0
   plexFreePrepare1___b1:
+    // PLEX_FREE_YPOS[s] = 0
     lda #0
     sta PLEX_FREE_YPOS,x
+    // for( byte s: 0..7)
     inx
     cpx #8
     bne plexFreePrepare1___b1
+    // }
     rts
 }
 // Initialize the program
 init: {
     // Set the x-positions & pointers
     .label xp = 6
+    // *D011 = VIC_DEN | VIC_RSEL | 3
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
+    // plexInit(SCREEN)
     jsr plexInit
     lda #<$20
     sta.z xp
@@ -227,8 +286,10 @@ init: {
     sta.z xp+1
     ldx #0
   __b1:
+    // PLEX_PTR[sx] = (byte)(SPRITE/$40)
     lda #SPRITE/$40
     sta PLEX_PTR,x
+    // PLEX_XPOS[sx] = xp
     txa
     asl
     tay
@@ -236,6 +297,7 @@ init: {
     sta PLEX_XPOS,y
     lda.z xp+1
     sta PLEX_XPOS+1,y
+    // xp += 9
     lda #9
     clc
     adc.z xp
@@ -243,30 +305,38 @@ init: {
     bcc !+
     inc.z xp+1
   !:
+    // for(byte sx: 0..PLEX_COUNT-1)
     inx
     cpx #PLEX_COUNT-1+1
     bne __b1
+    // *SPRITES_ENABLE = $ff
     // Enable & initialize sprites
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0
   __b3:
+    // SPRITES_COLS[ss] = GREEN
     lda #GREEN
     sta SPRITES_COLS,x
+    // for(byte ss: 0..7)
     inx
     cpx #8
     bne __b3
+    // }
     rts
 }
 // Initialize the multiplexer data structures
 plexInit: {
     ldx #0
   __b1:
+    // PLEX_SORTED_IDX[i] = i
     txa
     sta PLEX_SORTED_IDX,x
+    // for(byte i: 0..PLEX_COUNT-1)
     inx
     cpx #PLEX_COUNT-1+1
     bne __b1
+    // }
     rts
 }
   // The x-positions of the multiplexer sprites ($000-$1ff)

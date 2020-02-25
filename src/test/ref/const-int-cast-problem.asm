@@ -6,14 +6,18 @@
 main: {
     ldx #$79
   __b1:
+    // i>>4
     txa
     lsr
     lsr
     lsr
     lsr
+    // SCREEN[i] = i>>4
     sta SCREEN,x
+    // for( byte i: 121..122)
     inx
     cpx #$7b
     bne __b1
+    // }
     rts
 }

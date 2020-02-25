@@ -6,9 +6,11 @@
 main: {
     .const i = 0
     .const i1 = 1
+    // *BGCOL = i
     lda #i
     sta BGCOL
     lda #i1
     sta BGCOL
+    // }
     rts
 }

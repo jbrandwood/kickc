@@ -72,76 +72,111 @@
   // Controls the ALU operation
   .label DTV_BLITTER_ALU = $d33e
 main: {
+    // *DTV_FEATURE = DTV_FEATURE_ENABLE
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
+    // *DTV_BLITTER_CONTROL2 = DTV_BLIT_CLEAR_IRQ
     // Instruct blitter not to continue previous blit
     lda #DTV_BLIT_CLEAR_IRQ
     sta DTV_BLITTER_CONTROL2
+    // *DTV_BLITTER_SRCA_LO = <SRCA
     lda #<SRCA
     sta DTV_BLITTER_SRCA_LO
+    // *DTV_BLITTER_SRCA_MI = >SRCA
     lda #>SRCA
     sta DTV_BLITTER_SRCA_MI
+    // *DTV_BLITTER_SRCA_HI = 0
     lda #0
     sta DTV_BLITTER_SRCA_HI
+    // *DTV_BLITTER_SRCA_MOD_LO = 0
     sta DTV_BLITTER_SRCA_MOD_LO
+    // *DTV_BLITTER_SRCA_MOD_HI = 0
     sta DTV_BLITTER_SRCA_MOD_HI
+    // *DTV_BLITTER_SRCA_LIN_LO = <$100uw
     sta DTV_BLITTER_SRCA_LIN_LO
+    // *DTV_BLITTER_SRCA_LIN_HI = >$100uw
     lda #>$100
     sta DTV_BLITTER_SRCA_LIN_HI
+    // *DTV_BLITTER_SRCA_STEP = 01
     lda #1
     sta DTV_BLITTER_SRCA_STEP
+    // *DTV_BLITTER_SRCB_LO = <SRCB
     // Step 0.0
     lda #<SRCB
     sta DTV_BLITTER_SRCB_LO
+    // *DTV_BLITTER_SRCB_MI = >SRCB
     lda #>SRCB
     sta DTV_BLITTER_SRCB_MI
+    // *DTV_BLITTER_SRCB_HI = 0
     lda #0
     sta DTV_BLITTER_SRCB_HI
+    // *DTV_BLITTER_SRCB_MOD_LO = 0
     sta DTV_BLITTER_SRCB_MOD_LO
+    // *DTV_BLITTER_SRCB_MOD_HI = 0
     sta DTV_BLITTER_SRCB_MOD_HI
+    // *DTV_BLITTER_SRCB_LIN_LO = <$100uw
     sta DTV_BLITTER_SRCB_LIN_LO
+    // *DTV_BLITTER_SRCB_LIN_HI = >$100uw
     lda #>$100
     sta DTV_BLITTER_SRCB_LIN_HI
+    // *DTV_BLITTER_SRCB_STEP = $00
     lda #0
     sta DTV_BLITTER_SRCB_STEP
+    // *DTV_BLITTER_DEST_LO = <SCREEN+40+5
     // Step 0.0
     lda #<SCREEN+$28+5
     sta DTV_BLITTER_DEST_LO
+    // *DTV_BLITTER_DEST_MI = >SCREEN+40+5
     lda #>SCREEN+$28+5
     sta DTV_BLITTER_DEST_MI
+    // *DTV_BLITTER_DEST_HI = 0
     lda #0
     sta DTV_BLITTER_DEST_HI
+    // *DTV_BLITTER_DEST_MOD_LO = <21uw
     lda #<$15
     sta DTV_BLITTER_DEST_MOD_LO
+    // *DTV_BLITTER_DEST_MOD_HI = >21uw
     lda #0
     sta DTV_BLITTER_DEST_MOD_HI
+    // *DTV_BLITTER_DEST_LIN_LO = <19uw
     lda #<$13
     sta DTV_BLITTER_DEST_LIN_LO
+    // *DTV_BLITTER_DEST_LIN_HI = >19uw
     lda #0
     sta DTV_BLITTER_DEST_LIN_HI
+    // *DTV_BLITTER_DEST_STEP = $10
     lda #$10
     sta DTV_BLITTER_DEST_STEP
+    // *DTV_BLITTER_LEN_LO = <20*10uw
     // Step 1.0
     lda #<$14*$a
     sta DTV_BLITTER_LEN_LO
+    // *DTV_BLITTER_LEN_HI = >20*10uw
     lda #0
     sta DTV_BLITTER_LEN_HI
+    // *DTV_BLITTER_ALU = DTV_BLIT_ADD
     lda #DTV_BLIT_ADD
     sta DTV_BLITTER_ALU
+    // *DTV_BLITTER_TRANSPARANCY = DTV_BLIT_TRANSPARANCY_NONE
     lda #DTV_BLIT_TRANSPARANCY_NONE
     sta DTV_BLITTER_TRANSPARANCY
+    // *DTV_BLITTER_CONTROL = DTV_BLIT_FORCE_START | DTV_BLIT_SRCA_FWD | DTV_BLIT_SRCB_FWD| DTV_BLIT_DEST_FWD
     // Start blitter
     lda #DTV_BLIT_FORCE_START|DTV_BLIT_SRCA_FWD|DTV_BLIT_SRCB_FWD|DTV_BLIT_DEST_FWD
     sta DTV_BLITTER_CONTROL
+    // *DTV_BLITTER_CONTROL2 = DTV_BLIT_DEST_CONT
     // Instruct blitter to continue at DEST and restart SRC A/B
     lda #DTV_BLIT_DEST_CONT
     sta DTV_BLITTER_CONTROL2
   // wait til blitter is ready
   __b1:
+    // *DTV_BLITTER_CONTROL2 & DTV_BLIT_STATUS_BUSY
     lda #DTV_BLIT_STATUS_BUSY
     and DTV_BLITTER_CONTROL2
+    // while((*DTV_BLITTER_CONTROL2 & DTV_BLIT_STATUS_BUSY)!=0)
     cmp #0
     bne __b1
+    // }
     rts
 }
   SRCA: .text "camelot rules!"

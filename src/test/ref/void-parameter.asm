@@ -5,15 +5,22 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
+    // print()
     ldx #0
     jsr print
+    // print()
     jsr print
+    // print()
     jsr print
+    // }
     rts
 }
 print: {
+    // SCREEN[idx++] = '.'
     lda #'.'
     sta SCREEN,x
+    // SCREEN[idx++] = '.';
     inx
+    // }
     rts
 }

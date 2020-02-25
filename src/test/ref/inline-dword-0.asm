@@ -5,6 +5,7 @@
 main: {
     .const w = $1234*$10000+$5678
     .label screen = $400
+    // screen[0] = w
     lda #<w
     sta screen
     lda #>w
@@ -13,5 +14,6 @@ main: {
     sta screen+2
     lda #>w>>$10
     sta screen+3
+    // }
     rts
 }

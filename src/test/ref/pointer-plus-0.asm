@@ -6,22 +6,29 @@ main: {
     .label SCREEN = $400
     .label __0 = 2
     .label __2 = 2
+    // first(msg1)
     lda #<msg1
     sta.z first.return
     lda #>msg1
     sta.z first.return+1
     jsr first
+    // first(msg1)
+    // SCREEN[0] = *(first(msg1)+0)
     ldy #0
     lda (__0),y
     sta SCREEN
+    // first(msg2)
     lda #<msg2
     sta.z first.return
     lda #>msg2
     sta.z first.return+1
     jsr first
+    // first(msg2)
+    // SCREEN[1] = *(first(msg2)+0)
     ldy #0
     lda (__2),y
     sta SCREEN+1
+    // }
     rts
 }
 first: {

@@ -12,14 +12,18 @@ init:
   .label BGCOL = $c01a
 .segment Code
 main: {
+    // (*BGCOL)++;
     inc BGCOL
+    // }
     rts
 }
 nmiHandler: {
     sta rega+1
     stx regx+1
     sty regy+1
+    // (*BGCOL)++;
     inc BGCOL
+    // }
   rega:
     lda #00
   regx:
@@ -31,11 +35,14 @@ nmiHandler: {
 entryPoint: {
     ldx #0
   __b1:
+    // SCREEN[i] = MESSAGE[i]
     lda MESSAGE,x
     sta SCREEN,x
+    // for( char i:0..49)
     inx
     cpx #$32
     bne __b1
+    // }
     rts
 }
 .segment RomData

@@ -5,7 +5,9 @@
 .pc = $80d "Program"
   .label process_name = $400
 main: {
+    // set_process_name("keyboard")
     jsr set_process_name
+    // }
     rts
     name: .text "keyboard"
     .byte 0
@@ -18,6 +20,7 @@ set_process_name: {
     sta.z j
     sta.z j+1
   __b1:
+    // for(signed int j = 0; j < 17; j++)
     lda.z j+1
     bmi __b2
     cmp #>$11
@@ -27,8 +30,10 @@ set_process_name: {
     cmp #<$11
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // process_name[j]=name[j]
     lda #<main.name
     clc
     adc.z j
@@ -46,6 +51,7 @@ set_process_name: {
     ldy #0
     lda (__1),y
     sta (__2),y
+    // for(signed int j = 0; j < 17; j++)
     inc.z j
     bne !+
     inc.z j+1

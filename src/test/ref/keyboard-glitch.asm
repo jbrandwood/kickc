@@ -22,39 +22,57 @@
   .const KEY_SPACE = $3c
   .label SCREEN = $400
 main: {
+    // *BORDERCOL = GREEN
     lda #GREEN
     sta BORDERCOL
   __b1:
+    // menu()
     jsr menu
     jmp __b1
 }
 menu: {
   __b1:
+    // keyboard_key_pressed(KEY_C)
     ldx #KEY_C
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_C)
+    // if(keyboard_key_pressed(KEY_C)!=0)
     cmp #0
     beq __b2
+    // pressed()
     jsr pressed
+    // }
     rts
   __b2:
+    // keyboard_key_pressed(KEY_I)
     ldx #KEY_I
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_I)
+    // if(keyboard_key_pressed(KEY_I)!=0)
     cmp #0
     beq __b3
+    // *BORDERCOL = RED
     lda #RED
     sta BORDERCOL
+    // asm
     sei
     rts
   __b3:
+    // keyboard_key_pressed(KEY_E)
     ldx #KEY_E
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_E)
+    // if(keyboard_key_pressed(KEY_E)!=0)
     cmp #0
     beq __b4
+    // *BORDERCOL = GREEN
     lda #GREEN
     sta BORDERCOL
+    // asm
     cli
     rts
   __b4:
+    // (*SCREEN)++;
     inc SCREEN
     jmp __b1
 }
@@ -64,16 +82,21 @@ menu: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
+    // colidx = key&7
     txa
     and #7
     tay
+    // rowidx = key>>3
     txa
     lsr
     lsr
     lsr
+    // keyboard_matrix_read(rowidx)
     tax
     jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
     and keyboard_matrix_col_bitmask,y
+    // }
     rts
 }
 // Read a single row of the keyboard matrix
@@ -83,21 +106,29 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
+    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
     lda CIA1_PORT_B
     eor #$ff
+    // }
     rts
 }
 pressed: {
+    // (*BGCOL)++;
     inc BGCOL
   __b1:
+    // keyboard_key_pressed(KEY_SPACE)
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_SPACE)
+    // if(keyboard_key_pressed(KEY_SPACE)!=0)
     cmp #0
     bne __breturn
     jmp __b1
   __breturn:
+    // }
     rts
 }
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

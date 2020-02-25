@@ -23,7 +23,9 @@ main: {
     .label screen_ref = 2
     .label x = $13
     .label y = $e
+    // init_font_hex(CHARSET)
     jsr init_font_hex
+    // *D018 = toD018(SCREEN, CHARSET)
     lda #toD0181_return
     sta D018
     lda #<SCREEN
@@ -43,14 +45,19 @@ main: {
     lda #-$13
     sta.z x
   __b2:
+    // (word){ (byte)x, 0 }
     lda.z x
     ldy #0
     sta.z xw+1
     sty.z xw
+    // (word){ (byte)y, 0 }
     lda.z y
     sta.z yw+1
     sty.z yw
+    // atan2_16(xw, yw)
     jsr atan2_16
+    // angle_w = atan2_16(xw, yw)
+    // angle_w+0x0080
     lda #$80
     clc
     adc.z __10
@@ -58,11 +65,14 @@ main: {
     bcc !+
     inc.z __10+1
   !:
+    // ang_w = >(angle_w+0x0080)
     lda.z __10+1
     tax
+    // diff(ang_w, *screen_ref)
     ldy #0
     lda (screen_ref),y
     jsr diff
+    // diff_sum += diff(ang_w, *screen_ref)
     //*screen = (>angle_w)-angle_b;
     //*screen = >angle_w;
     clc
@@ -71,29 +81,37 @@ main: {
     bcc !+
     inc.z diff_sum+1
   !:
+    // ang_w - *screen_ref
     txa
     sec
     ldy #0
     sbc (screen_ref),y
+    // *screen =  ang_w - *screen_ref
     sta (screen),y
+    // screen++;
     inc.z screen
     bne !+
     inc.z screen+1
   !:
+    // screen_ref++;
     inc.z screen_ref
     bne !+
     inc.z screen_ref+1
   !:
+    // for(signed byte x: -19..20)
     inc.z x
     lda #$15
     cmp.z x
     bne __b2
+    // for(signed byte y: -12..12)
     inc.z y
     lda #$d
     cmp.z y
     bne __b1
+    // print_word(diff_sum)
     jsr print_word
   __b5:
+    // (*col00)++;
     inc col00
     jmp __b5
 }
@@ -101,6 +119,7 @@ main: {
 // print_word(word zp($c) w)
 print_word: {
     .label w = $c
+    // print_byte(>w)
     lda.z w+1
     tax
     lda #<$400
@@ -108,41 +127,52 @@ print_word: {
     lda #>$400
     sta.z print_char_cursor+1
     jsr print_byte
+    // print_byte(<w)
     lda.z w
     tax
     jsr print_byte
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte register(X) b)
 print_byte: {
+    // b>>4
     txa
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     axs #0
+    // print_char(print_hextab[b&$f])
     lda print_hextab,x
     jsr print_char
+    // }
     rts
 }
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // diff(byte register(X) bb1, byte register(A) bb2)
 diff: {
+    // (bb1<bb2)?(bb2-bb1):bb1-bb2
     sta.z $ff
     cpx.z $ff
     bcc __b1
@@ -150,8 +180,10 @@ diff: {
     txa
     sec
     sbc.z $ff
+    // }
     rts
   __b1:
+    // (bb1<bb2)?(bb2-bb1):bb1-bb2
     stx.z $ff
     sec
     sbc.z $ff
@@ -172,6 +204,7 @@ atan2_16: {
     .label return = 6
     .label x = $15
     .label y = $17
+    // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
     jmp __b1
@@ -184,6 +217,7 @@ atan2_16: {
     sbc.z y+1
     sta.z __2+1
   __b3:
+    // (x>=0)?x:-x
     lda.z x+1
     bmi !__b4+
     jmp __b4
@@ -201,15 +235,19 @@ atan2_16: {
     sta.z angle+1
     tax
   __b10:
+    // if(yi==0)
     lda.z yi+1
     bne __b11
     lda.z yi
     bne __b11
   __b12:
+    // angle /=2
     lsr.z angle+1
     ror.z angle
+    // if(x<0)
     lda.z x+1
     bpl __b7
+    // angle = 0x8000-angle
     sec
     lda #<$8000
     sbc.z angle
@@ -218,8 +256,10 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
   __b7:
+    // if(y<0)
     lda.z y+1
     bpl __b8
+    // angle = -angle
     sec
     lda #0
     sbc.z angle
@@ -228,6 +268,7 @@ atan2_16: {
     sbc.z angle+1
     sta.z angle+1
   __b8:
+    // }
     rts
   __b11:
     txa
@@ -241,21 +282,27 @@ atan2_16: {
     lda.z yi+1
     sta.z yd+1
   __b13:
+    // while(shift>=2)
     cpy #2
     bcs __b14
+    // if(shift)
     cpy #0
     beq __b17
+    // xd >>= 1
     lda.z xd+1
     cmp #$80
     ror.z xd+1
     ror.z xd
+    // yd >>= 1
     lda.z yd+1
     cmp #$80
     ror.z yd+1
     ror.z yd
   __b17:
+    // if(yi>=0)
     lda.z yi+1
     bpl __b18
+    // xi -= yd
     lda.z xi
     sec
     sbc.z yd
@@ -263,6 +310,7 @@ atan2_16: {
     lda.z xi+1
     sbc.z yd+1
     sta.z xi+1
+    // yi += xd
     lda.z yi
     clc
     adc.z xd
@@ -270,6 +318,7 @@ atan2_16: {
     lda.z yi+1
     adc.z xd+1
     sta.z yi+1
+    // angle -= CORDIC_ATAN2_ANGLES_16[i]
     txa
     asl
     tay
@@ -281,6 +330,7 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
   __b19:
+    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+
@@ -288,6 +338,7 @@ atan2_16: {
   !__b12:
     jmp __b10
   __b18:
+    // xi += yd
     lda.z xi
     clc
     adc.z yd
@@ -295,6 +346,7 @@ atan2_16: {
     lda.z xi+1
     adc.z yd+1
     sta.z xi+1
+    // yi -= xd
     lda.z yi
     sec
     sbc.z xd
@@ -302,6 +354,7 @@ atan2_16: {
     lda.z yi+1
     sbc.z xd+1
     sta.z yi+1
+    // angle += CORDIC_ATAN2_ANGLES_16[i]
     txa
     asl
     tay
@@ -314,6 +367,7 @@ atan2_16: {
     sta.z angle+1
     jmp __b19
   __b14:
+    // xd >>= 2
     lda.z xd+1
     cmp #$80
     ror.z xd+1
@@ -322,6 +376,7 @@ atan2_16: {
     cmp #$80
     ror.z xd+1
     ror.z xd
+    // yd >>= 2
     lda.z yd+1
     cmp #$80
     ror.z yd+1
@@ -330,6 +385,7 @@ atan2_16: {
     cmp #$80
     ror.z yd+1
     ror.z yd
+    // shift -=2
     dey
     dey
     jmp __b13
@@ -374,6 +430,7 @@ init_font_hex: {
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
   __b2:
+    // charset[idx++] = 0
     lda #0
     tay
     sta (charset),y
@@ -381,6 +438,7 @@ init_font_hex: {
     sta.z idx
     ldx #0
   __b3:
+    // proto_hi[i]<<4
     txa
     tay
     lda (proto_hi),y
@@ -389,22 +447,31 @@ init_font_hex: {
     asl
     asl
     sta.z __0
+    // proto_lo[i]<<1
     txa
     tay
     lda (proto_lo),y
     asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
     ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
     ldy.z idx
     sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
     inc.z idx
+    // for( byte i: 0..4)
     inx
     cpx #5
     bne __b3
+    // charset[idx++] = 0
     lda #0
     ldy.z idx
     sta (charset),y
+    // charset[idx++] = 0;
     iny
+    // charset[idx++] = 0
     sta (charset),y
+    // proto_lo += 5
     lda #5
     clc
     adc.z proto_lo
@@ -412,6 +479,7 @@ init_font_hex: {
     bcc !+
     inc.z proto_lo+1
   !:
+    // charset += 8
     lda #8
     clc
     adc.z charset
@@ -419,10 +487,12 @@ init_font_hex: {
     bcc !+
     inc.z charset+1
   !:
+    // for( byte c: 0..15 )
     inc.z c1
     lda #$10
     cmp.z c1
     bne __b2
+    // proto_hi += 5
     lda #5
     clc
     adc.z proto_hi
@@ -430,10 +500,12 @@ init_font_hex: {
     bcc !+
     inc.z proto_hi+1
   !:
+    // for( byte c: 0..15 )
     inc.z c
     lda #$10
     cmp.z c
     bne __b1
+    // }
     rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex

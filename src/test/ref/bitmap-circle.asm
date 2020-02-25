@@ -14,6 +14,7 @@
   .label SCREEN = $400
   .label BITMAP = $2000
 main: {
+    // fill(BITMAP,40*25*8,0)
     ldx #0
     lda #<$28*$19*8
     sta.z fill.size
@@ -24,6 +25,7 @@ main: {
     lda #>BITMAP
     sta.z fill.addr+1
     jsr fill
+    // fill(SCREEN,40*25,$16)
     ldx #$16
     lda #<$28*$19
     sta.z fill.size
@@ -34,12 +36,16 @@ main: {
     lda #>SCREEN
     sta.z fill.addr+1
     jsr fill
+    // *BORDERCOL = BLUE
     lda #BLUE
     sta BORDERCOL
+    // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
+    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
+    // circle(100,100,50)
     jsr circle
   __b1:
     jmp __b1
@@ -68,6 +74,7 @@ circle: {
     sta.z x1
     sta.z x1+1
   __b1:
+    // for(int x = 0; x <= y; x ++)
     lda.z y
     cmp.z x1
     lda.z y+1
@@ -76,12 +83,15 @@ circle: {
     eor #$80
   !:
     bpl __b2
+    // }
     rts
   __b2:
+    // if(p < 0)
     lda.z p+1
     bpl !__b3+
     jmp __b3
   !__b3:
+    // y=y-1
     sec
     lda.z y
     sbc #1
@@ -89,6 +99,7 @@ circle: {
     bcs !+
     dec.z y+1
   !:
+    // x-y
     lda.z x1
     sec
     sbc.z y
@@ -96,10 +107,12 @@ circle: {
     lda.z x1+1
     sbc.z y+1
     sta.z __5+1
+    // (x-y) << 2
     asl.z __6
     rol.z __6+1
     asl.z __6
     rol.z __6+1
+    // p + ((x-y) << 2)
     lda.z __7
     clc
     adc.z __6
@@ -107,6 +120,7 @@ circle: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
+    // p = p + ((x-y) << 2) + 10
     lda.z p
     clc
     adc #<$a
@@ -115,6 +129,7 @@ circle: {
     adc #>$a
     sta.z p+1
   __b4:
+    // plot(xc+x,yc-y)
     lda.z x1
     clc
     adc #<xc
@@ -130,6 +145,7 @@ circle: {
     sbc.z y+1
     sta.z plot.y+1
     jsr plot
+    // plot(xc-x,yc-y)
     lda #<xc
     sec
     sbc.z x1
@@ -145,6 +161,7 @@ circle: {
     sbc.z y+1
     sta.z plot.y+1
     jsr plot
+    // plot(xc+x,yc+y)
     lda.z x1
     clc
     adc #<xc
@@ -160,6 +177,7 @@ circle: {
     adc #>yc
     sta.z plot.y+1
     jsr plot
+    // plot(xc-x,yc+y)
     lda #<xc
     sec
     sbc.z x1
@@ -175,6 +193,7 @@ circle: {
     adc #>yc
     sta.z plot.y+1
     jsr plot
+    // plot(xc+y,yc-x)
     lda.z y
     clc
     adc #<xc
@@ -190,6 +209,7 @@ circle: {
     sbc.z x1+1
     sta.z plot.y+1
     jsr plot
+    // plot(xc-y,yc-x)
     lda #<xc
     sec
     sbc.z y
@@ -205,6 +225,7 @@ circle: {
     sbc.z x1+1
     sta.z plot.y+1
     jsr plot
+    // plot(xc+y,yc+x)
     lda.z y
     clc
     adc #<xc
@@ -220,6 +241,7 @@ circle: {
     adc #>yc
     sta.z plot.y+1
     jsr plot
+    // plot(xc-y,yc+x)
     lda #<xc
     sec
     sbc.z y
@@ -235,12 +257,14 @@ circle: {
     adc #>yc
     sta.z plot.y+1
     jsr plot
+    // for(int x = 0; x <= y; x ++)
     inc.z x1
     bne !+
     inc.z x1+1
   !:
     jmp __b1
   __b3:
+    // x << 2
     lda.z x1
     asl
     sta.z __9
@@ -249,6 +273,7 @@ circle: {
     sta.z __9+1
     asl.z __9
     rol.z __9+1
+    // p + (x << 2)
     lda.z __10
     clc
     adc.z __9
@@ -256,6 +281,7 @@ circle: {
     lda.z __10+1
     adc.z __9+1
     sta.z __10+1
+    // p = p + (x << 2) + 6
     lda.z p
     clc
     adc #<6
@@ -275,12 +301,14 @@ plot: {
     .label location = $c
     .label __7 = $e
     .label __8 = $e
+    // x & $fff8
     lda.z x
     and #<$fff8
     sta.z __0
     lda.z x+1
     and #>$fff8
     sta.z __0+1
+    // location += x & $fff8
     clc
     lda.z location
     adc #<BITMAP
@@ -288,14 +316,18 @@ plot: {
     lda.z location+1
     adc #>BITMAP
     sta.z location+1
+    // <y
     lda.z y
+    // <y & 7
     and #7
+    // location += <y & 7
     clc
     adc.z location
     sta.z location
     bcc !+
     inc.z location+1
   !:
+    // y >> 3
     lda.z __3+1
     cmp #$80
     ror.z __3+1
@@ -308,6 +340,7 @@ plot: {
     cmp #$80
     ror.z __3+1
     ror.z __3
+    // (y >> 3) * 320
     lda.z __3
     asl
     sta.z __7
@@ -335,6 +368,7 @@ plot: {
     lsr.z $ff
     ror.z __4+1
     ror.z __4
+    // location += ((y >> 3) * 320)
     lda.z location
     clc
     adc.z __4
@@ -342,13 +376,17 @@ plot: {
     lda.z location+1
     adc.z __4+1
     sta.z location+1
+    // x & 7
     lda #7
     and.z x
+    // (*location) | bitmask[x & 7]
     tay
     lda bitmask,y
     ldy #0
     ora (location),y
+    // (*location) = (*location) | bitmask[x & 7]
     sta (location),y
+    // }
     rts
 }
 // Fill some memory with a value
@@ -357,6 +395,7 @@ fill: {
     .label end = 4
     .label addr = 6
     .label size = 4
+    // end = start + size
     lda.z end
     clc
     adc.z addr
@@ -365,17 +404,21 @@ fill: {
     adc.z addr+1
     sta.z end+1
   __b1:
+    // for(byte* addr = start; addr!=end; addr++)
     lda.z addr+1
     cmp.z end+1
     bne __b2
     lda.z addr
     cmp.z end
     bne __b2
+    // }
     rts
   __b2:
+    // *addr = val
     txa
     ldy #0
     sta (addr),y
+    // for(byte* addr = start; addr!=end; addr++)
     inc.z addr
     bne !+
     inc.z addr+1

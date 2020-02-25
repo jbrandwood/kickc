@@ -6,8 +6,10 @@
 main: {
     ldx #0
   __b2:
+    // for( char i: 0..7)
     inx
     cpx #8
     bne __b2
+    // }
     rts
 }

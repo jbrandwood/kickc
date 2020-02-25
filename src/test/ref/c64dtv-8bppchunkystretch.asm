@@ -46,42 +46,59 @@
   // Plane with all pixels
   .label CHUNKY = $8000
 main: {
+    // asm
     sei
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    // gfx_init_chunky()
     jsr gfx_init_chunky
+    // *DTV_FEATURE = DTV_FEATURE_ENABLE
     // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
+    // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_COLORRAM_OFF | DTV_CHUNKY | DTV_BADLINE_OFF
     // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
+    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
     lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
     sta VIC_CONTROL
+    // *VIC_CONTROL2 = VIC_MCM | VIC_CSEL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
+    // *DTV_PLANEB_START_LO = < CHUNKY
     // Plane B: CHUNKY
     lda #0
     sta DTV_PLANEB_START_LO
+    // *DTV_PLANEB_START_MI = > CHUNKY
     lda #>CHUNKY
     sta DTV_PLANEB_START_MI
+    // *DTV_PLANEB_START_HI = 0
     lda #0
     sta DTV_PLANEB_START_HI
+    // *DTV_PLANEB_STEP = 8
     lda #8
     sta DTV_PLANEB_STEP
+    // *DTV_PLANEB_MODULO_LO = 0
     lda #0
     sta DTV_PLANEB_MODULO_LO
+    // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
+    // *CIA2_PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
+    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHUNKY/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2_PORT_A
+    // *VIC_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4)
     // Set VIC Bank
     // VIC memory
     lda #0
@@ -89,12 +106,15 @@ main: {
     tax
   // DTV Palette - Grey Tones
   __b1:
+    // DTV_PALETTE[j] = j
     txa
     sta DTV_PALETTE,x
+    // for(byte j : 0..$f)
     inx
     cpx #$10
     bne __b1
   __b2:
+    // asm
     // Stabilize Raster
     ldx #$ff
   rff:
@@ -132,14 +152,18 @@ main: {
     inx
     cpx #8
     bne stabilize
+    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
     lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
     sta VIC_CONTROL
+    // *BORDERCOL = 0
     lda #0
     sta BORDERCOL
   __b3:
+    // while(*RASTER!=rst)
     lda #$42
     cmp RASTER
     bne __b3
+    // asm
     nop
     nop
     nop
@@ -159,17 +183,24 @@ main: {
     nop
     nop
   __b5:
+    // rst = *RASTER
     ldx RASTER
+    // rst&7
     txa
     and #7
+    // VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
     ora #VIC_DEN|VIC_ECM|VIC_RSEL
+    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
     sta VIC_CONTROL
+    // rst*$10
     txa
     asl
     asl
     asl
     asl
+    // *BORDERCOL = rst*$10
     sta BORDERCOL
+    // asm
     nop
     nop
     nop
@@ -185,6 +216,7 @@ main: {
     nop
     nop
     nop
+    // while (rst!=$f2)
     cpx #$f2
     bne __b5
     jmp __b2
@@ -195,6 +227,7 @@ gfx_init_chunky: {
     .label gfxb = 5
     .label x = 3
     .label y = 2
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #CHUNKY/$4000
     jsr dtvSetCpuBankSegment1
     ldx #($ff&CHUNKY/$4000)+1
@@ -209,20 +242,24 @@ gfx_init_chunky: {
     sta.z x
     sta.z x+1
   __b2:
+    // if(gfxb==$8000)
     lda.z gfxb+1
     cmp #>$8000
     bne __b3
     lda.z gfxb
     cmp #<$8000
     bne __b3
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
     txa
     jsr dtvSetCpuBankSegment1
+    // dtvSetCpuBankSegment1(gfxbCpuBank++);
     inx
     lda #<$4000
     sta.z gfxb
     lda #>$4000
     sta.z gfxb+1
   __b3:
+    // x+y
     lda.z y
     clc
     adc.z x
@@ -230,13 +267,17 @@ gfx_init_chunky: {
     lda #0
     adc.z x+1
     sta.z __5+1
+    // c = (byte)(x+y)
     lda.z __5
+    // *gfxb++ = c
     ldy #0
     sta (gfxb),y
+    // *gfxb++ = c;
     inc.z gfxb
     bne !+
     inc.z gfxb+1
   !:
+    // for (word x : 0..319)
     inc.z x
     bne !+
     inc.z x+1
@@ -247,12 +288,15 @@ gfx_init_chunky: {
     lda.z x
     cmp #<$140
     bne __b2
+    // for(byte y : 0..50)
     inc.z y
     lda #$33
     cmp.z y
     bne __b1
+    // dtvSetCpuBankSegment1((byte)($4000/$4000))
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
+    // }
     rts
 }
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
@@ -262,9 +306,12 @@ gfx_init_chunky: {
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
+    // *cpuBank = cpuBankIdx
     sta cpuBank
+    // asm
     .byte $32, $dd
     lda.z $ff
     .byte $32, $00
+    // }
     rts
 }

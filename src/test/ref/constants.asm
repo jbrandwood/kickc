@@ -7,11 +7,16 @@
   .label print_char_cursor = 2
   .label print_line_cursor = 4
 main: {
+    // print_cls()
     jsr print_cls
+    // *BGCOL = GREEN
     lda #GREEN
     sta BGCOL
+    // test_bytes()
     jsr test_bytes
+    // test_sbytes()
     jsr test_sbytes
+    // }
     rts
 }
 // Test different signed byte constants
@@ -21,6 +26,7 @@ test_sbytes: {
     .const bc = 2
     .const bd = bc-4
     .const be = -bd
+    // assert_sbyte("0=0", bb, 0)
     lda #0
     sta.z assert_sbyte.c
     ldx #bb
@@ -29,6 +35,7 @@ test_sbytes: {
     lda #>msg
     sta.z assert_sbyte.msg+1
     jsr assert_sbyte
+    // assert_sbyte("0+2=2", bc, 2)
     lda #2
     sta.z assert_sbyte.c
     ldx #bc
@@ -37,6 +44,7 @@ test_sbytes: {
     lda #>msg1
     sta.z assert_sbyte.msg+1
     jsr assert_sbyte
+    // assert_sbyte("0+2-4=-2", bd, -2)
     lda #-2
     sta.z assert_sbyte.c
     ldx #bd
@@ -45,6 +53,7 @@ test_sbytes: {
     lda #>msg2
     sta.z assert_sbyte.msg+1
     jsr assert_sbyte
+    // assert_sbyte("-(0+2-4)=2", be, 2)
     lda #2
     sta.z assert_sbyte.c
     ldx #be
@@ -53,6 +62,7 @@ test_sbytes: {
     lda #>msg3
     sta.z assert_sbyte.msg+1
     jsr assert_sbyte
+    // assert_sbyte("-127-127=2", bf, 2)
     lda #2
     sta.z assert_sbyte.c
     ldx #bf
@@ -61,6 +71,7 @@ test_sbytes: {
     lda #>msg4
     sta.z assert_sbyte.msg+1
     jsr assert_sbyte
+    // }
     rts
     msg2: .text "0+2-4=-2"
     .byte 0
@@ -73,29 +84,38 @@ test_sbytes: {
 assert_sbyte: {
     .label msg = 7
     .label c = 6
+    // print_str(msg)
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str(msg)
     jsr print_str
+    // print_str(" ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // if(b!=c)
     cpx.z c
     bne __b1
+    // print_str("ok")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
   __b2:
+    // print_ln()
     jsr print_ln
+    // }
     rts
   __b1:
+    // *BGCOL = RED
     lda #RED
     sta BGCOL
+    // print_str("fail!")
     lda #<str1
     sta.z print_str.str
     lda #>str1
@@ -108,15 +128,19 @@ assert_sbyte: {
 print_str: {
     .label str = 7
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -130,6 +154,7 @@ print_str: {
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -137,6 +162,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -145,6 +171,7 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Test different byte constants
@@ -152,6 +179,7 @@ test_bytes: {
     .const bb = 0
     .const bc = 2
     .const bd = bc-4
+    // assert_byte("0=0", bb, 0)
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -172,6 +200,7 @@ test_bytes: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // assert_byte("0+2=2", bc, 2)
     lda #2
     sta.z assert_byte.c
     ldx #bc
@@ -184,6 +213,7 @@ test_bytes: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // assert_byte("0+2-4=254", bd, 254)
     lda #$fe
     sta.z assert_byte.c
     ldx #bd
@@ -192,6 +222,7 @@ test_bytes: {
     lda #>msg2
     sta.z assert_byte.msg+1
     jsr assert_byte
+    // }
     rts
     msg2: .text "0+2-4=254"
     .byte 0
@@ -200,25 +231,33 @@ test_bytes: {
 assert_byte: {
     .label msg = 7
     .label c = 6
+    // print_str(msg)
     jsr print_str
+    // print_str(" ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // if(b!=c)
     cpx.z c
     bne __b1
+    // print_str("ok")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
   __b2:
+    // print_ln()
     jsr print_ln
+    // }
     rts
   __b1:
+    // *BGCOL = RED
     lda #RED
     sta BGCOL
+    // print_str("fail!")
     lda #<str1
     sta.z print_str.str
     lda #>str1
@@ -228,7 +267,9 @@ assert_byte: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -243,17 +284,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1

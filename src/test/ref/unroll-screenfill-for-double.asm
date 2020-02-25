@@ -4,6 +4,7 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
+    // (SCREEN+line*40)[x] = x
     lda #0
     sta SCREEN
     sta SCREEN+1*$28
@@ -136,5 +137,6 @@ main: {
     sta SCREEN+8*$28+$a
     sta SCREEN+9*$28+$a
     sta SCREEN+$a*$28+$a
+    // }
     rts
 }

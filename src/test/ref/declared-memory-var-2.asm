@@ -7,6 +7,7 @@
 main: {
     ldx #0
   __b1:
+    // *cursor = '*'
     lda #'*'
     ldy cursor
     sty.z $fe
@@ -14,6 +15,7 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
+    // cursor += 41
     lda #$29
     clc
     adc cursor
@@ -21,9 +23,11 @@ main: {
     bcc !+
     inc cursor+1
   !:
+    // for( char i: 0..24 )
     inx
     cpx #$19
     bne __b1
+    // }
     rts
 }
   cursor: .word SCREEN

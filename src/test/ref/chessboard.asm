@@ -20,19 +20,25 @@ main: {
   __b1:
     ldy #0
   __b2:
+    // screen[column] = $a0
     lda #$a0
     sta (screen),y
+    // colors[column] = color
     txa
     sta (colors),y
+    // color = color^1
     txa
     eor #1
     tax
+    // for( byte column: 0..7)
     iny
     cpy #8
     bne __b2
+    // color = color^1
     txa
     eor #1
     tax
+    // screen = screen+40
     lda #$28
     clc
     adc.z screen
@@ -40,6 +46,7 @@ main: {
     bcc !+
     inc.z screen+1
   !:
+    // colors = colors+40
     lda #$28
     clc
     adc.z colors
@@ -47,9 +54,11 @@ main: {
     bcc !+
     inc.z colors+1
   !:
+    // for( byte row: 0..7)
     inc.z row
     lda #8
     cmp.z row
     bne __b1
+    // }
     rts
 }

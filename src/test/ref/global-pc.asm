@@ -5,9 +5,12 @@
   .label BGCOL = $d021
   .label RASTER = $d012
 main: {
+    // asm
     sei
   __b1:
+    // col = *RASTER
     lda RASTER
+    // *BGCOL = col
     sta BGCOL
     jmp __b1
 }

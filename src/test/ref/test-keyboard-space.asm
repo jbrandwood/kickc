@@ -16,18 +16,25 @@
   .const BLUE = 6
   .const KEY_SPACE = $3c
 main: {
+    // keyboard_init()
     jsr keyboard_init
   __b1:
+    // while (*RASTER!=$ff)
     lda #$ff
     cmp RASTER
     bne __b1
+    // keyboard_key_pressed(KEY_SPACE)
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_SPACE)
+    // if(keyboard_key_pressed(KEY_SPACE)!=0)
     cmp #0
     bne __b4
+    // *BGCOL = BLUE
     lda #BLUE
     sta BGCOL
     jmp __b1
   __b4:
+    // *BGCOL = GREEN
     lda #GREEN
     sta BGCOL
     jmp __b1
@@ -39,8 +46,11 @@ main: {
 keyboard_key_pressed: {
     .const colidx = KEY_SPACE&7
     .label rowidx = KEY_SPACE>>3
+    // keyboard_matrix_read(rowidx)
     jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
     and keyboard_matrix_col_bitmask+colidx
+    // }
     rts
 }
 // Read a single row of the keyboard matrix
@@ -49,20 +59,26 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
+    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
     lda CIA1_PORT_B
     eor #$ff
+    // }
     rts
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
+    // *CIA1_PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
+    // *CIA1_PORT_B_DDR = $00
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
+    // }
     rts
 }
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

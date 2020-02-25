@@ -8,6 +8,7 @@ main: {
     ldx #0
     ldy #-2
   __b1:
+    // i?'+':'0'
     cpy #0
     bne __b2
     lda #'0'
@@ -15,10 +16,14 @@ main: {
   __b2:
     lda #'+'
   __b3:
+    // SCREEN[idx++] = j
     sta SCREEN,x
+    // SCREEN[idx++] = j;
     inx
+    // for( signed byte i: -2..2)
     iny
     cpy #3
     bne __b1
+    // }
     rts
 }

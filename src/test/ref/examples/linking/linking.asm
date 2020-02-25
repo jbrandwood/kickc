@@ -20,15 +20,19 @@
 main: {
     ldx #0
   __b1:
+    // base[i] = i
     txa
     sta base,x
+    // for(char i:0..255)
     inx
     cpx #0
     bne __b1
   __b2:
+    // fillscreen(*BGCOL)
     lda BGCOL
     sta.z fillscreen.c
     jsr fillscreen
+    // (*BGCOL)++;
     inc BGCOL
     jmp __b2
 }
@@ -43,6 +47,7 @@ fillscreen: {
     lda #>SCREEN
     sta.z screen+1
   __b1:
+    // for( char *screen = SCREEN; screen<SCREEN+1000; screen++)
     lda.z screen+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -51,14 +56,19 @@ fillscreen: {
     cmp #<SCREEN+$3e8
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // c+base[i++]
     lda base,x
     clc
     adc.z c
+    // *screen = c+base[i++]
     ldy #0
     sta (screen),y
+    // *screen = c+base[i++];
     inx
+    // for( char *screen = SCREEN; screen<SCREEN+1000; screen++)
     inc.z screen
     bne !+
     inc.z screen+1

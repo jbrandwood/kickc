@@ -9,6 +9,7 @@ main: {
     sta.z b
     sta.z b+1
   __b1:
+    // b = b + 40*8
     clc
     lda.z b
     adc #<$28*8
@@ -16,8 +17,10 @@ main: {
     lda.z b+1
     adc #>$28*8
     sta.z b+1
+    // for(byte i : 0..10)
     inx
     cpx #$b
     bne __b1
+    // }
     rts
 }

@@ -80,6 +80,7 @@ main: {
     sta.z sc+1
   // Clear screen
   __b1:
+    // for( byte* sc=SCREEN;sc<SCREEN+1000;sc++)
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bcs !__b2+
@@ -92,6 +93,7 @@ main: {
     jmp __b2
   !__b2:
   !:
+    // print_str_at("f1", SCREEN+1)
     lda #<SCREEN+1
     sta.z print_str_at.at
     lda #>SCREEN+1
@@ -101,6 +103,7 @@ main: {
     lda #>str
     sta.z print_str_at.str+1
     jsr print_str_at
+    // print_str_at("f3", SCREEN+1+10)
     lda #<SCREEN+1+$a
     sta.z print_str_at.at
     lda #>SCREEN+1+$a
@@ -110,6 +113,7 @@ main: {
     lda #>str1
     sta.z print_str_at.str+1
     jsr print_str_at
+    // print_str_at("f5", SCREEN+1+20)
     lda #<SCREEN+1+$14
     sta.z print_str_at.at
     lda #>SCREEN+1+$14
@@ -119,6 +123,7 @@ main: {
     lda #>str2
     sta.z print_str_at.str+1
     jsr print_str_at
+    // print_str_at("f7", SCREEN+1+30)
     lda #<SCREEN+1+$1e
     sta.z print_str_at.at
     lda #>SCREEN+1+$1e
@@ -131,10 +136,12 @@ main: {
     lda #0
     sta.z i
   __b4:
+    // plot_chargen(i, $20, 0)
     ldy.z i
     ldx #0
     lda #$20
     jsr plot_chargen
+    // for(byte i : 0..3 )
     inc.z i
     lda #4
     cmp.z i
@@ -142,36 +149,51 @@ main: {
     lda #0
     sta.z cur_pos
   __b5:
+    // keyboard_key_pressed(KEY_F1)
     ldx #KEY_F1
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_F1)
+    // if(keyboard_key_pressed(KEY_F1)!=0)
     cmp #0
     beq __b6
     lda #0
     sta.z cur_pos
   __b6:
+    // keyboard_key_pressed(KEY_F3)
     ldx #KEY_F3
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_F3)
+    // if(keyboard_key_pressed(KEY_F3)!=0)
     cmp #0
     beq __b7
     lda #1
     sta.z cur_pos
   __b7:
+    // keyboard_key_pressed(KEY_F5)
     ldx #KEY_F5
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_F5)
+    // if(keyboard_key_pressed(KEY_F5)!=0)
     cmp #0
     beq __b8
     lda #2
     sta.z cur_pos
   __b8:
+    // keyboard_key_pressed(KEY_F7)
     ldx #KEY_F7
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_F7)
+    // if(keyboard_key_pressed(KEY_F7)!=0)
     cmp #0
     beq __b9
     lda #3
     sta.z cur_pos
   __b9:
+    // keyboard_key_pressed(KEY_LSHIFT)
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(KEY_LSHIFT)
+    // if(keyboard_key_pressed(KEY_LSHIFT)!=0)
     cmp #0
     bne __b10
     lda #0
@@ -185,32 +207,43 @@ main: {
     sta.z ch
   // Check for key presses - and plot char if found
   __b12:
+    // keyboard_get_keycode(ch)
     ldx.z ch
     jsr keyboard_get_keycode
+    // key = keyboard_get_keycode(ch)
+    // if(key!=$3f)
     cmp #$3f
     beq b1
+    // keyboard_key_pressed(key)
     tax
     jsr keyboard_key_pressed
+    // keyboard_key_pressed(key)
+    // pressed = keyboard_key_pressed(key)
     jmp __b13
   b1:
     lda #0
   __b13:
+    // if(pressed!=0)
     cmp #0
     beq __b14
+    // plot_chargen(cur_pos, ch, shift)
     ldy.z cur_pos
     lda.z ch
     ldx.z shift
     jsr plot_chargen
   __b14:
+    // for( byte ch : 0..$3f)
     inc.z ch
     lda #$40
     cmp.z ch
     bne __b12
     jmp __b5
   __b2:
+    // *sc = ' '
     lda #' '
     ldy #0
     sta (sc),y
+    // for( byte* sc=SCREEN;sc<SCREEN+1000;sc++)
     inc.z sc
     bne !+
     inc.z sc+1
@@ -235,16 +268,20 @@ plot_chargen: {
     .label sc = $a
     .label bits = 9
     .label y = 8
+    // asm
     sei
+    // (word)ch
     sta.z __0
     lda #0
     sta.z __0+1
+    // (word)ch*8
     asl.z __1
     rol.z __1+1
     asl.z __1
     rol.z __1+1
     asl.z __1
     rol.z __1+1
+    // chargen = CHARGEN+(word)ch*8
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -252,8 +289,10 @@ plot_chargen: {
     lda.z chargen+1
     adc #>CHARGEN
     sta.z chargen+1
+    // if(shift!=0)
     cpx #0
     beq __b1
+    // chargen = chargen + $0800
     clc
     lda.z chargen
     adc #<$800
@@ -262,11 +301,15 @@ plot_chargen: {
     adc #>$800
     sta.z chargen+1
   __b1:
+    // *PROCPORT = $32
     lda #$32
     sta PROCPORT
+    // mul8u(pos, 10)
     tya
     tax
     jsr mul8u
+    // mul8u(pos, 10)
+    // sc = SCREEN+40+1+mul8u(pos, 10)
     clc
     lda.z sc
     adc #<SCREEN+$28+1
@@ -277,13 +320,16 @@ plot_chargen: {
     lda #0
     sta.z y
   __b3:
+    // bits = chargen[y]
     ldy.z y
     lda (chargen),y
     sta.z bits
     ldx #0
   __b4:
+    // bits & $80
     lda #$80
     and.z bits
+    // if((bits & $80) != 0)
     cmp #0
     beq b1
     lda #'*'
@@ -291,16 +337,21 @@ plot_chargen: {
   b1:
     lda #'.'
   __b5:
+    // *sc = c
     ldy #0
     sta (sc),y
+    // sc++;
     inc.z sc
     bne !+
     inc.z sc+1
   !:
+    // bits = bits*2
     asl.z bits
+    // for(byte x:0..7)
     inx
     cpx #8
     bne __b4
+    // sc = sc+32
     lda #$20
     clc
     adc.z sc
@@ -308,13 +359,17 @@ plot_chargen: {
     bcc !+
     inc.z sc+1
   !:
+    // for(byte y:0..7)
     inc.z y
     lda #8
     cmp.z y
     bne __b3
+    // *PROCPORT = $37
     lda #$37
     sta PROCPORT
+    // asm
     cli
+    // }
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -332,14 +387,19 @@ mul8u: {
     sta.z res
     sta.z res+1
   __b1:
+    // while(a!=0)
     cpx #0
     bne __b2
+    // }
     rts
   __b2:
+    // a&1
     txa
     and #1
+    // if( (a&1) != 0)
     cmp #0
     beq __b3
+    // res = res + mb
     lda.z res
     clc
     adc.z mb
@@ -348,9 +408,11 @@ mul8u: {
     adc.z mb+1
     sta.z res+1
   __b3:
+    // a = a>>1
     txa
     lsr
     tax
+    // mb = mb<<1
     asl.z mb
     rol.z mb+1
     jmp __b1
@@ -361,16 +423,21 @@ mul8u: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
+    // colidx = key&7
     txa
     and #7
     tay
+    // rowidx = key>>3
     txa
     lsr
     lsr
     lsr
+    // keyboard_matrix_read(rowidx)
     tax
     jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
     and keyboard_matrix_col_bitmask,y
+    // }
     rts
 }
 // Read a single row of the keyboard matrix
@@ -380,10 +447,13 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
+    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
     lda CIA1_PORT_B
     eor #$ff
+    // }
     rts
 }
 // Get the keycode corresponding to a specific screen code character
@@ -392,7 +462,9 @@ keyboard_matrix_read: {
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
+    // return keyboard_char_keycodes[ch];
     lda keyboard_char_keycodes,x
+    // }
     rts
 }
 // Print a string at a specific screen position
@@ -401,15 +473,19 @@ print_str_at: {
     .label at = $c
     .label str = $a
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(at++) = *(str++)
     ldy #0
     lda (str),y
     sta (at),y
+    // *(at++) = *(str++);
     inc.z at
     bne !+
     inc.z at+1

@@ -6,7 +6,9 @@
   .label SCREEN = $4400
 main: {
     .label sprite_ptr = SCREEN+$378
+    // sprite_ptr[0] = (byte)(sprite/$40)
     lda #$ff&sprite/$40
     sta sprite_ptr
+    // }
     rts
 }

@@ -21,6 +21,7 @@ main: {
     lda #>$400
     sta.z sc+1
   __b1:
+    // for(byte* sc = $400;sc<$400+1000;sc++)
     lda.z sc+1
     cmp #>$400+$3e8
     bcc __b2
@@ -39,6 +40,7 @@ main: {
     sta.z line1_pos+1
     ldx #0
   line1___b1:
+    // for( byte i=0;i<ysize; i++)
     cpx #line1_ysize
     bcc line1___b2
     lda #<$400
@@ -51,14 +53,19 @@ main: {
     sta.z line2_pos+1
     ldx #0
   line2___b1:
+    // for( byte i=0;i<ysize; i++)
     cpx #line2_ysize
     bcc line2___b2
+    // }
     rts
   line2___b2:
+    // plot(>pos, ch)
     lda.z line2_pos+1
+    // *(cur_line+xpos) = ch
     tay
     lda #line2_ch
     sta (cur_line_1),y
+    // pos += xadd
     lda #line2_xadd
     clc
     adc.z line2_pos
@@ -66,6 +73,7 @@ main: {
     bcc !+
     inc.z line2_pos+1
   !:
+    // cur_line += 40
     lda #$28
     clc
     adc.z cur_line_1
@@ -73,13 +81,17 @@ main: {
     bcc !+
     inc.z cur_line_1+1
   !:
+    // for( byte i=0;i<ysize; i++)
     inx
     jmp line2___b1
   line1___b2:
+    // plot(>pos, ch)
     lda.z line1_pos+1
+    // *(cur_line+xpos) = ch
     tay
     lda #line1_ch
     sta (cur_line),y
+    // pos += xadd
     lda #line1_xadd
     clc
     adc.z line1_pos
@@ -87,6 +99,7 @@ main: {
     bcc !+
     inc.z line1_pos+1
   !:
+    // cur_line += 40
     lda #$28
     clc
     adc.z cur_line
@@ -94,12 +107,15 @@ main: {
     bcc !+
     inc.z cur_line+1
   !:
+    // for( byte i=0;i<ysize; i++)
     inx
     jmp line1___b1
   __b2:
+    // *sc = ' '
     lda #' '
     ldy #0
     sta (sc),y
+    // for(byte* sc = $400;sc<$400+1000;sc++)
     inc.z sc
     bne !+
     inc.z sc+1

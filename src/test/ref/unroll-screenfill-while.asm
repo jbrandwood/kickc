@@ -6,6 +6,7 @@ main: {
     .label SCREEN = $400
     ldx #0
   __b2:
+    // (SCREEN+line*40)[x] = x
     txa
     sta SCREEN,x
     txa
@@ -56,8 +57,10 @@ main: {
     sta SCREEN+$17*$28,x
     txa
     sta SCREEN+$18*$28,x
+    // for(byte x: 0..39)
     inx
     cpx #$28
     bne __b2
+    // }
     rts
 }

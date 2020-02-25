@@ -4,6 +4,7 @@
   .label SCREEN = $400
   .label ptr = 2
 __bbegin:
+  // ptr = 0x1000
   lda #<$1000
   sta.z ptr
   lda #>$1000
@@ -11,7 +12,9 @@ __bbegin:
   jsr main
   rts
 main: {
+    // SCREEN[0] = <w
     lda #<ptr+$32
     sta SCREEN
+    // }
     rts
 }

@@ -475,7 +475,7 @@ public class Unroller {
                   RValue rValueNew = valueToNew(origPhiRValue.getrValue(), varsOriginalToCopied);
                   newPhiVariable.setrValue(blocksOriginalToCopied.get(predecessor), rValueNew);
                   // - Then an entry from the existing predecessor block
-                  RValue rValue = valueToOrig(origPhiRValue.getrValue());
+                  RValue rValue = copyValue(origPhiRValue.getrValue());
                   newPhiVariable.setrValue(predecessor, rValue);
                   // Finally remove the phi entry into the original block (since both will hit the new block)
                   origPhiRValuesIt.remove();
@@ -530,7 +530,7 @@ public class Unroller {
     */
    private static RValue valueToNew(RValue rValue, Map<SymbolVariableRef, SymbolVariableRef> definedToNewVar) {
       if(rValue == null) return null;
-      RValue rValueCopy = valueToOrig(rValue);
+      RValue rValueCopy = copyValue(rValue);
       ProgramValue.GenericValue genericValue = new ProgramValue.GenericValue(rValueCopy);
       ProgramValueIterator.execute(genericValue, (programValue, currentStmt, stmtIt, currentBlock) -> {
          Value rVal = programValue.get();
@@ -550,7 +550,7 @@ public class Unroller {
     * @param rValue The value to copy
     * @return An exact copy of the value
     */
-   private static RValue valueToOrig(RValue rValue) {
+   public static RValue copyValue(RValue rValue) {
       if(rValue == null) return null;
       ProgramValue.GenericValue genericValue = new ProgramValue.GenericValue(rValue);
       ProgramValueIterator.execute(genericValue, (programValue, currentStmt, stmtIt, currentBlock) -> {

@@ -12,23 +12,31 @@ main: {
   __b1:
     ldy #0
   __b2:
+    // e = b+c
     tya
     clc
     adc.z a
     sta.z e
+    // f = d+a
     tya
     clc
     adc.z a
+    // g = e+f
     clc
     adc.z e
+    // SCREEN[idx++] = g
     sta SCREEN,x
+    // SCREEN[idx++] = g;
     inx
+    // for( byte b: 0..5)
     iny
     cpy #6
     bne __b2
+    // for( byte a: 0..5)
     inc.z a
     lda #6
     cmp.z a
     bne __b1
+    // }
     rts
 }

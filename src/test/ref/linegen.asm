@@ -9,6 +9,7 @@
   .label print_char_cursor = 3
   .label print_line_cursor = $b
 main: {
+    // lin16u_gen(557, 29793, lintab1, 20)
     lda #<lintab1
     sta.z lin16u_gen.lintab
     lda #>lintab1
@@ -22,6 +23,7 @@ main: {
     lda #>$7461
     sta.z lin16u_gen.max+1
     jsr lin16u_gen
+    // lin16u_gen(31179, 63361, lintab2, 20)
     lda #<lintab2
     sta.z lin16u_gen.lintab
     lda #>lintab2
@@ -35,6 +37,7 @@ main: {
     lda #>$f781
     sta.z lin16u_gen.max+1
     jsr lin16u_gen
+    // lin16u_gen(0, $6488, lintab3, 20)
     lda #<lintab3
     sta.z lin16u_gen.lintab
     lda #>lintab3
@@ -47,7 +50,9 @@ main: {
     lda #>$6488
     sta.z lin16u_gen.max+1
     jsr lin16u_gen
+    // print_cls()
     jsr print_cls
+    // print_str("   ")
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -57,30 +62,36 @@ main: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_word(557)
     lda #<$22d
     sta.z print_word.w
     lda #>$22d
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word(31179)
     lda #<$79cb
     sta.z print_word.w
     lda #>$79cb
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word(0)
     lda #<0
     sta.z print_word.w
     sta.z print_word.w+1
     jsr print_word
+    // print_ln()
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -88,56 +99,69 @@ main: {
     jsr print_ln
     ldx #0
   __b1:
+    // for(byte i=0; i<20; i++)
     cpx #$14
     bcc __b2
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("   ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_word(29793)
     lda #<$7461
     sta.z print_word.w
     lda #>$7461
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word(63361)
     lda #<$f781
     sta.z print_word.w
     lda #>$f781
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word($6488)
     lda #<$6488
     sta.z print_word.w
     lda #>$6488
     sta.z print_word.w+1
     jsr print_word
+    // print_ln()
     jsr print_ln
+    // }
     rts
   __b2:
+    // print_byte(i)
     stx.z print_byte.b
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_byte(i)
     jsr print_byte
+    // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word(lintab1[i])
     txa
     asl
     tay
@@ -146,11 +170,13 @@ main: {
     lda lintab1+1,y
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word(lintab2[i])
     txa
     asl
     tay
@@ -159,11 +185,13 @@ main: {
     lda lintab2+1,y
     sta.z print_word.w+1
     jsr print_word
+    // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word(lintab3[i])
     txa
     asl
     tay
@@ -172,7 +200,9 @@ main: {
     lda lintab3+1,y
     sta.z print_word.w+1
     jsr print_word
+    // print_ln()
     jsr print_ln
+    // for(byte i=0; i<20; i++)
     inx
     jmp __b1
     lintab1: .fill 2*$14, 0
@@ -186,6 +216,7 @@ main: {
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -193,6 +224,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -201,48 +233,60 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Print a word as HEX
 // print_word(word zp(5) w)
 print_word: {
     .label w = 5
+    // print_byte(>w)
     lda.z w+1
     sta.z print_byte.b
     jsr print_byte
+    // print_byte(<w)
     lda.z w
     sta.z print_byte.b
     jsr print_byte
+    // }
     rts
 }
 // Print a byte as HEX
 // print_byte(byte zp(2) b)
 print_byte: {
     .label b = 2
+    // b>>4
     lda.z b
     lsr
     lsr
     lsr
     lsr
+    // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
     jsr print_char
+    // b&$f
     lda #$f
     and.z b
+    // print_char(print_hextab[b&$f])
     tay
     lda print_hextab,y
     jsr print_char
+    // }
     rts
 }
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -250,15 +294,19 @@ print_char: {
 print_str: {
     .label str = 5
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -271,7 +319,9 @@ print_str: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -286,17 +336,21 @@ memset: {
     lda #>str
     sta.z dst+1
   __b1:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp #>end
     bne __b2
     lda.z dst
     cmp #<end
     bne __b2
+    // }
     rts
   __b2:
+    // *dst = c
     lda #c
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1
@@ -318,6 +372,7 @@ lin16u_gen: {
     .label i = $d
     .label max = 3
     .label min = 5
+    // ampl = max-min
     lda.z ampl
     sec
     sbc.z min
@@ -325,6 +380,7 @@ lin16u_gen: {
     lda.z ampl+1
     sbc.z min+1
     sta.z ampl+1
+    // divr16u(ampl, length-1, 0)
     lda #<$14-1
     sta.z divr16u.divisor
     lda #>$14-1
@@ -333,10 +389,13 @@ lin16u_gen: {
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
+    // divr16u(ampl, length-1, 0)
+    // stepi = divr16u(ampl, length-1, 0)
     lda.z divr16u.return
     sta.z stepi
     lda.z divr16u.return+1
     sta.z stepi+1
+    // divr16u(0, length-1, rem16u)
     lda #<$14-1
     sta.z divr16u.divisor
     lda #>$14-1
@@ -345,6 +404,9 @@ lin16u_gen: {
     sta.z divr16u.dividend
     sta.z divr16u.dividend+1
     jsr divr16u
+    // divr16u(0, length-1, rem16u)
+    // stepf = divr16u(0, length-1, rem16u)
+    // step = { stepi, stepf }
     lda.z stepi
     sta.z step+2
     lda.z stepi+1
@@ -353,6 +415,7 @@ lin16u_gen: {
     sta.z step
     lda.z stepf+1
     sta.z step+1
+    // val = { min, 0 }
     lda #<0
     sta.z val
     sta.z val+1
@@ -364,6 +427,7 @@ lin16u_gen: {
     sta.z i
     sta.z i+1
   __b1:
+    // for(word i=0; i<length; i++)
     lda.z i+1
     cmp #>$14
     bcc __b2
@@ -372,18 +436,22 @@ lin16u_gen: {
     cmp #<$14
     bcc __b2
   !:
+    // }
     rts
   __b2:
+    // >val
     lda.z val+2
     sta.z __6
     lda.z val+3
     sta.z __6+1
+    // *lintab = >val
     ldy #0
     lda.z __6
     sta (lintab),y
     iny
     lda.z __6+1
     sta (lintab),y
+    // val = val + step
     lda.z val
     clc
     adc.z step
@@ -397,6 +465,7 @@ lin16u_gen: {
     lda.z val+3
     adc.z step+3
     sta.z val+3
+    // lintab++;
     lda #SIZEOF_WORD
     clc
     adc.z lintab
@@ -404,6 +473,7 @@ lin16u_gen: {
     bcc !+
     inc.z lintab+1
   !:
+    // for(word i=0; i<length; i++)
     inc.z i
     bne !+
     inc.z i+1
@@ -426,20 +496,28 @@ divr16u: {
     sta.z quotient
     sta.z quotient+1
   __b1:
+    // rem = rem << 1
     asl.z rem
     rol.z rem+1
+    // >dividend
     lda.z dividend+1
+    // >dividend & $80
     and #$80
+    // if( (>dividend & $80) != 0 )
     cmp #0
     beq __b2
+    // rem = rem | 1
     lda #1
     ora.z rem
     sta.z rem
   __b2:
+    // dividend = dividend << 1
     asl.z dividend
     rol.z dividend+1
+    // quotient = quotient << 1
     asl.z quotient
     rol.z quotient+1
+    // if(rem>=divisor)
     lda.z rem+1
     cmp.z divisor+1
     bcc __b3
@@ -448,10 +526,12 @@ divr16u: {
     cmp.z divisor
     bcc __b3
   !:
+    // quotient++;
     inc.z quotient
     bne !+
     inc.z quotient+1
   !:
+    // rem = rem - divisor
     lda.z rem
     sec
     sbc.z divisor
@@ -460,9 +540,12 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
   __b3:
+    // for( byte i : 0..15)
     inx
     cpx #$10
     bne __b1
+    // rem16u = rem
+    // }
     rts
 }
   print_hextab: .text "0123456789abcdef"

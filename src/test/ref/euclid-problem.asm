@@ -10,20 +10,26 @@ main: {
     lda #$80
     sta.z a
   __b1:
+    // while (a!=b)
     cpx.z a
     bne __b2
+    // *SCREEN = a
     lda.z a
     sta SCREEN
+    // }
     rts
   __b2:
+    // if(a>b)
     cpx.z a
     bcc __b4
+    // b = b-a
     txa
     sec
     sbc.z a
     tax
     jmp __b1
   __b4:
+    // a = a-b
     txa
     eor #$ff
     sec

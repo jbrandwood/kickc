@@ -10,19 +10,26 @@
   .const WHITE = 1
 // Setup the IRQ routine
 main: {
+    // asm
     sei
+    // *KERNEL_IRQ = &irq
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
+    // asm
     cli
+    // }
     rts
 }
 // The Interrupt Handler
 irq: {
+    // *BGCOL = WHITE
     lda #WHITE
     sta BGCOL
+    // *BGCOL = BLACK
     lda #BLACK
     sta BGCOL
+    // }
     jmp $ea31
 }

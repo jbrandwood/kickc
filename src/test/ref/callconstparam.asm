@@ -6,6 +6,7 @@
 .pc = $80d "Program"
   .label screen = 3
 main: {
+    // line(1,2)
     lda #<$400
     sta.z screen
     lda #>$400
@@ -14,27 +15,34 @@ main: {
     sta.z line.x1
     ldx #1
     jsr line
+    // line(3,5)
     lda #5
     sta.z line.x1
     ldx #3
     jsr line
+    // }
     rts
 }
 // line(byte zp(2) x1)
 line: {
     .label x1 = 2
   __b1:
+    // for(byte x  = x0; x<x1; x++)
     cpx.z x1
     bcc __b2
+    // }
     rts
   __b2:
+    // *screen = x
     txa
     ldy #0
     sta (screen),y
+    // screen++;
     inc.z screen
     bne !+
     inc.z screen+1
   !:
+    // for(byte x  = x0; x<x1; x++)
     inx
     jmp __b1
 }

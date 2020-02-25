@@ -5,14 +5,19 @@
 main: {
     ldx #0
   __b2:
+    // (*getfn(++i))();
     inx
+    // getfn(++i)
     jsr getfn
+    // (*getfn(++i))()
     jsr fn1
     jmp __b2
 }
 fn1: {
     .label BORDERCOL = $d020
+    // (*BORDERCOL)++;
     inc BORDERCOL
+    // }
     rts
 }
 getfn: {

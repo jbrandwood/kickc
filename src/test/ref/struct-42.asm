@@ -10,6 +10,7 @@ main: {
     lda #0
     sta.z i
   __b1:
+    // points[i] = { 2, 3 }
     lda.z i
     asl
     tax
@@ -21,14 +22,18 @@ main: {
     iny
     cpy #SIZEOF_STRUCT_POINT
     bne !-
+    // for( char i: 0..2)
     inc.z i
     lda #3
     cmp.z i
     bne __b1
+    // SCREEN[0] = points[2].x
     lda points+2*SIZEOF_STRUCT_POINT
     sta SCREEN
+    // SCREEN[1] = points[2].y
     lda points+OFFSET_STRUCT_POINT_Y+2*SIZEOF_STRUCT_POINT
     sta SCREEN+1
+    // }
     rts
 }
   points: .fill 2*3, 0

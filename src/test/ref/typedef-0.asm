@@ -4,7 +4,9 @@
 main: {
     .const b = 'a'
     .label SCREEN = $400
+    // *SCREEN = b
     lda #b
     sta SCREEN
+    // }
     rts
 }

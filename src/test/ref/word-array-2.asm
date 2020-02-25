@@ -13,6 +13,7 @@ main: {
     .label __8 = 2
     ldx #0
   __b1:
+    // (word)i
     txa
     sta.z __0
     lda #0
@@ -21,10 +22,12 @@ main: {
     sta.z __1
     lda #0
     sta.z __1+1
+    // ((word)i)*0x100
     lda.z __2
     sta.z __2+1
     lda #0
     sta.z __2
+    // ((word)i)*0x100+i
     txa
     clc
     adc.z __3
@@ -32,6 +35,7 @@ main: {
     bcc !+
     inc.z __3+1
   !:
+    // words[(word)i] = ((word)i)*0x100+i
     asl.z __5
     rol.z __5+1
     clc
@@ -47,13 +51,16 @@ main: {
     iny
     lda.z __3+1
     sta (__8),y
+    // for(byte i: 0..0xff)
     inx
     cpx #0
     bne __b1
+    // SCREEN[0] = words[(word)255]
     lda words+$ff*SIZEOF_WORD
     sta SCREEN
     lda words+$ff*SIZEOF_WORD+1
     sta SCREEN+1
+    // }
     rts
 }
   words: .fill 2*$100, 0

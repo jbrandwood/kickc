@@ -45,10 +45,13 @@ main: {
     .label s = 4
     .label i_1 = $d
     .label __34 = $13
+    // *D018 = toD018(SCREEN, 0x1800)
     //Show lower case font
     lda #toD0181_return
     sta D018
+    // print_cls()
     jsr print_cls
+    // print_str("Sieve benchmark - calculating primes")
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -58,6 +61,7 @@ main: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
+    // print_ln()
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -67,17 +71,21 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("between 2 and ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
+    // print_word_decimal(COUNT)
     lda #<COUNT
     sta.z print_word_decimal.w
     lda #>COUNT
     sta.z print_word_decimal.w+1
     jsr print_word_decimal
+    // print_ln()
     jsr print_ln
+    // memset(sieve, 0, COUNT)
     ldx #0
     lda #<sieve
     sta.z memset.str
@@ -88,6 +96,7 @@ main: {
     lda #>COUNT
     sta.z memset.num+1
     jsr memset
+    // clock_start()
     jsr clock_start
     lda #<sieve+2
     sta.z sieve_i
@@ -98,6 +107,7 @@ main: {
     lda #>2
     sta.z i+1
   __b1:
+    // while (i < SQRT_COUNT)
     lda.z i+1
     cmp #>SQRT_COUNT
     bcs !__b2+
@@ -110,7 +120,9 @@ main: {
     jmp __b2
   !__b2:
   !:
+    // clock()
     jsr clock
+    // cyclecount = clock()-CLOCKS_PER_INIT
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -124,7 +136,9 @@ main: {
     lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
+    // div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100))
     jsr div32u16u
+    // sec100s = (unsigned int)div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100))
     lda.z __12
     sta.z sec100s
     lda.z __12+1
@@ -133,24 +147,30 @@ main: {
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
+    // print_str("100ths seconds used: ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
+    // print_word_decimal(sec100s)
     jsr print_word_decimal
+    // print_str(" cycles: ")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
+    // print_dword_decimal(cyclecount)
     jsr print_dword_decimal
+    // print_ln()
     jsr print_ln
     lda #<2
     sta.z i_1
     lda #>2
     sta.z i_1+1
   __b8:
+    // for (i = 2; i < 1300; ++i)
     lda.z i_1+1
     cmp #>$514
     bcc __b9
@@ -163,15 +183,18 @@ main: {
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
+    // print_str("...")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
   __b13:
+    // (*(SCREEN+999))++;
     inc SCREEN+$3e7
     jmp __b13
   __b9:
+    // if (!sieve[i])
     lda.z i_1
     clc
     adc #<sieve
@@ -183,29 +206,36 @@ main: {
     lda (__34),y
     cmp #0
     bne __b11
+    // print_word_decimal(i)
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
+    // print_word_decimal(i)
     jsr print_word_decimal
+    // print_char(' ')
     jsr print_char
   __b11:
+    // for (i = 2; i < 1300; ++i)
     inc.z i_1
     bne !+
     inc.z i_1+1
   !:
     jmp __b8
   __b2:
+    // if (!*sieve_i)
     ldy #0
     lda (sieve_i),y
     cmp #0
     bne __b4
+    // j = i*2
     lda.z i
     asl
     sta.z j
     lda.z i+1
     rol
     sta.z j+1
+    // s = &sieve[j]
     lda.z j
     clc
     adc #<sieve
@@ -214,6 +244,7 @@ main: {
     adc #>sieve
     sta.z s+1
   __b5:
+    // while (j < COUNT)
     lda.z j+1
     cmp #>COUNT
     bcc __b6
@@ -223,19 +254,23 @@ main: {
     bcc __b6
   !:
   __b4:
+    // i++;
     inc.z i
     bne !+
     inc.z i+1
   !:
+    // sieve_i++;
     inc.z sieve_i
     bne !+
     inc.z sieve_i+1
   !:
     jmp __b1
   __b6:
+    // *s = 1
     lda #1
     ldy #0
     sta (s),y
+    // s += i
     lda.z s
     clc
     adc.z i
@@ -243,6 +278,7 @@ main: {
     lda.z s+1
     adc.z i+1
     sta.z s+1
+    // j += i
     lda.z j
     clc
     adc.z i
@@ -265,9 +301,11 @@ main: {
 // Print a single char
 print_char: {
     .const ch = ' '
+    // *(print_char_cursor++) = ch
     lda #ch
     ldy #0
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
     lda.z print_char_cursor
     clc
     adc #1
@@ -275,22 +313,26 @@ print_char: {
     lda.z print_char_cursor+1
     adc #0
     sta.z print_char_cursor_1+1
+    // }
     rts
 }
 // Print a word as DECIMAL
 // print_word_decimal(word zp($d) w)
 print_word_decimal: {
     .label w = $d
+    // utoa(w, decimal_digits, DECIMAL)
     lda.z w
     sta.z utoa.value
     lda.z w+1
     sta.z utoa.value+1
     jsr utoa
+    // print_str(decimal_digits)
     lda #<decimal_digits
     sta.z print_str.str
     lda #>decimal_digits
     sta.z print_str.str+1
     jsr print_str
+    // }
     rts
 }
 // Print a zero-terminated string
@@ -298,15 +340,19 @@ print_word_decimal: {
 print_str: {
     .label str = $f
   __b1:
+    // while(*str)
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
+    // }
     rts
   __b2:
+    // *(print_char_cursor++) = *(str++)
     ldy #0
     lda (str),y
     sta (print_char_cursor),y
+    // *(print_char_cursor++) = *(str++);
     inc.z print_char_cursor
     bne !+
     inc.z print_char_cursor+1
@@ -337,23 +383,30 @@ utoa: {
     txa
     sta.z digit
   __b1:
+    // for( char digit=0; digit<max_digits-1; digit++ )
     lda.z digit
     cmp #max_digits-1
     bcc __b2
+    // (char)value
     lda.z value
+    // *buffer++ = DIGITS[(char)value]
     tay
     lda DIGITS,y
     ldy #0
     sta (buffer),y
+    // *buffer++ = DIGITS[(char)value];
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
+    // *buffer = 0
     lda #0
     tay
     sta (buffer),y
+    // }
     rts
   __b2:
+    // digit_value = digit_values[digit]
     lda.z digit
     asl
     tay
@@ -361,6 +414,7 @@ utoa: {
     sta.z digit_value
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
+    // if (started || value >= digit_value)
     cpx #0
     bne __b5
     cmp.z value+1
@@ -371,10 +425,15 @@ utoa: {
   !:
     bcc __b5
   __b4:
+    // for( char digit=0; digit<max_digits-1; digit++ )
     inc.z digit
     jmp __b1
   __b5:
+    // utoa_append(buffer++, value, digit_value)
     jsr utoa_append
+    // utoa_append(buffer++, value, digit_value)
+    // value = utoa_append(buffer++, value, digit_value)
+    // value = utoa_append(buffer++, value, digit_value);
     inc.z buffer
     bne !+
     inc.z buffer+1
@@ -398,6 +457,7 @@ utoa_append: {
     .label return = 2
     ldx #0
   __b1:
+    // while (value >= sub)
     lda.z sub+1
     cmp.z value+1
     bne !+
@@ -406,12 +466,16 @@ utoa_append: {
     beq __b2
   !:
     bcc __b2
+    // *buffer = DIGITS[digit]
     lda DIGITS,x
     ldy #0
     sta (buffer),y
+    // }
     rts
   __b2:
+    // digit++;
     inx
+    // value -= sub
     lda.z value
     sec
     sbc.z sub
@@ -424,6 +488,7 @@ utoa_append: {
 // Print a newline
 print_ln: {
   __b1:
+    // print_line_cursor + $28
     lda #$28
     clc
     adc.z print_line_cursor
@@ -431,6 +496,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
+    // while (print_line_cursor<print_char_cursor)
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -439,18 +505,22 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
+    // }
     rts
 }
 // Print a dword as DECIMAL
 // print_dword_decimal(dword zp(9) w)
 print_dword_decimal: {
     .label w = 9
+    // ultoa(w, decimal_digits_long, DECIMAL)
     jsr ultoa
+    // print_str(decimal_digits_long)
     lda #<decimal_digits_long
     sta.z print_str.str
     lda #>decimal_digits_long
     sta.z print_str.str+1
     jsr print_str
+    // }
     rts
 }
 // Converts unsigned number value to a string representing it in RADIX format.
@@ -473,23 +543,30 @@ ultoa: {
     txa
     sta.z digit
   __b1:
+    // for( char digit=0; digit<max_digits-1; digit++ )
     lda.z digit
     cmp #max_digits-1
     bcc __b2
+    // (char)value
     lda.z value
+    // *buffer++ = DIGITS[(char)value]
     tay
     lda DIGITS,y
     ldy #0
     sta (buffer),y
+    // *buffer++ = DIGITS[(char)value];
     inc.z buffer
     bne !+
     inc.z buffer+1
   !:
+    // *buffer = 0
     lda #0
     tay
     sta (buffer),y
+    // }
     rts
   __b2:
+    // digit_value = digit_values[digit]
     lda.z digit
     asl
     asl
@@ -502,6 +579,7 @@ ultoa: {
     sta.z digit_value+2
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
+    // if (started || value >= digit_value)
     cpx #0
     bne __b5
     lda.z value+3
@@ -521,10 +599,15 @@ ultoa: {
     bcs __b5
   !:
   __b4:
+    // for( char digit=0; digit<max_digits-1; digit++ )
     inc.z digit
     jmp __b1
   __b5:
+    // ultoa_append(buffer++, value, digit_value)
     jsr ultoa_append
+    // ultoa_append(buffer++, value, digit_value)
+    // value = ultoa_append(buffer++, value, digit_value)
+    // value = ultoa_append(buffer++, value, digit_value);
     inc.z buffer
     bne !+
     inc.z buffer+1
@@ -548,6 +631,7 @@ ultoa_append: {
     .label return = 9
     ldx #0
   __b1:
+    // while (value >= sub)
     lda.z value+3
     cmp.z sub+3
     bcc !+
@@ -564,12 +648,16 @@ ultoa_append: {
     cmp.z sub
     bcs __b2
   !:
+    // *buffer = DIGITS[digit]
     lda DIGITS,x
     ldy #0
     sta (buffer),y
+    // }
     rts
   __b2:
+    // digit++;
     inx
+    // value -= sub
     lda.z value
     sec
     sbc.z sub
@@ -594,6 +682,7 @@ div32u16u: {
     .label quotient_lo = $13
     .label return = $15
     .label dividend = 9
+    // divr16u(>dividend, divisor, 0)
     lda.z dividend+2
     sta.z divr16u.dividend
     lda.z dividend+3
@@ -602,15 +691,21 @@ div32u16u: {
     sta.z divr16u.rem
     sta.z divr16u.rem+1
     jsr divr16u
+    // divr16u(>dividend, divisor, 0)
+    // quotient_hi = divr16u(>dividend, divisor, 0)
     lda.z divr16u.return
     sta.z quotient_hi
     lda.z divr16u.return+1
     sta.z quotient_hi+1
+    // divr16u(<dividend, divisor, rem16u)
     lda.z dividend
     sta.z divr16u.dividend
     lda.z dividend+1
     sta.z divr16u.dividend+1
     jsr divr16u
+    // divr16u(<dividend, divisor, rem16u)
+    // quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // quotient = { quotient_hi, quotient_lo}
     lda.z quotient_hi
     sta.z return+2
     lda.z quotient_hi+1
@@ -619,6 +714,7 @@ div32u16u: {
     sta.z return
     lda.z quotient_lo+1
     sta.z return+1
+    // }
     rts
 }
 // Performs division on two 16 bit unsigned words and an initial remainder
@@ -636,20 +732,28 @@ divr16u: {
     sta.z quotient
     sta.z quotient+1
   __b1:
+    // rem = rem << 1
     asl.z rem
     rol.z rem+1
+    // >dividend
     lda.z dividend+1
+    // >dividend & $80
     and #$80
+    // if( (>dividend & $80) != 0 )
     cmp #0
     beq __b2
+    // rem = rem | 1
     lda #1
     ora.z rem
     sta.z rem
   __b2:
+    // dividend = dividend << 1
     asl.z dividend
     rol.z dividend+1
+    // quotient = quotient << 1
     asl.z quotient
     rol.z quotient+1
+    // if(rem>=divisor)
     lda.z rem+1
     cmp #>div32u16u.divisor
     bcc __b3
@@ -658,10 +762,12 @@ divr16u: {
     cmp #<div32u16u.divisor
     bcc __b3
   !:
+    // quotient++;
     inc.z quotient
     bne !+
     inc.z quotient+1
   !:
+    // rem = rem - divisor
     lda.z rem
     sec
     sbc #<div32u16u.divisor
@@ -670,15 +776,19 @@ divr16u: {
     sbc #>div32u16u.divisor
     sta.z rem+1
   __b3:
+    // for( byte i : 0..15)
     inx
     cpx #$10
     bne __b1
+    // rem16u = rem
+    // }
     rts
 }
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = 9
+    // 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -692,16 +802,20 @@ clock: {
     lda #>$ffffffff>>$10
     sbc CIA2_TIMER_AB+3
     sta.z return+3
+    // }
     rts
 }
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
+    // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2_TIMER_A_CONTROL
+    // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -710,10 +824,13 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
+    // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
+    // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -723,11 +840,13 @@ memset: {
     .label dst = $11
     .label num = $f
     .label str = $11
+    // if(num>0)
     lda.z num
     bne !+
     lda.z num+1
     beq __breturn
   !:
+    // end = (char*)str + num
     lda.z end
     clc
     adc.z str
@@ -736,6 +855,7 @@ memset: {
     adc.z str+1
     sta.z end+1
   __b2:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -743,11 +863,14 @@ memset: {
     cmp.z end
     bne __b3
   __breturn:
+    // }
     rts
   __b3:
+    // *dst = c
     txa
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1
@@ -756,6 +879,7 @@ memset: {
 }
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
+    // memset(print_screen, ' ', 1000)
     ldx #' '
     lda #<$400
     sta.z memset.str
@@ -766,6 +890,7 @@ print_cls: {
     lda #>$3e8
     sta.z memset.num+1
     jsr memset
+    // }
     rts
 }
   // The digits used for numbers

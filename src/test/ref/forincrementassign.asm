@@ -7,12 +7,16 @@
 main: {
     lda #0
   __b1:
+    // for(byte i=0;i<40;i=i+2)
     cmp #$28
     bcc __b2
+    // }
     rts
   __b2:
+    // SCREEN[i] = i
     tax
     sta SCREEN,x
+    // i=i+2
     clc
     adc #2
     jmp __b1

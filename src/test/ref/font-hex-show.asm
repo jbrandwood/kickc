@@ -7,17 +7,22 @@
   .label CHARSET = $2000
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
+    // *D018 = toD018(SCREEN, CHARSET)
     lda #toD0181_return
     sta D018
+    // init_font_hex(CHARSET)
     jsr init_font_hex
     ldx #0
   // Show all chars on screen
   __b1:
+    // SCREEN[c] = c
     txa
     sta SCREEN,x
+    // for (byte c: 0..255)
     inx
     cpx #0
     bne __b1
+    // }
     rts
 }
 // Make charset from proto chars
@@ -48,6 +53,7 @@ init_font_hex: {
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
   __b2:
+    // charset[idx++] = 0
     lda #0
     tay
     sta (charset),y
@@ -55,6 +61,7 @@ init_font_hex: {
     sta.z idx
     ldx #0
   __b3:
+    // proto_hi[i]<<4
     txa
     tay
     lda (proto_hi),y
@@ -63,22 +70,31 @@ init_font_hex: {
     asl
     asl
     sta.z __0
+    // proto_lo[i]<<1
     txa
     tay
     lda (proto_lo),y
     asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
     ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
     ldy.z idx
     sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
     inc.z idx
+    // for( byte i: 0..4)
     inx
     cpx #5
     bne __b3
+    // charset[idx++] = 0
     lda #0
     ldy.z idx
     sta (charset),y
+    // charset[idx++] = 0;
     iny
+    // charset[idx++] = 0
     sta (charset),y
+    // proto_lo += 5
     lda #5
     clc
     adc.z proto_lo
@@ -86,6 +102,7 @@ init_font_hex: {
     bcc !+
     inc.z proto_lo+1
   !:
+    // charset += 8
     lda #8
     clc
     adc.z charset
@@ -93,10 +110,12 @@ init_font_hex: {
     bcc !+
     inc.z charset+1
   !:
+    // for( byte c: 0..15 )
     inc.z c1
     lda #$10
     cmp.z c1
     bne __b2
+    // proto_hi += 5
     lda #5
     clc
     adc.z proto_hi
@@ -104,10 +123,12 @@ init_font_hex: {
     bcc !+
     inc.z proto_hi+1
   !:
+    // for( byte c: 0..15 )
     inc.z c
     lda #$10
     cmp.z c
     bne __b1
+    // }
     rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex

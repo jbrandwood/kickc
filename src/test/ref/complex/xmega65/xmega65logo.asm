@@ -11,15 +11,20 @@ main: {
     .label SCREEN = $400
     ldx #0
   __b1:
+    // (SCREEN+40*0)[i] = LOGO256_RED[i]
     lda LOGO256_RED,x
     sta SCREEN,x
+    // (SCREEN+40*8)[i] = LOGO256_GREEN[i]
     lda LOGO256_GREEN,x
     sta SCREEN+$28*8,x
+    // (SCREEN+40*16)[i] = LOGO256_BLUE[i]
     lda LOGO256_BLUE,x
     sta SCREEN+$28*$10,x
+    // for(byte i:0..0xff)
     inx
     cpx #0
     bne __b1
+    // }
     rts
 }
 // Import a 128x128 8bit-per-color logo using inline KickAsm

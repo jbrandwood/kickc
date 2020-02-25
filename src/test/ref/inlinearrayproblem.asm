@@ -8,13 +8,17 @@
 main: {
     ldx #0
   __b1:
+    // SCREEN[i] = txt[i]
     lda txt,x
     sta SCREEN,x
+    // SCREEN2[i] = data[i]
     lda data,x
     sta SCREEN2,x
+    // for( byte i : 0..3)
     inx
     cpx #4
     bne __b1
+    // }
     rts
     txt: .text "qwe"
     data: .byte 1, 2, 3

@@ -72,6 +72,7 @@ main: {
     sta.z sc+1
   // Clear screen
   __b1:
+    // for(byte* sc = $400; sc<$400+1000;sc++)
     lda.z sc+1
     cmp #>$400+$3e8
     bcs !__b2+
@@ -84,8 +85,10 @@ main: {
     jmp __b2
   !__b2:
   !:
+    // keyboard_init()
     jsr keyboard_init
   __b4:
+    // while (*RASTER!=$ff)
     lda #$ff
     cmp RASTER
     bne __b4
@@ -97,24 +100,33 @@ main: {
     sta.z row
   // Read & print keyboard matrix
   __b5:
+    // keyboard_matrix_read(row)
     ldy.z row
     jsr keyboard_matrix_read
+    // keyboard_matrix_read(row)
+    // row_pressed_bits = keyboard_matrix_read(row)
     tax
     ldy #0
   __b6:
+    // row_pressed_bits & $80
     txa
     and #$80
+    // if( (row_pressed_bits & $80) != 0)
     cmp #0
     bne __b7
+    // screen[col] = '0'
     lda #'0'
     sta (screen),y
   __b8:
+    // row_pressed_bits = row_pressed_bits * 2
     txa
     asl
     tax
+    // for(byte col : 0..7)
     iny
     cpy #8
     bne __b6
+    // screen = screen + 40
     lda #$28
     clc
     adc.z screen
@@ -122,10 +134,12 @@ main: {
     bcc !+
     inc.z screen+1
   !:
+    // for(byte row : 0..7)
     inc.z row
     lda #8
     cmp.z row
     bne __b5
+    // screen = screen + 40
     lda #$28
     clc
     adc.z screen
@@ -137,42 +151,56 @@ main: {
     txa
     sta.z ch
   __b12:
+    // keyboard_get_keycode(ch)
     ldy.z ch
     jsr keyboard_get_keycode
+    // key = keyboard_get_keycode(ch)
+    // if(key!=$3f)
     cmp #$3f
     beq __b13
+    // keyboard_key_pressed(key)
     tay
     jsr keyboard_key_pressed
+    // if(keyboard_key_pressed(key)!=0)
     cmp #0
     beq __b13
+    // screen[i++] = ch
     txa
     tay
     lda.z ch
     sta (screen),y
+    // screen[i++] = ch;
     inx
   __b13:
+    // for( byte ch : 0..$3f )
     inc.z ch
     lda #$40
     cmp.z ch
     bne __b12
   b1:
   // Add some spaces
+    // screen[i++] = ' '
     txa
     tay
     lda #' '
     sta (screen),y
+    // screen[i++] = ' ';
     inx
+    // while (i<5)
     cpx #5
     bcc b1
     jmp __b4
   __b7:
+    // screen[col] = '1'
     lda #'1'
     sta (screen),y
     jmp __b8
   __b2:
+    // *sc = ' '
     lda #' '
     ldy #0
     sta (sc),y
+    // for(byte* sc = $400; sc<$400+1000;sc++)
     inc.z sc
     bne !+
     inc.z sc+1
@@ -186,17 +214,23 @@ main: {
 // keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
     .label colidx = 7
+    // colidx = key&7
     tya
     and #7
     sta.z colidx
+    // rowidx = key>>3
     tya
     lsr
     lsr
     lsr
+    // keyboard_matrix_read(rowidx)
     tay
     jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx)
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
     ldy.z colidx
     and keyboard_matrix_col_bitmask,y
+    // }
     rts
 }
 // Read a single row of the keyboard matrix
@@ -206,10 +240,13 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(Y) rowid)
 keyboard_matrix_read: {
+    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
     lda CIA1_PORT_B
     eor #$ff
+    // }
     rts
 }
 // Get the keycode corresponding to a specific screen code character
@@ -218,17 +255,22 @@ keyboard_matrix_read: {
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte register(Y) ch)
 keyboard_get_keycode: {
+    // return keyboard_char_keycodes[ch];
     lda keyboard_char_keycodes,y
+    // }
     rts
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
+    // *CIA1_PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
+    // *CIA1_PORT_B_DDR = $00
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
+    // }
     rts
 }
   // Keycodes for each screen code character from $00-$3f.

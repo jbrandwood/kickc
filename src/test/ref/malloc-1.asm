@@ -7,6 +7,7 @@
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
 __b1:
+  // malloc(0x200)
   jsr malloc
   jsr main
   rts
@@ -18,12 +19,14 @@ main: {
     sta.z w+1
     ldx #0
   __b1:
+    // *w++ = i
     txa
     ldy #0
     sta (w),y
     tya
     iny
     sta (w),y
+    // *w++ = i;
     lda #SIZEOF_WORD
     clc
     adc.z w
@@ -31,9 +34,11 @@ main: {
     bcc !+
     inc.z w+1
   !:
+    // for( byte i: 0..255)
     inx
     cpx #0
     bne __b1
+    // }
     rts
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.

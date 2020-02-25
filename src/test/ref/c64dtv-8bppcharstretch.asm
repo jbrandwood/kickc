@@ -58,51 +58,74 @@
   // Plane with all pixels
   .label CHARSET8 = $8000
 main: {
+    // asm
     sei
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
     // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    // gfx_init()
     jsr gfx_init
+    // *DTV_FEATURE = DTV_FEATURE_ENABLE
     // Enable DTV extended modes
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
+    // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_BADLINE_OFF
     // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
+    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
     lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
     sta VIC_CONTROL
+    // *VIC_CONTROL2 = VIC_MCM | VIC_CSEL
     lda #VIC_MCM|VIC_CSEL
     sta VIC_CONTROL2
+    // *DTV_PLANEA_START_LO = < SCREEN
     // Plane A: SCREEN
     lda #0
     sta DTV_PLANEA_START_LO
+    // *DTV_PLANEA_START_MI = > SCREEN
     lda #>SCREEN
     sta DTV_PLANEA_START_MI
+    // *DTV_PLANEA_START_HI = 0
     lda #0
     sta DTV_PLANEA_START_HI
+    // *DTV_PLANEA_STEP = 1
     lda #1
     sta DTV_PLANEA_STEP
+    // *DTV_PLANEA_MODULO_LO = 0
     lda #0
     sta DTV_PLANEA_MODULO_LO
+    // *DTV_PLANEA_MODULO_HI = 0
     sta DTV_PLANEA_MODULO_HI
+    // *DTV_PLANEB_START_LO = < CHARSET8
     // Plane B: CHARSET8
     sta DTV_PLANEB_START_LO
+    // *DTV_PLANEB_START_MI = > CHARSET8
     lda #>CHARSET8
     sta DTV_PLANEB_START_MI
+    // *DTV_PLANEB_START_HI = 0
     lda #0
     sta DTV_PLANEB_START_HI
+    // *DTV_PLANEB_STEP = 0
     sta DTV_PLANEB_STEP
+    // *DTV_PLANEB_MODULO_LO = 0
     sta DTV_PLANEB_MODULO_LO
+    // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
+    // *CIA2_PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
     sta CIA2_PORT_A_DDR
+    // *CIA2_PORT_A = %00000011 ^ (byte)((word)SCREEN/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^SCREEN/$4000
     sta CIA2_PORT_A
+    // *VIC_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((>(((word)SCREEN)&$3fff))/4)
     // Set VIC Bank
     // VIC memory
     lda #(SCREEN&$3fff)/$40|(>(SCREEN&$3fff))/4
@@ -110,12 +133,15 @@ main: {
     ldx #0
   // DTV Palette - Grey Tones
   __b1:
+    // DTV_PALETTE[j] = j
     txa
     sta DTV_PALETTE,x
+    // for(byte j : 0..$f)
     inx
     cpx #$10
     bne __b1
   __b2:
+    // asm
     // Stabilize Raster
     ldx #$ff
   rff:
@@ -153,14 +179,18 @@ main: {
     inx
     cpx #8
     bne stabilize
+    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
     lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
     sta VIC_CONTROL
+    // *BORDERCOL = 0
     lda #0
     sta BORDERCOL
   __b3:
+    // while(*RASTER!=rst)
     lda #$42
     cmp RASTER
     bne __b3
+    // asm
     nop
     nop
     nop
@@ -180,17 +210,24 @@ main: {
     nop
     nop
   __b5:
+    // rst = *RASTER
     ldx RASTER
+    // rst&7
     txa
     and #7
+    // VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
     ora #VIC_DEN|VIC_ECM|VIC_RSEL
+    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
     sta VIC_CONTROL
+    // rst*$10
     txa
     asl
     asl
     asl
     asl
+    // *BORDERCOL = rst*$10
     sta BORDERCOL
+    // asm
     nop
     nop
     nop
@@ -206,14 +243,18 @@ main: {
     nop
     nop
     nop
+    // while (rst!=$f2)
     cpx #$f2
     bne __b5
     jmp __b2
 }
 // Initialize the different graphics in the memory
 gfx_init: {
+    // gfx_init_screen0()
     jsr gfx_init_screen0
+    // gfx_init_plane_charset8()
     jsr gfx_init_plane_charset8
+    // }
     rts
 }
 // Initialize Plane with 8bpp charset
@@ -226,8 +267,10 @@ gfx_init_plane_charset8: {
     .label col = 5
     .label cr = 9
     .label ch = 6
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
+    // *PROCPORT = PROCPORT_RAM_CHARROM
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     lda #0
@@ -245,6 +288,7 @@ gfx_init_plane_charset8: {
     lda #0
     sta.z cr
   __b2:
+    // bits = *chargen++
     ldy #0
     lda (chargen),y
     sta.z bits
@@ -254,8 +298,10 @@ gfx_init_plane_charset8: {
   !:
     ldx #0
   __b3:
+    // bits & $80
     lda #$80
     and.z bits
+    // if((bits & $80) != 0)
     cmp #0
     beq b1
     lda.z col
@@ -263,29 +309,39 @@ gfx_init_plane_charset8: {
   b1:
     lda #0
   __b4:
+    // *gfxa++ = c
     ldy #0
     sta (gfxa),y
+    // *gfxa++ = c;
     inc.z gfxa
     bne !+
     inc.z gfxa+1
   !:
+    // bits = bits*2
     asl.z bits
+    // col++;
     inc.z col
+    // for ( byte cp : 0..7)
     inx
     cpx #8
     bne __b3
+    // for ( byte cr : 0..7)
     inc.z cr
     lda #8
     cmp.z cr
     bne __b2
+    // for(byte ch : $00..$ff)
     inc.z ch
     lda.z ch
     cmp #0
     bne __b1
+    // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
+    // dtvSetCpuBankSegment1((byte)($4000/$4000))
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
+    // }
     rts
 }
 // Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
@@ -295,10 +351,13 @@ gfx_init_plane_charset8: {
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
+    // *cpuBank = cpuBankIdx
     sta cpuBank
+    // asm
     .byte $32, $dd
     lda.z $ff
     .byte $32, $00
+    // }
     rts
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
@@ -315,28 +374,37 @@ gfx_init_screen0: {
   __b1:
     ldx #0
   __b2:
+    // cy&$f
     lda #$f
     and.z cy
+    // (cy&$f)*$10
     asl
     asl
     asl
     asl
     sta.z __1
+    // cx&$f
     txa
     and #$f
+    // (cy&$f)*$10|(cx&$f)
     ora.z __1
+    // *ch++ = (cy&$f)*$10|(cx&$f)
     ldy #0
     sta (ch),y
+    // *ch++ = (cy&$f)*$10|(cx&$f);
     inc.z ch
     bne !+
     inc.z ch+1
   !:
+    // for(byte cx: 0..39)
     inx
     cpx #$28
     bne __b2
+    // for(byte cy: 0..24 )
     inc.z cy
     lda #$19
     cmp.z cy
     bne __b1
+    // }
     rts
 }

@@ -29,10 +29,12 @@
 main: {
     .label y = 3
     .label x = 2
+    // init()
     jsr init
     lda #0
     sta.z x
   __b1:
+    // for (byte x = 0; x < 16; x++ )
     lda.z x
     cmp #$10
     bcc b1
@@ -42,20 +44,26 @@ main: {
     lda #0
     sta.z y
   __b2:
+    // for (byte y = 0; y < 9; y++)
     lda.z y
     cmp #9
     bcc __b3
+    // for (byte x = 0; x < 16; x++ )
     inc.z x
     jmp __b1
   __b3:
+    // z = x+y
     lda.z x
     clc
     adc.z y
+    // tile = level_address[z]
     tay
     lda level_address,y
+    // draw_block(tile,x,y,YELLOW)
     ldy.z x
     ldx.z y
     jsr draw_block
+    // for (byte y = 0; y < 9; y++)
     inc.z y
     jmp __b2
 }
@@ -73,19 +81,26 @@ draw_block: {
     .label __16 = $11
     .label __17 = $13
     .label __18 = $15
+    // tileno = tileno << 2
     asl
     asl
     sta.z tileno
+    // x1 = x << 1
     tya
     asl
     sta.z x1
     lda #0
     rol
     sta.z x1+1
+    // y = y << 1
     txa
     asl
+    // mul8u(y,40)
     tax
     jsr mul8u
+    // mul8u(y,40)
+    // z = mul8u(y,40)
+    // z = z + x1
     lda.z z_1
     clc
     adc.z z
@@ -93,8 +108,10 @@ draw_block: {
     lda.z z_1+1
     adc.z z+1
     sta.z z_1+1
+    // drawtile = tileset[tileno]
     ldy.z tileno
     ldx tileset,y
+    // screen[z] = drawtile
     lda.z z_1
     clc
     adc #<screen
@@ -105,6 +122,7 @@ draw_block: {
     txa
     ldy #0
     sta (__11),y
+    // colors[z] = YELLOW
     lda.z z_1
     clc
     adc #<colors
@@ -114,6 +132,7 @@ draw_block: {
     sta.z __12+1
     lda #YELLOW
     sta (__12),y
+    // screen[z+1] = 1
     lda.z z_1
     clc
     adc #<screen+1
@@ -123,6 +142,7 @@ draw_block: {
     sta.z __13+1
     lda #1
     sta (__13),y
+    // colors[z+1] = YELLOW
     lda.z z_1
     clc
     adc #<colors+1
@@ -132,6 +152,7 @@ draw_block: {
     sta.z __14+1
     lda #YELLOW
     sta (__14),y
+    // screen[z+40] = 2
     lda.z z_1
     clc
     adc #<screen+$28
@@ -141,6 +162,7 @@ draw_block: {
     sta.z __15+1
     lda #2
     sta (__15),y
+    // colors[z+40] = YELLOW
     lda.z z_1
     clc
     adc #<colors+$28
@@ -150,6 +172,7 @@ draw_block: {
     sta.z __16+1
     lda #YELLOW
     sta (__16),y
+    // screen[z+41] = 3
     lda.z z_1
     clc
     adc #<screen+$29
@@ -159,6 +182,7 @@ draw_block: {
     sta.z __17+1
     lda #3
     sta (__17),y
+    // colors[z+41] = YELLOW
     clc
     lda.z __18
     adc #<colors+$29
@@ -168,6 +192,7 @@ draw_block: {
     sta.z __18+1
     lda #YELLOW
     sta (__18),y
+    // }
     rts
 }
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
@@ -185,14 +210,19 @@ mul8u: {
     sta.z res
     sta.z res+1
   __b1:
+    // while(a!=0)
     cpx #0
     bne __b2
+    // }
     rts
   __b2:
+    // a&1
     txa
     and #1
+    // if( (a&1) != 0)
     cmp #0
     beq __b3
+    // res = res + mb
     lda.z res
     clc
     adc.z mb
@@ -201,41 +231,54 @@ mul8u: {
     adc.z mb+1
     sta.z res+1
   __b3:
+    // a = a>>1
     txa
     lsr
     tax
+    // mb = mb<<1
     asl.z mb
     rol.z mb+1
     jmp __b1
 }
 init: {
     .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
+    // init_sprites()
     jsr init_sprites
+    // memset(screen, 0, 1000)
     ldx #0
     lda #<screen
     sta.z memset.str
     lda #>screen
     sta.z memset.str+1
     jsr memset
+    // memset(colors, BLACK, 1000)
     ldx #BLACK
     lda #<colors
     sta.z memset.str
     lda #>colors
     sta.z memset.str+1
     jsr memset
+    // *D018 = toD018(screen, charset)
     lda #toD0181_return
     sta D018
+    // asm
     lda #$5b
     sta $d011
+    // *BORDERCOL = BLACK
     lda #BLACK
     sta BORDERCOL
+    // *BGCOL1 = BLACK
     sta BGCOL1
+    // *BGCOL2 = RED
     lda #RED
     sta BGCOL2
+    // *BGCOL3 = BLUE
     lda #BLUE
     sta BGCOL3
+    // *BGCOL4 = GREEN
     lda #GREEN
     sta BGCOL4
+    // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -244,6 +287,7 @@ memset: {
     .label end = $15
     .label dst = 4
     .label str = 4
+    // end = (char*)str + num
     lda.z str
     clc
     adc #<$3e8
@@ -252,17 +296,21 @@ memset: {
     adc #>$3e8
     sta.z end+1
   __b2:
+    // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
     cmp.z end+1
     bne __b3
     lda.z dst
     cmp.z end
     bne __b3
+    // }
     rts
   __b3:
+    // *dst = c
     txa
     ldy #0
     sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
     inc.z dst
     bne !+
     inc.z dst+1
@@ -270,16 +318,23 @@ memset: {
     jmp __b2
 }
 init_sprites: {
+    // *SPRITES_ENABLE = %00000001
     lda #1
     sta SPRITES_ENABLE
+    // *SPRITES_EXPAND_X = 0
     // one sprite enabled
     lda #0
     sta SPRITES_EXPAND_X
+    // *SPRITES_EXPAND_Y = 0
     sta SPRITES_EXPAND_Y
+    // *SPRITES_XMSB = 0
     sta SPRITES_XMSB
+    // *SPRITES_COLS = WHITE
     lda #WHITE
     sta SPRITES_COLS
+    // *SPRITES_MC = 0
     lda #0
     sta SPRITES_MC
+    // }
     rts
 }

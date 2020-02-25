@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
@@ -279,6 +280,8 @@ public class ControlFlowGraph implements Serializable {
          // Recurse to successor blocks
          final Collection<LabelRef> successors = block.getSuccessors();
          for(LabelRef successor : successors) {
+            if(successor.getFullName().equals(ProcedureRef.PROCEXIT_BLOCK_NAME))
+               continue;
             final ControlFlowBlock successorBlock = getBlock(successor);
             populateStatementsBetween(from, to, true, between, successorBlock);
          }

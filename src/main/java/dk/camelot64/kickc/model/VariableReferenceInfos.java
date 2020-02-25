@@ -212,6 +212,9 @@ public class VariableReferenceInfos {
     */
    public Collection<VariableRef> getDefinedVars(Statement stmt) {
       Collection<ReferenceToSymbolVar> referenceToSymbolVars = statementVarReferences.get(stmt.getIndex());
+      // TODO: This may cause problems since it is a sign that the maps are out of date!
+      if(referenceToSymbolVars==null)
+         return new ArrayList<>();
       return referenceToSymbolVars
             .stream()
             .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)

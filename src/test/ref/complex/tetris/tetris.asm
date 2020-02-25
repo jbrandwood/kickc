@@ -91,7 +91,7 @@
   // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // Address of the sprites covering the playfield
-  .label PLAYFIELD_SPRITES = $2000
+  .label PLAYFIELD_SPRITES = $3000
   // Address of the charset
   .label PLAYFIELD_CHARSET = $2800
   // The size of the playfield

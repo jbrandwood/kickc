@@ -42,6 +42,9 @@ public class Compiler {
    /** File name of link script to use (from command line parameter). */
    private String linkScriptFileName;
 
+   /** Variable optimization/memory area configuration to use (from command line parameter). */
+   private VariableBuilderConfig variableBuilderConfig;
+
    public Compiler() {
       this.program = new Program();
    }
@@ -55,7 +58,11 @@ public class Compiler {
    }
 
    public void setLinkScriptFileName(String linkScript) {
-      linkScriptFileName = linkScript;
+      this.linkScriptFileName = linkScript;
+   }
+
+   public void setVariableBuilderConfig(VariableBuilderConfig variableBuilderConfig) {
+      this.variableBuilderConfig = variableBuilderConfig;
    }
 
    public void setUpliftCombinations(int upliftCombinations) {
@@ -128,7 +135,16 @@ public class Compiler {
          program.setStatementSequence(new StatementSequence());
          CParser cParser = new CParser(program);
          KickCParser.FileContext cFileContext = cParser.loadAndParseCFile(fileName, currentPath);
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program);
+
+         if(variableBuilderConfig == null) {
+            VariableBuilderConfig config = new VariableBuilderConfig();
+            VariableBuilderConfig.defaultPreConfig(config, program.getLog());
+            VariableBuilderConfig.defaultPostConfig(config, program.getLog());
+            this.variableBuilderConfig = config;
+         }
+
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, variableBuilderConfig);
+
          pass0GenerateStatementSequence.generate();
 
          StatementSequence sequence = program.getStatementSequence();
@@ -298,8 +314,8 @@ public class Compiler {
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
-      optimizations.add(() -> { program.clearStatementIndices(); return false; });
-      optimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
+      optimizations.add(() -> { program.clearStatementIndices(); return false;  });
+      optimizations.add(() -> { program.clearVariableReferenceInfos();return false;  });
       optimizations.add(() -> { program.clearStatementInfos(); return false; });
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));

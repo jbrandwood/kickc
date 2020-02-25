@@ -3,10 +3,8 @@ package dk.camelot64.kickc;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.TargetCpu;
-import dk.camelot64.kickc.model.TargetPlatform;
+import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import picocli.CommandLine;
@@ -16,9 +14,11 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 /** KickC Commandline */
 @CommandLine.Command(
@@ -132,14 +132,17 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Si"}, description = "Interleave comments with intermediate language code and ASM fragment names in the generated ASM.")
    private boolean interleaveIclFile = false;
 
-   @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. ")
+   @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. See #pragma target()")
    private String target = TargetPlatform.C64BASIC.getName();
 
-   @CommandLine.Option(names = {"-cpu"}, description = "The target CPU. Default is 6502 with illegal opcodes. ")
+   @CommandLine.Option(names = {"-cpu"}, description = "The target CPU. Default is 6502 with illegal opcodes. See #pragma cpu()")
    private String cpu = TargetCpu.MOS6502X.getName();
 
-   @CommandLine.Option(names = {"-T", "-link"}, description = "Link using a linker script in KickAss segment format.")
+   @CommandLine.Option(names = {"-T", "-link"}, description = "Link using a linker script in KickAss segment format. See #pragma link()")
    private String linkScript = null;
+
+   @CommandLine.Option(names = {"-var_model"}, description = "Configure variable optimization/memory area. Default is ssa_zp. See #pragma var_model()")
+   private String varModel = null;
 
    /** Program Exit Code signaling a compile error. */
    public static final int COMPILE_ERROR = 1;
@@ -266,6 +269,13 @@ public class KickC implements Callable<Void> {
 
          if(linkScript!=null) {
             compiler.setLinkScriptFileName(linkScript);
+         }
+
+         if(varModel!=null) {
+            List<String> settings = Arrays.asList(varModel.split(","));
+            settings = settings.stream().map(String::trim).collect(Collectors.toList());
+            final VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, StatementSource.NONE, compiler.getLog());
+            compiler.setVariableBuilderConfig(config);
          }
 
          System.out.println("Compiling " + kcFile);

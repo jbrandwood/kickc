@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Generates program SSA form by visiting the ANTLR4 parse tree
@@ -51,17 +52,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** Configuration for the variable builder. */
    private VariableBuilderConfig variableBuilderConfig;
 
-   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program) {
+   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, VariableBuilderConfig variableBuilderConfig) {
       this.cParser = cParser;
       this.fileCtx = fileCtx;
       this.program = program;
       this.sequence = program.getStatementSequence();
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
-      VariableBuilderConfig config = new VariableBuilderConfig();
-      VariableBuilderConfig.defaultPreConfig(config, program.getLog());
-      VariableBuilderConfig.defaultPostConfig(config, program.getLog());
-      this.variableBuilderConfig = config;
+      this.variableBuilderConfig = variableBuilderConfig;
       scopeStack.push(program.getScope());
    }
 
@@ -107,22 +105,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) {
-      List<TerminalNode> settings = new ArrayList<>(ctx.NAME());
-      // Detect if the first setting is "full"
-      boolean full = false;
-      if(settings.size() > 0 && settings.get(0).getText().equals(VariableBuilderConfig.SETTING_FULL)) {
-         full = true;
-         settings = settings.subList(1, settings.size());
-      }
-      VariableBuilderConfig config = new VariableBuilderConfig();
-      if(!full)
-         VariableBuilderConfig.defaultPreConfig(config, program.getLog());
-      for(TerminalNode varModel : settings) {
-         config.addSetting(varModel.getText(), program.getLog(), new StatementSource(ctx));
-      }
-      if(!full)
-         VariableBuilderConfig.defaultPostConfig(config, program.getLog());
-      this.variableBuilderConfig = config;
+      List<TerminalNode> settingNodes = new ArrayList<>(ctx.NAME());
+      List<String> settings = settingNodes.stream().map(ParseTree::getText).collect(Collectors.toList());
+      this.variableBuilderConfig = VariableBuilderConfig.fromSettings(settings, new StatementSource(ctx), program.getLog());
       return null;
    }
 

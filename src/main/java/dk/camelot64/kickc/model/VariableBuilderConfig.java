@@ -40,6 +40,32 @@ import java.util.*;
  */
 public class VariableBuilderConfig {
 
+   /**
+    * Create variable builder configuration from a number of settings.
+    * @param settings The settings.
+    * @param statementSource The statement source (used for error messages)
+    * @param program The program log (used for error messages)
+    * @return A variable builder configuration
+    */
+   public static VariableBuilderConfig fromSettings(List<String> settings, StatementSource statementSource, CompileLog log) {
+      // Detect if the first setting is "full"
+      boolean full = false;
+      if(settings.size() > 0 && settings.get(0).equals(SETTING_FULL)) {
+         full = true;
+         settings = settings.subList(1, settings.size());
+      }
+      VariableBuilderConfig config = new VariableBuilderConfig();
+      if(!full)
+         defaultPreConfig(config, log);
+      // Apply all settings
+      for(String setting : settings) {
+         config.addSetting(setting, log, statementSource);
+      }
+      if(!full)
+         defaultPostConfig(config, log);
+      return config;
+   }
+
    /** Setting specifying that the Variable Builder config is "full" and the default pre/post should not be applied. */
    public static final String SETTING_FULL = "full";
 

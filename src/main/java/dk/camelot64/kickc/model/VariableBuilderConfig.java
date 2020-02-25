@@ -133,6 +133,11 @@ public class VariableBuilderConfig {
          this.memoryArea = memoryArea;
          this.optimization = optimization;
       }
+
+      @Override
+      public String toString() {
+         return (scope + "_" + type + "_" + optimization + "_" + memoryArea).toLowerCase();
+      }
    }
 
    /** Key of the settings map containing scope & type. */
@@ -179,11 +184,9 @@ public class VariableBuilderConfig {
          throw new CompileError("Warning: Malformed var_model parameter " + pragmaParam, statementSource);
       for(Scope scope : scopes) {
          for(Type type : types) {
-            if(memoryArea == null)
-               memoryArea = getSetting(scope, type).memoryArea;
-            if(optimization == null)
-               optimization = getSetting(scope, type).optimization;
-            settings.put(new ScopeType(scope, type), new Setting(scope, type, memoryArea, optimization));
+            MemoryArea mem = (memoryArea != null) ? memoryArea : getSetting(scope, type).memoryArea;
+            Optimization opt = (optimization != null) ? optimization : getSetting(scope, type).optimization;
+            settings.put(new ScopeType(scope, type), new Setting(scope, type, mem, opt));
          }
       }
    }

@@ -114,7 +114,7 @@ public class SymbolTypeInference {
       } else if(rValue instanceof ParamValue) {
          return inferType(symbols, ((ParamValue) rValue).getParameter());
       } else if(rValue instanceof StackIdxValue) {
-         return SymbolType.BYTE;
+         return ((StackIdxValue) rValue).getValueType();
       } else if(rValue instanceof MemsetValue) {
          return ((MemsetValue) rValue).getType();
       } else if(rValue instanceof MemcpyValue) {

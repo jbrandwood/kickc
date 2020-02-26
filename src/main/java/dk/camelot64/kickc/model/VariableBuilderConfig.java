@@ -87,16 +87,12 @@ public class VariableBuilderConfig {
     */
    public static void defaultPostConfig(VariableBuilderConfig config, CompileLog log) {
       // Arrays are always load/store variables in main memory
-      // TODO: Theoretically some program may want an array on ZP. How to support that?
       config.addSetting("array_ma_mem", log, StatementSource.NONE);
       // Global struct values are always load/store variables in main memory
-      // TODO: Global structs can be SSA (and then unwound) which can optimize some programs. How to support that?
       config.addSetting("global_struct_ma_mem", log, StatementSource.NONE);
       // Parameters are always passed using single-static-assignment
-      // TODO: Compilation Unit support will require parameters that are not SSA. How to specify that?
       config.addSetting("parameter_ssa", log, StatementSource.NONE);
       // Pointers are always on zeropage
-      // TODO: Pointers can technically exist in main-memory and be moved to ZP on every use. How to specify that?
       config.addSetting("pointer_zp", log, StatementSource.NONE);
    }
 

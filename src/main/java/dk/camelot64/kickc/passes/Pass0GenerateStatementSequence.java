@@ -97,9 +97,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Importing " + importFileName);
       }
-      // The Parser / Lexer will automatically add the import file content here in the token stream
-      //Path currentPath = file.toPath().getParent();
-      //SourceLoader.loadAndParseFile(importFileName, currentPath, program);
       return null;
    }
 

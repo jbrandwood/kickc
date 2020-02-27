@@ -28,7 +28,7 @@ public class Procedure extends Scope {
    private String codeSegment;
 
    /** The method for passing parameters and return value to the procedure. */
-   public enum CallingConvension {
+   public enum CallingConvention {
       /** Parameters and return value handled through call PHI-transitions. */
       PHI_CALL("__phicall"),
       /** Parameters and return value over the stack. */
@@ -36,7 +36,7 @@ public class Procedure extends Scope {
 
       private String name;
 
-      CallingConvension(String name) {
+      CallingConvention(String name) {
          this.name = name;
       }
 
@@ -45,8 +45,8 @@ public class Procedure extends Scope {
       }
 
       /** Get a calling convention by name. */
-      public static CallingConvension getCallingConvension(String name) {
-         for(CallingConvension value : CallingConvension.values()) {
+      public static CallingConvention getCallingConvension(String name) {
+         for(CallingConvention value : CallingConvention.values()) {
             if(value.getName().equalsIgnoreCase(name)) {
                return value;
             }
@@ -56,24 +56,24 @@ public class Procedure extends Scope {
    }
 
    /** The calling convention used for this procedure. */
-   private CallingConvension callingConvension;
+   private CallingConvention callingConvention;
 
-   public Procedure(String name, SymbolType returnType, Scope parentScope, String codeSegment, String dataSegment, CallingConvension callingConvension) {
+   public Procedure(String name, SymbolType returnType, Scope parentScope, String codeSegment, String dataSegment, CallingConvention callingConvention) {
       super(name, parentScope, dataSegment);
       this.returnType = returnType;
       this.declaredInline = false;
       this.interruptType = null;
       this.comments = new ArrayList<>();
       this.codeSegment = codeSegment;
-      this.callingConvension = callingConvension;
+      this.callingConvention = callingConvention;
    }
 
-   public CallingConvension getCallingConvension() {
-      return callingConvension;
+   public CallingConvention getCallingConvention() {
+      return callingConvention;
    }
 
-   public void setCallingConvension(CallingConvension callingConvension) {
-      this.callingConvension = callingConvension;
+   public void setCallingConvention(CallingConvention callingConvention) {
+      this.callingConvention = callingConvention;
    }
 
    public String getCodeSegment() {
@@ -203,8 +203,8 @@ public class Procedure extends Scope {
       if(declaredInline) {
          res.append("inline ");
       }
-      if(!callingConvension.equals(CallingConvension.PHI_CALL)) {
-         res.append(getCallingConvension().getName()).append(" ");
+      if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
+         res.append(getCallingConvention().getName()).append(" ");
       }
       if(interruptType != null) {
          res.append("interrupt(" + interruptType + ")");

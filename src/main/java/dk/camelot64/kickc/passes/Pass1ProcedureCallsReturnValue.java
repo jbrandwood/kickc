@@ -6,13 +6,12 @@ import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.types.SymbolType;
-import org.antlr.v4.runtime.RuleContext;
 
 import java.util.ArrayList;
 import java.util.Set;
 
 /**
- * Pass that modifies a control flow graph to call procedures by passing return value through registers for {@link dk.camelot64.kickc.model.symbols.Procedure.CallingConvension#PHI_CALL}
+ * Pass that modifies a control flow graph to call procedures by passing return value through registers for {@link Procedure.CallingConvention#PHI_CALL}
  */
 public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor {
 
@@ -34,7 +33,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       ProcedureRef procedureRef = origCall.getProcedure();
       Procedure procedure = program.getScope().getProcedure(procedureRef);
       // If not PHI-call - skip
-      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+      if(!Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
          StatementCall copyCall = super.visitCall(origCall);
          copyCall.setProcedure(procedureRef);
          return copyCall;
@@ -117,7 +116,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       String currentProcName = currentBlock.getLabel().getScopeNames();
       Procedure procedure = program.getScope().getProcedure(currentProcName);
       // If not PHI-call - skip
-      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension()))
+      if(!Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()))
          return super.visitReturn(orig);
 
       addStatementToCurrentBlock(new StatementReturn(null, orig.getSource(), orig.getComments()));

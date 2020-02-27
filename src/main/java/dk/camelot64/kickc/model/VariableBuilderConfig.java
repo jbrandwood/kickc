@@ -177,7 +177,7 @@ public class VariableBuilderConfig {
       Optimization optimization = getOptimization(paramElements);
       MemoryArea memoryArea = getMemoryArea(paramElements);
       if((memoryArea == null && optimization == null) || paramElements.size() > 0)
-         throw new CompileError("Warning: Malformed var_model parameter " + pragmaParam, statementSource);
+         throw new CompileError("Error! Malformed var_model parameter " + pragmaParam, statementSource);
       for(Scope scope : scopes) {
          for(Type type : types) {
             MemoryArea mem = (memoryArea != null) ? memoryArea : getSetting(scope, type).memoryArea;

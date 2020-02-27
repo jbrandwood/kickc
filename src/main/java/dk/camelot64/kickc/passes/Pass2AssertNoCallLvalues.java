@@ -19,7 +19,7 @@ public class Pass2AssertNoCallLvalues extends Pass2SsaAssertion {
          @Override
          public Void visitCall(StatementCall call) {
             Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+            if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                if(call.getlValue() != null) {
                   throw new AssertionFailed("No call lValue allowed! " + call);
                }

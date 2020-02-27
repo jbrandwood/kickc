@@ -52,7 +52,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** Configuration for the variable builder. */
    private VariableBuilderConfig variableBuilderConfig;
 
-   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, VariableBuilderConfig variableBuilderConfig) {
+   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, VariableBuilderConfig variableBuilderConfig, Procedure.CallingConvention initialCallingConvention) {
       this.cParser = cParser;
       this.fileCtx = fileCtx;
       this.program = program;
@@ -60,6 +60,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
       this.variableBuilderConfig = variableBuilderConfig;
+      this.currentCallingConvention = initialCallingConvention;
       scopeStack.push(program.getScope());
    }
 
@@ -174,13 +175,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /** The current calling convention for procedures. */
-   private Procedure.CallingConvension currentCallingConvention = Procedure.CallingConvension.PHI_CALL;
+   private Procedure.CallingConvention currentCallingConvention;
 
    @Override
    public Object visitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) {
-      Procedure.CallingConvension callingConvension = Procedure.CallingConvension.getCallingConvension(ctx.CALLINGCONVENTION().getText());
-      if(callingConvension != null) {
-         currentCallingConvention = callingConvension;
+      Procedure.CallingConvention callingConvention = Procedure.CallingConvention.getCallingConvension(ctx.CALLINGCONVENTION().getText());
+      if(callingConvention != null) {
+         currentCallingConvention = callingConvention;
       }
       return null;
    }
@@ -225,7 +226,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       procedure.setParameters(parameterList);
       sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
       // Add parameter assignments
-      if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+      if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
          for(Variable param : parameterList) {
             sequence.addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
          }
@@ -234,7 +235,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(ctx.stmtSeq());
       }
       sequence.addStatement(new StatementLabel(procExit.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-      if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension()) && returnVar != null) {
+      if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()) && returnVar != null) {
          sequence.addStatement(new StatementAssignment(returnVar.getVariableRef(), returnVar.getRef(), false, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       }
       SymbolVariableRef returnVarRef = null;
@@ -678,7 +679,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
          } else if(directive instanceof Directive.CallingConvention) {
-            procedure.setCallingConvension(((Directive.CallingConvention) directive).callingConvension);
+            procedure.setCallingConvention(((Directive.CallingConvention) directive).callingConvention);
          } else if(directive instanceof Directive.Interrupt) {
             procedure.setInterruptType(((Directive.Interrupt) directive).interruptType);
          } else if(directive instanceof Directive.ReserveZp) {
@@ -733,8 +734,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveCallingConvention(KickCParser.DirectiveCallingConventionContext ctx) {
-      Procedure.CallingConvension callingConvension = Procedure.CallingConvension.getCallingConvension(ctx.getText());
-      return new Directive.CallingConvention(callingConvension);
+      Procedure.CallingConvention callingConvention = Procedure.CallingConvention.getCallingConvension(ctx.getText());
+      return new Directive.CallingConvention(callingConvention);
    }
 
    @Override

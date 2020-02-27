@@ -301,8 +301,8 @@ public abstract class Scope implements Symbol, Serializable {
       return (BlockScope) getSymbol(name);
    }
 
-   public Procedure addProcedure(String name, SymbolType type, String codeSegment, String dataSegment, Procedure.CallingConvension callingConvension) {
-      return add(new Procedure(name, type, this, codeSegment, dataSegment, callingConvension));
+   public Procedure addProcedure(String name, SymbolType type, String codeSegment, String dataSegment, Procedure.CallingConvention callingConvention) {
+      return add(new Procedure(name, type, this, codeSegment, dataSegment, callingConvention));
    }
 
    public Procedure getProcedure(String name) {

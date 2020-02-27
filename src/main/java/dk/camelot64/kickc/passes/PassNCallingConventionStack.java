@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
 
-/** Handle calling convention {@link Procedure.CallingConvension#STACK_CALL} by converting the making control flow graph and symbols calling convention specific. */
+/** Handle calling convention {@link Procedure.CallingConvention#STACK_CALL} by converting the making control flow graph and symbols calling convention specific. */
 public class PassNCallingConventionStack extends Pass2SsaOptimization {
 
    public PassNCallingConventionStack(Program program) {
@@ -29,7 +29,7 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
       // Introduce STACK_OFFSET constants
       boolean createStackBase = false;
       for(Procedure procedure : getScope().getAllProcedures(true)) {
-         if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+         if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
             // Introduce the parameter offsets
             for(Variable parameter : procedure.getParameters()) {
                ConstantRef parameterOffsetConstant = CallingConventionStack.getParameterOffsetConstant(procedure, parameter);
@@ -57,12 +57,12 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
                StatementCall call = (StatementCall) statement;
                ProcedureRef procedureRef = call.getProcedure();
                Procedure procedure = getScope().getProcedure(procedureRef);
-               if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+               if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
                   stmtIt.remove();
                   stmtIt.add(new StatementCallPrepare(procedureRef, call.getParameters(), call.getSource(), call.getComments()));
                   stmtIt.add(new StatementCallExecute(procedureRef, call.getSource(), call.getComments()));
                   stmtIt.add(new StatementCallFinalize(call.getlValue(), procedureRef, call.getSource(), call.getComments()));
-                  getLog().append("Calling convention " + Procedure.CallingConvension.STACK_CALL + " adding prepare/execute/finalize for " + call.toString(getProgram(), false));
+                  getLog().append("Calling convention " + Procedure.CallingConvention.STACK_CALL + " adding prepare/execute/finalize for " + call.toString(getProgram(), false));
                }
             }
          }
@@ -79,7 +79,7 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
                if(offsetConstants.containsKey(parameterRef)) {
                   StackIdxValue stackIdxValue = new StackIdxValue(offsetConstants.get(parameterRef), parameterType);
                   programValue.set(stackIdxValue);
-                  getLog().append("Calling convention " + Procedure.CallingConvension.STACK_CALL + " replacing " + paramValue.toString(getProgram()) + " with " + stackIdxValue.toString(getProgram()));
+                  getLog().append("Calling convention " + Procedure.CallingConvention.STACK_CALL + " replacing " + paramValue.toString(getProgram()) + " with " + stackIdxValue.toString(getProgram()));
                }
             }
          });

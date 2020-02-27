@@ -62,10 +62,10 @@ public interface Directive {
    /** Function with specific declared calling convention. */
    class CallingConvention implements Directive {
 
-      public Procedure.CallingConvension callingConvension;
+      public Procedure.CallingConvention callingConvention;
 
-      public CallingConvention(Procedure.CallingConvension callingConvension) {
-         this.callingConvension = callingConvension;
+      public CallingConvention(Procedure.CallingConvention callingConvention) {
+         this.callingConvention = callingConvention;
       }
 
    }

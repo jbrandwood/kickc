@@ -12,7 +12,7 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
-/** Pass that modifies a control flow graph to call {@link dk.camelot64.kickc.model.symbols.Procedure.CallingConvension#PHI_CALL} procedures by passing parameters through registers */
+/** Pass that modifies a control flow graph to call {@link Procedure.CallingConvention#PHI_CALL} procedures by passing parameters through registers */
 public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
 
    private Program program;
@@ -53,7 +53,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       ProcedureRef procedureRef = origCall.getProcedure();
       Procedure procedure = getScope().getProcedure(procedureRef);
       // If not PHI-call - skip
-      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+      if(!Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
          StatementCall copyCall = super.visitCall(origCall);
          copyCall.setProcedure(procedureRef);
          return copyCall;
@@ -129,7 +129,7 @@ public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
       String currentProcName = currentBlock.getLabel().getScopeNames();
       Procedure procedure = program.getScope().getProcedure(currentProcName);
       // If not PHI-call - skip
-      if(!Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension()))
+      if(!Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()))
          return super.visitReturn(orig);
 
       // Add self-assignments for all variables modified in the procedure

@@ -6,7 +6,7 @@ import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantRef;
 
 /**
- * Utility methods for {@link dk.camelot64.kickc.model.symbols.Procedure.CallingConvension#STACK_CALL}
+ * Utility methods for {@link Procedure.CallingConvention#STACK_CALL}
  */
 public class CallingConventionStack {
 

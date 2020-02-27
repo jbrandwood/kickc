@@ -828,7 +828,7 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+            if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                // Generate PHI transition
                if(genCallPhiEntry) {
                   ControlFlowBlock callSuccessor = getGraph().getCallSuccessor(block);
@@ -845,7 +845,7 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementCallPrepare) {
             StatementCallPrepare call = (StatementCallPrepare) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+            if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
                // Push parameters to the stack
                List<RValue> callParameters = call.getParameters();
                List<Variable> procParameters = procedure.getParameters();
@@ -874,14 +874,14 @@ public class Pass4CodeGeneration {
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+            if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
                asm.getCurrentChunk().setFragment("jsr");
                asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
             }
          } else if(statement instanceof StatementCallFinalize) {
             StatementCallFinalize call = (StatementCallFinalize) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+            if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
 
                long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
                long returnByteSize = procedure.getReturnType() == null ? 0 : procedure.getReturnType().getSizeBytes();
@@ -910,7 +910,7 @@ public class Pass4CodeGeneration {
                procedure = getScope().getProcedure(scope.getFullName());
             }
 
-            if(procedure != null && Procedure.CallingConvension.STACK_CALL.equals(procedure.getCallingConvension())) {
+            if(procedure != null && Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
                StatementReturn returnStatement = (StatementReturn) statement;
                if(returnStatement.getValue() != null) {
                   // Store return value on stack

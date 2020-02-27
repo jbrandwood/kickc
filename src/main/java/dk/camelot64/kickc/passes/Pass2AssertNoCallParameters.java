@@ -21,7 +21,7 @@ public class Pass2AssertNoCallParameters extends Pass2SsaAssertion {
          @Override
          public Void visitCall(StatementCall call) {
             Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+            if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                List<RValue> parameters = call.getParameters();
                if(parameters != null && parameters.size() > 0) {
                   throw new AssertionFailed("No call parameters allowed for PHI-call procedures! " + call);

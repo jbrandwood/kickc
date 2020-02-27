@@ -5,6 +5,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import picocli.CommandLine;
@@ -132,17 +133,20 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Si"}, description = "Interleave comments with intermediate language code and ASM fragment names in the generated ASM.")
    private boolean interleaveIclFile = false;
 
-   @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. See #pragma target()")
+   @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. See #pragma target")
    private String target = TargetPlatform.C64BASIC.getName();
 
-   @CommandLine.Option(names = {"-cpu"}, description = "The target CPU. Default is 6502 with illegal opcodes. See #pragma cpu()")
+   @CommandLine.Option(names = {"-cpu"}, description = "The target CPU. Default is 6502 with illegal opcodes. See #pragma cpu")
    private String cpu = TargetCpu.MOS6502X.getName();
 
-   @CommandLine.Option(names = {"-T", "-link"}, description = "Link using a linker script in KickAss segment format. See #pragma link()")
+   @CommandLine.Option(names = {"-T", "-link"}, description = "Link using a linker script in KickAss segment format. See #pragma link")
    private String linkScript = null;
 
-   @CommandLine.Option(names = {"-var_model"}, description = "Configure variable optimization/memory area. Default is ssa_zp. See #pragma var_model()")
+   @CommandLine.Option(names = {"-var_model"}, description = "Configure variable optimization/memory area. Default is ssa_zp. See #pragma var_model")
    private String varModel = null;
+
+   @CommandLine.Option(names = {"-calling"}, description = "Configure calling convention. Default is __phicall. See #pragma calling")
+   private String calling = null;
 
    /** Program Exit Code signaling a compile error. */
    public static final int COMPILE_ERROR = 1;
@@ -274,8 +278,28 @@ public class KickC implements Callable<Void> {
          if(varModel!=null) {
             List<String> settings = Arrays.asList(varModel.split(","));
             settings = settings.stream().map(String::trim).collect(Collectors.toList());
-            final VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, StatementSource.NONE, compiler.getLog());
-            compiler.setVariableBuilderConfig(config);
+            try {
+               VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, StatementSource.NONE, compiler.getLog());
+               compiler.setVariableBuilderConfig(config);
+            } catch(CompileError e) {
+               System.err.println(e.getMessage());
+               System.exit(COMPILE_ERROR);
+            }
+         }
+
+         if(calling!=null) {
+            Procedure.CallingConvention callingConvention = Procedure.CallingConvention.getCallingConvension(calling);
+            if(callingConvention ==null) {
+               System.err.println("Unknown calling convention "+calling);
+               StringBuffer supported = new StringBuffer();
+               supported.append("The supported calling conventions are: ");
+               for(Procedure.CallingConvention value : Procedure.CallingConvention.values()) {
+                  supported.append(value.getName()).append(" ");
+               }
+               System.err.println(supported);
+               System.exit(COMPILE_ERROR);
+            }
+            compiler.setCallingConvention(callingConvention);
          }
 
          System.out.println("Compiling " + kcFile);

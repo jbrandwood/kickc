@@ -70,7 +70,7 @@ public class TestPrograms {
 
    @Test
    public void testVarModelUnknown() throws IOException, URISyntaxException {
-      assertError("varmodel-unknown", "Warning: Malformed var_model parameter");
+      assertError("varmodel-unknown", "Error! Malformed var_model parameter");
    }
 
    @Test

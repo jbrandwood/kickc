@@ -22,7 +22,7 @@ public class Pass2AssertNoReturnValues extends Pass2SsaAssertion {
          Scope scope = getScope().getScope(blockScopeRef);
          if(scope instanceof Procedure) {
             Procedure procedure = (Procedure) scope;
-            if(Procedure.CallingConvension.PHI_CALL.equals(procedure.getCallingConvension())) {
+            if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                for(Statement statement : block.getStatements()) {
                   if(statement instanceof StatementReturn) {
                      StatementReturn aReturn = (StatementReturn) statement;

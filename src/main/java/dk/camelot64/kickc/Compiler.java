@@ -5,6 +5,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -45,6 +46,9 @@ public class Compiler {
    /** Variable optimization/memory area configuration to use (from command line parameter). */
    private VariableBuilderConfig variableBuilderConfig;
 
+   /** The initial calling convention to use when compiling (from command line parameter). */
+   private Procedure.CallingConvention callingConvention;
+
    public Compiler() {
       this.program = new Program();
    }
@@ -63,6 +67,10 @@ public class Compiler {
 
    public void setVariableBuilderConfig(VariableBuilderConfig variableBuilderConfig) {
       this.variableBuilderConfig = variableBuilderConfig;
+   }
+
+   public void setCallingConvention(Procedure.CallingConvention callingConvention) {
+      this.callingConvention = callingConvention;
    }
 
    public void setUpliftCombinations(int upliftCombinations) {
@@ -143,7 +151,11 @@ public class Compiler {
             this.variableBuilderConfig = config;
          }
 
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, variableBuilderConfig);
+         if(callingConvention==null) {
+            callingConvention = Procedure.CallingConvention.PHI_CALL;
+         }
+
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, variableBuilderConfig, callingConvention);
 
          pass0GenerateStatementSequence.generate();
 

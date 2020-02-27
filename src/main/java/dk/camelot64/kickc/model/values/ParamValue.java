@@ -1,9 +1,10 @@
 package dk.camelot64.kickc.model.values;
 
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.symbols.Procedure;
 
 /** The value passed into a function for a specific parameter.
- * Used for procedures that does not use {@link dk.camelot64.kickc.model.symbols.Procedure.CallingConvension#PHI_CALL}
+ * Used for procedures that does not use {@link Procedure.CallingConvention#PHI_CALL}
  * */
 public class ParamValue implements RValue {
 

@@ -5,6 +5,9 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantRef;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * Utility methods for {@link Procedure.CallingConvention#STACK_CALL}
  */
@@ -94,7 +97,10 @@ public class CallingConventionStack {
     */
    public static long getParameterByteOffset(Procedure procedure, Variable parameter) {
       long byteOffset = 0;
-      for(Variable procedureParameter : procedure.getParameters()) {
+      ArrayList<Variable> parameters = new ArrayList<>(procedure.getParameters());
+      // Reverse because pushing is done in parameter order
+      Collections.reverse(parameters);
+      for(Variable procedureParameter : parameters) {
          if(parameter.equals(procedureParameter)) {
             break;
          } else {

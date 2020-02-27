@@ -35,8 +35,8 @@ main: {
 }
 // plus(word zp(2) a, word zp(4) b)
 plus: {
-    .const OFFSET_STACK_A = 0
-    .const OFFSET_STACK_B = 2
+    .const OFFSET_STACK_A = 2
+    .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 2
     .label a = 2
     .label b = 4

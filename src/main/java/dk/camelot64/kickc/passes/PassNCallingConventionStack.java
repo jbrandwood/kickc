@@ -37,7 +37,7 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
                createStackBase = true;
             }
             // Introduce the return value offset
-            if(procedure.getReturnType() != null) {
+            if(procedure.getReturnType() != null && !SymbolType.VOID.equals(procedure.getReturnType())) {
                CallingConventionStack.getReturnOffsetConstant(procedure);
                createStackBase = true;
             }

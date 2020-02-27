@@ -678,6 +678,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       for(Directive directive : directives) {
          if(directive instanceof Directive.Inline) {
             procedure.setDeclaredInline(true);
+            procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
          } else if(directive instanceof Directive.CallingConvention) {
             procedure.setCallingConvention(((Directive.CallingConvention) directive).callingConvention);
          } else if(directive instanceof Directive.Interrupt) {

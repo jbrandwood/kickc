@@ -39,6 +39,7 @@ public class Pass1ProcedureInline extends Pass1Base {
                ProcedureRef procedureRef = call.getProcedure();
                Procedure procedure = getScope().getProcedure(procedureRef);
                if(procedure.isDeclaredInline()) {
+                  procedure.setCallingConvention(Procedure.CallingConvention.PHI_CALL);
                   if(procedure.getInterruptType()!=null) {
                      throw new CompileError("Error! Interrupts cannot be inlined. "+procedure.getRef().toString());
                   }

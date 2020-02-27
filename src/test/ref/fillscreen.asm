@@ -12,9 +12,9 @@ main: {
 }
 // fillscreen(byte register(A) c)
 fillscreen: {
-    .label SCREEN2 = SCREEN+$100
-    .label SCREEN3 = SCREEN+$200
-    .label SCREEN4 = SCREEN+$3e8
+    .label SCREEN2 = SCREEN+$fa
+    .label SCREEN3 = SCREEN+$1f4
+    .label SCREEN4 = SCREEN+$2ee
     ldx #0
   __b1:
     // SCREEN[j] = c
@@ -25,9 +25,9 @@ fillscreen: {
     sta SCREEN3,x
     // SCREEN4[j] = c
     sta SCREEN4,x
-    // for(byte j : 0..255)
+    // for(byte j : 0..249)
     inx
-    cpx #0
+    cpx #$fa
     bne __b1
     // }
     rts

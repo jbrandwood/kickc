@@ -10,11 +10,11 @@
 main: {
     .label __0 = 2
     // plus('0', 7)
-    lda #>'0'
+    lda #0
     pha
     lda #<'0'
     pha
-    lda #>7
+    lda #0
     pha
     lda #<7
     pha

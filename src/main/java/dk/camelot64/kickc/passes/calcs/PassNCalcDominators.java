@@ -1,14 +1,16 @@
 package dk.camelot64.kickc.passes.calcs;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.DominatorsBlock;
-import dk.camelot64.kickc.model.DominatorsGraph;
-import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.InternalError;
+import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.SymbolRef;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /** Finds the dominators for the control flow graph. */
 public class PassNCalcDominators extends PassNCalcBase<DominatorsGraph> {
@@ -29,41 +31,51 @@ public class PassNCalcDominators extends PassNCalcBase<DominatorsGraph> {
    public DominatorsGraph calculate() {
       DominatorsGraph dominatorsGraph = new DominatorsGraph();
 
+      Collection<Procedure> procedures = getScope().getAllProcedures(true);
+      for(Procedure procedure : procedures) {
+         calculateDominators(procedure, dominatorsGraph);
+      }
+      calculateDominators(getScope(), dominatorsGraph);
+
+      return dominatorsGraph;
+   }
+
+   private void calculateDominators(Scope scope, DominatorsGraph dominatorsGraph) {
       // Initialize dominators: Dom[first]={first}, Dom[block]={all}
 
       List<LabelRef> firstBlocks = new ArrayList<>();
-      List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
-      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
-         LabelRef firstBlock = entryPointBlock.getLabel();
-         // Skip main-block, as it will be called by @begin anyways
-         if(firstBlock.getFullName().equals(SymbolRef.MAIN_PROC_NAME)) continue;
-         DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
-         firstDominators.add(firstBlock);
-         firstBlocks.add(firstBlock);
+      LabelRef firstBlock;
+      if(scope instanceof Procedure) {
+         firstBlock = ((Procedure)scope).getRef().getLabelRef();
+      } else if(scope.getRef().equals(ScopeRef.ROOT)) {
+         firstBlock = new LabelRef(LabelRef.BEGIN_BLOCK_NAME);
+      } else {
+         throw new InternalError("Scope type not handled! "+scope);
       }
+      DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
+      firstDominators.add(firstBlock);
+      firstBlocks.add(firstBlock);
 
-      List<LabelRef> allBlocks = new ArrayList<>();
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         allBlocks.add(block.getLabel());
-      }
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         if(!firstBlocks.contains(block.getLabel())) {
-            DominatorsBlock dominatorsBlock = dominatorsGraph.addDominators(block.getLabel());
-            dominatorsBlock.addAll(allBlocks);
+      List<LabelRef> procedureBlocks = getGraph().getScopeBlocks(scope.getRef()).stream().map(ControlFlowBlock::getLabel).collect(Collectors.toList());
+      for(LabelRef procedureBlock : procedureBlocks) {
+         if(!firstBlocks.contains(procedureBlock)) {
+            DominatorsBlock dominatorsBlock = dominatorsGraph.addDominators(procedureBlock);
+            dominatorsBlock.addAll(procedureBlocks);
          }
       }
 
       // Iteratively refine dominators until they do not change
       // For all nodes:
       // Dom[n] = {n} UNION ( INTERSECT Dom[p] for all p that are predecessors of n)
-      boolean change = false;
+      boolean change;
       do {
          change = false;
-         for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-            if(!firstBlocks.contains(block.getLabel())) {
+         for(LabelRef procedureBlock : procedureBlocks) {
+            if(!firstBlocks.contains(procedureBlock)) {
+               ControlFlowBlock block = getGraph().getBlock(procedureBlock);
                List<ControlFlowBlock> predecessors = getGraph().getPredecessors(block);
                DominatorsBlock newDominators = new DominatorsBlock();
-               newDominators.addAll(allBlocks);
+               newDominators.addAll(procedureBlocks);
                for(ControlFlowBlock predecessor : predecessors) {
                   DominatorsBlock predecessorDominators = dominatorsGraph.getDominators(predecessor.getLabel());
                   newDominators.intersect(predecessorDominators);
@@ -76,9 +88,7 @@ public class PassNCalcDominators extends PassNCalcBase<DominatorsGraph> {
                }
             }
          }
-
       } while(change);
-      return dominatorsGraph;
    }
 
 

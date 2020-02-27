@@ -150,7 +150,7 @@ public class ControlFlowGraph implements Serializable {
       }
 
       ControlFlowBlock mainBlock = getMainBlock();
-      if(mainBlock != null) {
+      if(mainBlock != null && !entryPointBlocks.contains(mainBlock)) {
          entryPointBlocks.add(mainBlock);
       }
       entryPointBlocks.add(getFirstBlock());

@@ -1,0 +1,436 @@
+Culled Empty Block (label) @1
+Culled Empty Block (label) printline::@4
+Culled Empty Block (label) printline::@3
+Culled Empty Block (label) printline::@5
+Culled Empty Block (label) printline::@6
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (byte) val ← (byte) 0
+  to:@2
+
+__stackcall (void()) main()
+main: scope:[main]  from
+  (byte) val ← (byte) '-'
+  call printline 
+  *((const byte*) SCREEN + (number) $50) ← (byte) val
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__stackcall (void()) printline()
+printline: scope:[printline]  from
+  (byte) printline::i ← (byte) 0
+  to:printline::@1
+printline::@1: scope:[printline]  from printline printline::@2
+  (bool~) printline::$0 ← (byte) printline::i < (number) $28
+  if((bool~) printline::$0) goto printline::@2
+  to:printline::@return
+printline::@2: scope:[printline]  from printline::@1
+  *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*'
+  (byte) printline::i ← ++ (byte) printline::i
+  to:printline::@1
+printline::@return: scope:[printline]  from printline::@1
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*)(number) $400
+__stackcall (void()) main()
+(label) main::@return
+__stackcall (void()) printline()
+(bool~) printline::$0
+(label) printline::@1
+(label) printline::@2
+(label) printline::@return
+(byte) printline::i loadstore
+(byte) val loadstore
+
+Adding number conversion cast (unumber) $50 in *((const byte*) SCREEN + (number) $50) ← (byte) val
+Adding number conversion cast (unumber) $28 in (bool~) printline::$0 ← (byte) printline::i < (number) $28
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $50
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simple Condition (bool~) printline::$0 [7] if((byte) printline::i<(byte) $28) goto printline::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Consolidated array index constant in *(SCREEN+$50)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to printline:10 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Renumbering block @2 to @1
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Calling convention STACK_CALL adding prepare/execute/finalize for [2] call main 
+Calling convention STACK_CALL adding prepare/execute/finalize for [10] call printline 
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] (byte) val ← (byte) 0
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] callprepare main 
+  [3] callexecute main 
+  [4] callfinalize main 
+  to:@end
+@end: scope:[]  from @1
+  [5] phi()
+
+__stackcall (void()) printline()
+printline: scope:[printline]  from
+  [6] (byte) printline::i ← (byte) 0
+  to:printline::@1
+printline::@1: scope:[printline]  from printline printline::@2
+  [7] if((byte) printline::i<(byte) $28) goto printline::@2
+  to:printline::@return
+printline::@return: scope:[printline]  from printline::@1
+  [8] return 
+  to:@return
+printline::@2: scope:[printline]  from printline::@1
+  [9] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*'
+  [10] (byte) printline::i ← ++ (byte) printline::i
+  to:printline::@1
+
+__stackcall (void()) main()
+main: scope:[main]  from
+  [11] (byte) val ← (byte) '-'
+  [12] callprepare printline 
+  [13] callexecute printline 
+  [14] callfinalize printline 
+  [15] *((const byte*) SCREEN+(byte) $50) ← (byte) val
+  to:main::@return
+main::@return: scope:[main]  from main
+  [16] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__stackcall (void()) main()
+__stackcall (void()) printline()
+(byte) printline::i loadstore 11.5
+(byte) val loadstore 1.5
+
+Initial phi equivalence classes
+Added variable val to live range equivalence class [ val ]
+Added variable printline::i to live range equivalence class [ printline::i ]
+Complete equivalence classes
+[ val ]
+[ printline::i ]
+Allocated zp[1]:2 [ val ]
+Allocated zp[1]:3 [ printline::i ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test a procedure with calling convention stack
+// Illustrates live ranges for printline::i and global variable val
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label val = 2
+  // @begin
+__bbegin:
+  // [0] (byte) val ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z val
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] callprepare main 
+  // [3] callexecute main  -- jsr 
+  jsr main
+  // [4] callfinalize main 
+  // [5] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // printline
+printline: {
+    .label i = 3
+    // [6] (byte) printline::i ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // printline::@1
+  __b1:
+    // [7] if((byte) printline::i<(byte) $28) goto printline::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #$28
+    bcc __b2
+    jmp __breturn
+    // printline::@return
+  __breturn:
+    // [8] return 
+    rts
+    // printline::@2
+  __b2:
+    // [9] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'*'
+    ldy.z i
+    sta SCREEN,y
+    // [10] (byte) printline::i ← ++ (byte) printline::i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    jmp __b1
+}
+  // main
+main: {
+    // [11] (byte) val ← (byte) '-' -- vbuz1=vbuc1 
+    lda #'-'
+    sta.z val
+    // [12] callprepare printline 
+    // [13] callexecute printline  -- jsr 
+    jsr printline
+    // [14] callfinalize printline 
+    // [15] *((const byte*) SCREEN+(byte) $50) ← (byte) val -- _deref_pbuc1=vbuz1 
+    lda.z val
+    sta SCREEN+$50
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [16] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] (byte) val ← (byte) 0 [ ] (  [ ] ) always clobbers reg byte a 
+Statement [6] (byte) printline::i ← (byte) 0 [ printline::i ] ( main:3::printline:13 [ val printline::i ] ) always clobbers reg byte a 
+Statement [7] if((byte) printline::i<(byte) $28) goto printline::@2 [ printline::i ] ( main:3::printline:13 [ val printline::i ] ) always clobbers reg byte a 
+Statement [9] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' [ printline::i ] ( main:3::printline:13 [ val printline::i ] ) always clobbers reg byte a reg byte y 
+Statement [11] (byte) val ← (byte) '-' [ val ] ( main:3 [ val ] ) always clobbers reg byte a 
+Statement [15] *((const byte*) SCREEN+(byte) $50) ← (byte) val [ ] ( main:3 [ ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ val ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ printline::i ] : zp[1]:3 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [printline] 11.5: zp[1]:3 [ printline::i ] 
+Uplift Scope [] 1.5: zp[1]:2 [ val ] 
+Uplift Scope [main] 
+
+Uplifting [printline] best 343 combination zp[1]:3 [ printline::i ] 
+Uplifting [] best 343 combination zp[1]:2 [ val ] 
+Uplifting [main] best 343 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ printline::i ]
+Uplifting [printline] best 343 combination zp[1]:3 [ printline::i ] 
+Attempting to uplift remaining variables inzp[1]:2 [ val ]
+Uplifting [] best 343 combination zp[1]:2 [ val ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test a procedure with calling convention stack
+// Illustrates live ranges for printline::i and global variable val
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label val = 2
+  // @begin
+__bbegin:
+  // [0] (byte) val ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z val
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] callprepare main 
+  // [3] callexecute main  -- jsr 
+  jsr main
+  // [4] callfinalize main 
+  // [5] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // printline
+printline: {
+    .label i = 3
+    // [6] (byte) printline::i ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // printline::@1
+  __b1:
+    // [7] if((byte) printline::i<(byte) $28) goto printline::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #$28
+    bcc __b2
+    jmp __breturn
+    // printline::@return
+  __breturn:
+    // [8] return 
+    rts
+    // printline::@2
+  __b2:
+    // [9] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'*'
+    ldy.z i
+    sta SCREEN,y
+    // [10] (byte) printline::i ← ++ (byte) printline::i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    jmp __b1
+}
+  // main
+main: {
+    // [11] (byte) val ← (byte) '-' -- vbuz1=vbuc1 
+    lda #'-'
+    sta.z val
+    // [12] callprepare printline 
+    // [13] callexecute printline  -- jsr 
+    jsr printline
+    // [14] callfinalize printline 
+    // [15] *((const byte*) SCREEN+(byte) $50) ← (byte) val -- _deref_pbuc1=vbuz1 
+    lda.z val
+    sta SCREEN+$50
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [16] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*) 1024
+__stackcall (void()) main()
+(label) main::@return
+__stackcall (void()) printline()
+(label) printline::@1
+(label) printline::@2
+(label) printline::@return
+(byte) printline::i loadstore zp[1]:3 11.5
+(byte) val loadstore zp[1]:2 1.5
+
+zp[1]:2 [ val ]
+zp[1]:3 [ printline::i ]
+
+
+FINAL ASSEMBLER
+Score: 307
+
+  // File Comments
+// Test a procedure with calling convention stack
+// Illustrates live ranges for printline::i and global variable val
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label val = 2
+  // @begin
+__bbegin:
+  // val = 0
+  // [0] (byte) val ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z val
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] callprepare main 
+  // [3] callexecute main  -- jsr 
+  jsr main
+  rts
+  // [4] callfinalize main 
+  // [5] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // printline
+printline: {
+    .label i = 3
+    // i=0
+    // [6] (byte) printline::i ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    // printline::@1
+  __b1:
+    // for(char i=0; i<40; i++)
+    // [7] if((byte) printline::i<(byte) $28) goto printline::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #$28
+    bcc __b2
+    // printline::@return
+    // }
+    // [8] return 
+    rts
+    // printline::@2
+  __b2:
+    // SCREEN[i] = '*'
+    // [9] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'*'
+    ldy.z i
+    sta SCREEN,y
+    // for(char i=0; i<40; i++)
+    // [10] (byte) printline::i ← ++ (byte) printline::i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    jmp __b1
+}
+  // main
+main: {
+    // val = '-'
+    // [11] (byte) val ← (byte) '-' -- vbuz1=vbuc1 
+    lda #'-'
+    sta.z val
+    // printline()
+    // [12] callprepare printline 
+    // [13] callexecute printline  -- jsr 
+    jsr printline
+    // [14] callfinalize printline 
+    // SCREEN[80] = val
+    // [15] *((const byte*) SCREEN+(byte) $50) ← (byte) val -- _deref_pbuc1=vbuz1 
+    lda.z val
+    sta SCREEN+$50
+    // main::@return
+    // }
+    // [16] return 
+    rts
+}
+  // File Data
+

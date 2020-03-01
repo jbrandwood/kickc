@@ -279,19 +279,20 @@ public class TestPrograms {
       compileAndCompare("declared-memory-var-0");
    }
 
-   /*
+   @Test
+   public void testProcedureCallingConventionStack9() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-9");
+   }
+
    @Test
    public void testProcedureCallingConventionStack8() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-8", log().verboseLiveRanges()); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+      compileAndCompare("procedure-callingconvention-stack-8");
    }
-    */
 
-   /*
    @Test
    public void testProcedureCallingConventionStack7() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-7", log().verboseLiveRanges()); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+      compileAndCompare("procedure-callingconvention-stack-7");
    }
-    */
 
    /*
    @Test

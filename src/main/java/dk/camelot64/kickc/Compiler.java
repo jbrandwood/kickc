@@ -513,11 +513,7 @@ public class Compiler {
 
       program.clearStatementInfos();
       program.clearVariableReferenceInfos();
-      //getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
-      //getLog().append(program.getGraph().toString(program));
       pass2AssertSSA();
-
-      //getLog().setVerboseLiveRanges(false);
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).step();
@@ -538,6 +534,12 @@ public class Compiler {
       program.clearLiveRangeVariablesEffective();
       new PassNStatementIndices(program).execute();
       pass2AssertSSA();
+
+      // program.getLiveRangeVariablesEffective();
+//      getLog().append("CONTROL FLOW GRAPH - LIVE RANGES FOUND");
+//      getLog().append(program.getGraph().toString(program));
+
+      program.getLiveRangeVariablesEffective();
 
       getLog().append("\nFINAL CONTROL FLOW GRAPH");
       getLog().append(program.getGraph().toString(program));

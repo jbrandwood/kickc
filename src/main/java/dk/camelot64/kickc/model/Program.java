@@ -381,9 +381,14 @@ public class Program {
       return symbolInfos;
    }
 
+   public boolean hasLiveRangeVariablesEffective() {
+      return liveRangeVariablesEffective!=null;
+   }
+
    public LiveRangeVariablesEffective getLiveRangeVariablesEffective() {
-      if(liveRangeVariablesEffective==null)
+      if(liveRangeVariablesEffective==null) {
          this.liveRangeVariablesEffective = new PassNCalcLiveRangesEffective(this).calculate();
+      }
       return liveRangeVariablesEffective;
    }
 

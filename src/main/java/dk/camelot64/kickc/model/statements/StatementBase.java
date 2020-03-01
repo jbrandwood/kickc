@@ -81,16 +81,18 @@ public abstract class StatementBase implements Statement {
       LiveRangeVariables liveRanges = program.getLiveRangeVariables();
       StringBuilder alive = new StringBuilder();
       alive.append(getAliveString(liveRanges.getAlive(index)));
-      LiveRangeVariablesEffective liveRangeVariablesEffective = program.getLiveRangeVariablesEffective();
-      if(liveRangeVariablesEffective != null) {
-         LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);
-         alive.append(" ( ");
-         for(LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
-            alive.append(getCallPathString(callPath.getPath()));
-            alive.append(getAliveString(aliveCombinations.getEffectiveAliveAtStmt(callPath)));
-            alive.append(" ");
+      if(program.hasLiveRangeVariablesEffective()) {
+         LiveRangeVariablesEffective liveRangeVariablesEffective = program.getLiveRangeVariablesEffective();
+         if(liveRangeVariablesEffective != null) {
+            LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);
+            alive.append(" ( ");
+            for(LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
+               alive.append(getCallPathString(callPath.getPath()));
+               alive.append(getAliveString(aliveCombinations.getEffectiveAliveAtStmt(callPath)));
+               alive.append(" ");
+            }
+            alive.append(")");
          }
-         alive.append(")");
       }
       return alive.toString();
    }

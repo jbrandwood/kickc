@@ -42,11 +42,13 @@ public class AsmChunk {
     */
    private String fragment;
 
-   /** If the chunk represents a PHI transition (See. {@link PhiTransitions}) this contains the transition ID. */
-   private String phiTransitionId;
+   /** If the chunk is part of a complex statement this is the sub-ID used for identifying the part of the statement represented.
+    * For PHI transitions (See. {@link PhiTransitions}) this contains the transition ID. For call prepare this holds the parameter. */
+   private String subStatementId;
 
-   /** If the chunk is an assignment in a PHI transition this contains the index of the assignment within the transition. */
-   private Integer phiTransitionAssignmentIdx;
+   /** If the chunk is part of a complex statement this is the sub index used for identifying the part of the statement represented.
+   * For  PHI transitions this contains the index of the assignment within the transition. For call prepares this is the index of the parameter. */
+   private Integer subStatementIdx;
 
    /** The full name of the containing scope (procedure). */
    private String scopeLabel;
@@ -112,20 +114,20 @@ public class AsmChunk {
       this.fragment = fragment;
    }
 
-   public String getPhiTransitionId() {
-      return phiTransitionId;
+   public String getSubStatementId() {
+      return subStatementId;
    }
 
-   public void setPhiTransitionId(String phiTransitionId) {
-      this.phiTransitionId = phiTransitionId;
+   public void setSubStatementId(String subStatementId) {
+      this.subStatementId = subStatementId;
    }
 
-   public Integer getPhiTransitionAssignmentIdx() {
-      return phiTransitionAssignmentIdx;
+   public Integer getSubStatementIdx() {
+      return subStatementIdx;
    }
 
-   public void setPhiTransitionAssignmentIdx(Integer phiTransitionAssignmentIdx) {
-      this.phiTransitionAssignmentIdx = phiTransitionAssignmentIdx;
+   public void setSubStatementIdx(Integer subStatementIdx) {
+      this.subStatementIdx = subStatementIdx;
    }
 
    public String getScopeLabel() {
@@ -252,10 +254,10 @@ public class AsmChunk {
          if(source != null) {
             out.append(" ").append(source.replace('\r', ' ').replace('\n', ' '));
          }
-         if(phiTransitionId != null) {
-            out.append(" [").append(phiTransitionId);
-            if(phiTransitionAssignmentIdx != null) {
-               out.append("#").append(phiTransitionAssignmentIdx);
+         if(subStatementId != null) {
+            out.append(" [").append(subStatementId);
+            if(subStatementIdx != null) {
+               out.append("#").append(subStatementIdx);
             }
             out.append("]");
          }

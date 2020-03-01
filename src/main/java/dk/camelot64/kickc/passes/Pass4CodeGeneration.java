@@ -280,7 +280,7 @@ public class Pass4CodeGeneration {
             signature.append("zp(").append(AsmFormat.getAsmNumber(registerZp.getZp())).append(")");
          } else if(allocation instanceof Registers.RegisterMainMem) {
             Registers.RegisterMainMem registerMainMem = (Registers.RegisterMainMem) allocation;
-            signature.append("mem(").append(registerMainMem.getAddress()==null?"":AsmFormat.getAsmNumber(registerMainMem.getAddress())).append(")");
+            signature.append("mem(").append(registerMainMem.getAddress() == null ? "" : AsmFormat.getAsmNumber(registerMainMem.getAddress())).append(")");
          } else if(allocation instanceof Registers.RegisterAByte) {
             signature.append("register(A)");
          } else if(allocation instanceof Registers.RegisterXByte) {
@@ -850,26 +850,29 @@ public class Pass4CodeGeneration {
                List<RValue> callParameters = call.getParameters();
                List<Variable> procParameters = procedure.getParameters();
                for(int i = 0; i < procParameters.size(); i++) {
+                  if(i > 0)
+                     asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   Variable procParameter = procParameters.get(i);
                   RValue callParameter = callParameters.get(i);
                   SymbolType parameterType = procParameter.getType();
                   AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackPushValue(parameterType), callParameter, program, block.getScope());
-                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                  asm.getCurrentChunk().setSubStatementIdx(i);
+                  asm.getCurrentChunk().setSubStatementId(procParameter.toString(program));
                }
                // Push additional bytes if needed
                long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
                long parametersByteSize = CallingConventionStack.getParametersByteSize(procedure);
                if(stackFrameByteSize > parametersByteSize) {
+                  if(procParameters.size() > 0)
+                     asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   // Add padding to the stack to make room for the return value
                   String pushSignature = "_stackpushbyte_" + (stackFrameByteSize - parametersByteSize);
                   AsmFragmentInstanceSpec pushFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pushSignature, new LinkedHashMap<>(), block.getScope());
-                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   generateAsm(asm, pushFragmentInstanceSpec);
 
                }
-               asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
             }
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
@@ -882,26 +885,24 @@ public class Pass4CodeGeneration {
             StatementCallFinalize call = (StatementCallFinalize) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
             if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-
                long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
                long returnByteSize = procedure.getReturnType() == null ? 0 : procedure.getReturnType().getSizeBytes();
-               if(stackFrameByteSize > returnByteSize) {
+               long stackCleanBytes = (call.getlValue() == null) ? stackFrameByteSize : (stackFrameByteSize - returnByteSize);
+               if(stackCleanBytes > 0) {
                   // Clean up the stack
-                  String pullSignature = "_stackpullbyte_" + (stackFrameByteSize - returnByteSize);
+                  String pullSignature = "_stackpullbyte_" + stackCleanBytes;
                   AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
-                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   generateAsm(asm, pullFragmentInstanceSpec);
                }
-
                // Pull result from the stack
                if(call.getlValue() != null) {
+                  if(stackCleanBytes>0)
+                     asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   SymbolType returnType = procedure.getReturnType();
                   AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(call.getlValue(), new StackPullValue(returnType), program, block.getScope());
-                  asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
                   ensureEncoding(asm, asmFragmentInstanceSpecFactory);
                   generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
                }
-
             }
          } else if(statement instanceof StatementReturn) {
             Procedure procedure = null;
@@ -1173,7 +1174,7 @@ public class Pass4CodeGeneration {
          }
          chunkSrc += "to " + toBlock.getLabel().getFullName();
          asm.startChunk(scope, toFirstStatement.getIndex(), chunkSrc);
-         asm.getCurrentChunk().setPhiTransitionId(transition.getTransitionId());
+         asm.getCurrentChunk().setSubStatementId(transition.getTransitionId());
          for(ControlFlowBlock fBlock : transition.getFromBlocks()) {
             asm.addLabel(AsmFormat.asmFix(toBlock.getLabel().getLocalName() + "_from_" + fBlock.getLabel().getLocalName()));
          }
@@ -1184,8 +1185,8 @@ public class Pass4CodeGeneration {
             Statement statement = assignment.getPhiBlock();
             // Generate an ASM move fragment
             asm.startChunk(scope, statement.getIndex(), "[" + statement.getIndex() + "] phi " + lValue.toString(program) + " = " + rValue.toString(program));
-            asm.getCurrentChunk().setPhiTransitionId(transition.getTransitionId());
-            asm.getCurrentChunk().setPhiTransitionAssignmentIdx(assignment.getAssignmentIdx());
+            asm.getCurrentChunk().setSubStatementId(transition.getTransitionId());
+            asm.getCurrentChunk().setSubStatementIdx(assignment.getAssignmentIdx());
             if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentChunk().setFragment("register_copy");
             } else {

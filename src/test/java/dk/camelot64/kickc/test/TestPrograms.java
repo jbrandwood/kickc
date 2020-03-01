@@ -281,6 +281,20 @@ public class TestPrograms {
 
    /*
    @Test
+   public void testProcedureCallingConventionStack8() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-8", log().verboseLiveRanges()); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+   }
+    */
+
+   /*
+   @Test
+   public void testProcedureCallingConventionStack7() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-7", log().verboseLiveRanges()); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
+   }
+    */
+
+   /*
+   @Test
    public void testProcedureCallingConventionStack6() throws IOException, URISyntaxException {
       compileAndCompare("procedure-callingconvention-stack-6", log()); //, log().verboseCreateSsa().verboseParse().verboseStatementSequence());
    }

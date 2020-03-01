@@ -1,0 +1,21 @@
+// Test a procedure with calling convention stack
+// Illustrates live range problem with variables in different functions main::val and printline::i
+
+#pragma calling(__stackcall)
+#pragma var_model(ma_zp)
+
+const char* SCREEN = 0x0400;
+
+void main(void) {
+    char val = 0;
+    val = '-';
+    printline();
+    SCREEN[80] = val;
+}
+
+void printline() {
+    for(char i=0; i<40; i++) {
+        SCREEN[i] = '*';
+    }
+}
+

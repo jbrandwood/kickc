@@ -199,6 +199,13 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
       findSuccessorClosure(block.getDefaultSuccessor(), successorClosure, visited);
       findSuccessorClosure(block.getConditionalSuccessor(), successorClosure, visited);
       findSuccessorClosure(block.getCallSuccessor(), successorClosure, visited);
+      // Also handle stack-calls
+      for(Statement statement : block.getStatements()) {
+         if(statement instanceof StatementCallExecute) {
+            final ProcedureRef calledProcRef = ((StatementCallExecute) statement).getProcedure();
+            findSuccessorClosure(calledProcRef.getLabelRef(), successorClosure, visited);
+         }
+      }
    }
 
 

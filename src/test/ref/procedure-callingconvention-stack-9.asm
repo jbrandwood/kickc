@@ -12,7 +12,7 @@ __bbegin:
   jsr main
   rts
 printother: {
-    .label i = 2
+    .label i = 3
     // for(char i:0..5)
     lda #0
     sta.z i
@@ -54,7 +54,7 @@ pval: {
     rts
 }
 main: {
-    .label i = 3
+    .label i = 4
     // for(char i:0..5)
     lda #0
     sta.z i

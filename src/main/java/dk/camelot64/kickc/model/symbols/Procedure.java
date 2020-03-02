@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.values.ProcedureRef;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /** Symbol describing a procedure/function */
 public class Procedure extends Scope {
@@ -233,19 +234,19 @@ public class Procedure extends Scope {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
-
       Procedure procedure = (Procedure) o;
-
-      if(returnType != null ? !returnType.equals(procedure.returnType) : procedure.returnType != null) return false;
-      return parameterNames != null ? parameterNames.equals(procedure.parameterNames) : procedure.parameterNames == null;
+      return declaredInline == procedure.declaredInline &&
+            Objects.equals(returnType, procedure.returnType) &&
+            Objects.equals(parameterNames, procedure.parameterNames) &&
+            interruptType == procedure.interruptType &&
+            Objects.equals(comments, procedure.comments) &&
+            Objects.equals(reservedZps, procedure.reservedZps) &&
+            Objects.equals(codeSegment, procedure.codeSegment) &&
+            callingConvention == procedure.callingConvention;
    }
 
    @Override
    public int hashCode() {
-      int result = super.hashCode();
-      result = 31 * result + (returnType != null ? returnType.hashCode() : 0);
-      result = 31 * result + (parameterNames != null ? parameterNames.hashCode() : 0);
-      return result;
+      return Objects.hash(super.hashCode(), returnType, parameterNames, declaredInline, interruptType, comments, reservedZps, codeSegment, callingConvention);
    }
-
 }

@@ -161,6 +161,10 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
          // Do not eliminate return variables in pass 1
          return false;
       }
+      if(variable.getScope() instanceof Procedure && ((Procedure) variable.getScope()).getParameters().contains(variable)) {
+         // Do not eliminate parameters
+         return false;
+      }
       final boolean unused = referenceInfos.isUnused(variable.getRef());
       if(!unused)
          // Do not eliminate is not unused

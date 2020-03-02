@@ -146,8 +146,8 @@ public class Compiler {
 
          if(variableBuilderConfig == null) {
             VariableBuilderConfig config = new VariableBuilderConfig();
-            VariableBuilderConfig.defaultPreConfig(config, program.getLog());
-            VariableBuilderConfig.defaultPostConfig(config, program.getLog());
+            VariableBuilderConfig.defaultPreConfig(config, getLog());
+            VariableBuilderConfig.defaultPostConfig(config, getLog());
             this.variableBuilderConfig = config;
          }
 

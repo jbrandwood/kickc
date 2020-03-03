@@ -7,6 +7,8 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.values.LValue;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.ValueList;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.*;
@@ -39,11 +41,19 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          return variableRefs;
       } else if(statement instanceof StatementLValue) {
          LValue lValue = ((StatementLValue) statement).getlValue();
-         if(lValue instanceof VariableRef) {
-            variableRefs.add((VariableRef) lValue);
-         }
+         addAssignedVars(lValue, variableRefs);
       }
       return variableRefs;
+   }
+
+   private static void addAssignedVars(RValue lValue, LinkedHashSet<VariableRef> variableRefs) {
+      if(lValue instanceof VariableRef) {
+         variableRefs.add((VariableRef) lValue);
+      } else if(lValue instanceof ValueList) {
+         for(RValue rValue : ((ValueList) lValue).getList()) {
+            addAssignedVars(rValue, variableRefs);
+         }
+      }
    }
 
    /***

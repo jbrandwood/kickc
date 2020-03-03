@@ -896,12 +896,33 @@ public class Pass4CodeGeneration {
                }
                // Pull result from the stack
                if(call.getlValue() != null) {
-                  if(stackCleanBytes>0)
+                  if(stackCleanBytes > 0)
                      asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
-                  SymbolType returnType = procedure.getReturnType();
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(call.getlValue(), new StackPullValue(returnType), program, block.getScope());
-                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                  boolean isValueListStruct = (call.getlValue() instanceof ValueList) && (procedure.getReturnType() instanceof SymbolTypeStruct);
+                  if(!isValueListStruct) {
+                     // Simple return value - fetch from stack
+                     SymbolType returnType = procedure.getReturnType();
+                     AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(call.getlValue(), new StackPullValue(returnType), program, block.getScope());
+                     ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+                     generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                  } else {
+                     // Struct value list return value - fetch each member from stack
+                     final List<RValue> lValues = ((ValueList) call.getlValue()).getList();
+                     final StructDefinition structDefinition = ((SymbolTypeStruct) procedure.getReturnType()).getStructDefinition(getScope());
+                     final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
+                     for(int i = 0; i < memberVars.size(); i++) {
+                        LValue lValue = (LValue) lValues.get(i);
+                        Variable memberDef = memberVars.get(i);
+                        final SymbolType memberType = memberDef.getType();
+                        if(i > 0)
+                           asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+                        AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(lValue, new StackPullValue(memberType), program, block.getScope());
+                        ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+                        generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                        asm.getCurrentChunk().setSubStatementIdx(i);
+                        asm.getCurrentChunk().setSubStatementId(memberDef.toString(program));
+                     }
+                  }
                }
             }
          } else if(statement instanceof StatementReturn) {
@@ -915,13 +936,36 @@ public class Pass4CodeGeneration {
                StatementReturn returnStatement = (StatementReturn) statement;
                if(returnStatement.getValue() != null) {
                   // Store return value on stack
-                  SymbolType returnType = procedure.getReturnType();
-                  // Find parameter/return stack size
-                  ConstantRef returnOffsetConstant = CallingConventionStack.getReturnOffsetConstant(procedure);
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackIdxValue(returnOffsetConstant, returnType), returnStatement.getValue(), program, block.getScope());
                   asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
-                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                  SymbolType returnType = procedure.getReturnType();
+                  boolean isValueListStruct = (returnStatement.getValue() instanceof ValueList) && (returnType instanceof SymbolTypeStruct);
+                  if(!isValueListStruct) {
+                     // A simple return type - put it on the stack
+                     ConstantRef returnOffsetConstant = CallingConventionStack.getReturnOffsetConstant(procedure);
+                     AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackIdxValue(returnOffsetConstant, returnType), returnStatement.getValue(), program, block.getScope());
+                     ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+                     generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                  } else {
+                     // A struct return value in a value list - Store each value on the stack
+                     final List<RValue> returnValues = ((ValueList) returnStatement.getValue()).getList();
+                     final StructDefinition structDefinition = ((SymbolTypeStruct) returnType).getStructDefinition(getScope());
+                     final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
+                     for(int i = 0; i < memberVars.size(); i++) {
+                        RValue returnValue = returnValues.get(i);
+                        Variable memberDef = memberVars.get(i);
+                        final SymbolType memberType = memberDef.getType();
+                        ConstantRef returnOffsetConstant = CallingConventionStack.getReturnOffsetConstant(procedure);
+                        ConstantRef structMemberOffsetConstant = SizeOfConstants.getStructMemberOffsetConstant(getScope(), structDefinition, memberDef.getLocalName());
+                        ConstantBinary memberReturnOffsetConstant = new ConstantBinary(returnOffsetConstant, Operators.PLUS, structMemberOffsetConstant);
+                        if(i > 0)
+                           asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
+                        AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackIdxValue(memberReturnOffsetConstant, memberType), returnValue, program, block.getScope());
+                        ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+                        generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                        asm.getCurrentChunk().setSubStatementIdx(i);
+                        asm.getCurrentChunk().setSubStatementId(memberDef.toString(program));
+                     }
+                  }
                }
             }
 

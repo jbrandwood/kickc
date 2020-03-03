@@ -5,6 +5,8 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementCallFinalize;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.ValueList;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
@@ -114,32 +116,32 @@ public class Pass4LiveRangeEquivalenceClassesFinalize extends Pass2Base {
 
       @Override
       public Void visitAssignment(StatementAssignment assignment) {
-         if(assignment.getlValue() instanceof VariableRef) {
-            VariableRef lValVar = (VariableRef) assignment.getlValue();
-            List<VariableRef> preferences = new ArrayList<>();
-            addToEquivalenceClassSet(lValVar, preferences, liveRangeEquivalenceClassSet);
-         }
+         addValueToEquivalenceClassSet(assignment.getlValue());
          return null;
       }
 
       @Override
       public Void visitCall(StatementCall call) {
-         if(call.getlValue() instanceof VariableRef) {
-            VariableRef lValVar = (VariableRef) call.getlValue();
-            List<VariableRef> preferences = new ArrayList<>();
-            addToEquivalenceClassSet(lValVar, preferences, liveRangeEquivalenceClassSet);
-         }
+         addValueToEquivalenceClassSet(call.getlValue());
          return null;
       }
 
       @Override
       public Void visitCallFinalize(StatementCallFinalize callFinalize) {
-         if(callFinalize.getlValue() instanceof VariableRef) {
-            VariableRef lValVar = (VariableRef) callFinalize.getlValue();
+         addValueToEquivalenceClassSet(callFinalize.getlValue());
+         return null;
+      }
+
+      private void addValueToEquivalenceClassSet(RValue lValue) {
+         if(lValue instanceof VariableRef) {
+            VariableRef lValVar = (VariableRef) lValue;
             List<VariableRef> preferences = new ArrayList<>();
             addToEquivalenceClassSet(lValVar, preferences, liveRangeEquivalenceClassSet);
+         } else if(lValue instanceof ValueList) {
+            for(RValue rValue : ((ValueList) lValue).getList()) {
+               addValueToEquivalenceClassSet(rValue);
+            }
          }
-         return null;
       }
 
    }

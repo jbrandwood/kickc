@@ -4,12 +4,11 @@ import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCallPrepare;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.ValueList;
 import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ArrayList;
@@ -85,34 +84,59 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
                PhiTransitions phiTransitions = programPhiTransitions.get(statementBlock.getLabel());
                PhiTransitions.PhiTransition phiTransition = phiTransitions.getTransition(phiTransitionId);
                for(PhiTransitions.PhiTransition.PhiAssignment phiAssignment : phiTransition.getAssignments()) {
+                  if(phiAssignment.getAssignmentIdx() != transitionAssignmentIdx) {
+                     // Only the current transition var is assigned
+                     VariableRef assignedVar = phiAssignment.getVariable();
+                     assignedVars.remove(assignedVar);
+                  }
                   if(phiAssignment.getAssignmentIdx() > transitionAssignmentIdx) {
-                     // IF the assignment is later than the current one
+                     // For all assignments later than the current one - add referenced vars to alive
                      RValue rValue = phiAssignment.getrValue();
                      Collection<VariableRef> alive = VariableReferenceInfos.getReferencedVars(rValue);
                      aliveVars.addAll(alive);
-                     VariableRef assignedVar = phiAssignment.getVariable();
-                     assignedVars.remove(assignedVar);
-                     alive.remove(assignedVar);
-                  } else if(phiAssignment.getAssignmentIdx() < transitionAssignmentIdx) {
-                     // IF the assignment is before the current one
-                     VariableRef assignedVar = phiAssignment.getVariable();
-                     assignedVars.remove(assignedVar);
                   }
                }
             }
 
             // If the chunk is an call parameter prepare, examine the later call parameter prepares and update alive variables 
             if(statement instanceof StatementCallPrepare && asmChunk.getSubStatementId() != null && asmChunk.getSubStatementIdx() != null) {
-               int transitionAssignmentIdx = asmChunk.getSubStatementIdx();
+               int parameterIdx = asmChunk.getSubStatementIdx();
                final StatementCallPrepare callPrepare = (StatementCallPrepare) statement;
                final int numParameters = callPrepare.getNumParameters();
-               for(int idx = 0; idx < numParameters; idx++) {
+               for(int idx = parameterIdx + 1; idx < numParameters; idx++) {
+                  // For parameter prepares later than the current one - add referenced to alive
                   final RValue parameter = callPrepare.getParameter(idx);
-                  if(idx > transitionAssignmentIdx) {
-                     // If the parameter prepare is later than the current one
-                     Collection<VariableRef> alive = VariableReferenceInfos.getReferencedVars(parameter);
-                     aliveVars.addAll(alive);
+                  Collection<VariableRef> alive = VariableReferenceInfos.getReferencedVars(parameter);
+                  aliveVars.addAll(alive);
+               }
+            }
+
+            // If the chunk is call finalize with a value list LValue, examine the LValue assigns and update alive variables
+            if(statement instanceof StatementCallFinalize && asmChunk.getSubStatementId() != null && asmChunk.getSubStatementIdx() != null) {
+               int memberIdx = asmChunk.getSubStatementIdx();
+               final StatementCallFinalize stmtCallFinalize = (StatementCallFinalize) statement;
+               final List<RValue> lValues = ((ValueList)stmtCallFinalize.getlValue()).getList();
+               final int numLValues = lValues.size();
+               for(int idx = 0; idx < numLValues; idx++) {
+                  if(idx != memberIdx) {
+                     // Only the current transition var is assigned
+                     final VariableRef assignedVar = (VariableRef) lValues.get(idx);
+                     assignedVars.remove(assignedVar);
                   }
+               }
+            }
+
+            // If the chunk is call with a value list LValue, examine the later LValue assigns and update alive variables
+            if(statement instanceof StatementReturn && asmChunk.getSubStatementId() != null && asmChunk.getSubStatementIdx() != null) {
+               int memberIdx = asmChunk.getSubStatementIdx();
+               final StatementReturn stmtReturn = (StatementReturn) statement;
+               final List<RValue> returnValues = ((ValueList) stmtReturn.getValue()).getList();
+               final int numReturnValues = returnValues.size();
+               for(int idx = memberIdx + 1; idx < numReturnValues; idx++) {
+                  // Add all referenced vars in later return values to alive
+                  final RValue returnValue = returnValues.get(idx);
+                  Collection<VariableRef> alive = VariableReferenceInfos.getReferencedVars(returnValue);
+                  aliveVars.addAll(alive);
                }
             }
 

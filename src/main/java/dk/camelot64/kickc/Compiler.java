@@ -265,6 +265,8 @@ public class Compiler {
       //getLog().append(program.getGraph().toString(program));
 
       new Pass1ProcedureCallParameters(program).generate();
+      //getLog().append("CONTROL FLOW GRAPH (BEFORE LIST UNWINDING)");
+      //getLog().append(program.getGraph().toString(program));
       new PassNUnwindLValueLists(program).execute();
       //new Pass1PointifyMemoryVariables(program).execute();
 
@@ -277,6 +279,8 @@ public class Compiler {
       //getLog().append(program.getGraph().toString(program));
 
       program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
+      //getLog().append("CONTROL FLOW GRAPH (BEFORE LIST UNWINDING)");
+      //getLog().append(program.getGraph().toString(program));
       new PassNUnwindLValueLists(program).execute();
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");

@@ -1,7 +1,7 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots a spiral
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Processor port data direction register
   .label PROCPORT_DDR = 0
@@ -47,7 +47,7 @@
   .label frame_cnt = $10
   // Remainder after unsigned 16-bit division
   .label rem16u = $13
-__b1:
+__bbegin:
   // frame_cnt = 1
   // Counts frames - updated by the IRQ
   lda #1

@@ -5,5 +5,6 @@
 .segmentdef Data [startAfter="Code"]
 .segmentdef ZpCode [start=$80]
 .segment Basic
-:BasicUpstart(main)
+:BasicUpstart(%E)
+.segment Code
 

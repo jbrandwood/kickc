@@ -2,7 +2,7 @@
 // The tetris game tries to match NES tetris gameplay pretty closely
 // Source: https://meatfighter.com/nintendotetrisai/
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Processor port data direction register
   .label PROCPORT_DDR = 0
@@ -163,7 +163,7 @@
   .label current_piece_gfx_1 = $23
   // The char of the current piece
   .label current_piece_char_1 = $a
-__b1:
+__bbegin:
   // render_screen_showing = 0
   // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
   lda #0

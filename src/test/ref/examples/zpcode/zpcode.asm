@@ -8,11 +8,13 @@
 .segmentdef Data [startAfter="Code"]
 .segmentdef ZpCode [start=$80]
 .segment Basic
-:BasicUpstart(main)
+:BasicUpstart(__bbegin)
+.segment Code
 
 
   .label RASTER = $d012
   .label BGCOL = $d020
+__bbegin:
 .segment Code
 main: {
     // Transfer ZP-code to zeropage

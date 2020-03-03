@@ -17,6 +17,7 @@
   .const WHITE = 1
   .const JMP = $4c
   .const NOP = $ea
+__bbegin:
 .segment Code
 main: {
     // Print message

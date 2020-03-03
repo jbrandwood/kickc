@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label last_time = $a
@@ -9,7 +9,7 @@
   .label free_ = 8
   .label root = 2
   .label Ticks_1 = $c
-__b1:
+__bbegin:
   // last_time
   lda #<0
   sta.z last_time

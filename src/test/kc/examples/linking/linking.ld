@@ -6,5 +6,6 @@
 .segmentdef CodeHigh [start=$4000]
 .segmentdef DataHigh [startAfter="CodeHigh"]
 .segment Basic
-:BasicUpstart(main)
+:BasicUpstart(%E)
+.segment Code
 

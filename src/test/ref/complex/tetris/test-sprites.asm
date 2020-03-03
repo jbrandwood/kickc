@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Processor port data direction register
   .label PROCPORT_DDR = 0
@@ -63,7 +63,7 @@
   .label irq_sprite_ptr = 7
   .label irq_cnt = 8
   .label sin_idx = 3
-__b1:
+__bbegin:
   // render_screen_showing = 0
   // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
   lda #0

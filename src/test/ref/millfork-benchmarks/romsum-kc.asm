@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label rom = $e000
   .label last_time = $b
@@ -7,7 +7,7 @@
   .label print_line_cursor = 2
   .label Ticks = $d
   .label Ticks_1 = $f
-__b1:
+__bbegin:
   // last_time
   lda #<0
   sta.z last_time

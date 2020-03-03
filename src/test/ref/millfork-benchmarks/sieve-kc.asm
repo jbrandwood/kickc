@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .const COUNT = $4000
   .const SQRT_COUNT = $80
@@ -8,7 +8,7 @@
   .label print_char_cursor = 4
   .label Ticks = 8
   .label Ticks_1 = $a
-__b1:
+__bbegin:
   // last_time
   lda #<0
   sta.z last_time

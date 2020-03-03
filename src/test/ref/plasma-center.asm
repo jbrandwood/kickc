@@ -1,6 +1,6 @@
 // Plasma based on the distance/angle to the screen center
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label D018 = $d018
   // Color Ram
@@ -37,7 +37,7 @@
   // Offsets for the sines
   .label sin_offset_x = 2
   .label sin_offset_y = $f
-__b1:
+__bbegin:
   // malloc(1000)
   lda #<$3e8
   sta.z malloc.size

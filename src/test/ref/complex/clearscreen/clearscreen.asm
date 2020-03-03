@@ -1,6 +1,6 @@
 // Clears start screen throwing around the letters (by turning them into sprites)
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
@@ -80,7 +80,7 @@
   .label heap_head = $18
   .label SCREEN_COPY = 7
   .label SCREEN_DIST = 9
-__b1:
+__bbegin:
   // malloc(1000)
   lda #<HEAP_TOP
   sta.z heap_head

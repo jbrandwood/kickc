@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label VIC_MEMORY = $d018
   // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
@@ -15,7 +15,7 @@
   .label print_char_cursor = 6
   .label Ticks = $10
   .label Ticks_1 = $13
-__b1:
+__bbegin:
   // last_time
   lda #<0
   sta.z last_time

@@ -95,8 +95,16 @@ public class Pass4CodeGeneration {
          asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
       } else if(TargetPlatform.CUSTOM.equals(program.getTargetPlatform())) {
          useSegments = true;
-         if(program.getLinkScriptBody() != null) {
-            asm.addLine(new AsmInlineKickAsm(program.getLinkScriptBody(), 0L, 0L));
+         String linkScriptBody = program.getLinkScriptBody();
+         if(linkScriptBody != null) {
+            String outputFileName = new File(program.getFileName()).getName();
+            linkScriptBody = linkScriptBody.replace("%O", outputFileName);
+            linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
+            linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
+            final ControlFlowBlock beginBlock = getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
+            String entryName = (beginBlock==null)?"main":"__bbegin";
+            linkScriptBody = linkScriptBody.replace("%E", entryName);
+            asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
          }
          if(programPc != null) {
             asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));

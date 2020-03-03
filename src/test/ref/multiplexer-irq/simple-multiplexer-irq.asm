@@ -1,6 +1,6 @@
 // A simple usage of the flexible sprite multiplexer routine
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -37,7 +37,7 @@
   .label plex_sprite_msb = 8
   .label plex_free_next = 9
   .label framedone = $a
-__b1:
+__bbegin:
   // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
   lda #0

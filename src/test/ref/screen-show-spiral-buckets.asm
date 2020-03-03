@@ -1,7 +1,7 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 // Utilizes a bucket sort for identifying the minimum angle/distance
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label RASTER = $d012
   .label BORDERCOL = $d020
@@ -32,7 +32,7 @@
   .label BUCKET_SIZES = $10
   .label BUCKETS = $12
   .label BUCKET_IDX = $18
-__b1:
+__bbegin:
   // malloc(1000)
   lda #<$3e8
   sta.z malloc.size

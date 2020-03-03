@@ -1,6 +1,6 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
@@ -20,7 +20,7 @@
   .label SQUARES = $11
   .label SCREEN_DIST = $b
   .label SCREEN_ANGLE = $d
-__b1:
+__bbegin:
   // malloc(1000)
   lda #<$3e8
   sta.z malloc.size

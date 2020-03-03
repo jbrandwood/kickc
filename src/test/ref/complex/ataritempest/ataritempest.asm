@@ -10,6 +10,7 @@
 .segment Code
 init:
   .label BGCOL = $c01a
+__bbegin:
 .segment Code
 main: {
     // (*BGCOL)++;

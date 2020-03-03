@@ -1,12 +1,12 @@
 // Experiments with malloc() - a word array
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
-__b1:
+__bbegin:
   // malloc(0x200)
   jsr malloc
   jsr main

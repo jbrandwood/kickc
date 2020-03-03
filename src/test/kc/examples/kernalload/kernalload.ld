@@ -10,4 +10,5 @@
 .segmentdef Data [startAfter="Code"]
 .segmentdef Sprite
 .segment Basic
-:BasicUpstart(main)
+:BasicUpstart(%E)
+.segment Code

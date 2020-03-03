@@ -1,6 +1,6 @@
 // Test interrupt routine using a variable between calls (irq_idx)
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -21,7 +21,7 @@
   .const VIC_SIZE = $30
   .const IRQ_CHANGE_NEXT = $7f
   .label irq_idx = 2
-__b1:
+__bbegin:
   // irq_idx = 0
   lda #0
   sta.z irq_idx

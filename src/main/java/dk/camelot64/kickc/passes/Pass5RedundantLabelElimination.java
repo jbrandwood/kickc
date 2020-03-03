@@ -141,10 +141,10 @@ public class Pass5RedundantLabelElimination extends Pass5AsmOptimization {
       }
 
       public void add(String label) {
-         if("bbegin".equals(label)) {
+         if("__bbegin".equals(label)) {
             redundant.add(label);
             keep = label;
-         } else if("bbegin".equals(keep)) {
+         } else if("__bbegin".equals(keep)) {
             redundant.add(label);
          } else if(keep.length() < label.length()) {
             redundant.add(label);

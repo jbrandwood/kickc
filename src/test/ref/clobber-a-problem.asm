@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(__b1)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label BORDERCOL = $d020
@@ -7,7 +7,7 @@
   .const DARK_GREY = $b
   .const BLACK = 0
   .label irq_raster_next = 2
-__b1:
+__bbegin:
   // irq_raster_next = 0
   lda #0
   sta.z irq_raster_next

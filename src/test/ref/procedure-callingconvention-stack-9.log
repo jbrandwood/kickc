@@ -5,6 +5,12 @@ Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) printother::@2
+Calling convention STACK_CALL adding prepare/execute/finalize for call pval 
+Calling convention STACK_CALL adding prepare/execute/finalize for call printother 
+Calling convention STACK_CALL adding prepare/execute/finalize for call ival 
+Calling convention STACK_CALL adding prepare/execute/finalize for call printval 
+Calling convention STACK_CALL adding prepare/execute/finalize for call incval 
+Calling convention STACK_CALL adding prepare/execute/finalize for call main 
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -16,9 +22,15 @@ main: scope:[main]  from
   (byte) main::i ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  call pval 
-  call printother 
-  call ival 
+  callprepare pval 
+  callexecute pval 
+  callfinalize pval 
+  callprepare printother 
+  callexecute printother 
+  callfinalize printother 
+  callprepare ival 
+  callexecute ival 
+  callfinalize ival 
   (byte) main::i ← (byte) main::i + rangenext(0,5)
   (bool~) main::$3 ← (byte) main::i != rangelast(0,5)
   if((bool~) main::$3) goto main::@1
@@ -29,7 +41,9 @@ main::@return: scope:[main]  from main::@1
 
 __stackcall (void()) pval()
 pval: scope:[pval]  from
-  call printval 
+  callprepare printval 
+  callexecute printval 
+  callfinalize printval 
   to:pval::@return
 pval::@return: scope:[pval]  from pval
   return 
@@ -37,7 +51,9 @@ pval::@return: scope:[pval]  from pval
 
 __stackcall (void()) ival()
 ival: scope:[ival]  from
-  call incval 
+  callprepare incval 
+  callexecute incval 
+  callfinalize incval 
   to:ival::@return
 ival::@return: scope:[ival]  from ival
   return 
@@ -73,7 +89,9 @@ printother::@return: scope:[printother]  from printother::@1
   return 
   to:@return
 @6: scope:[]  from @begin
-  call main 
+  callprepare main 
+  callexecute main 
+  callfinalize main 
   to:@end
 @end: scope:[]  from @6
 
@@ -112,14 +130,14 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$3 [7] if((byte) main::i!=rangelast(0,5)) goto main::@1
-Simple Condition (bool~) printother::$1 [21] if((byte) printother::i!=rangelast(0,5)) goto printother::@1
+Simple Condition (bool~) main::$3 [13] if((byte) main::i!=rangelast(0,5)) goto main::@1
+Simple Condition (bool~) printother::$1 [31] if((byte) printother::i!=rangelast(0,5)) goto printother::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Resolved ranged next value [5] main::i ← ++ main::i to ++
-Resolved ranged comparison value [7] if(main::i!=rangelast(0,5)) goto main::@1 to (number) 6
-Resolved ranged next value [19] printother::i ← ++ printother::i to ++
-Resolved ranged comparison value [21] if(printother::i!=rangelast(0,5)) goto printother::@1 to (number) 6
-Simplifying expression containing zero SCREEN in [13] *((const byte*) SCREEN + (byte) 0) ← (byte) val
+Resolved ranged next value [11] main::i ← ++ main::i to ++
+Resolved ranged comparison value [13] if(main::i!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [29] printother::i ← ++ printother::i to ++
+Resolved ranged comparison value [31] if(printother::i!=rangelast(0,5)) goto printother::@1 to (number) 6
+Simplifying expression containing zero SCREEN in [23] *((const byte*) SCREEN + (byte) 0) ← (byte) val
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) 6 in if((byte) main::i!=(number) 6) goto main::@1
 Adding number conversion cast (unumber) 6 in if((byte) printother::i!=(number) 6) goto printother::@1
@@ -130,116 +148,98 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 6
 Finalized unsigned number type (byte) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Adding NOP phi() at start of @6
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of ival
-Adding NOP phi() at start of pval
-Adding NOP phi() at start of main::@1
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [ival] to incval:14 
-Calls in [pval] to printval:17 
-Calls in [main] to pval:21 printother:22 ival:23 
+Calls in [ival] to incval:15 
+Calls in [pval] to printval:19 
+Calls in [main] to pval:24 printother:27 ival:30 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Renumbering block @6 to @1
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of ival
-Adding NOP phi() at start of pval
-Adding NOP phi() at start of main::@1
-Calling convention STACK_CALL adding prepare/execute/finalize for [2] call main 
-Calling convention STACK_CALL adding prepare/execute/finalize for [14] call incval 
-Calling convention STACK_CALL adding prepare/execute/finalize for [17] call printval 
-Calling convention STACK_CALL adding prepare/execute/finalize for [21] call pval 
-Calling convention STACK_CALL adding prepare/execute/finalize for [22] call printother 
-Calling convention STACK_CALL adding prepare/execute/finalize for [23] call ival 
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
   [0] (byte) val ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
-  [1] phi()
-  [2] callprepare main 
-  [3] callexecute main 
-  [4] callfinalize main 
+  [1] callprepare main 
+  [2] callexecute main 
+  [3] callfinalize main 
   to:@end
 @end: scope:[]  from @1
-  [5] phi()
+  [4] phi()
 
 __stackcall (void()) printother()
 printother: scope:[printother]  from
-  [6] (byte) printother::i ← (byte) 0
+  [5] (byte) printother::i ← (byte) 0
   to:printother::@1
 printother::@1: scope:[printother]  from printother printother::@1
-  [7] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i)
-  [8] (byte) printother::i ← ++ (byte) printother::i
-  [9] if((byte) printother::i!=(byte) 6) goto printother::@1
+  [6] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i)
+  [7] (byte) printother::i ← ++ (byte) printother::i
+  [8] if((byte) printother::i!=(byte) 6) goto printother::@1
   to:printother::@return
 printother::@return: scope:[printother]  from printother::@1
-  [10] return 
+  [9] return 
   to:@return
 
 __stackcall (void()) incval()
 incval: scope:[incval]  from
-  [11] (byte) val ← ++ (byte) val
+  [10] (byte) val ← ++ (byte) val
   to:incval::@return
 incval::@return: scope:[incval]  from incval
-  [12] return 
+  [11] return 
   to:@return
 
 __stackcall (void()) printval()
 printval: scope:[printval]  from
-  [13] *((const byte*) SCREEN) ← (byte) val
+  [12] *((const byte*) SCREEN) ← (byte) val
   to:printval::@return
 printval::@return: scope:[printval]  from printval
-  [14] return 
+  [13] return 
   to:@return
 
 __stackcall (void()) ival()
 ival: scope:[ival]  from
-  [15] phi()
-  [16] callprepare incval 
-  [17] callexecute incval 
-  [18] callfinalize incval 
+  [14] callprepare incval 
+  [15] callexecute incval 
+  [16] callfinalize incval 
   to:ival::@return
 ival::@return: scope:[ival]  from ival
-  [19] return 
+  [17] return 
   to:@return
 
 __stackcall (void()) pval()
 pval: scope:[pval]  from
-  [20] phi()
-  [21] callprepare printval 
-  [22] callexecute printval 
-  [23] callfinalize printval 
+  [18] callprepare printval 
+  [19] callexecute printval 
+  [20] callfinalize printval 
   to:pval::@return
 pval::@return: scope:[pval]  from pval
-  [24] return 
+  [21] return 
   to:@return
 
 __stackcall (void()) main()
 main: scope:[main]  from
-  [25] (byte) main::i ← (byte) 0
+  [22] (byte) main::i ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [26] phi()
-  [27] callprepare pval 
-  [28] callexecute pval 
-  [29] callfinalize pval 
-  [30] callprepare printother 
-  [31] callexecute printother 
-  [32] callfinalize printother 
-  [33] callprepare ival 
-  [34] callexecute ival 
-  [35] callfinalize ival 
-  [36] (byte) main::i ← ++ (byte) main::i
-  [37] if((byte) main::i!=(byte) 6) goto main::@1
+  [23] callprepare pval 
+  [24] callexecute pval 
+  [25] callfinalize pval 
+  [26] callprepare printother 
+  [27] callexecute printother 
+  [28] callfinalize printother 
+  [29] callprepare ival 
+  [30] callexecute ival 
+  [31] callfinalize ival 
+  [32] (byte) main::i ← ++ (byte) main::i
+  [33] if((byte) main::i!=(byte) 6) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [38] return 
+  [34] return 
   to:@return
 
 null depth in calling loop Loop head: main::@1 tails: main::@1 blocks: main::@1  in scope printother
@@ -252,12 +252,12 @@ VARIABLE REGISTER WEIGHTS
 __stackcall (void()) incval()
 __stackcall (void()) ival()
 __stackcall (void()) main()
-(byte) main::i loadstore 2.6923076923076925
+(byte) main::i loadstore 2.9166666666666665
 __stackcall (void()) printother()
 (byte) printother::i loadstore 14.25
 __stackcall (void()) printval()
 __stackcall (void()) pval()
-(byte) val loadstore 0.26666666666666666
+(byte) val loadstore 0.3076923076923077
 
 Initial phi equivalence classes
 Added variable val to live range equivalence class [ val ]
@@ -288,16 +288,14 @@ __bbegin:
   // [0] (byte) val ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z val
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [2] callprepare main 
-  // [3] callexecute main  -- jsr 
+  // [1] callprepare main 
+  // [2] callexecute main  -- jsr 
   jsr main
-  // [4] callfinalize main 
-  // [5] phi from @1 to @end [phi:@1->@end]
+  // [3] callfinalize main 
+  // [4] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
   jmp __bend
   // @end
@@ -305,144 +303,141 @@ __bend:
   // printother
 printother: {
     .label i = 3
-    // [6] (byte) printother::i ← (byte) 0 -- vbuz1=vbuc1 
+    // [5] (byte) printother::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // printother::@1
   __b1:
-    // [7] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    // [6] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z i
     inc SCREEN+$28,x
-    // [8] (byte) printother::i ← ++ (byte) printother::i -- vbuz1=_inc_vbuz1 
+    // [7] (byte) printother::i ← ++ (byte) printother::i -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [9] if((byte) printother::i!=(byte) 6) goto printother::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) printother::i!=(byte) 6) goto printother::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
     bne __b1
     jmp __breturn
     // printother::@return
   __breturn:
-    // [10] return 
+    // [9] return 
     rts
 }
   // incval
 incval: {
-    // [11] (byte) val ← ++ (byte) val -- vbuz1=_inc_vbuz1 
+    // [10] (byte) val ← ++ (byte) val -- vbuz1=_inc_vbuz1 
     inc.z val
     jmp __breturn
     // incval::@return
   __breturn:
-    // [12] return 
+    // [11] return 
     rts
 }
   // printval
 printval: {
-    // [13] *((const byte*) SCREEN) ← (byte) val -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) SCREEN) ← (byte) val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN
     jmp __breturn
     // printval::@return
   __breturn:
-    // [14] return 
+    // [13] return 
     rts
 }
   // ival
 ival: {
-    // [16] callprepare incval 
-    // [17] callexecute incval  -- jsr 
+    // [14] callprepare incval 
+    // [15] callexecute incval  -- jsr 
     jsr incval
-    // [18] callfinalize incval 
+    // [16] callfinalize incval 
     jmp __breturn
     // ival::@return
   __breturn:
-    // [19] return 
+    // [17] return 
     rts
 }
   // pval
 pval: {
-    // [21] callprepare printval 
-    // [22] callexecute printval  -- jsr 
+    // [18] callprepare printval 
+    // [19] callexecute printval  -- jsr 
     jsr printval
-    // [23] callfinalize printval 
+    // [20] callfinalize printval 
     jmp __breturn
     // pval::@return
   __breturn:
-    // [24] return 
+    // [21] return 
     rts
 }
   // main
 main: {
     .label i = 4
-    // [25] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
+    // [22] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [26] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  __b1_from_main:
-  __b1_from___b1:
     jmp __b1
     // main::@1
   __b1:
-    // [27] callprepare pval 
-    // [28] callexecute pval  -- jsr 
+    // [23] callprepare pval 
+    // [24] callexecute pval  -- jsr 
     jsr pval
-    // [29] callfinalize pval 
-    // [30] callprepare printother 
-    // [31] callexecute printother  -- jsr 
+    // [25] callfinalize pval 
+    // [26] callprepare printother 
+    // [27] callexecute printother  -- jsr 
     jsr printother
-    // [32] callfinalize printother 
-    // [33] callprepare ival 
-    // [34] callexecute ival  -- jsr 
+    // [28] callfinalize printother 
+    // [29] callprepare ival 
+    // [30] callexecute ival  -- jsr 
     jsr ival
-    // [35] callfinalize ival 
-    // [36] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    // [31] callfinalize ival 
+    // [32] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [37] if((byte) main::i!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [33] if((byte) main::i!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne __b1_from___b1
+    bne __b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [38] return 
+    // [34] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) val ← (byte) 0 [ val ] (  [ val ] ) always clobbers reg byte a 
-Statement [6] (byte) printother::i ← (byte) 0 [ printother::i ] ( main:3::printother:31 [ val main::i printother::i ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) [ printother::i ] ( main:3::printother:31 [ val main::i printother::i ] ) always clobbers reg byte x 
-Statement [9] if((byte) printother::i!=(byte) 6) goto printother::@1 [ printother::i ] ( main:3::printother:31 [ val main::i printother::i ] ) always clobbers reg byte a 
-Statement [13] *((const byte*) SCREEN) ← (byte) val [ val ] ( main:3::pval:28::printval:22 [ main::i val ] ) always clobbers reg byte a 
-Statement [25] (byte) main::i ← (byte) 0 [ val main::i ] ( main:3 [ val main::i ] ) always clobbers reg byte a 
-Statement [37] if((byte) main::i!=(byte) 6) goto main::@1 [ val main::i ] ( main:3 [ val main::i ] ) always clobbers reg byte a 
+Statement [5] (byte) printother::i ← (byte) 0 [ printother::i ] ( main:2::printother:27 [ val main::i printother::i ] ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) [ printother::i ] ( main:2::printother:27 [ val main::i printother::i ] ) always clobbers reg byte x 
+Statement [8] if((byte) printother::i!=(byte) 6) goto printother::@1 [ printother::i ] ( main:2::printother:27 [ val main::i printother::i ] ) always clobbers reg byte a 
+Statement [12] *((const byte*) SCREEN) ← (byte) val [ val ] ( main:2::pval:24::printval:19 [ main::i val ] ) always clobbers reg byte a 
+Statement [22] (byte) main::i ← (byte) 0 [ val main::i ] ( main:2 [ val main::i ] ) always clobbers reg byte a 
+Statement [33] if((byte) main::i!=(byte) 6) goto main::@1 [ val main::i ] ( main:2 [ val main::i ] ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ val ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ printother::i ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ main::i ] : zp[1]:4 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [printother] 14.25: zp[1]:3 [ printother::i ] 
-Uplift Scope [main] 2.69: zp[1]:4 [ main::i ] 
-Uplift Scope [] 0.27: zp[1]:2 [ val ] 
+Uplift Scope [main] 2.92: zp[1]:4 [ main::i ] 
+Uplift Scope [] 0.31: zp[1]:2 [ val ] 
 Uplift Scope [pval] 
 Uplift Scope [ival] 
 Uplift Scope [printval] 
 Uplift Scope [incval] 
 
-Uplifting [printother] best 722 combination zp[1]:3 [ printother::i ] 
-Uplifting [main] best 722 combination zp[1]:4 [ main::i ] 
-Uplifting [] best 722 combination zp[1]:2 [ val ] 
-Uplifting [pval] best 722 combination 
-Uplifting [ival] best 722 combination 
-Uplifting [printval] best 722 combination 
-Uplifting [incval] best 722 combination 
+Uplifting [printother] best 695 combination zp[1]:3 [ printother::i ] 
+Uplifting [main] best 695 combination zp[1]:4 [ main::i ] 
+Uplifting [] best 695 combination zp[1]:2 [ val ] 
+Uplifting [pval] best 695 combination 
+Uplifting [ival] best 695 combination 
+Uplifting [printval] best 695 combination 
+Uplifting [incval] best 695 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ printother::i ]
-Uplifting [printother] best 722 combination zp[1]:3 [ printother::i ] 
+Uplifting [printother] best 695 combination zp[1]:3 [ printother::i ] 
 Attempting to uplift remaining variables inzp[1]:4 [ main::i ]
-Uplifting [main] best 722 combination zp[1]:4 [ main::i ] 
+Uplifting [main] best 695 combination zp[1]:4 [ main::i ] 
 Attempting to uplift remaining variables inzp[1]:2 [ val ]
-Uplifting [] best 722 combination zp[1]:2 [ val ] 
+Uplifting [] best 695 combination zp[1]:2 [ val ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -460,16 +455,14 @@ __bbegin:
   // [0] (byte) val ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z val
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [2] callprepare main 
-  // [3] callexecute main  -- jsr 
+  // [1] callprepare main 
+  // [2] callexecute main  -- jsr 
   jsr main
-  // [4] callfinalize main 
-  // [5] phi from @1 to @end [phi:@1->@end]
+  // [3] callfinalize main 
+  // [4] phi from @1 to @end [phi:@1->@end]
 __bend_from___b1:
   jmp __bend
   // @end
@@ -477,106 +470,103 @@ __bend:
   // printother
 printother: {
     .label i = 3
-    // [6] (byte) printother::i ← (byte) 0 -- vbuz1=vbuc1 
+    // [5] (byte) printother::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // printother::@1
   __b1:
-    // [7] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    // [6] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z i
     inc SCREEN+$28,x
-    // [8] (byte) printother::i ← ++ (byte) printother::i -- vbuz1=_inc_vbuz1 
+    // [7] (byte) printother::i ← ++ (byte) printother::i -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [9] if((byte) printother::i!=(byte) 6) goto printother::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) printother::i!=(byte) 6) goto printother::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
     bne __b1
     jmp __breturn
     // printother::@return
   __breturn:
-    // [10] return 
+    // [9] return 
     rts
 }
   // incval
 incval: {
-    // [11] (byte) val ← ++ (byte) val -- vbuz1=_inc_vbuz1 
+    // [10] (byte) val ← ++ (byte) val -- vbuz1=_inc_vbuz1 
     inc.z val
     jmp __breturn
     // incval::@return
   __breturn:
-    // [12] return 
+    // [11] return 
     rts
 }
   // printval
 printval: {
-    // [13] *((const byte*) SCREEN) ← (byte) val -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) SCREEN) ← (byte) val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN
     jmp __breturn
     // printval::@return
   __breturn:
-    // [14] return 
+    // [13] return 
     rts
 }
   // ival
 ival: {
-    // [16] callprepare incval 
-    // [17] callexecute incval  -- jsr 
+    // [14] callprepare incval 
+    // [15] callexecute incval  -- jsr 
     jsr incval
-    // [18] callfinalize incval 
+    // [16] callfinalize incval 
     jmp __breturn
     // ival::@return
   __breturn:
-    // [19] return 
+    // [17] return 
     rts
 }
   // pval
 pval: {
-    // [21] callprepare printval 
-    // [22] callexecute printval  -- jsr 
+    // [18] callprepare printval 
+    // [19] callexecute printval  -- jsr 
     jsr printval
-    // [23] callfinalize printval 
+    // [20] callfinalize printval 
     jmp __breturn
     // pval::@return
   __breturn:
-    // [24] return 
+    // [21] return 
     rts
 }
   // main
 main: {
     .label i = 4
-    // [25] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
+    // [22] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [26] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  __b1_from_main:
-  __b1_from___b1:
     jmp __b1
     // main::@1
   __b1:
-    // [27] callprepare pval 
-    // [28] callexecute pval  -- jsr 
+    // [23] callprepare pval 
+    // [24] callexecute pval  -- jsr 
     jsr pval
-    // [29] callfinalize pval 
-    // [30] callprepare printother 
-    // [31] callexecute printother  -- jsr 
+    // [25] callfinalize pval 
+    // [26] callprepare printother 
+    // [27] callexecute printother  -- jsr 
     jsr printother
-    // [32] callfinalize printother 
-    // [33] callprepare ival 
-    // [34] callexecute ival  -- jsr 
+    // [28] callfinalize printother 
+    // [29] callprepare ival 
+    // [30] callexecute ival  -- jsr 
     jsr ival
-    // [35] callfinalize ival 
-    // [36] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    // [31] callfinalize ival 
+    // [32] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [37] if((byte) main::i!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [33] if((byte) main::i!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
-    bne __b1_from___b1
+    bne __b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [38] return 
+    // [34] return 
     rts
 }
   // File Data
@@ -593,11 +583,7 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
 Removing instruction __bend_from___b1:
-Removing instruction __b1_from_main:
-Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b1:
 Removing instruction __bend:
@@ -623,7 +609,7 @@ __stackcall (void()) ival()
 __stackcall (void()) main()
 (label) main::@1
 (label) main::@return
-(byte) main::i loadstore zp[1]:4 2.6923076923076925
+(byte) main::i loadstore zp[1]:4 2.9166666666666665
 __stackcall (void()) printother()
 (label) printother::@1
 (label) printother::@return
@@ -632,7 +618,7 @@ __stackcall (void()) printval()
 (label) printval::@return
 __stackcall (void()) pval()
 (label) pval::@return
-(byte) val loadstore zp[1]:2 0.26666666666666666
+(byte) val loadstore zp[1]:2 0.3076923076923077
 
 zp[1]:2 [ val ]
 zp[1]:3 [ printother::i ]
@@ -658,120 +644,118 @@ __bbegin:
   // [0] (byte) val ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z val
-  // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
-  // [2] callprepare main 
-  // [3] callexecute main  -- jsr 
+  // [1] callprepare main 
+  // [2] callexecute main  -- jsr 
   jsr main
   rts
-  // [4] callfinalize main 
-  // [5] phi from @1 to @end [phi:@1->@end]
+  // [3] callfinalize main 
+  // [4] phi from @1 to @end [phi:@1->@end]
   // @end
   // printother
 printother: {
     .label i = 3
     // for(char i:0..5)
-    // [6] (byte) printother::i ← (byte) 0 -- vbuz1=vbuc1 
+    // [5] (byte) printother::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // printother::@1
   __b1:
     // (SCREEN+40)[i]++;
-    // [7] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    // [6] *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) ← ++ *((const byte*) SCREEN+(byte) $28 + (byte) printother::i) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z i
     inc SCREEN+$28,x
     // for(char i:0..5)
-    // [8] (byte) printother::i ← ++ (byte) printother::i -- vbuz1=_inc_vbuz1 
+    // [7] (byte) printother::i ← ++ (byte) printother::i -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [9] if((byte) printother::i!=(byte) 6) goto printother::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) printother::i!=(byte) 6) goto printother::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
     bne __b1
     // printother::@return
     // }
-    // [10] return 
+    // [9] return 
     rts
 }
   // incval
 incval: {
     // val++;
-    // [11] (byte) val ← ++ (byte) val -- vbuz1=_inc_vbuz1 
+    // [10] (byte) val ← ++ (byte) val -- vbuz1=_inc_vbuz1 
     inc.z val
     // incval::@return
     // }
-    // [12] return 
+    // [11] return 
     rts
 }
   // printval
 printval: {
     // SCREEN[0] = val
-    // [13] *((const byte*) SCREEN) ← (byte) val -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) SCREEN) ← (byte) val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN
     // printval::@return
     // }
-    // [14] return 
+    // [13] return 
     rts
 }
   // ival
 ival: {
     // incval()
-    // [16] callprepare incval 
-    // [17] callexecute incval  -- jsr 
+    // [14] callprepare incval 
+    // [15] callexecute incval  -- jsr 
     jsr incval
-    // [18] callfinalize incval 
+    // [16] callfinalize incval 
     // ival::@return
     // }
-    // [19] return 
+    // [17] return 
     rts
 }
   // pval
 pval: {
     // printval()
-    // [21] callprepare printval 
-    // [22] callexecute printval  -- jsr 
+    // [18] callprepare printval 
+    // [19] callexecute printval  -- jsr 
     jsr printval
-    // [23] callfinalize printval 
+    // [20] callfinalize printval 
     // pval::@return
     // }
-    // [24] return 
+    // [21] return 
     rts
 }
   // main
 main: {
     .label i = 4
     // for(char i:0..5)
-    // [25] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
+    // [22] (byte) main::i ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [26] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
     // main::@1
   __b1:
     // pval()
-    // [27] callprepare pval 
-    // [28] callexecute pval  -- jsr 
+    // [23] callprepare pval 
+    // [24] callexecute pval  -- jsr 
     jsr pval
-    // [29] callfinalize pval 
+    // [25] callfinalize pval 
     // printother()
-    // [30] callprepare printother 
-    // [31] callexecute printother  -- jsr 
+    // [26] callprepare printother 
+    // [27] callexecute printother  -- jsr 
     jsr printother
-    // [32] callfinalize printother 
+    // [28] callfinalize printother 
     // ival()
-    // [33] callprepare ival 
-    // [34] callexecute ival  -- jsr 
+    // [29] callprepare ival 
+    // [30] callexecute ival  -- jsr 
     jsr ival
-    // [35] callfinalize ival 
+    // [31] callfinalize ival 
     // for(char i:0..5)
-    // [36] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    // [32] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [37] if((byte) main::i!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [33] if((byte) main::i!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z i
     bne __b1
     // main::@return
     // }
-    // [38] return 
+    // [34] return 
     rts
 }
   // File Data

@@ -264,11 +264,13 @@ public class Compiler {
       //getLog().append("CONTROL FLOW GRAPH (CLEANED)");
       //getLog().append(program.getGraph().toString(program));
 
+      // Handle calling convention stack
+      new PassNCallingConventionStack(program).execute();
+
       new Pass1ProcedureCallParameters(program).generate();
       //getLog().append("CONTROL FLOW GRAPH (BEFORE LIST UNWINDING)");
       //getLog().append(program.getGraph().toString(program));
       new PassNUnwindLValueLists(program).execute();
-      //new Pass1PointifyMemoryVariables(program).execute();
 
       //getLog().append("CONTROL FLOW GRAPH (CALL PARAMETERS)");
       //getLog().append(program.getGraph().toString(program));
@@ -526,9 +528,6 @@ public class Compiler {
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();
-
-      // Handle calling convention stack
-      new PassNCallingConventionStack(program).execute();
 
       program.clearCallGraph();
       program.clearStatementIndices();

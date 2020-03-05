@@ -1,6 +1,9 @@
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @1
 Culled Empty Block (label) plus::@1
+Calling convention STACK_CALL adding prepare/execute/finalize for (byte~) main::$1 ← call plus (byte) '0' (byte) main::v 
+Calling convention STACK_CALL replacing param((byte) plus::a) with stackidx(byte,(const byte) plus::OFFSET_STACK_A)
+Calling convention STACK_CALL replacing param((byte) plus::b) with stackidx(byte,(const byte) plus::OFFSET_STACK_B)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -17,7 +20,9 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::a#2 ← phi( main/(byte) main::a#0 main::@1/(byte) main::a#1 )
   (number~) main::$0 ← (byte) main::a#2 + (number) 1
   (byte) main::v#0 ← (number~) main::$0
-  (byte~) main::$1 ← call plus (byte) '0' (byte) main::v#0 
+  callprepare plus (byte) '0' (byte) main::v#0 
+  callexecute plus 
+  (byte~) main::$1 ← callfinalize plus 
   (byte) main::w#0 ← (byte~) main::$1
   (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2
   *((const byte*) SCREEN + (byte) i#4) ← (byte~) main::$2
@@ -34,8 +39,8 @@ main::@return: scope:[main]  from main::@1
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 plus: scope:[plus]  from
   (byte) i#6 ← phi( )
-  (byte) plus::a#0 ← param((byte) plus::a)
-  (byte) plus::b#0 ← param((byte) plus::b)
+  (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A)
+  (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B)
   (byte) i#2 ← ++ (byte) i#6
   (byte~) plus::$0 ← (byte) plus::a#0 + (byte) plus::b#0
   (byte) plus::return#0 ← (byte~) plus::$0
@@ -60,6 +65,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
+(const word) STACK_BASE = (word) $103
 (byte) i
 (byte) i#0
 (byte) i#1
@@ -89,6 +95,9 @@ SYMBOL TABLE SSA
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 (byte~) plus::$0
 (label) plus::@return
+(const byte) plus::OFFSET_STACK_A = (byte) 1
+(const byte) plus::OFFSET_STACK_B = (byte) 0
+(const byte) plus::OFFSET_STACK_RETURN = (byte) 1
 (byte) plus::a
 (byte) plus::a#0
 (byte) plus::b
@@ -117,16 +126,17 @@ Identical Phi Values (byte) i#8 (byte) i#0
 Identical Phi Values (byte) i#1 (byte) i#8
 Identical Phi Values (byte) i#3 (byte) i#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [10] if((byte) main::a#1!=rangelast(0,1)) goto main::@1
+Simple Condition (bool~) main::$3 [12] if((byte) main::a#1!=rangelast(0,1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [8] main::a#1 ← ++ main::a#2 to ++
-Resolved ranged comparison value [10] if(main::a#1!=rangelast(0,1)) goto main::@1 to (number) 2
-Simplifying expression containing zero SCREEN in [7] *((const byte*) SCREEN + (const byte) i#0) ← (byte~) main::$2
+Resolved ranged next value [10] main::a#1 ← ++ main::a#2 to ++
+Resolved ranged comparison value [12] if(main::a#1!=rangelast(0,1)) goto main::@1 to (number) 2
+Simplifying expression containing zero SCREEN in [9] *((const byte*) SCREEN + (const byte) i#0) ← (byte~) main::$2
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) i#2 and assignment [11] (byte) i#2 ← ++ (byte) i#6
+Eliminating unused variable (byte) i#2 and assignment [13] (byte) i#2 ← ++ (byte) i#6
+Eliminating unused constant (const byte) plus::OFFSET_STACK_RETURN
 Eliminating unused constant (const byte) i#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused variable - keeping the phi block (byte) i#6
@@ -148,10 +158,10 @@ Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to plus:8 
+Calls in [main] to plus:9 
 
 Created 1 initial phi equivalence classes
-Coalesced [14] main::a#3 ← main::a#1
+Coalesced [16] main::a#3 ← main::a#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@3
@@ -160,9 +170,6 @@ Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Calling convention STACK_CALL adding prepare/execute/finalize for [7] (byte) main::w#0 ← call plus (byte) '0' (byte) main::v#0 
-Calling convention STACK_CALL replacing param((byte) plus::a) with stackidx(byte,(const byte) plus::OFFSET_STACK_A)
-Calling convention STACK_CALL replacing param((byte) plus::b) with stackidx(byte,(const byte) plus::OFFSET_STACK_B)
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -336,7 +343,6 @@ main: {
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
-    .const OFFSET_STACK_RETURN = 1
     .label a = 6
     .label b = 7
     .label return = 8
@@ -606,7 +612,7 @@ main: {
     tya
     tax
     inx
-    // w = plus('0', v)
+    // plus('0', v)
     // [7] callprepare plus (byte) '0' (byte) main::v#0  [(byte) plus::a#0] -- _stackpushbyte_=vbuc1 
     lda #'0'
     pha
@@ -615,6 +621,7 @@ main: {
     pha
     // [8] callexecute plus  -- jsr 
     jsr plus
+    // w = plus('0', v)
     // [9] (byte) main::w#0 ← callfinalize plus  -- _stackpullbyte_1 
     pla
     // [9] (byte) main::w#0 ← callfinalize plus  -- vbuaa=_stackpullbyte_ 

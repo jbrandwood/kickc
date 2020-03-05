@@ -130,6 +130,7 @@ public class CallingConventionStack {
    public static ConstantRef getStackBaseConstant(ProgramScope programScope) {
       long STACK_BASE_ADDRESS = 0x103L;
       Variable stackBase = Variable.createConstant("STACK_BASE", SymbolType.WORD, programScope, null, new ConstantInteger(STACK_BASE_ADDRESS, SymbolType.WORD), Scope.SEGMENT_DATA_DEFAULT);
+      stackBase.setExport(true);
       programScope.add(stackBase);
       return stackBase.getConstantRef();
    }

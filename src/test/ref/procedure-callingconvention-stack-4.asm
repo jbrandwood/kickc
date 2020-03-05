@@ -12,12 +12,13 @@ main: {
     tya
     tax
     inx
-    // w = plus('0', v)
+    // plus('0', v)
     lda #'0'
     pha
     txa
     pha
     jsr plus
+    // w = plus('0', v)
     pla
     pla
     // w+a

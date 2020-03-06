@@ -14,9 +14,19 @@ __bbegin:
   sta.z idx
   jsr main
   rts
-// print(byte register(A) p_x, byte register(X) p_y)
+// print(byte register(Y) p_x, byte register(X) p_y)
 print: {
+    .const OFFSET_STACK_P_X = 1
+    .const OFFSET_STACK_P_Y = 0
+    // }
+    tsx
+    lda STACK_BASE+OFFSET_STACK_P_X,x
+    tay
+    tsx
+    lda STACK_BASE+OFFSET_STACK_P_Y,x
+    tax
     // SCREEN[idx++] = p.x
+    tya
     ldy.z idx
     sta SCREEN,y
     // SCREEN[idx++] = p.x;

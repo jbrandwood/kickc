@@ -60,6 +60,10 @@ public class ValueSourceFactory {
          final ValueSource structValueSource = getValueSource(structValue, program, programScope, currentStmt, stmtIt, currentBlock);
          return structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), program, programScope, currentStmt, stmtIt, currentBlock);
       }
+      if(valueType instanceof SymbolTypeStruct && value instanceof ParamValue) {
+         final StructDefinition structDefinition = ((SymbolTypeStruct) valueType).getStructDefinition(programScope);
+         return new ValueSourceParamList((ParamValue) value, structDefinition);
+      }
       return null;
    }
 

@@ -48,7 +48,7 @@ public class ProgramValueIterator {
     * @param programValueHandler The programValueHandler to execute
     */
    public static void execute(Variable variable, ProgramValueHandler programValueHandler) {
-      if(variable.getInitValue()!=null) {
+      if(variable.getInitValue() != null) {
          execute(new ProgramValue.ProgramValueInitValue(variable), programValueHandler, null, null, null);
       }
       if(variable.isArray()) {
@@ -145,15 +145,15 @@ public class ProgramValueIterator {
       } else if(statement instanceof StatementKickAsm) {
          StatementKickAsm statementKickAsm = (StatementKickAsm) statement;
          RValue location = statementKickAsm.getLocation();
-         if(location!=null) {
+         if(location != null) {
             execute(new ProgramValue.ProgramValueKickAsmLocation(statementKickAsm), handler, statement, statementsIt, block);
          }
          RValue bytes = statementKickAsm.getLocation();
-         if(bytes!=null) {
+         if(bytes != null) {
             execute(new ProgramValue.ProgramValueKickAsmBytes(statementKickAsm), handler, statement, statementsIt, block);
          }
          RValue cycles = statementKickAsm.getLocation();
-         if(cycles!=null) {
+         if(cycles != null) {
             execute(new ProgramValue.ProgramValueKickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
          }
          List<SymbolRef> uses = statementKickAsm.getUses();
@@ -166,6 +166,9 @@ public class ProgramValueIterator {
          for(String label : referenced.keySet()) {
             execute(new ProgramValue.ProgramValueAsmReferenced(statementAsm, label), handler, statement, statementsIt, block);
          }
+      } else if(statement instanceof StatementStackPull) {
+         StatementStackPull statementStackPull = (StatementStackPull) statement;
+         execute(new ProgramValue.StackPullBytes(statementStackPull), handler, statement, statementsIt, block);
       }
    }
 
@@ -245,13 +248,13 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueLValueIntermediateVariable((LvalueIntermediate) value));
       } else if(value instanceof ParamValue) {
          subValues.add(new ProgramValue.ProgramValueParamValue((ParamValue) value));
-      } else if(value instanceof StackIdxValue) {
-         subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
       } else if(value instanceof MemsetValue) {
          subValues.add(new ProgramValue.ProgramValueMemsetValue((MemsetValue) value));
       } else if(value instanceof MemcpyValue) {
          subValues.add(new ProgramValue.ProgramValueMempySize((MemcpyValue) value));
          subValues.add(new ProgramValue.ProgramValueMempySource((MemcpyValue) value));
+      } else if(value instanceof StackIdxValue) {
+         subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
       } else if(value == null ||
             value instanceof SymbolVariableRef ||
             value instanceof Variable ||
@@ -259,8 +262,9 @@ public class ProgramValueIterator {
             value instanceof ConstantLiteral ||
             value instanceof StructZero ||
             value instanceof Label ||
-            value instanceof LabelRef
-            ) {
+            value instanceof LabelRef ||
+            value instanceof StackPullValue
+      ) {
          // No sub values
       } else {
          throw new RuntimeException("Unhandled value type " + value.getClass());

@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.Program;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +14,7 @@ public class StatementLabel extends StatementBase {
    private LabelRef label;
 
    public StatementLabel(LabelRef label, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.label = label;
    }
 

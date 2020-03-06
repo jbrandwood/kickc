@@ -4,6 +4,8 @@ Culled Empty Block (label) plus::@1
 Calling convention STACK_CALL adding prepare/execute/finalize for (byte~) main::$1 ← call plus (byte) '0' (byte) main::v 
 Calling convention STACK_CALL replacing param((byte) plus::a) with stackidx(byte,(const byte) plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param((byte) plus::b) with stackidx(byte,(const byte) plus::OFFSET_STACK_B)
+Calling convention STACK_CALL adding stack return stackidx(byte,plus::OFFSET_STACK_RETURN) ← plus::return
+Calling convention STACK_CALL adding stack pull main::$1 ← stackpull(byte)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -22,7 +24,8 @@ main::@1: scope:[main]  from main main::@1
   (byte) main::v#0 ← (number~) main::$0
   callprepare plus (byte) '0' (byte) main::v#0 
   callexecute plus 
-  (byte~) main::$1 ← callfinalize plus 
+  stackpull((number) 1)
+  (byte~) main::$1 ← stackpull(byte)
   (byte) main::w#0 ← (byte~) main::$1
   (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2
   *((const byte*) SCREEN + (byte) i#4) ← (byte~) main::$2
@@ -47,7 +50,8 @@ plus: scope:[plus]  from
   to:plus::@return
 plus::@return: scope:[plus]  from plus
   (byte) plus::return#1 ← phi( plus/(byte) plus::return#0 )
-  return (byte) plus::return#1
+  stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#1
+  return 
   to:@return
 @2: scope:[]  from @begin
   (byte) i#9 ← phi( @begin/(byte) i#0 )
@@ -126,17 +130,16 @@ Identical Phi Values (byte) i#8 (byte) i#0
 Identical Phi Values (byte) i#1 (byte) i#8
 Identical Phi Values (byte) i#3 (byte) i#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [12] if((byte) main::a#1!=rangelast(0,1)) goto main::@1
+Simple Condition (bool~) main::$3 [13] if((byte) main::a#1!=rangelast(0,1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [10] main::a#1 ← ++ main::a#2 to ++
-Resolved ranged comparison value [12] if(main::a#1!=rangelast(0,1)) goto main::@1 to (number) 2
-Simplifying expression containing zero SCREEN in [9] *((const byte*) SCREEN + (const byte) i#0) ← (byte~) main::$2
+Resolved ranged next value [11] main::a#1 ← ++ main::a#2 to ++
+Resolved ranged comparison value [13] if(main::a#1!=rangelast(0,1)) goto main::@1 to (number) 2
+Simplifying expression containing zero SCREEN in [10] *((const byte*) SCREEN + (const byte) i#0) ← (byte~) main::$2
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) i#2 and assignment [13] (byte) i#2 ← ++ (byte) i#6
-Eliminating unused constant (const byte) plus::OFFSET_STACK_RETURN
+Eliminating unused variable (byte) i#2 and assignment [14] (byte) i#2 ← ++ (byte) i#6
 Eliminating unused constant (const byte) i#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused variable - keeping the phi block (byte) i#6
@@ -161,7 +164,7 @@ Calls in [] to main:2
 Calls in [main] to plus:9 
 
 Created 1 initial phi equivalence classes
-Coalesced [16] main::a#3 ← main::a#1
+Coalesced [17] main::a#3 ← main::a#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@3
@@ -191,24 +194,26 @@ main::@1: scope:[main]  from main main::@1
   [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1
   [7] callprepare plus (byte) '0' (byte) main::v#0 
   [8] callexecute plus 
-  [9] (byte) main::w#0 ← callfinalize plus 
-  [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2
-  [11] *((const byte*) SCREEN) ← (byte~) main::$2
-  [12] (byte) main::a#1 ← ++ (byte) main::a#2
-  [13] if((byte) main::a#1!=(byte) 2) goto main::@1
+  stackpull((number) 1)
+  [10] (byte) main::w#0 ← stackpull(byte)
+  [11] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2
+  [12] *((const byte*) SCREEN) ← (byte~) main::$2
+  [13] (byte) main::a#1 ← ++ (byte) main::a#2
+  [14] if((byte) main::a#1!=(byte) 2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [14] return 
+  [15] return 
   to:@return
 
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 plus: scope:[plus]  from
-  [15] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A)
-  [16] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B)
-  [17] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0
+  [16] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A)
+  [17] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B)
+  [18] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
-  [18] return (byte) plus::return#0
+  [19] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0
+  [20] return 
   to:@return
 
 
@@ -218,18 +223,18 @@ VARIABLE REGISTER WEIGHTS
 (byte~) main::$2 22.0
 (byte) main::a
 (byte) main::a#1 16.5
-(byte) main::a#2 6.285714285714286
+(byte) main::a#2 5.5
 (byte) main::v
 (byte) main::v#0 11.0
 (byte) main::w
-(byte) main::w#0 11.0
+(byte) main::w#0 22.0
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 (byte) plus::a
 (byte) plus::a#0 2.0
 (byte) plus::b
 (byte) plus::b#0 4.0
 (byte) plus::return
-(byte) plus::return#0 2.0
+(byte) plus::return#0 4.0
 
 Initial phi equivalence classes
 [ main::a#2 main::a#1 ]
@@ -313,29 +318,29 @@ main: {
     pha
     // [8] callexecute plus  -- jsr 
     jsr plus
-    // [9] (byte) main::w#0 ← callfinalize plus  -- _stackpullbyte_1 
+    // stackpull((number) 1) -- _stackpullbyte_1 
     pla
-    // [9] (byte) main::w#0 ← callfinalize plus  -- vbuz1=_stackpullbyte_ 
+    // [10] (byte) main::w#0 ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
     pla
     sta.z w
-    // [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [11] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z w
     clc
     adc.z a
     sta.z __2
-    // [11] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
     lda.z __2
     sta SCREEN
-    // [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
     inc.z a
-    // [13] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [14] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z a
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [14] return 
+    // [15] return 
     rts
 }
   // plus
@@ -343,18 +348,19 @@ main: {
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
+    .const OFFSET_STACK_RETURN = 1
     .label a = 6
     .label b = 7
     .label return = 8
-    // [15] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
+    // [16] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [16] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuz1=_stackidxbyte_vbuc1 
+    // [17] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
-    // [17] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuz1=vbuz2_plus_vbuz3 
+    // [18] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z a
     clc
     adc.z b
@@ -362,11 +368,11 @@ plus: {
     jmp __breturn
     // plus::@return
   __breturn:
-    // [18] return (byte) plus::return#0
-    // [18] return (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuz1 
+    // [19] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuz1 
     lda.z return
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
+    // [20] return 
     rts
 }
   // File Data
@@ -374,22 +380,24 @@ plus: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] callprepare plus (byte) '0' (byte) main::v#0  [ main::a#2 ] ( main:2 [ main::a#2 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::a#2 main::a#1 ]
-Statement [9] (byte) main::w#0 ← callfinalize plus  [ main::a#2 main::w#0 ] ( main:2 [ main::a#2 main::w#0 ] ) always clobbers reg byte a 
-Statement [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ main::a#2 main::$2 ] ( main:2 [ main::a#2 main::$2 ] ) always clobbers reg byte a 
-Statement [15] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement stackpull((number) 1) always clobbers reg byte a 
+Statement [10] (byte) main::w#0 ← stackpull(byte) [ main::a#2 main::w#0 ] ( main:2 [ main::a#2 main::w#0 ] ) always clobbers reg byte a 
+Statement [11] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ main::a#2 main::$2 ] ( main:2 [ main::a#2 main::$2 ] ) always clobbers reg byte a 
+Statement [16] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 ] ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::a#2 main::a#1 ]
-Statement [16] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [17] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ plus::a#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:6 [ plus::a#0 ]
-Statement [17] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:8 [ main::a#2 plus::return#0 ] ) always clobbers reg byte a 
-Statement [18] return (byte) plus::return#0 [ ] ( main:2::plus:8 [ main::a#2 ] ) always clobbers reg byte x 
+Statement [18] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:8 [ main::a#2 plus::return#0 ] ) always clobbers reg byte a 
+Statement [19] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 [ ] ( main:2::plus:8 [ main::a#2 ] ) always clobbers reg byte x 
 Statement [7] callprepare plus (byte) '0' (byte) main::v#0  [ main::a#2 ] ( main:2 [ main::a#2 ] ) always clobbers reg byte a 
-Statement [9] (byte) main::w#0 ← callfinalize plus  [ main::a#2 main::w#0 ] ( main:2 [ main::a#2 main::w#0 ] ) always clobbers reg byte a 
-Statement [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ main::a#2 main::$2 ] ( main:2 [ main::a#2 main::$2 ] ) always clobbers reg byte a 
-Statement [15] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 ] ) always clobbers reg byte a reg byte x 
-Statement [16] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
-Statement [17] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:8 [ main::a#2 plus::return#0 ] ) always clobbers reg byte a 
-Statement [18] return (byte) plus::return#0 [ ] ( main:2::plus:8 [ main::a#2 ] ) always clobbers reg byte x 
+Statement stackpull((number) 1) always clobbers reg byte a 
+Statement [10] (byte) main::w#0 ← stackpull(byte) [ main::a#2 main::w#0 ] ( main:2 [ main::a#2 main::w#0 ] ) always clobbers reg byte a 
+Statement [11] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ main::a#2 main::$2 ] ( main:2 [ main::a#2 main::$2 ] ) always clobbers reg byte a 
+Statement [16] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [17] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:8 [ main::a#2 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [18] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:8 [ main::a#2 plus::return#0 ] ) always clobbers reg byte a 
+Statement [19] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 [ ] ( main:2::plus:8 [ main::a#2 ] ) always clobbers reg byte x 
 Potential registers zp[1]:2 [ main::a#2 main::a#1 ] : zp[1]:2 , reg byte y , 
 Potential registers zp[1]:3 [ main::v#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::w#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -399,13 +407,13 @@ Potential registers zp[1]:7 [ plus::b#0 ] : zp[1]:7 , reg byte a , reg byte x , 
 Potential registers zp[1]:8 [ plus::return#0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22.79: zp[1]:2 [ main::a#2 main::a#1 ] 22: zp[1]:5 [ main::$2 ] 11: zp[1]:3 [ main::v#0 ] 11: zp[1]:4 [ main::w#0 ] 
-Uplift Scope [plus] 4: zp[1]:7 [ plus::b#0 ] 2: zp[1]:6 [ plus::a#0 ] 2: zp[1]:8 [ plus::return#0 ] 
+Uplift Scope [main] 22: zp[1]:2 [ main::a#2 main::a#1 ] 22: zp[1]:4 [ main::w#0 ] 22: zp[1]:5 [ main::$2 ] 11: zp[1]:3 [ main::v#0 ] 
+Uplift Scope [plus] 4: zp[1]:7 [ plus::b#0 ] 4: zp[1]:8 [ plus::return#0 ] 2: zp[1]:6 [ plus::a#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 661 combination reg byte y [ main::a#2 main::a#1 ] reg byte a [ main::$2 ] reg byte x [ main::v#0 ] reg byte a [ main::w#0 ] 
+Uplifting [main] best 661 combination reg byte y [ main::a#2 main::a#1 ] reg byte a [ main::w#0 ] reg byte a [ main::$2 ] reg byte x [ main::v#0 ] 
 Limited combination testing to 100 combinations of 128 possible.
-Uplifting [plus] best 649 combination reg byte a [ plus::b#0 ] zp[1]:6 [ plus::a#0 ] reg byte a [ plus::return#0 ] 
+Uplifting [plus] best 649 combination reg byte a [ plus::b#0 ] reg byte a [ plus::return#0 ] zp[1]:6 [ plus::a#0 ] 
 Uplifting [] best 649 combination 
 Attempting to uplift remaining variables inzp[1]:6 [ plus::a#0 ]
 Uplifting [plus] best 649 combination zp[1]:6 [ plus::a#0 ] 
@@ -463,25 +471,25 @@ main: {
     pha
     // [8] callexecute plus  -- jsr 
     jsr plus
-    // [9] (byte) main::w#0 ← callfinalize plus  -- _stackpullbyte_1 
+    // stackpull((number) 1) -- _stackpullbyte_1 
     pla
-    // [9] (byte) main::w#0 ← callfinalize plus  -- vbuaa=_stackpullbyte_ 
+    // [10] (byte) main::w#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
-    // [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
+    // [11] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
     sty.z $ff
     clc
     adc.z $ff
-    // [11] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
+    // [13] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [13] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [14] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #2
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [14] return 
+    // [15] return 
     rts
 }
   // plus
@@ -491,23 +499,23 @@ plus: {
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 1
     .label a = 2
-    // [15] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
+    // [16] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [16] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
+    // [17] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
-    // [17] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    // [18] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
     clc
     adc.z a
     jmp __breturn
     // plus::@return
   __breturn:
-    // [18] return (byte) plus::return#0
-    // [18] return (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [19] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
+    // [20] return 
     rts
 }
   // File Data
@@ -552,11 +560,11 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (byte) main::a
 (byte) main::a#1 reg byte y 16.5
-(byte) main::a#2 reg byte y 6.285714285714286
+(byte) main::a#2 reg byte y 5.5
 (byte) main::v
 (byte) main::v#0 reg byte x 11.0
 (byte) main::w
-(byte) main::w#0 reg byte a 11.0
+(byte) main::w#0 reg byte a 22.0
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 (label) plus::@return
 (const byte) plus::OFFSET_STACK_A = (byte) 1
@@ -567,7 +575,7 @@ __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 (byte) plus::b
 (byte) plus::b#0 reg byte a 4.0
 (byte) plus::return
-(byte) plus::return#0 reg byte a 2.0
+(byte) plus::return#0 reg byte a 4.0
 
 reg byte y [ main::a#2 main::a#1 ]
 reg byte x [ main::v#0 ]
@@ -621,28 +629,28 @@ main: {
     pha
     // [8] callexecute plus  -- jsr 
     jsr plus
-    // w = plus('0', v)
-    // [9] (byte) main::w#0 ← callfinalize plus  -- _stackpullbyte_1 
+    // stackpull((number) 1) -- _stackpullbyte_1 
     pla
-    // [9] (byte) main::w#0 ← callfinalize plus  -- vbuaa=_stackpullbyte_ 
+    // w = plus('0', v)
+    // [10] (byte) main::w#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     // w+a
-    // [10] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
+    // [11] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
     sty.z $ff
     clc
     adc.z $ff
     // SCREEN[i] = w+a
-    // [11] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // for(char a:0..1)
-    // [12] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
+    // [13] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [13] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [14] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #2
     bne __b1
     // main::@return
     // }
-    // [14] return 
+    // [15] return 
     rts
 }
   // plus
@@ -652,23 +660,23 @@ plus: {
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 1
     .label a = 2
-    // [15] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
+    // [16] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
-    // [16] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
+    // [17] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     // return a+b;
-    // [17] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    // [18] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
     clc
     adc.z a
     // plus::@return
     // }
-    // [18] return (byte) plus::return#0
-    // [18] return (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [19] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
+    // [20] return 
     rts
 }
   // File Data

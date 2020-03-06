@@ -14,7 +14,7 @@ public class StatementProcedureEnd extends StatementBase {
    private ProcedureRef procedure;
 
    public StatementProcedureEnd(ProcedureRef procedure, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.procedure = procedure;
    }
 

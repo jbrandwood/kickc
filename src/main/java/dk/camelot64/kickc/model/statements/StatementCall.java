@@ -28,7 +28,7 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
    private boolean initialAssignment;
 
    public StatementCall(LValue lValue, String procedureName, List<RValue> parameters, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.lValue = lValue;
       this.procedureName = procedureName;
       this.parameters = parameters;

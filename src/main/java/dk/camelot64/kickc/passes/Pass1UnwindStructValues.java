@@ -10,7 +10,8 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
-import dk.camelot64.kickc.passes.unwinding.*;
+import dk.camelot64.kickc.passes.unwinding.ValueSource;
+import dk.camelot64.kickc.passes.unwinding.ValueSourceFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,16 +91,10 @@ public class Pass1UnwindStructValues extends Pass1Base {
    private boolean unwindCall(StatementCall call, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       // Unwind struct value return value
       boolean lvalUnwound = false;
-
-      final ValueSource lValueSource = ValueSourceFactory.getValueSource(call.getlValue(), getProgram(), getScope(), call, stmtIt, currentBlock);
-      if(lValueSource != null && lValueSource.isUnwindable()) {
-         ArrayList<RValue> unwoundMembers = new ArrayList<>();
-         for(String memberName : lValueSource.getMemberNames(getScope())) {
-            ValueSource memberUnwinding = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, stmtIt, currentBlock);
-            unwoundMembers.add(memberUnwinding.getSimpleValue(getScope()));
-         }
-         ValueList unwoundLValue = new ValueList(unwoundMembers);
-         call.setlValue(unwoundLValue);
+      final ValueSource valueSource = ValueSourceFactory.getValueSource(call.getlValue(), getProgram(), getScope(), call, stmtIt, currentBlock);
+      RValue unwoundLValue = unwindValue(valueSource, call, stmtIt, currentBlock);
+      if(unwoundLValue != null && !call.getlValue().equals(unwoundLValue)) {
+         call.setlValue((LValue) unwoundLValue);
          getLog().append("Converted procedure call LValue to member unwinding " + call.toString(getProgram(), false));
          lvalUnwound = true;
       }
@@ -133,28 +128,46 @@ public class Pass1UnwindStructValues extends Pass1Base {
    }
 
    /**
+    * Unwind an LVa.lue to a ValueList if it is unwindable.
+    * @param value The value to unwind
+    * @param statement The current statement
+    * @param stmtIt Statement iterator
+    * @param currentBlock current block
+    * @return The unwound ValueList. null if the value is not unwindable.
+    */
+   private RValue unwindValue(ValueSource lValueSource, Statement statement, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      if(lValueSource==null) {
+         return null;
+      } else if(lValueSource.isSimple()) {
+         return lValueSource.getSimpleValue(getScope());
+      } else if(lValueSource.isUnwindable()) {
+         ArrayList<RValue> unwoundMembers = new ArrayList<>();
+         for(String memberName : lValueSource.getMemberNames(getScope())) {
+            ValueSource memberUnwinding = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), statement, stmtIt, currentBlock);
+            unwoundMembers.add(unwindValue(memberUnwinding, statement, stmtIt, currentBlock));
+         }
+         return new ValueList(unwoundMembers);
+      } else {
+         return null;
+      }
+   }
+
+   /**
     * Unwind any return value that is a struct value into the member values
     *
     * @param statementReturn The return to unwind
     */
 
    private boolean unwindReturn(StatementReturn statementReturn, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      boolean modified = false;
-      // Unwind struct value return value
-      final ValueSource returnVarUnwinding = ValueSourceFactory.getValueSource(statementReturn.getValue(), getProgram(), getScope(), statementReturn, stmtIt, currentBlock);
-      if(returnVarUnwinding != null && returnVarUnwinding.isUnwindable()) {
-         ArrayList<RValue> unwoundMembers = new ArrayList<>();
-         for(String memberName : returnVarUnwinding.getMemberNames(getScope())) {
-            final ValueSource memberUnwinding = returnVarUnwinding.getMemberUnwinding(memberName, getProgram(), getScope(), statementReturn, stmtIt, currentBlock);
-            unwoundMembers.add(memberUnwinding.getSimpleValue(getScope()));
-         }
-         ValueList unwoundReturnValue = new ValueList(unwoundMembers);
-         statementReturn.setValue(unwoundReturnValue);
+      boolean unwound = false;
+      final ValueSource valueSource = ValueSourceFactory.getValueSource(statementReturn.getValue(), getProgram(), getScope(), statementReturn, stmtIt, currentBlock);
+      RValue unwoundValue = unwindValue(valueSource, statementReturn, stmtIt, currentBlock);
+      if(unwoundValue != null && !statementReturn.getValue().equals(unwoundValue)) {
+         statementReturn.setValue(unwoundValue);
          getLog().append("Converted procedure struct return value to member unwinding " + statementReturn.toString(getProgram(), false));
-         modified = true;
-
+         unwound = true;
       }
-      return modified;
+      return unwound;
    }
 
    /**

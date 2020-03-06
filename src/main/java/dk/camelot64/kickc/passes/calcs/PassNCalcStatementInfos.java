@@ -4,7 +4,7 @@ package dk.camelot64.kickc.passes.calcs;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementInfos;
+import dk.camelot64.kickc.model.StatementInfos;
 
 import java.util.LinkedHashMap;
 

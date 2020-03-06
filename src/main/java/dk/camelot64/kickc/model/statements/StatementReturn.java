@@ -17,7 +17,7 @@ public class StatementReturn extends StatementBase {
    private RValue value;
 
    public StatementReturn(RValue value, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.value = value;
    }
 

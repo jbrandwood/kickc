@@ -3,6 +3,9 @@ Fixing pointer array-indexing *((const signed word*) SCREEN + (number) 1)
 Culled Empty Block (label) next::@1
 Calling convention STACK_CALL adding prepare/execute/finalize for (signed word~) main::$0 ← call next 
 Calling convention STACK_CALL adding prepare/execute/finalize for (signed word~) main::$1 ← call next 
+Calling convention STACK_CALL adding stack return stackidx(signed word,next::OFFSET_STACK_RETURN) ← next::return
+Calling convention STACK_CALL adding stack pull main::$0 ← stackpull(signed word)
+Calling convention STACK_CALL adding stack pull main::$1 ← stackpull(signed word)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -13,12 +16,12 @@ main: scope:[main]  from @2
   (signed word) current#7 ← phi( @2/(signed word) current#8 )
   callprepare next 
   callexecute next 
-  (signed word~) main::$0 ← callfinalize next 
+  (signed word~) main::$0 ← stackpull(signed word)
   (number~) main::$2 ← (number) 0 * (const byte) SIZEOF_SIGNED_WORD
   *((const signed word*) SCREEN + (number~) main::$2) ← (signed word~) main::$0
   callprepare next 
   callexecute next 
-  (signed word~) main::$1 ← callfinalize next 
+  (signed word~) main::$1 ← stackpull(signed word)
   (number~) main::$3 ← (number) 1 * (const byte) SIZEOF_SIGNED_WORD
   *((const signed word*) SCREEN + (number~) main::$3) ← (signed word~) main::$1
   to:main::@return
@@ -39,7 +42,8 @@ next: scope:[next]  from
   to:next::@return
 next::@return: scope:[next]  from next
   (signed word) next::return#1 ← phi( next/(signed word) next::return#0 )
-  return (signed word) next::return#1
+  stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#1
+  return 
   to:@return
 @2: scope:[]  from @1
   (signed word) current#8 ← phi( @1/(signed word) current#1 )
@@ -118,7 +122,6 @@ Simplifying expression containing zero SCREEN in [5] *((const signed word*) SCRE
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (signed word) current#2 and assignment [11] (signed word) current#2 ← ++ (signed word) current#5
 Eliminating unused constant (const byte) main::$2
-Eliminating unused constant (const byte) next::OFFSET_STACK_RETURN
 Eliminating unused constant (const signed word) current#1
 Successful SSA optimization PassNEliminateUnusedVars
 Constant inlined main::$3 = (byte) 1*(const byte) SIZEOF_SIGNED_WORD
@@ -158,11 +161,11 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] callprepare next 
   [5] callexecute next 
-  [6] (signed word~) main::$0 ← callfinalize next 
+  [6] (signed word~) main::$0 ← stackpull(signed word)
   [7] *((const signed word*) SCREEN) ← (signed word~) main::$0
   [8] callprepare next 
   [9] callexecute next 
-  [10] (signed word~) main::$1 ← callfinalize next 
+  [10] (signed word~) main::$1 ← stackpull(signed word)
   [11] *((const signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -175,7 +178,8 @@ next: scope:[next]  from
   [14] (signed word) next::return#0 ← (signed word) current#5
   to:next::@return
 next::@return: scope:[next]  from next
-  [15] return (signed word) next::return#0
+  [15] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0
+  [16] return 
   to:@return
 
 
@@ -183,11 +187,11 @@ VARIABLE REGISTER WEIGHTS
 (signed word) current
 (signed word) current#5 2.0
 (void()) main()
-(signed word~) main::$0 2.0
-(signed word~) main::$1 2.0
+(signed word~) main::$0 4.0
+(signed word~) main::$1 4.0
 __stackcall (signed word()) next()
 (signed word) next::return
-(signed word) next::return#0 2.0
+(signed word) next::return#0 4.0
 
 Initial phi equivalence classes
 [ current#5 ]
@@ -241,7 +245,7 @@ main: {
     pha
     // [5] callexecute next  -- jsr 
     jsr next
-    // [6] (signed word~) main::$0 ← callfinalize next  -- vwsz1=_stackpullsword_ 
+    // [6] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __0
     pla
@@ -256,7 +260,7 @@ main: {
     pha
     // [9] callexecute next  -- jsr 
     jsr next
-    // [10] (signed word~) main::$1 ← callfinalize next  -- vwsz1=_stackpullsword_ 
+    // [10] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __1
     pla
@@ -274,6 +278,7 @@ main: {
 }
   // next
 next: {
+    .const OFFSET_STACK_RETURN = 0
     .label return = 8
     // [14] (signed word) next::return#0 ← (signed word) current#5 -- vwsz1=vwsz2 
     lda.z current
@@ -283,32 +288,32 @@ next: {
     jmp __breturn
     // next::@return
   __breturn:
-    // [15] return (signed word) next::return#0
-    // [15] return (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [15] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [16] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (signed word~) main::$0 ← callfinalize next  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [6] (signed word~) main::$0 ← stackpull(signed word) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [7] *((const signed word*) SCREEN) ← (signed word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [10] (signed word~) main::$1 ← callfinalize next  [ main::$1 ] ( main:2 [ main::$1 ] ) always clobbers reg byte a 
+Statement [10] (signed word~) main::$1 ← stackpull(signed word) [ main::$1 ] ( main:2 [ main::$1 ] ) always clobbers reg byte a 
 Statement [11] *((const signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [14] (signed word) next::return#0 ← (signed word) current#5 [ next::return#0 ] ( main:2::next:5 [ next::return#0 ] main:2::next:9 [ next::return#0 ] ) always clobbers reg byte a 
-Statement [15] return (signed word) next::return#0 [ ] ( main:2::next:5 [ ] main:2::next:9 [ ] ) always clobbers reg byte a reg byte x 
+Statement [15] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 [ ] ( main:2::next:5 [ ] main:2::next:9 [ ] ) always clobbers reg byte a reg byte x 
 Potential registers zp[2]:2 [ current#5 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::$0 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ main::$1 ] : zp[2]:6 , 
 Potential registers zp[2]:8 [ next::return#0 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2: zp[2]:4 [ main::$0 ] 2: zp[2]:6 [ main::$1 ] 
-Uplift Scope [next] 2: zp[2]:8 [ next::return#0 ] 
+Uplift Scope [main] 4: zp[2]:4 [ main::$0 ] 4: zp[2]:6 [ main::$1 ] 
+Uplift Scope [next] 4: zp[2]:8 [ next::return#0 ] 
 Uplift Scope [] 2: zp[2]:2 [ current#5 ] 
 
 Uplifting [main] best 140 combination zp[2]:4 [ main::$0 ] zp[2]:6 [ main::$1 ] 
@@ -355,7 +360,7 @@ main: {
     pha
     // [5] callexecute next  -- jsr 
     jsr next
-    // [6] (signed word~) main::$0 ← callfinalize next  -- vwsz1=_stackpullsword_ 
+    // [6] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __0
     pla
@@ -370,7 +375,7 @@ main: {
     pha
     // [9] callexecute next  -- jsr 
     jsr next
-    // [10] (signed word~) main::$1 ← callfinalize next  -- vwsz1=_stackpullsword_ 
+    // [10] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __1
     pla
@@ -394,13 +399,13 @@ next: {
     jmp __breturn
     // next::@return
   __breturn:
-    // [15] return (signed word) next::return#0
-    // [15] return (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [15] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [16] return 
     rts
 }
   // File Data
@@ -435,14 +440,14 @@ FINAL SYMBOL TABLE
 (signed word) current
 (signed word) current#5 current zp[2]:2 2.0
 (void()) main()
-(signed word~) main::$0 zp[2]:2 2.0
-(signed word~) main::$1 zp[2]:4 2.0
+(signed word~) main::$0 zp[2]:2 4.0
+(signed word~) main::$1 zp[2]:4 4.0
 (label) main::@return
 __stackcall (signed word()) next()
 (label) next::@return
 (const byte) next::OFFSET_STACK_RETURN = (byte) 0
 (signed word) next::return
-(signed word) next::return#0 return zp[2]:2 2.0
+(signed word) next::return#0 return zp[2]:2 4.0
 
 zp[2]:2 [ main::$0 current#5 next::return#0 ]
 zp[2]:4 [ main::$1 ]
@@ -479,7 +484,7 @@ main: {
     pha
     // [5] callexecute next  -- jsr 
     jsr next
-    // [6] (signed word~) main::$0 ← callfinalize next  -- vwsz1=_stackpullsword_ 
+    // [6] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __0
     pla
@@ -496,7 +501,7 @@ main: {
     pha
     // [9] callexecute next  -- jsr 
     jsr next
-    // [10] (signed word~) main::$1 ← callfinalize next  -- vwsz1=_stackpullsword_ 
+    // [10] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __1
     pla
@@ -520,13 +525,13 @@ next: {
     // [14] (signed word) next::return#0 ← (signed word) current#5
     // next::@return
     // }
-    // [15] return (signed word) next::return#0
-    // [15] return (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [15] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [16] return 
     rts
 }
   // File Data

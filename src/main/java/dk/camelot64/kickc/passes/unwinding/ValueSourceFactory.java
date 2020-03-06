@@ -61,8 +61,8 @@ public class ValueSourceFactory {
          return structValueSource.getMemberUnwinding(((StructMemberRef) value).getMemberName(), program, programScope, currentStmt, stmtIt, currentBlock);
       }
       if(valueType instanceof SymbolTypeStruct && value instanceof ParamValue) {
-         final StructDefinition structDefinition = ((SymbolTypeStruct) valueType).getStructDefinition(programScope);
-         return new ValueSourceParamList((ParamValue) value, structDefinition);
+         final ValueSource subValueSource = getValueSource(((ParamValue) value).getParameter(), program, programScope, currentStmt, stmtIt, currentBlock);
+         return new ValueSourceParamValue(subValueSource);
       }
       return null;
    }

@@ -4,6 +4,8 @@ Culled Empty Block (label) plus::@1
 Calling convention STACK_CALL adding prepare/execute/finalize for (word~) main::$0 ← call plus (number) $1234 (number) $2345 
 Calling convention STACK_CALL replacing param((word) plus::a) with stackidx(word,(const byte) plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param((word) plus::b) with stackidx(word,(const byte) plus::OFFSET_STACK_B)
+Calling convention STACK_CALL adding stack return stackidx(word,plus::OFFSET_STACK_RETURN) ← plus::return
+Calling convention STACK_CALL adding stack pull main::$0 ← stackpull(word)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -13,7 +15,8 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @2
   callprepare plus (number) $1234 (number) $2345 
   callexecute plus 
-  (word~) main::$0 ← callfinalize plus 
+  stackpull((number) 2)
+  (word~) main::$0 ← stackpull(word)
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
   *((const word*) SCREEN + (number~) main::$1) ← (word~) main::$0
   to:main::@return
@@ -30,7 +33,8 @@ plus: scope:[plus]  from
   to:plus::@return
 plus::@return: scope:[plus]  from plus
   (word) plus::return#1 ← phi( plus/(word) plus::return#0 )
-  return (word) plus::return#1
+  stackidx(word,(const byte) plus::OFFSET_STACK_RETURN) ← (word) plus::return#1
+  return 
   to:@return
 @2: scope:[]  from @begin
   call main 
@@ -82,16 +86,15 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
 Alias (word) plus::return#0 = (word~) plus::$0 (word) plus::return#1 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [3] (byte~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
+Constant right-side identified [4] (byte~) main::$1 ← (byte) 0 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$1 = 0*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN in [4] *((const word*) SCREEN + (const byte) main::$1) ← (word~) main::$0
+Simplifying expression containing zero SCREEN in [5] *((const word*) SCREEN + (const byte) main::$1) ← (word~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$1
-Eliminating unused constant (const byte) plus::OFFSET_STACK_RETURN
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
@@ -125,34 +128,36 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] callprepare plus (word) $1234 (word) $2345 
   [5] callexecute plus 
-  [6] (word~) main::$0 ← callfinalize plus 
-  [7] *((const word*) SCREEN) ← (word~) main::$0
+  stackpull((number) 2)
+  [7] (word~) main::$0 ← stackpull(word)
+  [8] *((const word*) SCREEN) ← (word~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
-  [8] return 
+  [9] return 
   to:@return
 
 __stackcall (word()) plus((word) plus::a , (word) plus::b)
 plus: scope:[plus]  from
-  [9] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A)
-  [10] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B)
-  [11] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0
+  [10] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A)
+  [11] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B)
+  [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
-  [12] return (word) plus::return#0
+  [13] stackidx(word,(const byte) plus::OFFSET_STACK_RETURN) ← (word) plus::return#0
+  [14] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(word~) main::$0 2.0
+(word~) main::$0 4.0
 __stackcall (word()) plus((word) plus::a , (word) plus::b)
 (word) plus::a
 (word) plus::a#0 2.0
 (word) plus::b
 (word) plus::b#0 4.0
 (word) plus::return
-(word) plus::return#0 2.0
+(word) plus::return#0 4.0
 
 Initial phi equivalence classes
 Added variable main::$0 to live range equivalence class [ main::$0 ]
@@ -209,15 +214,15 @@ main: {
     pha
     // [5] callexecute plus  -- jsr 
     jsr plus
-    // [6] (word~) main::$0 ← callfinalize plus  -- _stackpullbyte_2 
+    // stackpull((number) 2) -- _stackpullbyte_2 
     pla
     pla
-    // [6] (word~) main::$0 ← callfinalize plus  -- vwuz1=_stackpullword_ 
+    // [7] (word~) main::$0 ← stackpull(word) -- vwuz1=_stackpullword_ 
     pla
     sta.z __0
     pla
     sta.z __0+1
-    // [7] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -225,7 +230,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [9] return 
     rts
 }
   // plus
@@ -233,22 +238,23 @@ main: {
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
+    .const OFFSET_STACK_RETURN = 2
     .label a = 4
     .label b = 6
     .label return = 8
-    // [9] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
+    // [10] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
     lda STACK_BASE+OFFSET_STACK_A+1,x
     sta.z a+1
-    // [10] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackidxword_vbuc1 
+    // [11] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
     lda STACK_BASE+OFFSET_STACK_B+1,x
     sta.z b+1
-    // [11] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz2_plus_vwuz3 
+    // [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz2_plus_vwuz3 
     lda.z a
     clc
     adc.z b
@@ -259,36 +265,37 @@ plus: {
     jmp __breturn
     // plus::@return
   __breturn:
-    // [12] return (word) plus::return#0
-    // [12] return (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
+    // [13] stackidx(word,(const byte) plus::OFFSET_STACK_RETURN) ← (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [14] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] callprepare plus (word) $1234 (word) $2345  [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [6] (word~) main::$0 ← callfinalize plus  [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
-Statement [7] *((const word*) SCREEN) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [9] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:5 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
-Statement [10] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:5 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
-Statement [11] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 [ plus::return#0 ] ( main:2::plus:5 [ plus::return#0 ] ) always clobbers reg byte a 
-Statement [12] return (word) plus::return#0 [ ] ( main:2::plus:5 [ ] ) always clobbers reg byte a reg byte x 
+Statement stackpull((number) 2) always clobbers reg byte a 
+Statement [7] (word~) main::$0 ← stackpull(word) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
+Statement [8] *((const word*) SCREEN) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
+Statement [10] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:5 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [11] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:5 [ plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 [ plus::return#0 ] ( main:2::plus:5 [ plus::return#0 ] ) always clobbers reg byte a 
+Statement [13] stackidx(word,(const byte) plus::OFFSET_STACK_RETURN) ← (word) plus::return#0 [ ] ( main:2::plus:5 [ ] ) always clobbers reg byte a reg byte x 
 Potential registers zp[2]:2 [ main::$0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ plus::a#0 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ plus::b#0 ] : zp[2]:6 , 
 Potential registers zp[2]:8 [ plus::return#0 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [plus] 4: zp[2]:6 [ plus::b#0 ] 2: zp[2]:4 [ plus::a#0 ] 2: zp[2]:8 [ plus::return#0 ] 
-Uplift Scope [main] 2: zp[2]:2 [ main::$0 ] 
+Uplift Scope [plus] 4: zp[2]:6 [ plus::b#0 ] 4: zp[2]:8 [ plus::return#0 ] 2: zp[2]:4 [ plus::a#0 ] 
+Uplift Scope [main] 4: zp[2]:2 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [plus] best 164 combination zp[2]:6 [ plus::b#0 ] zp[2]:4 [ plus::a#0 ] zp[2]:8 [ plus::return#0 ] 
+Uplifting [plus] best 164 combination zp[2]:6 [ plus::b#0 ] zp[2]:8 [ plus::return#0 ] zp[2]:4 [ plus::a#0 ] 
 Uplifting [main] best 164 combination zp[2]:2 [ main::$0 ] 
 Uplifting [] best 164 combination 
 Coalescing zero page register [ zp[2]:4 [ plus::a#0 ] ] with [ zp[2]:8 [ plus::return#0 ] ] - score: 1
@@ -335,15 +342,15 @@ main: {
     pha
     // [5] callexecute plus  -- jsr 
     jsr plus
-    // [6] (word~) main::$0 ← callfinalize plus  -- _stackpullbyte_2 
+    // stackpull((number) 2) -- _stackpullbyte_2 
     pla
     pla
-    // [6] (word~) main::$0 ← callfinalize plus  -- vwuz1=_stackpullword_ 
+    // [7] (word~) main::$0 ← stackpull(word) -- vwuz1=_stackpullword_ 
     pla
     sta.z __0
     pla
     sta.z __0+1
-    // [7] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -351,7 +358,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [9] return 
     rts
 }
   // plus
@@ -363,19 +370,19 @@ plus: {
     .label a = 2
     .label b = 4
     .label return = 2
-    // [9] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
+    // [10] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
     lda STACK_BASE+OFFSET_STACK_A+1,x
     sta.z a+1
-    // [10] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackidxword_vbuc1 
+    // [11] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
     lda STACK_BASE+OFFSET_STACK_B+1,x
     sta.z b+1
-    // [11] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz1_plus_vwuz2 
+    // [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z return
     clc
     adc.z b
@@ -386,13 +393,13 @@ plus: {
     jmp __breturn
     // plus::@return
   __breturn:
-    // [12] return (word) plus::return#0
-    // [12] return (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
+    // [13] stackidx(word,(const byte) plus::OFFSET_STACK_RETURN) ← (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [14] return 
     rts
 }
   // File Data
@@ -424,7 +431,7 @@ FINAL SYMBOL TABLE
 (const word*) SCREEN = (word*) 1024
 (const word) STACK_BASE = (word) $103
 (void()) main()
-(word~) main::$0 zp[2]:2 2.0
+(word~) main::$0 zp[2]:2 4.0
 (label) main::@return
 __stackcall (word()) plus((word) plus::a , (word) plus::b)
 (label) plus::@return
@@ -436,7 +443,7 @@ __stackcall (word()) plus((word) plus::a , (word) plus::b)
 (word) plus::b
 (word) plus::b#0 b zp[2]:4 4.0
 (word) plus::return
-(word) plus::return#0 return zp[2]:2 2.0
+(word) plus::return#0 return zp[2]:2 4.0
 
 zp[2]:2 [ plus::a#0 plus::return#0 main::$0 ]
 zp[2]:4 [ plus::b#0 ]
@@ -476,23 +483,23 @@ main: {
     pha
     // [5] callexecute plus  -- jsr 
     jsr plus
-    // [6] (word~) main::$0 ← callfinalize plus  -- _stackpullbyte_2 
+    // stackpull((number) 2) -- _stackpullbyte_2 
     pla
     pla
-    // [6] (word~) main::$0 ← callfinalize plus  -- vwuz1=_stackpullword_ 
+    // [7] (word~) main::$0 ← stackpull(word) -- vwuz1=_stackpullword_ 
     pla
     sta.z __0
     pla
     sta.z __0+1
     // SCREEN[0] = plus(0x1234, 0x2345)
-    // [7] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [8] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
     sta SCREEN+1
     // main::@return
     // }
-    // [8] return 
+    // [9] return 
     rts
 }
   // plus
@@ -504,20 +511,20 @@ plus: {
     .label a = 2
     .label b = 4
     .label return = 2
-    // [9] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
+    // [10] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a
     lda STACK_BASE+OFFSET_STACK_A+1,x
     sta.z a+1
-    // [10] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackidxword_vbuc1 
+    // [11] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
     lda STACK_BASE+OFFSET_STACK_B+1,x
     sta.z b+1
     // return a+b;
-    // [11] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz1_plus_vwuz2 
+    // [12] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z return
     clc
     adc.z b
@@ -527,13 +534,13 @@ plus: {
     sta.z return+1
     // plus::@return
     // }
-    // [12] return (word) plus::return#0
-    // [12] return (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
+    // [13] stackidx(word,(const byte) plus::OFFSET_STACK_RETURN) ← (word) plus::return#0 -- _stackidxword_vbuc1=vwuz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [14] return 
     rts
 }
   // File Data

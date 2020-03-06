@@ -27,7 +27,7 @@ public class StatementConditionalJump extends StatementBase {
    private boolean wasUnrolled;
 
    public StatementConditionalJump(RValue condition, LabelRef destination,StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.rValue1 = null;
       this.operator = null;
       this.rValue2 = condition;
@@ -41,7 +41,7 @@ public class StatementConditionalJump extends StatementBase {
          LabelRef destination,
          StatementSource source,
          List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;

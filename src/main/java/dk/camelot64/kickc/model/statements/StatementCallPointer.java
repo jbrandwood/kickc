@@ -3,7 +3,6 @@ package dk.camelot64.kickc.model.statements;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.LValue;
-import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.List;
@@ -24,7 +23,7 @@ public class StatementCallPointer extends StatementBase implements StatementLVal
    private boolean initialAssignment;
 
    public StatementCallPointer(LValue lValue, RValue procedure, List<RValue> parameters, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.lValue = lValue;
       this.procedure = procedure;
       this.parameters = parameters;

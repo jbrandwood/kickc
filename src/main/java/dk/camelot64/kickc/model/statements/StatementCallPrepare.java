@@ -23,7 +23,7 @@ public class StatementCallPrepare extends StatementBase {
    private List<RValue> parameters;
 
    public StatementCallPrepare(ProcedureRef procedure, List<RValue> parameters, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.procedure = procedure;
       this.parameters = parameters;
    }

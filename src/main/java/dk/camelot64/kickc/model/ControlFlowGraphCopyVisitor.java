@@ -221,4 +221,8 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
       return new StatementKickAsm(orig.getKickAsmCode(), orig.getLocation(), orig.getBytes(), orig.getCycles(), orig.getUses(), orig.getDeclaredClobber(), orig.getSource(), orig.getComments());
    }
 
+   @Override
+   public Object visitStackPull(StatementStackPull orig) {
+      return new StatementStackPull(orig.getPullBytes(), orig.getSource(), orig.getComments());
+   }
 }

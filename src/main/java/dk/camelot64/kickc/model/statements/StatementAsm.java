@@ -26,7 +26,7 @@ public class StatementAsm extends StatementBase {
    private AsmClobber declaredClobber;
 
    public StatementAsm(String asmBody, Map<String, SymbolRef> referenced, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.asmBody = asmBody;
       this.referenced = referenced;
       this.declaredClobber = declaredClobber;

@@ -6,7 +6,6 @@
   .label SCREEN = $400
   .const OFFSET_STRUCT_POINT_Y = 1
   .const STACK_BASE = $103
-  .const OFFSET_STRUCT_POINT_X = 0
   .label idx = 2
 __bbegin:
   // idx = 0
@@ -43,8 +42,7 @@ print: {
 // get(byte register(X) i)
 get: {
     .const OFFSET_STACK_I = 0
-    .const OFFSET_STACK_RETURN = 0
-    .label p = 8
+    .label p = 6
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tax
@@ -55,21 +53,19 @@ get: {
     stx.z p
     sta p+OFFSET_STRUCT_POINT_Y
     // return p;
-    txa
-    ldy p+OFFSET_STRUCT_POINT_Y
+    tay
     // }
+    txa
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_X,x
+    sta STACK_BASE+0,x
     tya
     tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_Y,x
+    sta STACK_BASE+OFFSET_STRUCT_POINT_Y,x
     rts
 }
 main: {
     .label i = 3
-    .label p = 6
-    .label __1_x = 4
-    .label __1_y = 5
+    .label p = 4
     // i=0
     lda #0
     sta.z i
@@ -87,16 +83,13 @@ main: {
     pha
     jsr get
     pla
-    sta.z __1_x
+    tax
     pla
-    sta.z __1_y
     // p = get(i)
-    lda.z __1_x
-    sta.z p
-    lda.z __1_y
+    stx.z p
     sta p+OFFSET_STRUCT_POINT_Y
     // print(p)
-    lda.z p
+    txa
     pha
     lda p+OFFSET_STRUCT_POINT_Y
     pha

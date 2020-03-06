@@ -1,18 +1,23 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.CallingConventionStack;
+import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
+import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.*;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.StructDefinition;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
-import java.util.HashMap;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 
 /** Handle calling convention {@link Procedure.CallingConvention#STACK_CALL} by converting the making control flow graph and symbols calling convention specific. */
 public class PassNCallingConventionStack extends Pass2SsaOptimization {
@@ -68,8 +73,8 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
          }
       }
 
+      // Convert param(xxx) to stackidx(PARAM_X) = xxx
       if(offsetConstants.size() > 0) {
-         // Convert ParamValue to StackIdxValue
          ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
             if(programValue.get() instanceof ParamValue) {
                // Convert ParamValues to calling-convention specific param-value
@@ -84,7 +89,122 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
             }
          });
       }
+
+      // Convert procedure return xxx to stackidx(RETURN) = xxx;
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         ListIterator<Statement> stmtIt = block.getStatements().listIterator();
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementReturn) {
+               final Scope blockScope = getScope().getScope(block.getScope());
+               if(blockScope instanceof Procedure) {
+                  Procedure procedure = (Procedure) blockScope;
+                  final SymbolType returnType = procedure.getReturnType();
+                  if(!SymbolType.VOID.equals(returnType) && Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+                     ConstantRef returnOffsetConstant = CallingConventionStack.getReturnOffsetConstant(procedure);
+                     final RValue value = ((StatementReturn) statement).getValue();
+                     stmtIt.previous();
+                     generateStackReturnValues(value, returnType, returnOffsetConstant, statement.getSource(), statement.getComments(), stmtIt);
+                     stmtIt.next();
+                     ((StatementReturn) statement).setValue(null);
+                  }
+               }
+            }
+         }
+      }
+
+      // Convert xxx = callfinalize to xxx = stackpull(type);
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         ListIterator<Statement> stmtIt = block.getStatements().listIterator();
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementCallFinalize) {
+               final StatementCallFinalize call = (StatementCallFinalize) statement;
+               Procedure procedure = getScope().getProcedure(call.getProcedure());
+               final SymbolType returnType = procedure.getReturnType();
+               if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+                  long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
+                  long returnByteSize = procedure.getReturnType() == null ? 0 : procedure.getReturnType().getSizeBytes();
+                  long stackCleanBytes = (call.getlValue() == null) ? stackFrameByteSize : (stackFrameByteSize - returnByteSize);
+                  stmtIt.previous();
+                  final StatementSource source = call.getSource();
+                  final List<Comment> comments = call.getComments();
+                  if(stackCleanBytes > 0) {
+                     // Clean up the stack
+                     stmtIt.add(new StatementStackPull( new ConstantInteger(stackCleanBytes), source, comments));
+                     //String pullSignature = "_stackpullbyte_" + stackCleanBytes;
+                  }
+                  final RValue value = call.getlValue();
+                  if(value!=null)
+                     generateStackPullValues(value, returnType, statement.getSource(), statement.getComments(), stmtIt);
+                  stmtIt.next();
+                  stmtIt.remove();
+               }
+            }
+         }
+      }
+
+
       return false;
+   }
+
+   /**
+    * Put a return value onto the stack by generating  stackidx(RETURN) = xxx assignments
+    *
+    * @param value The value to return
+    * @param returnType The type of the value
+    * @param stackReturnOffset The offset onto the stack to place the value at
+    * @param source The source line
+    * @param comments The comments
+    * @param stmtIt The statment iterator used to add statements to.
+    */
+   private void generateStackReturnValues(RValue value, SymbolType returnType, ConstantValue stackReturnOffset, StatementSource source, List<Comment> comments, ListIterator<Statement> stmtIt) {
+      if(!(value instanceof ValueList) || !(returnType instanceof SymbolTypeStruct)) {
+         // A simple value to put on the stack
+         final StatementAssignment stackReturn = new StatementAssignment(new StackIdxValue(stackReturnOffset, returnType), value, false, source, comments);
+         stmtIt.add(stackReturn);
+         getLog().append("Calling convention " + Procedure.CallingConvention.STACK_CALL + " adding stack return " + stackReturn);
+      } else {
+         // A struct to put on the stack
+         final List<RValue> memberValues = ((ValueList) value).getList();
+         final StructDefinition structDefinition = ((SymbolTypeStruct) returnType).getStructDefinition(getScope());
+         final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
+         for(int i = 0; i < memberVars.size(); i++) {
+            final Variable memberVar = memberVars.get(i);
+            final RValue memberValue = memberValues.get(i);
+            ConstantRef structMemberOffsetConstant = SizeOfConstants.getStructMemberOffsetConstant(getScope(), structDefinition, memberVar.getLocalName());
+            ConstantBinary memberReturnOffsetConstant = new ConstantBinary(stackReturnOffset, Operators.PLUS, structMemberOffsetConstant);
+            generateStackReturnValues(memberValue, memberVar.getType(), memberReturnOffsetConstant, source, comments, stmtIt);
+         }
+      }
+   }
+
+   /**
+    * Generate stack pull xxx = stackpull(type) assignments
+    *
+    * @param value The value to return
+    * @param symbolType The type of the value
+    * @param source The source line
+    * @param comments The comments
+    * @param stmtIt The statment iterator used to add statements to.
+    */
+   private void generateStackPullValues(RValue value, SymbolType symbolType, StatementSource source, List<Comment> comments, ListIterator<Statement> stmtIt) {
+      if(!(value instanceof ValueList) || !(symbolType instanceof SymbolTypeStruct)) {
+         // A simple value to put on the stack
+         final StatementAssignment stackPull = new StatementAssignment((LValue) value, new StackPullValue(symbolType), false, source, comments);
+         stmtIt.add(stackPull);
+         getLog().append("Calling convention " + Procedure.CallingConvention.STACK_CALL + " adding stack pull " + stackPull);
+      } else {
+         // A struct to put on the stack
+         final List<RValue> memberValues = ((ValueList) value).getList();
+         final StructDefinition structDefinition = ((SymbolTypeStruct) symbolType).getStructDefinition(getScope());
+         final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
+         for(int i = 0; i < memberVars.size(); i++) {
+            final Variable memberVar = memberVars.get(i);
+            final RValue memberValue = memberValues.get(i);
+            generateStackPullValues(memberValue, memberVar.getType(), source, comments, stmtIt);
+         }
+      }
    }
 
 }

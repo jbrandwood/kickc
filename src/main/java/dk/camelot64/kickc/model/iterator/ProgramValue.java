@@ -312,6 +312,28 @@ public interface ProgramValue {
 
    }
 
+   /** Number of bytes constant used by stack pull . */
+   class StackPullBytes implements ProgramValue {
+
+      private StatementStackPull statementStackPull;
+
+      StackPullBytes(StatementStackPull statementStackPull) {
+         this.statementStackPull = statementStackPull;
+      }
+
+      @Override
+      public Value get() {
+         return statementStackPull.getPullBytes();
+      }
+
+      @Override
+      public void set(Value value) {
+         statementStackPull.setPullBytes((ConstantValue) value);
+      }
+
+   }
+
+
    class BlockLabel implements ProgramValue {
 
       private final ControlFlowBlock block;
@@ -790,7 +812,7 @@ public interface ProgramValue {
 
       @Override
       public void set(Value val) {
-         stackIdxValue.setStackOffset((ConstantRef) val);
+         stackIdxValue.setStackOffset((ConstantValue) val);
       }
 
    }

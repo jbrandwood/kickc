@@ -24,7 +24,7 @@ public class StatementPhiBlock extends StatementBase {
    private List<PhiVariable> phiVariables;
 
    public StatementPhiBlock(List<Comment> comments) {
-      super(null, new StatementSource(RuleContext.EMPTY), comments);
+      super(new StatementSource(RuleContext.EMPTY), comments);
       this.phiVariables = new ArrayList<>();
    }
 

@@ -25,7 +25,7 @@ public class StatementCallFinalize extends StatementBase implements StatementLVa
    private boolean initialAssignment;
 
    public StatementCallFinalize(LValue lValue, ProcedureRef procedure, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.lValue = lValue;
       this.procedure = procedure;
    }

@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Single Static Assignment Form Statement.
@@ -28,34 +29,21 @@ public class StatementAssignment extends StatementBase implements StatementLValu
    private boolean initialAssignment;
 
    public StatementAssignment(LValue lValue, RValue rValue2, boolean initialAssignment, StatementSource source, List<Comment> comments) {
-      this(lValue, null, null, rValue2, initialAssignment, null, source, comments);
+      this(lValue, null, null, rValue2, initialAssignment, source, comments);
    }
 
    public StatementAssignment(LValue lValue, Operator operator, RValue rValue2, boolean initialAssignment, StatementSource source, List<Comment> comments) {
-      this(lValue, null, operator, rValue2, initialAssignment, null, source, comments);
+      this(lValue, null, operator, rValue2, initialAssignment, source, comments);
    }
 
    public StatementAssignment(LValue lValue, RValue rValue1, Operator operator, RValue rValue2, boolean initialAssignment, StatementSource source, List<Comment> comments) {
-      this(lValue, rValue1, operator, rValue2, initialAssignment, null, source, comments);
-   }
-
-   public StatementAssignment(
-         LValue lValue,
-         RValue rValue1,
-         Operator operator,
-         RValue rValue2,
-         boolean initialAssignment,
-         Integer index,
-         StatementSource source,
-         List<Comment> comments) {
-      super(index, source, comments);
+      super(source, comments);
       this.lValue = lValue;
       this.rValue1 = rValue1;
       this.operator = operator;
       this.rValue2 = rValue2;
       this.initialAssignment = initialAssignment;
    }
-
 
    public LValue getlValue() {
       return lValue;
@@ -114,22 +102,16 @@ public class StatementAssignment extends StatementBase implements StatementLValu
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       if(!super.equals(o)) return false;
-
       StatementAssignment that = (StatementAssignment) o;
-
-      if(!lValue.equals(that.lValue)) return false;
-      if(rValue1 != null ? !rValue1.equals(that.rValue1) : that.rValue1 != null) return false;
-      if(operator != null ? !operator.equals(that.operator) : that.operator != null) return false;
-      return rValue2 != null ? rValue2.equals(that.rValue2) : that.rValue2 == null;
+      return initialAssignment == that.initialAssignment &&
+            Objects.equals(lValue, that.lValue) &&
+            Objects.equals(rValue1, that.rValue1) &&
+            Objects.equals(operator, that.operator) &&
+            Objects.equals(rValue2, that.rValue2);
    }
 
    @Override
    public int hashCode() {
-      int result = super.hashCode();
-      result = 31 * result + lValue.hashCode();
-      result = 31 * result + (rValue1 != null ? rValue1.hashCode() : 0);
-      result = 31 * result + (operator != null ? operator.hashCode() : 0);
-      result = 31 * result + (rValue2 != null ? rValue2.hashCode() : 0);
-      return result;
+      return Objects.hash(super.hashCode(), lValue, rValue1, operator, rValue2, initialAssignment);
    }
 }

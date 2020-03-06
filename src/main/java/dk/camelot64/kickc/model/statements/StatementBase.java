@@ -16,8 +16,8 @@ public abstract class StatementBase implements Statement {
    /** Comments preceding the statement in the source code. */
    private List<Comment> comments;
 
-   public StatementBase(Integer index, StatementSource source, List<Comment> comments) {
-      this.index = index;
+   public StatementBase(StatementSource source, List<Comment> comments) {
+      this.index = null;
       this.source = source;
       this.comments = comments;
    }

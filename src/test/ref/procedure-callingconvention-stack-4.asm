@@ -18,8 +18,8 @@ main: {
     txa
     pha
     jsr plus
-    // w = plus('0', v)
     pla
+    // w = plus('0', v)
     pla
     // w+a
     sty.z $ff

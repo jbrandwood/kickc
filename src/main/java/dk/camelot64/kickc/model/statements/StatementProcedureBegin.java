@@ -4,7 +4,6 @@ import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.Program;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /** Procedure declaration in SSA */
@@ -15,7 +14,7 @@ public class StatementProcedureBegin extends StatementBase {
    private Strategy strategy;
 
    public StatementProcedureBegin(ProcedureRef procedure,StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.procedure = procedure;
    }
 

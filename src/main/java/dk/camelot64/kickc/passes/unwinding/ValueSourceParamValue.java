@@ -14,7 +14,7 @@ import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.ListIterator;
 
-/** An unwound parameter value. */
+/** A parameter value list. */
 public class ValueSourceParamValue extends ValueSourceBase {
 
    private final ValueSource valueSource;
@@ -30,7 +30,7 @@ public class ValueSourceParamValue extends ValueSourceBase {
 
    @Override
    public ArraySpec getArraySpec() {
-      return valueSource.getArraySpec();
+      return null;
    }
 
    @Override
@@ -55,7 +55,8 @@ public class ValueSourceParamValue extends ValueSourceBase {
 
    @Override
    public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      throw new InternalError("Not unwindable");
+      final ValueSource memberUnwinding = valueSource.getMemberUnwinding(memberName, program, programScope, currentStmt, stmtIt, currentBlock);
+      return new ValueSourceParamValue(memberUnwinding);
    }
 
 }

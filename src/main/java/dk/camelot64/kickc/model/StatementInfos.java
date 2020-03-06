@@ -1,9 +1,7 @@
-package dk.camelot64.kickc.model.statements;
+package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.ControlFlowBlock;
-import dk.camelot64.kickc.model.ControlFlowGraph;
+import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.Program;
 
 import java.util.Map;
 

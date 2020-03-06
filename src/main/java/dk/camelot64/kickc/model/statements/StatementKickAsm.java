@@ -5,7 +5,6 @@ import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +31,13 @@ public class StatementKickAsm extends StatementBase {
    private AsmClobber declaredClobber;
 
    public StatementKickAsm(String kickAsmCode, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.kickAsmCode = kickAsmCode;
       this.uses = new ArrayList<>();
    }
 
    public StatementKickAsm(String kickAsmCode, RValue location, RValue bytes, RValue cycles, List<SymbolRef> uses, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.kickAsmCode = kickAsmCode;
       this.location = location;
       this.bytes = bytes;

@@ -20,7 +20,7 @@ public class StatementCallExecute extends StatementBase implements StatementCall
    private ProcedureRef procedure;
 
    public StatementCallExecute(ProcedureRef procedure, StatementSource source, List<Comment> comments) {
-      super(null, source, comments);
+      super(source, comments);
       this.procedure = procedure;
    }
 

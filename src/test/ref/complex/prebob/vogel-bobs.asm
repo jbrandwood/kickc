@@ -72,6 +72,18 @@ main: {
     lda #toD0181_return
     sta D018
     // memset(BOB_SCREEN, 0x00, 1000)
+  /*
+	// Clear screen
+	memset(BOB_SCREEN, 0x00, 1000);
+	// Display a BOB grid
+	for(char x: 0..7)
+	    for(char y: 0..3)
+            renderBob(x*12+y, y*24+x);
+	// Wait for space
+	while(!keyboard_key_pressed(KEY_SPACE)) {}
+	while(keyboard_key_pressed(KEY_SPACE)) {}
+	*/
+  // Clear screen
     jsr memset
     lda #0
     sta.z angle
@@ -579,6 +591,7 @@ prepareBobs: {
     // progress_init(SCREEN_BASIC)
     jsr progress_init
     // bobCharsetFindOrAddGlyph(PROTO_BOB+48)
+  // Ensure that glyph #0 is empty
     lda #<PROTO_BOB+$30
     sta.z bobCharsetFindOrAddGlyph.bob_glyph
     lda #>PROTO_BOB+$30
@@ -611,6 +624,7 @@ prepareBobs: {
     cmp #BOB_SHIFTS_X
     bcc __b3
     // shiftProtoBobDown()
+  // Shift PROTO_BOB down and 8px left
     jsr shiftProtoBobDown
     // for(char shift_y=0;shift_y<BOB_SHIFTS_Y;shift_y++)
     inc.z shift_y
@@ -638,6 +652,7 @@ prepareBobs: {
     // bob_table_idx++;
     inc.z bob_table_idx
     // shiftProtoBobRight()
+  // Shift PROTO_BOB right twice
     jsr shiftProtoBobRight
     // shiftProtoBobRight()
     jsr shiftProtoBobRight
@@ -802,6 +817,7 @@ shiftProtoBobRight: {
     sta.z carry
     jmp __b4
   __b3:
+    // (PROTO_BOB[j]&1)?0x80ub:0ub
     lda #$80
     sta.z carry
   __b4:

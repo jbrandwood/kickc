@@ -129,6 +129,7 @@ print_byte_at: {
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
+  // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
     lda #$f
@@ -495,12 +496,14 @@ atan2_16: {
     dey
     jmp __b13
   __b4:
+    // (x>=0)?x:-x
     lda.z x
     sta.z xi
     lda.z x+1
     sta.z xi+1
     jmp __b6
   __b1:
+    // (y>=0)?y:-y
     lda.z y
     sta.z yi
     lda.z y+1

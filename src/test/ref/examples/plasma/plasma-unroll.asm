@@ -72,6 +72,7 @@ main: {
     sta.z c1A
   __b4:
     // doplasma(SCREEN1)
+    // Show single-buffered plasma
     jsr doplasma
     jmp __b4
 }

@@ -16,6 +16,7 @@ main: {
     lda #'3'
     pha
     // peek_stack()
+    // Then call a function
     jsr peek_stack
     // asm
     // Clean up the stack

@@ -48,6 +48,7 @@ main: {
 }
 testBinaryOperator: {
     // assertType(typeid(12ub+12ub), typeid(unsigned byte))
+  // Binary Operations between unsigned byte & other types
     ldx #$28
     lda #TYPEID_BYTE
     sta.z assertType.t2
@@ -81,6 +82,7 @@ testBinaryOperator: {
     // idx++;
     inx
     // assertType(typeid(12sb+12ub), typeid(unsigned byte))
+  // Binary Operations between signed byte & other types
     lda #TYPEID_BYTE
     sta.z assertType.t2
     tay
@@ -113,6 +115,7 @@ testBinaryOperator: {
     // idx++;
     inx
     // assertType(typeid(12uw+12ub), typeid(unsigned word))
+  // Binary Operations between unsigned word & other types
     lda #TYPEID_WORD
     sta.z assertType.t2
     tay
@@ -143,6 +146,7 @@ testBinaryOperator: {
     tay
     jsr assertType
     // assertType(typeid(12sw+12ub), typeid(signed word))
+  // Binary Operations between signed word & other types
     ldx #$50
     lda #TYPEID_SIGNED_WORD
     sta.z assertType.t2
@@ -176,6 +180,7 @@ testBinaryOperator: {
     // idx++;
     inx
     // assertType(typeid(12ud+12ub), typeid(unsigned dword))
+  // Binary Operations between unsigned dword & other types
     lda #TYPEID_DWORD
     sta.z assertType.t2
     tay
@@ -208,6 +213,7 @@ testBinaryOperator: {
     // idx++;
     inx
     // assertType(typeid(12sd+12ub), typeid(signed dword))
+  // Binary Operations between signed dword & other types
     lda #TYPEID_SIGNED_DWORD
     sta.z assertType.t2
     tay
@@ -269,6 +275,7 @@ assertType: {
 }
 testUnaryOperator: {
     // assertType(typeid(-12ub), typeid(unsigned byte))
+  // Unary Operations
     ldx #0
     lda #TYPEID_BYTE
     sta.z assertType.t2

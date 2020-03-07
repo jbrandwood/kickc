@@ -53,6 +53,10 @@ public class ControlFlowGraph implements Serializable {
          return blocks;
    }
 
+   public void setAllBlocks(List<ControlFlowBlock> blocks) {
+      this.blocks = blocks;
+   }
+
    public void remove(LabelRef label) {
       ListIterator<ControlFlowBlock> blocksIt = blocks.listIterator();
       while(blocksIt.hasNext()) {

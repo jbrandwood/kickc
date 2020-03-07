@@ -94,6 +94,7 @@ main: {
   !__b2:
   !:
     // print_str_at("f1", SCREEN+1)
+  // Plot 4 initial analysis chars
     lda #<SCREEN+1
     sta.z print_str_at.at
     lda #>SCREEN+1

@@ -43,6 +43,7 @@ sin8u_table: {
     // div16u(PI2_u4f12, tabsize)
     // step = div16u(PI2_u4f12, tabsize)
     // print_str("step:")
+  // u[4.12]
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -271,6 +272,7 @@ print_byte: {
     // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
+  // Table of hexadecimal digits
     jsr print_char
     // b&$f
     lda #$f

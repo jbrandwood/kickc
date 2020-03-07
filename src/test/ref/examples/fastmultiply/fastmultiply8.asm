@@ -174,6 +174,7 @@ print_byte_at: {
     tay
     lda print_hextab,y
     sta.z print_char_at.ch
+  // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
     lda #$f

@@ -12,6 +12,7 @@ main: {
     lda #'b'
     jmp __b3
   __b2:
+    // i<5?'a':'b'
     lda #'a'
   __b3:
     // SCREEN[i] = i<5?'a':'b'

@@ -353,6 +353,7 @@ print_byte: {
     // print_char(print_hextab[b>>4])
     tay
     lda DIGITS,y
+  // Table of hexadecimal digits
     jsr print_char
     // b&$f
     lda #$f

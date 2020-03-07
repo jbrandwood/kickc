@@ -46,6 +46,7 @@ main: {
 }
 testSimpleTypes: {
     // assertType(typeid(12ub), typeid(unsigned byte))
+  // Simple types
     ldx #0
     lda #TYPEID_BYTE
     sta.z assertType.t2

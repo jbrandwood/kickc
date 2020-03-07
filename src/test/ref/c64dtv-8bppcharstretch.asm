@@ -339,6 +339,7 @@ gfx_init_plane_charset8: {
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }

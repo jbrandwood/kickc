@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -167,9 +168,10 @@ public class ControlFlowBlock implements Serializable {
     * @return the procedure, that the block is part of
     */
    public Procedure getProcedure(Program program) {
-      Symbol symbol = program.getScope().getSymbol(getLabel());
-      if(symbol instanceof Procedure) {
-         return (Procedure) symbol;
+      final ScopeRef scopeRef = getScope();
+      final Scope scope = program.getScope().getScope(scopeRef);
+      if(scope instanceof Procedure) {
+         return (Procedure) scope;
       } else {
          return null;
       }

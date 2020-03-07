@@ -200,8 +200,10 @@ main: {
     sta.z form_cursor_count
   __b2:
     // form_mode()
+  // Let the user change the GFX configuration
     jsr form_mode
     // gfx_mode()
+    // Show the GFX configuration
     jsr gfx_mode
     jmp __b2
 }
@@ -1118,6 +1120,7 @@ get_plane: {
 form_mode: {
     .label preset_current = $10
     // print_set_screen(COLS)
+  // Form Colors
     lda #<COLS
     sta.z print_set_screen.screen
     lda #>COLS
@@ -1132,6 +1135,7 @@ form_mode: {
     sta.z print_str_lines.str+1
     jsr print_str_lines
     // print_set_screen(FORM_SCREEN)
+  // Form Text
     lda #<FORM_SCREEN
     sta.z print_set_screen.screen
     lda #>FORM_SCREEN
@@ -1146,6 +1150,7 @@ form_mode: {
     sta.z print_str_lines.str+1
     jsr print_str_lines
     // form_set_screen(FORM_SCREEN)
+  // Form Fields
     jsr form_set_screen
     // form_render_values()
     jsr form_render_values
@@ -1236,6 +1241,7 @@ form_mode: {
     cmp.z preset_current
     beq b1
     // apply_preset(*form_preset)
+    // Preset changed - update field values and render
     jsr apply_preset
     // preset_current = *form_preset
     lda form_fields_val
@@ -1352,6 +1358,7 @@ render_preset_name: {
     sta.z name+1
   __b2:
     // print_str_at(name, FORM_SCREEN+40*2+10)
+  // Render it
     jsr print_str_at
     // }
     rts
@@ -1614,6 +1621,7 @@ form_control: {
     sta (field),y
   __b3:
     // keyboard_event_scan()
+  // Scan the keyboard
     jsr keyboard_event_scan
     // keyboard_event_get()
     jsr keyboard_event_get
@@ -2007,6 +2015,7 @@ gfx_init_plane_fill: {
     cmp.z by
     bne __b1
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }
@@ -2104,6 +2113,7 @@ gfx_init_plane_horisontal2: {
     cmp.z ay
     bne __b1
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }
@@ -2146,6 +2156,7 @@ gfx_init_plane_vertical: {
     cmp.z by
     bne __b1
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }
@@ -2194,6 +2205,7 @@ gfx_init_plane_horisontal: {
     cmp.z ay
     bne __b1
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }
@@ -2292,6 +2304,7 @@ gfx_init_plane_charset8: {
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }
@@ -2370,6 +2383,7 @@ gfx_init_plane_8bppchunky: {
     cmp.z y
     bne __b1
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }
@@ -2380,6 +2394,7 @@ gfx_init_vic_bitmap: {
     .const lines_cnt = 9
     .label l = $1e
     // bitmap_init(VIC_BITMAP)
+  // Draw some lines on the bitmap
     jsr bitmap_init
     // bitmap_clear()
     jsr bitmap_clear

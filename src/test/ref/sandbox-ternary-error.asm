@@ -15,7 +15,9 @@ main: {
     lda #'c'
     jmp __b3
   __b4:
+    // (b == 1) ? 'b' : 'c'
     lda #'b'
+    // (b == 0) ? 'a' : ((b == 1) ? 'b' : 'c')
     jmp __b3
   b1:
     lda #'a'

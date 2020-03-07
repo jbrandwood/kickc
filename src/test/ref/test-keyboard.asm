@@ -86,6 +86,7 @@ main: {
   !__b2:
   !:
     // keyboard_init()
+    // Init keyboard
     jsr keyboard_init
   __b4:
     // while (*RASTER!=$ff)

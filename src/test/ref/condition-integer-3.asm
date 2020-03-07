@@ -14,6 +14,7 @@ main: {
     lda #'0'
     jmp __b3
   __b2:
+    // i?'+':'0'
     lda #'+'
   __b3:
     // SCREEN[idx++] = j

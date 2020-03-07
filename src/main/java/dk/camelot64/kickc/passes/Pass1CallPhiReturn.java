@@ -14,11 +14,11 @@ import java.util.Set;
 /**
  * Handles return values for {@link Procedure.CallingConvention#PHI_CALL} procedure calls by passing the return value through variable versions.
  */
-public class Pass1CallingConventionPhiReturnValue {
+public class Pass1CallPhiReturn {
 
    private Program program;
 
-   public Pass1CallingConventionPhiReturnValue(Program program) {
+   public Pass1CallPhiReturn(Program program) {
       this.program = program;
    }
 
@@ -42,7 +42,7 @@ public class Pass1CallingConventionPhiReturnValue {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementReturn) {
                StatementReturn statementReturn = (StatementReturn) statement;
-               Procedure procedure = (Procedure) program.getScope().getScope(block.getScope());
+               Procedure procedure = block.getProcedure(program);
                if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
                   statementReturn.setValue(null);
                }
@@ -83,9 +83,11 @@ public class Pass1CallingConventionPhiReturnValue {
             throw new RuntimeException("Error! Cannot find final return variable for " + procedure.getFullName());
          }
          // Add assignment of final return variable version to lValue
-         StatementAssignment returnAssignment = new StatementAssignment(call.getlValue(), returnVarFinal, call.isInitialAssignment(), call.getSource(), new ArrayList<>());
-         stmtIt.add(returnAssignment);
-         call.setlValue(null);
+         if(call.getlValue()!=null) {
+            StatementAssignment returnAssignment = new StatementAssignment(call.getlValue(), returnVarFinal, call.isInitialAssignment(), call.getSource(), new ArrayList<>());
+            stmtIt.add(returnAssignment);
+            call.setlValue(null);
+         }
       }
 
       // Patch versions of rValues in assignments for vars modified in the call
@@ -109,7 +111,6 @@ public class Pass1CallingConventionPhiReturnValue {
             }
          }
       }
-
    }
 
    private VariableRef findReturnVersion(Procedure procedure, VariableRef assignedVar) {

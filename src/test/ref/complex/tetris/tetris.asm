@@ -209,6 +209,7 @@ main: {
     // play_init()
     jsr play_init
     // play_spawn_current()
+  // Spawn twice to spawn both current & next
     lda #0
     sta.z game_over
     sta.z next_piece_idx
@@ -265,8 +266,11 @@ main: {
     cmp RASTER
     bne __b2
     // render_show()
+    //*BORDERCOL = render_screen_show/0x10;
+    // Update D018 to show the selected screen
     jsr render_show
     // keyboard_event_scan()
+  // Scan keyboard events
     jsr keyboard_event_scan
     // keyboard_event_get()
     jsr keyboard_event_get
@@ -972,6 +976,7 @@ play_move_down: {
     cmp #COLLISION_NONE
     beq __b10
     // play_lock_current()
+    // Lock current piece
     jsr play_lock_current
     // play_remove_lines()
     jsr play_remove_lines
@@ -980,8 +985,10 @@ play_move_down: {
     // removed = play_remove_lines()
     // play_update_score(removed)
     tax
+    // Tally up the score
     jsr play_update_score
     // play_spawn_current()
+  // Spawn a new piece
     jsr play_spawn_current
     ldy.z play_spawn_current.__7
     lda PIECES,y
@@ -1718,6 +1725,7 @@ render_init: {
     lda #GREY
     sta BGCOL4
     // render_screen_original(PLAYFIELD_SCREEN_1)
+  // Setup chars on the screens
     lda #<PLAYFIELD_SCREEN_1
     sta.z render_screen_original.screen
     lda #>PLAYFIELD_SCREEN_1

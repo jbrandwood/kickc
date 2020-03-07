@@ -146,6 +146,7 @@ print_byte: {
     // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
+  // Table of hexadecimal digits
     jsr print_char
     // b&$f
     lda #$f
@@ -390,12 +391,14 @@ atan2_16: {
     dey
     jmp __b13
   __b4:
+    // (x>=0)?x:-x
     lda.z x
     sta.z xi
     lda.z x+1
     sta.z xi+1
     jmp __b6
   __b1:
+    // (y>=0)?y:-y
     lda.z y
     sta.z yi
     lda.z y+1

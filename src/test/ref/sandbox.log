@@ -4669,6 +4669,8 @@ main: {
     lda.z v+1
     sta.z myprintf.w2+1
     // [44] call myprintf 
+  // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
+  // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --
     // [78] phi from main::@6 to myprintf [phi:main::@6->myprintf]
   myprintf_from___b6:
     // [78] phi (word) myprintf::w3#8 = (word) myprintf::w3#0 [phi:main::@6->myprintf#0] -- register_copy 
@@ -6635,6 +6637,8 @@ main: {
     // [42] (word) myprintf::w1#0 ← (word) main::u#15
     // [43] (word) myprintf::w2#0 ← (word) main::v#11
     // [44] call myprintf 
+  // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
+  // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --
     // [78] phi from main::@6 to myprintf [phi:main::@6->myprintf]
   myprintf_from___b6:
     // [78] phi (word) myprintf::w3#8 = (word) myprintf::w3#0 [phi:main::@6->myprintf#0] -- register_copy 
@@ -8081,13 +8085,13 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __bbegin:
 Removing instruction b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [374] bcs b1 to bcc
-Fixing long branch [267] beq __b4 to bne
-Fixing long branch [284] bcc __b28 to bcs
-Fixing long branch [287] beq __b28 to bne
-Fixing long branch [298] beq __b8 to bne
-Fixing long branch [494] bne __b5 to beq
-Fixing long branch [499] bcs __b5 to bcc
+Fixing long branch [376] bcs b1 to bcc
+Fixing long branch [269] beq __b4 to bne
+Fixing long branch [286] bcc __b28 to bcs
+Fixing long branch [289] beq __b28 to bne
+Fixing long branch [300] beq __b8 to bne
+Fixing long branch [496] bne __b5 to beq
+Fixing long branch [501] bcs __b5 to bcc
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -8665,6 +8669,8 @@ main: {
     // [42] (word) myprintf::w1#0 ← (word) main::u#15
     // [43] (word) myprintf::w2#0 ← (word) main::v#11
     // [44] call myprintf 
+  // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
+  // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --
     // [78] phi from main::@6 to myprintf [phi:main::@6->myprintf]
     // [78] phi (word) myprintf::w3#8 = (word) myprintf::w3#0 [phi:main::@6->myprintf#0] -- register_copy 
     // [78] phi (word) myprintf::w2#8 = (word) myprintf::w2#0 [phi:main::@6->myprintf#1] -- register_copy 
@@ -9061,6 +9067,7 @@ myprintf: {
     // [100] phi from myprintf::@31 to myprintf::@10 [phi:myprintf::@31->myprintf::@10]
     // myprintf::@10
   __b10:
+    // b < 10 ? '0' : 0x57
     // [101] phi from myprintf::@10 to myprintf::@11 [phi:myprintf::@10->myprintf::@11]
     // [101] phi (byte~) myprintf::$24 = (byte) '0' [phi:myprintf::@10->myprintf::@11#0] -- vbuaa=vbuc1 
     lda #'0'
@@ -9096,6 +9103,7 @@ myprintf: {
     // [108] phi from myprintf::@11 to myprintf::@12 [phi:myprintf::@11->myprintf::@12]
     // myprintf::@12
   __b12:
+    // b < 10 ? '0' : 0x57
     // [109] phi from myprintf::@12 to myprintf::@13 [phi:myprintf::@12->myprintf::@13]
     // [109] phi (byte~) myprintf::$31 = (byte) '0' [phi:myprintf::@12->myprintf::@13#0] -- vbuaa=vbuc1 
     lda #'0'
@@ -9243,6 +9251,7 @@ myprintf: {
     // [135] phi from myprintf::@19 to myprintf::@20 [phi:myprintf::@19->myprintf::@20]
     // myprintf::@20
   __b20:
+    // (bLeadZero == 0) ? ' ' : '0'
     // [136] phi from myprintf::@20 to myprintf::@21 [phi:myprintf::@20->myprintf::@21]
     // [136] phi (byte~) myprintf::$43 = (byte) ' ' [phi:myprintf::@20->myprintf::@21#0] -- vbuaa=vbuc1 
     lda #' '

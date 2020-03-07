@@ -205,6 +205,7 @@ menu: {
     // *BORDERCOL = 0
     sta BORDERCOL
     // print_set_screen(SCREEN)
+  // Display menu Text
     jsr print_set_screen
     // print_cls()
     jsr print_cls
@@ -477,9 +478,11 @@ mode_8bppchunkybmm: {
     cmp.z y
     bne __b3
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta.z dtv_control
     jsr mode_ctrl
@@ -848,6 +851,7 @@ mode_8bpppixelcell: {
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta.z dtv_control
     jsr mode_ctrl
@@ -1032,6 +1036,7 @@ mode_sixsfred: {
     cmp.z by
     bne __b9
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta.z dtv_control
     jsr mode_ctrl
@@ -1238,6 +1243,7 @@ mode_twoplanebitmap: {
     cmp.z by
     bne __b12
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta.z dtv_control
     jsr mode_ctrl
@@ -1442,6 +1448,7 @@ mode_sixsfred2: {
     cmp.z by
     bne __b9
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_LINEAR
     sta.z dtv_control
     jsr mode_ctrl
@@ -1581,6 +1588,7 @@ mode_hicolmcchar: {
     cmp.z cy
     bne __b3
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_HIGHCOLOR
     sta.z dtv_control
     jsr mode_ctrl
@@ -1721,6 +1729,7 @@ mode_hicolecmchar: {
     cmp.z cy
     bne __b3
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_HIGHCOLOR
     sta.z dtv_control
     jsr mode_ctrl
@@ -1847,6 +1856,7 @@ mode_hicolstdchar: {
     cmp.z cy
     bne __b3
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #DTV_HIGHCOLOR
     sta.z dtv_control
     jsr mode_ctrl
@@ -1959,6 +1969,7 @@ mode_stdbitmap: {
     cmp.z cy
     bne __b3
     // bitmap_init(BITMAP)
+  // Draw some lines on the bitmap
     jsr bitmap_init
     // bitmap_clear()
     jsr bitmap_clear
@@ -1970,6 +1981,7 @@ mode_stdbitmap: {
     cmp #lines_cnt
     bcc __b8
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #0
     sta.z dtv_control
     jsr mode_ctrl
@@ -2572,6 +2584,7 @@ mode_mcchar: {
     cmp.z cy
     bne __b3
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #0
     sta.z dtv_control
     jsr mode_ctrl
@@ -2716,6 +2729,7 @@ mode_ecmchar: {
     cmp.z cy
     bne __b3
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #0
     sta.z dtv_control
     jsr mode_ctrl
@@ -2847,6 +2861,7 @@ mode_stdchar: {
     cmp.z cy
     bne __b3
     // mode_ctrl()
+  // Leave control to the user until exit
     lda #0
     sta.z dtv_control
     jsr mode_ctrl

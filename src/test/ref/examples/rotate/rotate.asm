@@ -213,6 +213,7 @@ anim: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     // print_dword_at(cyclecount, SCREEN)
+    // Print cycle count
     jsr print_dword_at
     // *BORDERCOL = LIGHT_BLUE
     lda #LIGHT_BLUE
@@ -287,6 +288,7 @@ print_byte_at: {
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
+  // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
     lda #$f

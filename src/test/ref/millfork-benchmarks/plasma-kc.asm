@@ -69,11 +69,13 @@ main: {
     lda.z block
     sta CIA2_PORT_A
     // end()
+    /* Reset screen colors */
     jsr end
     // }
     rts
   __b2:
     // doplasma ((char*)SCREEN1)
+  /* Build page 1, then make it visible */
     lda #<SCREEN1
     sta.z doplasma.scrn
     lda #>SCREEN1
@@ -83,6 +85,7 @@ main: {
     lda #PAGE1
     sta VIC_MEMORY
     // doplasma ((char*)SCREEN2)
+  /* Build page 2, then make it visible */
     lda #<SCREEN2
     sta.z doplasma.scrn
     lda #>SCREEN2
@@ -293,6 +296,7 @@ print_byte: {
     // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
+  // Table of hexadecimal digits
     jsr print_char
     // b&$f
     lda #$f

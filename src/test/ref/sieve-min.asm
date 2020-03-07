@@ -16,6 +16,7 @@ main: {
     .label i_1 = 2
     .label __16 = $c
     // memset(sieve, 0, COUNT)
+  // Fill sieve with zeros
     jsr memset
     lda #<sieve+2
     sta.z sieve_i
@@ -189,6 +190,7 @@ print_byte: {
     // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
+  // Table of hexadecimal digits
     jsr print_char
     // b&$f
     lda #$f

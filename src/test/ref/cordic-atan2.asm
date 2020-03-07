@@ -207,10 +207,12 @@ atan2_8: {
     sta.z angle
     jmp __b14
   __b4:
+    // (x>0)?x:-x
     lda.z x
     sta.z xi
     jmp __b6
   __b1:
+    // (y>0)?y:-y
     ldx.z y
     jmp __b3
 }

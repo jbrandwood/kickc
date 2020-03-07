@@ -294,6 +294,7 @@ gfx_init_chunky: {
     cmp.z y
     bne __b1
     // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
     lda #$4000/$4000
     jsr dtvSetCpuBankSegment1
     // }

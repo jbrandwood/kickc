@@ -54,6 +54,7 @@ main: {
     // debug_print_init()
     jsr debug_print_init
     // anim()
+  //calculate_matrix(1,1,1);
     jsr anim
     // }
     rts
@@ -84,6 +85,7 @@ anim: {
     inc BORDERCOL
     // calculate_matrix(sx,sy,sz)
     ldx.z sx
+    //calculate_matrix_16(sx,sy,sz);
     jsr calculate_matrix
     // store_matrix()
     jsr store_matrix
@@ -423,6 +425,7 @@ print_byte_at: {
     // print_char_at(print_hextab[b>>4], at)
     lda print_hextab,y
     tay
+  // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
     lda #$f

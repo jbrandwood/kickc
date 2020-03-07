@@ -31,6 +31,7 @@ main: {
     ldy #4
     sta (__0),y
     // print_cls()
+  // writes address 0x4004 (right!)
     jsr print_cls
     // print_str("$0000=")
     lda #<$400
@@ -108,6 +109,7 @@ print_byte: {
     // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
+  // Table of hexadecimal digits
     jsr print_char
     // b&$f
     lda #$f

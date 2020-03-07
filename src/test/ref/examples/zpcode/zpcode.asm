@@ -32,8 +32,10 @@ main: {
     cmp RASTER
     bne __b3
     // loop()
+  // Call code in normal memory
     jsr loop
     // zpLoop()
+  // Call code on zeropage
     jsr zpLoop
     // *BGCOL = 0
     lda #0

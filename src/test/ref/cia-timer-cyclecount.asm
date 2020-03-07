@@ -21,6 +21,7 @@ main: {
     .label cyclecount = 9
   __b1:
     // clock_start()
+    // Reset & start the CIA#2 timer A+B
     jsr clock_start
     // asm
     nop
@@ -41,6 +42,7 @@ main: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     // print_dword_at(cyclecount, SCREEN)
+    // Print cycle count
     jsr print_dword_at
     jmp __b1
 }
@@ -112,6 +114,7 @@ print_byte_at: {
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
+  // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
     lda #$f

@@ -20,9 +20,9 @@ import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 import java.util.*;
 
 /** Handle calling convention {@link Procedure.CallingConvention#STACK_CALL} by converting the making control flow graph and symbols calling convention specific. */
-public class Pass1CallingConventionStack extends Pass2SsaOptimization {
+public class Pass1CallStack extends Pass2SsaOptimization {
 
-   public Pass1CallingConventionStack(Program program) {
+   public Pass1CallStack(Program program) {
       super(program);
    }
 

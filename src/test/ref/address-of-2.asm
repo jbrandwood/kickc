@@ -49,6 +49,7 @@ main: {
     lda.z ptr
     sta SCREEN2+3
     // setv(4)
+    // Set value directly in a call
     jsr setv
     // SCREEN1[idx] = val
     lda.z val
@@ -57,6 +58,7 @@ main: {
     lda.z ptr
     sta SCREEN2+4
     // setp(ptr, 5)
+    // Set value through pointer in a call
     jsr setp
     // SCREEN1[idx] = val
     lda.z val

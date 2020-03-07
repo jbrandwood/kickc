@@ -28,6 +28,7 @@ main: {
     lda #$14
     sta VIC_MEMORY
     // memset(SCREEN, ' ', 40*25)
+  // Init screen/colors
     ldx #' '
     lda #<SCREEN
     sta.z memset.str

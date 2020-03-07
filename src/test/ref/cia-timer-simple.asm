@@ -15,6 +15,7 @@
   .label SCREEN = $400
 main: {
     // clock_start()
+    // Reset & start the CIA#2 timer A+B
     jsr clock_start
   __b1:
     // clock()
@@ -91,6 +92,7 @@ print_byte_at: {
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
+  // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
     lda #$f

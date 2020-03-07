@@ -279,6 +279,7 @@ init: {
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
     // plexInit(SCREEN)
+  // Initialize the multiplexer
     jsr plexInit
     lda #<$20
     sta.z xp

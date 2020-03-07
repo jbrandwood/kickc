@@ -90,6 +90,7 @@ main: {
     lda.z __33+1
     sta.z dw2+1
     // print_dword(dw2)
+    // Test set/get low word of dword
     jsr print_dword
     // print_char(' ')
     lda #' '
@@ -101,6 +102,7 @@ main: {
     sta.z print_word.w+1
     jsr print_word
     // print_char(' ')
+  // Test get high word of dword
     lda #' '
     jsr print_char
     // print_word(<dw2)
@@ -110,6 +112,7 @@ main: {
     sta.z print_word.w+1
     jsr print_word
     // print_char(' ')
+  // Test get low word of dword
     lda #' '
     jsr print_char
     // >dw2
@@ -121,6 +124,7 @@ main: {
     tax
     jsr print_byte
     // print_char(' ')
+  // Test get high high byte of dword
     lda #' '
     jsr print_char
     // >dw2
@@ -133,6 +137,7 @@ main: {
     tax
     jsr print_byte
     // print_char(' ')
+  // Test get low high byte of dword
     lda #' '
     jsr print_char
     // <dw2
@@ -144,6 +149,7 @@ main: {
     tax
     jsr print_byte
     // print_char(' ')
+  // Test get high low byte of dword
     lda #' '
     jsr print_char
     // <dw2
@@ -156,6 +162,7 @@ main: {
     tax
     jsr print_byte
     // print_ln()
+  // Test get low low byte of dword
     jsr print_ln
     // for( dword dw = $12345678; dw != $12345690; dw++ )
     inc.z dw
@@ -212,6 +219,7 @@ print_byte: {
     // print_char(print_hextab[b>>4])
     tay
     lda print_hextab,y
+  // Table of hexadecimal digits
     jsr print_char
     // b&$f
     lda #$f

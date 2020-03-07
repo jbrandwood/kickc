@@ -261,11 +261,13 @@ public class Compiler {
          getLog().append(program.getProcedureModifiedVars().toString(program));
       }
 
-      new Pass1CallingConventionStack(program).execute();
-      new Pass1CallingConventionPhiParameters(program).execute();
+      new Pass1CallStack(program).execute();
+      new Pass1CallPhiParameters(program).execute();
+      //getLog().append("PROCEDURE PARAMETERS");
+      //getLog().append(program.getGraph().toString(program));
       new PassNUnwindLValueLists(program).execute();
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
-      new Pass1CallingConventionPhiReturnValue(program).execute();
+      new Pass1CallPhiReturn(program).execute();
       new PassNUnwindLValueLists(program).execute();
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");

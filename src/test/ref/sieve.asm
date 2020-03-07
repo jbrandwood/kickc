@@ -86,6 +86,7 @@ main: {
     // print_ln()
     jsr print_ln
     // memset(sieve, 0, COUNT)
+  // Fill sieve with zeros
     ldx #0
     lda #<sieve
     sta.z memset.str

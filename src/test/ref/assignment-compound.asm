@@ -9,56 +9,67 @@
   .label screen2 = screen1+$28
 main: {
     // test(i++, a)
+  //3
     ldx #0
     lda #3
     sta.z test.a
     jsr test
     // test(i++, a)
+  //4
     ldx #1
     lda #3+1
     sta.z test.a
     jsr test
     // test(i++, a)
+  //3
     ldx #2
     lda #3+1-1
     sta.z test.a
     jsr test
     // test(i++, a)
+  //18
     ldx #3
     lda #(3+1-1)*6
     sta.z test.a
     jsr test
     // test(i++, a)
+  //9
     ldx #4
     lda #(3+1-1)*6/2
     sta.z test.a
     jsr test
     // test(i++, a)
+  //1
     ldx #5
     lda #(3+1-1)*6/2&2-1
     sta.z test.a
     jsr test
     // test(i++, a)
+  //4
     ldx #6
     lda #((3+1-1)*6/2&2-1)<<2
     sta.z test.a
     jsr test
     // test(i++, a)
+  //2
     ldx #7
     lda #((3+1-1)*6/2&2-1)<<2>>1
     sta.z test.a
     jsr test
     // test(i++, a)
+  //4
     ldx #8
     lda #((3+1-1)*6/2&2-1)<<2>>1^6
     sta.z test.a
     jsr test
     // test(i++, a)
+  //5
     ldx #9
     lda #((3+1-1)*6/2&2-1)<<2>>1^6|1
     sta.z test.a
     jsr test
     // test(i++, a)
+  //1
     ldx #$a
     lda #(((3+1-1)*6/2&2-1)<<2>>1^6|1)&1
     sta.z test.a

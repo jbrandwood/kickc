@@ -146,6 +146,8 @@ main: {
     lda.z myprintf.w3+1
     adc.z __5+1
     sta.z myprintf.w3+1
+  // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
+  // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --
     lda #<str
     sta.z myprintf.str
     lda #>str
@@ -389,6 +391,7 @@ myprintf: {
     lda #$57
     jmp __b11
   __b10:
+    // b < 10 ? '0' : 0x57
     lda #'0'
   __b11:
     // (b < 10 ? '0' : 0x57) + b
@@ -411,6 +414,7 @@ myprintf: {
     lda #$57
     jmp __b13
   __b12:
+    // b < 10 ? '0' : 0x57
     lda #'0'
   __b13:
     // (b < 10 ? '0' : 0x57) + b
@@ -499,6 +503,7 @@ myprintf: {
     lda #'0'
     jmp __b21
   __b20:
+    // (bLeadZero == 0) ? ' ' : '0'
     lda #' '
   __b21:
     // dst[bLen++] = (bLeadZero == 0) ? ' ' : '0'

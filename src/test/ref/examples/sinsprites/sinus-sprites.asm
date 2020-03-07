@@ -257,50 +257,61 @@ gen_sintab: {
     sta.z setFAC.w
     lda #0
     sta.z setFAC.w+1
+  // 2 * PI
     jsr setFAC
     // setARGtoFAC()
+    // fac = max
     jsr setARGtoFAC
     // setFAC((word)min)
     lda.z min
     sta.z setFAC.w
     lda #0
     sta.z setFAC.w+1
+  // arg = max
     jsr setFAC
     // setMEMtoFAC(f_min)
+  // fac = min
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
     sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // subFACfromARG()
+    // f_min = min
     jsr subFACfromARG
     // setMEMtoFAC(f_amp)
+  // fac = max - min
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
     sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // setFAC(2)
+  // f_amp = max - min
     lda #<2
     sta.z setFAC.prepareMEM1_mem
     lda #>2
     sta.z setFAC.prepareMEM1_mem+1
     jsr setFAC
     // divMEMbyFAC(f_amp)
+  // fac = 2
     lda #<f_amp
     sta.z divMEMbyFAC.mem
     lda #>f_amp
     sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // setMEMtoFAC(f_amp)
+  // fac = (max - min) / 2
     lda #<f_amp
     sta.z setMEMtoFAC.mem
     lda #>f_amp
     sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // addMEMtoFAC(f_min)
+  // f_amp = (max - min) / 2
     jsr addMEMtoFAC
     // setMEMtoFAC(f_min)
+  // fac = min + (max - min) / 2
     lda #<f_min
     sta.z setMEMtoFAC.mem
     lda #>f_min
@@ -325,12 +336,14 @@ gen_sintab: {
     sta.z setFAC.w+1
     jsr setFAC
     // mulFACbyMEM(f_2pi)
+  // fac = i
     lda #<f_2pi
     sta.z mulFACbyMEM.mem
     lda #>f_2pi
     sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // setMEMtoFAC(f_i)
+  // fac = i * 2 * PI
     lda #<f_i
     sta.z setMEMtoFAC.mem
     lda #>f_i
@@ -341,22 +354,27 @@ gen_sintab: {
     sta.z setFAC.w
     lda #0
     sta.z setFAC.w+1
+  // f_i = i * 2 * PI
     jsr setFAC
     // divMEMbyFAC(f_i)
+  // fac = length
     lda #<f_i
     sta.z divMEMbyFAC.mem
     lda #>f_i
     sta.z divMEMbyFAC.mem+1
     jsr divMEMbyFAC
     // sinFAC()
+    // fac = i * 2 * PI / length
     jsr sinFAC
     // mulFACbyMEM(f_amp)
+  // fac = sin( i * 2 * PI / length )
     lda #<f_amp
     sta.z mulFACbyMEM.mem
     lda #>f_amp
     sta.z mulFACbyMEM.mem+1
     jsr mulFACbyMEM
     // addMEMtoFAC(f_min)
+  // fac =  sin( i * 2 * PI / length ) * (max - min) / 2
     jsr addMEMtoFAC
     // getFAC()
     jsr getFAC

@@ -76,6 +76,7 @@ main: {
     lda #toD0181_return
     sta D018
     // memset(BOB_SCREEN, 0x00, 1000)
+  // Clear screen
     jsr memset
     lda #<$100
     sta.z rowOffsetY
@@ -531,6 +532,7 @@ prepareBobs: {
     // progress_init(BASIC_SCREEN)
     jsr progress_init
     // charsetFindOrAddGlyph(PROTO_BOB+48, BOB_CHARSET)
+  // Ensure that glyph #0 is empty
     lda #<PROTO_BOB+$30
     sta.z charsetFindOrAddGlyph.glyph
     lda #>PROTO_BOB+$30
@@ -563,6 +565,7 @@ prepareBobs: {
     cmp #BOB_SHIFTS_X
     bcc __b3
     // protoBobShiftDown()
+  // Shift PROTO_BOB down and 8px left
     jsr protoBobShiftDown
     // for(char shift_y=0;shift_y<BOB_SHIFTS_Y;shift_y++)
     inc.z shift_y
@@ -590,6 +593,7 @@ prepareBobs: {
     // bob_table_idx++;
     inc.z bob_table_idx
     // protoBobShiftRight()
+  // Shift PROTO_BOB right twice
     jsr protoBobShiftRight
     // protoBobShiftRight()
     jsr protoBobShiftRight
@@ -753,6 +757,7 @@ protoBobShiftRight: {
     sta.z carry
     jmp __b4
   __b3:
+    // (PROTO_BOB[j]&1)?0x80ub:0ub
     lda #$80
     sta.z carry
   __b4:

@@ -106,6 +106,7 @@ main: {
     sta.z init_angle_screen.screen
     lda.z SCREEN_DIST+1
     sta.z init_angle_screen.screen+1
+    // Initialize the screen containing distance to the center
     jsr init_angle_screen
     // dst=SCREEN_COPY
     lda.z SCREEN_COPY
@@ -153,8 +154,10 @@ main: {
     cmp.z i
     bne __b3
     // initSprites()
+  // Init sprites
     jsr initSprites
     // setupRasterIrq(RASTER_IRQ_TOP, &irqTop)
+    // Set-up raster interrupts
     jsr setupRasterIrq
   b1:
   // Main loop
@@ -1064,12 +1067,14 @@ atan2_16: {
     dey
     jmp __b13
   __b4:
+    // (x>=0)?x:-x
     lda.z x
     sta.z xi
     lda.z x+1
     sta.z xi+1
     jmp __b6
   __b1:
+    // (y>=0)?y:-y
     lda.z y
     sta.z yi
     lda.z y+1

@@ -850,39 +850,6 @@ public class Pass4CodeGeneration {
                }
             }
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
-         } else if(statement instanceof StatementCallPrepare) {
-            StatementCallPrepare call = (StatementCallPrepare) statement;
-            Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-               // Push parameters to the stack
-               List<RValue> callParameters = call.getParameters();
-               List<Variable> procParameters = procedure.getParameters();
-               for(int i = 0; i < procParameters.size(); i++) {
-                  if(i > 0)
-                     asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
-                  Variable procParameter = procParameters.get(i);
-                  RValue callParameter = callParameters.get(i);
-                  SymbolType parameterType = procParameter.getType();
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(new StackPushValue(parameterType), callParameter, program, block.getScope());
-                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
-                  asm.getCurrentChunk().setSubStatementIdx(i);
-                  asm.getCurrentChunk().setSubStatementId(procParameter.toString(program));
-               }
-               // Push additional bytes if needed
-               long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
-               long parametersByteSize = CallingConventionStack.getParametersByteSize(procedure);
-               if(stackFrameByteSize > parametersByteSize) {
-                  if(procParameters.size() > 0)
-                     asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(program, verboseAliveInfo));
-                  // Add padding to the stack to make room for the return value
-                  String pushSignature = "_stackpushbyte_" + (stackFrameByteSize - parametersByteSize);
-                  AsmFragmentInstanceSpec pushFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pushSignature, new LinkedHashMap<>(), block.getScope());
-                  generateAsm(asm, pushFragmentInstanceSpec);
-
-               }
-            }
-            //throw new RuntimeException("E!");
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());

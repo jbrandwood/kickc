@@ -43,6 +43,9 @@ Calling convention STACK_CALL adding stack return stackidx(byte,get::OFFSET_STAC
 Calling convention STACK_CALL adding stack return stackidx(byte,get::OFFSET_STACK_RETURN+OFFSET_STRUCT_POINT_Y) ← get::return_y
 Calling convention STACK_CALL adding stack pull main::$1_x ← stackpull(byte)
 Calling convention STACK_CALL adding stack pull main::$1_y ← stackpull(byte)
+Calling convention STACK_CALL adding stack push stackpush(byte) ← main::i
+Calling convention STACK_CALL adding stack push stackpush(byte) ← *((byte*)&main::p+OFFSET_STRUCT_POINT_X)
+Calling convention STACK_CALL adding stack push stackpush(byte) ← *((byte*)&main::p+OFFSET_STRUCT_POINT_Y)
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -58,14 +61,16 @@ main::@1: scope:[main]  from main main::@2
   if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  callprepare get (byte) main::i 
+  stackpush(byte) ← (byte) main::i
+  sideeffect stackpushbytes((number) 1)
   callexecute get 
   (byte~) main::$1_x ← stackpull(byte)
   (byte~) main::$1_y ← stackpull(byte)
   *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X) ← (byte~) main::$1_x
   *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y
   (struct Point) main::p ← struct-unwound {*((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X), *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)}
-  callprepare print *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) 
+  stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X)
+  stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)
   callexecute print 
   sideeffect stackpullbytes((number) 2)
   (byte) main::i ← ++ (byte) main::i
@@ -106,7 +111,6 @@ print::@return: scope:[print]  from print
   return 
   to:@return
 @3: scope:[]  from @begin
-  callprepare main 
   callexecute main 
   to:@end
 @end: scope:[]  from @3
@@ -173,30 +177,32 @@ Alias (byte) get::return_y#0 = (byte) get::return_y#1
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::$0 [3] if((byte) main::i<(byte) 5) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Removing C-classic struct-unwound assignment [10] (struct Point) main::p ← struct-unwound {*((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X), *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)}
-Removing C-classic struct-unwound assignment [20] (struct Point) get::p ← struct-unwound {*((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_X), *((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_Y)}
-Simplifying constant evaluating to zero (const byte) get::OFFSET_STACK_RETURN+(const byte) OFFSET_STRUCT_POINT_X in [24] stackidx(byte,(const byte) get::OFFSET_STACK_RETURN+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) get::return_x#0
+Removing C-classic struct-unwound assignment [11] (struct Point) main::p ← struct-unwound {*((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X), *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)}
+Removing C-classic struct-unwound assignment [22] (struct Point) get::p ← struct-unwound {*((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_X), *((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_Y)}
+Simplifying constant evaluating to zero (const byte) get::OFFSET_STACK_RETURN+(const byte) OFFSET_STRUCT_POINT_X in [26] stackidx(byte,(const byte) get::OFFSET_STACK_RETURN+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) get::return_x#0
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero (byte*)&main::p in [8] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X) ← (byte~) main::$1_x
-Simplifying expression containing zero (byte*)&main::p in [11] callprepare print *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) 
-Simplifying expression containing zero (byte*)&get::p in [18] *((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) get::i#0
-Simplifying expression containing zero (byte*)&get::p in [21] (byte) get::return_x#0 ← *((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero OFFSET_STRUCT_POINT_Y in [25] stackidx(byte,(const byte) get::OFFSET_STACK_RETURN+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) get::return_y#0
+Simplifying expression containing zero (byte*)&main::p in [9] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X) ← (byte~) main::$1_x
+Simplifying expression containing zero (byte*)&main::p in [12] stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero (byte*)&get::p in [20] *((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) get::i#0
+Simplifying expression containing zero (byte*)&get::p in [23] (byte) get::return_x#0 ← *((byte*)&(struct Point) get::p+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero OFFSET_STRUCT_POINT_Y in [27] stackidx(byte,(const byte) get::OFFSET_STACK_RETURN+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) get::return_y#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (struct Point) get::return#0 and assignment [20] (struct Point) get::return#0 ← struct-unwound {(byte) get::return_x#0, (byte) get::return_y#0}
+Eliminating unused variable (struct Point) get::return#0 and assignment [22] (struct Point) get::return#0 ← struct-unwound {(byte) get::return_x#0, (byte) get::return_y#0}
 Eliminating unused constant (const byte) get::OFFSET_STACK_RETURN
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
-Rewriting division to use shift [15] (byte~) get::$0 ← (byte) get::i#0 / (byte) 2
+Rewriting division to use shift [17] (byte~) get::$0 ← (byte) get::i#0 / (byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to get:24 print:30 
+Calls in [main] to get:25 print:32 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Renumbering block @3 to @1
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
@@ -204,7 +210,7 @@ FINAL CONTROL FLOW GRAPH
   [0] (byte) idx ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
-  [1] callprepare main 
+  [1] phi()
   [2] callexecute main 
   to:@end
 @end: scope:[]  from @1
@@ -249,16 +255,18 @@ main::@return: scope:[main]  from main::@1
   [22] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [23] callprepare get (byte) main::i 
-  [24] callexecute get 
-  [25] (byte~) main::$1_x ← stackpull(byte)
-  [26] (byte~) main::$1_y ← stackpull(byte)
-  [27] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x
-  [28] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y
-  [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) 
-  [30] callexecute print 
+  [23] stackpush(byte) ← (byte) main::i
+  sideeffect stackpushbytes((number) 1)
+  [25] callexecute get 
+  [26] (byte~) main::$1_x ← stackpull(byte)
+  [27] (byte~) main::$1_y ← stackpull(byte)
+  [28] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x
+  [29] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y
+  [30] stackpush(byte) ← *((byte*)&(struct Point) main::p)
+  [31] stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)
+  [32] callexecute print 
   sideeffect stackpullbytes((number) 2)
-  [32] (byte) main::i ← ++ (byte) main::i
+  [34] (byte) main::i ← ++ (byte) main::i
   to:main::@1
 
 null depth in calling loop Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1  in scope print
@@ -277,11 +285,11 @@ __stackcall (struct Point()) get((byte) get::i)
 (byte) get::return_x#0 2.0
 (byte) get::return_y
 (byte) get::return_y#0 2.0
-(byte) idx loadstore 0.6666666666666666
+(byte) idx loadstore 0.6086956521739131
 __stackcall (void()) main()
 (byte~) main::$1_x 11.0
 (byte~) main::$1_y 11.0
-(byte) main::i loadstore 2.9166666666666665
+(byte) main::i loadstore 3.2857142857142856
 (struct Point) main::p loadstore
 __stackcall (void()) print((byte) print::p_x , (byte) print::p_y)
 (byte) print::p_x
@@ -347,10 +355,11 @@ __bbegin:
   // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] callprepare main 
   // [2] callexecute main  -- jsr 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
@@ -457,37 +466,37 @@ main: {
     rts
     // main::@2
   __b2:
-    // [23] callprepare get (byte) main::i  [(byte) get::i#0] -- _stackpushbyte_=vbuz1 
+    // [23] stackpush(byte) ← (byte) main::i -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
-    // [23] callprepare get (byte) main::i  -- _stackpushbyte_1 
+    // sideeffect stackpushbytes((number) 1) -- _stackpushbyte_1 
     pha
-    // [24] callexecute get  -- jsr 
+    // [25] callexecute get  -- jsr 
     jsr get
-    // [25] (byte~) main::$1_x ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
+    // [26] (byte~) main::$1_x ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
     pla
     sta.z __1_x
-    // [26] (byte~) main::$1_y ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
+    // [27] (byte~) main::$1_y ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
     pla
     sta.z __1_y
-    // [27] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x -- _deref_pbuc1=vbuz1 
+    // [28] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x -- _deref_pbuc1=vbuz1 
     lda.z __1_x
     sta.z p
-    // [28] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y -- _deref_pbuc1=vbuz1 
+    // [29] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y -- _deref_pbuc1=vbuz1 
     lda.z __1_y
     sta p+OFFSET_STRUCT_POINT_Y
-    // [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [(byte) print::p_x#0] -- _stackpushbyte_=_deref_pbuc1 
+    // [30] stackpush(byte) ← *((byte*)&(struct Point) main::p) -- _stackpushbyte_=_deref_pbuc1 
     lda.z p
     pha
-    // [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [(byte) print::p_y#1] -- _stackpushbyte_=_deref_pbuc1 
+    // [31] stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) -- _stackpushbyte_=_deref_pbuc1 
     lda p+OFFSET_STRUCT_POINT_Y
     pha
-    // [30] callexecute print  -- jsr 
+    // [32] callexecute print  -- jsr 
     jsr print
     // sideeffect stackpullbytes((number) 2) -- _stackpullbyte_2 
     pla
     pla
-    // [32] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    // [34] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }
@@ -495,43 +504,45 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (byte) idx ← (byte) 0 [ idx get::p main::p ] (  [ idx get::p main::p ] ) always clobbers reg byte a 
-Statement [4] (byte) print::p_x#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_X) [ idx print::p_x#0 ] ( main:2::print:30 [ get::p main::i main::p idx print::p_x#0 ] ) always clobbers reg byte a reg byte x 
-Statement [5] (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:2::print:30 [ get::p main::i main::p idx print::p_x#0 print::p_y#0 ] ) always clobbers reg byte a reg byte x 
+Statement [4] (byte) print::p_x#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_X) [ idx print::p_x#0 ] ( main:2::print:32 [ get::p main::i main::p idx print::p_x#0 ] ) always clobbers reg byte a reg byte x 
+Statement [5] (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:2::print:32 [ get::p main::i main::p idx print::p_x#0 print::p_y#0 ] ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ print::p_x#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:3 [ print::p_x#0 ]
-Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:30 [ get::p main::i main::p idx print::p_y#0 ] ) always clobbers reg byte a reg byte y 
+Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:32 [ get::p main::i main::p idx print::p_y#0 ] ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ print::p_y#0 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ print::p_y#0 ]
-Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:30 [ get::p main::i main::p idx ] ) always clobbers reg byte a reg byte y 
-Statement [11] (byte) get::i#0 ← stackidx(byte,(const byte) get::OFFSET_STACK_I) [ get::i#0 get::p ] ( main:2::get:24 [ idx main::i main::p get::i#0 get::p ] ) always clobbers reg byte a reg byte x 
-Statement [12] (byte~) get::$0 ← (byte) get::i#0 >> (byte) 1 [ get::i#0 get::$0 get::p ] ( main:2::get:24 [ idx main::i main::p get::i#0 get::$0 get::p ] ) always clobbers reg byte a 
+Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:32 [ get::p main::i main::p idx ] ) always clobbers reg byte a reg byte y 
+Statement [11] (byte) get::i#0 ← stackidx(byte,(const byte) get::OFFSET_STACK_I) [ get::i#0 get::p ] ( main:2::get:25 [ idx main::i main::p get::i#0 get::p ] ) always clobbers reg byte a reg byte x 
+Statement [12] (byte~) get::$0 ← (byte) get::i#0 >> (byte) 1 [ get::i#0 get::$0 get::p ] ( main:2::get:25 [ idx main::i main::p get::i#0 get::$0 get::p ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ get::i#0 ]
-Statement [17] stackidx(byte,(byte) 0) ← (byte) get::return_x#0 [ get::p get::return_y#0 ] ( main:2::get:24 [ idx main::i main::p get::p get::return_y#0 ] ) always clobbers reg byte x 
+Statement [17] stackidx(byte,(byte) 0) ← (byte) get::return_x#0 [ get::p get::return_y#0 ] ( main:2::get:25 [ idx main::i main::p get::p get::return_y#0 ] ) always clobbers reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:8 [ get::return_y#0 ]
-Statement [18] stackidx(byte,(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) get::return_y#0 [ get::p ] ( main:2::get:24 [ idx main::i main::p get::p ] ) always clobbers reg byte x 
+Statement [18] stackidx(byte,(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) get::return_y#0 [ get::p ] ( main:2::get:25 [ idx main::i main::p get::p ] ) always clobbers reg byte x 
 Statement [20] (byte) main::i ← (byte) 0 [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
 Statement [21] if((byte) main::i<(byte) 5) goto main::@2 [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
-Statement [23] callprepare get (byte) main::i  [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
-Statement [25] (byte~) main::$1_x ← stackpull(byte) [ idx get::p main::i main::$1_x main::p ] ( main:2 [ idx get::p main::i main::$1_x main::p ] ) always clobbers reg byte a 
-Statement [26] (byte~) main::$1_y ← stackpull(byte) [ idx get::p main::i main::$1_x main::$1_y main::p ] ( main:2 [ idx get::p main::i main::$1_x main::$1_y main::p ] ) always clobbers reg byte a 
+Statement [23] stackpush(byte) ← (byte) main::i [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
+Statement [26] (byte~) main::$1_x ← stackpull(byte) [ idx get::p main::i main::$1_x main::p ] ( main:2 [ idx get::p main::i main::$1_x main::p ] ) always clobbers reg byte a 
+Statement [27] (byte~) main::$1_y ← stackpull(byte) [ idx get::p main::i main::$1_x main::$1_y main::p ] ( main:2 [ idx get::p main::i main::$1_x main::$1_y main::p ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ main::$1_x ]
-Statement [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
+Statement [30] stackpush(byte) ← *((byte*)&(struct Point) main::p) [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
+Statement [31] stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes((number) 2) always clobbers reg byte a 
 Statement [0] (byte) idx ← (byte) 0 [ idx get::p main::p ] (  [ idx get::p main::p ] ) always clobbers reg byte a 
-Statement [4] (byte) print::p_x#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_X) [ idx print::p_x#0 ] ( main:2::print:30 [ get::p main::i main::p idx print::p_x#0 ] ) always clobbers reg byte a reg byte x 
-Statement [5] (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:2::print:30 [ get::p main::i main::p idx print::p_x#0 print::p_y#0 ] ) always clobbers reg byte a reg byte x 
-Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:30 [ get::p main::i main::p idx print::p_y#0 ] ) always clobbers reg byte a reg byte y 
-Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:30 [ get::p main::i main::p idx ] ) always clobbers reg byte a reg byte y 
-Statement [11] (byte) get::i#0 ← stackidx(byte,(const byte) get::OFFSET_STACK_I) [ get::i#0 get::p ] ( main:2::get:24 [ idx main::i main::p get::i#0 get::p ] ) always clobbers reg byte a reg byte x 
-Statement [12] (byte~) get::$0 ← (byte) get::i#0 >> (byte) 1 [ get::i#0 get::$0 get::p ] ( main:2::get:24 [ idx main::i main::p get::i#0 get::$0 get::p ] ) always clobbers reg byte a 
-Statement [17] stackidx(byte,(byte) 0) ← (byte) get::return_x#0 [ get::p get::return_y#0 ] ( main:2::get:24 [ idx main::i main::p get::p get::return_y#0 ] ) always clobbers reg byte x 
-Statement [18] stackidx(byte,(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) get::return_y#0 [ get::p ] ( main:2::get:24 [ idx main::i main::p get::p ] ) always clobbers reg byte x 
+Statement [4] (byte) print::p_x#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_X) [ idx print::p_x#0 ] ( main:2::print:32 [ get::p main::i main::p idx print::p_x#0 ] ) always clobbers reg byte a reg byte x 
+Statement [5] (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:2::print:32 [ get::p main::i main::p idx print::p_x#0 print::p_y#0 ] ) always clobbers reg byte a reg byte x 
+Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:32 [ get::p main::i main::p idx print::p_y#0 ] ) always clobbers reg byte a reg byte y 
+Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:32 [ get::p main::i main::p idx ] ) always clobbers reg byte a reg byte y 
+Statement [11] (byte) get::i#0 ← stackidx(byte,(const byte) get::OFFSET_STACK_I) [ get::i#0 get::p ] ( main:2::get:25 [ idx main::i main::p get::i#0 get::p ] ) always clobbers reg byte a reg byte x 
+Statement [12] (byte~) get::$0 ← (byte) get::i#0 >> (byte) 1 [ get::i#0 get::$0 get::p ] ( main:2::get:25 [ idx main::i main::p get::i#0 get::$0 get::p ] ) always clobbers reg byte a 
+Statement [17] stackidx(byte,(byte) 0) ← (byte) get::return_x#0 [ get::p get::return_y#0 ] ( main:2::get:25 [ idx main::i main::p get::p get::return_y#0 ] ) always clobbers reg byte x 
+Statement [18] stackidx(byte,(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) get::return_y#0 [ get::p ] ( main:2::get:25 [ idx main::i main::p get::p ] ) always clobbers reg byte x 
 Statement [20] (byte) main::i ← (byte) 0 [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
 Statement [21] if((byte) main::i<(byte) 5) goto main::@2 [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
-Statement [23] callprepare get (byte) main::i  [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
-Statement [25] (byte~) main::$1_x ← stackpull(byte) [ idx get::p main::i main::$1_x main::p ] ( main:2 [ idx get::p main::i main::$1_x main::p ] ) always clobbers reg byte a 
-Statement [26] (byte~) main::$1_y ← stackpull(byte) [ idx get::p main::i main::$1_x main::$1_y main::p ] ( main:2 [ idx get::p main::i main::$1_x main::$1_y main::p ] ) always clobbers reg byte a 
-Statement [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
+Statement [23] stackpush(byte) ← (byte) main::i [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
+Statement [26] (byte~) main::$1_x ← stackpull(byte) [ idx get::p main::i main::$1_x main::p ] ( main:2 [ idx get::p main::i main::$1_x main::p ] ) always clobbers reg byte a 
+Statement [27] (byte~) main::$1_y ← stackpull(byte) [ idx get::p main::i main::$1_x main::$1_y main::p ] ( main:2 [ idx get::p main::i main::$1_x main::$1_y main::p ] ) always clobbers reg byte a 
+Statement [30] stackpush(byte) ← *((byte*)&(struct Point) main::p) [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
+Statement [31] stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) [ idx get::p main::i main::p ] ( main:2 [ idx get::p main::i main::p ] ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes((number) 2) always clobbers reg byte a 
 Potential registers zp[1]:2 [ idx ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ print::p_x#0 ] : zp[1]:3 , reg byte y , 
@@ -547,10 +558,10 @@ Potential registers zp[2]:12 [ main::p ] : zp[2]:12 ,
 Potential registers zp[2]:14 [ get::p ] : zp[2]:14 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 11: zp[1]:10 [ main::$1_x ] 11: zp[1]:11 [ main::$1_y ] 2.92: zp[1]:9 [ main::i ] 0: zp[2]:12 [ main::p ] 
+Uplift Scope [main] 11: zp[1]:10 [ main::$1_x ] 11: zp[1]:11 [ main::$1_y ] 3.29: zp[1]:9 [ main::i ] 0: zp[2]:12 [ main::p ] 
 Uplift Scope [get] 3: zp[1]:5 [ get::i#0 ] 2: zp[1]:6 [ get::$0 ] 2: zp[1]:7 [ get::return_x#0 ] 2: zp[1]:8 [ get::return_y#0 ] 0: zp[2]:14 [ get::p ] 
 Uplift Scope [print] 2: zp[1]:3 [ print::p_x#0 ] 1.33: zp[1]:4 [ print::p_y#0 ] 
-Uplift Scope [] 0.67: zp[1]:2 [ idx ] 
+Uplift Scope [] 0.61: zp[1]:2 [ idx ] 
 Uplift Scope [Point] 
 
 Uplifting [main] best 937 combination reg byte x [ main::$1_x ] reg byte a [ main::$1_y ] zp[1]:9 [ main::i ] zp[2]:12 [ main::p ] 
@@ -587,10 +598,11 @@ __bbegin:
   // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] callprepare main 
   // [2] callexecute main  -- jsr 
   jsr main
   // [3] phi from @1 to @end [phi:@1->@end]
@@ -684,34 +696,34 @@ main: {
     rts
     // main::@2
   __b2:
-    // [23] callprepare get (byte) main::i  [(byte) get::i#0] -- _stackpushbyte_=vbuz1 
+    // [23] stackpush(byte) ← (byte) main::i -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
-    // [23] callprepare get (byte) main::i  -- _stackpushbyte_1 
+    // sideeffect stackpushbytes((number) 1) -- _stackpushbyte_1 
     pha
-    // [24] callexecute get  -- jsr 
+    // [25] callexecute get  -- jsr 
     jsr get
-    // [25] (byte~) main::$1_x ← stackpull(byte) -- vbuxx=_stackpullbyte_ 
+    // [26] (byte~) main::$1_x ← stackpull(byte) -- vbuxx=_stackpullbyte_ 
     pla
     tax
-    // [26] (byte~) main::$1_y ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    // [27] (byte~) main::$1_y ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
-    // [27] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x -- _deref_pbuc1=vbuxx 
+    // [28] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x -- _deref_pbuc1=vbuxx 
     stx.z p
-    // [28] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y -- _deref_pbuc1=vbuaa 
+    // [29] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y -- _deref_pbuc1=vbuaa 
     sta p+OFFSET_STRUCT_POINT_Y
-    // [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [(byte) print::p_x#0] -- _stackpushbyte_=_deref_pbuc1 
+    // [30] stackpush(byte) ← *((byte*)&(struct Point) main::p) -- _stackpushbyte_=_deref_pbuc1 
     lda.z p
     pha
-    // [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [(byte) print::p_y#1] -- _stackpushbyte_=_deref_pbuc1 
+    // [31] stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) -- _stackpushbyte_=_deref_pbuc1 
     lda p+OFFSET_STRUCT_POINT_Y
     pha
-    // [30] callexecute print  -- jsr 
+    // [32] callexecute print  -- jsr 
     jsr print
     // sideeffect stackpullbytes((number) 2) -- _stackpullbyte_2 
     pla
     pla
-    // [32] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    // [34] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }
@@ -729,6 +741,7 @@ Removing instruction ldx.z p
 Replacing instruction ldy p+OFFSET_STRUCT_POINT_Y with TAY
 Replacing instruction lda.z p with TXA
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b1_from___bbegin:
 Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b1:
@@ -761,14 +774,14 @@ __stackcall (struct Point()) get((byte) get::i)
 (byte) get::return_x#0 reg byte x 2.0
 (byte) get::return_y
 (byte) get::return_y#0 reg byte y 2.0
-(byte) idx loadstore zp[1]:2 0.6666666666666666
+(byte) idx loadstore zp[1]:2 0.6086956521739131
 __stackcall (void()) main()
 (byte~) main::$1_x reg byte x 11.0
 (byte~) main::$1_y reg byte a 11.0
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte) main::i loadstore zp[1]:3 2.9166666666666665
+(byte) main::i loadstore zp[1]:3 3.2857142857142856
 (struct Point) main::p loadstore zp[2]:4
 __stackcall (void()) print((byte) print::p_x , (byte) print::p_y)
 (label) print::@return
@@ -814,8 +827,8 @@ __bbegin:
   // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
+  // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
-  // [1] callprepare main 
   // [2] callexecute main  -- jsr 
   jsr main
   rts
@@ -913,37 +926,37 @@ main: {
     // main::@2
   __b2:
     // get(i)
-    // [23] callprepare get (byte) main::i  [(byte) get::i#0] -- _stackpushbyte_=vbuz1 
+    // [23] stackpush(byte) ← (byte) main::i -- _stackpushbyte_=vbuz1 
     lda.z i
     pha
-    // [23] callprepare get (byte) main::i  -- _stackpushbyte_1 
+    // sideeffect stackpushbytes((number) 1) -- _stackpushbyte_1 
     pha
-    // [24] callexecute get  -- jsr 
+    // [25] callexecute get  -- jsr 
     jsr get
-    // [25] (byte~) main::$1_x ← stackpull(byte) -- vbuxx=_stackpullbyte_ 
+    // [26] (byte~) main::$1_x ← stackpull(byte) -- vbuxx=_stackpullbyte_ 
     pla
     tax
-    // [26] (byte~) main::$1_y ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    // [27] (byte~) main::$1_y ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     // p = get(i)
-    // [27] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x -- _deref_pbuc1=vbuxx 
+    // [28] *((byte*)&(struct Point) main::p) ← (byte~) main::$1_x -- _deref_pbuc1=vbuxx 
     stx.z p
-    // [28] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y -- _deref_pbuc1=vbuaa 
+    // [29] *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte~) main::$1_y -- _deref_pbuc1=vbuaa 
     sta p+OFFSET_STRUCT_POINT_Y
     // print(p)
-    // [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [(byte) print::p_x#0] -- _stackpushbyte_=_deref_pbuc1 
+    // [30] stackpush(byte) ← *((byte*)&(struct Point) main::p) -- _stackpushbyte_=_deref_pbuc1 
     txa
     pha
-    // [29] callprepare print *((byte*)&(struct Point) main::p) *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y)  [(byte) print::p_y#1] -- _stackpushbyte_=_deref_pbuc1 
+    // [31] stackpush(byte) ← *((byte*)&(struct Point) main::p+(const byte) OFFSET_STRUCT_POINT_Y) -- _stackpushbyte_=_deref_pbuc1 
     lda p+OFFSET_STRUCT_POINT_Y
     pha
-    // [30] callexecute print  -- jsr 
+    // [32] callexecute print  -- jsr 
     jsr print
     // sideeffect stackpullbytes((number) 2) -- _stackpullbyte_2 
     pla
     pla
     // for(char i=0;i<5;i++)
-    // [32] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
+    // [34] (byte) main::i ← ++ (byte) main::i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }

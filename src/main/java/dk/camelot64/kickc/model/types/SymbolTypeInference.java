@@ -125,6 +125,8 @@ public class SymbolTypeInference {
          return ((ConstantStructValue) rValue).getStructType();
       } else if(rValue instanceof StackPullValue) {
          return ((StackPullValue) rValue).getType();
+      } else if(rValue instanceof StackPushValue) {
+         return ((StackPushValue) rValue).getType();
       }
       if(type == null) {
          throw new InternalError("Cannot infer type for " + rValue.toString());

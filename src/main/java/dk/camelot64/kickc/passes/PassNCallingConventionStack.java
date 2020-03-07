@@ -143,6 +143,40 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
          }
       }
 
+      // Convert callprepare(xxx,yyy,) stackpush(type)=xxx, ...;
+      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+         ListIterator<Statement> stmtIt = block.getStatements().listIterator();
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementCallPrepare) {
+               final StatementCallPrepare call = (StatementCallPrepare) statement;
+               Procedure procedure = getScope().getProcedure(call.getProcedure());
+               if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+                  stmtIt.previous();
+                  final StatementSource source = call.getSource();
+                  final List<Comment> comments = call.getComments();
+                  final List<Variable> parameterDefs = procedure.getParameters();
+                  for(int i=0;i<parameterDefs.size();i++) {
+                     final RValue parameterVal = call.getParameters().get(i);
+                     final Variable parameterDef = parameterDefs.get(i);
+                     generateStackPushValues(parameterVal, parameterDef.getType(), statement.getSource(), statement.getComments(), stmtIt);
+                  }
+                  // Push additional bytes for padding if needed
+                  long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
+                  long parametersByteSize = CallingConventionStack.getParametersByteSize(procedure);
+                  final long stackPadBytes = stackFrameByteSize - parametersByteSize;
+                  if(stackFrameByteSize > parametersByteSize) {
+                     // Add padding to the stack to make room for the return value
+                        stmtIt.add(new StatementExprSideEffect( new StackPushBytes(new ConstantInteger(stackPadBytes)), source, comments));
+                  }
+                  stmtIt.next();
+                  stmtIt.remove();
+               }
+            }
+         }
+      }
+
+
 
       return false;
    }
@@ -185,7 +219,7 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
     * @param symbolType The type of the value
     * @param source The source line
     * @param comments The comments
-    * @param stmtIt The statment iterator used to add statements to.
+    * @param stmtIt The statement iterator used to add statements to.
     */
    private void generateStackPullValues(RValue value, SymbolType symbolType, StatementSource source, List<Comment> comments, ListIterator<Statement> stmtIt) {
       if(!(value instanceof ValueList) || !(symbolType instanceof SymbolTypeStruct)) {
@@ -202,6 +236,34 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
             final Variable memberVar = memberVars.get(i);
             final RValue memberValue = memberValues.get(i);
             generateStackPullValues(memberValue, memberVar.getType(), source, comments, stmtIt);
+         }
+      }
+   }
+
+   /**
+    * Generate stack push stackpull(type)=xxx assignments
+    *
+    * @param value The value to push
+    * @param symbolType The type of the value
+    * @param source The source line
+    * @param comments The comments
+    * @param stmtIt The statement iterator used to add statements to.
+    */
+   private void generateStackPushValues(RValue value, SymbolType symbolType, StatementSource source, List<Comment> comments, ListIterator<Statement> stmtIt) {
+      if(!(value instanceof ValueList) || !(symbolType instanceof SymbolTypeStruct)) {
+         // A simple value to put on the stack
+         final StatementAssignment stackPull = new StatementAssignment(new StackPushValue(symbolType), value, false, source, comments);
+         stmtIt.add(stackPull);
+         getLog().append("Calling convention " + Procedure.CallingConvention.STACK_CALL + " adding stack push " + stackPull);
+      } else {
+         // A struct to put on the stack
+         final List<RValue> memberValues = ((ValueList) value).getList();
+         final StructDefinition structDefinition = ((SymbolTypeStruct) symbolType).getStructDefinition(getScope());
+         final List<Variable> memberVars = new ArrayList<>(structDefinition.getAllVars(false));
+         for(int i = 0; i < memberVars.size(); i++) {
+            final Variable memberVar = memberVars.get(i);
+            final RValue memberValue = memberValues.get(i);
+            generateStackPushValues(memberValue, memberVar.getType(), source, comments, stmtIt);
          }
       }
    }

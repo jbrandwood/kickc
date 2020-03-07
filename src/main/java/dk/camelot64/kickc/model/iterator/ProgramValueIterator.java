@@ -267,7 +267,8 @@ public class ProgramValueIterator {
             value instanceof StructZero ||
             value instanceof Label ||
             value instanceof LabelRef ||
-            value instanceof StackPullValue
+            value instanceof StackPullValue ||
+            value instanceof StackPushValue
       ) {
          // No sub values
       } else {

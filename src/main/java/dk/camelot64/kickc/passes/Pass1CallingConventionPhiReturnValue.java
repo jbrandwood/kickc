@@ -8,42 +8,61 @@ import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.types.SymbolType;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Set;
 
 /**
- * Pass that modifies a control flow graph to call procedures by passing return value through registers for {@link Procedure.CallingConvention#PHI_CALL}
+ * Handles return values for {@link Procedure.CallingConvention#PHI_CALL} procedure calls by passing the return value through variable versions.
  */
-public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor {
+public class Pass1CallingConventionPhiReturnValue {
 
    private Program program;
 
-   public Pass1ProcedureCallsReturnValue(Program program) {
+   public Pass1CallingConventionPhiReturnValue(Program program) {
       this.program = program;
    }
 
-   public ControlFlowGraph generate() {
-      ControlFlowGraph generated = visitGraph(program.getGraph());
-      return generated;
-   }
-
-   @Override
-   public StatementCall visitCall(StatementCall origCall) {
-      // Procedure strategy implemented is currently variable-based transfer of parameters/return values
-      // Generate return value assignment
-      ProcedureRef procedureRef = origCall.getProcedure();
-      Procedure procedure = program.getScope().getProcedure(procedureRef);
-      // If not PHI-call - skip
-      if(!Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
-         StatementCall copyCall = super.visitCall(origCall);
-         copyCall.setProcedure(procedureRef);
-         return copyCall;
+   public void execute() {
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         ListIterator<Statement> stmtIt = block.getStatements().listIterator();
+         while(stmtIt.hasNext()) {
+            Statement statement = stmtIt.next();
+            if(statement instanceof StatementCall) {
+               StatementCall call = (StatementCall) statement;
+               ProcedureRef procedureRef = call.getProcedure();
+               Procedure procedure = program.getScope().getProcedure(procedureRef);
+               if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
+                  handlePhiCall(call, procedure, block, stmtIt);
+               }
+            }
+         }
       }
 
-      String procedureName = origCall.getProcedureName();
-      StatementCall copyCall = new StatementCall(null, procedureName, null, origCall.getSource(), origCall.getComments());
-      copyCall.setProcedure(procedureRef);
-      addStatementToCurrentBlock(copyCall);
-      getCurrentBlock().setCallSuccessor(procedure.getLabel().getRef());
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementReturn) {
+               StatementReturn statementReturn = (StatementReturn) statement;
+               Procedure procedure = (Procedure) program.getScope().getScope(block.getScope());
+               if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
+                  statementReturn.setValue(null);
+               }
+            }
+         }
+      }
+
+   }
+
+
+   /**
+    * Handle PHI-call by assigning return value to LValue and updating all variables modified inside the procedure.
+    * @param call The call statement
+    * @param procedure The procedure
+    * @param block The block containing the call
+    * @param stmtIt Iterator used for adding statements
+    */
+   void handlePhiCall(StatementCall call, Procedure procedure, ControlFlowBlock block, ListIterator<Statement> stmtIt) {
+      // Generate return value assignment
+      block.setCallSuccessor(procedure.getLabel().getRef());
       if(!SymbolType.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
          Label returnBlockLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
@@ -63,12 +82,14 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
          if(returnVarFinal == null) {
             throw new RuntimeException("Error! Cannot find final return variable for " + procedure.getFullName());
          }
-         StatementAssignment returnAssignment = new StatementAssignment(origCall.getlValue(), returnVarFinal, origCall.isInitialAssignment(), origCall.getSource(), new ArrayList<>());
-         addStatementToCurrentBlock(returnAssignment);
+         // Add assignment of final return variable version to lValue
+         StatementAssignment returnAssignment = new StatementAssignment(call.getlValue(), returnVarFinal, call.isInitialAssignment(), call.getSource(), new ArrayList<>());
+         stmtIt.add(returnAssignment);
+         call.setlValue(null);
       }
 
       // Patch versions of rValues in assignments for vars modified in the call
-      LabelRef successor = getOrigBlock().getDefaultSuccessor();
+      LabelRef successor = block.getDefaultSuccessor();
       ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(Statement statement : successorBlock.getStatements()) {
@@ -79,7 +100,7 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
                VariableRef unversionedVar = new VariableRef(phiVar.getFullNameUnversioned());
                if(modifiedVars.contains(unversionedVar)) {
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                     if(phiRValue.getPredecessor().equals(getOrigBlock().getLabel())) {
+                     if(phiRValue.getPredecessor().equals(block.getLabel())) {
                         VariableRef procReturnVersion = findReturnVersion(procedure, unversionedVar);
                         phiRValue.setrValue(procReturnVersion);
                      }
@@ -89,7 +110,6 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
          }
       }
 
-      return null;
    }
 
    private VariableRef findReturnVersion(Procedure procedure, VariableRef assignedVar) {
@@ -110,17 +130,5 @@ public class Pass1ProcedureCallsReturnValue extends ControlFlowGraphCopyVisitor 
       throw new RuntimeException("Variable " + assignedVar + "modified by procedure " + procedure + " not found in @return block " + block.getLabel());
    }
 
-   @Override
-   public StatementReturn visitReturn(StatementReturn orig) {
-      ControlFlowBlock currentBlock = getCurrentBlock();
-      String currentProcName = currentBlock.getLabel().getScopeNames();
-      Procedure procedure = program.getScope().getProcedure(currentProcName);
-      // If not PHI-call - skip
-      if(!Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()))
-         return super.visitReturn(orig);
-
-      addStatementToCurrentBlock(new StatementReturn(null, orig.getSource(), orig.getComments()));
-      return null;
-   }
 }
 

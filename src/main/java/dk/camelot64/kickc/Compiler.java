@@ -280,7 +280,7 @@ public class Compiler {
       //getLog().append("CONTROL FLOW GRAPH (SSA)");
       //getLog().append(program.getGraph().toString(program));
 
-      program.setGraph(new Pass1ProcedureCallsReturnValue(program).generate());
+      new Pass1CallingConventionPhiReturnValue(program).execute();
       //getLog().append("CONTROL FLOW GRAPH (BEFORE LIST UNWINDING)");
       //getLog().append(program.getGraph().toString(program));
       new PassNUnwindLValueLists(program).execute();

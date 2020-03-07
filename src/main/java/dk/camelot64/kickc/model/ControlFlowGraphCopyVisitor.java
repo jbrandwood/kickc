@@ -222,7 +222,7 @@ public class ControlFlowGraphCopyVisitor extends ControlFlowGraphBaseVisitor<Obj
    }
 
    @Override
-   public Object visitStackPull(StatementStackPull orig) {
-      return new StatementStackPull(orig.getPullBytes(), orig.getSource(), orig.getComments());
+   public Object visitStackPull(StatementExprSideEffect orig) {
+      return new StatementExprSideEffect(orig.getExpression(), orig.getSource(), orig.getComments());
    }
 }

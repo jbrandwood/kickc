@@ -166,9 +166,9 @@ public class ProgramValueIterator {
          for(String label : referenced.keySet()) {
             execute(new ProgramValue.ProgramValueAsmReferenced(statementAsm, label), handler, statement, statementsIt, block);
          }
-      } else if(statement instanceof StatementStackPull) {
-         StatementStackPull statementStackPull = (StatementStackPull) statement;
-         execute(new ProgramValue.StackPullBytes(statementStackPull), handler, statement, statementsIt, block);
+      } else if(statement instanceof StatementExprSideEffect) {
+         StatementExprSideEffect statementExprSideEffect = (StatementExprSideEffect) statement;
+         execute(new ProgramValue.ExprSideEffect(statementExprSideEffect), handler, statement, statementsIt, block);
       }
    }
 
@@ -255,6 +255,10 @@ public class ProgramValueIterator {
          subValues.add(new ProgramValue.ProgramValueMempySource((MemcpyValue) value));
       } else if(value instanceof StackIdxValue) {
          subValues.add(new ProgramValue.ProgramValueStackIdxValue((StackIdxValue) value));
+      } else if(value instanceof StackPullBytes) {
+         subValues.add(new ProgramValue.ProgramValueStackPullBytes((StackPullBytes) value));
+      } else if(value instanceof StackPushBytes) {
+         subValues.add(new ProgramValue.ProgramValueStackPushBytes((StackPushBytes) value));
       } else if(value == null ||
             value instanceof SymbolVariableRef ||
             value instanceof Variable ||

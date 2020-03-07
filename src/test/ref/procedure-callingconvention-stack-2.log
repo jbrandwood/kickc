@@ -15,7 +15,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @2
   callprepare plus (number) $1234 (number) $2345 
   callexecute plus 
-  stackpull((number) 2)
+  sideeffect stackpullbytes((number) 2)
   (word~) main::$0 ← stackpull(word)
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
   *((const word*) SCREEN + (number~) main::$1) ← (word~) main::$0
@@ -128,7 +128,7 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] callprepare plus (word) $1234 (word) $2345 
   [5] callexecute plus 
-  stackpull((number) 2)
+  sideeffect stackpullbytes((number) 2)
   [7] (word~) main::$0 ← stackpull(word)
   [8] *((const word*) SCREEN) ← (word~) main::$0
   to:main::@return
@@ -214,7 +214,7 @@ main: {
     pha
     // [5] callexecute plus  -- jsr 
     jsr plus
-    // stackpull((number) 2) -- _stackpullbyte_2 
+    // sideeffect stackpullbytes((number) 2) -- _stackpullbyte_2 
     pla
     pla
     // [7] (word~) main::$0 ← stackpull(word) -- vwuz1=_stackpullword_ 
@@ -278,7 +278,7 @@ plus: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] callprepare plus (word) $1234 (word) $2345  [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement stackpull((number) 2) always clobbers reg byte a 
+Statement sideeffect stackpullbytes((number) 2) always clobbers reg byte a 
 Statement [7] (word~) main::$0 ← stackpull(word) [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
 Statement [8] *((const word*) SCREEN) ← (word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
 Statement [10] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:5 [ plus::a#0 ] ) always clobbers reg byte a reg byte x 
@@ -342,7 +342,7 @@ main: {
     pha
     // [5] callexecute plus  -- jsr 
     jsr plus
-    // stackpull((number) 2) -- _stackpullbyte_2 
+    // sideeffect stackpullbytes((number) 2) -- _stackpullbyte_2 
     pla
     pla
     // [7] (word~) main::$0 ← stackpull(word) -- vwuz1=_stackpullword_ 
@@ -483,7 +483,7 @@ main: {
     pha
     // [5] callexecute plus  -- jsr 
     jsr plus
-    // stackpull((number) 2) -- _stackpullbyte_2 
+    // sideeffect stackpullbytes((number) 2) -- _stackpullbyte_2 
     pla
     pla
     // [7] (word~) main::$0 ← stackpull(word) -- vwuz1=_stackpullword_ 

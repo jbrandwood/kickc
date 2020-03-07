@@ -313,22 +313,22 @@ public interface ProgramValue {
    }
 
    /** Number of bytes constant used by stack pull . */
-   class StackPullBytes implements ProgramValue {
+   class ExprSideEffect implements ProgramValue {
 
-      private StatementStackPull statementStackPull;
+      private StatementExprSideEffect statementExprSideEffect;
 
-      StackPullBytes(StatementStackPull statementStackPull) {
-         this.statementStackPull = statementStackPull;
+      ExprSideEffect(StatementExprSideEffect statementExprSideEffect) {
+         this.statementExprSideEffect = statementExprSideEffect;
       }
 
       @Override
       public Value get() {
-         return statementStackPull.getPullBytes();
+         return statementExprSideEffect.getExpression();
       }
 
       @Override
-      public void set(Value value) {
-         statementStackPull.setPullBytes((ConstantValue) value);
+       public void set(Value value) {
+         statementExprSideEffect.setExpression((RValue) value);
       }
 
    }
@@ -813,6 +813,46 @@ public interface ProgramValue {
       @Override
       public void set(Value val) {
          stackIdxValue.setStackOffset((ConstantValue) val);
+      }
+
+   }
+
+   /** Value inside a StackPullBytes . */
+   class ProgramValueStackPullBytes implements ProgramValue {
+      private final StackPullBytes stackPullBytes;
+
+      ProgramValueStackPullBytes(StackPullBytes stackPullBytes) {
+         this.stackPullBytes = stackPullBytes;
+      }
+
+      @Override
+      public Value get() {
+         return stackPullBytes.getBytes();
+      }
+
+      @Override
+      public void set(Value val) {
+         stackPullBytes.setBytes((ConstantValue) val);
+      }
+
+   }
+
+   /** Value inside a StackPushBytes . */
+   class ProgramValueStackPushBytes implements ProgramValue {
+      private final StackPushBytes stackPushBytes;
+
+      ProgramValueStackPushBytes(StackPushBytes stackPushBytes) {
+         this.stackPushBytes = stackPushBytes;
+      }
+
+      @Override
+      public Value get() {
+         return stackPushBytes.getBytes();
+      }
+
+      @Override
+      public void set(Value val) {
+         stackPushBytes.setBytes((ConstantValue) val);
       }
 
    }

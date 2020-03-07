@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
+import dk.camelot64.kickc.model.statements.StatementExprSideEffect;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
@@ -55,6 +56,14 @@ public class AsmFragmentInstanceSpecFactory {
       this.bindings = new LinkedHashMap<>();
       ScopeRef codeScope = program.getStatementInfos().getBlock(conditionalJump).getScope();
       String signature = conditionalJumpSignature(conditionalJump, block, graph);
+      this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+   }
+
+   public AsmFragmentInstanceSpecFactory(StatementExprSideEffect exprSideEffect, Program program) {
+      this.program = program;
+      this.bindings = new LinkedHashMap<>();
+      ScopeRef codeScope = program.getStatementInfos().getBlock(exprSideEffect).getScope();
+      String signature = bind(exprSideEffect.getExpression());
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
    }
 
@@ -373,6 +382,12 @@ public class AsmFragmentInstanceSpecFactory {
          SymbolType type = ((StackPullValue) value).getType();
          String typeShortName = Operators.getCastUnary(type).getAsmOperator().replace("_", "");
          return "_stackpull" + typeShortName + "_";
+      } else if(value instanceof StackPullBytes) {
+         final ConstantInteger bytes = (ConstantInteger) ((StackPullBytes) value).getBytes();
+         return "_stackpullbyte_" + AsmFormat.getAsmNumber(bytes.getInteger());
+      } else if(value instanceof StackPushBytes) {
+         final ConstantInteger bytes = (ConstantInteger) ((StackPushBytes) value).getBytes();
+         return "_stackpushbyte_" + AsmFormat.getAsmNumber(bytes.getInteger());
       } else if(value instanceof MemsetValue) {
          MemsetValue memsetValue = (MemsetValue) value;
          ConstantValue sizeConst = memsetValue.getSize();

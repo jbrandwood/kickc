@@ -281,7 +281,7 @@ public class TestPrograms {
 
    @Test
    public void testProcedureCallingConventionStack11() throws IOException, URISyntaxException {
-      compileAndCompare("procedure-callingconvention-stack-11");
+      compileAndCompare("procedure-callingconvention-stack-11"); //, log().verboseCreateSsa().verboseSSAOptimize());
    }
 
    @Test

@@ -131,8 +131,7 @@ public class PassNCallingConventionStack extends Pass2SsaOptimization {
                   final List<Comment> comments = call.getComments();
                   if(stackCleanBytes > 0) {
                      // Clean up the stack
-                     stmtIt.add(new StatementStackPull( new ConstantInteger(stackCleanBytes), source, comments));
-                     //String pullSignature = "_stackpullbyte_" + stackCleanBytes;
+                     stmtIt.add(new StatementExprSideEffect( new StackPullBytes(new ConstantInteger(stackCleanBytes)), source, comments));
                   }
                   final RValue value = call.getlValue();
                   if(value!=null)

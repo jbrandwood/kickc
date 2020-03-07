@@ -882,6 +882,7 @@ public class Pass4CodeGeneration {
 
                }
             }
+            //throw new RuntimeException("E!");
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
@@ -889,10 +890,10 @@ public class Pass4CodeGeneration {
                asm.getCurrentChunk().setFragment("jsr");
                asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
             }
-         } else if(statement instanceof StatementStackPull) {
-            String pullSignature = "_stackpullbyte_" + AsmFormat.getAsmConstant(program, ((StatementStackPull) statement).getPullBytes(), 99, block.getScope());
-            AsmFragmentInstanceSpec pullFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, pullSignature, new LinkedHashMap<>(), block.getScope());
-            generateAsm(asm, pullFragmentInstanceSpec);
+         } else if(statement instanceof StatementExprSideEffect) {
+            AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementExprSideEffect)statement, program);
+            ensureEncoding(asm, asmFragmentInstanceSpecFactory);
+            generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
          } else if(statement instanceof StatementReturn) {
             Procedure procedure = null;
             ScopeRef scope = block.getScope();

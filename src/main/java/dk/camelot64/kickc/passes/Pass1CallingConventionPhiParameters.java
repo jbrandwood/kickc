@@ -12,18 +12,18 @@ import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
 
-/** Pass that modifies a control flow graph to call {@link Procedure.CallingConvention#PHI_CALL} procedures by passing parameters through registers */
-public class Pass1ProcedureCallParameters extends ControlFlowGraphCopyVisitor {
+/** Handle calling convention {@link Procedure.CallingConvention#PHI_CALL} by passing parameters through variables */
+public class Pass1CallingConventionPhiParameters extends ControlFlowGraphCopyVisitor {
 
    private Program program;
 
-   public Pass1ProcedureCallParameters(Program program) {
+   public Pass1CallingConventionPhiParameters(Program program) {
       this.program = program;
    }
 
    private Map<LabelRef, LabelRef> splitBlockMap = new LinkedHashMap<>();
 
-   public void generate() {
+   public void execute() {
       ControlFlowGraph generated = visitGraph(program.getGraph());
 
       // Fix phi predecessors for any blocks has a split block as predecessor

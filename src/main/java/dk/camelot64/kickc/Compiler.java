@@ -261,28 +261,11 @@ public class Compiler {
          getLog().append(program.getProcedureModifiedVars().toString(program));
       }
 
-      //getLog().append("CONTROL FLOW GRAPH (CLEANED)");
-      //getLog().append(program.getGraph().toString(program));
-
-      // Handle calling convention stack
-      new PassNCallingConventionStack(program).execute();
-
-      new Pass1ProcedureCallParameters(program).generate();
-      //getLog().append("CONTROL FLOW GRAPH (BEFORE LIST UNWINDING)");
-      //getLog().append(program.getGraph().toString(program));
+      new Pass1CallingConventionStack(program).execute();
+      new Pass1CallingConventionPhiParameters(program).execute();
       new PassNUnwindLValueLists(program).execute();
-
-      //getLog().append("CONTROL FLOW GRAPH (CALL PARAMETERS)");
-      //getLog().append(program.getGraph().toString(program));
-
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
-
-      //getLog().append("CONTROL FLOW GRAPH (SSA)");
-      //getLog().append(program.getGraph().toString(program));
-
       new Pass1CallingConventionPhiReturnValue(program).execute();
-      //getLog().append("CONTROL FLOW GRAPH (BEFORE LIST UNWINDING)");
-      //getLog().append(program.getGraph().toString(program));
       new PassNUnwindLValueLists(program).execute();
 
       getLog().append("\nCONTROL FLOW GRAPH SSA");

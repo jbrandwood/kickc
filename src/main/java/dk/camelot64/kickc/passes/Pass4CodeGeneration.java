@@ -102,7 +102,7 @@ public class Pass4CodeGeneration {
             linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
             linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
             final ControlFlowBlock beginBlock = getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
-            String entryName = (beginBlock==null)?"main":"__bbegin";
+            String entryName = (beginBlock == null) ? "main" : "__bbegin";
             linkScriptBody = linkScriptBody.replace("%E", entryName);
             asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
          }
@@ -852,13 +852,10 @@ public class Pass4CodeGeneration {
             asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
-            Procedure procedure = getScope().getProcedure(call.getProcedure());
-            if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-               asm.getCurrentChunk().setFragment("jsr");
-               asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
-            }
+            asm.getCurrentChunk().setFragment("jsr");
+            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementExprSideEffect) {
-            AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementExprSideEffect)statement, program);
+            AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementExprSideEffect) statement, program);
             ensureEncoding(asm, asmFragmentInstanceSpecFactory);
             generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
          } else if(statement instanceof StatementReturn) {

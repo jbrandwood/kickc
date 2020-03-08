@@ -4,9 +4,9 @@
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label SCREEN = $400
-  .const OFFSET_STRUCT_POINT_Y = 1
   .const STACK_BASE = $103
-  .label idx = 2
+  .const OFFSET_STRUCT_POINT_Y = 1
+  .label idx = 3
 __bbegin:
   // idx = 0
   lda #0
@@ -39,20 +39,14 @@ print: {
     // }
     rts
 }
-// get(byte register(X) i)
 get: {
     .const OFFSET_STACK_I = 0
-    .label p = 6
     tsx
     lda STACK_BASE+OFFSET_STACK_I,x
     tax
     // i/2
     txa
     lsr
-    // p = { i, i/2 }
-    stx.z p
-    sta p+OFFSET_STRUCT_POINT_Y
-    // return p;
     tay
     // }
     txa
@@ -64,9 +58,7 @@ get: {
     rts
 }
 main: {
-    .label i = 3
-    .label p = 4
-    // i=0
+    .label i = 2
     lda #0
     sta.z i
   __b1:
@@ -82,16 +74,15 @@ main: {
     pha
     pha
     jsr get
+    // p = get(i)
+    pla
+    tay
     pla
     tax
-    pla
-    // p = get(i)
-    stx.z p
-    sta p+OFFSET_STRUCT_POINT_Y
     // print(p)
-    txa
+    tya
     pha
-    lda p+OFFSET_STRUCT_POINT_Y
+    txa
     pha
     jsr print
     pla

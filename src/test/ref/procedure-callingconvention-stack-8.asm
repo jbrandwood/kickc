@@ -12,24 +12,19 @@ __bbegin:
   jsr main
   rts
 printline: {
-    .label i = 3
-    // i=0
-    lda #0
-    sta.z i
+    ldx #0
   __b1:
     // for(char i=0; i<40; i++)
-    lda.z i
-    cmp #$28
+    cpx #$28
     bcc __b2
     // }
     rts
   __b2:
     // SCREEN[i] = '*'
     lda #'*'
-    ldy.z i
-    sta SCREEN,y
+    sta SCREEN,x
     // for(char i=0; i<40; i++)
-    inc.z i
+    inx
     jmp __b1
 }
 main: {

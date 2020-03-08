@@ -12,10 +12,10 @@ CONTROL FLOW GRAPH SSA
 
 __stackcall (void()) main()
 main: scope:[main]  from
-  (byte) main::val ← (byte) 0
-  (byte) main::val ← *((const byte*) SCREEN)
+  (byte) main::val#0 ← (byte) 0
+  (byte) main::val#1 ← *((const byte*) SCREEN)
   callexecute printline 
-  *((const byte*) SCREEN + (number) $50) ← (byte) main::val
+  *((const byte*) SCREEN + (number) $50) ← (byte) main::val#1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -23,15 +23,17 @@ main::@return: scope:[main]  from main
 
 __stackcall (void()) printline()
 printline: scope:[printline]  from
-  (byte) printline::i ← (byte) 0
+  (byte) printline::i#0 ← (byte) 0
   to:printline::@1
 printline::@1: scope:[printline]  from printline printline::@2
-  (bool~) printline::$0 ← (byte) printline::i < (number) $28
+  (byte) printline::i#2 ← phi( printline/(byte) printline::i#0 printline::@2/(byte) printline::i#1 )
+  (bool~) printline::$0 ← (byte) printline::i#2 < (number) $28
   if((bool~) printline::$0) goto printline::@2
   to:printline::@return
 printline::@2: scope:[printline]  from printline::@1
-  *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*'
-  (byte) printline::i ← ++ (byte) printline::i
+  (byte) printline::i#3 ← phi( printline::@1/(byte) printline::i#2 )
+  *((const byte*) SCREEN + (byte) printline::i#3) ← (byte) '*'
+  (byte) printline::i#1 ← ++ (byte) printline::i#3
   to:printline::@1
 printline::@return: scope:[printline]  from printline::@1
   return 
@@ -48,16 +50,22 @@ SYMBOL TABLE SSA
 (const byte*) SCREEN = (byte*)(number) $400
 __stackcall (void()) main()
 (label) main::@return
-(byte) main::val loadstore
+(byte) main::val
+(byte) main::val#0
+(byte) main::val#1
 __stackcall (void()) printline()
 (bool~) printline::$0
 (label) printline::@1
 (label) printline::@2
 (label) printline::@return
-(byte) printline::i loadstore
+(byte) printline::i
+(byte) printline::i#0
+(byte) printline::i#1
+(byte) printline::i#2
+(byte) printline::i#3
 
-Adding number conversion cast (unumber) $50 in *((const byte*) SCREEN + (number) $50) ← (byte) main::val
-Adding number conversion cast (unumber) $28 in (bool~) printline::$0 ← (byte) printline::i < (number) $28
+Adding number conversion cast (unumber) $50 in *((const byte*) SCREEN + (number) $50) ← (byte) main::val#1
+Adding number conversion cast (unumber) $28 in (bool~) printline::$0 ← (byte) printline::i#2 < (number) $28
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $50
@@ -66,23 +74,36 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $50
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) printline::$0 [7] if((byte) printline::i<(byte) $28) goto printline::@2
+Alias (byte) printline::i#2 = (byte) printline::i#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition (bool~) printline::$0 [8] if((byte) printline::i#2<(byte) $28) goto printline::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) main::val#0 = 0
+Constant (const byte) printline::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused constant (const byte) main::val#0
+Successful SSA optimization PassNEliminateUnusedVars
+Inlining constant with var siblings (const byte) printline::i#0
+Constant inlined printline::i#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+$50)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of printline
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to printline:11 
+Calls in [main] to printline:12 
 
-Created 0 initial phi equivalence classes
-Coalesced down to 0 phi equivalence classes
+Created 1 initial phi equivalence classes
+Coalesced [10] printline::i#4 ← printline::i#1
+Coalesced down to 1 phi equivalence classes
 Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
+Adding NOP phi() at start of printline
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
@@ -97,25 +118,25 @@ FINAL CONTROL FLOW GRAPH
 
 __stackcall (void()) printline()
 printline: scope:[printline]  from
-  [4] (byte) printline::i ← (byte) 0
+  [4] phi()
   to:printline::@1
 printline::@1: scope:[printline]  from printline printline::@2
-  [5] if((byte) printline::i<(byte) $28) goto printline::@2
+  [5] (byte) printline::i#2 ← phi( printline/(byte) 0 printline::@2/(byte) printline::i#1 )
+  [6] if((byte) printline::i#2<(byte) $28) goto printline::@2
   to:printline::@return
 printline::@return: scope:[printline]  from printline::@1
-  [6] return 
+  [7] return 
   to:@return
 printline::@2: scope:[printline]  from printline::@1
-  [7] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*'
-  [8] (byte) printline::i ← ++ (byte) printline::i
+  [8] *((const byte*) SCREEN + (byte) printline::i#2) ← (byte) '*'
+  [9] (byte) printline::i#1 ← ++ (byte) printline::i#2
   to:printline::@1
 
 __stackcall (void()) main()
 main: scope:[main]  from
-  [9] (byte) main::val ← (byte) 0
-  [10] (byte) main::val ← *((const byte*) SCREEN)
+  [10] (byte) main::val#1 ← *((const byte*) SCREEN)
   [11] callexecute printline 
-  [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val
+  [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val#1
   to:main::@return
 main::@return: scope:[main]  from main
   [13] return 
@@ -124,18 +145,21 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 __stackcall (void()) main()
-(byte) main::val loadstore 3.0
+(byte) main::val
+(byte) main::val#1 2.0
 __stackcall (void()) printline()
-(byte) printline::i loadstore 11.5
+(byte) printline::i
+(byte) printline::i#1 22.0
+(byte) printline::i#2 14.666666666666666
 
 Initial phi equivalence classes
-Added variable printline::i to live range equivalence class [ printline::i ]
-Added variable main::val to live range equivalence class [ main::val ]
+[ printline::i#2 printline::i#1 ]
+Added variable main::val#1 to live range equivalence class [ main::val#1 ]
 Complete equivalence classes
-[ printline::i ]
-[ main::val ]
-Allocated zp[1]:2 [ printline::i ]
-Allocated zp[1]:3 [ main::val ]
+[ printline::i#2 printline::i#1 ]
+[ main::val#1 ]
+Allocated zp[1]:2 [ printline::i#2 printline::i#1 ]
+Allocated zp[1]:3 [ main::val#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -165,43 +189,45 @@ __bend:
   // printline
 printline: {
     .label i = 2
-    // [4] (byte) printline::i ← (byte) 0 -- vbuz1=vbuc1 
+    // [5] phi from printline to printline::@1 [phi:printline->printline::@1]
+  __b1_from_printline:
+    // [5] phi (byte) printline::i#2 = (byte) 0 [phi:printline->printline::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // printline::@1
   __b1:
-    // [5] if((byte) printline::i<(byte) $28) goto printline::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((byte) printline::i#2<(byte) $28) goto printline::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$28
     bcc __b2
     jmp __breturn
     // printline::@return
   __breturn:
-    // [6] return 
+    // [7] return 
     rts
     // printline::@2
   __b2:
-    // [7] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) printline::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'*'
     ldy.z i
     sta SCREEN,y
-    // [8] (byte) printline::i ← ++ (byte) printline::i -- vbuz1=_inc_vbuz1 
+    // [9] (byte) printline::i#1 ← ++ (byte) printline::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
+    // [5] phi from printline::@2 to printline::@1 [phi:printline::@2->printline::@1]
+  __b1_from___b2:
+    // [5] phi (byte) printline::i#2 = (byte) printline::i#1 [phi:printline::@2->printline::@1#0] -- register_copy 
     jmp __b1
 }
   // main
 main: {
     .label val = 3
-    // [9] (byte) main::val ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z val
-    // [10] (byte) main::val ← *((const byte*) SCREEN) -- vbuz1=_deref_pbuc1 
+    // [10] (byte) main::val#1 ← *((const byte*) SCREEN) -- vbuz1=_deref_pbuc1 
     lda SCREEN
     sta.z val
     // [11] callexecute printline  -- jsr 
     jsr printline
-    // [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val#1 -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN+$50
     jmp __breturn
@@ -213,27 +239,21 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) printline::i ← (byte) 0 [ printline::i ] ( main:2::printline:11 [ main::val printline::i ] ) always clobbers reg byte a 
-Statement [5] if((byte) printline::i<(byte) $28) goto printline::@2 [ printline::i ] ( main:2::printline:11 [ main::val printline::i ] ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' [ printline::i ] ( main:2::printline:11 [ main::val printline::i ] ) always clobbers reg byte a reg byte y 
-Statement [9] (byte) main::val ← (byte) 0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [10] (byte) main::val ← *((const byte*) SCREEN) [ main::val ] ( main:2 [ main::val ] ) always clobbers reg byte a 
-Statement [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ printline::i ] : zp[1]:2 , 
-Potential registers zp[1]:3 [ main::val ] : zp[1]:3 , 
+Statement [8] *((const byte*) SCREEN + (byte) printline::i#2) ← (byte) '*' [ printline::i#2 ] ( main:2::printline:11 [ main::val#1 printline::i#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::val#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ printline::i#2 printline::i#1 ]
+Statement [8] *((const byte*) SCREEN + (byte) printline::i#2) ← (byte) '*' [ printline::i#2 ] ( main:2::printline:11 [ main::val#1 printline::i#2 ] ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ printline::i#2 printline::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::val#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [printline] 11.5: zp[1]:2 [ printline::i ] 
-Uplift Scope [main] 3: zp[1]:3 [ main::val ] 
+Uplift Scope [printline] 36.67: zp[1]:2 [ printline::i#2 printline::i#1 ] 
+Uplift Scope [main] 2: zp[1]:3 [ main::val#1 ] 
 Uplift Scope [] 
 
-Uplifting [printline] best 345 combination zp[1]:2 [ printline::i ] 
-Uplifting [main] best 345 combination zp[1]:3 [ main::val ] 
-Uplifting [] best 345 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ printline::i ]
-Uplifting [printline] best 345 combination zp[1]:2 [ printline::i ] 
-Attempting to uplift remaining variables inzp[1]:3 [ main::val ]
-Uplifting [main] best 345 combination zp[1]:3 [ main::val ] 
+Uplifting [printline] best 292 combination reg byte x [ printline::i#2 printline::i#1 ] 
+Uplifting [main] best 286 combination reg byte y [ main::val#1 ] 
+Uplifting [] best 286 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -261,46 +281,41 @@ __bend_from___b1:
 __bend:
   // printline
 printline: {
-    .label i = 2
-    // [4] (byte) printline::i ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    // [5] phi from printline to printline::@1 [phi:printline->printline::@1]
+  __b1_from_printline:
+    // [5] phi (byte) printline::i#2 = (byte) 0 [phi:printline->printline::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     jmp __b1
     // printline::@1
   __b1:
-    // [5] if((byte) printline::i<(byte) $28) goto printline::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i
-    cmp #$28
+    // [6] if((byte) printline::i#2<(byte) $28) goto printline::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$28
     bcc __b2
     jmp __breturn
     // printline::@return
   __breturn:
-    // [6] return 
+    // [7] return 
     rts
     // printline::@2
   __b2:
-    // [7] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) printline::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
-    ldy.z i
-    sta SCREEN,y
-    // [8] (byte) printline::i ← ++ (byte) printline::i -- vbuz1=_inc_vbuz1 
-    inc.z i
+    sta SCREEN,x
+    // [9] (byte) printline::i#1 ← ++ (byte) printline::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [5] phi from printline::@2 to printline::@1 [phi:printline::@2->printline::@1]
+  __b1_from___b2:
+    // [5] phi (byte) printline::i#2 = (byte) printline::i#1 [phi:printline::@2->printline::@1#0] -- register_copy 
     jmp __b1
 }
   // main
 main: {
-    .label val = 3
-    // [9] (byte) main::val ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z val
-    // [10] (byte) main::val ← *((const byte*) SCREEN) -- vbuz1=_deref_pbuc1 
-    lda SCREEN
-    sta.z val
+    // [10] (byte) main::val#1 ← *((const byte*) SCREEN) -- vbuyy=_deref_pbuc1 
+    ldy SCREEN
     // [11] callexecute printline  -- jsr 
     jsr printline
-    // [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN+$50
+    // [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val#1 -- _deref_pbuc1=vbuyy 
+    sty SCREEN+$50
     jmp __breturn
     // main::@return
   __breturn:
@@ -321,7 +336,9 @@ Removing instruction __b1:
 Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __bend:
+Removing instruction __b1_from_printline:
 Removing instruction __breturn:
+Removing instruction __b1_from___b2:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
@@ -337,19 +354,22 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN = (byte*) 1024
 __stackcall (void()) main()
 (label) main::@return
-(byte) main::val loadstore zp[1]:3 3.0
+(byte) main::val
+(byte) main::val#1 reg byte y 2.0
 __stackcall (void()) printline()
 (label) printline::@1
 (label) printline::@2
 (label) printline::@return
-(byte) printline::i loadstore zp[1]:2 11.5
+(byte) printline::i
+(byte) printline::i#1 reg byte x 22.0
+(byte) printline::i#2 reg byte x 14.666666666666666
 
-zp[1]:2 [ printline::i ]
-zp[1]:3 [ main::val ]
+reg byte x [ printline::i#2 printline::i#1 ]
+reg byte y [ main::val#1 ]
 
 
 FINAL ASSEMBLER
-Score: 297
+Score: 211
 
   // File Comments
 // Test a procedure with calling convention stack
@@ -368,52 +388,43 @@ Score: 297
   // @end
   // printline
 printline: {
-    .label i = 2
-    // i=0
-    // [4] (byte) printline::i ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    // [5] phi from printline to printline::@1 [phi:printline->printline::@1]
+    // [5] phi (byte) printline::i#2 = (byte) 0 [phi:printline->printline::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     // printline::@1
   __b1:
     // for(char i=0; i<40; i++)
-    // [5] if((byte) printline::i<(byte) $28) goto printline::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i
-    cmp #$28
+    // [6] if((byte) printline::i#2<(byte) $28) goto printline::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$28
     bcc __b2
     // printline::@return
     // }
-    // [6] return 
+    // [7] return 
     rts
     // printline::@2
   __b2:
     // SCREEN[i] = '*'
-    // [7] *((const byte*) SCREEN + (byte) printline::i) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const byte*) SCREEN + (byte) printline::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
-    ldy.z i
-    sta SCREEN,y
+    sta SCREEN,x
     // for(char i=0; i<40; i++)
-    // [8] (byte) printline::i ← ++ (byte) printline::i -- vbuz1=_inc_vbuz1 
-    inc.z i
+    // [9] (byte) printline::i#1 ← ++ (byte) printline::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [5] phi from printline::@2 to printline::@1 [phi:printline::@2->printline::@1]
+    // [5] phi (byte) printline::i#2 = (byte) printline::i#1 [phi:printline::@2->printline::@1#0] -- register_copy 
     jmp __b1
 }
   // main
 main: {
-    .label val = 3
-    // val
-    // [9] (byte) main::val ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z val
     // val = *SCREEN
-    // [10] (byte) main::val ← *((const byte*) SCREEN) -- vbuz1=_deref_pbuc1 
-    lda SCREEN
-    sta.z val
+    // [10] (byte) main::val#1 ← *((const byte*) SCREEN) -- vbuyy=_deref_pbuc1 
+    ldy SCREEN
     // printline()
     // [11] callexecute printline  -- jsr 
     jsr printline
     // SCREEN[80] = val
-    // [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN+$50
+    // [12] *((const byte*) SCREEN+(byte) $50) ← (byte) main::val#1 -- _deref_pbuc1=vbuyy 
+    sty SCREEN+$50
     // main::@return
     // }
     // [13] return 

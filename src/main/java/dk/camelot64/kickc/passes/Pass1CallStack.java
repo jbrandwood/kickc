@@ -53,6 +53,20 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       if(createStackBase)
          CallingConventionStack.getStackBaseConstant(getScope());
 
+      // Set variables modified in STACK_CALL procedures to load/store
+      for(Procedure procedure : getScope().getAllProcedures(true)) {
+         if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+            Set<VariableRef> modifiedVars = getProgram().getProcedureModifiedVars().getModifiedVars(procedure.getRef());
+            for(VariableRef modifiedVar : modifiedVars) {
+               final Variable variable = getScope().getVariable(modifiedVar);
+               if(variable.isKindPhiMaster()) {
+                  getLog().append("Converting PHI-variable modified inside __stackcall procedure "+procedure.getFullName()+"() to load/store "+variable.toString(getProgram()));
+                  variable.setKind(Variable.Kind.LOAD_STORE);
+               }
+            }
+         }
+      }
+
       // Transform STACK_CALL calls to call-prepare, call-execute, call-finalize
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();

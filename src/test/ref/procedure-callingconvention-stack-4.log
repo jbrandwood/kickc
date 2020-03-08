@@ -1,6 +1,7 @@
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) @1
 Culled Empty Block (label) plus::@1
+Converting PHI-variable modified inside __stackcall procedure plus() to load/store (byte) i
 Calling convention STACK_CALL adding prepare/execute/finalize for (byte~) main::$1 ← call plus (byte) '0' (byte) main::v 
 Calling convention STACK_CALL replacing param((byte) plus::a) with stackidx(byte,(const byte) plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param((byte) plus::b) with stackidx(byte,(const byte) plus::OFFSET_STACK_B)
@@ -11,16 +12,14 @@ Calling convention STACK_CALL adding stack push stackpush(byte) ← main::v
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) i#0 ← (byte) 0
+  (byte) i ← (byte) 0
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) i#8 ← phi( @2/(byte) i#9 )
   (byte) main::a#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte) i#4 ← phi( main/(byte) i#8 main::@1/(byte) i#4 )
   (byte) main::a#2 ← phi( main/(byte) main::a#0 main::@1/(byte) main::a#1 )
   (number~) main::$0 ← (byte) main::a#2 + (number) 1
   (byte) main::v#0 ← (number~) main::$0
@@ -31,23 +30,20 @@ main::@1: scope:[main]  from main main::@1
   (byte~) main::$1 ← stackpull(byte)
   (byte) main::w#0 ← (byte~) main::$1
   (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2
-  *((const byte*) SCREEN + (byte) i#4) ← (byte~) main::$2
+  *((const byte*) SCREEN + (byte) i) ← (byte~) main::$2
   (byte) main::a#1 ← (byte) main::a#2 + rangenext(0,1)
   (bool~) main::$3 ← (byte) main::a#1 != rangelast(0,1)
   if((bool~) main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  (byte) i#5 ← phi( main::@1/(byte) i#4 )
-  (byte) i#1 ← (byte) i#5
   return 
   to:@return
 
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 plus: scope:[plus]  from
-  (byte) i#6 ← phi( )
   (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A)
   (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B)
-  (byte) i#2 ← ++ (byte) i#6
+  (byte) i ← ++ (byte) i
   (byte~) plus::$0 ← (byte) plus::a#0 + (byte) plus::b#0
   (byte) plus::return#0 ← (byte~) plus::$0
   to:plus::@return
@@ -57,12 +53,9 @@ plus::@return: scope:[plus]  from plus
   return 
   to:@return
 @2: scope:[]  from @begin
-  (byte) i#9 ← phi( @begin/(byte) i#0 )
   call main 
   to:@3
 @3: scope:[]  from @2
-  (byte) i#7 ← phi( @2/(byte) i#1 )
-  (byte) i#3 ← (byte) i#7
   to:@end
 @end: scope:[]  from @3
 
@@ -73,17 +66,7 @@ SYMBOL TABLE SSA
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
 (const word) STACK_BASE = (word) $103
-(byte) i
-(byte) i#0
-(byte) i#1
-(byte) i#2
-(byte) i#3
-(byte) i#4
-(byte) i#5
-(byte) i#6
-(byte) i#7
-(byte) i#8
-(byte) i#9
+(byte) i loadstore
 (void()) main()
 (number~) main::$0
 (byte~) main::$1
@@ -124,29 +107,14 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::a#2 + (byte) 1
 Alias (byte) main::v#0 = (byte~) main::$0 
 Alias (byte) main::w#0 = (byte~) main::$1 
-Alias (byte) i#1 = (byte) i#5 (byte) i#4 
 Alias (byte) plus::return#0 = (byte~) plus::$0 (byte) plus::return#1 
-Alias (byte) i#0 = (byte) i#9 
-Alias (byte) i#3 = (byte) i#7 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) i#8 (byte) i#0
-Identical Phi Values (byte) i#1 (byte) i#8
-Identical Phi Values (byte) i#3 (byte) i#1
-Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [14] if((byte) main::a#1!=rangelast(0,1)) goto main::@1
+Simple Condition (bool~) main::$3 [13] if((byte) main::a#1!=rangelast(0,1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) i#0 = 0
 Constant (const byte) main::a#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [12] main::a#1 ← ++ main::a#2 to ++
-Resolved ranged comparison value [14] if(main::a#1!=rangelast(0,1)) goto main::@1 to (number) 2
-Simplifying expression containing zero SCREEN in [11] *((const byte*) SCREEN + (const byte) i#0) ← (byte~) main::$2
-Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) i#2 and assignment [15] (byte) i#2 ← ++ (byte) i#6
-Eliminating unused constant (const byte) i#0
-Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable - keeping the phi block (byte) i#6
-Successful SSA optimization PassNEliminateUnusedVars
+Resolved ranged next value [11] main::a#1 ← ++ main::a#2 to ++
+Resolved ranged comparison value [13] if(main::a#1!=rangelast(0,1)) goto main::@1 to (number) 2
 Adding number conversion cast (unumber) 2 in if((byte) main::a#1!=(number) 2) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 2
@@ -157,7 +125,6 @@ Inlining constant with var siblings (const byte) main::a#0
 Constant inlined main::a#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
-Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
@@ -172,14 +139,13 @@ Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@3
 Renumbering block @2 to @1
-Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] phi()
+  [0] (byte) i ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -201,7 +167,7 @@ main::@1: scope:[main]  from main main::@1
   sideeffect stackpullbytes((number) 1)
   [11] (byte) main::w#0 ← stackpull(byte)
   [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2
-  [13] *((const byte*) SCREEN) ← (byte~) main::$2
+  [13] *((const byte*) SCREEN + (byte) i) ← (byte~) main::$2
   [14] (byte) main::a#1 ← ++ (byte) main::a#2
   [15] if((byte) main::a#1!=(byte) 2) goto main::@1
   to:main::@return
@@ -213,16 +179,17 @@ __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 plus: scope:[plus]  from
   [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A)
   [18] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B)
-  [19] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0
+  [19] (byte) i ← ++ (byte) i
+  [20] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0
   to:plus::@return
 plus::@return: scope:[plus]  from plus
-  [20] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0
-  [21] return 
+  [21] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0
+  [22] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) i
+(byte) i loadstore 0.85
 (void()) main()
 (byte~) main::$2 22.0
 (byte) main::a
@@ -234,14 +201,15 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::w#0 22.0
 __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 (byte) plus::a
-(byte) plus::a#0 2.0
+(byte) plus::a#0 1.3333333333333333
 (byte) plus::b
-(byte) plus::b#0 4.0
+(byte) plus::b#0 2.0
 (byte) plus::return
 (byte) plus::return#0 4.0
 
 Initial phi equivalence classes
 [ main::a#2 main::a#1 ]
+Added variable i to live range equivalence class [ i ]
 Added variable main::v#0 to live range equivalence class [ main::v#0 ]
 Added variable main::w#0 to live range equivalence class [ main::w#0 ]
 Added variable main::$2 to live range equivalence class [ main::$2 ]
@@ -250,6 +218,7 @@ Added variable plus::b#0 to live range equivalence class [ plus::b#0 ]
 Added variable plus::return#0 to live range equivalence class [ plus::return#0 ]
 Complete equivalence classes
 [ main::a#2 main::a#1 ]
+[ i ]
 [ main::v#0 ]
 [ main::w#0 ]
 [ main::$2 ]
@@ -257,12 +226,13 @@ Complete equivalence classes
 [ plus::b#0 ]
 [ plus::return#0 ]
 Allocated zp[1]:2 [ main::a#2 main::a#1 ]
-Allocated zp[1]:3 [ main::v#0 ]
-Allocated zp[1]:4 [ main::w#0 ]
-Allocated zp[1]:5 [ main::$2 ]
-Allocated zp[1]:6 [ plus::a#0 ]
-Allocated zp[1]:7 [ plus::b#0 ]
-Allocated zp[1]:8 [ plus::return#0 ]
+Allocated zp[1]:3 [ i ]
+Allocated zp[1]:4 [ main::v#0 ]
+Allocated zp[1]:5 [ main::w#0 ]
+Allocated zp[1]:6 [ main::$2 ]
+Allocated zp[1]:7 [ plus::a#0 ]
+Allocated zp[1]:8 [ plus::b#0 ]
+Allocated zp[1]:9 [ plus::return#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -276,8 +246,12 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
+  .label i = 3
   // @begin
 __bbegin:
+  // [0] (byte) i ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z i
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -294,9 +268,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label __2 = 5
-    .label v = 3
-    .label w = 4
+    .label __2 = 6
+    .label v = 4
+    .label w = 5
     .label a = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
@@ -332,9 +306,10 @@ main: {
     clc
     adc.z a
     sta.z __2
-    // [13] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) SCREEN + (byte) i) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __2
-    sta SCREEN
+    ldy.z i
+    sta SCREEN,y
     // [14] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
     inc.z a
     // [15] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -348,14 +323,14 @@ main: {
     rts
 }
   // plus
-// plus(byte zp(6) a, byte zp(7) b)
+// plus(byte zp(7) a, byte zp(8) b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 1
-    .label a = 6
-    .label b = 7
-    .label return = 8
+    .label a = 7
+    .label b = 8
+    .label return = 9
     // [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -364,7 +339,9 @@ plus: {
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
     sta.z b
-    // [19] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuz1=vbuz2_plus_vbuz3 
+    // [19] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [20] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z a
     clc
     adc.z b
@@ -372,58 +349,69 @@ plus: {
     jmp __breturn
     // plus::@return
   __breturn:
-    // [20] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuz1 
+    // [21] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuz1 
     lda.z return
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
-    // [21] return 
+    // [22] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] stackpush(byte) ← (byte) '0' [ main::a#2 main::v#0 ] ( main:2 [ main::a#2 main::v#0 ] ) always clobbers reg byte a 
+Statement [0] (byte) i ← (byte) 0 [ i ] (  [ i ] ) always clobbers reg byte a 
+Statement [7] stackpush(byte) ← (byte) '0' [ i main::a#2 main::v#0 ] ( main:2 [ i main::a#2 main::v#0 ] ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::a#2 main::a#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::v#0 ]
-Statement [8] stackpush(byte) ← (byte) main::v#0 [ main::a#2 ] ( main:2 [ main::a#2 ] ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::v#0 ]
+Statement [8] stackpush(byte) ← (byte) main::v#0 [ i main::a#2 ] ( main:2 [ i main::a#2 ] ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes((number) 1) always clobbers reg byte a 
-Statement [11] (byte) main::w#0 ← stackpull(byte) [ main::a#2 main::w#0 ] ( main:2 [ main::a#2 main::w#0 ] ) always clobbers reg byte a 
-Statement [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ main::a#2 main::$2 ] ( main:2 [ main::a#2 main::$2 ] ) always clobbers reg byte a 
-Statement [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:9 [ main::a#2 plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [11] (byte) main::w#0 ← stackpull(byte) [ i main::a#2 main::w#0 ] ( main:2 [ i main::a#2 main::w#0 ] ) always clobbers reg byte a 
+Statement [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ i main::a#2 main::$2 ] ( main:2 [ i main::a#2 main::$2 ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) SCREEN + (byte) i) ← (byte~) main::$2 [ i main::a#2 ] ( main:2 [ i main::a#2 ] ) always clobbers reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::a#2 main::a#1 ]
+Statement [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ i plus::a#0 ] ( main:2::plus:9 [ main::a#2 i plus::a#0 ] ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::a#2 main::a#1 ]
-Statement [18] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:9 [ main::a#2 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
-Removing always clobbered register reg byte a as potential for zp[1]:6 [ plus::a#0 ]
-Removing always clobbered register reg byte x as potential for zp[1]:6 [ plus::a#0 ]
-Statement [19] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:9 [ main::a#2 plus::return#0 ] ) always clobbers reg byte a 
-Statement [20] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 [ ] ( main:2::plus:9 [ main::a#2 ] ) always clobbers reg byte x 
-Statement [7] stackpush(byte) ← (byte) '0' [ main::a#2 main::v#0 ] ( main:2 [ main::a#2 main::v#0 ] ) always clobbers reg byte a 
-Statement [8] stackpush(byte) ← (byte) main::v#0 [ main::a#2 ] ( main:2 [ main::a#2 ] ) always clobbers reg byte a 
+Statement [18] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ i plus::a#0 plus::b#0 ] ( main:2::plus:9 [ main::a#2 i plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp[1]:7 [ plus::a#0 ]
+Removing always clobbered register reg byte x as potential for zp[1]:7 [ plus::a#0 ]
+Statement [20] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ i plus::return#0 ] ( main:2::plus:9 [ main::a#2 i plus::return#0 ] ) always clobbers reg byte a 
+Statement [21] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 [ i ] ( main:2::plus:9 [ main::a#2 i ] ) always clobbers reg byte x 
+Statement [0] (byte) i ← (byte) 0 [ i ] (  [ i ] ) always clobbers reg byte a 
+Statement [7] stackpush(byte) ← (byte) '0' [ i main::a#2 main::v#0 ] ( main:2 [ i main::a#2 main::v#0 ] ) always clobbers reg byte a 
+Statement [8] stackpush(byte) ← (byte) main::v#0 [ i main::a#2 ] ( main:2 [ i main::a#2 ] ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes((number) 1) always clobbers reg byte a 
-Statement [11] (byte) main::w#0 ← stackpull(byte) [ main::a#2 main::w#0 ] ( main:2 [ main::a#2 main::w#0 ] ) always clobbers reg byte a 
-Statement [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ main::a#2 main::$2 ] ( main:2 [ main::a#2 main::$2 ] ) always clobbers reg byte a 
-Statement [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:9 [ main::a#2 plus::a#0 ] ) always clobbers reg byte a reg byte x 
-Statement [18] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:9 [ main::a#2 plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
-Statement [19] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ plus::return#0 ] ( main:2::plus:9 [ main::a#2 plus::return#0 ] ) always clobbers reg byte a 
-Statement [20] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 [ ] ( main:2::plus:9 [ main::a#2 ] ) always clobbers reg byte x 
-Potential registers zp[1]:2 [ main::a#2 main::a#1 ] : zp[1]:2 , reg byte y , 
-Potential registers zp[1]:3 [ main::v#0 ] : zp[1]:3 , reg byte x , reg byte y , 
-Potential registers zp[1]:4 [ main::w#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:5 [ main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:6 [ plus::a#0 ] : zp[1]:6 , reg byte y , 
-Potential registers zp[1]:7 [ plus::b#0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:8 [ plus::return#0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Statement [11] (byte) main::w#0 ← stackpull(byte) [ i main::a#2 main::w#0 ] ( main:2 [ i main::a#2 main::w#0 ] ) always clobbers reg byte a 
+Statement [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 [ i main::a#2 main::$2 ] ( main:2 [ i main::a#2 main::$2 ] ) always clobbers reg byte a 
+Statement [13] *((const byte*) SCREEN + (byte) i) ← (byte~) main::$2 [ i main::a#2 ] ( main:2 [ i main::a#2 ] ) always clobbers reg byte y 
+Statement [15] if((byte) main::a#1!=(byte) 2) goto main::@1 [ i main::a#1 ] ( main:2 [ i main::a#1 ] ) always clobbers reg byte a 
+Statement [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) [ i plus::a#0 ] ( main:2::plus:9 [ main::a#2 i plus::a#0 ] ) always clobbers reg byte a reg byte x 
+Statement [18] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) [ i plus::a#0 plus::b#0 ] ( main:2::plus:9 [ main::a#2 i plus::a#0 plus::b#0 ] ) always clobbers reg byte a reg byte x 
+Statement [20] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 [ i plus::return#0 ] ( main:2::plus:9 [ main::a#2 i plus::return#0 ] ) always clobbers reg byte a 
+Statement [21] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 [ i ] ( main:2::plus:9 [ main::a#2 i ] ) always clobbers reg byte x 
+Potential registers zp[1]:2 [ main::a#2 main::a#1 ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ i ] : zp[1]:3 , 
+Potential registers zp[1]:4 [ main::v#0 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::w#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$2 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ plus::a#0 ] : zp[1]:7 , reg byte y , 
+Potential registers zp[1]:8 [ plus::b#0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ plus::return#0 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp[1]:4 [ main::w#0 ] 22: zp[1]:5 [ main::$2 ] 21.39: zp[1]:2 [ main::a#2 main::a#1 ] 11: zp[1]:3 [ main::v#0 ] 
-Uplift Scope [plus] 4: zp[1]:7 [ plus::b#0 ] 4: zp[1]:8 [ plus::return#0 ] 2: zp[1]:6 [ plus::a#0 ] 
-Uplift Scope [] 
+Uplift Scope [main] 22: zp[1]:5 [ main::w#0 ] 22: zp[1]:6 [ main::$2 ] 21.39: zp[1]:2 [ main::a#2 main::a#1 ] 11: zp[1]:4 [ main::v#0 ] 
+Uplift Scope [plus] 4: zp[1]:9 [ plus::return#0 ] 2: zp[1]:8 [ plus::b#0 ] 1.33: zp[1]:7 [ plus::a#0 ] 
+Uplift Scope [] 0.85: zp[1]:3 [ i ] 
 
-Uplifting [main] best 661 combination reg byte a [ main::w#0 ] reg byte a [ main::$2 ] reg byte y [ main::a#2 main::a#1 ] reg byte x [ main::v#0 ] 
-Uplifting [plus] best 649 combination reg byte a [ plus::b#0 ] reg byte a [ plus::return#0 ] zp[1]:6 [ plus::a#0 ] 
-Uplifting [] best 649 combination 
-Attempting to uplift remaining variables inzp[1]:6 [ plus::a#0 ]
-Uplifting [plus] best 649 combination zp[1]:6 [ plus::a#0 ] 
-Allocated (was zp[1]:6) zp[1]:2 [ plus::a#0 ]
+Uplifting [main] best 761 combination reg byte a [ main::w#0 ] reg byte a [ main::$2 ] zp[1]:2 [ main::a#2 main::a#1 ] reg byte x [ main::v#0 ] 
+Uplifting [plus] best 749 combination reg byte a [ plus::return#0 ] reg byte a [ plus::b#0 ] zp[1]:7 [ plus::a#0 ] 
+Uplifting [] best 749 combination zp[1]:3 [ i ] 
+Attempting to uplift remaining variables inzp[1]:2 [ main::a#2 main::a#1 ]
+Uplifting [main] best 749 combination zp[1]:2 [ main::a#2 main::a#1 ] 
+Attempting to uplift remaining variables inzp[1]:7 [ plus::a#0 ]
+Uplifting [plus] best 749 combination zp[1]:7 [ plus::a#0 ] 
+Attempting to uplift remaining variables inzp[1]:3 [ i ]
+Uplifting [] best 749 combination zp[1]:3 [ i ] 
+Allocated (was zp[1]:7) zp[1]:4 [ plus::a#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -436,8 +424,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
+  .label i = 3
   // @begin
 __bbegin:
+  // [0] (byte) i ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z i
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -454,10 +446,12 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label a = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z a
     jmp __b1
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
@@ -465,9 +459,8 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1 -- vbuxx=vbuyy_plus_1 
-    tya
-    tax
+    // [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    ldx.z a
     inx
     // [7] stackpush(byte) ← (byte) '0' -- _stackpushbyte_=vbuc1 
     lda #'0'
@@ -481,16 +474,17 @@ main: {
     pla
     // [11] (byte) main::w#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
-    // [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
-    sty.z $ff
+    // [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc.z $ff
-    // [13] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
-    sta SCREEN
-    // [14] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [15] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #2
+    adc.z a
+    // [13] *((const byte*) SCREEN + (byte) i) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+    ldy.z i
+    sta SCREEN,y
+    // [14] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
+    inc.z a
+    // [15] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #2
+    cmp.z a
     bne __b1_from___b1
     jmp __breturn
     // main::@return
@@ -499,12 +493,12 @@ main: {
     rts
 }
   // plus
-// plus(byte zp(2) a, byte register(A) b)
+// plus(byte zp(4) a, byte register(A) b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 1
-    .label a = 2
+    .label a = 4
     // [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -512,16 +506,18 @@ plus: {
     // [18] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
-    // [19] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    // [19] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [20] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
     clc
     adc.z a
     jmp __breturn
     // plus::@return
   __breturn:
-    // [20] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [21] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
-    // [21] return 
+    // [22] return 
     rts
 }
   // File Data
@@ -535,23 +531,20 @@ Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
 Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
 Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
 Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Updating BasicUpstart to call main directly
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __bbegin:
-Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -559,14 +552,14 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte*) SCREEN = (byte*) 1024
 (const word) STACK_BASE = (word) $103
-(byte) i
+(byte) i loadstore zp[1]:3 0.85
 (void()) main()
 (byte~) main::$2 reg byte a 22.0
 (label) main::@1
 (label) main::@return
 (byte) main::a
-(byte) main::a#1 reg byte y 16.5
-(byte) main::a#2 reg byte y 4.888888888888889
+(byte) main::a#1 a zp[1]:2 16.5
+(byte) main::a#2 a zp[1]:2 4.888888888888889
 (byte) main::v
 (byte) main::v#0 reg byte x 11.0
 (byte) main::w
@@ -577,54 +570,64 @@ __stackcall (byte()) plus((byte) plus::a , (byte) plus::b)
 (const byte) plus::OFFSET_STACK_B = (byte) 0
 (const byte) plus::OFFSET_STACK_RETURN = (byte) 1
 (byte) plus::a
-(byte) plus::a#0 a zp[1]:2 2.0
+(byte) plus::a#0 a zp[1]:4 1.3333333333333333
 (byte) plus::b
-(byte) plus::b#0 reg byte a 4.0
+(byte) plus::b#0 reg byte a 2.0
 (byte) plus::return
 (byte) plus::return#0 reg byte a 4.0
 
-reg byte y [ main::a#2 main::a#1 ]
+zp[1]:2 [ main::a#2 main::a#1 ]
+zp[1]:3 [ i ]
 reg byte x [ main::v#0 ]
 reg byte a [ main::w#0 ]
 reg byte a [ main::$2 ]
-zp[1]:2 [ plus::a#0 ]
+zp[1]:4 [ plus::a#0 ]
 reg byte a [ plus::b#0 ]
 reg byte a [ plus::return#0 ]
 
 
 FINAL ASSEMBLER
-Score: 544
+Score: 656
 
   // File Comments
 // Test a procedure with calling convention stack
 // A slightly more complex call
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .const STACK_BASE = $103
+  .label i = 3
   // @begin
+__bbegin:
+  // i = 0
+  // [0] (byte) i ← (byte) 0 -- vbuz1=vbuc1 
+  lda #0
+  sta.z i
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
   // [4] phi from @1 to main [phi:@1->main]
+  jsr main
+  rts
   // [3] phi from @1 to @end [phi:@1->@end]
   // @end
   // main
 main: {
+    .label a = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
-    ldy #0
+    // [5] phi (byte) main::a#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z a
     // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [5] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // v = a+1
-    // [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1 -- vbuxx=vbuyy_plus_1 
-    tya
-    tax
+    // [6] (byte) main::v#0 ← (byte) main::a#2 + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    ldx.z a
     inx
     // plus('0', v)
     // [7] stackpush(byte) ← (byte) '0' -- _stackpushbyte_=vbuc1 
@@ -641,18 +644,19 @@ main: {
     // [11] (byte) main::w#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     // w+a
-    // [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuyy 
-    sty.z $ff
+    // [12] (byte~) main::$2 ← (byte) main::w#0 + (byte) main::a#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
-    adc.z $ff
+    adc.z a
     // SCREEN[i] = w+a
-    // [13] *((const byte*) SCREEN) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
-    sta SCREEN
+    // [13] *((const byte*) SCREEN + (byte) i) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuaa 
+    ldy.z i
+    sta SCREEN,y
     // for(char a:0..1)
-    // [14] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [15] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
-    cpy #2
+    // [14] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
+    inc.z a
+    // [15] if((byte) main::a#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #2
+    cmp.z a
     bne __b1
     // main::@return
     // }
@@ -660,12 +664,12 @@ main: {
     rts
 }
   // plus
-// plus(byte zp(2) a, byte register(A) b)
+// plus(byte zp(4) a, byte register(A) b)
 plus: {
     .const OFFSET_STACK_A = 1
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 1
-    .label a = 2
+    .label a = 4
     // [17] (byte) plus::a#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_A) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -673,16 +677,19 @@ plus: {
     // [18] (byte) plus::b#0 ← stackidx(byte,(const byte) plus::OFFSET_STACK_B) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_B,x
+    // i++;
+    // [19] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    inc.z i
     // return a+b;
-    // [19] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
+    // [20] (byte) plus::return#0 ← (byte) plus::a#0 + (byte) plus::b#0 -- vbuaa=vbuz1_plus_vbuaa 
     clc
     adc.z a
     // plus::@return
     // }
-    // [20] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
+    // [21] stackidx(byte,(const byte) plus::OFFSET_STACK_RETURN) ← (byte) plus::return#0 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
-    // [21] return 
+    // [22] return 
     rts
 }
   // File Data

@@ -16,7 +16,6 @@ __bbegin:
 print: {
     .const OFFSET_STACK_STR = 1
     .const OFFSET_STACK_SPACING = 0
-    .label c = 6
     .label str = 2
     .label spacing = 5
     // }
@@ -48,13 +47,10 @@ print: {
     bne !+
     inc.z str+1
   !:
-    // c=0
-    lda #0
-    sta.z c
+    ldx #0
   __b3:
     // for(char c=0;c<spacing;c++)
-    lda.z c
-    cmp.z spacing
+    cpx.z spacing
     bcc __b4
     jmp __b1
   __b4:
@@ -65,7 +61,7 @@ print: {
     // SCREEN[idx++] = ' ';
     inc.z idx
     // for(char c=0;c<spacing;c++)
-    inc.z c
+    inx
     jmp __b3
 }
 main: {

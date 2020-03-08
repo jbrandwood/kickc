@@ -12,18 +12,13 @@ __bbegin:
   jsr main
   rts
 printother: {
-    .label i = 3
-    // for(char i:0..5)
-    lda #0
-    sta.z i
+    ldx #0
   __b1:
     // (SCREEN+40)[i]++;
-    ldx.z i
     inc SCREEN+$28,x
     // for(char i:0..5)
-    inc.z i
-    lda #6
-    cmp.z i
+    inx
+    cpx #6
     bne __b1
     // }
     rts
@@ -54,10 +49,7 @@ pval: {
     rts
 }
 main: {
-    .label i = 4
-    // for(char i:0..5)
-    lda #0
-    sta.z i
+    ldy #0
   __b1:
     // pval()
     jsr pval
@@ -66,9 +58,8 @@ main: {
     // ival()
     jsr ival
     // for(char i:0..5)
-    inc.z i
-    lda #6
-    cmp.z i
+    iny
+    cpy #6
     bne __b1
     // }
     rts

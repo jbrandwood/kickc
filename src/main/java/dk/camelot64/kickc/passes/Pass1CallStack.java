@@ -63,10 +63,11 @@ public class Pass1CallStack extends Pass2SsaOptimization {
                ProcedureRef procedureRef = call.getProcedure();
                Procedure procedure = getScope().getProcedure(procedureRef);
                if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+                  boolean hasPrepare = (call.getParameters().size() > 0) || !SymbolType.VOID.equals(procedure.getReturnType());
                   stmtIt.remove();
-                  stmtIt.add(new StatementCallPrepare(procedureRef, call.getParameters(), call.getSource(), call.getComments()));
-                  stmtIt.add(new StatementCallExecute(procedureRef, call.getSource(), call.getComments()));
-                  stmtIt.add(new StatementCallFinalize(call.getlValue(), procedureRef, call.getSource(), call.getComments()));
+                  stmtIt.add(new StatementCallPrepare(procedureRef, call.getParameters(), call.getSource(), hasPrepare?call.getComments():Comment.NO_COMMENTS));
+                  stmtIt.add(new StatementCallExecute(procedureRef, call.getSource(), hasPrepare?Comment.NO_COMMENTS:call.getComments()));
+                  stmtIt.add(new StatementCallFinalize(call.getlValue(), procedureRef, call.getSource(), Comment.NO_COMMENTS));
                   getLog().append("Calling convention " + Procedure.CallingConvention.STACK_CALL + " adding prepare/execute/finalize for " + call.toString(getProgram(), false));
                }
             }
@@ -154,12 +155,14 @@ public class Pass1CallStack extends Pass2SsaOptimization {
                if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
                   stmtIt.previous();
                   final StatementSource source = call.getSource();
-                  final List<Comment> comments = call.getComments();
+                  List<Comment> comments = call.getComments();
                   final List<Variable> parameterDefs = procedure.getParameters();
                   for(int i=0;i<parameterDefs.size();i++) {
                      final RValue parameterVal = call.getParameters().get(i);
                      final Variable parameterDef = parameterDefs.get(i);
-                     generateStackPushValues(parameterVal, parameterDef.getType(), statement.getSource(), statement.getComments(), stmtIt);
+                     generateStackPushValues(parameterVal, parameterDef.getType(), source, comments, stmtIt);
+                     // Clear comments - enduring they are only output once
+                     comments = Comment.NO_COMMENTS;
                   }
                   // Push additional bytes for padding if needed
                   long stackFrameByteSize = CallingConventionStack.getStackFrameByteSize(procedure);
@@ -264,6 +267,8 @@ public class Pass1CallStack extends Pass2SsaOptimization {
             final Variable memberVar = memberVars.get(i);
             final RValue memberValue = memberValues.get(i);
             generateStackPushValues(memberValue, memberVar.getType(), source, comments, stmtIt);
+            // Clear comments ensuring they are only output once
+            comments = Comment.NO_COMMENTS;
          }
       }
    }

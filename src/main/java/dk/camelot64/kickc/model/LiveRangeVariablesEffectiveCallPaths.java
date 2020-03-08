@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 import dk.camelot64.kickc.passes.Pass2AliasElimination;
-import dk.camelot64.kickc.passes.calcs.PassNCalcLiveRangesEffective;
+import dk.camelot64.kickc.passes.calcs.PassNCalcLiveRangesEffectiveCallPaths;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Effective variable live ranges for all statements.
  * (Including variables alive in calling methods).
- * Created by {@link PassNCalcLiveRangesEffective}
+ * Created by {@link PassNCalcLiveRangesEffectiveCallPaths}
  */
 public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesEffective {
 
@@ -94,7 +94,7 @@ public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesE
     * @return All combinations of variables alive at the statement
     */
    @Override
-   public AliveCombinationsCallPath getAliveCombinations(Statement statement) {
+   public AliveCombinations getAliveCombinations(Statement statement) {
       AliveCombinationsCallPath stmtCombinations = this.statementAliveCombinations.get(statement.getIndex());
       if(stmtCombinations == null) {
          Collection<VariableRef> aliveAtStmt = statementLiveVariables.get(statement.getIndex());
@@ -150,7 +150,7 @@ public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesE
    }
 
 
-   String getSizeInfo() {
+   public String getSizeInfo() {
       StringBuilder sizeInfo = new StringBuilder();
       if(this.procedureCallPaths != null) {
          AtomicInteger numCallPaths = new AtomicInteger();

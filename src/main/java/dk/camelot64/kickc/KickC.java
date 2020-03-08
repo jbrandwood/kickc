@@ -79,6 +79,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Ocache"}, description = "Optimization Option. Enables a fragment cache file.")
    private boolean optimizeFragmentCache = false;
 
+   //@CommandLine.Option(names = {"-Oliverangecallpath"}, description = "Optimization Option. Enables live ranges per call path optimization, which limits memory usage and code, but takes a lot of compile time.")
+   private boolean optimizeLiveRangeCallPath = true;
+
    @CommandLine.Option(names = {"-v"}, description = "Verbose output describing the compilation process")
    private boolean verbose = false;
 
@@ -163,10 +166,10 @@ public class KickC implements Callable<Void> {
 
       Compiler compiler = new Compiler();
 
-      if(target!=null) {
+      if(target != null) {
          TargetPlatform targetPlatform = TargetPlatform.getTargetPlatform(target);
-         if(targetPlatform==null) {
-            System.err.println("Unknown target platform "+target);
+         if(targetPlatform == null) {
+            System.err.println("Unknown target platform " + target);
             StringBuffer supported = new StringBuffer();
             supported.append("The supported target platforms are: ");
             for(TargetPlatform value : TargetPlatform.values()) {
@@ -178,10 +181,10 @@ public class KickC implements Callable<Void> {
          compiler.setTargetPlatform(targetPlatform);
       }
 
-      if(cpu!=null) {
+      if(cpu != null) {
          TargetCpu targetCpu = TargetCpu.getTargetCpu(cpu);
-         if(targetCpu==null) {
-            System.err.println("Unknown target CPU "+cpu);
+         if(targetCpu == null) {
+            System.err.println("Unknown target CPU " + cpu);
             StringBuffer supported = new StringBuffer();
             supported.append("The supported target CPUs are: ");
             for(TargetCpu value : TargetCpu.values()) {
@@ -252,7 +255,7 @@ public class KickC implements Callable<Void> {
          if(optimizeNoUplift) {
             compiler.setDisableUplift(true);
          }
-         
+
          if(optimizeUpliftCombinations != null) {
             compiler.setUpliftCombinations(optimizeUpliftCombinations);
          }
@@ -267,15 +270,17 @@ public class KickC implements Callable<Void> {
             compiler.disableLoopHeadConstant();
          }
 
+         compiler.setEnableLiveRangeCallPath(optimizeLiveRangeCallPath);
+
          if(warnFragmentMissing) {
             compiler.setWarnFragmentMissing(true);
          }
 
-         if(linkScript!=null) {
+         if(linkScript != null) {
             compiler.setLinkScriptFileName(linkScript);
          }
 
-         if(varModel!=null) {
+         if(varModel != null) {
             List<String> settings = Arrays.asList(varModel.split(","));
             settings = settings.stream().map(String::trim).collect(Collectors.toList());
             try {
@@ -287,10 +292,10 @@ public class KickC implements Callable<Void> {
             }
          }
 
-         if(calling!=null) {
+         if(calling != null) {
             Procedure.CallingConvention callingConvention = Procedure.CallingConvention.getCallingConvension(calling);
-            if(callingConvention ==null) {
-               System.err.println("Unknown calling convention "+calling);
+            if(callingConvention == null) {
+               System.err.println("Unknown calling convention " + calling);
                StringBuffer supported = new StringBuffer();
                supported.append("The supported calling conventions are: ");
                for(Procedure.CallingConvention value : Procedure.CallingConvention.values()) {
@@ -391,8 +396,6 @@ public class KickC implements Callable<Void> {
          }
 
       }
-
-
 
       return null;
    }

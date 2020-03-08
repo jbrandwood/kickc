@@ -89,7 +89,7 @@ public class Program {
    /** The live ranges of all variables. PASS 3-4 (CACHED ON-DEMAND) */
    private LiveRangeVariables liveRangeVariables;
    /** The effective live ranges of all variables. PASS 3-4 (CACHED ON-DEMAND) */
-   private LiveRangeVariablesEffectiveCallPaths liveRangeVariablesEffective;
+   private LiveRangeVariablesEffective liveRangeVariablesEffective;
    /** Separation of live range equivalence classes into scopes - used for register uplift. PASS 4 (CACHED ON-DEMAND) */
    private RegisterUpliftProgram registerUpliftProgram;
    /** Cached information about which block is each statement a part of. PASS 2U-5 (CACHED ON-DEMAND) */
@@ -98,6 +98,8 @@ public class Program {
    private NaturalLoopSet loopSet;
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register. PASS 3-5 (CACHED ON-DEMAND) */
    private VariableRegisterWeights variableRegisterWeights;
+   /** Enable live ranges per call path optimization, which limits memory usage and code, but takes a lot of compile time. */
+   private boolean enableLiveRangeCallPath = true;
 
    public Program() {
       this.scope = new ProgramScope();
@@ -165,6 +167,10 @@ public class Program {
       this.asm = null;
    }
 
+   public void setEnableLiveRangeCallPath(boolean enableLiveRangeCallPath) {
+      this.enableLiveRangeCallPath = enableLiveRangeCallPath;
+   }
+
    public boolean isWarnFragmentMissing() {
       return warnFragmentMissing;
    }
@@ -200,6 +206,7 @@ public class Program {
    public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
       this.asmFragmentSynthesizer = synthesizer;
    }
+
    public TargetCpu getTargetCpu() {
       return targetCpu;
    }
@@ -290,6 +297,7 @@ public class Program {
 
    /**
     * Get the call-graph for the program. Calculates the call-graph if it has not already been calculated.
+    *
     * @return The call-graph
     */
    public CallGraph getCallGraph() {
@@ -306,7 +314,7 @@ public class Program {
    }
 
    public VariableReferenceInfos getVariableReferenceInfos() {
-      if(variableReferenceInfos==null)
+      if(variableReferenceInfos == null)
          this.variableReferenceInfos = new PassNCalcVariableReferenceInfos(this).calculate();
       return variableReferenceInfos;
    }
@@ -316,7 +324,7 @@ public class Program {
    }
 
    public DominatorsGraph getDominators() {
-      if(dominators==null)
+      if(dominators == null)
          this.dominators = new PassNCalcDominators(this).calculate();
       return dominators;
    }
@@ -326,7 +334,7 @@ public class Program {
    }
 
    public Map<LabelRef, PhiTransitions> getPhiTransitions() {
-      if(phiTransitions==null)
+      if(phiTransitions == null)
          this.phiTransitions = new PassNCalcPhiTransitions(this).calculate();
       return phiTransitions;
    }
@@ -336,7 +344,7 @@ public class Program {
    }
 
    public LiveRangeVariables getLiveRangeVariables() {
-      if(liveRangeVariables==null)
+      if(liveRangeVariables == null)
          this.liveRangeVariables = new PassNCalcLiveRangeVariables(this).calculate();
       return liveRangeVariables;
    }
@@ -354,7 +362,7 @@ public class Program {
    }
 
    public StatementInfos getStatementInfos() {
-      if(statementInfos==null)
+      if(statementInfos == null)
          this.statementInfos = new PassNCalcStatementInfos(this).calculate();
       return statementInfos;
    }
@@ -375,18 +383,22 @@ public class Program {
    }
 
    public SymbolInfos getSymbolInfos() {
-      if(symbolInfos==null)
+      if(symbolInfos == null)
          this.symbolInfos = new PassNCalcSymbolInfos(this).calculate();
       return symbolInfos;
    }
 
    public boolean hasLiveRangeVariablesEffective() {
-      return liveRangeVariablesEffective!=null;
+      return liveRangeVariablesEffective != null;
    }
 
    public LiveRangeVariablesEffective getLiveRangeVariablesEffective() {
-      if(liveRangeVariablesEffective==null) {
-         this.liveRangeVariablesEffective = new PassNCalcLiveRangesEffective(this).calculate();
+      if(liveRangeVariablesEffective == null) {
+         if(enableLiveRangeCallPath) {
+            this.liveRangeVariablesEffective = new PassNCalcLiveRangesEffectiveCallPaths(this).calculate();
+         } else {
+            this.liveRangeVariablesEffective = new PassNCalcLiveRangesEffectiveSimple(this).calculate();
+         }
       }
       return liveRangeVariablesEffective;
    }
@@ -396,13 +408,13 @@ public class Program {
    }
 
    public RegisterUpliftProgram getRegisterUpliftProgram() {
-      if(registerUpliftProgram==null)
+      if(registerUpliftProgram == null)
          this.registerUpliftProgram = new PassNCalcRegisterUpliftProgram(this).calculate();
       return registerUpliftProgram;
    }
 
    public NaturalLoopSet getLoopSet() {
-      if(loopSet==null)
+      if(loopSet == null)
          this.loopSet = new PassNCalcLoopSet(this).calculate();
       return loopSet;
    }
@@ -412,7 +424,7 @@ public class Program {
    }
 
    public VariableRegisterWeights getVariableRegisterWeights() {
-      if(variableRegisterWeights==null)
+      if(variableRegisterWeights == null)
          this.variableRegisterWeights = new PassNCalcVariableRegisterWeight(this).calculate();
       return variableRegisterWeights;
    }
@@ -499,19 +511,20 @@ public class Program {
 
    /**
     * Get information about the size of the program
+    *
     * @return Size information
     */
    public String getSizeInfo() {
       StringBuilder sizeInfo = new StringBuilder();
       sizeInfo.append(getScope().getSizeInfo());
       sizeInfo.append(getGraph().getSizeInfo());
-      if(variableReferenceInfos!=null)
+      if(variableReferenceInfos != null)
          sizeInfo.append(variableReferenceInfos.getSizeInfo());
-      if(getLiveRangeEquivalenceClassSet()!=null)
+      if(getLiveRangeEquivalenceClassSet() != null)
          sizeInfo.append(getLiveRangeEquivalenceClassSet().getSizeInfo());
-      if(liveRangeVariablesEffective!=null)
+      if(liveRangeVariablesEffective != null)
          sizeInfo.append(liveRangeVariablesEffective.getSizeInfo());
-      if(getAsm()!=null)
+      if(getAsm() != null)
          sizeInfo.append(getAsm().getSizeInfo());
       return sizeInfo.toString();
    }

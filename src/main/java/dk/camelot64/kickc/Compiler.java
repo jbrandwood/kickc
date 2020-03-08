@@ -89,6 +89,10 @@ public class Compiler {
       this.enableLoopHeadConstant = false;
    }
 
+   public void setEnableLiveRangeCallPath(boolean enableLiveRangeCallPath) {
+      this.program.setEnableLiveRangeCallPath(enableLiveRangeCallPath);
+   }
+
    void setTargetPlatform(TargetPlatform targetPlatform) {
       program.setTargetPlatform(targetPlatform);
    }

@@ -201,20 +201,22 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
       LiveRangeVariablesEffective.AliveCombinations aliveCombinations = program.getLiveRangeVariablesEffective().getAliveCombinations(statement);
       for(LiveRangeVariablesEffective.AliveCombination combination : aliveCombinations.getAll()) {
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
-         Collection<VariableRef> alive = combination.getEffectiveAliveAtStmt();
-         Pass2AliasElimination.Aliases callPathAliases = combination.getEffectiveAliasesAtStmt();
-         for(VariableRef varRef : alive) {
+         Collection<VariableRef> aliveAtStmt = combination.getEffectiveAliveAtStmt();
+         Pass2AliasElimination.Aliases aliasesAtStmt = combination.getEffectiveAliasesAtStmt();
+         for(VariableRef varRef : aliveAtStmt) {
             Variable var = program.getSymbolInfos().getVariable(varRef);
             Registers.Register allocation = var.getAllocation();
             LiveRangeEquivalenceClass allocationClass = usedRegisters.get(allocation);
             if(allocationClass != null && !allocationClass.contains(varRef)) {
                // Examine if the var is an alias of a var in the allocation class
                boolean overlap = true;
-               Pass2AliasElimination.AliasSet aliasSet = callPathAliases.findAliasSet(varRef);
-               if(aliasSet != null) {
-                  for(VariableRef aliasVar : aliasSet.getVars()) {
-                     if(allocationClass.contains(aliasVar)) {
-                        overlap = false;
+               if(aliasesAtStmt!=null) {
+                  Pass2AliasElimination.AliasSet aliasSet = aliasesAtStmt.findAliasSet(varRef);
+                  if(aliasSet != null) {
+                     for(VariableRef aliasVar : aliasSet.getVars()) {
+                        if(allocationClass.contains(aliasVar)) {
+                           overlap = false;
+                        }
                      }
                   }
                }

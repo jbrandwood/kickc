@@ -131,14 +131,14 @@ public class CallGraph {
    /**
     * Get all calls of a specific procedure
     *
-    * @param label The label of the procedure
+    * @param procedureRef The label of the procedure
     * @return All calls
     */
-   public Collection<CallBlock.Call> getCallers(ScopeRef label) {
+   public Collection<CallBlock.Call> getCallers(ProcedureRef procedureRef) {
       Collection<CallBlock.Call> callers = new ArrayList<>();
       for(CallBlock callBlock : callBlocks) {
          for(CallBlock.Call call : callBlock.getCalls()) {
-            if(call.getProcedure().equals(label)) {
+            if(call.getProcedure().equals(procedureRef)) {
                callers.add(call);
             }
          }
@@ -147,11 +147,36 @@ public class CallGraph {
    }
 
    /**
-    * Get all procedures containing calls of a specific procedure
+    * Get all calls of a specific procedure
     *
     * @param label The label of the procedure
     * @return All calls
     */
+   public Collection<CallBlock.Call> getRecursiveCallers(ProcedureRef procedureRef) {
+      final LinkedList<CallBlock.Call> callers = new LinkedList<>();
+      Deque<ProcedureRef> todo = new LinkedList<>();
+      todo.add(procedureRef);
+      Collection<ProcedureRef> visited = new LinkedList<>();
+      while(!todo.isEmpty()) {
+         final ProcedureRef procRef = todo.pop();
+         if(visited.contains(procRef))
+            continue;
+         visited.add(procRef);
+         final Collection<CallBlock.Call> procCallers = getCallers(procRef);
+         callers.addAll(procCallers);
+         for(CallBlock.Call caller : procCallers) {
+            todo.add(caller.getProcedure());
+         }
+      }
+      return callers;
+   }
+
+      /**
+       * Get all procedures containing calls of a specific procedure
+       *
+       * @param label The label of the procedure
+       * @return All calls
+       */
    public Collection<ScopeRef> getCallerProcs(ScopeRef label) {
       Collection<ScopeRef> callers = new ArrayList<>();
       for(CallBlock callBlock : callBlocks) {
@@ -170,9 +195,9 @@ public class CallGraph {
     * @param scopeRef The scope (procedure/root) to examine
     * @return All scopes calling the passed scope (potentially through other callers)
     */
-   public Collection<ScopeRef> getRecursiveCallers(ScopeRef scopeRef) {
+   public Collection<ScopeRef> getRecursiveCallerProcs(ScopeRef scopeRef) {
       ArrayList<ScopeRef> closure = new ArrayList<>();
-      addRecursiveCallers(scopeRef, closure);
+      addRecursiveCallerProcs(scopeRef, closure);
       return closure;
    }
 
@@ -182,7 +207,7 @@ public class CallGraph {
     * @param scopeRef The scope (procedure/root) to examine
     * @param found The scopes already found
     * */
-   private void addRecursiveCallers(ScopeRef scopeRef, Collection<ScopeRef> found) {
+   private void addRecursiveCallerProcs(ScopeRef scopeRef, Collection<ScopeRef> found) {
       if(found.contains(scopeRef)) {
          // Recursion detected - stop here
          return;
@@ -190,7 +215,7 @@ public class CallGraph {
       found.add(scopeRef);
       Collection<ScopeRef> callerProcs = getCallerProcs(scopeRef);
       for(ScopeRef callerProc : callerProcs) {
-         addRecursiveCallers(callerProc, found);
+         addRecursiveCallerProcs(callerProc, found);
       }
    }
 

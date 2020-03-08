@@ -12,6 +12,8 @@ public interface LiveRangeVariablesEffective {
 
    AliveCombinations getAliveCombinations(Statement statement);
 
+   String getSizeInfo();
+
    /**
     * Combinations of variables effectively alive at a specific statement.
     */

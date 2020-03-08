@@ -117,7 +117,7 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
                threads.add(mainThreadHead);
             }
          } else {
-            Collection<ScopeRef> recursiveCallers = callGraph.getRecursiveCallers(scopeRef);
+            Collection<ScopeRef> recursiveCallers = callGraph.getRecursiveCallerProcs(scopeRef);
             for(ScopeRef threadHead : threadHeads) {
                if(recursiveCallers.contains(threadHead)) {
                   if(!threads.contains(threadHead)) {

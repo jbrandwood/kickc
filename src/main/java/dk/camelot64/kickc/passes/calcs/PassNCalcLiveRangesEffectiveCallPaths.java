@@ -16,9 +16,9 @@ import java.util.*;
 /**
  * Find effective alive intervals for all variables in all statements. Add the intervals to the Program.
  */
-public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariablesEffectiveCallPaths> {
+public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRangeVariablesEffectiveCallPaths> {
 
-   public PassNCalcLiveRangesEffective(Program program) {
+   public PassNCalcLiveRangesEffectiveCallPaths(Program program) {
       super(program);
    }
 

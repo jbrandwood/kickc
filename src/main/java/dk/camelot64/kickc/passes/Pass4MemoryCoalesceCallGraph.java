@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
@@ -55,9 +56,9 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
          if(Registers.RegisterType.MAIN_MEM.equals(thisEC.getRegister().getType()))
             continue;
          // Find all calling scopes - since we want to avoid coalescing with variables in these
-         Set<ScopeRef> allCallingScopes = new LinkedHashSet<>();
+         Set<ProcedureRef> allCallingScopes = new LinkedHashSet<>();
          for(ScopeRef ecScope : getEquivalenceClassScopes(thisEC)) {
-            allCallingScopes.addAll(getAllCallingScopes(ecScope, callGraph));
+            allCallingScopes.addAll(getAllCallingScopes(new ProcedureRef(ecScope.getFullName()), callGraph));
          }
          // Go through the already handled equivalence classes - and try to coalesce with any that does not have variables from the calling scopes
          boolean coalesced = false;
@@ -66,7 +67,7 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
             if(Registers.RegisterType.MAIN_MEM.equals(otherEC.getRegister().getType()))
                continue;
             // Skip if there is a scope overlap
-            if(isScopeOverlap(otherEC, allCallingScopes))
+            if(isProcedureOverlap(otherEC, allCallingScopes))
                continue;
             // No scope overlap - attempt to coalesce
             Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate candidate = new Pass4MemoryCoalesce.LiveRangeEquivalenceClassCoalesceCandidate(thisEC, otherEC, null);
@@ -86,33 +87,33 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
    }
 
    /**
-    * Determine if any variable in a live range equivalence class has a scope from the passed set of scopes.
+    * Determine if any variable in a live range equivalence class has a scope from the passed set of procedures.
     * @param equivalenceClass The live range equivalence class
-    * @param scopeRefSet The set of scopes
+    * @param procedureRefs The set of procedures
     * @return true if there is a scope overlap
     */
-   private boolean isScopeOverlap(LiveRangeEquivalenceClass equivalenceClass, Collection<ScopeRef> scopeRefSet) {
+   private boolean isProcedureOverlap(LiveRangeEquivalenceClass equivalenceClass, Collection<ProcedureRef> procedureRefs) {
       boolean scopeOverlap = false;
       for(VariableRef otherVarRef : equivalenceClass.getVariables()) {
-         ScopeRef otherScopeRef = new ScopeRef(otherVarRef.getScopeNames());
-         if(scopeRefSet.contains(otherScopeRef))
+         ProcedureRef otherProcedureRef = new ProcedureRef(otherVarRef.getScopeNames());
+         if(procedureRefs.contains(otherProcedureRef))
             scopeOverlap = true;
       }
       return scopeOverlap;
    }
 
    /**
-    * Get all scopes call into a specific scope. Recursively includes callers of callers. Also includes the scope itself.
-    * @param scopeRef The scope to examine
+    * Get all procedures calling into a specific procedure. Recursively includes callers of callers. Also includes the procedure itself.
+    * @param procedureRef The scope to examine
     * @param callGraph The call graph
-    * @return All scopes that call into this one (potentially )
+    * @return All procedures that call into this one (potentially )
     */
-   private Set<ScopeRef> getAllCallingScopes(ScopeRef scopeRef, CallGraph callGraph) {
-      LinkedHashSet<ScopeRef> allCallers = new LinkedHashSet<>();
+   private Set<ProcedureRef> getAllCallingScopes(ProcedureRef procedureRef, CallGraph callGraph) {
+      LinkedHashSet<ProcedureRef> allCallers = new LinkedHashSet<>();
       // Add the scope itself
-      allCallers.add(scopeRef);
+      allCallers.add(procedureRef);
       // Recursively add the scopes of all callers
-      for(CallGraph.CallBlock.Call caller : callGraph.getCallers(scopeRef)) {
+      for(CallGraph.CallBlock.Call caller : callGraph.getCallers(procedureRef)) {
          if(!allCallers.contains(caller.getProcedure()))
             allCallers.addAll(getAllCallingScopes(caller.getProcedure(), callGraph));
       }

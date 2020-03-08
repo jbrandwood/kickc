@@ -61,8 +61,7 @@ public class Pass1CallPhiReturn {
     * @param stmtIt Iterator used for adding statements
     */
    void handlePhiCall(StatementCall call, Procedure procedure, ControlFlowBlock block, ListIterator<Statement> stmtIt) {
-      // Generate return value assignment
-      block.setCallSuccessor(procedure.getLabel().getRef());
+      // Generate return value assignment (call finalize)
       if(!SymbolType.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
          Label returnBlockLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
@@ -90,7 +89,7 @@ public class Pass1CallPhiReturn {
          }
       }
 
-      // Patch versions of rValues in assignments for vars modified in the call
+      // Patch versions of rValues in assignments for vars modified in the call (call finalize)
       LabelRef successor = block.getDefaultSuccessor();
       ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());

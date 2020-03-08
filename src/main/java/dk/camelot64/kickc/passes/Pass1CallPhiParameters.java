@@ -39,13 +39,8 @@ public class Pass1CallPhiParameters {
                Procedure procedure = getScope().getProcedure(procedureRef);
                // Handle PHI-calls
                if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention())) {
-                  final ControlFlowBlock newBlock = handleCall(call, procedure, stmtIt, block);
-                  // The current block was split into two blocks - put the rest of the statements into the new block and add it at the front of the todoBlocks
-                  while(stmtIt.hasNext()) {
-                     newBlock.getStatements().add(stmtIt.next());
-                     stmtIt.previous();
-                     stmtIt.remove();
-                  }
+                  final ControlFlowBlock newBlock = handlePhiCall(call, procedure, stmtIt, block);
+                  // The current block was split into two blocks - add the new block at the front of the todoBlocks
                   todoBlocks.add(0, newBlock);
                }
             }
@@ -66,7 +61,7 @@ public class Pass1CallPhiParameters {
             }
          }
       }
-      // Update graph blocks
+      // Update graph blocks to include the new blocks added
       program.getGraph().setAllBlocks(doneBlocks);
 
       // Fix phi predecessors for any blocks has a split block as predecessor
@@ -92,7 +87,7 @@ public class Pass1CallPhiParameters {
       return program.getGraph();
    }
 
-   private ControlFlowBlock handleCall(StatementCall call, Procedure procedure, ListIterator<Statement> stmtIt, ControlFlowBlock block) {
+   private ControlFlowBlock handlePhiCall(StatementCall call, Procedure procedure, ListIterator<Statement> stmtIt, ControlFlowBlock block) {
 
       List<Variable> parameterDefs = procedure.getParameters();
       List<RValue> parameterValues = call.getParameters();
@@ -100,7 +95,7 @@ public class Pass1CallPhiParameters {
          throw new CompileError("Wrong number of parameters in call " + call.toString(program, false) + " expected " + procedure.toString(program), call);
       }
 
-      // Add assignments for call parameters
+      // Add assignments for call parameters before the call (call prepare)
       if(parameterDefs.size() > 0) {
          stmtIt.previous();
          for(int i = 0; i < parameterDefs.size(); i++) {
@@ -110,6 +105,10 @@ public class Pass1CallPhiParameters {
          }
          stmtIt.next();
       }
+      // Clear parameters
+      call.setParameters(null);
+
+      // Update call LValue (call finalize)
       Variable procReturnVar = procedure.getVariable("return");
       LValue procReturnVarRef = null;
       if(procReturnVar != null) {
@@ -127,40 +126,19 @@ public class Pass1CallPhiParameters {
             }
          }
       }
-
-      call.setParameters(null);
+      // Save original LValue and update the LValue
       final LValue origCallLValue = call.getlValue();
       call.setlValue(procReturnVarRef);
 
-      Symbol currentBlockSymbol = getScope().getSymbol(block.getLabel());
-      Scope currentBlockScope;
-      if(currentBlockSymbol instanceof Procedure) {
-         currentBlockScope = (Scope) currentBlockSymbol;
-      } else {
-         currentBlockScope = currentBlockSymbol.getScope();
-      }
+      // Create a new block in the program, splitting the current block at the call/return (call finalize)
+      Scope currentBlockScope = block.getProcedure(program);
+      if(currentBlockScope==null) currentBlockScope = getScope().getScope(ScopeRef.ROOT);
       LabelRef splitBlockNewLabelRef = currentBlockScope.addLabelIntermediate().getRef();
-
       ControlFlowBlock newBlock = new ControlFlowBlock(splitBlockNewLabelRef, block.getScope());
       splitBlockMap.put(block.getLabel(), splitBlockNewLabelRef);
       if(!SymbolType.VOID.equals(procedure.getReturnType()) && origCallLValue != null) {
          newBlock.getStatements().add(new StatementAssignment(origCallLValue, procReturnVarRef, call.isInitialAssignment(), call.getSource(), Comment.NO_COMMENTS));
-      } else {
-         // No return type. Remove variable receiving the result.
-         if(origCallLValue instanceof VariableRef) {
-            VariableRef lValueRef = (VariableRef) origCallLValue;
-            Variable lValueVar = getScope().getVariable(lValueRef);
-            lValueVar.getScope().remove(lValueVar);
-         }
       }
-      // Add self-assignments for all variables modified in the procedure
-      Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
-      for(VariableRef modifiedVar : modifiedVars) {
-         if(getScope().getVariable(modifiedVar).isKindLoadStore())
-            continue;
-         newBlock.getStatements().add(new StatementAssignment(modifiedVar, modifiedVar, false, call.getSource(), Comment.NO_COMMENTS));
-      }
-
       // Set new block successors
       newBlock.setDefaultSuccessor(block.getDefaultSuccessor());
       newBlock.setConditionalSuccessor(block.getConditionalSuccessor());
@@ -171,6 +149,19 @@ public class Pass1CallPhiParameters {
       block.setDefaultSuccessor(newBlock.getLabel());
       // Set old block conditional successor to null
       block.setConditionalSuccessor(null);
+      // Add self-assignments for all variables modified in the procedure at the start of the new block
+      Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
+      for(VariableRef modifiedVar : modifiedVars) {
+         if(getScope().getVariable(modifiedVar).isKindLoadStore())
+            continue;
+         newBlock.getStatements().add(new StatementAssignment(modifiedVar, modifiedVar, false, call.getSource(), Comment.NO_COMMENTS));
+      }
+      // Grab the rest of the statements from the old block using the iterator and put them into the new block
+      while(stmtIt.hasNext()) {
+         newBlock.getStatements().add(stmtIt.next());
+         stmtIt.previous();
+         stmtIt.remove();
+      }
 
       return newBlock;
    }

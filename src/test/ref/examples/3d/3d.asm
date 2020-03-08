@@ -60,7 +60,7 @@ main: {
     rts
 }
 anim: {
-    .label i = 5
+    .label i = 4
     lda #0
     sta.z sy
     sta.z sx
@@ -370,9 +370,9 @@ debug_print: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte register(X) b, byte* zp($d) at)
+// print_sbyte_at(signed byte register(X) b, byte* zp($e) at)
 print_sbyte_at: {
-    .label at = $d
+    .label at = $e
     // if(b<0)
     cpx #0
     bmi __b1
@@ -401,9 +401,9 @@ print_sbyte_at: {
     jmp __b2
 }
 // Print a single char
-// print_char_at(byte register(Y) ch, byte* zp($d) at)
+// print_char_at(byte register(Y) ch, byte* zp($e) at)
 print_char_at: {
-    .label at = $d
+    .label at = $e
     // *(at) = ch
     tya
     ldy #0
@@ -412,9 +412,9 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte register(X) b, byte* zp($d) at)
+// print_byte_at(byte register(X) b, byte* zp($e) at)
 print_byte_at: {
-    .label at = $d
+    .label at = $e
     // b>>4
     txa
     lsr
@@ -444,10 +444,10 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zp(6) y, signed byte zp(4) z)
+// rotate_matrix(signed byte register(X) x, signed byte zp(6) y, signed byte zp(5) z)
 rotate_matrix: {
     .label y = 6
-    .label z = 4
+    .label z = 5
     // *xr = x
     txa
     sta xr
@@ -597,15 +597,15 @@ store_matrix: {
 // calculate_matrix(signed byte register(X) sx, signed byte zp(3) sy)
 calculate_matrix: {
     .label sy = 3
-    .label t1 = 4
-    .label t2 = 5
-    .label t3 = 6
-    .label t4 = 7
-    .label t5 = 8
-    .label t6 = 9
-    .label t7 = $a
-    .label t8 = $b
-    .label t9 = $c
+    .label t1 = 5
+    .label t2 = 6
+    .label t3 = 7
+    .label t4 = 8
+    .label t5 = 9
+    .label t6 = $a
+    .label t7 = $b
+    .label t8 = $c
+    .label t9 = $d
     // t1 = sy-sz
     lda.z sy
     sta.z t1
@@ -788,17 +788,17 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label __41 = $d
-    .label __44 = $f
-    .label __47 = $11
-    .label __50 = $13
-    .label __53 = $15
-    .label __56 = $17
-    .label __59 = $19
-    .label __62 = $1b
-    .label __65 = $1d
-    .label c = 2
-    .label i = 3
+    .label __41 = $e
+    .label __44 = $10
+    .label __47 = $12
+    .label __50 = $14
+    .label __53 = $16
+    .label __56 = $18
+    .label __59 = $1a
+    .label __62 = $1c
+    .label __65 = $1e
+    .label c = 4
+    .label i = 5
     // print_cls()
     jsr print_cls
     // print_str_at("sx", SCREEN+40*0+34)
@@ -1108,10 +1108,10 @@ debug_print_init: {
     .byte 0
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zp($d) str, byte* zp($f) at)
+// print_str_at(byte* zp($e) str, byte* zp($10) at)
 print_str_at: {
-    .label at = $f
-    .label str = $d
+    .label at = $10
+    .label str = $e
   __b1:
     // while(*str)
     ldy #0
@@ -1149,7 +1149,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $f
+    .label dst = $10
     lda #<str
     sta.z dst
     lda #>str

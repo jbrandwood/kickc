@@ -3273,20 +3273,19 @@ Coalescing zero page register [ zp[2]:23 [ memset::str#3 ] ] with [ zp[2]:26 [ m
 Coalescing zero page register [ zp[2]:51 [ bitmap_plot::plotter#0 ] ] with [ zp[2]:55 [ bitmap_plot::plotter#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:17 [ sgn_u16::return#4 sgn_u16::return#0 sgn_u16::return#1 ] ] with [ zp[2]:49 [ bitmap_line::sy#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:19 [ abs_u16::return#4 abs_u16::return#2 abs_u16::w#2 abs_u16::w#0 abs_u16::return#0 abs_u16::return#1 ] ] with [ zp[2]:41 [ bitmap_line::dy#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:15 [ sgn_u16::w#2 sgn_u16::w#0 ] ] with [ zp[2]:4 [ bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ] ]
-Coalescing zero page register [ zp[2]:21 [ memset::num#2 memset::end#0 ] ] with [ zp[2]:2 [ next#5 next#3 next#1 bitmap_line::x2#0 ] ]
+Coalescing zero page register [ zp[2]:21 [ memset::num#2 memset::end#0 ] ] with [ zp[2]:4 [ bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ] ]
 Coalescing zero page register [ zp[2]:23 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:6 [ bitmap_line::y#15 bitmap_line::y#7 bitmap_line::y#13 bitmap_line::y#4 bitmap_line::y#1 bitmap_line::y#2 ] ]
 Coalescing zero page register [ zp[2]:31 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] ] with [ zp[2]:8 [ bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x#12 bitmap_line::x#1 bitmap_plot::x#4 bitmap_plot::x#3 bitmap_plot::x#2 bitmap_plot::x#1 ] ]
-Allocated (was zp[2]:10) zp[2]:2 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ]
-Allocated (was zp[2]:15) zp[2]:4 [ sgn_u16::w#2 sgn_u16::w#0 bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ]
+Coalescing zero page register [ zp[2]:51 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ] ] with [ zp[2]:15 [ sgn_u16::w#2 sgn_u16::w#0 ] ]
+Allocated (was zp[2]:10) zp[2]:4 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ]
 Allocated (was zp[2]:17) zp[2]:6 [ sgn_u16::return#4 sgn_u16::return#0 sgn_u16::return#1 bitmap_line::sy#0 ]
 Allocated (was zp[2]:19) zp[2]:8 [ abs_u16::return#4 abs_u16::return#2 abs_u16::w#2 abs_u16::w#0 abs_u16::return#0 abs_u16::return#1 bitmap_line::dy#0 ]
-Allocated (was zp[2]:21) zp[2]:10 [ memset::num#2 memset::end#0 next#5 next#3 next#1 bitmap_line::x2#0 ]
+Allocated (was zp[2]:21) zp[2]:10 [ memset::num#2 memset::end#0 bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ]
 Allocated (was zp[2]:23) zp[2]:12 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 bitmap_line::y#15 bitmap_line::y#7 bitmap_line::y#13 bitmap_line::y#4 bitmap_line::y#1 bitmap_line::y#2 ]
 Allocated (was zp[2]:31) zp[2]:14 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x#12 bitmap_line::x#1 bitmap_plot::x#4 bitmap_plot::x#3 bitmap_plot::x#2 bitmap_plot::x#1 ]
 Allocated (was zp[2]:37) zp[2]:16 [ bitmap_line::dx#0 ]
 Allocated (was zp[2]:45) zp[2]:18 [ bitmap_line::sx#0 ]
-Allocated (was zp[2]:51) zp[2]:20 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ]
+Allocated (was zp[2]:51) zp[2]:20 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 sgn_u16::w#2 sgn_u16::w#0 ]
 Allocated (was zp[2]:53) zp[2]:22 [ bitmap_plot::$1 ]
 Allocated (was zp[1]:64) zp[1]:24 [ bitmap_init::$7 ]
 
@@ -3310,7 +3309,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PURPLE = 4
   .label SCREEN = $400
   .label BITMAP = $2000
-  .label next = $a
+  .label next = 2
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -3406,7 +3405,7 @@ main: {
 }
   // bitmap_line
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp($a) x2)
+// bitmap_line(word zp(2) x2)
 bitmap_line: {
     .const x1 = 0
     .const y1 = 0
@@ -3415,11 +3414,11 @@ bitmap_line: {
     .label dy = 8
     .label sx = $12
     .label sy = 6
-    .label e1 = 2
-    .label e = 4
+    .label e1 = 4
+    .label e = $a
     .label y = $c
     .label x = $e
-    .label x2 = $a
+    .label x2 = 2
     // [18] (word) abs_u16::w#0 ← (word) bitmap_line::x2#0 -- vwuz1=vwuz2 
     lda.z x2
     sta.z abs_u16.w
@@ -3806,9 +3805,9 @@ bitmap_plot: {
   // sgn_u16
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp(4) w)
+// sgn_u16(word zp($14) w)
 sgn_u16: {
-    .label w = 4
+    .label w = $14
     .label return = 6
     // [74] (byte~) sgn_u16::$0 ← > (word) sgn_u16::w#2 -- vbuaa=_hi_vwuz1 
     lda.z w+1
@@ -4359,17 +4358,17 @@ FINAL SYMBOL TABLE
 (word) bitmap_line::dy
 (word) bitmap_line::dy#0 dy zp[2]:8 8.885714285714286
 (word) bitmap_line::e
-(word) bitmap_line::e#0 e zp[2]:4 4.0
-(word) bitmap_line::e#1 e zp[2]:4 134.66666666666666
-(word) bitmap_line::e#2 e zp[2]:4 202.0
-(word) bitmap_line::e#3 e zp[2]:4 40.8
-(word) bitmap_line::e#6 e zp[2]:4 151.5
+(word) bitmap_line::e#0 e zp[2]:10 4.0
+(word) bitmap_line::e#1 e zp[2]:10 134.66666666666666
+(word) bitmap_line::e#2 e zp[2]:10 202.0
+(word) bitmap_line::e#3 e zp[2]:10 40.8
+(word) bitmap_line::e#6 e zp[2]:10 151.5
 (word) bitmap_line::e1
-(word) bitmap_line::e1#0 e1 zp[2]:2 4.0
-(word) bitmap_line::e1#1 e1 zp[2]:2 134.66666666666666
-(word) bitmap_line::e1#2 e1 zp[2]:2 202.0
-(word) bitmap_line::e1#3 e1 zp[2]:2 40.8
-(word) bitmap_line::e1#6 e1 zp[2]:2 151.5
+(word) bitmap_line::e1#0 e1 zp[2]:4 4.0
+(word) bitmap_line::e1#1 e1 zp[2]:4 134.66666666666666
+(word) bitmap_line::e1#2 e1 zp[2]:4 202.0
+(word) bitmap_line::e1#3 e1 zp[2]:4 40.8
+(word) bitmap_line::e1#6 e1 zp[2]:4 151.5
 (word) bitmap_line::sx
 (word) bitmap_line::sx#0 sx zp[2]:18 7.03448275862069
 (word) bitmap_line::sy
@@ -4384,7 +4383,7 @@ FINAL SYMBOL TABLE
 (word) bitmap_line::x1
 (const word) bitmap_line::x1#0 x1 = (byte) 0
 (word) bitmap_line::x2
-(word) bitmap_line::x2#0 x2 zp[2]:10 3.8666666666666667
+(word) bitmap_line::x2#0 x2 zp[2]:2 3.8666666666666667
 (word) bitmap_line::y
 (word) bitmap_line::y#1 y zp[2]:12 57.714285714285715
 (word) bitmap_line::y#13 y zp[2]:12 202.0
@@ -4442,9 +4441,9 @@ FINAL SYMBOL TABLE
 (void*) memset::str
 (void*) memset::str#3 str zp[2]:12
 (word) next
-(word) next#1 next zp[2]:10 11.0
-(word) next#3 next zp[2]:10 22.0
-(word) next#5 next zp[2]:10 11.0
+(word) next#1 next zp[2]:2 11.0
+(word) next#3 next zp[2]:2 22.0
+(word) next#5 next zp[2]:2 11.0
 (word()) sgn_u16((word) sgn_u16::w)
 (byte~) sgn_u16::$0 reg byte a 4.0
 (byte~) sgn_u16::$1 reg byte a 4.0
@@ -4455,15 +4454,15 @@ FINAL SYMBOL TABLE
 (word) sgn_u16::return#1 return zp[2]:6 4.0
 (word) sgn_u16::return#4 return zp[2]:6 1.0
 (word) sgn_u16::w
-(word) sgn_u16::w#0 w zp[2]:4 4.0
-(word) sgn_u16::w#2 w zp[2]:4 4.0
+(word) sgn_u16::w#0 w zp[2]:20 4.0
+(word) sgn_u16::w#2 w zp[2]:20 4.0
 
-zp[2]:2 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ]
+zp[2]:2 [ next#5 next#3 next#1 bitmap_line::x2#0 ]
+zp[2]:4 [ bitmap_line::e1#3 bitmap_line::e1#6 bitmap_line::e1#0 bitmap_line::e1#2 bitmap_line::e1#1 ]
 reg byte x [ bitmap_plot::y#4 bitmap_plot::y#3 bitmap_plot::y#2 bitmap_plot::y#1 ]
-zp[2]:4 [ sgn_u16::w#2 sgn_u16::w#0 bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ]
 zp[2]:6 [ sgn_u16::return#4 sgn_u16::return#0 sgn_u16::return#1 bitmap_line::sy#0 ]
 zp[2]:8 [ abs_u16::return#4 abs_u16::return#2 abs_u16::w#2 abs_u16::w#0 abs_u16::return#0 abs_u16::return#1 bitmap_line::dy#0 ]
-zp[2]:10 [ memset::num#2 memset::end#0 next#5 next#3 next#1 bitmap_line::x2#0 ]
+zp[2]:10 [ memset::num#2 memset::end#0 bitmap_line::e#3 bitmap_line::e#0 bitmap_line::e#6 bitmap_line::e#1 bitmap_line::e#2 ]
 zp[2]:12 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 bitmap_line::y#15 bitmap_line::y#7 bitmap_line::y#13 bitmap_line::y#4 bitmap_line::y#1 bitmap_line::y#2 ]
 reg byte x [ memset::c#4 ]
 reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
@@ -4472,7 +4471,7 @@ reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ]
 zp[2]:14 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 bitmap_line::x#7 bitmap_line::x#6 bitmap_line::x#15 bitmap_line::x#13 bitmap_line::x#12 bitmap_line::x#1 bitmap_plot::x#4 bitmap_plot::x#3 bitmap_plot::x#2 bitmap_plot::x#1 ]
 zp[2]:16 [ bitmap_line::dx#0 ]
 zp[2]:18 [ bitmap_line::sx#0 ]
-zp[2]:20 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ]
+zp[2]:20 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 sgn_u16::w#2 sgn_u16::w#0 ]
 zp[2]:22 [ bitmap_plot::$1 ]
 reg byte a [ bitmap_plot::$2 ]
 reg byte a [ sgn_u16::$0 ]
@@ -4507,7 +4506,7 @@ Score: 30188
   .const PURPLE = 4
   .label SCREEN = $400
   .label BITMAP = $2000
-  .label next = $a
+  .label next = 2
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -4583,7 +4582,7 @@ main: {
 }
   // bitmap_line
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp($a) x2)
+// bitmap_line(word zp(2) x2)
 bitmap_line: {
     .const x1 = 0
     .const y1 = 0
@@ -4592,11 +4591,11 @@ bitmap_line: {
     .label dy = 8
     .label sx = $12
     .label sy = 6
-    .label e1 = 2
-    .label e = 4
+    .label e1 = 4
+    .label e = $a
     .label y = $c
     .label x = $e
-    .label x2 = $a
+    .label x2 = 2
     // abs_u16(x2-x1)
     // [18] (word) abs_u16::w#0 ← (word) bitmap_line::x2#0 -- vwuz1=vwuz2 
     lda.z x2
@@ -4969,9 +4968,9 @@ bitmap_plot: {
   // sgn_u16
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp(4) w)
+// sgn_u16(word zp($14) w)
 sgn_u16: {
-    .label w = 4
+    .label w = $14
     .label return = 6
     // >w
     // [74] (byte~) sgn_u16::$0 ← > (word) sgn_u16::w#2 -- vbuaa=_hi_vwuz1 

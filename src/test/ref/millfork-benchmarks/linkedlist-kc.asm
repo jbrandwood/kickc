@@ -3,12 +3,12 @@
 .pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label last_time = $a
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
-  .label Ticks = $e
-  .label free_ = 8
-  .label root = 2
-  .label Ticks_1 = $c
+  .label print_line_cursor = 6
+  .label print_char_cursor = 8
+  .label Ticks = $c
+  .label free_ = 2
+  .label root = 4
+  .label Ticks_1 = $e
 __bbegin:
   // last_time
   lda #<0
@@ -17,8 +17,8 @@ __bbegin:
   jsr main
   rts
 main: {
-    .label __5 = 8
-    .label i = 4
+    .label __5 = $c
+    .label i = 6
     // start()
     jsr start
     ldx #0
@@ -120,9 +120,9 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($c) w)
+// print_word(word zp($e) w)
 print_word: {
-    .label w = $c
+    .label w = $e
     // print_byte(>w)
     lda.z w+1
     tax
@@ -181,9 +181,9 @@ start: {
     rts
 }
 sum: {
-    .label current = 2
-    .label s = 8
-    .label return = 8
+    .label current = 4
+    .label s = $c
+    .label return = $c
     // current = root
     lda #<0
     sta.z s
@@ -220,10 +220,10 @@ sum: {
     sta.z current
     jmp __b1
 }
-// prepend(word zp(4) x)
+// prepend(word zp(6) x)
 prepend: {
-    .label new = $e
-    .label x = 4
+    .label new = $10
+    .label x = 6
     // alloc()
     jsr alloc
     // new = alloc()
@@ -250,8 +250,8 @@ prepend: {
     rts
 }
 alloc: {
-    .label __1 = $e
-    .label return = $e
+    .label __1 = $10
+    .label return = $10
     // heap + free_
     lda.z free_
     asl

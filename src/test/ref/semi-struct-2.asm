@@ -33,17 +33,17 @@
   .const SIZEOF_ENTRY = $12
   // The maximal number of files
   .const MAX_FILES = $90
-  .label print_char_cursor = 4
-  .label print_line_cursor = 8
-  .label print_line_cursor_1 = $a
+  .label print_char_cursor = 6
+  .label print_line_cursor = $c
+  .label print_line_cursor_1 = 2
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
-    .label fileEntry1___0 = 2
-    .label fileEntry2___0 = 6
-    .label entry1 = 2
-    .label entry2 = 6
+    .label fileEntry1___0 = 4
+    .label fileEntry2___0 = $a
+    .label entry1 = 4
+    .label entry2 = $a
     // keyboard_init()
     jsr keyboard_init
     // mul8u(idx, SIZEOF_ENTRY)
@@ -230,7 +230,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $a
+    .label dst = 2
     lda #<str
     sta.z dst
     lda #>str
@@ -287,9 +287,9 @@ keyboard_matrix_read: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($a) str)
+// print_str(byte* zp(2) str)
 print_str: {
-    .label str = $a
+    .label str = 2
   __b1:
     // while(*str)
     ldy #0
@@ -343,9 +343,9 @@ print_ln: {
     jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zp(2) entry)
+// printEntry(byte* zp(4) entry)
 printEntry: {
-    .label entry = 2
+    .label entry = 4
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -701,9 +701,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($a) w)
+// print_word(word zp(8) w)
 print_word: {
-    .label w = $a
+    .label w = 8
     // print_byte(>w)
     lda.z w+1
     tax
@@ -717,14 +717,14 @@ print_word: {
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zp(4) entry, byte register(X) n)
+// initEntry(byte* zp(8) entry, byte register(X) n)
 initEntry: {
-    .label __1 = 8
-    .label __3 = $a
-    .label __5 = $c
-    .label __7 = $e
-    .label __17 = $10
-    .label entry = 4
+    .label __1 = $e
+    .label __3 = $10
+    .label __5 = $12
+    .label __7 = $14
+    .label __17 = $16
+    .label entry = 8
     // 0x1111+n
     txa
     clc
@@ -862,9 +862,9 @@ initEntry: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a)
 mul8u: {
-    .label mb = 8
-    .label res = 6
-    .label return = 6
+    .label mb = $c
+    .label res = $a
+    .label return = $a
     lda #<SIZEOF_ENTRY
     sta.z mb
     lda #>SIZEOF_ENTRY

@@ -2,7 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_char_cursor = 7
-  .label print_line_cursor = $a
+  .label print_line_cursor = 4
 main: {
     .label b = $c
     .label a = 2
@@ -459,11 +459,11 @@ print_ln: {
     // }
     rts
 }
-// printu(byte zp(2) a, byte* zp(4) op, byte zp(6) b, byte register(X) res)
+// printu(byte zp(2) a, byte* zp($a) op, byte zp(6) b, byte register(X) res)
 printu: {
     .label a = 2
     .label b = 6
-    .label op = 4
+    .label op = $a
     // print_char(' ')
     lda #' '
     jsr print_char
@@ -526,9 +526,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(4) str)
+// print_str(byte* zp($a) str)
 print_str: {
-    .label str = 4
+    .label str = $a
   __b1:
     // while(*str)
     ldy #0

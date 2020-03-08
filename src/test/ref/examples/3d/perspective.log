@@ -2482,13 +2482,12 @@ Uplifting [do_perspective] best 3984 combination
 Uplifting [perspective] best 3984 combination 
 Attempting to uplift remaining variables inzp[1]:20 [ mulf_init::val#0 ]
 Uplifting [mulf_init] best 3984 combination zp[1]:20 [ mulf_init::val#0 ] 
-Coalescing zero page register [ zp[2]:4 [ print_str::str#7 print_str::str#9 print_str::str#0 ] ] with [ zp[2]:2 [ print_line_cursor#11 print_line_cursor#1 ] ]
-Coalescing zero page register [ zp[2]:11 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:8 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ] ]
-Coalescing zero page register [ zp[2]:13 [ mulf_init::sqr#2 mulf_init::sqr#1 ] ] with [ zp[2]:4 [ print_str::str#7 print_str::str#9 print_str::str#0 print_line_cursor#11 print_line_cursor#1 ] ]
-Coalescing zero page register [ zp[2]:16 [ mulf_init::add#2 mulf_init::add#1 ] ] with [ zp[2]:11 [ memset::dst#2 memset::dst#1 print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ] ]
-Allocated (was zp[2]:13) zp[2]:2 [ mulf_init::sqr#2 mulf_init::sqr#1 print_str::str#7 print_str::str#9 print_str::str#0 print_line_cursor#11 print_line_cursor#1 ]
-Allocated (was zp[2]:16) zp[2]:4 [ mulf_init::add#2 mulf_init::add#1 memset::dst#2 memset::dst#1 print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ]
-Allocated (was zp[1]:20) zp[1]:6 [ mulf_init::val#0 ]
+Coalescing zero page register [ zp[2]:11 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:4 [ print_str::str#7 print_str::str#9 print_str::str#0 ] ]
+Coalescing zero page register [ zp[2]:13 [ mulf_init::sqr#2 mulf_init::sqr#1 ] ] with [ zp[2]:11 [ memset::dst#2 memset::dst#1 print_str::str#7 print_str::str#9 print_str::str#0 ] ]
+Allocated (was zp[2]:8) zp[2]:4 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ]
+Allocated (was zp[2]:13) zp[2]:6 [ mulf_init::sqr#2 mulf_init::sqr#1 memset::dst#2 memset::dst#1 print_str::str#7 print_str::str#9 print_str::str#0 ]
+Allocated (was zp[2]:16) zp[2]:8 [ mulf_init::add#2 mulf_init::add#1 ]
+Allocated (was zp[1]:20) zp[1]:10 [ mulf_init::val#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2785,9 +2784,9 @@ print_ln: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
     // [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   __b1_from_print_str:
   __b1_from___b2:
@@ -3003,7 +3002,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 4
+    .label dst = 6
     // [83] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
     // [83] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
@@ -3045,9 +3044,9 @@ memset: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = 6
-    .label sqr = 2
-    .label add = 4
+    .label val = $a
+    .label sqr = 6
+    .label add = 8
     // [89] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
   __b1_from_mulf_init:
     // [89] phi (signed word) mulf_init::add#2 = (signed word) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vwsc1 
@@ -3370,8 +3369,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp[2]:4 22.0
-(byte*) memset::dst#2 dst zp[2]:4 14.666666666666666
+(byte*) memset::dst#1 dst zp[2]:6 22.0
+(byte*) memset::dst#2 dst zp[2]:6 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -3386,16 +3385,16 @@ FINAL SYMBOL TABLE
 (label) mulf_init::@1
 (label) mulf_init::@return
 (signed word) mulf_init::add
-(signed word) mulf_init::add#1 add zp[2]:4 7.333333333333333
-(signed word) mulf_init::add#2 add zp[2]:4 2.357142857142857
+(signed word) mulf_init::add#1 add zp[2]:8 7.333333333333333
+(signed word) mulf_init::add#2 add zp[2]:8 2.357142857142857
 (byte) mulf_init::i
 (byte) mulf_init::i#1 reg byte y 16.5
 (byte) mulf_init::i#2 reg byte y 6.6
 (signed word) mulf_init::sqr
-(signed word) mulf_init::sqr#1 sqr zp[2]:2 5.5
-(signed word) mulf_init::sqr#2 sqr zp[2]:2 2.5384615384615383
+(signed word) mulf_init::sqr#1 sqr zp[2]:6 5.5
+(signed word) mulf_init::sqr#2 sqr zp[2]:6 2.5384615384615383
 (byte) mulf_init::val
-(byte) mulf_init::val#0 val zp[1]:6 9.0
+(byte) mulf_init::val#0 val zp[1]:10 9.0
 (const byte*) mulf_sqr1[(number) $200]  = { fill( $200, 0) }
 (const byte*) mulf_sqr2[(number) $200]  = { fill( $200, 0) }
 (void()) perspective((signed byte) perspective::x , (signed byte) perspective::y , (signed byte) perspective::z)
@@ -3451,24 +3450,26 @@ FINAL SYMBOL TABLE
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp[2]:2 22.0
-(byte*) print_str::str#7 str zp[2]:2 11.5
-(byte*) print_str::str#9 str zp[2]:2 2.0
+(byte*) print_str::str#0 str zp[2]:6 22.0
+(byte*) print_str::str#7 str zp[2]:6 11.5
+(byte*) print_str::str#9 str zp[2]:6 2.0
 (const word*) psp1 = (word*) 243
 (const word*) psp2 = (word*) 245
 (const signed byte*) xr = (signed byte*) 240
 (const signed byte*) yr = (signed byte*) 241
 (const signed byte*) zr = (signed byte*) 242
 
+zp[2]:2 [ print_line_cursor#11 print_line_cursor#1 ]
 reg byte x [ print_byte::b#3 print_byte::b#5 print_byte::b#6 print_byte::b#0 ]
 reg byte a [ print_char::ch#4 print_char::ch#2 print_char::ch#3 ]
+zp[2]:4 [ print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ]
 reg byte x [ print_sbyte::b#6 print_sbyte::b#0 print_sbyte::b#4 ]
-zp[2]:2 [ mulf_init::sqr#2 mulf_init::sqr#1 print_str::str#7 print_str::str#9 print_str::str#0 print_line_cursor#11 print_line_cursor#1 ]
+zp[2]:6 [ mulf_init::sqr#2 mulf_init::sqr#1 memset::dst#2 memset::dst#1 print_str::str#7 print_str::str#9 print_str::str#0 ]
 reg byte y [ mulf_init::i#2 mulf_init::i#1 ]
-zp[2]:4 [ mulf_init::add#2 mulf_init::add#1 memset::dst#2 memset::dst#1 print_char_cursor#44 print_char_cursor#69 print_char_cursor#2 print_char_cursor#74 print_char_cursor#12 print_char_cursor#1 ]
+zp[2]:8 [ mulf_init::add#2 mulf_init::add#1 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
-zp[1]:6 [ mulf_init::val#0 ]
+zp[1]:10 [ mulf_init::val#0 ]
 reg byte x [ mulf_init::$2 ]
 reg byte x [ mulf_init::$5 ]
 reg byte x [ mulf_init::$6 ]
@@ -3723,9 +3724,9 @@ print_ln: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
     // [45] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
     // [45] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#74 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [45] phi (byte*) print_str::str#7 = (byte*) print_str::str#9 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
@@ -3931,7 +3932,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 4
+    .label dst = 6
     // [83] phi from memset to memset::@1 [phi:memset->memset::@1]
     // [83] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
@@ -3972,9 +3973,9 @@ memset: {
   // mulf_init
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = 6
-    .label sqr = 2
-    .label add = 4
+    .label val = $a
+    .label sqr = 6
+    .label add = 8
     // [89] phi from mulf_init to mulf_init::@1 [phi:mulf_init->mulf_init::@1]
     // [89] phi (signed word) mulf_init::add#2 = (signed word) 1 [phi:mulf_init->mulf_init::@1#0] -- vwsz1=vwsc1 
     lda #<1

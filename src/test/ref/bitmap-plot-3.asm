@@ -14,10 +14,10 @@
   .label COSTAB = SINTAB+$40
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __4 = $b
-    .label __8 = $f
-    .label a = 2
-    .label i = $1b
+    .label __4 = 4
+    .label __8 = $10
+    .label a = 3
+    .label i = 2
     // bitmap_init(BITMAP, SCREEN)
     jsr bitmap_init
     // bitmap_clear(BLACK, WHITE)
@@ -88,20 +88,20 @@ main: {
     jmp __b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp($b) x1, word zp(9) y1, word zp($f) x2, word zp($11) y2)
+// bitmap_line(word zp(4) x1, word zp($c) y1, word zp($10) x2, word zp($12) y2)
 bitmap_line: {
-    .label dx = $13
-    .label dy = 7
-    .label sx = $15
-    .label sy = 5
-    .label e1 = $d
-    .label e = 3
-    .label y = 9
-    .label x = $b
-    .label x1 = $b
-    .label y1 = 9
-    .label x2 = $f
-    .label y2 = $11
+    .label dx = $14
+    .label dy = 8
+    .label sx = $16
+    .label sy = 6
+    .label e1 = $e
+    .label e = $a
+    .label y = $c
+    .label x = 4
+    .label x1 = 4
+    .label y1 = $c
+    .label x2 = $10
+    .label y2 = $12
     // abs_u16(x2-x1)
     lda.z x2
     sec
@@ -313,11 +313,11 @@ bitmap_line: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($b) x, byte register(X) y)
+// bitmap_plot(word zp(4) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $19
-    .label plotter = $17
-    .label x = $b
+    .label __1 = $1a
+    .label plotter = $18
+    .label x = 4
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -351,10 +351,10 @@ bitmap_plot: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp(3) w)
+// sgn_u16(word zp($18) w)
 sgn_u16: {
-    .label w = 3
-    .label return = 5
+    .label w = $18
+    .label return = 6
     // >w
     lda.z w+1
     // >w&0x80
@@ -375,10 +375,10 @@ sgn_u16: {
     rts
 }
 // Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zp(7) w)
+// abs_u16(word zp(8) w)
 abs_u16: {
-    .label w = 7
-    .label return = 7
+    .label w = 8
+    .label return = 8
     // >w
     lda.z w+1
     // >w&0x80
@@ -430,12 +430,12 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($b) str, byte register(X) c, word zp(9) num)
+// memset(void* zp($c) str, byte register(X) c, word zp($a) num)
 memset: {
-    .label end = 9
-    .label dst = $b
-    .label num = 9
-    .label str = $b
+    .label end = $a
+    .label dst = $c
+    .label num = $a
+    .label str = $c
     // if(num>0)
     lda.z num
     bne !+
@@ -475,8 +475,8 @@ memset: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label __7 = $1b
-    .label yoffs = $d
+    .label __7 = $1c
+    .label yoffs = $e
     ldx #0
     lda #$80
   __b1:

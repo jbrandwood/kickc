@@ -7,13 +7,13 @@
   .const SQRT_COUNT = $80
   /* Sqrt of COUNT */
   .label sieve = $1000
-  .label print_char_cursor = 8
+  .label print_char_cursor = $a
 main: {
-    .label i = 8
-    .label sieve_i = $a
-    .label j = 4
-    .label s = 6
-    .label i_1 = 2
+    .label i = $a
+    .label sieve_i = 2
+    .label j = 6
+    .label s = 8
+    .label i_1 = 4
     .label __16 = $c
     // memset(sieve, 0, COUNT)
   // Fill sieve with zeros
@@ -164,9 +164,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(2) w)
+// print_word(word zp(4) w)
 print_word: {
-    .label w = 2
+    .label w = 4
     // print_byte(>w)
     lda.z w+1
     tax
@@ -206,7 +206,7 @@ memset: {
     .label str = sieve
     .const c = 0
     .label end = str+COUNT
-    .label dst = $a
+    .label dst = $c
     lda #<str
     sta.z dst
     lda #>str

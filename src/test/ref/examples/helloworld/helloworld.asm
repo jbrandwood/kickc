@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 4
+  .label print_char_cursor = 6
   .label print_line_cursor = 2
 main: {
     // print_str("hello world!")
@@ -41,9 +41,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(4) str)
 print_str: {
-    .label str = 2
+    .label str = 4
     lda #<$400
     sta.z print_char_cursor
     lda #>$400

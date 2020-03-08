@@ -54,8 +54,8 @@ anim: {
     .label yr = $f
     .label xpos = $11
     // signed fixed[0.7]
-    .label sprite_msb = $a
-    .label i = 2
+    .label sprite_msb = 2
+    .label i = $a
     .label angle = 7
     .label cyclecount = $13
     lda #0
@@ -271,9 +271,9 @@ print_word_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zp(2) b, byte* zp(5) at)
+// print_byte_at(byte zp($b) b, byte* zp(5) at)
 print_byte_at: {
-    .label b = 2
+    .label b = $b
     .label at = 5
     // b>>4
     lda.z b

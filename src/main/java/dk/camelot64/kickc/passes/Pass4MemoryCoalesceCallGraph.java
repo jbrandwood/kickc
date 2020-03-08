@@ -56,9 +56,9 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
          if(Registers.RegisterType.MAIN_MEM.equals(thisEC.getRegister().getType()))
             continue;
          // Find all calling scopes - since we want to avoid coalescing with variables in these
-         Set<ProcedureRef> allCallingScopes = new LinkedHashSet<>();
+         Set<ScopeRef> allCallingScopes = new LinkedHashSet<>();
          for(ScopeRef ecScope : getEquivalenceClassScopes(thisEC)) {
-            allCallingScopes.addAll(getAllCallingScopes(new ProcedureRef(ecScope.getFullName()), callGraph));
+            allCallingScopes.addAll(callGraph.getRecursiveCallerProcs(ecScope));
          }
          // Go through the already handled equivalence classes - and try to coalesce with any that does not have variables from the calling scopes
          boolean coalesced = false;
@@ -79,7 +79,7 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
             }
          }
          if(!coalesced) {
-            // Add th already handled
+            // Add the already handled
             handledECs.add(thisEC);
          }
       }
@@ -92,32 +92,14 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
     * @param procedureRefs The set of procedures
     * @return true if there is a scope overlap
     */
-   private boolean isProcedureOverlap(LiveRangeEquivalenceClass equivalenceClass, Collection<ProcedureRef> procedureRefs) {
+   private boolean isProcedureOverlap(LiveRangeEquivalenceClass equivalenceClass, Collection<ScopeRef> procedureRefs) {
       boolean scopeOverlap = false;
       for(VariableRef otherVarRef : equivalenceClass.getVariables()) {
-         ProcedureRef otherProcedureRef = new ProcedureRef(otherVarRef.getScopeNames());
+         ScopeRef otherProcedureRef = getScopeRef(otherVarRef);
          if(procedureRefs.contains(otherProcedureRef))
             scopeOverlap = true;
       }
       return scopeOverlap;
-   }
-
-   /**
-    * Get all procedures calling into a specific procedure. Recursively includes callers of callers. Also includes the procedure itself.
-    * @param procedureRef The scope to examine
-    * @param callGraph The call graph
-    * @return All procedures that call into this one (potentially )
-    */
-   private Set<ProcedureRef> getAllCallingScopes(ProcedureRef procedureRef, CallGraph callGraph) {
-      LinkedHashSet<ProcedureRef> allCallers = new LinkedHashSet<>();
-      // Add the scope itself
-      allCallers.add(procedureRef);
-      // Recursively add the scopes of all callers
-      for(CallGraph.CallBlock.Call caller : callGraph.getCallers(procedureRef)) {
-         if(!allCallers.contains(caller.getProcedure()))
-            allCallers.addAll(getAllCallingScopes(caller.getProcedure(), callGraph));
-      }
-      return allCallers;
    }
 
    /**
@@ -129,14 +111,19 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
       List<ScopeRef> ecScopes = new ArrayList<>();
       List<VariableRef> variables = equivalenceClass.getVariables();
       for(VariableRef varRef : variables) {
-         ScopeRef scopeRef = new ScopeRef(varRef.getScopeNames());
-         //if(!ScopeRef.ROOT.equals(scopeRef)) {
-         //   scopeRef = new ProcedureRef(varRef.getScopeNames());
-         //}
+         ScopeRef scopeRef = getScopeRef(varRef);
          if(!ecScopes.contains(scopeRef))
             ecScopes.add(scopeRef);
       }
       return ecScopes;
+   }
+
+   private static ScopeRef getScopeRef(VariableRef varRef) {
+      ScopeRef scopeRef = new ScopeRef(varRef.getScopeNames());
+      if(!ScopeRef.ROOT.equals(scopeRef)) {
+         scopeRef = new ProcedureRef(varRef.getScopeNames());
+      }
+      return scopeRef;
    }
 
 

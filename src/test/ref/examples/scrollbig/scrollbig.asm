@@ -10,7 +10,7 @@
   .label SCROLL = $d016
   .label current_bit = 2
   // Scroll the next bit from the current char onto the screen - trigger next char if needed
-  .label current_chargen = 7
+  .label current_chargen = 3
   .label nxt = 5
 main: {
     // fillscreen(SCREEN, $20)
@@ -60,9 +60,9 @@ scroll_soft: {
     rts
 }
 scroll_bit: {
-    .label __7 = 7
-    .label c = 7
-    .label sc = 3
+    .label __7 = 3
+    .label c = 3
+    .label sc = 7
     // current_bit = current_bit/2
     lsr.z current_bit
     // if(current_bit==0)

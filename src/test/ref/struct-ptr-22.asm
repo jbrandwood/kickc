@@ -3,8 +3,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 6
-  .label print_line_cursor = 4
+  .label print_char_cursor = 4
+  .label print_line_cursor = 2
 main: {
     .label __0 = 6
     // file->bufEdit = 0x4000
@@ -135,9 +135,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0
@@ -175,7 +175,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 4
+    .label dst = 6
     lda #<str
     sta.z dst
     lda #>str

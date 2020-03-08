@@ -11,7 +11,7 @@
   .label SCREEN = $400
   .label BITMAP = $2000
 main: {
-    .label i = 6
+    .label i = 2
     // fill(BITMAP,40*25*8,0)
     ldx #0
     lda #<$28*$19*8
@@ -76,7 +76,7 @@ main: {
     sta.z i+1
     jmp __b1
 }
-// circle(signed word zp(2) r)
+// circle(signed word zp(8) r)
 circle: {
     .const xc = $a0
     .const yc = $64
@@ -86,10 +86,10 @@ circle: {
     .label __7 = 4
     .label __9 = $c
     .label __10 = 4
-    .label r = 2
+    .label r = 8
     .label p = 4
-    .label y = 2
-    .label x1 = 8
+    .label y = 8
+    .label x1 = 6
     // r << 1
     lda.z r
     asl

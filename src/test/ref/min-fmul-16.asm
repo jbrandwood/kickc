@@ -4,11 +4,11 @@
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label SCREEN = $400
-  .label print_char_cursor = 5
+  .label print_char_cursor = 2
 main: {
     .label a = $4d2
     .label b = $929
-    .label r = $e
+    .label r = $10
     // mulf_init()
     jsr mulf_init
     // asm
@@ -45,9 +45,9 @@ print_set_screen: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zp($e) dw)
+// print_dword(dword zp($10) dw)
 print_dword: {
-    .label dw = $e
+    .label dw = $10
     // print_word(>dw)
     lda.z dw+2
     sta.z print_word.w
@@ -64,9 +64,9 @@ print_dword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(2) w)
+// print_word(word zp(4) w)
 print_word: {
-    .label w = 2
+    .label w = 4
     // print_byte(>w)
     lda.z w+1
     tax
@@ -121,7 +121,7 @@ mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $e
+    .label return = $10
     // *memA = a
     lda #<main.a
     sta memA
@@ -240,17 +240,17 @@ mulf16u: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 4
+    .label c = 6
     // Counter used for determining x%2==0
-    .label sqr1_hi = 5
+    .label sqr1_hi = 7
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $c
-    .label sqr1_lo = 2
+    .label sqr = $e
+    .label sqr1_lo = 4
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 9
-    .label sqr2_lo = 7
+    .label sqr2_hi = $b
+    .label sqr2_lo = 9
     //Start with g(0)=f(255)
-    .label dir = $b
+    .label dir = $d
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi

@@ -5,10 +5,10 @@
   .label SCREEN = $400
 main: {
     // Working memory copy of string
-    .label sc = 6
-    .label camelot = 4
-    .label sc2 = 2
-    .label reigns = 8
+    .label sc = 4
+    .label camelot = 2
+    .label sc2 = 8
+    .label reigns = 6
     ldx #0
     lda #<SCREEN
     sta.z sc
@@ -100,14 +100,14 @@ main: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(6) destination, void* zp(4) source, word zp(8) num)
+// memcpy(void* zp($c) destination, void* zp($a) source, word zp($e) num)
 memcpy: {
-    .label src_end = 8
-    .label dst = 6
-    .label src = 4
-    .label source = 4
-    .label destination = 6
-    .label num = 8
+    .label src_end = $e
+    .label dst = $c
+    .label src = $a
+    .label source = $a
+    .label destination = $c
+    .label num = $e
     // src_end = (char*)source+num
     lda.z src_end
     clc

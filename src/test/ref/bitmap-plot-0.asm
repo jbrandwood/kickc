@@ -36,7 +36,7 @@
   .const WHITE = 1
   .label BITMAP = $2000
   .label SCREEN = $400
-  .label frame_cnt = 7
+  .label frame_cnt = 8
 __bbegin:
   // frame_cnt = 1
   // Counts frames - updated by the IRQ
@@ -46,10 +46,10 @@ __bbegin:
   rts
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label x = 3
-    .label y = $c
+    .label x = 2
+    .label y = 4
     .label vx = 5
-    .label vy = 2
+    .label vy = 7
     // bitmap_init(BITMAP, SCREEN)
     jsr bitmap_init
     // bitmap_clear(BLACK, WHITE)
@@ -130,11 +130,11 @@ main: {
     jmp __b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(3) x, byte register(X) y)
+// bitmap_plot(word zp(2) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $a
-    .label plotter = 8
-    .label x = 3
+    .label __1 = $b
+    .label plotter = 9
+    .label x = 2
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -235,12 +235,12 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(5) str, byte register(X) c, word zp(3) num)
+// memset(void* zp(9) str, byte register(X) c, word zp($b) num)
 memset: {
-    .label end = 3
-    .label dst = 5
-    .label num = 3
-    .label str = 5
+    .label end = $b
+    .label dst = 9
+    .label num = $b
+    .label str = 9
     // if(num>0)
     lda.z num
     bne !+
@@ -280,8 +280,8 @@ memset: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label __7 = $c
-    .label yoffs = 8
+    .label __7 = $d
+    .label yoffs = $b
     ldx #0
     lda #$80
   __b1:

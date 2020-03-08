@@ -63,9 +63,9 @@
   .const KEY_Q = $3e
 main: {
     .label sc = 2
-    .label screen = 4
-    .label row = 7
-    .label ch = 6
+    .label screen = 5
+    .label row = 4
+    .label ch = 7
     lda #<$400
     sta.z sc
     lda #>$400
@@ -214,7 +214,7 @@ main: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(Y) key)
 keyboard_key_pressed: {
-    .label colidx = 7
+    .label colidx = 8
     // colidx = key&7
     tya
     and #7

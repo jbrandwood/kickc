@@ -786,13 +786,11 @@ Uplifting [] best 2314 combination
 Coalescing zero page register [ zp[2]:12 [ memcpy::source#2 ] ] with [ zp[2]:18 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:14 [ memcpy::destination#2 ] ] with [ zp[2]:20 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:16 [ memcpy::num#2 ] ] with [ zp[2]:22 [ memcpy::src_end#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:12 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] with [ zp[2]:2 [ main::camelot#2 main::camelot#1 ] ]
-Coalescing zero page register [ zp[2]:14 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] with [ zp[2]:4 [ main::sc#2 main::sc#1 ] ]
-Coalescing zero page register [ zp[2]:16 [ memcpy::num#2 memcpy::src_end#0 ] ] with [ zp[2]:7 [ main::reigns#2 main::reigns#1 ] ]
-Allocated (was zp[2]:9) zp[2]:2 [ main::sc2#2 main::sc2#1 ]
-Allocated (was zp[2]:12) zp[2]:4 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 main::camelot#2 main::camelot#1 ]
-Allocated (was zp[2]:14) zp[2]:6 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 main::sc#2 main::sc#1 ]
-Allocated (was zp[2]:16) zp[2]:8 [ memcpy::num#2 memcpy::src_end#0 main::reigns#2 main::reigns#1 ]
+Allocated (was zp[2]:7) zp[2]:6 [ main::reigns#2 main::reigns#1 ]
+Allocated (was zp[2]:9) zp[2]:8 [ main::sc2#2 main::sc2#1 ]
+Allocated (was zp[2]:12) zp[2]:10 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
+Allocated (was zp[2]:14) zp[2]:12 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
+Allocated (was zp[2]:16) zp[2]:14 [ memcpy::num#2 memcpy::src_end#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -822,10 +820,10 @@ __bend:
   // main
 main: {
     // Working memory copy of string
-    .label sc = 6
-    .label camelot = 4
-    .label sc2 = 2
-    .label reigns = 8
+    .label sc = 4
+    .label camelot = 2
+    .label sc2 = 8
+    .label reigns = 6
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -973,14 +971,14 @@ main: {
   // memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(6) destination, void* zp(4) source, word zp(8) num)
+// memcpy(void* zp($c) destination, void* zp($a) source, word zp($e) num)
 memcpy: {
-    .label src_end = 8
-    .label dst = 6
-    .label src = 4
-    .label source = 4
-    .label destination = 6
-    .label num = 8
+    .label src_end = $e
+    .label dst = $c
+    .label src = $a
+    .label source = $a
+    .label destination = $c
+    .label num = $e
     // [23] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z src_end
     clc
@@ -1096,8 +1094,8 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte*) main::camelot
-(byte*) main::camelot#1 camelot zp[2]:4 7.333333333333333
-(byte*) main::camelot#2 camelot zp[2]:4 11.0
+(byte*) main::camelot#1 camelot zp[2]:2 7.333333333333333
+(byte*) main::camelot#2 camelot zp[2]:2 11.0
 (byte) main::i
 (byte) main::i#1 reg byte x 16.5
 (byte) main::i#2 reg byte x 5.5
@@ -1106,42 +1104,45 @@ FINAL SYMBOL TABLE
 (byte) main::i1#2 reg byte x 5.5
 (byte*) main::reigns
 (const byte*) main::reigns#0 reigns_1 = (byte*) "reigns"
-(byte*) main::reigns#1 reigns zp[2]:8 7.333333333333333
-(byte*) main::reigns#2 reigns zp[2]:8 11.0
+(byte*) main::reigns#1 reigns zp[2]:6 7.333333333333333
+(byte*) main::reigns#2 reigns zp[2]:6 11.0
 (byte*) main::sc
-(byte*) main::sc#1 sc zp[2]:6 5.5
-(byte*) main::sc#2 sc zp[2]:6 16.5
+(byte*) main::sc#1 sc zp[2]:4 5.5
+(byte*) main::sc#2 sc zp[2]:4 16.5
 (byte*) main::sc2
-(byte*) main::sc2#1 sc2 zp[2]:2 5.5
-(byte*) main::sc2#2 sc2 zp[2]:2 16.5
+(byte*) main::sc2#1 sc2 zp[2]:8 5.5
+(byte*) main::sc2#2 sc2 zp[2]:8 16.5
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 (label) memcpy::@1
 (label) memcpy::@2
 (label) memcpy::@return
 (void*) memcpy::destination
-(void*) memcpy::destination#2 destination zp[2]:6
+(void*) memcpy::destination#2 destination zp[2]:12
 (byte*) memcpy::dst
-(byte*) memcpy::dst#1 dst zp[2]:6 11.0
-(byte*) memcpy::dst#2 dst zp[2]:6 11.666666666666666
-(byte*) memcpy::dst#4 dst zp[2]:6 4.0
+(byte*) memcpy::dst#1 dst zp[2]:12 11.0
+(byte*) memcpy::dst#2 dst zp[2]:12 11.666666666666666
+(byte*) memcpy::dst#4 dst zp[2]:12 4.0
 (word) memcpy::num
-(word) memcpy::num#2 num zp[2]:8 2.0
+(word) memcpy::num#2 num zp[2]:14 2.0
 (void*) memcpy::return
 (void*) memcpy::source
-(void*) memcpy::source#2 source zp[2]:4
+(void*) memcpy::source#2 source zp[2]:10
 (byte*) memcpy::src
-(byte*) memcpy::src#1 src zp[2]:4 22.0
-(byte*) memcpy::src#2 src zp[2]:4 11.5
-(byte*) memcpy::src#4 src zp[2]:4 2.0
+(byte*) memcpy::src#1 src zp[2]:10 22.0
+(byte*) memcpy::src#2 src zp[2]:10 11.5
+(byte*) memcpy::src#4 src zp[2]:10 2.0
 (byte*) memcpy::src_end
-(byte*) memcpy::src_end#0 src_end zp[2]:8 1.625
+(byte*) memcpy::src_end#0 src_end zp[2]:14 1.625
 
+zp[2]:2 [ main::camelot#2 main::camelot#1 ]
+zp[2]:4 [ main::sc#2 main::sc#1 ]
 reg byte x [ main::i#2 main::i#1 ]
-zp[2]:2 [ main::sc2#2 main::sc2#1 ]
+zp[2]:6 [ main::reigns#2 main::reigns#1 ]
+zp[2]:8 [ main::sc2#2 main::sc2#1 ]
 reg byte x [ main::i1#2 main::i1#1 ]
-zp[2]:4 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 main::camelot#2 main::camelot#1 ]
-zp[2]:6 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 main::sc#2 main::sc#1 ]
-zp[2]:8 [ memcpy::num#2 memcpy::src_end#0 main::reigns#2 main::reigns#1 ]
+zp[2]:10 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
+zp[2]:12 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
+zp[2]:14 [ memcpy::num#2 memcpy::src_end#0 ]
 
 
 FINAL ASSEMBLER
@@ -1165,10 +1166,10 @@ Score: 2029
   // main
 main: {
     // Working memory copy of string
-    .label sc = 6
-    .label camelot = 4
-    .label sc2 = 2
-    .label reigns = 8
+    .label sc = 4
+    .label camelot = 2
+    .label sc2 = 8
+    .label reigns = 6
     // [5] phi from main to main::@1 [phi:main->main::@1]
     // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
@@ -1305,14 +1306,14 @@ main: {
   // memcpy
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(6) destination, void* zp(4) source, word zp(8) num)
+// memcpy(void* zp($c) destination, void* zp($a) source, word zp($e) num)
 memcpy: {
-    .label src_end = 8
-    .label dst = 6
-    .label src = 4
-    .label source = 4
-    .label destination = 6
-    .label num = 8
+    .label src_end = $e
+    .label dst = $c
+    .label src = $a
+    .label source = $a
+    .label destination = $c
+    .label num = $e
     // src_end = (char*)source+num
     // [23] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z src_end

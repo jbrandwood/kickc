@@ -33,29 +33,29 @@
   .const SIZEOF_POINTER = 2
   .label COS = SIN+$40
   // BOB charset ID of the next glyph to be added
-  .label bob_charset_next_id = $d
+  .label bob_charset_next_id = 9
   // Current index within the progress cursor (0-7)
-  .label progress_idx = 3
+  .label progress_idx = 8
   // Current position of the progress cursor
-  .label progress_cursor = $b
+  .label progress_cursor = 6
   // Pointer to the next clean-up to add
   // Prepare for next clean-up
-  .label renderBobCleanupNext = 6
+  .label renderBobCleanupNext = 3
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .const vicSelectGfxBank2_toDd001_return = 3
     .const toD0181_return = (>(BOB_SCREEN&$3fff)*4)|(>BOB_CHARSET)/4&$f
     .const toD0182_return = (>(SCREEN_BASIC&$3fff)*4)|(>CHARSET_BASIC)/4&$f
-    .label __10 = $b
-    .label __12 = $b
-    .label __13 = $b
-    .label x = 8
-    .label y = $b
-    .label a = 4
-    .label r = 3
+    .label __10 = 6
+    .label __12 = 6
+    .label __13 = 6
+    .label x = $c
+    .label y = 6
+    .label a = 2
+    .label r = 9
     .label i = 5
     // Render Rotated BOBs
-    .label angle = 2
+    .label angle = 8
     // mulf_init()
     jsr mulf_init
     // prepareBobs()
@@ -233,12 +233,12 @@ keyboard_matrix_read: {
 // Y-position is 0-183. Each y-position is 1 pixel high.
 // renderBob(byte zp($e) xpos, byte register(X) ypos)
 renderBob: {
-    .label __2 = $b
-    .label __5 = $d
+    .label __2 = $10
+    .label __5 = $12
     .label xpos = $e
-    .label x_char_offset = $a
-    .label y_offset = $b
-    .label screen = $b
+    .label x_char_offset = $f
+    .label y_offset = $10
+    .label screen = $10
     // x_char_offset = xpos/BOB_SHIFTS_X
     lda.z xpos
     lsr
@@ -343,7 +343,7 @@ renderBob: {
 // Fast multiply two signed bytes to a word result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
-    .label return = $b
+    .label return = 6
     // mulf8u_prepare((byte)a)
     jsr mulf8u_prepare
     // mulf8s_prepared(b)
@@ -354,11 +354,11 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zp($e) b)
+// mulf8s_prepared(signed byte zp($13) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = $b
-    .label b = $e
+    .label m = 6
+    .label b = $13
     // mulf8u_prepared((byte) b)
     lda.z b
     jsr mulf8u_prepared
@@ -394,7 +394,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = $b
+    .label return = 6
     // *memB = b
     sta memB
     // asm
@@ -435,7 +435,7 @@ mulf8u_prepare: {
 }
 // Clean Up the rendered BOB's
 renderBobCleanup: {
-    .label screen = $f
+    .label screen = $14
     ldx #0
   __b1:
     // screen = RENDERBOB_CLEANUP[i]
@@ -487,7 +487,7 @@ memset: {
     .const c = 0
     .const num = $3e8
     .label end = str+num
-    .label dst = 6
+    .label dst = $c
     lda #<str
     sta.z dst
     lda #>str
@@ -516,10 +516,10 @@ memset: {
 }
 // Initialize the tables used by renderBob()
 renderBobInit: {
-    .label __0 = $f
-    .label __1 = $f
-    .label __6 = $11
-    .label __7 = $f
+    .label __0 = $16
+    .label __1 = $16
+    .label __6 = $18
+    .label __7 = $16
     ldx #0
   __b1:
     // (unsigned int)y
@@ -581,13 +581,13 @@ renderBobInit: {
 // Creates the pre-shifted bobs into BOB_CHARSET and populates the BOB_TABLES
 // Modifies PROTO_BOB by shifting it around
 prepareBobs: {
-    .label bob_table = $f
-    .label shift_y = 2
+    .label bob_table = $16
+    .label shift_y = $a
     // Populate charset and tables
-    .label bob_glyph = 6
-    .label cell = $a
-    .label bob_table_idx = 4
-    .label shift_x = 5
+    .label bob_glyph = $c
+    .label cell = $f
+    .label bob_table_idx = $b
+    .label shift_x = $e
     // progress_init(SCREEN_BASIC)
     jsr progress_init
     // bobCharsetFindOrAddGlyph(PROTO_BOB+48)
@@ -725,10 +725,10 @@ progress_inc: {
 // Looks through BOB_CHARSET to find the passed bob glyph if present.
 // If not present it is added
 // Returns the glyph ID
-// bobCharsetFindOrAddGlyph(byte* zp(6) bob_glyph)
+// bobCharsetFindOrAddGlyph(byte* zp($c) bob_glyph)
 bobCharsetFindOrAddGlyph: {
-    .label bob_glyph = 6
-    .label glyph_cursor = $11
+    .label bob_glyph = $c
+    .label glyph_cursor = $18
     lda #<BOB_CHARSET
     sta.z glyph_cursor
     lda #>BOB_CHARSET
@@ -793,8 +793,8 @@ bobCharsetFindOrAddGlyph: {
 }
 // Shift PROTO_BOB right one X pixel
 shiftProtoBobRight: {
-    .label carry = $e
-    .label i = $a
+    .label carry = $13
+    .label i = $12
     ldy #0
     ldx #0
     txa
@@ -887,17 +887,17 @@ progress_init: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $d
+    .label c = $a
     // Counter used for determining x%2==0
-    .label sqr1_hi = $f
+    .label sqr1_hi = $18
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $b
-    .label sqr1_lo = 6
+    .label sqr = $14
+    .label sqr1_lo = $16
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 8
-    .label sqr2_lo = $11
+    .label sqr2_hi = $10
+    .label sqr2_lo = $c
     //Start with g(0)=f(255)
-    .label dir = $e
+    .label dir = $b
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi

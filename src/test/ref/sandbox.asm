@@ -8,11 +8,11 @@
   .label TIMELO = $a2
   .label VICBANK = $d018
 main: {
-    .label __3 = $17
-    .label __4 = $17
+    .label __3 = 6
+    .label __4 = 6
     .label __5 = $11
-    .label __12 = $17
-    .label __13 = $17
+    .label __12 = 6
+    .label __13 = 6
     .label __14 = $f
     .label v = 4
     // test performance of 'div16u(10)'
@@ -201,10 +201,10 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp(6) dividend, word zp($17) rem)
+// divr16u(word zp($17) dividend, word zp(6) rem)
 divr16u: {
-    .label rem = $17
-    .label dividend = 6
+    .label rem = 6
+    .label dividend = $17
     .label quotient = 4
     .label return = 4
     ldx #0
@@ -279,9 +279,9 @@ Print: {
     // }
     rts
 }
-// myprintf(byte* zp(6) str, word zp(2) w1, word zp(4) w2, word zp($17) w3)
+// myprintf(byte* zp($17) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
 myprintf: {
-    .label str = 6
+    .label str = $17
     .label bDigits = $d
     .label bLen = $e
     // formats
@@ -289,7 +289,7 @@ myprintf: {
     .label bArg = 9
     .label w1 = 2
     .label w2 = 4
-    .label w3 = $17
+    .label w3 = 6
     .label w = $f
     .label bFormat = 8
     .label bTrailing = $a

@@ -2,7 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 7
+  .label print_line_cursor = 2
   .label print_char_cursor = 4
 main: {
     ldy #0
@@ -83,9 +83,9 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(2) w)
+// print_sword(signed word zp(7) w)
 print_sword: {
-    .label w = 2
+    .label w = 7
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -126,9 +126,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(2) w)
+// print_word(word zp(7) w)
 print_word: {
-    .label w = 2
+    .label w = 7
     // print_byte(>w)
     lda.z w+1
     sta.z print_byte.b

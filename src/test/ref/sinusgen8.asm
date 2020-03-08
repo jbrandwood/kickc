@@ -40,9 +40,9 @@ main: {
     .byte 0
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// print_str(byte* zp(4) str)
 print_str: {
-    .label str = 6
+    .label str = 4
     lda #<main.str
     sta.z str
     lda #>main.str
@@ -72,9 +72,9 @@ print_str: {
     jmp __b1
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zp(4) b)
+// print_sbyte(signed byte zp($a) b)
 print_sbyte: {
-    .label b = 4
+    .label b = $a
     // if(b<0)
     lda.z b
     bmi __b1
@@ -113,9 +113,9 @@ print_char: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp(4) b)
+// print_byte(byte zp($a) b)
 print_byte: {
-    .label b = 4
+    .label b = $a
     // b>>4
     lda.z b
     lsr
@@ -150,7 +150,7 @@ memset: {
     .const num = $3e8
     .label str = print_line_cursor
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -180,14 +180,14 @@ memset: {
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zp($c) sintab)
+// sin8s_gen(signed byte* zp(8) sintab)
 sin8s_gen: {
-    .label step = $e
-    .label sintab = $c
+    .label step = $10
+    .label sintab = 8
     // u[4.12]
     // Iterate over the table
-    .label x = $a
-    .label i = 2
+    .label x = 6
+    .label i = 4
     // div16u(PI2_u4f12, wavelength)
     jsr div16u
     // div16u(PI2_u4f12, wavelength)
@@ -247,17 +247,17 @@ sin8s_gen: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp(6) x)
+// sin8s(word zp($c) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = 6
-    .label x = 6
-    .label x1 = $10
-    .label x3 = $11
-    .label usinx = $12
+    .label __4 = $c
+    .label x = $c
+    .label x1 = $12
+    .label x3 = $13
+    .label usinx = $14
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-    .label isUpper = 4
+    .label isUpper = $a
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -388,11 +388,11 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp(5) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($b) select)
 mulu8_sel: {
-    .label __0 = 6
-    .label __1 = 6
-    .label select = 5
+    .label __0 = $e
+    .label __1 = $e
+    .label select = $b
     // mul8u(v1, v2)
     tya
     jsr mul8u
@@ -413,9 +413,9 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = 8
-    .label res = 6
-    .label return = 6
+    .label mb = $c
+    .label res = $e
+    .label return = $e
     // mb = b
     sta.z mb
     lda #0
@@ -458,7 +458,7 @@ mul8u: {
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
 div16u: {
-    .label return = $e
+    .label return = $10
     // divr16u(dividend, divisor, 0)
     jsr divr16u
     // divr16u(dividend, divisor, 0)
@@ -469,12 +469,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($c) dividend, word zp($a) rem)
+// divr16u(word zp($e) dividend, word zp($c) rem)
 divr16u: {
-    .label rem = $a
-    .label dividend = $c
-    .label quotient = $e
-    .label return = $e
+    .label rem = $c
+    .label dividend = $e
+    .label quotient = $10
+    .label return = $10
     ldx #0
     txa
     sta.z quotient

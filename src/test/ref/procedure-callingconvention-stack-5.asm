@@ -17,7 +17,7 @@ __bbegin:
   rts
 main: {
     .label __0 = 4
-    .label __1 = 2
+    .label __1 = 6
     // next()
     pha
     pha
@@ -49,7 +49,7 @@ main: {
 }
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 4
+    .label return = 8
     // return current++;
     lda.z current
     sta.z return

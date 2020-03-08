@@ -14,7 +14,7 @@
   .label print_line_cursor = 4
   .label print_char_cursor = 6
   .label Ticks = $10
-  .label Ticks_1 = $13
+  .label Ticks_1 = $12
 __bbegin:
   // last_time
   lda #<0
@@ -107,11 +107,11 @@ doplasma: {
     .const c2A = 0
     .const c2B = 0
     .label c1a = 9
-    .label c1b = $12
+    .label c1b = $14
     .label ii = 8
     .label c2a = 2
     .label c2b = 3
-    .label i = $15
+    .label i = $17
     .label scrn = 6
     lda #0
     sta.z c1b
@@ -266,9 +266,9 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($13) w)
+// print_word(word zp($12) w)
 print_word: {
-    .label w = $13
+    .label w = $12
     // print_byte(>w)
     lda.z w+1
     tax
@@ -336,14 +336,14 @@ start: {
     rts
 }
 makechar: {
-    .label __5 = $15
-    .label __8 = $13
-    .label __9 = $13
-    .label s = $12
+    .label __5 = $17
+    .label __8 = $15
+    .label __9 = $15
+    .label s = $14
     .label c = $10
     .label i = 8
     .label b = 9
-    .label __10 = $13
+    .label __10 = $15
     lda #<0
     sta.z c
     sta.z c+1

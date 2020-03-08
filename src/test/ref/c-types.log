@@ -3316,11 +3316,9 @@ Uplifting [testLong] best 2606 combination
 Coalescing zero page register [ zp[4]:4 [ print_sdword::dw#5 print_sdword::dw#0 print_sdword::dw#3 ] ] with [ zp[4]:9 [ print_dword::dw#2 print_dword::dw#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:13 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 ] ] with [ zp[2]:20 [ print_sword::w#7 print_sword::w#0 print_sword::w#10 ] ] - score: 1
 Coalescing zero page register [ zp[2]:18 [ print_str::str#5 print_str::str#7 print_str::str#0 ] ] with [ zp[2]:13 [ print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 print_sword::w#7 print_sword::w#0 print_sword::w#10 ] ]
-Coalescing zero page register [ zp[2]:22 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:2 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ] ]
-Allocated (was zp[4]:4) zp[4]:2 [ print_sdword::dw#5 print_sdword::dw#0 print_sdword::dw#3 print_dword::dw#2 print_dword::dw#0 ]
-Allocated (was zp[2]:15) zp[2]:6 [ print_char_cursor#144 print_char_cursor#145 print_char_cursor#94 print_char_cursor#149 print_char_cursor#26 print_char_cursor#136 print_char_cursor#156 print_char_cursor#160 print_char_cursor#161 print_char_cursor#162 print_char_cursor#1 ]
-Allocated (was zp[2]:18) zp[2]:8 [ print_str::str#5 print_str::str#7 print_str::str#0 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 print_sword::w#7 print_sword::w#0 print_sword::w#10 ]
-Allocated (was zp[2]:22) zp[2]:10 [ memset::dst#2 memset::dst#1 print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ]
+Coalescing zero page register [ zp[2]:22 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:18 [ print_str::str#5 print_str::str#7 print_str::str#0 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 print_sword::w#7 print_sword::w#0 print_sword::w#10 ] ]
+Allocated (was zp[2]:15) zp[2]:8 [ print_char_cursor#144 print_char_cursor#145 print_char_cursor#94 print_char_cursor#149 print_char_cursor#26 print_char_cursor#136 print_char_cursor#156 print_char_cursor#160 print_char_cursor#161 print_char_cursor#162 print_char_cursor#1 ]
+Allocated (was zp[2]:22) zp[2]:10 [ memset::dst#2 memset::dst#1 print_str::str#5 print_str::str#7 print_str::str#0 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 print_sword::w#7 print_sword::w#0 print_sword::w#10 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -3330,8 +3328,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
-  .label print_line_cursor = $a
+  .label print_char_cursor = 8
+  .label print_line_cursor = 2
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -3542,9 +3540,9 @@ print_ln: {
 }
   // print_sdword
 // Print a signed dword as HEX
-// print_sdword(signed dword zp(2) dw)
+// print_sdword(signed dword zp(4) dw)
 print_sdword: {
-    .label dw = 2
+    .label dw = 4
     // [36] if((signed dword) print_sdword::dw#3<(signed byte) 0) goto print_sdword::@1 -- vdsz1_lt_0_then_la1 
     lda.z dw+3
     bmi __b1_from_print_sdword
@@ -3634,9 +3632,9 @@ print_char: {
 }
   // print_dword
 // Print a dword as HEX
-// print_dword(dword zp(2) dw)
+// print_dword(dword zp(4) dw)
 print_dword: {
-    .label dw = 2
+    .label dw = 4
     // [51] (word) print_word::w#1 ← > (dword) print_dword::dw#2 -- vwuz1=_hi_vduz2 
     lda.z dw+2
     sta.z print_word.w
@@ -3670,9 +3668,9 @@ print_dword: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zp(8) w)
+// print_word(word zp($a) w)
 print_word: {
-    .label w = 8
+    .label w = $a
     // [57] (byte) print_byte::b#1 ← > (word) print_word::w#5 -- vbuxx=_hi_vwuz1 
     lda.z w+1
     tax
@@ -3742,9 +3740,9 @@ print_byte: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp(8) str)
+// print_str(byte* zp($a) str)
 print_str: {
-    .label str = 8
+    .label str = $a
     // [71] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   __b1_from_print_str:
   __b1_from___b2:
@@ -3889,9 +3887,9 @@ testInt: {
 }
   // print_sword
 // Print a signed word as HEX
-// print_sword(signed word zp(8) w)
+// print_sword(signed word zp($a) w)
 print_sword: {
-    .label w = 8
+    .label w = $a
     // [93] if((signed word) print_sword::w#10<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
     lda.z w+1
     bmi __b1_from_print_sword
@@ -4524,30 +4522,30 @@ FINAL SYMBOL TABLE
 (byte) print_char::ch#6 reg byte a 4.0
 (byte) print_char::ch#7 reg byte a 4.0
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp[2]:6 11.0
-(byte*) print_char_cursor#136 print_char_cursor zp[2]:6 3.583333333333333
-(byte*) print_char_cursor#144 print_char_cursor zp[2]:6 6.0
-(byte*) print_char_cursor#145 print_char_cursor zp[2]:6 3.0
-(byte*) print_char_cursor#149 print_char_cursor zp[2]:6 3.9999999999999996
-(byte*) print_char_cursor#156 print_char_cursor zp[2]:6 8.0
-(byte*) print_char_cursor#160 print_char_cursor zp[2]:6 4.0
-(byte*) print_char_cursor#161 print_char_cursor zp[2]:6 4.0
-(byte*) print_char_cursor#162 print_char_cursor zp[2]:6 4.0
-(byte*) print_char_cursor#26 print_char_cursor zp[2]:6 0.6091954022988502
-(byte*) print_char_cursor#94 print_char_cursor zp[2]:6 17.0
+(byte*) print_char_cursor#1 print_char_cursor zp[2]:8 11.0
+(byte*) print_char_cursor#136 print_char_cursor zp[2]:8 3.583333333333333
+(byte*) print_char_cursor#144 print_char_cursor zp[2]:8 6.0
+(byte*) print_char_cursor#145 print_char_cursor zp[2]:8 3.0
+(byte*) print_char_cursor#149 print_char_cursor zp[2]:8 3.9999999999999996
+(byte*) print_char_cursor#156 print_char_cursor zp[2]:8 8.0
+(byte*) print_char_cursor#160 print_char_cursor zp[2]:8 4.0
+(byte*) print_char_cursor#161 print_char_cursor zp[2]:8 4.0
+(byte*) print_char_cursor#162 print_char_cursor zp[2]:8 4.0
+(byte*) print_char_cursor#26 print_char_cursor zp[2]:8 0.6091954022988502
+(byte*) print_char_cursor#94 print_char_cursor zp[2]:8 17.0
 (void()) print_cls()
 (label) print_cls::@return
 (void()) print_dword((dword) print_dword::dw)
 (label) print_dword::@1
 (label) print_dword::@return
 (dword) print_dword::dw
-(dword) print_dword::dw#0 dw zp[4]:2 4.0
-(dword) print_dword::dw#2 dw zp[4]:2 2.0
+(dword) print_dword::dw#0 dw zp[4]:4 4.0
+(dword) print_dword::dw#2 dw zp[4]:4 2.0
 (const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
-(byte*) print_line_cursor#1 print_line_cursor zp[2]:10 0.8333333333333333
-(byte*) print_line_cursor#20 print_line_cursor zp[2]:10 24.0
-(byte*) print_line_cursor#39 print_line_cursor zp[2]:10 8.0
+(byte*) print_line_cursor#1 print_line_cursor zp[2]:2 0.8333333333333333
+(byte*) print_line_cursor#20 print_line_cursor zp[2]:2 24.0
+(byte*) print_line_cursor#39 print_line_cursor zp[2]:2 8.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -4565,17 +4563,17 @@ FINAL SYMBOL TABLE
 (label) print_sdword::@4
 (label) print_sdword::@return
 (signed dword) print_sdword::dw
-(signed dword) print_sdword::dw#0 dw zp[4]:2 4.0
-(signed dword) print_sdword::dw#3 dw zp[4]:2 1.0
-(signed dword) print_sdword::dw#5 dw zp[4]:2 4.0
+(signed dword) print_sdword::dw#0 dw zp[4]:4 4.0
+(signed dword) print_sdword::dw#3 dw zp[4]:4 1.0
+(signed dword) print_sdword::dw#5 dw zp[4]:4 4.0
 (void()) print_str((byte*) print_str::str)
 (label) print_str::@1
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp[2]:8 22.0
-(byte*) print_str::str#5 str zp[2]:8 11.5
-(byte*) print_str::str#7 str zp[2]:8 2.0
+(byte*) print_str::str#0 str zp[2]:10 22.0
+(byte*) print_str::str#5 str zp[2]:10 11.5
+(byte*) print_str::str#7 str zp[2]:10 2.0
 (void()) print_sword((signed word) print_sword::w)
 (label) print_sword::@1
 (label) print_sword::@2
@@ -4583,17 +4581,17 @@ FINAL SYMBOL TABLE
 (label) print_sword::@4
 (label) print_sword::@return
 (signed word) print_sword::w
-(signed word) print_sword::w#0 w zp[2]:8 4.0
-(signed word) print_sword::w#10 w zp[2]:8 1.0
-(signed word) print_sword::w#7 w zp[2]:8 4.0
+(signed word) print_sword::w#0 w zp[2]:10 4.0
+(signed word) print_sword::w#10 w zp[2]:10 1.0
+(signed word) print_sword::w#7 w zp[2]:10 4.0
 (void()) print_word((word) print_word::w)
 (label) print_word::@1
 (label) print_word::@return
 (word) print_word::w
-(word) print_word::w#0 w zp[2]:8 4.0
-(word) print_word::w#1 w zp[2]:8 4.0
-(word) print_word::w#2 w zp[2]:8 4.0
-(word) print_word::w#5 w zp[2]:8 3.333333333333333
+(word) print_word::w#0 w zp[2]:10 4.0
+(word) print_word::w#1 w zp[2]:10 4.0
+(word) print_word::w#2 w zp[2]:10 4.0
+(word) print_word::w#5 w zp[2]:10 3.333333333333333
 (void()) testChar()
 (label) testChar::@1
 (label) testChar::@2
@@ -4643,12 +4641,12 @@ FINAL SYMBOL TABLE
 (const byte*) testShort::str[(byte) 8]  = (byte*) "short: "
 (const word) testShort::u = (word) $578
 
-zp[4]:2 [ print_sdword::dw#5 print_sdword::dw#0 print_sdword::dw#3 print_dword::dw#2 print_dword::dw#0 ]
+zp[2]:2 [ print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ]
+zp[4]:4 [ print_sdword::dw#5 print_sdword::dw#0 print_sdword::dw#3 print_dword::dw#2 print_dword::dw#0 ]
 reg byte a [ print_char::ch#16 print_char::ch#6 print_char::ch#7 ]
-zp[2]:6 [ print_char_cursor#144 print_char_cursor#145 print_char_cursor#94 print_char_cursor#149 print_char_cursor#26 print_char_cursor#136 print_char_cursor#156 print_char_cursor#160 print_char_cursor#161 print_char_cursor#162 print_char_cursor#1 ]
+zp[2]:8 [ print_char_cursor#144 print_char_cursor#145 print_char_cursor#94 print_char_cursor#149 print_char_cursor#26 print_char_cursor#136 print_char_cursor#156 print_char_cursor#160 print_char_cursor#161 print_char_cursor#162 print_char_cursor#1 ]
 reg byte x [ print_byte::b#5 print_byte::b#1 print_byte::b#2 ]
-zp[2]:8 [ print_str::str#5 print_str::str#7 print_str::str#0 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 print_sword::w#7 print_sword::w#0 print_sword::w#10 ]
-zp[2]:10 [ memset::dst#2 memset::dst#1 print_line_cursor#20 print_line_cursor#39 print_line_cursor#1 ]
+zp[2]:10 [ memset::dst#2 memset::dst#1 print_str::str#5 print_str::str#7 print_str::str#0 print_word::w#5 print_word::w#1 print_word::w#2 print_word::w#0 print_sword::w#7 print_sword::w#0 print_sword::w#10 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 
@@ -4663,8 +4661,8 @@ Score: 2196
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
-  .label print_line_cursor = $a
+  .label print_char_cursor = 8
+  .label print_line_cursor = 2
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -4835,9 +4833,9 @@ print_ln: {
 }
   // print_sdword
 // Print a signed dword as HEX
-// print_sdword(signed dword zp(2) dw)
+// print_sdword(signed dword zp(4) dw)
 print_sdword: {
-    .label dw = 2
+    .label dw = 4
     // if(dw<0)
     // [36] if((signed dword) print_sdword::dw#3<(signed byte) 0) goto print_sdword::@1 -- vdsz1_lt_0_then_la1 
     lda.z dw+3
@@ -4919,9 +4917,9 @@ print_char: {
 }
   // print_dword
 // Print a dword as HEX
-// print_dword(dword zp(2) dw)
+// print_dword(dword zp(4) dw)
 print_dword: {
-    .label dw = 2
+    .label dw = 4
     // print_word(>dw)
     // [51] (word) print_word::w#1 ← > (dword) print_dword::dw#2 -- vwuz1=_hi_vduz2 
     lda.z dw+2
@@ -4952,9 +4950,9 @@ print_dword: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zp(8) w)
+// print_word(word zp($a) w)
 print_word: {
-    .label w = 8
+    .label w = $a
     // print_byte(>w)
     // [57] (byte) print_byte::b#1 ← > (word) print_word::w#5 -- vbuxx=_hi_vwuz1 
     lda.z w+1
@@ -5020,9 +5018,9 @@ print_byte: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp(8) str)
+// print_str(byte* zp($a) str)
 print_str: {
-    .label str = 8
+    .label str = $a
     // [71] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
     // [71] phi (byte*) print_char_cursor#136 = (byte*) print_char_cursor#156 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [71] phi (byte*) print_str::str#5 = (byte*) print_str::str#7 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
@@ -5146,9 +5144,9 @@ testInt: {
 }
   // print_sword
 // Print a signed word as HEX
-// print_sword(signed word zp(8) w)
+// print_sword(signed word zp($a) w)
 print_sword: {
-    .label w = 8
+    .label w = $a
     // if(w<0)
     // [93] if((signed word) print_sword::w#10<(signed byte) 0) goto print_sword::@1 -- vwsz1_lt_0_then_la1 
     lda.z w+1

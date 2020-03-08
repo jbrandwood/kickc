@@ -307,9 +307,6 @@ Uplifting [plus] best 164 combination zp[2]:6 [ plus::b#0 ] zp[2]:8 [ plus::retu
 Uplifting [main] best 164 combination zp[2]:2 [ main::$0 ] 
 Uplifting [] best 164 combination 
 Coalescing zero page register [ zp[2]:4 [ plus::a#0 ] ] with [ zp[2]:8 [ plus::return#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:4 [ plus::a#0 plus::return#0 ] ] with [ zp[2]:2 [ main::$0 ] ]
-Allocated (was zp[2]:4) zp[2]:2 [ plus::a#0 plus::return#0 main::$0 ]
-Allocated (was zp[2]:6) zp[2]:4 [ plus::b#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -370,14 +367,14 @@ main: {
     rts
 }
   // plus
-// plus(word zp(2) a, word zp(4) b)
+// plus(word zp(4) a, word zp(6) b)
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 2
-    .label a = 2
-    .label b = 4
-    .label return = 2
+    .label a = 4
+    .label b = 6
+    .label return = 4
     // [11] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
@@ -447,14 +444,15 @@ __stackcall (word()) plus((word) plus::a , (word) plus::b)
 (const byte) plus::OFFSET_STACK_B = (byte) 0
 (const byte) plus::OFFSET_STACK_RETURN = (byte) 2
 (word) plus::a
-(word) plus::a#0 a zp[2]:2 2.0
+(word) plus::a#0 a zp[2]:4 2.0
 (word) plus::b
-(word) plus::b#0 b zp[2]:4 4.0
+(word) plus::b#0 b zp[2]:6 4.0
 (word) plus::return
-(word) plus::return#0 return zp[2]:2 4.0
+(word) plus::return#0 return zp[2]:4 4.0
 
-zp[2]:2 [ plus::a#0 plus::return#0 main::$0 ]
-zp[2]:4 [ plus::b#0 ]
+zp[2]:2 [ main::$0 ]
+zp[2]:4 [ plus::a#0 plus::return#0 ]
+zp[2]:6 [ plus::b#0 ]
 
 
 FINAL ASSEMBLER
@@ -511,14 +509,14 @@ main: {
     rts
 }
   // plus
-// plus(word zp(2) a, word zp(4) b)
+// plus(word zp(4) a, word zp(6) b)
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 2
-    .label a = 2
-    .label b = 4
-    .label return = 2
+    .label a = 4
+    .label b = 6
+    .label return = 4
     // [11] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) -- vwuz1=_stackidxword_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x

@@ -15,13 +15,13 @@
   .label SPRITE = $2000
   .const g = -5
   // Reset y velocity
-  .label yvel_init = 2
-  .label yvel = 2
-  .label yvel_1 = 4
+  .label yvel_init = 4
+  .label yvel = 4
+  .label yvel_1 = 6
   // Reset position
-  .label xpos = 6
-  .label ypos = 8
-  .label xvel = $a
+  .label xpos = 8
+  .label ypos = $a
+  .label xvel = 2
 main: {
     // init()
     jsr init
@@ -190,7 +190,7 @@ anim: {
 }
 // Fill and show a sprite, clear the screen
 init: {
-    .label sc = $a
+    .label sc = $c
     // *SPRITES_ENABLE = %00000001
     lda #1
     sta SPRITES_ENABLE

@@ -164,8 +164,8 @@ start: {
     rts
 }
 round: {
-    .label p = 2
-    .label S = 4
+    .label p = 8
+    .label S = $a
     lda #<Sieve
     sta.z p
     lda #>Sieve

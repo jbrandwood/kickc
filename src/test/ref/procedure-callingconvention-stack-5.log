@@ -308,10 +308,6 @@ Uplift Scope [] 0.73: zp[2]:2 [ current ]
 Uplifting [main] best 192 combination zp[2]:4 [ main::$0 ] zp[2]:6 [ main::$1 ] 
 Uplifting [next] best 192 combination zp[2]:8 [ next::return#0 ] 
 Uplifting [] best 192 combination zp[2]:2 [ current ] 
-Coalescing zero page register [ zp[2]:6 [ main::$1 ] ] with [ zp[2]:2 [ current ] ]
-Coalescing zero page register [ zp[2]:8 [ next::return#0 ] ] with [ zp[2]:4 [ main::$0 ] ]
-Allocated (was zp[2]:6) zp[2]:2 [ main::$1 current ]
-Allocated (was zp[2]:8) zp[2]:4 [ next::return#0 main::$0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -351,7 +347,7 @@ __bend:
   // main
 main: {
     .label __0 = 4
-    .label __1 = 2
+    .label __1 = 6
     // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
     pha
     pha
@@ -391,7 +387,7 @@ main: {
   // next
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 4
+    .label return = 8
     // [14] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
     lda.z current
     sta.z return
@@ -446,16 +442,18 @@ FINAL SYMBOL TABLE
 (signed word) current loadstore zp[2]:2 0.7272727272727273
 (void()) main()
 (signed word~) main::$0 zp[2]:4 4.0
-(signed word~) main::$1 zp[2]:2 4.0
+(signed word~) main::$1 zp[2]:6 4.0
 (label) main::@return
 __stackcall (signed word()) next()
 (label) next::@return
 (const byte) next::OFFSET_STACK_RETURN = (byte) 0
 (signed word) next::return
-(signed word) next::return#0 return zp[2]:4 2.0
+(signed word) next::return#0 return zp[2]:8 2.0
 
-zp[2]:2 [ main::$1 current ]
-zp[2]:4 [ next::return#0 main::$0 ]
+zp[2]:2 [ current ]
+zp[2]:4 [ main::$0 ]
+zp[2]:6 [ main::$1 ]
+zp[2]:8 [ next::return#0 ]
 
 
 FINAL ASSEMBLER
@@ -492,7 +490,7 @@ __bbegin:
   // main
 main: {
     .label __0 = 4
-    .label __1 = 2
+    .label __1 = 6
     // next()
     // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
     pha
@@ -535,7 +533,7 @@ main: {
   // next
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 4
+    .label return = 8
     // return current++;
     // [14] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
     lda.z current

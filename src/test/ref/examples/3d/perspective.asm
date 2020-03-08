@@ -138,9 +138,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0
@@ -275,7 +275,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 4
+    .label dst = 6
     lda #<str
     sta.z dst
     lda #>str
@@ -304,9 +304,9 @@ memset: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = 6
-    .label sqr = 2
-    .label add = 4
+    .label val = $a
+    .label sqr = 6
+    .label add = 8
     lda #<1
     sta.z add
     lda #>1

@@ -32,14 +32,14 @@
   .const NUM_BOBS = $19
   .const SIZEOF_POINTER = 2
   // BOB charset ID of the next glyph to be added
-  .label bob_charset_next_id = $e
+  .label bob_charset_next_id = $11
   // Current index within the progress cursor (0-7)
-  .label progress_idx = 9
+  .label progress_idx = $10
   // Current position of the progress cursor
-  .label progress_cursor = $17
+  .label progress_cursor = $e
   // Pointer to the next clean-up to add
   // Prepare for next clean-up
-  .label renderBobCleanupNext = $a
+  .label renderBobCleanupNext = $c
 main: {
     .const origY = $a00
     // Row and column offset vectors
@@ -50,16 +50,16 @@ main: {
     .const vicSelectGfxBank2_toDd001_return = 3
     .const toD0181_return = (>(BOB_SCREEN&$3fff)*4)|(>BOB_CHARSET)/4&$f
     .const toD0182_return = (>(BASIC_SCREEN&$3fff)*4)|(>BASIC_CHARSET)/4&$f
-    .label x = $13
-    .label y = 3
-    .label x_1 = 5
-    .label y_1 = 7
-    .label rowX = $13
-    .label rowY = 3
-    .label col = 2
+    .label x = 4
+    .label y = 6
+    .label x_1 = 8
+    .label y_1 = $a
+    .label rowX = 4
+    .label rowY = 6
+    .label col = $10
     // Origin point
-    .label origX = $15
-    .label rowOffsetY = $17
+    .label origX = $e
+    .label rowOffsetY = 2
     // mulf_init()
     jsr mulf_init
     // prepareBobs()
@@ -254,16 +254,16 @@ keyboard_matrix_read: {
 // Render a single BOB at a given x/y-position
 // X-position is 0-151. Each x-position is 2 pixels wide.
 // Y-position is 0-183. Each y-position is 1 pixel high.
-// renderBob(byte zp($d) xpos, byte zp($e) ypos)
+// renderBob(byte zp($16) xpos, byte zp($17) ypos)
 renderBob: {
-    .label __2 = $10
-    .label __5 = $12
-    .label xpos = $d
-    .label ypos = $e
-    .label x_char_offset = $f
-    .label y_offset = $10
-    .label screen = $10
-    .label bob_table_idx = $12
+    .label __2 = $19
+    .label __5 = $1b
+    .label xpos = $16
+    .label ypos = $17
+    .label x_char_offset = $18
+    .label y_offset = $19
+    .label screen = $19
+    .label bob_table_idx = $1b
     // x_char_offset = xpos/BOB_SHIFTS_X
     lda.z xpos
     lsr
@@ -376,7 +376,7 @@ renderBob: {
 }
 // Clean Up the rendered BOB's
 renderBobCleanup: {
-    .label screen = $13
+    .label screen = $1c
     ldx #0
   __b1:
     // screen = RENDERBOB_CLEANUP[i]
@@ -428,7 +428,7 @@ memset: {
     .const c = 0
     .const num = $3e8
     .label end = str+num
-    .label dst = $15
+    .label dst = $19
     lda #<str
     sta.z dst
     lda #>str
@@ -457,10 +457,10 @@ memset: {
 }
 // Initialize the tables used by renderBob()
 renderBobInit: {
-    .label __0 = $15
-    .label __1 = $15
-    .label __6 = $17
-    .label __7 = $15
+    .label __0 = $1e
+    .label __1 = $1e
+    .label __6 = $20
+    .label __7 = $1e
     ldx #0
   __b1:
     // (unsigned int)y
@@ -522,13 +522,13 @@ renderBobInit: {
 // Creates the pre-shifted bobs into BOB_CHARSET and populates the BOB_TABLES
 // Modifies PROTO_BOB by shifting it around
 prepareBobs: {
-    .label bob_table = 3
-    .label shift_y = 2
+    .label bob_table = $20
+    .label shift_y = $12
     // Populate charset and tables
-    .label bob_glyph = $13
-    .label cell = $12
-    .label bob_table_idx = $c
-    .label shift_x = $d
+    .label bob_glyph = $19
+    .label cell = $17
+    .label bob_table_idx = $15
+    .label shift_x = $16
     // progress_init(BASIC_SCREEN)
     jsr progress_init
     // charsetFindOrAddGlyph(PROTO_BOB+48, BOB_CHARSET)
@@ -665,10 +665,10 @@ progress_inc: {
 }
 // Looks through a charset to find a glyph if present. If not present it is added.
 // Returns the glyph ID
-// charsetFindOrAddGlyph(byte* zp($13) glyph)
+// charsetFindOrAddGlyph(byte* zp($19) glyph)
 charsetFindOrAddGlyph: {
-    .label glyph = $13
-    .label glyph_cursor = 5
+    .label glyph = $19
+    .label glyph_cursor = $13
     lda #<BOB_CHARSET
     sta.z glyph_cursor
     lda #>BOB_CHARSET
@@ -733,8 +733,8 @@ charsetFindOrAddGlyph: {
 }
 // Shift PROTO_BOB right one X pixel
 protoBobShiftRight: {
-    .label carry = $f
-    .label i = $12
+    .label carry = $1b
+    .label i = $18
     ldy #0
     ldx #0
     txa
@@ -827,17 +827,17 @@ progress_init: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 9
+    .label c = $12
     // Counter used for determining x%2==0
-    .label sqr1_hi = $a
+    .label sqr1_hi = $13
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $15
-    .label sqr1_lo = 7
+    .label sqr = $1e
+    .label sqr1_lo = $20
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $13
-    .label sqr2_lo = $10
+    .label sqr2_hi = $1c
+    .label sqr2_lo = $19
     //Start with g(0)=f(255)
-    .label dir = $c
+    .label dir = $15
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi

@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 6
-  .label print_line_cursor = $a
+  .label print_char_cursor = 8
+  .label print_line_cursor = 2
 main: {
     // print_cls()
     jsr print_cls
@@ -99,9 +99,9 @@ print_ln: {
     rts
 }
 // Print a signed dword as HEX
-// print_sdword(signed dword zp(2) dw)
+// print_sdword(signed dword zp(4) dw)
 print_sdword: {
-    .label dw = 2
+    .label dw = 4
     // if(dw<0)
     lda.z dw+3
     bmi __b1
@@ -152,9 +152,9 @@ print_char: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zp(2) dw)
+// print_dword(dword zp(4) dw)
 print_dword: {
-    .label dw = 2
+    .label dw = 4
     // print_word(>dw)
     lda.z dw+2
     sta.z print_word.w
@@ -171,9 +171,9 @@ print_dword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(8) w)
+// print_word(word zp($a) w)
 print_word: {
-    .label w = 8
+    .label w = $a
     // print_byte(>w)
     lda.z w+1
     tax
@@ -209,9 +209,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(8) str)
+// print_str(byte* zp($a) str)
 print_str: {
-    .label str = 8
+    .label str = $a
   __b1:
     // while(*str)
     ldy #0
@@ -282,9 +282,9 @@ testInt: {
     .byte 0
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(8) w)
+// print_sword(signed word zp($a) w)
 print_sword: {
-    .label w = 8
+    .label w = $a
     // if(w<0)
     lda.z w+1
     bmi __b1

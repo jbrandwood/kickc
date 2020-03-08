@@ -108,8 +108,8 @@ loop: {
     .label i = 4
     // Render Rotated BOBs
     .label angle = 6
-    .label plexFreeNextYpos1_return = $11
-    .label i1 = $12
+    .label plexFreeNextYpos1_return = $12
+    .label i1 = 9
     lda #0
     sta.z angle
   __b2:
@@ -258,7 +258,7 @@ loop: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $11
+    .label plex_sprite_idx2 = $13
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -347,9 +347,9 @@ plexShowSprite: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $11
-    .label nxt_y = $12
-    .label m = 5
+    .label nxt_idx = $13
+    .label nxt_y = $14
+    .label m = $12
     lda #0
     sta.z m
   __b1:
@@ -417,11 +417,11 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zp($12) b)
+// mulf8s_prepared(signed byte zp($14) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 7
-    .label b = $12
+    .label b = $14
     // mulf8u_prepared((byte) b)
     lda.z b
     jsr mulf8u_prepared
@@ -601,17 +601,17 @@ memset: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $12
+    .label c = 9
     // Counter used for determining x%2==0
-    .label sqr1_hi = 9
+    .label sqr1_hi = $a
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $f
+    .label sqr = $10
     .label sqr1_lo = 7
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $d
-    .label sqr2_lo = $b
+    .label sqr2_hi = $e
+    .label sqr2_lo = $c
     //Start with g(0)=f(255)
-    .label dir = $11
+    .label dir = $12
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi

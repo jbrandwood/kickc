@@ -2091,15 +2091,15 @@ Coalescing zero page register [ zp[2]:35 [ alloc::return#2 prepend::new#1 ] ] wi
 Coalescing zero page register [ zp[2]:17 [ sum::s#3 sum::s#2 sum::return#2 ] ] with [ zp[2]:25 [ main::$5 ] ] - score: 1
 Coalescing zero page register [ zp[2]:35 [ alloc::return#2 prepend::new#1 alloc::return#0 ] ] with [ zp[2]:39 [ alloc::$1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:9 [ print_line_cursor#8 print_line_cursor#1 ] ] with [ zp[2]:3 [ main::i#3 main::i#2 prepend::x#0 ] ]
-Coalescing zero page register [ zp[2]:17 [ sum::s#3 sum::s#2 sum::return#2 main::$5 ] ] with [ zp[2]:5 [ free_#22 free_#13 ] ]
-Coalescing zero page register [ zp[2]:35 [ alloc::return#2 prepend::new#1 alloc::return#0 alloc::$1 ] ] with [ zp[2]:27 [ Ticks#1 ] ]
-Allocated (was zp[2]:7) zp[2]:2 [ root#20 root#11 sum::current#3 sum::current#1 sum::current#2 ]
-Allocated (was zp[2]:9) zp[2]:4 [ print_line_cursor#8 print_line_cursor#1 main::i#3 main::i#2 prepend::x#0 ]
-Allocated (was zp[2]:13) zp[2]:6 [ print_char_cursor#26 print_char_cursor#48 print_char_cursor#10 ]
-Allocated (was zp[2]:17) zp[2]:8 [ sum::s#3 sum::s#2 sum::return#2 main::$5 free_#22 free_#13 ]
+Coalescing zero page register [ zp[2]:27 [ Ticks#1 ] ] with [ zp[2]:17 [ sum::s#3 sum::s#2 sum::return#2 main::$5 ] ]
+Allocated (was zp[2]:5) zp[2]:2 [ free_#22 free_#13 ]
+Allocated (was zp[2]:7) zp[2]:4 [ root#20 root#11 sum::current#3 sum::current#1 sum::current#2 ]
+Allocated (was zp[2]:9) zp[2]:6 [ print_line_cursor#8 print_line_cursor#1 main::i#3 main::i#2 prepend::x#0 ]
+Allocated (was zp[2]:13) zp[2]:8 [ print_char_cursor#26 print_char_cursor#48 print_char_cursor#10 ]
 Allocated (was zp[2]:19) zp[2]:10 [ last_time ]
-Allocated (was zp[2]:29) zp[2]:12 [ Ticks#12 print_word::w#0 ]
-Allocated (was zp[2]:35) zp[2]:14 [ alloc::return#2 prepend::new#1 alloc::return#0 alloc::$1 Ticks#1 ]
+Allocated (was zp[2]:27) zp[2]:12 [ Ticks#1 sum::s#3 sum::s#2 sum::return#2 main::$5 ]
+Allocated (was zp[2]:29) zp[2]:14 [ Ticks#12 print_word::w#0 ]
+Allocated (was zp[2]:35) zp[2]:16 [ alloc::return#2 prepend::new#1 alloc::return#0 alloc::$1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2110,12 +2110,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label last_time = $a
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
-  .label Ticks = $e
-  .label free_ = 8
-  .label root = 2
-  .label Ticks_1 = $c
+  .label print_line_cursor = 6
+  .label print_char_cursor = 8
+  .label Ticks = $c
+  .label free_ = 2
+  .label root = 4
+  .label Ticks_1 = $e
   // @begin
 __bbegin:
   jmp __b1
@@ -2142,8 +2142,8 @@ __bend_from___b2:
 __bend:
   // main
 main: {
-    .label __5 = 8
-    .label i = 4
+    .label __5 = $c
+    .label i = 6
     // [6] call start 
     jsr start
     // [7] phi from main to main::@1 [phi:main->main::@1]
@@ -2339,9 +2339,9 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zp($c) w)
+// print_word(word zp($e) w)
 print_word: {
-    .label w = $c
+    .label w = $e
     // [39] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
     lda.z w+1
     tax
@@ -2440,9 +2440,9 @@ start: {
 }
   // sum
 sum: {
-    .label current = 2
-    .label s = 8
-    .label return = 8
+    .label current = 4
+    .label s = $c
+    .label return = $c
     // [58] (struct node*) sum::current#1 ← (struct node*) root#11
     // [59] phi from sum to sum::@1 [phi:sum->sum::@1]
   __b1_from_sum:
@@ -2495,10 +2495,10 @@ sum: {
     jmp __b1
 }
   // prepend
-// prepend(word zp(4) x)
+// prepend(word zp(6) x)
 prepend: {
-    .label new = $e
-    .label x = 4
+    .label new = $10
+    .label x = 6
     // [65] call alloc 
     jsr alloc
     // [66] (struct node*) alloc::return#2 ← (struct node*) alloc::return#0
@@ -2533,8 +2533,8 @@ prepend: {
 }
   // alloc
 alloc: {
-    .label __1 = $e
-    .label return = $e
+    .label __1 = $10
+    .label return = $10
     // [72] (word~) alloc::$1 ← (word) free_#22 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z free_
     asl
@@ -2684,28 +2684,28 @@ FINAL SYMBOL TABLE
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (word) Ticks
-(word) Ticks#1 Ticks zp[2]:14 2.0
-(word) Ticks#12 Ticks_1 zp[2]:12 4.0
+(word) Ticks#1 Ticks zp[2]:12 2.0
+(word) Ticks#12 Ticks_1 zp[2]:14 4.0
 (struct node*()) alloc()
-(word~) alloc::$1 zp[2]:14 4.0
+(word~) alloc::$1 zp[2]:16 4.0
 (label) alloc::@return
 (struct node*) alloc::result
 (struct node*) alloc::return
-(struct node*) alloc::return#0 return zp[2]:14 1.0
-(struct node*) alloc::return#2 return zp[2]:14 4.0
+(struct node*) alloc::return#0 return zp[2]:16 1.0
+(struct node*) alloc::return#2 return zp[2]:16 4.0
 (void()) end()
 (label) end::@1
 (label) end::@2
 (label) end::@return
 (word) free_
-(word) free_#13 free_ zp[2]:8 8.583333333333332
-(word) free_#22 free_ zp[2]:8 20.999999999999996
+(word) free_#13 free_ zp[2]:2 8.583333333333332
+(word) free_#22 free_ zp[2]:2 20.999999999999996
 (const struct node*) heap[(number) $fa0]  = { fill( $fa0, 0) }
 (void()) init()
 (label) init::@return
 (word) last_time loadstore zp[2]:10 0.43478260869565216
 (void()) main()
-(word~) main::$5 zp[2]:8 11.0
+(word~) main::$5 zp[2]:12 11.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -2718,17 +2718,17 @@ FINAL SYMBOL TABLE
 (byte) main::c#2 reg byte x 16.5
 (byte) main::c#8 reg byte x 1.6923076923076923
 (word) main::i
-(word) main::i#2 i zp[2]:4 151.5
-(word) main::i#3 i zp[2]:4 101.0
+(word) main::i#2 i zp[2]:6 151.5
+(word) main::i#3 i zp[2]:6 101.0
 (struct node*) node::next
 (word) node::value
 (void()) prepend((word) prepend::x)
 (label) prepend::@1
 (label) prepend::@return
 (struct node*) prepend::new
-(struct node*) prepend::new#1 new zp[2]:14 1.3333333333333333
+(struct node*) prepend::new#1 new zp[2]:16 1.3333333333333333
 (word) prepend::x
-(word) prepend::x#0 x zp[2]:4 17.166666666666664
+(word) prepend::x#0 x zp[2]:6 17.166666666666664
 (void()) print_byte((byte) print_byte::b)
 (byte~) print_byte::$0 reg byte a 4.0
 (byte~) print_byte::$2 reg byte x 4.0
@@ -2746,13 +2746,13 @@ FINAL SYMBOL TABLE
 (byte) print_char::ch#2 reg byte a 22.0
 (byte) print_char::ch#3 reg byte a 17.0
 (byte*) print_char_cursor
-(byte*) print_char_cursor#10 print_char_cursor zp[2]:6 0.9333333333333332
-(byte*) print_char_cursor#26 print_char_cursor zp[2]:6 9.5
-(byte*) print_char_cursor#48 print_char_cursor zp[2]:6 1.8333333333333333
+(byte*) print_char_cursor#10 print_char_cursor zp[2]:8 0.9333333333333332
+(byte*) print_char_cursor#26 print_char_cursor zp[2]:8 9.5
+(byte*) print_char_cursor#48 print_char_cursor zp[2]:8 1.8333333333333333
 (const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
-(byte*) print_line_cursor#1 print_line_cursor zp[2]:4 16.5
-(byte*) print_line_cursor#8 print_line_cursor zp[2]:4 22.0
+(byte*) print_line_cursor#1 print_line_cursor zp[2]:6 16.5
+(byte*) print_line_cursor#8 print_line_cursor zp[2]:6 22.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -2761,10 +2761,10 @@ FINAL SYMBOL TABLE
 (label) print_word::@1
 (label) print_word::@return
 (word) print_word::w
-(word) print_word::w#0 w zp[2]:12 2.0
+(word) print_word::w#0 w zp[2]:14 2.0
 (struct node*) root
-(struct node*) root#11 root zp[2]:2 17.499999999999996
-(struct node*) root#20 root zp[2]:2 17.166666666666664
+(struct node*) root#11 root zp[2]:4 17.499999999999996
+(struct node*) root#20 root zp[2]:4 17.166666666666664
 (void()) start()
 (label) start::@return
 (const word*) start::LAST_TIME = &(word) last_time
@@ -2773,27 +2773,28 @@ FINAL SYMBOL TABLE
 (label) sum::@2
 (label) sum::@return
 (struct node*) sum::current
-(struct node*) sum::current#1 current zp[2]:2 4.0
-(struct node*) sum::current#2 current zp[2]:2 202.0
-(struct node*) sum::current#3 current zp[2]:2 68.0
+(struct node*) sum::current#1 current zp[2]:4 4.0
+(struct node*) sum::current#2 current zp[2]:4 202.0
+(struct node*) sum::current#3 current zp[2]:4 68.0
 (word) sum::return
-(word) sum::return#2 return zp[2]:8 22.0
+(word) sum::return#2 return zp[2]:12 22.0
 (word) sum::s
-(word) sum::s#2 s zp[2]:8 101.0
-(word) sum::s#3 s zp[2]:8 53.25
+(word) sum::s#2 s zp[2]:12 101.0
+(word) sum::s#3 s zp[2]:12 53.25
 
 reg byte x [ main::c#8 main::c#2 ]
-zp[2]:2 [ root#20 root#11 sum::current#3 sum::current#1 sum::current#2 ]
-zp[2]:4 [ print_line_cursor#8 print_line_cursor#1 main::i#3 main::i#2 prepend::x#0 ]
+zp[2]:2 [ free_#22 free_#13 ]
+zp[2]:4 [ root#20 root#11 sum::current#3 sum::current#1 sum::current#2 ]
+zp[2]:6 [ print_line_cursor#8 print_line_cursor#1 main::i#3 main::i#2 prepend::x#0 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#3 print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-zp[2]:6 [ print_char_cursor#26 print_char_cursor#48 print_char_cursor#10 ]
-zp[2]:8 [ sum::s#3 sum::s#2 sum::return#2 main::$5 free_#22 free_#13 ]
+zp[2]:8 [ print_char_cursor#26 print_char_cursor#48 print_char_cursor#10 ]
 zp[2]:10 [ last_time ]
-zp[2]:12 [ Ticks#12 print_word::w#0 ]
+zp[2]:12 [ Ticks#1 sum::s#3 sum::s#2 sum::return#2 main::$5 ]
+zp[2]:14 [ Ticks#12 print_word::w#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
-zp[2]:14 [ alloc::return#2 prepend::new#1 alloc::return#0 alloc::$1 Ticks#1 ]
+zp[2]:16 [ alloc::return#2 prepend::new#1 alloc::return#0 alloc::$1 ]
 
 
 FINAL ASSEMBLER
@@ -2807,12 +2808,12 @@ Score: 14183
   // Global Constants & labels
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label last_time = $a
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
-  .label Ticks = $e
-  .label free_ = 8
-  .label root = 2
-  .label Ticks_1 = $c
+  .label print_line_cursor = 6
+  .label print_char_cursor = 8
+  .label Ticks = $c
+  .label free_ = 2
+  .label root = 4
+  .label Ticks_1 = $e
   // @begin
 __bbegin:
   // @1
@@ -2831,8 +2832,8 @@ __bbegin:
   // @end
   // main
 main: {
-    .label __5 = 8
-    .label i = 4
+    .label __5 = $c
+    .label i = 6
     // start()
     // [6] call start 
     jsr start
@@ -3003,9 +3004,9 @@ print_ln: {
 }
   // print_word
 // Print a word as HEX
-// print_word(word zp($c) w)
+// print_word(word zp($e) w)
 print_word: {
-    .label w = $c
+    .label w = $e
     // print_byte(>w)
     // [39] (byte) print_byte::b#0 ← > (word) print_word::w#0 -- vbuxx=_hi_vwuz1 
     lda.z w+1
@@ -3101,9 +3102,9 @@ start: {
 }
   // sum
 sum: {
-    .label current = 2
-    .label s = 8
-    .label return = 8
+    .label current = 4
+    .label s = $c
+    .label return = $c
     // current = root
     // [58] (struct node*) sum::current#1 ← (struct node*) root#11
     // [59] phi from sum to sum::@1 [phi:sum->sum::@1]
@@ -3155,10 +3156,10 @@ sum: {
     jmp __b1
 }
   // prepend
-// prepend(word zp(4) x)
+// prepend(word zp(6) x)
 prepend: {
-    .label new = $e
-    .label x = 4
+    .label new = $10
+    .label x = 6
     // alloc()
     // [65] call alloc 
     jsr alloc
@@ -3195,8 +3196,8 @@ prepend: {
 }
   // alloc
 alloc: {
-    .label __1 = $e
-    .label return = $e
+    .label __1 = $10
+    .label return = $10
     // heap + free_
     // [72] (word~) alloc::$1 ← (word) free_#22 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z free_

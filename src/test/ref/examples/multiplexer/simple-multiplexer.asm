@@ -24,14 +24,14 @@
   // The address of the sprite pointers on the current screen (screen+$3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
   // The MSB bit of the next sprite to use for showing
-  .label plex_sprite_msb = 3
+  .label plex_sprite_msb = 6
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  .label plex_free_next = 5
+  .label plex_free_next = 3
   // The index the next sprite to use for showing (sprites are used round-robin)
-  .label plex_sprite_idx = 9
+  .label plex_sprite_idx = 4
   // The index in the PLEX tables of the next sprite to show
   // Prepare for showing the sprites
-  .label plex_show_idx = $a
+  .label plex_show_idx = 5
   // kickasm
 main: {
     // asm
@@ -47,8 +47,8 @@ main: {
 loop: {
     // The current index into the y-sinus
     .label sin_idx = 2
-    .label plexFreeNextYpos1_return = 8
-    .label ss = 4
+    .label plexFreeNextYpos1_return = $a
+    .label ss = 7
     lda #0
     sta.z sin_idx
   __b2:
@@ -126,7 +126,7 @@ loop: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = 8
+    .label plex_sprite_idx2 = $b
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -215,9 +215,9 @@ plexShowSprite: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = 9
-    .label nxt_y = $a
-    .label m = 5
+    .label nxt_idx = $b
+    .label nxt_y = $c
+    .label m = $a
     lda #0
     sta.z m
   __b1:
@@ -274,7 +274,7 @@ plexSort: {
 // Initialize the program
 init: {
     // Set the x-positions & pointers
-    .label xp = 6
+    .label xp = 8
     // *D011 = VIC_DEN | VIC_RSEL | 3
     lda #VIC_DEN|VIC_RSEL|3
     sta D011

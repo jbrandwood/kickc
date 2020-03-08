@@ -1422,11 +1422,10 @@ Uplifting [RADIX] best 1921 combination
 Uplifting [print_ln] best 1921 combination 
 Uplifting [print_cls] best 1921 combination 
 Uplifting [fileentry] best 1921 combination 
-Coalescing zero page register [ zp[2]:10 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ] ]
-Coalescing zero page register [ zp[2]:12 [ main::$0 ] ] with [ zp[2]:6 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ] ]
-Allocated (was zp[2]:8) zp[2]:2 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
-Allocated (was zp[2]:10) zp[2]:4 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
-Allocated (was zp[2]:12) zp[2]:6 [ main::$0 print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
+Coalescing zero page register [ zp[2]:10 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:8 [ print_str::str#3 print_str::str#5 print_str::str#0 ] ]
+Coalescing zero page register [ zp[2]:12 [ main::$0 ] ] with [ zp[2]:10 [ memset::dst#2 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ] ]
+Allocated (was zp[2]:6) zp[2]:4 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
+Allocated (was zp[2]:12) zp[2]:6 [ main::$0 memset::dst#2 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1437,8 +1436,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
-  .label print_line_cursor = 4
+  .label print_char_cursor = 4
+  .label print_line_cursor = 2
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -1668,9 +1667,9 @@ print_char: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
     // [40] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
   __b1_from_print_str:
   __b1_from___b2:
@@ -1728,7 +1727,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 4
+    .label dst = 6
     // [50] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
     // [50] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
@@ -1872,8 +1871,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) ' '
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp[2]:4 22.0
-(byte*) memset::dst#2 dst zp[2]:4 14.666666666666666
+(byte*) memset::dst#1 dst zp[2]:6 22.0
+(byte*) memset::dst#2 dst zp[2]:6 14.666666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -1897,19 +1896,19 @@ FINAL SYMBOL TABLE
 (byte) print_char::ch#1 reg byte a 4.0
 (byte) print_char::ch#2 reg byte a 6.0
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp[2]:6 11.0
-(byte*) print_char_cursor#2 print_char_cursor zp[2]:6 3.3636363636363638
-(byte*) print_char_cursor#28 print_char_cursor zp[2]:6 4.0
-(byte*) print_char_cursor#29 print_char_cursor zp[2]:6 0.9999999999999999
-(byte*) print_char_cursor#45 print_char_cursor zp[2]:6 4.0
-(byte*) print_char_cursor#47 print_char_cursor zp[2]:6 4.0
+(byte*) print_char_cursor#1 print_char_cursor zp[2]:4 11.0
+(byte*) print_char_cursor#2 print_char_cursor zp[2]:4 3.3636363636363638
+(byte*) print_char_cursor#28 print_char_cursor zp[2]:4 4.0
+(byte*) print_char_cursor#29 print_char_cursor zp[2]:4 0.9999999999999999
+(byte*) print_char_cursor#45 print_char_cursor zp[2]:4 4.0
+(byte*) print_char_cursor#47 print_char_cursor zp[2]:4 4.0
 (void()) print_cls()
 (label) print_cls::@return
 (const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
-(byte*) print_line_cursor#1 print_line_cursor zp[2]:4 4.111111111111112
-(byte*) print_line_cursor#10 print_line_cursor zp[2]:4 24.0
-(byte*) print_line_cursor#19 print_line_cursor zp[2]:4 4.0
+(byte*) print_line_cursor#1 print_line_cursor zp[2]:2 4.111111111111112
+(byte*) print_line_cursor#10 print_line_cursor zp[2]:2 24.0
+(byte*) print_line_cursor#19 print_line_cursor zp[2]:2 4.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -1919,15 +1918,15 @@ FINAL SYMBOL TABLE
 (label) print_str::@2
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp[2]:2 22.0
-(byte*) print_str::str#3 str zp[2]:2 11.5
-(byte*) print_str::str#5 str zp[2]:2 2.0
+(byte*) print_str::str#0 str zp[2]:6 22.0
+(byte*) print_str::str#3 str zp[2]:6 11.5
+(byte*) print_str::str#5 str zp[2]:6 2.0
 
+zp[2]:2 [ print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 reg byte a [ print_char::ch#2 print_char::ch#0 print_char::ch#1 ]
-zp[2]:2 [ print_str::str#3 print_str::str#5 print_str::str#0 ]
-zp[2]:4 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#19 print_line_cursor#1 ]
-zp[2]:6 [ main::$0 print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
+zp[2]:4 [ print_char_cursor#28 print_char_cursor#2 print_char_cursor#29 print_char_cursor#45 print_char_cursor#47 print_char_cursor#1 ]
+zp[2]:6 [ main::$0 memset::dst#2 memset::dst#1 print_str::str#3 print_str::str#5 print_str::str#0 ]
 reg byte a [ print_byte::$0 ]
 reg byte x [ print_byte::$2 ]
 
@@ -1943,8 +1942,8 @@ Score: 1676
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label print_char_cursor = 6
-  .label print_line_cursor = 4
+  .label print_char_cursor = 4
+  .label print_line_cursor = 2
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -2152,9 +2151,9 @@ print_char: {
 }
   // print_str
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
     // [40] phi from print_str print_str::@2 to print_str::@1 [phi:print_str/print_str::@2->print_str::@1]
     // [40] phi (byte*) print_char_cursor#2 = (byte*) print_char_cursor#45 [phi:print_str/print_str::@2->print_str::@1#0] -- register_copy 
     // [40] phi (byte*) print_str::str#3 = (byte*) print_str::str#5 [phi:print_str/print_str::@2->print_str::@1#1] -- register_copy 
@@ -2209,7 +2208,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 4
+    .label dst = 6
     // [50] phi from memset to memset::@1 [phi:memset->memset::@1]
     // [50] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str

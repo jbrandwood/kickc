@@ -23,16 +23,16 @@
   .label SCREEN2 = $2c00
   .label CHARSET = $2000
   .label print_line_cursor = $400
-  .label print_char_cursor = 9
+  .label print_char_cursor = $b
   // Plasma state variables
-  .label c1A = $b
-  .label c1B = $e
-  .label c2A = $11
-  .label c2B = 2
+  .label c1A = 2
+  .label c1B = 3
+  .label c2A = 4
+  .label c2B = 5
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
-    .label col = 9
+    .label col = $b
     // asm
     sei
     // *BORDERCOL = BLUE
@@ -92,9 +92,9 @@ main: {
 // Render plasma to the passed screen
 // doplasma(byte* zp(9) screen)
 doplasma: {
-    .label c1a = 4
-    .label c1b = 5
-    .label i = 3
+    .label c1a = $e
+    .label c1b = $11
+    .label i = $d
     .label c2a = 7
     .label c2b = 8
     .label i1 = 6
@@ -227,8 +227,8 @@ makecharset: {
     .label __10 = $f
     .label __11 = $f
     .label s = $e
-    .label i = $b
-    .label c = $c
+    .label i = $d
+    .label c = 9
     .label __16 = $f
     // sid_rnd_init()
     jsr sid_rnd_init
@@ -378,7 +378,7 @@ memset: {
     .const num = $3e8
     .label str = print_line_cursor
     .label end = str+num
-    .label dst = $c
+    .label dst = $f
     lda #<str
     sta.z dst
     lda #>str

@@ -30,7 +30,7 @@
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>SCREEN)/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label i = $12
+    .label i = 2
     // asm
     // Disable normal interrupt
     sei
@@ -90,11 +90,11 @@ main: {
     jmp __b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($a) x, byte register(X) y)
+// bitmap_plot(word zp(9) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $e
-    .label x = $a
-    .label plotter = $c
+    .label __1 = $d
+    .label x = 9
+    .label plotter = $b
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -127,19 +127,19 @@ bitmap_plot: {
     rts
 }
 // Initialize the points to be animated
-// point_init(byte zp($12) point_idx)
+// point_init(byte zp(2) point_idx)
 point_init: {
-    .label __3 = 6
-    .label __4 = $c
-    .label __9 = $e
-    .label __10 = $10
-    .label __11 = $10
-    .label point_idx = $12
-    .label y_diff = 6
-    .label abs16s1_return = 2
-    .label abs16s2_return = 4
-    .label x_stepf = $a
-    .label x_diff = 8
+    .label __3 = 7
+    .label __4 = $d
+    .label __9 = $f
+    .label __10 = $11
+    .label __11 = $11
+    .label point_idx = 2
+    .label y_diff = 7
+    .label abs16s1_return = 3
+    .label abs16s2_return = 5
+    .label x_stepf = $b
+    .label x_diff = 9
     // (signed word)x_end[point_idx]
     lda.z point_idx
     asl
@@ -306,14 +306,14 @@ point_init: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp(8) divisor, signed word zp(6) rem)
+// divr16s(signed word zp(9) divisor, signed word zp(7) rem)
 divr16s: {
-    .label remu = 6
-    .label divisoru = 8
-    .label resultu = $a
-    .label return = $a
-    .label divisor = 8
-    .label rem = 6
+    .label remu = 7
+    .label divisoru = 9
+    .label resultu = $b
+    .label return = $b
+    .label divisor = 9
+    .label rem = 7
     // if(dividend<0 || rem<0)
     lda.z rem+1
     bmi __b1
@@ -371,13 +371,13 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp(2) dividend, word zp(8) divisor, word zp(6) rem)
+// divr16u(word zp($d) dividend, word zp(9) divisor, word zp(7) rem)
 divr16u: {
-    .label rem = 6
-    .label dividend = 2
-    .label quotient = $a
-    .label return = $a
-    .label divisor = 8
+    .label rem = 7
+    .label dividend = $d
+    .label quotient = $b
+    .label return = $b
+    .label divisor = 9
     ldx #0
     txa
     sta.z quotient
@@ -437,11 +437,11 @@ divr16u: {
     rts
 }
 // Fill the screen with a specific char
-// screen_fill(byte* zp(4) screen)
+// screen_fill(byte* zp(3) screen)
 screen_fill: {
     .const ch = $10
-    .label screen = 4
-    .label y = $12
+    .label screen = 3
+    .label y = $13
     lda #0
     sta.z y
     lda #<SCREEN
@@ -474,8 +474,8 @@ screen_fill: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label bitmap = 6
-    .label y = $12
+    .label bitmap = 5
+    .label y = $13
     // (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
     lda bitmap_plot_ylo
     sta.z bitmap
@@ -508,8 +508,8 @@ bitmap_clear: {
     rts
 }
 bitmap_init: {
-    .label __7 = $12
-    .label yoffs = 8
+    .label __7 = $13
+    .label yoffs = 7
     ldx #0
     lda #$80
   __b1:

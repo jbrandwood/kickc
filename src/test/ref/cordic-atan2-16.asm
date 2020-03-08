@@ -13,13 +13,13 @@
 main: {
     .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label __9 = 2
-    .label xw = $11
-    .label yw = $13
-    .label angle_w = 2
-    .label screen = 8
-    .label x = $f
-    .label y = $a
+    .label __9 = 6
+    .label xw = $13
+    .label yw = $15
+    .label angle_w = 6
+    .label screen = 4
+    .label x = 3
+    .label y = 2
     // init_font_hex(CHARSET)
     jsr init_font_hex
     // *D018 = toD018(SCREEN, CHARSET)
@@ -83,18 +83,18 @@ main: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($11) x, signed word zp($13) y)
+// atan2_16(signed word zp($13) x, signed word zp($15) y)
 atan2_16: {
-    .label __2 = $b
+    .label __2 = $a
     .label __7 = $d
-    .label yi = $b
+    .label yi = $a
     .label xi = $d
-    .label angle = 2
-    .label xd = 6
-    .label yd = 4
-    .label return = 2
-    .label x = $11
-    .label y = $13
+    .label angle = 6
+    .label xd = 8
+    .label yd = $f
+    .label return = 6
+    .label x = $13
+    .label y = $15
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -296,15 +296,15 @@ atan2_16: {
     jmp __b3
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp($b) charset)
+// init_font_hex(byte* zp($d) charset)
 init_font_hex: {
-    .label __0 = $15
-    .label idx = $10
-    .label proto_lo = $d
-    .label charset = $b
-    .label c1 = $f
-    .label proto_hi = 8
-    .label c = $a
+    .label __0 = $17
+    .label idx = $12
+    .label proto_lo = $f
+    .label charset = $d
+    .label c1 = $11
+    .label proto_hi = $a
+    .label c = $c
     lda #0
     sta.z c
     lda #<FONT_HEX_PROTO

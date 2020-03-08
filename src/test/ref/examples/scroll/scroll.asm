@@ -77,7 +77,7 @@ main: {
 }
 fillscreen: {
     .const fill = $20
-    .label cursor = 2
+    .label cursor = 4
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN

@@ -30,14 +30,14 @@ main: {
     // }
     rts
 }
-// plus(word zp(2) a, word zp(4) b)
+// plus(word zp(4) a, word zp(6) b)
 plus: {
     .const OFFSET_STACK_A = 2
     .const OFFSET_STACK_B = 0
     .const OFFSET_STACK_RETURN = 2
-    .label a = 2
-    .label b = 4
-    .label return = 2
+    .label a = 4
+    .label b = 6
+    .label return = 4
     tsx
     lda STACK_BASE+OFFSET_STACK_A,x
     sta.z a

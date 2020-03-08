@@ -56,7 +56,7 @@ memset: {
     .const c = ' '
     .const num = $3e8
     .label end = str+num
-    .label dst = 4
+    .label dst = 6
     lda #<str
     sta.z dst
     lda #>str

@@ -24,11 +24,11 @@
   .label sprites = $2000
   .label SCREEN = $400
   // Current index within the progress cursor (0-7)
-  .label progress_idx = $a
+  .label progress_idx = 4
   // Current position of the progress cursor
-  .label progress_cursor = 2
-  .label sin_idx_x = 6
-  .label sin_idx_y = 8
+  .label progress_cursor = 5
+  .label sin_idx_x = 2
+  .label sin_idx_y = 3
 main: {
     // init()
     jsr init
@@ -48,10 +48,10 @@ anim: {
     .label __7 = $a
     .label xidx = 9
     .label yidx = 4
-    .label x = $f
+    .label x = $10
     .label x_msb = $a
     .label j2 = $b
-    .label j = 5
+    .label j = 8
     // (*BORDERCOL)++;
     inc BORDERCOL
     // xidx = sin_idx_x
@@ -209,7 +209,7 @@ init: {
     rts
 }
 clear_screen: {
-    .label sc = $f
+    .label sc = $10
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -243,15 +243,15 @@ clear_screen: {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
-// gen_sintab(byte* zp($f) sintab, byte zp(8) length, byte zp(6) min, byte register(X) max)
+// gen_sintab(byte* zp($10) sintab, byte zp($a) length, byte zp(9) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
     .label __24 = $13
-    .label i = 9
-    .label min = 6
-    .label length = 8
-    .label sintab = $f
+    .label i = $b
+    .label min = 9
+    .label length = $a
+    .label sintab = $10
     // setFAC((word)max)
     txa
     sta.z setFAC.w
@@ -570,14 +570,14 @@ setARGtoFAC: {
     rts
 }
 // Initialize the PETSCII progress bar
-// progress_init(byte* zp(2) line)
+// progress_init(byte* zp(5) line)
 progress_init: {
-    .label line = 2
+    .label line = 5
     rts
 }
 gen_sprites: {
-    .label spr = 2
-    .label i = $b
+    .label spr = $10
+    .label i = 8
     lda #<sprites
     sta.z spr
     lda #>sprites
@@ -613,19 +613,19 @@ gen_sprites: {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-// gen_chargen_sprite(byte register(X) ch, byte* zp($f) sprite)
+// gen_chargen_sprite(byte register(X) ch, byte* zp($13) sprite)
 gen_chargen_sprite: {
-    .label __0 = $13
-    .label __1 = $13
-    .label sprite = $f
-    .label chargen = $13
-    .label bits = 5
+    .label __0 = $15
+    .label __1 = $15
+    .label sprite = $13
+    .label chargen = $15
+    .label bits = $a
     // current sprite byte
-    .label s_gen = 9
-    .label x = 6
-    .label y = 4
+    .label s_gen = $f
+    .label x = $b
+    .label y = 9
     // Find the current chargen pixel (c)
-    .label c = 8
+    .label c = $c
     // (word)ch
     txa
     sta.z __0
@@ -743,11 +743,11 @@ gen_chargen_sprite: {
 }
 place_sprites: {
     .label sprites_ptr = SCREEN+$3f8
-    .label spr_id = 6
-    .label spr_x = 9
-    .label col = $b
-    .label j2 = $a
-    .label j = 8
+    .label spr_id = 9
+    .label spr_x = $b
+    .label col = $f
+    .label j2 = $c
+    .label j = $a
     // *SPRITES_ENABLE = %01111111
     lda #$7f
     sta SPRITES_ENABLE

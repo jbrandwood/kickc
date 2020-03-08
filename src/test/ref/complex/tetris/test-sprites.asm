@@ -57,11 +57,11 @@
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .label SIN_SPRITE = $2800
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-  .label render_screen_showing = 4
-  .label irq_raster_next = 5
-  .label irq_sprite_ypos = 6
-  .label irq_sprite_ptr = 7
-  .label irq_cnt = 8
+  .label render_screen_showing = 5
+  .label irq_raster_next = 6
+  .label irq_sprite_ypos = 7
+  .label irq_sprite_ptr = 8
+  .label irq_cnt = 9
   .label sin_idx = 3
 __bbegin:
   // render_screen_showing = 0
@@ -153,7 +153,7 @@ main: {
     rts
 }
 loop: {
-    .label s = 2
+    .label s = 4
     lda #0
     sta.z sin_idx
   __b2:
@@ -231,7 +231,7 @@ sprites_irq_init: {
 }
 // Setup the sprites
 sprites_init: {
-    .label xpos = 3
+    .label xpos = 4
     // *SPRITES_ENABLE = %00001111
     lda #$f
     sta SPRITES_ENABLE
@@ -272,7 +272,7 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = 9
+    .label raster_sprite_gfx_modify = $a
     sta rega+1
     stx regx+1
     // asm

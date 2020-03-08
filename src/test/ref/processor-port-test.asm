@@ -23,8 +23,8 @@
   .label KERNAL_ROM = $e000
   .label IO_RAM = $d000
   .label SCREEN = $400
-  .label print_char_cursor = 4
-  .label print_line_cursor = 8
+  .label print_char_cursor = 6
+  .label print_line_cursor = 4
 main: {
     // asm
     // Avoid interrupts
@@ -409,9 +409,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// print_str(byte* zp(8) str)
 print_str: {
-    .label str = 6
+    .label str = 8
   __b1:
     // while(*str)
     ldy #0

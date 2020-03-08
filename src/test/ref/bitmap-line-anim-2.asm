@@ -14,7 +14,7 @@
   .const PURPLE = 4
   .label SCREEN = $400
   .label BITMAP = $2000
-  .label next = $a
+  .label next = 2
 main: {
     // *BORDERCOL = 0
     lda #0
@@ -55,7 +55,7 @@ main: {
     jmp __b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp($a) x2)
+// bitmap_line(word zp(2) x2)
 bitmap_line: {
     .const x1 = 0
     .const y1 = 0
@@ -64,11 +64,11 @@ bitmap_line: {
     .label dy = 8
     .label sx = $12
     .label sy = 6
-    .label e1 = 2
-    .label e = 4
+    .label e1 = 4
+    .label e = $a
     .label y = $c
     .label x = $e
-    .label x2 = $a
+    .label x2 = 2
     // abs_u16(x2-x1)
     lda.z x2
     sta.z abs_u16.w
@@ -325,9 +325,9 @@ bitmap_plot: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp(4) w)
+// sgn_u16(word zp($14) w)
 sgn_u16: {
-    .label w = 4
+    .label w = $14
     .label return = 6
     // >w
     lda.z w+1

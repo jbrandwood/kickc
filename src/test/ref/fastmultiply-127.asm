@@ -6,8 +6,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 7
-  .label print_line_cursor = 5
+  .label print_char_cursor = 4
+  .label print_line_cursor = 2
 main: {
     // print_cls()
     jsr print_cls
@@ -136,10 +136,10 @@ main: {
     str1: .text "signed"
     .byte 0
 }
-// print_mulf8s127(signed byte register(Y) a, signed byte zp(4) b)
+// print_mulf8s127(signed byte register(Y) a, signed byte zp(8) b)
 print_mulf8s127: {
-    .label c = 2
-    .label b = 4
+    .label c = 6
+    .label b = 8
     // mulf8s127(a,b)
     jsr mulf8s127
     // c = mulf8s127(a,b)
@@ -192,9 +192,9 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(2) w)
+// print_sword(signed word zp(6) w)
 print_sword: {
-    .label w = 2
+    .label w = 6
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -235,9 +235,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(2) w)
+// print_word(word zp(6) w)
 print_word: {
-    .label w = 2
+    .label w = 6
     // print_byte(>w)
     lda.z w+1
     tax
@@ -298,15 +298,15 @@ print_sbyte: {
     tax
     jmp __b2
 }
-// mulf8s127(signed byte register(Y) a, signed byte zp(4) b)
+// mulf8s127(signed byte register(Y) a, signed byte zp(8) b)
 mulf8s127: {
-    .label __12 = 7
-    .label __13 = 7
-    .label __14 = 9
-    .label __15 = 9
-    .label b = 4
-    .label return = 2
-    .label c = 2
+    .label __12 = 9
+    .label __13 = 9
+    .label __14 = $b
+    .label __15 = $b
+    .label b = 8
+    .label return = 6
+    .label c = 6
     // mulf8u127((unsigned char)a, (unsigned char)b)
     tya
     ldx.z b
@@ -385,7 +385,7 @@ mulf8u127: {
     .label res = $fe
     .label resL = $fe
     .label resH = $ff
-    .label return = 2
+    .label return = 6
     // *memA = a
     sta memA
     // *memB = b
@@ -416,9 +416,9 @@ mulf8u127: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0
@@ -443,10 +443,10 @@ print_str: {
   !:
     jmp __b1
 }
-// print_mulf8u127(byte register(Y) a, byte zp(4) b)
+// print_mulf8u127(byte register(Y) a, byte zp(8) b)
 print_mulf8u127: {
-    .label c = 2
-    .label b = 4
+    .label c = 6
+    .label b = 8
     // mulf8u127(a,b)
     tya
     ldx.z b
@@ -491,7 +491,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 5
+    .label dst = 9
     lda #<str
     sta.z dst
     lda #>str

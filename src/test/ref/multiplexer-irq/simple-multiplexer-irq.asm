@@ -329,7 +329,7 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $d
+    .label plex_sprite_idx2 = $e
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl

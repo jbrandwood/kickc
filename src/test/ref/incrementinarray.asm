@@ -2,7 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_char_cursor = 4
-  .label print_line_cursor = 6
+  .label print_line_cursor = 2
 main: {
     // print_cls()
     jsr print_cls
@@ -62,9 +62,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
     lda #<txt
     sta.z str
     lda #>txt

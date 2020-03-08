@@ -6,7 +6,7 @@
   // filled circle
   .const TT = $51
   .label print_char_cursor = $a
-  .label print_line_cursor = $d
+  .label print_line_cursor = 5
 main: {
     .label w1 = $f
     .label w2 = $11
@@ -114,7 +114,7 @@ print_ln: {
 compare: {
     .label w1 = 8
     .label w2 = $11
-    .label ops = 5
+    .label ops = $d
     .label r = 7
     // if(op==0)
     cpx #0
@@ -361,9 +361,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(5) str)
+// print_str(byte* zp($d) str)
 print_str: {
-    .label str = 5
+    .label str = $d
   __b1:
     // while(*str)
     ldy #0

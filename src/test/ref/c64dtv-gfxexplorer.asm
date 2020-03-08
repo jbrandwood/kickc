@@ -165,15 +165,15 @@
   .const FORM_CURSOR_BLINK = $28
   // Number of form fields
   .const form_fields_cnt = $24
-  .label print_char_cursor = $a
-  .label print_line_cursor = $d
+  .label print_char_cursor = 5
+  .label print_line_cursor = 7
   // Keyboard event buffer size. The number of events currently in the event buffer
-  .label keyboard_events_size = $1e
+  .label keyboard_events_size = 2
   // Counts down to blink for form cursor (it is inversed in the lower half)
   // Always blink cursor in new field
-  .label form_cursor_count = $f
+  .label form_cursor_count = 3
   // Current selected field in the form
-  .label form_field_idx = 8
+  .label form_field_idx = 4
 main: {
     // asm
     sei
@@ -209,23 +209,23 @@ main: {
 }
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
-    .label __20 = 2
-    .label __24 = $19
-    .label __26 = $1b
-    .label __34 = 2
-    .label __38 = $11
-    .label __40 = $17
-    .label __47 = 6
-    .label __48 = 6
-    .label __49 = 6
-    .label __50 = $1d
-    .label __52 = $d
-    .label __53 = $d
-    .label plane_a = 2
-    .label plane_b = 2
-    .label vic_colors = 6
-    .label col = $a
-    .label cy = 9
+    .label __20 = 9
+    .label __24 = $14
+    .label __26 = $1d
+    .label __34 = 9
+    .label __38 = $1f
+    .label __40 = $1b
+    .label __47 = $10
+    .label __48 = $10
+    .label __49 = $10
+    .label __50 = $13
+    .label __52 = 7
+    .label __53 = 7
+    .label plane_a = 9
+    .label plane_b = 9
+    .label vic_colors = $10
+    .label col = 5
+    .label cy = $d
     // if(*form_ctrl_line!=0)
     lda form_ctrl_line
     cmp #0
@@ -654,9 +654,9 @@ keyboard_event_get: {
 // Handles debounce and only generates events when the status of a key changes.
 // Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
-    .label row_scan = $1d
-    .label keycode = $c
-    .label row = 9
+    .label row_scan = $16
+    .label keycode = $22
+    .label row = $e
     lda #0
     sta.z keycode
     sta.z row
@@ -791,10 +791,10 @@ keyboard_event_scan: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zp($c) keycode)
+// keyboard_event_pressed(byte zp($f) keycode)
 keyboard_event_pressed: {
-    .label row_bits = $1d
-    .label keycode = $c
+    .label row_bits = $21
+    .label keycode = $f
     // keycode>>3
     lda.z keycode
     lsr
@@ -833,7 +833,7 @@ keyboard_matrix_read: {
 // Get the VIC screen address from the screen index
 // get_vic_screen(byte register(A) idx)
 get_vic_screen: {
-    .label return = 6
+    .label return = $10
     // if(idx==0)
     cmp #0
     beq __b1
@@ -883,7 +883,7 @@ get_vic_screen: {
 // Get the VIC charset/bitmap address from the index
 // get_vic_charset(byte register(A) idx)
 get_vic_charset: {
-    .label return = $d
+    .label return = 7
     // if(idx==0)
     cmp #0
     beq __b1
@@ -906,7 +906,7 @@ get_vic_charset: {
 // Get plane address from a plane index (from the form)
 // get_plane(byte register(A) idx)
 get_plane: {
-    .label return = 2
+    .label return = 9
     // if(idx==0)
     cmp #0
     beq b1
@@ -1118,7 +1118,7 @@ get_plane: {
 }
 // Show the form - and let the user change values
 form_mode: {
-    .label preset_current = $10
+    .label preset_current = $d
     // print_set_screen(COLS)
   // Form Colors
     lda #<COLS
@@ -1257,7 +1257,7 @@ form_mode: {
 // idx is the ID of the preset
 // render_preset_name(byte register(A) idx)
 render_preset_name: {
-    .label name = 6
+    .label name = $10
     // if(idx==0)
     cmp #0
     beq b1
@@ -1386,10 +1386,10 @@ render_preset_name: {
     .byte 0
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zp(6) str, byte* zp($a) at)
+// print_str_at(byte* zp($10) str, byte* zp(5) at)
 print_str_at: {
-    .label at = $a
-    .label str = 6
+    .label at = 5
+    .label str = $10
     lda #<FORM_SCREEN+$28*2+$a
     sta.z at
     lda #>FORM_SCREEN+$28*2+$a
@@ -1443,9 +1443,9 @@ form_render_values: {
 // field_idx is the index of the field to get the screen address for
 // form_field_ptr(byte register(X) field_idx)
 form_field_ptr: {
-    .label line = $19
-    .label x = $1d
-    .label return = $1b
+    .label line = $14
+    .label x = $16
+    .label return = $1d
     // y = form_fields_y[field_idx]
     ldy form_fields_y,x
     // (byte*) { form_line_hi[y], form_line_lo[y] }
@@ -1470,7 +1470,7 @@ form_field_ptr: {
 // idx is the ID of the preset
 // apply_preset(byte register(A) idx)
 apply_preset: {
-    .label preset = $d
+    .label preset = 7
     // if(idx==0)
     cmp #0
     beq b1
@@ -1589,7 +1589,7 @@ apply_preset: {
 // Reads keyboard and allows the user to navigate and change the fields of the form
 // Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
-    .label field = $1b
+    .label field = $1d
     // form_field_ptr(form_field_idx)
     ldx.z form_field_idx
     jsr form_field_ptr
@@ -1725,7 +1725,7 @@ form_control: {
 // Set the screen to use for the form.
 // screen is the start address of the screen to use
 form_set_screen: {
-    .label line = 6
+    .label line = $10
     ldx #0
     lda #<FORM_SCREEN
     sta.z line
@@ -1757,9 +1757,9 @@ form_set_screen: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zp(6) str)
+// print_str_lines(byte* zp($10) str)
 print_str_lines: {
-    .label str = 6
+    .label str = $10
     lda.z print_set_screen.screen
     sta.z print_char_cursor
     lda.z print_set_screen.screen+1
@@ -1838,13 +1838,13 @@ print_cls: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($a) str)
+// memset(void* zp($10) str)
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label end = $11
-    .label dst = $a
-    .label str = $a
+    .label end = $1f
+    .label dst = $10
+    .label str = $10
     // end = (char*)str + num
     lda.z str
     clc
@@ -1876,9 +1876,9 @@ memset: {
     jmp __b2
 }
 // Set the screen to print on. Also resets current line/char cursor.
-// print_set_screen(byte* zp($d) screen)
+// print_set_screen(byte* zp(7) screen)
 print_set_screen: {
-    .label screen = $d
+    .label screen = 7
     // }
     rts
 }
@@ -1935,16 +1935,16 @@ gfx_init_plane_full: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// gfx_init_plane_fill(dword zp(2) plane_addr, byte zp($1e) fill)
+// gfx_init_plane_fill(dword zp(9) plane_addr, byte zp($e) fill)
 gfx_init_plane_fill: {
-    .label __0 = $13
-    .label __1 = $17
-    .label __4 = $d
-    .label __5 = $d
-    .label gfxb = $d
-    .label by = $f
-    .label plane_addr = 2
-    .label fill = $1e
+    .label __0 = $17
+    .label __1 = $1b
+    .label __4 = $10
+    .label __5 = $10
+    .label gfxb = $10
+    .label by = $22
+    .label plane_addr = 9
+    .label fill = $e
     // plane_addr*4
     lda.z plane_addr
     asl
@@ -2074,8 +2074,8 @@ gfx_init_plane_vertical2: {
 // Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
-    .label gfxa = 6
-    .label ay = 8
+    .label gfxa = $10
+    .label ay = $f
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2123,8 +2123,8 @@ gfx_init_plane_horisontal2: {
 // Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
-    .label gfxb = 6
-    .label by = $10
+    .label gfxb = $10
+    .label by = $d
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2165,8 +2165,8 @@ gfx_init_plane_vertical: {
 // Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
-    .label gfxa = 6
-    .label ay = 9
+    .label gfxa = $10
+    .label ay = $d
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2226,12 +2226,12 @@ gfx_init_plane_horisontal: {
 gfx_init_plane_charset8: {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
-    .label bits = $1e
-    .label chargen = 6
-    .label gfxa = $a
-    .label col = $f
-    .label cr = $c
-    .label ch = 9
+    .label bits = $f
+    .label chargen = $10
+    .label gfxa = $14
+    .label col = $12
+    .label cr = $22
+    .label ch = $e
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2312,10 +2312,10 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label __5 = $19
-    .label gfxb = $d
-    .label x = $a
-    .label y = $c
+    .label __5 = $1d
+    .label gfxb = $10
+    .label x = $14
+    .label y = $e
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #PLANE_8BPP_CHUNKY/$4000
     jsr dtvSetCpuBankSegment1
@@ -2392,7 +2392,7 @@ gfx_init_plane_8bppchunky: {
 // Initialize VIC bitmap
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
-    .label l = $1e
+    .label l = $22
     // bitmap_init(VIC_BITMAP)
   // Draw some lines on the bitmap
     jsr bitmap_init
@@ -2425,12 +2425,12 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zp(8) x0, byte register(X) x1, byte zp($c) y0, byte zp($10) y1)
+// bitmap_line(byte zp($16) x0, byte register(X) x1, byte zp($21) y0, byte zp($13) y1)
 bitmap_line: {
-    .label xd = $1d
-    .label x0 = 8
-    .label y0 = $c
-    .label y1 = $10
+    .label xd = $12
+    .label x0 = $16
+    .label y0 = $21
+    .label y1 = $13
     // if(x0<x1)
     txa
     cmp.z x0
@@ -2553,14 +2553,14 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zp(9) x, byte zp($c) y, byte zp(8) x1, byte zp($1d) xd, byte zp($f) yd)
+// bitmap_line_xdyi(byte zp($d) x, byte zp($21) y, byte zp($16) x1, byte zp($12) xd, byte zp($f) yd)
 bitmap_line_xdyi: {
-    .label x = 9
-    .label y = $c
-    .label x1 = 8
-    .label xd = $1d
+    .label x = $d
+    .label y = $21
+    .label x1 = $16
+    .label xd = $12
     .label yd = $f
-    .label e = $10
+    .label e = $13
     // e = yd>>1
     lda.z yd
     lsr
@@ -2600,9 +2600,9 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
-    .label plotter_x = $19
-    .label plotter_y = $1b
-    .label plotter = $19
+    .label plotter_x = $1d
+    .label plotter_y = $1f
+    .label plotter = $1d
     // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
     lda bitmap_plot_xhi,x
     sta.z plotter_x+1
@@ -2630,13 +2630,13 @@ bitmap_plot: {
     // }
     rts
 }
-// bitmap_line_ydxi(byte zp(9) y, byte register(X) x, byte zp($10) y1, byte zp(8) yd, byte zp($1d) xd)
+// bitmap_line_ydxi(byte zp($e) y, byte register(X) x, byte zp($13) y1, byte zp($d) yd, byte zp($12) xd)
 bitmap_line_ydxi: {
-    .label y = 9
-    .label y1 = $10
-    .label yd = 8
-    .label xd = $1d
-    .label e = $c
+    .label y = $e
+    .label y1 = $13
+    .label yd = $d
+    .label xd = $12
+    .label e = $f
     // e = xd>>1
     lda.z xd
     lsr
@@ -2674,14 +2674,14 @@ bitmap_line_ydxi: {
     // }
     rts
 }
-// bitmap_line_xdyd(byte zp($f) x, byte zp($c) y, byte zp(8) x1, byte zp($1d) xd, byte zp(9) yd)
+// bitmap_line_xdyd(byte zp($f) x, byte zp($21) y, byte zp($16) x1, byte zp($12) xd, byte zp($e) yd)
 bitmap_line_xdyd: {
     .label x = $f
-    .label y = $c
-    .label x1 = 8
-    .label xd = $1d
-    .label yd = 9
-    .label e = $10
+    .label y = $21
+    .label x1 = $16
+    .label xd = $12
+    .label yd = $e
+    .label e = $d
     // e = yd>>1
     lda.z yd
     lsr
@@ -2719,13 +2719,13 @@ bitmap_line_xdyd: {
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp($f) y, byte register(X) x, byte zp($c) y1, byte zp(9) yd, byte zp($1d) xd)
+// bitmap_line_ydxd(byte zp($e) y, byte register(X) x, byte zp($21) y1, byte zp($d) yd, byte zp($12) xd)
 bitmap_line_ydxd: {
-    .label y = $f
-    .label y1 = $c
-    .label yd = 9
-    .label xd = $1d
-    .label e = $10
+    .label y = $e
+    .label y1 = $21
+    .label yd = $d
+    .label xd = $12
+    .label e = $f
     // e = xd>>1
     lda.z xd
     lsr
@@ -2765,8 +2765,8 @@ bitmap_line_ydxd: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label bitmap = $d
-    .label y = $1d
+    .label bitmap = $10
+    .label y = $16
     // (byte*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap
@@ -2800,8 +2800,8 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label __10 = $1d
-    .label yoffs = $a
+    .label __10 = $21
+    .label yoffs = $14
     ldy #$80
     ldx #0
   __b1:
@@ -2868,9 +2868,9 @@ bitmap_init: {
     rts
 }
 gfx_init_charset: {
-    .label charset = $d
-    .label chargen = $a
-    .label c = $c
+    .label charset = $10
+    .label chargen = $14
+    .label c = $21
     // *PROCPORT = $32
     lda #$32
     sta PROCPORT
@@ -2917,8 +2917,8 @@ gfx_init_charset: {
 }
 // Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
-    .label ch = $d
-    .label cy = $c
+    .label ch = $10
+    .label cy = $e
     lda #0
     sta.z cy
     lda #<VIC_SCREEN4
@@ -2951,8 +2951,8 @@ gfx_init_screen4: {
 }
 // Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
-    .label __1 = $1d
-    .label ch = $11
+    .label __1 = $22
+    .label ch = $10
     .label cy = $f
     lda #<VIC_SCREEN3
     sta.z ch
@@ -2999,9 +2999,9 @@ gfx_init_screen3: {
 }
 // Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
-    .label col2 = $1e
-    .label ch = $11
-    .label cy = $f
+    .label col2 = $22
+    .label ch = $10
+    .label cy = $12
     lda #<VIC_SCREEN2
     sta.z ch
     lda #>VIC_SCREEN2
@@ -3054,8 +3054,8 @@ gfx_init_screen2: {
 }
 // Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
-    .label ch = $11
-    .label cy = $10
+    .label ch = $14
+    .label cy = $12
     lda #<VIC_SCREEN1
     sta.z ch
     lda #>VIC_SCREEN1
@@ -3093,9 +3093,9 @@ gfx_init_screen1: {
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
-    .label __1 = $1e
-    .label ch = $11
-    .label cy = $10
+    .label __1 = $22
+    .label ch = $14
+    .label cy = $13
     lda #<VIC_SCREEN0
     sta.z ch
     lda #>VIC_SCREEN0

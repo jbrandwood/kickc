@@ -3,7 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BGCOL = $d021
-  .label print_char_cursor = 6
+  .label print_char_cursor = 4
   .label print_line_cursor = 2
 main: {
     // *BGCOL = 5
@@ -26,11 +26,11 @@ main: {
 }
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
-    .label ms = 4
-    .label mf = $a
-    .label mn = 8
-    .label a = $c
-    .label b = $f
+    .label ms = 7
+    .label mf = 9
+    .label mn = $e
+    .label a = $d
+    .label b = 6
     lda #-$80
     sta.z a
   __b1:
@@ -118,12 +118,12 @@ mul8s_compare: {
     str: .text "signed multiply results match!"
     .byte 0
 }
-// mul8s_error(signed byte register(X) a, signed byte zp($f) b, signed word zp(4) ms, signed word zp(8) mn, signed word zp($a) mf)
+// mul8s_error(signed byte register(X) a, signed byte zp(6) b, signed word zp(7) ms, signed word zp($e) mn, signed word zp(9) mf)
 mul8s_error: {
-    .label b = $f
-    .label ms = 4
-    .label mn = 8
-    .label mf = $a
+    .label b = 6
+    .label ms = 7
+    .label mn = $e
+    .label mf = 9
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -208,9 +208,9 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(4) w)
+// print_sword(signed word zp(7) w)
 print_sword: {
-    .label w = 4
+    .label w = 7
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -251,9 +251,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(4) w)
+// print_word(word zp(7) w)
 print_word: {
-    .label w = 4
+    .label w = 7
     // print_byte(>w)
     lda.z w+1
     tax
@@ -289,9 +289,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($d) str)
+// print_str(byte* zp($b) str)
 print_str: {
-    .label str = $d
+    .label str = $b
   __b1:
     // while(*str)
     ldy #0
@@ -344,10 +344,10 @@ print_sbyte: {
 }
 // Multiply of two signed bytes to a signed word
 // Fixes offsets introduced by using unsigned multiplication
-// mul8s(signed byte zp($c) a, signed byte register(Y) b)
+// mul8s(signed byte zp($d) a, signed byte register(Y) b)
 mul8s: {
-    .label m = 8
-    .label a = $c
+    .label m = $e
+    .label a = $d
     // mul8u((byte)a, (byte) b)
     ldx.z a
     tya
@@ -382,9 +382,9 @@ mul8s: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $d
-    .label res = 8
-    .label return = 8
+    .label mb = $b
+    .label res = $e
+    .label return = $e
     // mb = b
     sta.z mb
     lda #0
@@ -425,7 +425,7 @@ mul8u: {
 // Fast multiply two signed bytes to a word result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
-    .label return = $a
+    .label return = 9
     // mulf8u_prepare((byte)a)
     jsr mulf8u_prepare
     // mulf8s_prepared(b)
@@ -436,11 +436,11 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zp($f) b)
+// mulf8s_prepared(signed byte zp($12) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = $a
-    .label b = $f
+    .label m = 9
+    .label b = $12
     // mulf8u_prepared((byte) b)
     ldx.z b
     jsr mulf8u_prepared
@@ -477,7 +477,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = $a
+    .label return = 9
     // *memB = b
     stx memB
     // asm
@@ -517,11 +517,11 @@ mulf8u_prepare: {
 }
 // Slow multiplication of signed bytes
 // Perform a signed multiplication by repeated addition/subtraction
-// muls8s(signed byte zp($c) a, signed byte register(X) b)
+// muls8s(signed byte zp($d) a, signed byte register(X) b)
 muls8s: {
-    .label m = 4
-    .label return = 4
-    .label a = $c
+    .label m = 7
+    .label return = 7
+    .label a = $d
     // if(a<0)
     lda.z a
     bmi b3
@@ -594,11 +594,11 @@ muls8s: {
 }
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
-    .label ms = 4
-    .label mf = $a
-    .label mn = 8
-    .label b = $f
-    .label a = $c
+    .label ms = 7
+    .label mf = 9
+    .label mn = $e
+    .label b = 6
+    .label a = $d
     lda #0
     sta.z a
   __b1:
@@ -677,12 +677,12 @@ mul8u_compare: {
     str: .text "multiply results match!"
     .byte 0
 }
-// mul8u_error(byte register(X) a, byte zp($f) b, word zp(4) ms, word zp(8) mn, word zp($a) mf)
+// mul8u_error(byte register(X) a, byte zp(6) b, word zp(7) ms, word zp($e) mn, word zp(9) mf)
 mul8u_error: {
-    .label b = $f
-    .label ms = 4
-    .label mn = 8
-    .label mf = $a
+    .label b = 6
+    .label ms = 7
+    .label mn = $e
+    .label mf = 9
     // print_str("multiply mismatch ")
     lda #<str
     sta.z print_str.str
@@ -742,7 +742,7 @@ mul8u_error: {
 // Fast multiply two unsigned bytes to a word result
 // mulf8u(byte register(A) a, byte register(X) b)
 mulf8u: {
-    .label return = $a
+    .label return = 9
     // mulf8u_prepare(a)
     jsr mulf8u_prepare
     // mulf8u_prepared(b)
@@ -753,11 +753,11 @@ mulf8u: {
 }
 // Slow multiplication of unsigned bytes
 // Calculate an unsigned multiplication by repeated addition
-// muls8u(byte zp($c) a, byte register(X) b)
+// muls8u(byte zp($d) a, byte register(X) b)
 muls8u: {
-    .label return = 4
-    .label m = 4
-    .label a = $c
+    .label return = 7
+    .label m = 7
+    .label a = $d
     // if(a!=0)
     lda.z a
     cmp #0
@@ -793,8 +793,8 @@ muls8u: {
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
 mulf_tables_cmp: {
-    .label asm_sqr = 4
-    .label kc_sqr = 2
+    .label asm_sqr = 7
+    .label kc_sqr = $e
     lda #<mula_sqr1_lo
     sta.z asm_sqr
     lda #>mula_sqr1_lo
@@ -954,17 +954,17 @@ mulf_init_asm: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $f
+    .label c = $12
     // Counter used for determining x%2==0
-    .label sqr1_hi = 6
+    .label sqr1_hi = 9
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $d
-    .label sqr1_lo = 4
+    .label sqr = $e
+    .label sqr1_lo = 7
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $a
-    .label sqr2_lo = 8
+    .label sqr2_hi = $b
+    .label sqr2_lo = $10
     //Start with g(0)=f(255)
-    .label dir = $c
+    .label dir = $d
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -1103,7 +1103,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $d
+    .label dst = $10
     lda #<str
     sta.z dst
     lda #>str

@@ -12,7 +12,7 @@
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
-  .label next = 5
+  .label next = 2
 main: {
     // *BORDERCOL = 0
     lda #0
@@ -89,13 +89,13 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zp(2) x, byte zp(3) y, byte zp(6) x1, byte zp($b) xd)
+// bitmap_line_xdyi(byte zp(3) x, byte zp(4) y, byte zp($b) x1, byte zp(6) xd)
 bitmap_line_xdyi: {
-    .label x1 = 6
-    .label xd = $b
-    .label x = 2
-    .label e = 4
-    .label y = 3
+    .label x1 = $b
+    .label xd = 6
+    .label x = 3
+    .label e = 5
+    .label y = 4
     lda #bitmap_line.y1>>1
     sta.z e
     lda #bitmap_line.y0
@@ -166,12 +166,12 @@ bitmap_plot: {
     // }
     rts
 }
-// bitmap_line_ydxi(byte zp(3) y, byte zp(2) x, byte zp(6) xd)
+// bitmap_line_ydxi(byte zp(4) y, byte zp(3) x, byte zp(6) xd)
 bitmap_line_ydxi: {
     .label xd = 6
-    .label e = 4
-    .label y = 3
-    .label x = 2
+    .label e = 5
+    .label y = 4
+    .label x = 3
     // e = xd>>1
     lda.z xd
     lsr
@@ -210,12 +210,12 @@ bitmap_line_ydxi: {
     // }
     rts
 }
-// bitmap_line_xdyd(byte zp(2) x, byte zp(3) y, byte zp(6) xd)
+// bitmap_line_xdyd(byte zp(3) x, byte zp(4) y, byte zp(6) xd)
 bitmap_line_xdyd: {
-    .label x = 2
+    .label x = 3
     .label xd = 6
-    .label e = 4
-    .label y = 3
+    .label e = 5
+    .label y = 4
     lda #bitmap_line.y1>>1
     sta.z e
     lda #bitmap_line.y1
@@ -250,12 +250,12 @@ bitmap_line_xdyd: {
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp(3) y, byte zp(2) x, byte zp(6) xd)
+// bitmap_line_ydxd(byte zp(4) y, byte zp(3) x, byte zp(6) xd)
 bitmap_line_ydxd: {
     .label xd = 6
-    .label e = 4
-    .label y = 3
-    .label x = 2
+    .label e = 5
+    .label y = 4
+    .label x = 3
     // e = xd>>1
     lda.z xd
     lsr
@@ -325,7 +325,7 @@ init_screen: {
 // Clear all graphics on the bitmap
 bitmap_clear: {
     .label bitmap = 7
-    .label y = 5
+    .label y = 6
     // (byte*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap

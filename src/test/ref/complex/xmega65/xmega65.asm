@@ -98,12 +98,12 @@ main: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c, word zp(2) num)
+// memset(void* zp(8) str, byte register(X) c, word zp(6) num)
 memset: {
-    .label end = 2
-    .label dst = 4
-    .label num = 2
-    .label str = 4
+    .label end = 6
+    .label dst = 8
+    .label num = 6
+    .label str = 8
     // if(num>0)
     lda.z num
     bne !+

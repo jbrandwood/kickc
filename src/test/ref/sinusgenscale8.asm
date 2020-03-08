@@ -7,8 +7,8 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
-  .label print_char_cursor = 6
-  .label print_line_cursor = 2
+  .label print_char_cursor = 8
+  .label print_line_cursor = 6
 main: {
     .label tabsize = $14
     // print_cls()
@@ -24,7 +24,7 @@ main: {
 // tabsize - the number of sinus points (the size of the table)
 // min - the minimal value
 // max - the maximal value
-// sin8u_table(byte* zp($11) sintab)
+// sin8u_table(byte* zp(4) sintab)
 sin8u_table: {
     .const min = $a
     .const max = $ff
@@ -33,11 +33,11 @@ sin8u_table: {
     .const mid = sum/2+1
     .label step = $f
     .label sinx = $13
-    .label sinx_sc = 9
-    .label sintab = $11
+    .label sinx_sc = $a
+    .label sintab = 4
     // Iterate over the table
-    .label x = $d
-    .label i = $b
+    .label x = 2
+    .label i = $11
     // div16u(PI2_u4f12, tabsize)
     jsr div16u
     // div16u(PI2_u4f12, tabsize)
@@ -260,9 +260,9 @@ print_ln: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp(8) b)
+// print_byte(byte zp($c) b)
 print_byte: {
-    .label b = 8
+    .label b = $c
     // b>>4
     lda.z b
     lsr
@@ -299,9 +299,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(4) str)
+// print_str(byte* zp($d) str)
 print_str: {
-    .label str = 4
+    .label str = $d
   __b1:
     // while(*str)
     ldy #0
@@ -327,9 +327,9 @@ print_str: {
     jmp __b1
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(4) w)
+// print_sword(signed word zp($d) w)
 print_sword: {
-    .label w = 4
+    .label w = $d
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -356,9 +356,9 @@ print_sword: {
     jmp __b2
 }
 // Print a word as HEX
-// print_word(word zp(4) w)
+// print_word(word zp($d) w)
 print_word: {
-    .label w = 4
+    .label w = $d
     // print_byte(>w)
     lda.z w+1
     sta.z print_byte.b
@@ -371,9 +371,9 @@ print_word: {
     rts
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zp(8) b)
+// print_sbyte(signed byte zp($c) b)
 print_sbyte: {
-    .label b = 8
+    .label b = $c
     // if(b<0)
     lda.z b
     bmi __b1
@@ -402,7 +402,7 @@ print_sbyte: {
 // mul8su(signed byte register(Y) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
-    .label m = 9
+    .label m = $a
     // mul8u((byte)a, (byte) b)
     tya
     tax
@@ -426,9 +426,9 @@ mul8su: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = 6
-    .label res = 9
-    .label return = 9
+    .label mb = $d
+    .label res = $a
+    .label return = $a
     // mb = b
     sta.z mb
     lda #0
@@ -469,17 +469,17 @@ mul8u: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp(9) x)
+// sin8s(word zp($d) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = 9
-    .label x = 9
+    .label __4 = $d
+    .label x = $d
     .label x1 = $14
     .label x3 = $15
     .label usinx = $16
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-    .label isUpper = 8
+    .label isUpper = $c
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -612,8 +612,8 @@ sin8s: {
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 // mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($13) select)
 mulu8_sel: {
-    .label __0 = 9
-    .label __1 = 9
+    .label __0 = $a
+    .label __1 = $a
     .label select = $13
     // mul8u(v1, v2)
     tya
@@ -649,9 +649,9 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($d) dividend, word zp($b) rem)
+// divr16u(word zp($d) dividend, word zp($11) rem)
 divr16u: {
-    .label rem = $b
+    .label rem = $11
     .label dividend = $d
     .label quotient = $f
     .label return = $f

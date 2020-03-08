@@ -2309,17 +2309,13 @@ Coalescing zero page register [ zp[2]:2 [ main::x#2 main::x#1 ] ] with [ zp[2]:2
 Coalescing zero page register [ zp[2]:8 [ memset::num#2 ] ] with [ zp[2]:31 [ memset::end#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:10 [ memset::str#3 ] ] with [ zp[2]:13 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:24 [ bitmap_plot::plotter#0 ] ] with [ zp[2]:28 [ bitmap_plot::plotter#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:8 [ memset::num#2 memset::end#0 ] ] with [ zp[2]:2 [ main::x#2 main::x#1 bitmap_plot::x#0 ] ]
-Coalescing zero page register [ zp[2]:10 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:5 [ main::vx#2 main::vx#6 main::vx#1 ] ]
-Coalescing zero page register [ zp[2]:24 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ] ] with [ zp[2]:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] ]
-Coalescing zero page register [ zp[1]:33 [ bitmap_init::$7 ] ] with [ zp[1]:4 [ main::y#2 main::y#1 ] ]
-Allocated (was zp[1]:7) zp[1]:2 [ main::vy#2 main::vy#8 main::vy#1 ]
-Allocated (was zp[2]:8) zp[2]:3 [ memset::num#2 memset::end#0 main::x#2 main::x#1 bitmap_plot::x#0 ]
-Allocated (was zp[2]:10) zp[2]:5 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 main::vx#2 main::vx#6 main::vx#1 ]
-Allocated (was zp[1]:20) zp[1]:7 [ frame_cnt ]
-Allocated (was zp[2]:24) zp[2]:8 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
-Allocated (was zp[2]:26) zp[2]:10 [ bitmap_plot::$1 ]
-Allocated (was zp[1]:33) zp[1]:12 [ bitmap_init::$7 main::y#2 main::y#1 ]
+Coalescing zero page register [ zp[2]:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ] ] with [ zp[2]:8 [ memset::num#2 memset::end#0 ] ]
+Coalescing zero page register [ zp[2]:24 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 ] ] with [ zp[2]:10 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ]
+Coalescing zero page register [ zp[2]:26 [ bitmap_plot::$1 ] ] with [ zp[2]:18 [ bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 memset::num#2 memset::end#0 ] ]
+Allocated (was zp[1]:20) zp[1]:8 [ frame_cnt ]
+Allocated (was zp[2]:24) zp[2]:9 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
+Allocated (was zp[2]:26) zp[2]:11 [ bitmap_plot::$1 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 memset::num#2 memset::end#0 ]
+Allocated (was zp[1]:33) zp[1]:13 [ bitmap_init::$7 ]
 Interrupt procedure irq clobbers ACNZ
 Removing interrupt register storage stx regx+1 in 154 entry interrupt(HARDWARE_CLOBBER)
 Removing interrupt register storage sty regy+1 in 154 entry interrupt(HARDWARE_CLOBBER)
@@ -2370,7 +2366,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const WHITE = 1
   .label BITMAP = $2000
   .label SCREEN = $400
-  .label frame_cnt = 7
+  .label frame_cnt = 8
   // @begin
 __bbegin:
   jmp __b1
@@ -2397,10 +2393,10 @@ __bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label x = 3
-    .label y = $c
+    .label x = 2
+    .label y = 4
     .label vx = 5
-    .label vy = 2
+    .label vy = 7
     // [6] call bitmap_init 
     // [58] phi from main to bitmap_init [phi:main->bitmap_init]
   bitmap_init_from_main:
@@ -2552,11 +2548,11 @@ main: {
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(3) x, byte register(X) y)
+// bitmap_plot(word zp(2) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $a
-    .label plotter = 8
-    .label x = 3
+    .label __1 = $b
+    .label plotter = 9
+    .label x = 2
     // [28] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -2685,12 +2681,12 @@ bitmap_clear: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(5) str, byte register(X) c, word zp(3) num)
+// memset(void* zp(9) str, byte register(X) c, word zp($b) num)
 memset: {
-    .label end = 3
-    .label dst = 5
-    .label num = 3
-    .label str = 5
+    .label end = $b
+    .label dst = 9
+    .label num = $b
+    .label str = 9
     // [50] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
     lda.z num
     bne !+
@@ -2744,8 +2740,8 @@ memset: {
   // bitmap_init
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label __7 = $c
-    .label yoffs = 8
+    .label __7 = $d
+    .label yoffs = $b
     // [59] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
   __b1_from_bitmap_init:
     // [59] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuxx=vbuc1 
@@ -3039,7 +3035,7 @@ FINAL SYMBOL TABLE
 (byte~) bitmap_init::$4 reg byte a 22.0
 (byte~) bitmap_init::$5 reg byte a 22.0
 (byte~) bitmap_init::$6 reg byte a 22.0
-(byte~) bitmap_init::$7 zp[1]:12 5.5
+(byte~) bitmap_init::$7 zp[1]:13 5.5
 (label) bitmap_init::@1
 (label) bitmap_init::@2
 (label) bitmap_init::@3
@@ -3060,25 +3056,25 @@ FINAL SYMBOL TABLE
 (byte) bitmap_init::y#1 reg byte x 16.5
 (byte) bitmap_init::y#2 reg byte x 5.5
 (byte*) bitmap_init::yoffs
-(byte*) bitmap_init::yoffs#1 yoffs zp[2]:8 22.0
-(byte*) bitmap_init::yoffs#2 yoffs zp[2]:8 6.875
-(byte*) bitmap_init::yoffs#4 yoffs zp[2]:8 11.0
+(byte*) bitmap_init::yoffs#1 yoffs zp[2]:11 22.0
+(byte*) bitmap_init::yoffs#2 yoffs zp[2]:11 6.875
+(byte*) bitmap_init::yoffs#4 yoffs zp[2]:11 11.0
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
-(word~) bitmap_plot::$1 zp[2]:10 4.0
+(word~) bitmap_plot::$1 zp[2]:11 4.0
 (byte~) bitmap_plot::$2 reg byte a 4.0
 (label) bitmap_plot::@return
 (byte*) bitmap_plot::plotter
-(word) bitmap_plot::plotter#0 plotter zp[2]:8 1.0
-(byte*) bitmap_plot::plotter#1 plotter zp[2]:8 3.0
+(word) bitmap_plot::plotter#0 plotter zp[2]:9 1.0
+(byte*) bitmap_plot::plotter#1 plotter zp[2]:9 3.0
 (word) bitmap_plot::x
-(word) bitmap_plot::x#0 x zp[2]:3 3.0
+(word) bitmap_plot::x#0 x zp[2]:2 3.0
 (byte) bitmap_plot::y
 (byte) bitmap_plot::y#0 reg byte x 15.0
 (const byte*) bitmap_plot_bit[(number) $100]  = { fill( $100, 0) }
 (const byte*) bitmap_plot_yhi[(number) $100]  = { fill( $100, 0) }
 (const byte*) bitmap_plot_ylo[(number) $100]  = { fill( $100, 0) }
 (byte*) bitmap_screen
-(byte) frame_cnt loadstore zp[1]:7 1.1111111111111112
+(byte) frame_cnt loadstore zp[1]:8 1.1111111111111112
 (void()) init_irq()
 (label) init_irq::@return
 interrupt(HARDWARE_CLOBBER)(void()) irq()
@@ -3108,15 +3104,15 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (word) main::vx#2 vx zp[2]:5 5.5
 (word) main::vx#6 vx zp[2]:5 5.5
 (byte) main::vy
-(byte) main::vy#1 vy zp[1]:2 22.0
-(byte) main::vy#2 vy zp[1]:2 3.6666666666666665
-(byte) main::vy#8 vy zp[1]:2 16.5
+(byte) main::vy#1 vy zp[1]:7 22.0
+(byte) main::vy#2 vy zp[1]:7 3.6666666666666665
+(byte) main::vy#8 vy zp[1]:7 16.5
 (word) main::x
-(word) main::x#1 x zp[2]:3 4.0
-(word) main::x#2 x zp[2]:3 8.25
+(word) main::x#1 x zp[2]:2 4.0
+(word) main::x#2 x zp[2]:2 8.25
 (byte) main::y
-(byte) main::y#1 y zp[1]:12 4.4
-(byte) main::y#2 y zp[1]:12 6.6000000000000005
+(byte) main::y#1 y zp[1]:4 4.4
+(byte) main::y#2 y zp[1]:4 6.6000000000000005
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
 (label) memset::@2
@@ -3125,31 +3121,32 @@ interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte) memset::c
 (byte) memset::c#4 reg byte x 1.375
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp[2]:5 22.0
-(byte*) memset::dst#2 dst zp[2]:5 15.333333333333332
-(byte*) memset::dst#4 dst zp[2]:5 4.0
+(byte*) memset::dst#1 dst zp[2]:9 22.0
+(byte*) memset::dst#2 dst zp[2]:9 15.333333333333332
+(byte*) memset::dst#4 dst zp[2]:9 4.0
 (byte*) memset::end
-(byte*) memset::end#0 end zp[2]:3 2.1666666666666665
+(byte*) memset::end#0 end zp[2]:11 2.1666666666666665
 (word) memset::num
-(word) memset::num#2 num zp[2]:3 2.0
+(word) memset::num#2 num zp[2]:11 2.0
 (void*) memset::return
 (void*) memset::str
-(void*) memset::str#3 str zp[2]:5
+(void*) memset::str#3 str zp[2]:9
 (const byte*) plots_per_frame[(number) $100]  = { fill( $100, 0) }
 
-zp[1]:2 [ main::vy#2 main::vy#8 main::vy#1 ]
-zp[2]:3 [ memset::num#2 memset::end#0 main::x#2 main::x#1 bitmap_plot::x#0 ]
-zp[2]:5 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 main::vx#2 main::vx#6 main::vx#1 ]
+zp[2]:2 [ main::x#2 main::x#1 bitmap_plot::x#0 ]
+zp[1]:4 [ main::y#2 main::y#1 ]
+zp[2]:5 [ main::vx#2 main::vx#6 main::vx#1 ]
+zp[1]:7 [ main::vy#2 main::vy#8 main::vy#1 ]
 reg byte x [ memset::c#4 ]
 reg byte a [ bitmap_init::bits#3 bitmap_init::bits#4 bitmap_init::bits#1 ]
 reg byte x [ bitmap_init::x#2 bitmap_init::x#1 ]
 reg byte x [ bitmap_init::y#2 bitmap_init::y#1 ]
-zp[1]:7 [ frame_cnt ]
+zp[1]:8 [ frame_cnt ]
 reg byte x [ bitmap_plot::y#0 ]
-zp[2]:8 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 ]
-zp[2]:10 [ bitmap_plot::$1 ]
+zp[2]:9 [ bitmap_plot::plotter#0 bitmap_plot::plotter#1 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
+zp[2]:11 [ bitmap_plot::$1 bitmap_init::yoffs#2 bitmap_init::yoffs#4 bitmap_init::yoffs#1 memset::num#2 memset::end#0 ]
 reg byte a [ bitmap_plot::$2 ]
-zp[1]:12 [ bitmap_init::$7 main::y#2 main::y#1 ]
+zp[1]:13 [ bitmap_init::$7 ]
 reg byte a [ bitmap_init::$4 ]
 reg byte a [ bitmap_init::$5 ]
 reg byte a [ bitmap_init::$6 ]
@@ -3199,7 +3196,7 @@ Score: 3177
   .const WHITE = 1
   .label BITMAP = $2000
   .label SCREEN = $400
-  .label frame_cnt = 7
+  .label frame_cnt = 8
   // @begin
 __bbegin:
   // @1
@@ -3219,10 +3216,10 @@ __bbegin:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label x = 3
-    .label y = $c
+    .label x = 2
+    .label y = 4
     .label vx = 5
-    .label vy = 2
+    .label vy = 7
     // bitmap_init(BITMAP, SCREEN)
     // [6] call bitmap_init 
     // [58] phi from main to bitmap_init [phi:main->bitmap_init]
@@ -3352,11 +3349,11 @@ main: {
 }
   // bitmap_plot
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(3) x, byte register(X) y)
+// bitmap_plot(word zp(2) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $a
-    .label plotter = 8
-    .label x = 3
+    .label __1 = $b
+    .label plotter = 9
+    .label x = 2
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     // [28] (word) bitmap_plot::plotter#0 ← *((const byte*) bitmap_plot_yhi + (byte) bitmap_plot::y#0) w= *((const byte*) bitmap_plot_ylo + (byte) bitmap_plot::y#0) -- vwuz1=pbuc1_derefidx_vbuxx_word_pbuc2_derefidx_vbuxx 
     lda bitmap_plot_yhi,x
@@ -3492,12 +3489,12 @@ bitmap_clear: {
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(5) str, byte register(X) c, word zp(3) num)
+// memset(void* zp(9) str, byte register(X) c, word zp($b) num)
 memset: {
-    .label end = 3
-    .label dst = 5
-    .label num = 3
-    .label str = 5
+    .label end = $b
+    .label dst = 9
+    .label num = $b
+    .label str = 9
     // if(num>0)
     // [50] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
     lda.z num
@@ -3551,8 +3548,8 @@ memset: {
   // bitmap_init
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label __7 = $c
-    .label yoffs = 8
+    .label __7 = $d
+    .label yoffs = $b
     // [59] phi from bitmap_init to bitmap_init::@1 [phi:bitmap_init->bitmap_init::@1]
     // [59] phi (byte) bitmap_init::x#2 = (byte) 0 [phi:bitmap_init->bitmap_init::@1#0] -- vbuxx=vbuc1 
     ldx #0

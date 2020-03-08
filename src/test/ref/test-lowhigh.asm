@@ -1,20 +1,20 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = $10
-  .label print_char_cursor = 8
-  .label print_char_cursor_1 = $10
-  .label print_line_cursor_1 = 6
+  .label print_line_cursor = 6
+  .label print_char_cursor = $a
+  .label print_char_cursor_1 = 6
+  .label print_line_cursor_1 = 8
 main: {
-    .label __3 = 8
-    .label __6 = $e
-    .label __16 = $10
-    .label __20 = $12
-    .label __24 = $14
-    .label __28 = $16
-    .label __32 = 8
-    .label __33 = $e
-    .label dw2 = $a
+    .label __3 = $c
+    .label __6 = $12
+    .label __16 = $14
+    .label __20 = $16
+    .label __24 = $18
+    .label __28 = $1a
+    .label __32 = $c
+    .label __33 = $12
+    .label dw2 = $e
     .label dw = 2
     // print_cls()
     jsr print_cls
@@ -245,9 +245,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($e) w)
+// print_word(word zp($c) w)
 print_word: {
-    .label w = $e
+    .label w = $c
     // print_byte(>w)
     lda.z w+1
     tax
@@ -260,9 +260,9 @@ print_word: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zp($a) dw)
+// print_dword(dword zp($e) dw)
 print_dword: {
-    .label dw = $a
+    .label dw = $e
     // print_word(>dw)
     lda.z dw+2
     sta.z print_word.w
@@ -296,7 +296,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $10
+    .label dst = $c
     lda #<str
     sta.z dst
     lda #>str

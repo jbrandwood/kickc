@@ -2,12 +2,12 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 5
-  .label print_line_cursor = $f
+  .label print_char_cursor = 4
+  .label print_line_cursor = 2
   // Remainder after unsigned 16-bit division
-  .label rem16u = $b
+  .label rem16u = $d
   // Remainder after signed 16 bit division
-  .label rem16s = $b
+  .label rem16s = $d
 main: {
     // print_cls()
     jsr print_cls
@@ -23,10 +23,10 @@ main: {
     rts
 }
 test_16s: {
-    .label dividend = 3
-    .label divisor = $11
-    .label res = 9
-    .label i = $d
+    .label dividend = $11
+    .label divisor = $13
+    .label res = $b
+    .label i = $f
     lda #0
     sta.z i
   __b1:
@@ -125,9 +125,9 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(3) w)
+// print_sword(signed word zp($11) w)
 print_sword: {
-    .label w = 3
+    .label w = $11
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -168,9 +168,9 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(3) w)
+// print_word(word zp($11) w)
 print_word: {
-    .label w = 3
+    .label w = $11
     // print_byte(>w)
     lda.z w+1
     sta.z print_byte.b
@@ -183,9 +183,9 @@ print_word: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp(2) b)
+// print_byte(byte zp(6) b)
 print_byte: {
-    .label b = 2
+    .label b = 6
     // b>>4
     lda.z b
     lsr
@@ -208,9 +208,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(3) str)
+// print_str(byte* zp(7) str)
 print_str: {
-    .label str = 3
+    .label str = 7
   __b1:
     // while(*str)
     ldy #0
@@ -241,11 +241,11 @@ print_str: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div16s(signed word zp(3) dividend, signed word zp($11) divisor)
+// div16s(signed word zp($11) dividend, signed word zp($13) divisor)
 div16s: {
-    .label return = 9
-    .label dividend = 3
-    .label divisor = $11
+    .label return = $b
+    .label dividend = $11
+    .label divisor = $13
     // divr16s(dividend, divisor, 0)
     lda.z dividend
     sta.z divr16s.dividend
@@ -264,15 +264,15 @@ div16s: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp(5) dividend, signed word zp(7) divisor)
+// divr16s(signed word zp(7) dividend, signed word zp(9) divisor)
 divr16s: {
-    .label __16 = $b
-    .label dividendu = 5
-    .label divisoru = 7
-    .label resultu = 9
-    .label return = 9
-    .label dividend = 5
-    .label divisor = 7
+    .label __16 = $d
+    .label dividendu = 7
+    .label divisoru = 9
+    .label resultu = $b
+    .label return = $b
+    .label dividend = 7
+    .label divisor = 9
     // if(dividend<0 || rem<0)
     lda.z dividend+1
     bmi __b1
@@ -339,13 +339,13 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp(5) dividend, word zp(7) divisor, word zp($b) rem)
+// divr16u(word zp(7) dividend, word zp(9) divisor, word zp($d) rem)
 divr16u: {
-    .label rem = $b
-    .label dividend = 5
-    .label quotient = 9
-    .label return = 9
-    .label divisor = 7
+    .label rem = $d
+    .label dividend = 7
+    .label quotient = $b
+    .label return = $b
+    .label divisor = 9
     ldx #0
     txa
     sta.z quotient
@@ -406,10 +406,10 @@ divr16u: {
     rts
 }
 test_8s: {
-    .label dividend = 2
-    .label divisor = $13
-    .label res = $14
-    .label i = $d
+    .label dividend = 6
+    .label divisor = $15
+    .label res = $16
+    .label i = $f
     lda #0
     sta.z i
   __b1:
@@ -475,9 +475,9 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zp(2) b)
+// print_sbyte(signed byte zp(6) b)
 print_sbyte: {
-    .label b = 2
+    .label b = 6
     // if(b<0)
     lda.z b
     bmi __b1
@@ -509,7 +509,7 @@ print_sbyte: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // div8s(signed byte register(Y) dividend, signed byte register(X) divisor)
 div8s: {
-    .label neg = $e
+    .label neg = $10
     // if(dividend<0)
     cpy #0
     bmi __b1
@@ -589,12 +589,12 @@ div8u: {
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// divr8u(byte zp($14) dividend, byte zp($15) divisor, byte register(Y) rem)
+// divr8u(byte zp($16) dividend, byte zp($17) divisor, byte register(Y) rem)
 divr8u: {
-    .label dividend = $14
-    .label divisor = $15
-    .label quotient = $16
-    .label return = $16
+    .label dividend = $16
+    .label divisor = $17
+    .label quotient = $18
+    .label return = $18
     ldx #0
     txa
     sta.z quotient
@@ -641,10 +641,10 @@ divr8u: {
     rts
 }
 test_16u: {
-    .label dividend = 3
-    .label divisor = 7
-    .label res = 9
-    .label i = $e
+    .label dividend = $11
+    .label divisor = 9
+    .label res = $b
+    .label i = $10
     lda #0
     sta.z i
   __b1:
@@ -723,11 +723,11 @@ test_16u: {
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// div16u(word zp(3) dividend, word zp(7) divisor)
+// div16u(word zp($11) dividend, word zp(9) divisor)
 div16u: {
-    .label return = 9
-    .label dividend = 3
-    .label divisor = 7
+    .label return = $b
+    .label dividend = $11
+    .label divisor = 9
     // divr16u(dividend, divisor, 0)
     lda.z dividend
     sta.z divr16u.dividend
@@ -739,10 +739,10 @@ div16u: {
     rts
 }
 test_8u: {
-    .label dividend = 2
-    .label divisor = $15
-    .label res = $16
-    .label i = $13
+    .label dividend = 6
+    .label divisor = $17
+    .label res = $18
+    .label i = $15
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -830,7 +830,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $f
+    .label dst = $11
     lda #<str
     sta.z dst
     lda #>str

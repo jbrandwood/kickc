@@ -14,12 +14,12 @@
   .label cp = $ff
   .label print_screen = $400
 main: {
-    .label at = $a
-    .label at_1 = $c
-    .label at_2 = 3
-    .label j = 5
-    .label i = 2
-    .label at_line = $c
+    .label at = 2
+    .label at_1 = 4
+    .label at_2 = 7
+    .label j = 9
+    .label i = 6
+    .label at_line = 4
     // init_screen()
     jsr init_screen
     lda #<$400+4
@@ -114,10 +114,10 @@ main: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte zp(8) b, byte* zp(6) at)
+// print_sbyte_at(signed byte zp($a) b, byte* zp($c) at)
 print_sbyte_at: {
-    .label b = 8
-    .label at = 6
+    .label b = $a
+    .label at = $c
     // if(b<0)
     lda.z b
     bmi __b1
@@ -148,10 +148,10 @@ print_sbyte_at: {
     jmp __b2
 }
 // Print a single char
-// print_char_at(byte zp(9) ch, byte* zp(6) at)
+// print_char_at(byte zp($b) ch, byte* zp($c) at)
 print_char_at: {
-    .label at = 6
-    .label ch = 9
+    .label at = $c
+    .label ch = $b
     // *(at) = ch
     lda.z ch
     ldy #0
@@ -160,10 +160,10 @@ print_char_at: {
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zp(8) b, byte* zp(6) at)
+// print_byte_at(byte zp($a) b, byte* zp($c) at)
 print_byte_at: {
-    .label b = 8
-    .label at = 6
+    .label b = $a
+    .label at = $c
     // b>>4
     lda.z b
     lsr
@@ -216,7 +216,7 @@ fmul8: {
 }
 init_screen: {
     .const WHITE = 1
-    .label COLS = $a
+    .label COLS = $c
     // print_cls()
     jsr print_cls
     ldx #0
@@ -275,7 +275,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $c
+    .label dst = $e
     lda #<str
     sta.z dst
     lda #>str

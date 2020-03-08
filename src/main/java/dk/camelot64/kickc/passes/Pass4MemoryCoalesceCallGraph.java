@@ -10,9 +10,9 @@ import java.util.*;
 /**
  * Use the call graph to coalesce memory registers.
  * For each live range equivalence class:
- *  - Look up through the call graph and avoid all variables declared in the scopes there
- *  - Go through already handled live range equivalence classes and if any exist with no scope overlap with the call graph - try to coalesce
- *  - Add to the list of already handled live range equivalence classes
+ * - Look up through the call graph and avoid all variables declared in the scopes there
+ * - Go through already handled live range equivalence classes and if any exist with no scope overlap with the call graph - try to coalesce
+ * - Add to the list of already handled live range equivalence classes
  */
 public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
 
@@ -130,8 +130,11 @@ public class Pass4MemoryCoalesceCallGraph extends Pass2Base {
       List<VariableRef> variables = equivalenceClass.getVariables();
       for(VariableRef varRef : variables) {
          ScopeRef scopeRef = new ScopeRef(varRef.getScopeNames());
+         //if(!ScopeRef.ROOT.equals(scopeRef)) {
+         //   scopeRef = new ProcedureRef(varRef.getScopeNames());
+         //}
          if(!ecScopes.contains(scopeRef))
-               ecScopes.add(scopeRef);
+            ecScopes.add(scopeRef);
       }
       return ecScopes;
    }

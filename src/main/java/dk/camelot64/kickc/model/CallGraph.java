@@ -149,23 +149,25 @@ public class CallGraph {
    /**
     * Get all calls of a specific procedure
     *
-    * @param label The label of the procedure
+    * @param procedureRef The procedure
     * @return All calls
     */
    public Collection<CallBlock.Call> getRecursiveCallers(ProcedureRef procedureRef) {
       final LinkedList<CallBlock.Call> callers = new LinkedList<>();
-      Deque<ProcedureRef> todo = new LinkedList<>();
+      Deque<ScopeRef> todo = new LinkedList<>();
       todo.add(procedureRef);
-      Collection<ProcedureRef> visited = new LinkedList<>();
+      Collection<ScopeRef> visited = new LinkedList<>();
       while(!todo.isEmpty()) {
-         final ProcedureRef procRef = todo.pop();
+         final ScopeRef procRef = todo.pop();
          if(visited.contains(procRef))
             continue;
          visited.add(procRef);
-         final Collection<CallBlock.Call> procCallers = getCallers(procRef);
-         callers.addAll(procCallers);
-         for(CallBlock.Call caller : procCallers) {
-            todo.add(caller.getProcedure());
+         if(procRef instanceof ProcedureRef) {
+            final Collection<CallBlock.Call> procCallers = getCallers((ProcedureRef) procRef);
+            callers.addAll(procCallers);
+            for(CallBlock.Call procCaller : procCallers) {
+               todo.add(procCaller.getCallStatementScope());
+            }
          }
       }
       return callers;
@@ -245,7 +247,7 @@ public class CallGraph {
       }
 
       public void addCall(ProcedureRef procedureLabel, StatementCalling call) {
-         this.calls.add(new Call(procedureLabel, call));
+         this.calls.add(new Call(procedureLabel, call, scopeLabel));
       }
 
       /**
@@ -307,13 +309,19 @@ public class CallGraph {
          private Integer callStatementIdx;
 
          /**
+          * The calling procedure (which contains the call statement).
+          */
+         private ScopeRef callStatementScope;
+
+         /**
           * The called procedure (which is itself also a Scope).
           */
          private ProcedureRef procedure;
 
-         Call(ProcedureRef procedure, StatementCalling call) {
+         Call(ProcedureRef procedure, StatementCalling call, ScopeRef callStatementScope) {
             this.callStatementIdx = call.getIndex();
             this.procedure = procedure;
+            this.callStatementScope = callStatementScope;
          }
 
          public ProcedureRef getProcedure() {
@@ -322,6 +330,10 @@ public class CallGraph {
 
          public Integer getCallStatementIdx() {
             return callStatementIdx;
+         }
+
+         public ScopeRef getCallStatementScope() {
+            return callStatementScope;
          }
 
          @Override

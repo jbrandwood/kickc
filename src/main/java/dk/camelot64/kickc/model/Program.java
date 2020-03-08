@@ -89,7 +89,7 @@ public class Program {
    /** The live ranges of all variables. PASS 3-4 (CACHED ON-DEMAND) */
    private LiveRangeVariables liveRangeVariables;
    /** The effective live ranges of all variables. PASS 3-4 (CACHED ON-DEMAND) */
-   private LiveRangeVariablesEffective liveRangeVariablesEffective;
+   private LiveRangeVariablesEffectiveCallPaths liveRangeVariablesEffective;
    /** Separation of live range equivalence classes into scopes - used for register uplift. PASS 4 (CACHED ON-DEMAND) */
    private RegisterUpliftProgram registerUpliftProgram;
    /** Cached information about which block is each statement a part of. PASS 2U-5 (CACHED ON-DEMAND) */

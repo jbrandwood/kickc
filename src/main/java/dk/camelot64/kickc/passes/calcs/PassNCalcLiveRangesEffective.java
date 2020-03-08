@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Find effective alive intervals for all variables in all statements. Add the intervals to the Program.
  */
-public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariablesEffective> {
+public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariablesEffectiveCallPaths> {
 
    public PassNCalcLiveRangesEffective(Program program) {
       super(program);
@@ -25,7 +25,7 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
    /**
     * Call-paths for all procedures.
     */
-   private Map<ProcedureRef, LiveRangeVariablesEffective.CallPaths> procedureCallPaths;
+   private Map<ProcedureRef, LiveRangeVariablesEffectiveCallPaths.CallPaths> procedureCallPaths;
 
    /**
     * Normal variable live ranges.
@@ -38,12 +38,12 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
    private VariableReferenceInfos referenceInfo;
 
    @Override
-   public LiveRangeVariablesEffective calculate() {
+   public LiveRangeVariablesEffectiveCallPaths calculate() {
       this.liveRangeVariables = getProgram().getLiveRangeVariables();
       this.referenceInfo = getProgram().getVariableReferenceInfos();
       this.procedureCallPaths = new LinkedHashMap<>();
       populateProcedureCallPaths();
-      LiveRangeVariablesEffective aliveEffective = new LiveRangeVariablesEffective(getProgram(), procedureCallPaths, liveRangeVariables, referenceInfo);
+      LiveRangeVariablesEffectiveCallPaths aliveEffective = new LiveRangeVariablesEffectiveCallPaths(getProgram(), procedureCallPaths, liveRangeVariables, referenceInfo);
       return aliveEffective;
       //getLog().append("Calculated effective variable live ranges");
    }
@@ -63,9 +63,9 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
       visited.add(procedure.getRef());
 
       ProcedureRef procedureRef = procedure.getRef();
-      LiveRangeVariablesEffective.CallPaths callPaths = procedureCallPaths.get(procedureRef);
+      LiveRangeVariablesEffectiveCallPaths.CallPaths callPaths = procedureCallPaths.get(procedureRef);
       if(callPaths == null) {
-         callPaths = new LiveRangeVariablesEffective.CallPaths(procedureRef);
+         callPaths = new LiveRangeVariablesEffectiveCallPaths.CallPaths(procedureRef);
 
          if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedureRef, getProgram())) {
             // Interrupt is called outside procedure scope - create initial call-path.
@@ -73,7 +73,7 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
             ArrayList<VariableRef> rootAlive = new ArrayList<>();
             // Initialize with global cross-scope aliases (assumed empty)
             Pass2AliasElimination.Aliases rootAliases = new Pass2AliasElimination.Aliases();
-            LiveRangeVariablesEffective.CallPath rootCallPath = new LiveRangeVariablesEffective.CallPath(rootPath, rootAlive, rootAliases, rootAliases);
+            LiveRangeVariablesEffectiveCallPaths.CallPath rootCallPath = new LiveRangeVariablesEffectiveCallPaths.CallPath(rootPath, rootAlive, rootAliases, rootAliases);
             callPaths.add(rootCallPath);
          }
 
@@ -93,9 +93,9 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
                // Find variables referenced in caller procedure
                Collection<VariableRef> referencedInCaller = referenceInfo.getReferencedVars(callerProcedure.getRef().getLabelRef());
                // For each caller path - create a new call-path
-               LiveRangeVariablesEffective.CallPaths callerPaths = procedureCallPaths.get(callerProcedure.getRef());
+               LiveRangeVariablesEffectiveCallPaths.CallPaths callerPaths = procedureCallPaths.get(callerProcedure.getRef());
                if(callerPaths!=null) 
-               for(LiveRangeVariablesEffective.CallPath callerPath : callerPaths.getCallPaths()) {
+               for(LiveRangeVariablesEffectiveCallPaths.CallPath callerPath : callerPaths.getCallPaths()) {
                   ArrayList<CallGraph.CallBlock.Call> path = new ArrayList<>(callerPath.getPath());
                   path.add(caller);
                   Collection<VariableRef> alive = new LinkedHashSet<>();
@@ -106,7 +106,7 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
                   Pass2AliasElimination.Aliases pathAliases = new Pass2AliasElimination.Aliases();
                   pathAliases.addAll(callerPath.getPathAliases());
                   pathAliases.addAll(innerAliases);
-                  LiveRangeVariablesEffective.CallPath callPath = new LiveRangeVariablesEffective.CallPath(path, alive, innerAliases, pathAliases);
+                  LiveRangeVariablesEffectiveCallPaths.CallPath callPath = new LiveRangeVariablesEffectiveCallPaths.CallPath(path, alive, innerAliases, pathAliases);
                   callPaths.add(callPath);
                }
             } else {
@@ -116,7 +116,7 @@ public class PassNCalcLiveRangesEffective extends PassNCalcBase<LiveRangeVariabl
                ArrayList<VariableRef> rootAlive = new ArrayList<>();
                // Initialize with global cross-scope aliases (assumed empty)
                Pass2AliasElimination.Aliases rootAliases = new Pass2AliasElimination.Aliases();
-               LiveRangeVariablesEffective.CallPath rootCallPath = new LiveRangeVariablesEffective.CallPath(rootPath, rootAlive, rootAliases, rootAliases);
+               LiveRangeVariablesEffectiveCallPaths.CallPath rootCallPath = new LiveRangeVariablesEffectiveCallPaths.CallPath(rootPath, rootAlive, rootAliases, rootAliases);
                callPaths.add(rootCallPath);
             }
          }

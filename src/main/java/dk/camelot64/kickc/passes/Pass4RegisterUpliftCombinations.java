@@ -199,10 +199,10 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     */
    private static boolean isStatementAllocationOverlapping(Program program, Statement statement) {
       LiveRangeVariablesEffective.AliveCombinations aliveCombinations = program.getLiveRangeVariablesEffective().getAliveCombinations(statement);
-      for(LiveRangeVariablesEffective.CallPath callPath : aliveCombinations.getCallPaths().getCallPaths()) {
+      for(LiveRangeVariablesEffective.AliveCombination combination : aliveCombinations.getAll()) {
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
-         Collection<VariableRef> alive = aliveCombinations.getEffectiveAliveAtStmt(callPath);
-         Pass2AliasElimination.Aliases callPathAliases = aliveCombinations.getEffectiveAliasesAtStmt(callPath);
+         Collection<VariableRef> alive = combination.getEffectiveAliveAtStmt();
+         Pass2AliasElimination.Aliases callPathAliases = combination.getEffectiveAliasesAtStmt();
          for(VariableRef varRef : alive) {
             Variable var = program.getSymbolInfos().getVariable(varRef);
             Registers.Register allocation = var.getAllocation();

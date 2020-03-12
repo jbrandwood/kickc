@@ -79,11 +79,14 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Ocache"}, description = "Optimization Option. Enables a fragment cache file.")
    private boolean optimizeFragmentCache = false;
 
-   //@CommandLine.Option(names = {"-Oliverangecallpath"}, description = "Optimization Option. Enables live ranges per call path optimization, which limits memory usage and code, but takes a lot of compile time.")
-   private boolean optimizeLiveRangeCallPath = true;
+   @CommandLine.Option(names = {"-Oliverangecallpath"}, description = "Optimization Option. Enables live ranges per call path optimization, which limits memory usage and code, but takes a lot of compile time.")
+   private boolean optimizeLiveRangeCallPath = false;
 
    @CommandLine.Option(names = {"-v"}, description = "Verbose output describing the compilation process")
    private boolean verbose = false;
+
+   @CommandLine.Option(names = {"-vasmout"}, description = "Verbosity Option. Show KickAsm standard output during compilation.")
+   private boolean verboseAsmOut = false;
 
    @CommandLine.Option(names = {"-vparse"}, description = "Verbosity Option. File Parsing.")
    private boolean verboseParse = false;
@@ -346,7 +349,6 @@ public class KickC implements Callable<Void> {
          if(assemble || execute || debug) {
             Path kasmLogPath = outputDir.resolve(fileBaseName + ".klog");
             System.out.println("Assembling to " + prgPath.toString());
-            ByteArrayOutputStream kasmLogOutputStream = new ByteArrayOutputStream();
             String[] assembleCommand = {asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem", "-debugdump"};
             if(verbose) {
                System.out.print("Assembling command: java -jar kickassembler-5.9.jar ");
@@ -355,7 +357,10 @@ public class KickC implements Callable<Void> {
                }
                System.out.println();
             }
-            System.setOut(new PrintStream(kasmLogOutputStream));
+            ByteArrayOutputStream kasmLogOutputStream = new ByteArrayOutputStream();
+            if(!verboseAsmOut) {
+               System.setOut(new PrintStream(kasmLogOutputStream));
+            }
             int kasmResult = -1;
             try {
                CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
@@ -365,7 +370,6 @@ public class KickC implements Callable<Void> {
             } finally {
                System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             }
-            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             if(kasmResult != 0) {
                throw new CompileError("KickAssembling file failed! " + kasmLogOutputStream.toString());
             }

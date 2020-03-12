@@ -85,7 +85,7 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-v"}, description = "Verbose output describing the compilation process")
    private boolean verbose = false;
 
-   @CommandLine.Option(names = {"-vasmout"}, description = "Verbosity Option. Show KickAsm standard output during compilation.")
+   @CommandLine.Option(names = {"-vasmout"}, description = "Verbosity Option. Show KickAssembler standard output during compilation.")
    private boolean verboseAsmOut = false;
 
    @CommandLine.Option(names = {"-vparse"}, description = "Verbosity Option. File Parsing.")

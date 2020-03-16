@@ -3386,6 +3386,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLiveRange2() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-2",log().verboseUplift().verboseLiveRanges().verboseLoopAnalysis());
+   }
+
+   @Test
+   public void testLiveRange1() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-1",log().verboseUplift().verboseLiveRanges());
+   }
+
+   @Test
    public void testLiveRange() throws IOException, URISyntaxException {
       compileAndCompare("liverange");
    }

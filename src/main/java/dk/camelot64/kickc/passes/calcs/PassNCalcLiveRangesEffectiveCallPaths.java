@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
@@ -102,7 +103,7 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
                   alive.addAll(callerPath.getAlive());
                   alive.removeAll(referencedInCaller);
                   alive.addAll(liveRangeVariables.getAlive(callStatementIdx));
-                  Pass2AliasElimination.Aliases innerAliases = getCallAliases(procedure, callBlock);
+                  Pass2AliasElimination.Aliases innerAliases = getCallAliases(caller, getProgram().getStatementInfos(), getGraph(), getScope());
                   Pass2AliasElimination.Aliases pathAliases = new Pass2AliasElimination.Aliases();
                   pathAliases.addAll(callerPath.getPathAliases());
                   pathAliases.addAll(innerAliases);
@@ -127,12 +128,17 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
    /**
     * Find aliases defined when taking a specific call - meaning call parameters that have specific values when taking the specific call.
     *
-    * @param procedure The called procedure
-    * @param callBlock The block performing the call
-    * @return Aliases defined by the specific call.
+    * @param call The procedure call
+    * @param statementInfos Statement infos
+    * @param graph The control flow graph
+    * @param programScope The program scope
+    * @return
     */
-   private Pass2AliasElimination.Aliases getCallAliases(Procedure procedure, ControlFlowBlock callBlock) {
-      ControlFlowBlock procedureBlock = getProgram().getGraph().getBlock(procedure.getLabel().getRef());
+   static Pass2AliasElimination.Aliases getCallAliases(CallGraph.CallBlock.Call call, StatementInfos statementInfos, ControlFlowGraph graph, ProgramScope programScope) {
+      final ProcedureRef procedureRef = call.getProcedure();
+      Procedure procedure = programScope.getProcedure(procedureRef);
+      final ControlFlowBlock callBlock = statementInfos.getBlock(call.getCallStatementIdx());
+      ControlFlowBlock procedureBlock = graph.getBlock(procedure.getLabel().getRef());
       StatementPhiBlock procedurePhiBlock = null;
       if(procedureBlock.hasPhiBlock()) {
          procedurePhiBlock = procedureBlock.getPhiBlock();
@@ -153,7 +159,7 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
             StatementAssignment assignment = (StatementAssignment) statement;
             LValue lValue = assignment.getlValue();
             if(lValue instanceof VariableRef) {
-               Variable lValueVar = getProgram().getScope().getVariable((VariableRef) lValue);
+               Variable lValueVar = programScope.getVariable((VariableRef) lValue);
                if(lValueVar.getScope().equals(procedure)) {
                   // Assigning into the procedure scope
                   if(assignment.getrValue1() == null && assignment.getOperator() == null && assignment.getrValue2() instanceof VariableRef) {

@@ -255,12 +255,10 @@ print_char: {
 print_word: {
     .label w = 7
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts
@@ -442,7 +440,7 @@ mulf8s_prepared: {
     .label m = 9
     .label b = $12
     // mulf8u_prepared((byte) b)
-    ldx.z b
+    lda.z b
     jsr mulf8u_prepared
     // mulf8u_prepared((byte) b)
     // m = mulf8u_prepared((byte) b)
@@ -473,14 +471,15 @@ mulf8s_prepared: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8u_prepare(byte a)
-// mulf8u_prepared(byte register(X) b)
+// mulf8u_prepared(byte register(A) b)
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
     .label return = 9
     // *memB = b
-    stx memB
+    sta memB
     // asm
+    tax
     sec
   sm1:
     lda mulf_sqr1_lo,x
@@ -746,6 +745,7 @@ mulf8u: {
     // mulf8u_prepare(a)
     jsr mulf8u_prepare
     // mulf8u_prepared(b)
+    txa
     jsr mulf8u_prepared
     // mulf8u_prepared(b)
     // }

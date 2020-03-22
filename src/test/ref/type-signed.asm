@@ -2,12 +2,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 6
+  .label print_line_cursor = 7
   .label print_char_cursor = $b
 main: {
     .label a = 2
     .label b = 4
-    ldx #0
+    .label i = 6
+    lda #0
+    sta.z i
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -59,8 +61,9 @@ main: {
     // print_ln()
     jsr print_ln
     // for( byte i : 0..5 )
-    inx
-    cpx #6
+    inc.z i
+    lda #6
+    cmp.z i
     bne __b6
     // }
     rts
@@ -95,26 +98,23 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(8) w)
+// print_word(word zp(9) w)
 print_word: {
-    .label w = 8
+    .label w = 9
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp($a) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = $a
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -126,10 +126,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts
@@ -149,9 +148,9 @@ print_char: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(8) w)
+// print_sword(signed word zp(9) w)
 print_sword: {
-    .label w = 8
+    .label w = 9
     // if(w<0)
     lda.z w+1
     bmi __b1

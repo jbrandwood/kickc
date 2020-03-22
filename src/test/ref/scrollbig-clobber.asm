@@ -2,10 +2,12 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label nxt = 2
+  .label nxt = 3
 main: {
     .label SCREEN = $400
-    ldx #0
+    .label i = 2
+    lda #0
+    sta.z i
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -13,12 +15,14 @@ main: {
   __b1:
     // next_char()
     jsr next_char
-    tya
+    txa
     // SCREEN[i] = next_char()
-    sta SCREEN,x
+    ldy.z i
+    sta SCREEN,y
     // for( byte i: 0..255)
-    inx
-    cpx #0
+    inc.z i
+    lda.z i
+    cmp #0
     bne __b1
     // }
     rts
@@ -28,12 +32,12 @@ next_char: {
     // c = *nxt
     ldy #0
     lda (nxt),y
-    tay
+    tax
     // if(c==0)
-    cpy #0
+    cpx #0
     bne __b1
     // c = *nxt
-    ldy TEXT
+    ldx TEXT
     lda #<TEXT
     sta.z nxt
     lda #>TEXT

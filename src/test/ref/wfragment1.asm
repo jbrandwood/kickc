@@ -7,6 +7,7 @@ main: {
     ldy #0
   __b1:
     // move_enemy(i)
+    tya
     jsr move_enemy
     // for(byte i:0..5)
     iny
@@ -15,10 +16,9 @@ main: {
     // }
     rts
 }
-// move_enemy(byte register(Y) obj_slot)
+// move_enemy(byte register(A) obj_slot)
 move_enemy: {
     // OBJ_WORLD_X[obj_slot] -= 1
-    tya
     asl
     tax
     lda OBJ_WORLD_X,x

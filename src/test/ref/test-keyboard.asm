@@ -66,6 +66,8 @@ main: {
     .label screen = 5
     .label row = 4
     .label ch = 7
+    // Checks all specific chars $00-$3f
+    .label i = 8
     lda #<$400
     sta.z sc
     lda #>$400
@@ -102,7 +104,7 @@ main: {
   // Read & print keyboard matrix
   __b5:
     // keyboard_matrix_read(row)
-    ldy.z row
+    ldx.z row
     jsr keyboard_matrix_read
     // keyboard_matrix_read(row)
     // row_pressed_bits = keyboard_matrix_read(row)
@@ -148,30 +150,29 @@ main: {
     bcc !+
     inc.z screen+1
   !:
-    ldx #0
-    txa
+    lda #0
+    sta.z i
     sta.z ch
   __b12:
     // keyboard_get_keycode(ch)
-    ldy.z ch
+    ldx.z ch
     jsr keyboard_get_keycode
     // key = keyboard_get_keycode(ch)
     // if(key!=$3f)
     cmp #$3f
     beq __b13
     // keyboard_key_pressed(key)
-    tay
+    tax
     jsr keyboard_key_pressed
     // if(keyboard_key_pressed(key)!=0)
     cmp #0
     beq __b13
     // screen[i++] = ch
-    txa
-    tay
     lda.z ch
+    ldy.z i
     sta (screen),y
     // screen[i++] = ch;
-    inx
+    inc.z i
   __b13:
     // for( byte ch : 0..$3f )
     inc.z ch
@@ -181,14 +182,14 @@ main: {
   b1:
   // Add some spaces
     // screen[i++] = ' '
-    txa
-    tay
     lda #' '
+    ldy.z i
     sta (screen),y
     // screen[i++] = ' ';
-    inx
+    inc.z i
     // while (i<5)
-    cpx #5
+    lda.z i
+    cmp #5
     bcc b1
     jmp __b4
   __b7:
@@ -212,24 +213,22 @@ main: {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-// keyboard_key_pressed(byte register(Y) key)
+// keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
-    .label colidx = 8
     // colidx = key&7
-    tya
+    txa
     and #7
-    sta.z colidx
+    tay
     // rowidx = key>>3
-    tya
+    txa
     lsr
     lsr
     lsr
     // keyboard_matrix_read(rowidx)
-    tay
+    tax
     jsr keyboard_matrix_read
     // keyboard_matrix_read(rowidx)
     // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    ldy.z colidx
     and keyboard_matrix_col_bitmask,y
     // }
     rts
@@ -239,10 +238,10 @@ keyboard_key_pressed: {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte register(Y) rowid)
+// keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
-    lda keyboard_matrix_row_bitmask,y
+    lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     // ~*CIA1_PORT_B
     lda CIA1_PORT_B
@@ -254,10 +253,10 @@ keyboard_matrix_read: {
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
-// keyboard_get_keycode(byte register(Y) ch)
+// keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
     // return keyboard_char_keycodes[ch];
-    lda keyboard_char_keycodes,y
+    lda keyboard_char_keycodes,x
     // }
     rts
 }

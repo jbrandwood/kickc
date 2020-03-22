@@ -158,7 +158,7 @@ main: {
     lda.z x+1
     sta.z renderBob.xpos
     lda.z y+1
-    tax
+    sta.z renderBob.ypos
     jsr renderBob
     // for(char i: 0..NUM_BOBS-1)
     inc.z i
@@ -231,21 +231,21 @@ keyboard_matrix_read: {
 // Render a single BOB at a given x/y-position
 // X-position is 0-151. Each x-position is 2 pixels wide.
 // Y-position is 0-183. Each y-position is 1 pixel high.
-// renderBob(byte zp($e) xpos, byte register(X) ypos)
+// renderBob(byte zp($e) xpos, byte zp($f) ypos)
 renderBob: {
     .label __2 = $10
     .label __5 = $12
     .label xpos = $e
-    .label x_char_offset = $f
+    .label ypos = $f
     .label y_offset = $10
     .label screen = $10
     // x_char_offset = xpos/BOB_SHIFTS_X
     lda.z xpos
     lsr
     lsr
-    sta.z x_char_offset
+    tax
     // y_char_offset = ypos/BOB_SHIFTS_Y
-    txa
+    lda.z ypos
     lsr
     lsr
     lsr
@@ -265,7 +265,7 @@ renderBob: {
     adc #>BOB_SCREEN
     sta.z __2+1
     // screen = BOB_SCREEN+y_offset+x_char_offset
-    lda.z x_char_offset
+    txa
     clc
     adc.z screen
     sta.z screen
@@ -273,8 +273,8 @@ renderBob: {
     inc.z screen+1
   !:
     // ypos&7
-    txa
-    and #7
+    lda #7
+    and.z ypos
     // (ypos&7)*BOB_SHIFTS_X
     asl
     asl

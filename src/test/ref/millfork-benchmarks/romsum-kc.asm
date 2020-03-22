@@ -331,12 +331,10 @@ end: {
 print_word: {
     .label w = $f
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts

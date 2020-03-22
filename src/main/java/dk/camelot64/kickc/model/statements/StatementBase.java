@@ -89,7 +89,7 @@ public abstract class StatementBase implements Statement {
          LiveRangeVariablesEffective.AliveCombinations aliveCombinations = liveRangeVariablesEffective.getAliveCombinations(this);
          alive.append(" ( ");
          for(LiveRangeVariablesEffective.AliveCombination aliveCombination : aliveCombinations.getAll()) {
-            alive.append(aliveCombination.toString());
+            alive.append(aliveCombination.toString(program));
             alive.append(" ");
          }
          alive.append(")");

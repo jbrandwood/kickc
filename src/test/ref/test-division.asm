@@ -421,8 +421,8 @@ test_8s: {
     lda divisors,y
     sta.z divisor
     // div8s(dividend, divisor)
-    ldy.z dividend
-    tax
+    ldx.z dividend
+    tay
     jsr div8s
     // res = div8s(dividend, divisor)
     sta.z res
@@ -507,21 +507,21 @@ print_sbyte: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div8s(signed byte register(Y) dividend, signed byte register(X) divisor)
+// div8s(signed byte register(X) dividend, signed byte register(Y) divisor)
 div8s: {
     .label neg = $10
     // if(dividend<0)
-    cpy #0
+    cpx #0
     bmi __b1
     lda #0
     sta.z neg
   __b2:
     // if(divisor<0)
-    cpx #0
+    cpy #0
     bmi __b3
+    tya
   __b4:
     // div8u(dividendu, divisoru)
-    tya
     jsr div8u
     // div8u(dividendu, divisoru)
     // resultu = div8u(dividendu, divisoru)
@@ -549,23 +549,24 @@ div8s: {
     rts
   __b3:
     // -divisor
-    txa
-    eor #$ff
-    clc
-    adc #1
-    tax
-    // neg = neg ^ 1
-    lda #1
-    eor.z neg
-    sta.z neg
-    jmp __b4
-  __b1:
-    // -dividend
     tya
     eor #$ff
     clc
     adc #1
     tay
+    // neg = neg ^ 1
+    lda #1
+    eor.z neg
+    sta.z neg
+    tya
+    jmp __b4
+  __b1:
+    // -dividend
+    txa
+    eor #$ff
+    clc
+    adc #1
+    tax
     lda #1
     sta.z neg
     jmp __b2
@@ -574,11 +575,11 @@ div8s: {
 // Returns dividend/divisor.
 // The remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// div8u(byte register(A) dividend, byte register(X) divisor)
+// div8u(byte register(X) dividend, byte register(A) divisor)
 div8u: {
     // divr8u(dividend, divisor, 0)
-    sta.z divr8u.dividend
-    stx.z divr8u.divisor
+    stx.z divr8u.dividend
+    sta.z divr8u.divisor
     jsr divr8u
     // divr8u(dividend, divisor, 0)
     lda.z divr8u.return
@@ -762,8 +763,7 @@ test_8u: {
     lda divisors,y
     sta.z divisor
     // div8u(dividend, divisor)
-    lda.z dividend
-    ldx.z divisor
+    ldx.z dividend
     jsr div8u
     // div8u(dividend, divisor)
     // res = div8u(dividend, divisor)

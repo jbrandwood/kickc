@@ -2412,9 +2412,9 @@ gfx_init_vic_bitmap: {
     ldy.z l
     lda lines_x,y
     sta.z bitmap_line.x0
-    ldx lines_x+1,y
-    lda lines_y,y
-    sta.z bitmap_line.y0
+    lda lines_x+1,y
+    sta.z bitmap_line.x1
+    ldx lines_y,y
     lda lines_y+1,y
     sta.z bitmap_line.y1
     jsr bitmap_line
@@ -2425,29 +2425,25 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zp($16) x0, byte register(X) x1, byte zp($21) y0, byte zp($13) y1)
+// bitmap_line(byte zp($16) x0, byte zp($21) x1, byte register(X) y0, byte zp($13) y1)
 bitmap_line: {
     .label xd = $12
     .label x0 = $16
-    .label y0 = $21
+    .label x1 = $21
     .label y1 = $13
     // if(x0<x1)
-    txa
-    cmp.z x0
-    beq !+
-    bcs __b1
-  !:
+    lda.z x0
+    cmp.z x1
+    bcc __b1
     // xd = x0-x1
-    txa
-    eor #$ff
     sec
-    adc.z x0
+    sbc.z x1
     sta.z xd
     // if(y0<y1)
-    lda.z y0
-    cmp.z y1
+    cpx.z y1
     bcc __b7
     // yd = y0-y1
+    txa
     sec
     sbc.z y1
     tay
@@ -2457,57 +2453,53 @@ bitmap_line: {
     // bitmap_line_ydxi(y1, x1, y0, yd, xd)
     lda.z y1
     sta.z bitmap_line_ydxi.y
-    lda.z y0
-    sta.z bitmap_line_ydxi.y1
+    stx.z bitmap_line_ydxi.y1
     sty.z bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     // }
     rts
   __b8:
     // bitmap_line_xdyi(x1, y1, x0, xd, yd)
-    stx.z bitmap_line_xdyi.x
-    lda.z y1
-    sta.z bitmap_line_xdyi.y
+    lda.z x1
+    sta.z bitmap_line_xdyi.x
+    ldx.z y1
     sty.z bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     rts
   __b7:
     // yd = y1-y0
-    lda.z y1
+    txa
+    eor #$ff
     sec
-    sbc.z y0
+    adc.z y1
     tay
     // if(yd<xd)
     cpy.z xd
     bcc __b9
     // bitmap_line_ydxd(y0, x0, y1, yd, xd)
-    lda.z y0
-    sta.z bitmap_line_ydxd.y
-    ldx.z x0
-    lda.z y1
-    sta.z bitmap_line_ydxd.y1
+    stx.z bitmap_line_ydxd.y
     sty.z bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     rts
   __b9:
     // bitmap_line_xdyd(x1, y1, x0, xd, yd)
-    stx.z bitmap_line_xdyd.x
-    lda.z y1
-    sta.z bitmap_line_xdyd.y
+    lda.z x1
+    sta.z bitmap_line_xdyd.x
+    ldx.z y1
     sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
   __b1:
     // xd = x1-x0
-    txa
+    lda.z x1
     sec
     sbc.z x0
     sta.z xd
     // if(y0<y1)
-    lda.z y0
-    cmp.z y1
+    cpx.z y1
     bcc __b11
     // yd = y0-y1
+    txa
     sec
     sbc.z y1
     tay
@@ -2517,6 +2509,9 @@ bitmap_line: {
     // bitmap_line_ydxd(y1, x1, y0, yd, xd)
     lda.z y1
     sta.z bitmap_line_ydxd.y
+    lda.z x1
+    sta.z bitmap_line_ydxd.x
+    stx.z bitmap_line_ydxd.y1
     sty.z bitmap_line_ydxd.yd
     jsr bitmap_line_ydxd
     rts
@@ -2524,23 +2519,25 @@ bitmap_line: {
     // bitmap_line_xdyd(x0, y0, x1, xd, yd)
     lda.z x0
     sta.z bitmap_line_xdyd.x
-    stx.z bitmap_line_xdyd.x1
+    lda.z x1
+    sta.z bitmap_line_xdyd.x1
     sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
   __b11:
     // yd = y1-y0
-    lda.z y1
+    txa
+    eor #$ff
     sec
-    sbc.z y0
+    adc.z y1
     tay
     // if(yd<xd)
     cpy.z xd
     bcc __b13
     // bitmap_line_ydxi(y0, x0, y1, yd, xd)
-    lda.z y0
-    sta.z bitmap_line_ydxi.y
-    ldx.z x0
+    stx.z bitmap_line_ydxi.y
+    lda.z x0
+    sta.z bitmap_line_ydxi.x
     sty.z bitmap_line_ydxi.yd
     jsr bitmap_line_ydxi
     rts
@@ -2548,15 +2545,15 @@ bitmap_line: {
     // bitmap_line_xdyi(x0, y0, x1, xd, yd)
     lda.z x0
     sta.z bitmap_line_xdyi.x
-    stx.z bitmap_line_xdyi.x1
+    lda.z x1
+    sta.z bitmap_line_xdyi.x1
     sty.z bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zp($d) x, byte zp($21) y, byte zp($16) x1, byte zp($12) xd, byte zp($f) yd)
+// bitmap_line_xdyi(byte zp($d) x, byte register(X) y, byte zp($16) x1, byte zp($12) xd, byte zp($f) yd)
 bitmap_line_xdyi: {
     .label x = $d
-    .label y = $21
     .label x1 = $16
     .label xd = $12
     .label yd = $f
@@ -2567,8 +2564,7 @@ bitmap_line_xdyi: {
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
+    ldy.z x
     jsr bitmap_plot
     // x++;
     inc.z x
@@ -2582,7 +2578,7 @@ bitmap_line_xdyi: {
     cmp.z e
     bcs __b2
     // y++;
-    inc.z y
+    inx
     // e = e - xd
     lda.z e
     sec
@@ -2590,28 +2586,29 @@ bitmap_line_xdyi: {
     sta.z e
   __b2:
     // x1+1
-    ldx.z x1
-    inx
+    lda.z x1
+    clc
+    adc #1
     // while (x!=(x1+1))
-    cpx.z x
+    cmp.z x
     bne __b1
     // }
     rts
 }
-// bitmap_plot(byte register(X) x, byte register(Y) y)
+// bitmap_plot(byte register(Y) x, byte register(X) y)
 bitmap_plot: {
     .label plotter_x = $1d
     .label plotter_y = $1f
     .label plotter = $1d
     // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
-    lda bitmap_plot_xhi,x
+    lda bitmap_plot_xhi,y
     sta.z plotter_x+1
-    lda bitmap_plot_xlo,x
+    lda bitmap_plot_xlo,y
     sta.z plotter_x
     // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,y
+    lda bitmap_plot_yhi,x
     sta.z plotter_y+1
-    lda bitmap_plot_ylo,y
+    lda bitmap_plot_ylo,x
     sta.z plotter_y
     // plotter_x+plotter_y
     lda.z plotter
@@ -2622,7 +2619,7 @@ bitmap_plot: {
     adc.z plotter_y+1
     sta.z plotter+1
     // *plotter | bitmap_plot_bit[x]
-    lda bitmap_plot_bit,x
+    lda bitmap_plot_bit,y
     ldy #0
     ora (plotter),y
     // *plotter = *plotter | bitmap_plot_bit[x]
@@ -2630,9 +2627,10 @@ bitmap_plot: {
     // }
     rts
 }
-// bitmap_line_ydxi(byte zp($e) y, byte register(X) x, byte zp($13) y1, byte zp($d) yd, byte zp($12) xd)
+// bitmap_line_ydxi(byte zp($e) y, byte zp($21) x, byte zp($13) y1, byte zp($d) yd, byte zp($12) xd)
 bitmap_line_ydxi: {
     .label y = $e
+    .label x = $21
     .label y1 = $13
     .label yd = $d
     .label xd = $12
@@ -2643,7 +2641,8 @@ bitmap_line_ydxi: {
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldy.z y
+    ldy.z x
+    ldx.z y
     jsr bitmap_plot
     // y++;
     inc.z y
@@ -2657,7 +2656,7 @@ bitmap_line_ydxi: {
     cmp.z e
     bcs __b2
     // x++;
-    inx
+    inc.z x
     // e = e - yd
     lda.z e
     sec
@@ -2665,19 +2664,17 @@ bitmap_line_ydxi: {
     sta.z e
   __b2:
     // y1+1
-    lda.z y1
-    clc
-    adc #1
+    ldx.z y1
+    inx
     // while (y!=(y1+1))
-    cmp.z y
+    cpx.z y
     bne __b1
     // }
     rts
 }
-// bitmap_line_xdyd(byte zp($f) x, byte zp($21) y, byte zp($16) x1, byte zp($12) xd, byte zp($e) yd)
+// bitmap_line_xdyd(byte zp($f) x, byte register(X) y, byte zp($16) x1, byte zp($12) xd, byte zp($e) yd)
 bitmap_line_xdyd: {
     .label x = $f
-    .label y = $21
     .label x1 = $16
     .label xd = $12
     .label yd = $e
@@ -2688,8 +2685,7 @@ bitmap_line_xdyd: {
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
+    ldy.z x
     jsr bitmap_plot
     // x++;
     inc.z x
@@ -2703,7 +2699,7 @@ bitmap_line_xdyd: {
     cmp.z e
     bcs __b2
     // y--;
-    dec.z y
+    dex
     // e = e - xd
     lda.z e
     sec
@@ -2711,18 +2707,20 @@ bitmap_line_xdyd: {
     sta.z e
   __b2:
     // x1+1
-    ldx.z x1
-    inx
+    lda.z x1
+    clc
+    adc #1
     // while (x!=(x1+1))
-    cpx.z x
+    cmp.z x
     bne __b1
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp($e) y, byte register(X) x, byte zp($21) y1, byte zp($d) yd, byte zp($12) xd)
+// bitmap_line_ydxd(byte zp($e) y, byte zp($16) x, byte zp($13) y1, byte zp($d) yd, byte zp($12) xd)
 bitmap_line_ydxd: {
     .label y = $e
-    .label y1 = $21
+    .label x = $16
+    .label y1 = $13
     .label yd = $d
     .label xd = $12
     .label e = $f
@@ -2732,7 +2730,8 @@ bitmap_line_ydxd: {
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldy.z y
+    ldy.z x
+    ldx.z y
     jsr bitmap_plot
     // y = y++;
     inc.z y
@@ -2746,7 +2745,7 @@ bitmap_line_ydxd: {
     cmp.z e
     bcs __b2
     // x--;
-    dex
+    dec.z x
     // e = e - yd
     lda.z e
     sec
@@ -2754,11 +2753,10 @@ bitmap_line_ydxd: {
     sta.z e
   __b2:
     // y1+1
-    lda.z y1
-    clc
-    adc #1
+    ldx.z y1
+    inx
     // while (y!=(y1+1))
-    cmp.z y
+    cpx.z y
     bne __b1
     // }
     rts

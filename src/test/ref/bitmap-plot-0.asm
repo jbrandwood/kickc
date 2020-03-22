@@ -156,10 +156,9 @@ bitmap_plot: {
     adc.z __1+1
     sta.z plotter+1
     // <x
-    lda.z x
+    ldx.z x
     // *plotter |= bitmap_plot_bit[<x]
-    tay
-    lda bitmap_plot_bit,y
+    lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
     sta (plotter),y

@@ -25,7 +25,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     *
     * @param combinationIterator The combination iterator used for supplying different register allocations to test
     * @param maxCombinations The maximal number of combinations to test. It the iterator has more combinations he rest is skipped (and a message logged)
-    * @param unknownFragments Receives any unknown ASM fragments encountered during the combinsation search
+    * @param unknownFragments Receives any unknown ASM fragments encountered during the combination search
     * @param scope The scope where the variables are being tested. (Only used for logging)
     * @param program The program to test (used for accessing global data structures)
     */

@@ -283,10 +283,9 @@ make_plasma_charset: {
     rts
   __b2:
     // <c
-    lda.z c
+    ldx.z c
     // s = SINTABLE[<c]
-    tay
-    lda SINTABLE,y
+    lda SINTABLE,x
     sta.z s
     lda #0
     sta.z i

@@ -170,6 +170,11 @@ public class CompileLog {
       this.verboseNonOptimization = verboseNonOptimization;
    }
 
+   public CompileLog verboseNonOptimization() {
+      setVerboseNonOptimization(true);
+      return this;
+   }
+
    public void setVerboseSequencePlan(boolean verboseSequencePlan) {
       this.verboseSequencePlan = verboseSequencePlan;
    }

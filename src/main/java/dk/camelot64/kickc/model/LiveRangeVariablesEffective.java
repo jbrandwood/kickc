@@ -33,6 +33,8 @@ public interface LiveRangeVariablesEffective {
       Collection<VariableRef> getEffectiveAliveAtStmt();
 
       Pass2AliasElimination.Aliases getEffectiveAliasesAtStmt();
+
+      String toString(Program program);
    }
 
 }

@@ -60,9 +60,8 @@ main: {
     rts
   line2___b2:
     // plot(>pos, ch)
-    lda.z line2_pos+1
+    ldy.z line2_pos+1
     // *(cur_line+xpos) = ch
-    tay
     lda #line2_ch
     sta (cur_line_1),y
     // pos += xadd

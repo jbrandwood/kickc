@@ -6,8 +6,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 4
-  .label print_line_cursor = 2
+  .label print_char_cursor = 5
+  .label print_line_cursor = 3
 main: {
     // print_cls()
     jsr print_cls
@@ -82,52 +82,57 @@ main: {
     // print_mulf8s127(0,0)
     lda #0
     sta.z print_mulf8s127.b
-    tay
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(64,64)
     lda #$40
     sta.z print_mulf8s127.b
-    tay
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(64,127)
     lda #$7f
     sta.z print_mulf8s127.b
-    ldy #$40
+    lda #$40
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(-64,64)
     lda #$40
     sta.z print_mulf8s127.b
-    ldy #-$40
+    lda #-$40
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(64,-64)
     lda #-$40
     sta.z print_mulf8s127.b
-    ldy #$40
+    lda #$40
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(-64,-64)
     lda #-$40
     sta.z print_mulf8s127.b
-    tay
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(127,127)
     lda #$7f
     sta.z print_mulf8s127.b
-    tay
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(-127,127)
     lda #$7f
     sta.z print_mulf8s127.b
-    ldy #-$7f
+    lda #-$7f
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(127,-127)
     lda #-$7f
     sta.z print_mulf8s127.b
-    ldy #$7f
+    lda #$7f
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // print_mulf8s127(-127,-127)
     lda #-$7f
     sta.z print_mulf8s127.b
-    tay
+    sta.z print_mulf8s127.a
     jsr print_mulf8s127
     // }
     rts
@@ -136,16 +141,17 @@ main: {
     str1: .text "signed"
     .byte 0
 }
-// print_mulf8s127(signed byte register(Y) a, signed byte zp(8) b)
+// print_mulf8s127(signed byte zp(9) a, signed byte zp(2) b)
 print_mulf8s127: {
-    .label c = 6
-    .label b = 8
+    .label c = 7
+    .label a = 9
+    .label b = 2
     // mulf8s127(a,b)
+    ldy.z b
     jsr mulf8s127
     // c = mulf8s127(a,b)
     // print_sbyte(a)
-    tya
-    tax
+    ldx.z a
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -192,9 +198,9 @@ print_ln: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(6) w)
+// print_sword(signed word zp(7) w)
 print_sword: {
-    .label w = 6
+    .label w = 7
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -235,16 +241,14 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(6) w)
+// print_word(word zp(7) w)
 print_word: {
-    .label w = 6
+    .label w = 7
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts
@@ -298,25 +302,26 @@ print_sbyte: {
     tax
     jmp __b2
 }
-// mulf8s127(signed byte register(Y) a, signed byte zp(8) b)
+// mulf8s127(signed byte zp(9) a, signed byte register(Y) b)
 mulf8s127: {
-    .label __12 = 9
-    .label __13 = 9
-    .label __14 = $b
-    .label __15 = $b
-    .label b = 8
-    .label return = 6
-    .label c = 6
+    .label __12 = $a
+    .label __13 = $a
+    .label __14 = $c
+    .label __15 = $c
+    .label a = 9
+    .label return = 7
+    .label c = 7
     // mulf8u127((unsigned char)a, (unsigned char)b)
+    ldx.z a
     tya
-    ldx.z b
     jsr mulf8u127
     // mulf8u127((unsigned char)a, (unsigned char)b)
     // if(a<0)
-    cpy #0
+    lda.z a
+    cmp #0
     bpl __b1
     // (signed word)b
-    lda.z b
+    tya
     sta.z __12
     ora #$7f
     bmi !+
@@ -336,11 +341,10 @@ mulf8s127: {
     sta.z c+1
   __b1:
     // if(b<0)
-    lda.z b
-    cmp #0
+    cpy #0
     bpl __b2
     // (signed word)a
-    tya
+    lda.z a
     sta.z __14
     ora #$7f
     bmi !+
@@ -360,10 +364,10 @@ mulf8s127: {
     sta.z c+1
   __b2:
     // if(a<0 && b<0)
-    cpy #0
-    bpl __b3
-    lda.z b
+    lda.z a
     cmp #0
+    bpl __b3
+    cpy #0
     bpl __b3
     // c -= 0x200
     lda.z c
@@ -378,24 +382,26 @@ mulf8s127: {
     // }
     rts
 }
-// mulf8u127(byte register(A) a, byte register(X) b)
+// mulf8u127(byte register(X) a, byte register(A) b)
 mulf8u127: {
     .label memA = $fc
     .label memB = $fd
     .label res = $fe
     .label resL = $fe
     .label resH = $ff
-    .label return = 6
+    .label return = 7
     // *memA = a
-    sta memA
+    stx memA
     // *memB = b
-    stx memB
+    sta memB
     // asm
+    txa
     sta sm1+1
     sta sm3+1
     eor #$ff
     sta sm2+1
     sta sm4+1
+    ldx memB
     sec
   sm1:
     lda mulf127_sqr1_lo,x
@@ -416,9 +422,9 @@ mulf8u127: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// print_str(byte* zp(7) str)
 print_str: {
-    .label str = 6
+    .label str = 7
   __b1:
     // while(*str)
     ldy #0
@@ -443,13 +449,14 @@ print_str: {
   !:
     jmp __b1
 }
-// print_mulf8u127(byte register(Y) a, byte zp(8) b)
+// print_mulf8u127(byte register(Y) a, byte zp(9) b)
 print_mulf8u127: {
-    .label c = 6
-    .label b = 8
+    .label c = 7
+    .label b = 9
     // mulf8u127(a,b)
     tya
-    ldx.z b
+    tax
+    lda.z b
     jsr mulf8u127
     // mulf8u127(a,b)
     // c = mulf8u127(a,b)
@@ -491,7 +498,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 9
+    .label dst = $a
     lda #<str
     sta.z dst
     lda #>str

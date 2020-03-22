@@ -3386,6 +3386,51 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLiveRange9() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-9");
+   }
+
+   @Test
+   public void testLiveRange8() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-8");
+   }
+
+   @Test
+   public void testLiveRange7() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-7");
+   }
+
+   @Test
+   public void testLiveRange6() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-6");
+   }
+
+   @Test
+   public void testLiveRange5() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-5");
+   }
+
+   @Test
+   public void testLiveRange4() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-4");
+   }
+
+   @Test
+   public void testLiveRange3() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-3");
+   }
+
+   @Test
+   public void testLiveRange2() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-2");
+   }
+
+   @Test
+   public void testLiveRange1() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-1");
+   }
+
+   @Test
    public void testLiveRange() throws IOException, URISyntaxException {
       compileAndCompare("liverange");
    }

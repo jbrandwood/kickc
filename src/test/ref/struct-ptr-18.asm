@@ -5,8 +5,8 @@
   .label SCREEN = $400
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
-  .label idx = 2
 main: {
+    .label i = 2
     // points[0] = { 1, 2 }
     ldy #SIZEOF_STRUCT_POINT
   !:
@@ -21,42 +21,40 @@ main: {
     sta points+1*SIZEOF_STRUCT_POINT-1,y
     dey
     bne !-
-    lda #0
-    sta.z idx
-    tax
+    ldx #0
+    txa
+    sta.z i
   __b1:
     // print(points[i])
-    txa
+    lda.z i
     asl
     tay
     lda points,y
     sta.z print.p_x
     lda points+OFFSET_STRUCT_POINT_Y,y
-    sta.z print.p_y
+    tay
     jsr print
     // for ( char i: 0..1)
-    inx
-    cpx #2
+    inc.z i
+    lda #2
+    cmp.z i
     bne __b1
     // }
     rts
 }
-// print(byte zp(3) p_x, byte zp(4) p_y)
+// print(byte zp(3) p_x, byte register(Y) p_y)
 print: {
     .label p_x = 3
-    .label p_y = 4
     // SCREEN[idx++] = p.x
     lda.z p_x
-    ldy.z idx
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = p.x;
-    iny
+    inx
     // SCREEN[idx++] = p.y
-    lda.z p_y
-    sta SCREEN,y
+    tya
+    sta SCREEN,x
     // SCREEN[idx++] = p.y;
-    iny
-    sty.z idx
+    inx
     // }
     rts
 }

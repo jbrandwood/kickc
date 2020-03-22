@@ -1,0 +1,28 @@
+// Test effective live range and register allocation
+// Here main::c, outsw::c and outw::c can all have the same allocation
+
+const char* SCREEN  = 0x0400;
+char idx = 0;
+
+void main() {
+    for(char c: 0..39 ) {
+        outsw(c);
+    }
+}
+
+void outsw(char c) {
+    out('-');
+    outw(c);
+}
+
+char[] HEXTAB = "0123456789abcdef";
+
+void outw(char c) {
+    out(HEXTAB[c<<4]);
+    out(HEXTAB[c&0x0f]);
+}
+
+void out(char c) {
+    idx++;
+    SCREEN[idx] = c;
+}

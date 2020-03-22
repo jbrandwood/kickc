@@ -18,11 +18,10 @@ main: {
     // a=a+inci()
     clc
     adc.z a
-    tax
     // *SCREEN = i
     sty SCREEN
     // *(SCREEN+1) = a
-    stx SCREEN+1
+    sta SCREEN+1
     // }
     rts
 }

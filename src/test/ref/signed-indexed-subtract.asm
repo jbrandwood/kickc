@@ -2,9 +2,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 2
-  .label print_char_cursor = 4
+  .label print_line_cursor = 3
+  .label print_char_cursor = 5
 main: {
+    .label j = 2
     ldy #0
   __b1:
     // sub(i, $80)
@@ -33,10 +34,11 @@ main: {
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    ldx #0
+    lda #0
+    sta.z j
   __b3:
     // print_sword(words[j])
-    txa
+    lda.z j
     asl
     tay
     lda words,y
@@ -47,8 +49,9 @@ main: {
     // print_ln()
     jsr print_ln
     // for(byte j: 0..8)
-    inx
-    cpx #9
+    inc.z j
+    lda #9
+    cmp.z j
     bne __b9
     // }
     rts
@@ -130,22 +133,19 @@ print_char: {
 print_word: {
     .label w = 7
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp(6) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = 6
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -157,10 +157,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts

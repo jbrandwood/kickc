@@ -24,10 +24,10 @@ main: {
 line: {
     .const x0 = 0
     .const x1 = $a
-    ldy #x0
+    ldx #x0
   __b1:
     // for(byte x = x0; x<=x1; x++)
-    cpy #x1+1
+    cpx #x1+1
     bcc __b2
     // }
     rts
@@ -35,19 +35,19 @@ line: {
     // plot(x)
     jsr plot
     // for(byte x = x0; x<=x1; x++)
-    iny
+    inx
     jmp __b1
 }
-// plot(byte register(Y) x)
+// plot(byte register(X) x)
 plot: {
     // idx = plots[x]
-    ldx plots,y
+    ldy plots,x
     // SCREEN[idx]+1
-    lda SCREEN,x
+    lda SCREEN,y
     clc
     adc #1
     // SCREEN[idx] = SCREEN[idx]+1
-    sta SCREEN,x
+    sta SCREEN,y
     // }
     rts
 }

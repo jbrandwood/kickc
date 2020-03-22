@@ -133,8 +133,7 @@ main: {
     lda.z dw2+3
     sta.z __20+1
     // print_byte(< >dw2)
-    lda.z __20
-    tax
+    ldx.z __20
     jsr print_byte
     // print_char(' ')
   // Test get low high byte of dword
@@ -158,8 +157,7 @@ main: {
     lda.z dw2+1
     sta.z __28+1
     // print_byte(< <dw2)
-    lda.z __28
-    tax
+    ldx.z __28
     jsr print_byte
     // print_ln()
   // Test get low low byte of dword
@@ -249,12 +247,10 @@ print_char: {
 print_word: {
     .label w = $c
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts

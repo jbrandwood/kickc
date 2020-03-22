@@ -23,22 +23,22 @@ main: {
     dey
     bne !-
     // print(point1)
-    lda.z point1
-    ldx point1+OFFSET_STRUCT_POINT_Y
+    ldx.z point1
+    lda point1+OFFSET_STRUCT_POINT_Y
     jsr print
     // print(point2)
-    lda.z point2
-    ldx point2+OFFSET_STRUCT_POINT_Y
+    ldx.z point2
+    lda point2+OFFSET_STRUCT_POINT_Y
     jsr print
     // }
     rts
 }
-// print(byte register(A) p_x, byte register(X) p_y)
+// print(byte register(X) p_x, byte register(A) p_y)
 print: {
     // SCREEN[0] = p.x
-    sta SCREEN
+    stx SCREEN
     // SCREEN[1] = p.y
-    stx SCREEN+1
+    sta SCREEN+1
     // }
     rts
 }

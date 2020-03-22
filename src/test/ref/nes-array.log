@@ -119,11 +119,11 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias (signed word) foo::return#0 = (signed word~) foo::$0 (signed word) foo::return#4 (signed word) foo::return#1 
-Alias (signed word) foo::return#2 = (signed word) foo::return#5 
-Alias (signed word*) main::SCREEN#0 = (signed word*) main::SCREEN#3 
-Alias (signed word) foo::return#3 = (signed word) foo::return#6 
-Alias (signed word*) main::SCREEN#1 = (signed word*) main::SCREEN#4 
+Alias foo::return#0 = foo::$0 foo::return#4 foo::return#1 
+Alias foo::return#2 = foo::return#5 
+Alias main::SCREEN#0 = main::SCREEN#3 
+Alias foo::return#3 = foo::return#6 
+Alias main::SCREEN#1 = main::SCREEN#4 
 Successful SSA optimization Pass2AliasElimination
 Constant (const signed word*) main::SCREEN#0 = (signed word*) 1024
 Constant (const byte) foo::x#0 = 1
@@ -212,21 +212,21 @@ foo::@return: scope:[foo]  from foo
 
 VARIABLE REGISTER WEIGHTS
 (signed word()) foo((byte) foo::x , (signed word*) foo::y)
-(byte~) foo::$1 4.0
+(byte~) foo::$1 202.0
 (signed word) foo::return
-(signed word) foo::return#0 1.5
-(signed word) foo::return#2 4.0
-(signed word) foo::return#3 4.0
+(signed word) foo::return#0 30.75
+(signed word) foo::return#2 22.0
+(signed word) foo::return#3 22.0
 (byte) foo::x
-(byte) foo::x#2 2.0
+(byte) foo::x#2 101.0
 (signed word*) foo::y
-(signed word*) foo::y#2 1.0
+(signed word*) foo::y#2 50.5
 (void()) main()
-(signed word~) main::$0 4.0
-(signed word~) main::$1 4.0
+(signed word~) main::$0 22.0
+(signed word~) main::$1 22.0
 (signed word*) main::SCREEN
-(signed word) main::y1 loadstore 20.0
-(signed word) main::y2 loadstore 20.0
+(signed word) main::y1 loadstore 110.0
+(signed word) main::y2 loadstore 110.0
 
 Initial phi equivalence classes
 [ foo::x#2 ]
@@ -403,16 +403,16 @@ foo: {
   wow: .word $cafe, $babe, $1234, $5678
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (signed word) main::y1 ← (signed word) $1234 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [5] (signed word) main::y2 ← (signed word) $1234 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [7] (signed word) foo::return#2 ← (signed word) foo::return#0 [ foo::return#2 ] ( main:2 [ foo::return#2 ] ) always clobbers reg byte a 
-Statement [8] (signed word~) main::$0 ← (signed word) foo::return#2 [ main::$0 ] ( main:2 [ main::$0 ] ) always clobbers reg byte a 
-Statement [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$0 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [11] (signed word) foo::return#3 ← (signed word) foo::return#0 [ foo::return#3 ] ( main:2 [ foo::return#3 ] ) always clobbers reg byte a 
-Statement [12] (signed word~) main::$1 ← (signed word) foo::return#3 [ main::$1 ] ( main:2 [ main::$1 ] ) always clobbers reg byte a 
-Statement [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 [ ] ( main:2 [ ] ) always clobbers reg byte a 
-Statement [16] (byte~) foo::$1 ← (byte) foo::x#2 << (byte) 1 [ foo::y#2 foo::$1 ] ( main:2::foo:6 [ foo::y#2 foo::$1 ] main:2::foo:10 [ foo::y#2 foo::$1 ] ) always clobbers reg byte a 
-Statement [17] (signed word) foo::return#0 ← *((const signed word*) wow + (byte~) foo::$1) + *((signed word*) foo::y#2) [ foo::return#0 ] ( main:2::foo:6 [ foo::return#0 ] main:2::foo:10 [ foo::return#0 ] ) always clobbers reg byte a reg byte y 
+Statement [4] (signed word) main::y1 ← (signed word) $1234 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
+Statement [5] (signed word) main::y2 ← (signed word) $1234 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
+Statement [7] (signed word) foo::return#2 ← (signed word) foo::return#0 [ foo::return#2 ] ( main:2 [ foo::return#2 ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
+Statement [8] (signed word~) main::$0 ← (signed word) foo::return#2 [ main::$0 ] ( main:2 [ main::$0 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
+Statement [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$0 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
+Statement [11] (signed word) foo::return#3 ← (signed word) foo::return#0 [ foo::return#3 ] ( main:2 [ foo::return#3 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
+Statement [12] (signed word~) main::$1 ← (signed word) foo::return#3 [ main::$1 ] ( main:2 [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [13] *((const signed word*) main::SCREEN#0+(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [16] (byte~) foo::$1 ← (byte) foo::x#2 << (byte) 1 [ foo::y#2 foo::$1 ] ( main:2::foo:6 [ foo::y#2 foo::$1 ] { { foo::return#0 = foo::return#2 } }  main:2::foo:10 [ foo::y#2 foo::$1 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
+Statement [17] (signed word) foo::return#0 ← *((const signed word*) wow + (byte~) foo::$1) + *((signed word*) foo::y#2) [ foo::return#0 ] ( main:2::foo:6 [ foo::return#0 ] { { foo::return#0 = foo::return#2 } }  main:2::foo:10 [ foo::return#0 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ foo::x#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ foo::y#2 ] : zp[2]:3 , 
 Potential registers zp[2]:5 [ main::y1 ] : zp[2]:5 , 
@@ -425,12 +425,12 @@ Potential registers zp[1]:17 [ foo::$1 ] : zp[1]:17 , reg byte a , reg byte x , 
 Potential registers zp[2]:18 [ foo::return#0 ] : zp[2]:18 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 20: zp[2]:5 [ main::y1 ] 20: zp[2]:7 [ main::y2 ] 4: zp[2]:11 [ main::$0 ] 4: zp[2]:15 [ main::$1 ] 
-Uplift Scope [foo] 4: zp[2]:9 [ foo::return#2 ] 4: zp[2]:13 [ foo::return#3 ] 4: zp[1]:17 [ foo::$1 ] 2: zp[1]:2 [ foo::x#2 ] 1.5: zp[2]:18 [ foo::return#0 ] 1: zp[2]:3 [ foo::y#2 ] 
+Uplift Scope [foo] 202: zp[1]:17 [ foo::$1 ] 101: zp[1]:2 [ foo::x#2 ] 50.5: zp[2]:3 [ foo::y#2 ] 30.75: zp[2]:18 [ foo::return#0 ] 22: zp[2]:9 [ foo::return#2 ] 22: zp[2]:13 [ foo::return#3 ] 
+Uplift Scope [main] 110: zp[2]:5 [ main::y1 ] 110: zp[2]:7 [ main::y2 ] 22: zp[2]:11 [ main::$0 ] 22: zp[2]:15 [ main::$1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 217 combination zp[2]:5 [ main::y1 ] zp[2]:7 [ main::y2 ] zp[2]:11 [ main::$0 ] zp[2]:15 [ main::$1 ] 
-Uplifting [foo] best 206 combination zp[2]:9 [ foo::return#2 ] zp[2]:13 [ foo::return#3 ] reg byte a [ foo::$1 ] reg byte x [ foo::x#2 ] zp[2]:18 [ foo::return#0 ] zp[2]:3 [ foo::y#2 ] 
+Uplifting [foo] best 206 combination reg byte a [ foo::$1 ] reg byte x [ foo::x#2 ] zp[2]:3 [ foo::y#2 ] zp[2]:18 [ foo::return#0 ] zp[2]:9 [ foo::return#2 ] zp[2]:13 [ foo::return#3 ] 
+Uplifting [main] best 206 combination zp[2]:5 [ main::y1 ] zp[2]:7 [ main::y2 ] zp[2]:11 [ main::$0 ] zp[2]:15 [ main::$1 ] 
 Uplifting [] best 206 combination 
 Coalescing zero page register [ zp[2]:3 [ foo::y#2 ] ] with [ zp[2]:18 [ foo::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:9 [ foo::return#2 ] ] with [ zp[2]:11 [ main::$0 ] ] - score: 1
@@ -592,26 +592,26 @@ FINAL SYMBOL TABLE
 (label) @end
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (signed word()) foo((byte) foo::x , (signed word*) foo::y)
-(byte~) foo::$1 reg byte a 4.0
+(byte~) foo::$1 reg byte a 202.0
 (label) foo::@return
 (signed word) foo::return
-(signed word) foo::return#0 return zp[2]:2 1.5
-(signed word) foo::return#2 return zp[2]:2 4.0
-(signed word) foo::return#3 return zp[2]:2 4.0
+(signed word) foo::return#0 return zp[2]:2 30.75
+(signed word) foo::return#2 return zp[2]:2 22.0
+(signed word) foo::return#3 return zp[2]:2 22.0
 (byte) foo::x
-(byte) foo::x#2 reg byte x 2.0
+(byte) foo::x#2 reg byte x 101.0
 (signed word*) foo::y
-(signed word*) foo::y#2 y zp[2]:2 1.0
+(signed word*) foo::y#2 y zp[2]:2 50.5
 (void()) main()
-(signed word~) main::$0 zp[2]:2 4.0
-(signed word~) main::$1 zp[2]:2 4.0
+(signed word~) main::$0 zp[2]:2 22.0
+(signed word~) main::$1 zp[2]:2 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (signed word*) main::SCREEN
 (const signed word*) main::SCREEN#0 SCREEN = (signed word*) 1024
-(signed word) main::y1 loadstore zp[2]:4 20.0
-(signed word) main::y2 loadstore zp[2]:6 20.0
+(signed word) main::y1 loadstore zp[2]:4 110.0
+(signed word) main::y2 loadstore zp[2]:6 110.0
 (const signed word*) wow[(number) 4]  = { (signed word) $cafe, (signed word) $babe, (signed word) $1234, (signed word) $5678 }
 
 reg byte x [ foo::x#2 ]

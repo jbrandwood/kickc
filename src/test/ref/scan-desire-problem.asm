@@ -57,43 +57,43 @@ main: {
     clc
     adc.z y
     // tile = level_address[z]
-    tay
-    lda level_address,y
+    tax
+    ldy level_address,x
     // draw_block(tile,x,y,YELLOW)
-    ldy.z x
-    ldx.z y
+    ldx.z x
     jsr draw_block
     // for (byte y = 0; y < 9; y++)
     inc.z y
     jmp __b2
 }
-// draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
+// draw_block(byte register(Y) tileno, byte register(X) x, byte zp(3) y)
 draw_block: {
-    .label tileno = 6
-    .label x1 = $15
+    .label y = 3
+    .label x1 = $14
     .label z = 4
-    .label z_1 = $15
-    .label __11 = 7
-    .label __12 = 9
-    .label __13 = $b
-    .label __14 = $d
-    .label __15 = $f
-    .label __16 = $11
-    .label __17 = $13
-    .label __18 = $15
+    .label z_1 = $14
+    .label __11 = 6
+    .label __12 = 8
+    .label __13 = $a
+    .label __14 = $c
+    .label __15 = $e
+    .label __16 = $10
+    .label __17 = $12
+    .label __18 = $14
     // tileno = tileno << 2
-    asl
-    asl
-    sta.z tileno
-    // x1 = x << 1
     tya
+    asl
+    asl
+    tay
+    // x1 = x << 1
+    txa
     asl
     sta.z x1
     lda #0
     rol
     sta.z x1+1
     // y = y << 1
-    txa
+    lda.z y
     asl
     // mul8u(y,40)
     tax
@@ -109,7 +109,6 @@ draw_block: {
     adc.z z+1
     sta.z z_1+1
     // drawtile = tileset[tileno]
-    ldy.z tileno
     ldx tileset,y
     // screen[z] = drawtile
     lda.z z_1
@@ -199,7 +198,7 @@ draw_block: {
 // mul8u(byte register(X) a)
 mul8u: {
     .const b = $28
-    .label mb = 7
+    .label mb = 6
     .label res = 4
     .label return = 4
     lda #<b
@@ -284,7 +283,7 @@ init: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp(4) str, byte register(X) c)
 memset: {
-    .label end = $15
+    .label end = $14
     .label dst = 4
     .label str = 4
     // end = (char*)str + num

@@ -35,57 +35,57 @@ main: {
     sta.z next
   __b1:
     // bitmap_line(0,next,0,100)
-    ldx.z next
+    lda.z next
     jsr bitmap_line
     // next++;
     inc.z next
     jmp __b1
 }
 // Draw a line on the bitmap
-// bitmap_line(byte register(X) x1)
+// bitmap_line(byte register(A) x1)
 bitmap_line: {
     .label x0 = 0
     .label y0 = 0
     .label y1 = $64
     // if(x0<x1)
-    cpx #x0
+    cmp #x0
     beq !+
     bcs __b1
   !:
     // xd = x0-x1
-    txa
+    tax
     // if(yd<xd)
-    cmp #y1
+    cpx #y1
     beq !+
     bcs __b4
   !:
     // bitmap_line_ydxd(y0, x0, y1, yd, xd)
-    sta.z bitmap_line_ydxd.xd
+    stx.z bitmap_line_ydxd.xd
     jsr bitmap_line_ydxd
     // }
     rts
   __b4:
     // bitmap_line_xdyd(x1, y1, x0, xd, yd)
-    stx.z bitmap_line_xdyd.x
-    sta.z bitmap_line_xdyd.xd
+    sta.z bitmap_line_xdyd.x
+    stx.z bitmap_line_xdyd.xd
     jsr bitmap_line_xdyd
     rts
   __b1:
     // xd = x1-x0
-    txa
+    tax
     // if(yd<xd)
-    cmp #y1
+    cpx #y1
     beq !+
     bcs __b7
   !:
     // bitmap_line_ydxi(y0, x0, y1, yd, xd)
-    sta.z bitmap_line_ydxi.xd
+    stx.z bitmap_line_ydxi.xd
     jsr bitmap_line_ydxi
     rts
   __b7:
     // bitmap_line_xdyi(x0, y0, x1, xd, yd)
-    stx.z bitmap_line_xdyi.x1
-    sta.z bitmap_line_xdyi.xd
+    sta.z bitmap_line_xdyi.x1
+    stx.z bitmap_line_xdyi.xd
     jsr bitmap_line_xdyi
     rts
 }

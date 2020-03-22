@@ -50,22 +50,8 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
                if(assignment.getOperator() == null && assignment.getrValue2() instanceof CastValue) {
                   CastValue castValue = (CastValue) assignment.getrValue2();
                   SymbolType subValType = SymbolTypeInference.inferType(getScope(), castValue.getValue());
-                  boolean isNopCast = false;
-                  if(SymbolType.BYTE.equals(castValue.getToType()) && SymbolType.SBYTE.equals(subValType)) {
-                     isNopCast = true;
-                  } else if(SymbolType.SBYTE.equals(castValue.getToType()) && SymbolType.BYTE.equals(subValType)) {
-                     isNopCast = true;
-                  } else if(SymbolType.WORD.equals(castValue.getToType()) && SymbolType.SWORD.equals(subValType)) {
-                     isNopCast = true;
-                  } else if(SymbolType.SWORD.equals(castValue.getToType()) && SymbolType.WORD.equals(subValType)) {
-                     isNopCast = true;
-                  } else if(castValue.getToType() instanceof SymbolTypePointer && SymbolType.WORD.equals(subValType)) {
-                     isNopCast = true;
-                  } else if(SymbolType.WORD.equals(castValue.getToType()) && subValType instanceof SymbolTypePointer) {
-                     isNopCast = true;
-                  } else if(castValue.getToType() instanceof SymbolTypePointer && subValType instanceof SymbolTypePointer) {
-                     isNopCast = true;
-                  }
+                  final SymbolType castToType = castValue.getToType();
+                  boolean isNopCast = isNopCast(castToType, subValType);
                   if(isNopCast && assignment.getlValue() instanceof VariableRef) {
 
                      final Variable assignmentVar = getScope().getVariable((VariableRef) assignment.getlValue());
@@ -136,6 +122,26 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
       }
 
       return (replace1.size() > 0);
+   }
+
+   public static boolean isNopCast(SymbolType castToType, SymbolType subValType) {
+      boolean isNopCast = false;
+      if(SymbolType.BYTE.equals(castToType) && SymbolType.SBYTE.equals(subValType)) {
+         isNopCast = true;
+      } else if(SymbolType.SBYTE.equals(castToType) && SymbolType.BYTE.equals(subValType)) {
+         isNopCast = true;
+      } else if(SymbolType.WORD.equals(castToType) && SymbolType.SWORD.equals(subValType)) {
+         isNopCast = true;
+      } else if(SymbolType.SWORD.equals(castToType) && SymbolType.WORD.equals(subValType)) {
+         isNopCast = true;
+      } else if(castToType instanceof SymbolTypePointer && SymbolType.WORD.equals(subValType)) {
+         isNopCast = true;
+      } else if(SymbolType.WORD.equals(castToType) && subValType instanceof SymbolTypePointer) {
+         isNopCast = true;
+      } else if(castToType instanceof SymbolTypePointer && subValType instanceof SymbolTypePointer) {
+         isNopCast = true;
+      }
+      return isNopCast;
    }
 
 

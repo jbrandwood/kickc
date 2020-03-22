@@ -3,21 +3,21 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    ldy #0
+    lda #0
   __b1:
     // b(i)
     jsr b
     // for(byte i:0..100)
-    iny
-    cpy #$65
+    clc
+    adc #1
+    cmp #$65
     bne __b1
     // }
     rts
 }
-// b(byte register(Y) i)
+// b(byte register(A) i)
 b: {
     // c(i)
-    tya
     jsr c
     // }
     rts

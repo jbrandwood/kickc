@@ -16,19 +16,21 @@
   .label print_line_cursor = $400
   // Remainder after unsigned 16-bit division
   .label rem16u = $b
-  .label print_char_cursor = 8
+  .label print_char_cursor = 9
 main: {
     .label wavelength = $78
-    .label sw = 6
+    .label sw = 7
     .label st1 = 2
     .label st2 = 4
+    .label i = 6
     // sin16s_gen(sintab1, wavelength)
     jsr sin16s_gen
     // sin16s_genb(sintab2, wavelength)
     jsr sin16s_genb
     // print_cls()
     jsr print_cls
-    ldx #0
+    lda #0
+    sta.z i
     lda #<print_line_cursor
     sta.z print_char_cursor
     lda #>print_line_cursor
@@ -86,8 +88,9 @@ main: {
     inc.z st2+1
   !:
     // for( byte i: 0..119)
-    inx
-    cpx #$78
+    inc.z i
+    lda #$78
+    cmp.z i
     bne __b1
     // }
     rts
@@ -127,9 +130,9 @@ print_str: {
     jmp __b1
 }
 // Print a signed word as HEX
-// print_sword(signed word zp(6) w)
+// print_sword(signed word zp(7) w)
 print_sword: {
-    .label w = 6
+    .label w = 7
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -170,26 +173,23 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(6) w)
+// print_word(word zp(7) w)
 print_word: {
-    .label w = 6
+    .label w = 7
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp($a) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = $a
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -201,10 +201,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts

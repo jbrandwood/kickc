@@ -14,22 +14,25 @@
   .label cp = $ff
   .label print_screen = $400
 main: {
-    .label at = 2
-    .label at_1 = 4
-    .label at_2 = 7
-    .label j = 9
-    .label i = 6
-    .label at_line = 4
+    .label at = 3
+    .label k = 2
+    .label at_1 = 5
+    .label at_2 = 8
+    .label j = $a
+    .label i = 7
+    .label at_line = 5
     // init_screen()
     jsr init_screen
     lda #<$400+4
     sta.z at
     lda #>$400+4
     sta.z at+1
-    ldx #0
+    lda #0
+    sta.z k
   __b1:
     // print_sbyte_at(vals[k], at)
-    lda vals,x
+    ldy.z k
+    lda vals,y
     sta.z print_sbyte_at.b
     lda.z at
     sta.z print_sbyte_at.at
@@ -45,8 +48,9 @@ main: {
     inc.z at+1
   !:
     // for(byte k: 0..8)
-    inx
-    cpx #9
+    inc.z k
+    lda #9
+    cmp.z k
     bne __b1
     lda #0
     sta.z i
@@ -114,16 +118,15 @@ main: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte zp($a) b, byte* zp($c) at)
+// print_sbyte_at(signed byte zp($b) b, byte* zp($c) at)
 print_sbyte_at: {
-    .label b = $a
+    .label b = $b
     .label at = $c
     // if(b<0)
     lda.z b
     bmi __b1
     // print_char_at(' ', at)
-    lda #' '
-    sta.z print_char_at.ch
+    ldx #' '
     jsr print_char_at
   __b2:
     // print_byte_at((byte)b, at+1)
@@ -136,8 +139,7 @@ print_sbyte_at: {
     rts
   __b1:
     // print_char_at('-', at)
-    lda #'-'
-    sta.z print_char_at.ch
+    ldx #'-'
     jsr print_char_at
     // b = -b
     lda.z b
@@ -148,21 +150,20 @@ print_sbyte_at: {
     jmp __b2
 }
 // Print a single char
-// print_char_at(byte zp($b) ch, byte* zp($c) at)
+// print_char_at(byte register(X) ch, byte* zp($c) at)
 print_char_at: {
     .label at = $c
-    .label ch = $b
     // *(at) = ch
-    lda.z ch
+    txa
     ldy #0
     sta (at),y
     // }
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zp($a) b, byte* zp($c) at)
+// print_byte_at(byte zp($b) b, byte* zp($c) at)
 print_byte_at: {
-    .label b = $a
+    .label b = $b
     .label at = $c
     // b>>4
     lda.z b
@@ -172,8 +173,7 @@ print_byte_at: {
     lsr
     // print_char_at(print_hextab[b>>4], at)
     tay
-    lda print_hextab,y
-    sta.z print_char_at.ch
+    ldx print_hextab,y
   // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
@@ -185,8 +185,7 @@ print_byte_at: {
     bne !+
     inc.z print_char_at.at+1
   !:
-    lda print_hextab,y
-    sta.z print_char_at.ch
+    ldx print_hextab,y
     jsr print_char_at
     // }
     rts

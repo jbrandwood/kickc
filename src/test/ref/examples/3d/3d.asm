@@ -190,16 +190,18 @@ debug_print: {
     .label c = 5
     .label i = 6
     // print_sbyte_pos(sx, 0, 37)
-    ldx.z sx
+    lda.z sx
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos1_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos1_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(sy, 1, 37)
-    ldx.z sy
+    lda.z sy
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
@@ -210,75 +212,85 @@ debug_print: {
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
     sta.z print_sbyte_at.at+1
-    ldx #sz
+    lda #sz
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[0], 4, 29)
-    ldx rotation_matrix
+    lda rotation_matrix
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[1], 4, 33)
-    ldx rotation_matrix+1
+    lda rotation_matrix+1
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[2], 4, 37)
-    ldx rotation_matrix+2
+    lda rotation_matrix+2
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[3], 5, 29)
-    ldx rotation_matrix+3
+    lda rotation_matrix+3
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[4], 5, 33)
-    ldx rotation_matrix+4
+    lda rotation_matrix+4
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[5], 5, 37)
-    ldx rotation_matrix+5
+    lda rotation_matrix+5
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[6], 6, 29)
-    ldx rotation_matrix+6
+    lda rotation_matrix+6
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[7], 6, 33)
-    ldx rotation_matrix+7
+    lda rotation_matrix+7
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
     // print_sbyte_pos(rotation_matrix[8], 6, 37)
-    ldx rotation_matrix+8
+    lda rotation_matrix+8
     // print_sbyte_at(sb, print_screen+row*40+col)
+    sta.z print_sbyte_at.b
     lda #<print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
     sta.z print_sbyte_at.at
     lda #>print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
@@ -298,7 +310,8 @@ debug_print: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx xrs,y
+    lda xrs,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_at(yrs[i], at_line+40*1+c)
     lda.z c
@@ -309,7 +322,8 @@ debug_print: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx yrs,y
+    lda yrs,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_at(zrs[i], at_line+40*2+c)
     lda.z c
@@ -320,7 +334,8 @@ debug_print: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx zrs,y
+    lda zrs,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_at(pps[i], at_line+40*3+c)
     lda.z c
@@ -331,7 +346,8 @@ debug_print: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx pps,y
+    lda pps,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_at(xps[i], at_line+40*4+c)
     lda.z c
@@ -342,7 +358,8 @@ debug_print: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx xps,y
+    lda xps,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_at(yps[i], at_line+40*5+c)
     lda.z c
@@ -353,7 +370,8 @@ debug_print: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx yps,y
+    lda yps,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // c += 4
     lax.z c
@@ -370,14 +388,15 @@ debug_print: {
     rts
 }
 // Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte register(X) b, byte* zp($e) at)
+// print_sbyte_at(signed byte zp(7) b, byte* zp($e) at)
 print_sbyte_at: {
+    .label b = 7
     .label at = $e
     // if(b<0)
-    cpx #0
+    lda.z b
     bmi __b1
     // print_char_at(' ', at)
-    ldy #' '
+    ldx #' '
     jsr print_char_at
   __b2:
     // print_byte_at((byte)b, at+1)
@@ -390,52 +409,53 @@ print_sbyte_at: {
     rts
   __b1:
     // print_char_at('-', at)
-    ldy #'-'
+    ldx #'-'
     jsr print_char_at
     // b = -b
-    txa
+    lda.z b
     eor #$ff
     clc
     adc #1
-    tax
+    sta.z b
     jmp __b2
 }
 // Print a single char
-// print_char_at(byte register(Y) ch, byte* zp($e) at)
+// print_char_at(byte register(X) ch, byte* zp($e) at)
 print_char_at: {
     .label at = $e
     // *(at) = ch
-    tya
+    txa
     ldy #0
     sta (at),y
     // }
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte register(X) b, byte* zp($e) at)
+// print_byte_at(byte zp(7) b, byte* zp($e) at)
 print_byte_at: {
+    .label b = 7
     .label at = $e
     // b>>4
-    txa
+    lda.z b
     lsr
     lsr
     lsr
     lsr
-    tay
     // print_char_at(print_hextab[b>>4], at)
-    lda print_hextab,y
     tay
+    ldx print_hextab,y
   // Table of hexadecimal digits
     jsr print_char_at
     // b&$f
     lda #$f
-    axs #0
+    and.z b
+    tay
     // print_char_at(print_hextab[b&$f], at+1)
     inc.z print_char_at.at
     bne !+
     inc.z print_char_at.at+1
   !:
-    ldy print_hextab,x
+    ldx print_hextab,y
     jsr print_char_at
     // }
     rts
@@ -444,10 +464,10 @@ print_byte_at: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zp(6) y, signed byte zp(5) z)
+// rotate_matrix(signed byte register(X) x, signed byte zp(6) y, signed byte zp(7) z)
 rotate_matrix: {
     .label y = 6
-    .label z = 5
+    .label z = 7
     // *xr = x
     txa
     sta xr
@@ -935,7 +955,8 @@ debug_print_init: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx xs,y
+    lda xs,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_at(ys[i], at_line+40*1+c)
     lda.z c
@@ -946,7 +967,8 @@ debug_print_init: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx ys,y
+    lda ys,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     // print_sbyte_at(zs[i], at_line+40*2+c)
     lda.z c
@@ -957,7 +979,8 @@ debug_print_init: {
     adc #0
     sta.z print_sbyte_at.at+1
     ldy.z i
-    ldx zs,y
+    lda zs,y
+    sta.z print_sbyte_at.b
     jsr print_sbyte_at
     ldy #0
   __b2:

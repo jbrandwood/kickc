@@ -2,14 +2,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
+  .label print_line_cursor = 5
+  .label print_char_cursor = 7
 main: {
     .label w2 = $b
     .label w1 = 2
+    .label i = 4
     // print_cls()
     jsr print_cls
-    ldx #0
+    lda #0
+    sta.z i
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -57,8 +59,9 @@ main: {
     // print_ln()
     jsr print_ln
     // for( byte i: 0..10 )
-    inx
-    cpx #$b
+    inc.z i
+    lda #$b
+    cmp.z i
     bne __b6
     // }
     rts
@@ -140,22 +143,19 @@ print_char: {
 print_word: {
     .label w = 9
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp(8) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = 8
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -167,10 +167,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts

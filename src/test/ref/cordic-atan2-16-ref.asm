@@ -66,8 +66,7 @@ main: {
     inc.z __10+1
   !:
     // ang_w = >(angle_w+0x0080)
-    lda.z __10+1
-    tax
+    ldx.z __10+1
     // diff(ang_w, *screen_ref)
     ldy #0
     lda (screen_ref),y
@@ -120,16 +119,14 @@ main: {
 print_word: {
     .label w = 4
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts

@@ -2,10 +2,12 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label a = 2
+    .label a = 3
+    .label y = 2
     ldy #0
   __b1:
-    ldx #0
+    lda #0
+    sta.z y
   __b2:
     lda #0
     sta.z a
@@ -15,6 +17,7 @@ main: {
     clc
     adc.z a
     // print(y, val1)
+    ldx.z y
     jsr print
     // for( byte a: 0..100 )
     inc.z a
@@ -22,8 +25,8 @@ main: {
     cmp.z a
     bne __b3
     // for( byte y: 0..100 )
-    inx
-    cpx #$65
+    inc.z y
+    cmp.z y
     bne __b2
     // for( register(Y) byte x: 0..100 )
     iny

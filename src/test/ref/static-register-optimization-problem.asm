@@ -29,8 +29,7 @@ main: {
     rts
   __b2:
     // <lasti
-    lda.z lasti
-    tax
+    ldx.z lasti
     // screen[i] = <lasti
     lda #<screen
     clc

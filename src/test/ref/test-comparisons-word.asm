@@ -5,12 +5,13 @@
   .const FF = $57
   // filled circle
   .const TT = $51
-  .label print_char_cursor = $a
-  .label print_line_cursor = 5
+  .label print_char_cursor = $b
+  .label print_line_cursor = 6
 main: {
     .label w1 = $f
     .label w2 = $11
-    .label s = 4
+    .label s = 5
+    .label op = 4
     .label j = 3
     .label i = 2
     // print_cls()
@@ -47,13 +48,19 @@ main: {
     sta.z w2
     lda words+1,y
     sta.z w2+1
-    ldx #0
+    lda #0
+    sta.z op
   __b3:
     // compare(w1,w2,op)
     lda.z w1
     sta.z compare.w1
     lda.z w1+1
     sta.z compare.w1+1
+    lda.z w2
+    sta.z compare.w2
+    lda.z w2+1
+    sta.z compare.w2+1
+    lda.z op
     jsr compare
     // if(++s==3)
     inc.z s
@@ -70,8 +77,9 @@ main: {
     sta.z s
   __b4:
     // for( byte op: 0..5 )
-    inx
-    cpx #6
+    inc.z op
+    lda #6
+    cmp.z op
     bne __b3
     // for( byte j: 0..2)
     inc.z j
@@ -110,35 +118,35 @@ print_ln: {
     rts
 }
 // Compare two words using an operator
-// compare(word zp(8) w1, word zp($11) w2, byte register(X) op)
+// compare(word zp(9) w1, word zp($13) w2, byte register(A) op)
 compare: {
-    .label w1 = 8
-    .label w2 = $11
+    .label w1 = 9
+    .label w2 = $13
     .label ops = $d
-    .label r = 7
+    .label r = 8
     // if(op==0)
-    cpx #0
+    cmp #0
     bne !__b1+
     jmp __b1
   !__b1:
     // if(op==1)
-    cpx #1
+    cmp #1
     bne !__b2+
     jmp __b2
   !__b2:
     // if(op==2)
-    cpx #2
+    cmp #2
     bne !__b3+
     jmp __b3
   !__b3:
     // if(op==3)
-    cpx #3
+    cmp #3
     beq __b4
     // if(op==4)
-    cpx #4
+    cmp #4
     beq __b5
     // if(op==5)
-    cpx #5
+    cmp #5
     bne b2
     // if(w1!=w2)
     lda.z w1
@@ -321,26 +329,23 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(8) w)
+// print_word(word zp(9) w)
 print_word: {
-    .label w = 8
+    .label w = 9
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp($c) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = $c
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -352,10 +357,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts

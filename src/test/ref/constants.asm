@@ -4,8 +4,8 @@
   .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
-  .label print_char_cursor = 2
-  .label print_line_cursor = 4
+  .label print_char_cursor = 4
+  .label print_line_cursor = 6
 main: {
     // print_cls()
     jsr print_cls
@@ -29,7 +29,8 @@ test_sbytes: {
     // assert_sbyte("0=0", bb, 0)
     lda #0
     sta.z assert_sbyte.c
-    ldx #bb
+    lda #bb
+    sta.z assert_sbyte.b
     lda #<msg
     sta.z assert_sbyte.msg
     lda #>msg
@@ -38,7 +39,8 @@ test_sbytes: {
     // assert_sbyte("0+2=2", bc, 2)
     lda #2
     sta.z assert_sbyte.c
-    ldx #bc
+    lda #bc
+    sta.z assert_sbyte.b
     lda #<msg1
     sta.z assert_sbyte.msg
     lda #>msg1
@@ -47,7 +49,8 @@ test_sbytes: {
     // assert_sbyte("0+2-4=-2", bd, -2)
     lda #-2
     sta.z assert_sbyte.c
-    ldx #bd
+    lda #bd
+    sta.z assert_sbyte.b
     lda #<msg2
     sta.z assert_sbyte.msg
     lda #>msg2
@@ -56,7 +59,8 @@ test_sbytes: {
     // assert_sbyte("-(0+2-4)=2", be, 2)
     lda #2
     sta.z assert_sbyte.c
-    ldx #be
+    lda #be
+    sta.z assert_sbyte.b
     lda #<msg3
     sta.z assert_sbyte.msg
     lda #>msg3
@@ -65,7 +69,8 @@ test_sbytes: {
     // assert_sbyte("-127-127=2", bf, 2)
     lda #2
     sta.z assert_sbyte.c
-    ldx #bf
+    lda #bf
+    sta.z assert_sbyte.b
     lda #<msg4
     sta.z assert_sbyte.msg
     lda #>msg4
@@ -80,10 +85,11 @@ test_sbytes: {
     msg4: .text "-127-127=2"
     .byte 0
 }
-// assert_sbyte(byte* zp(7) msg, signed byte register(X) b, signed byte zp(6) c)
+// assert_sbyte(byte* zp(9) msg, signed byte zp(2) b, signed byte zp(3) c)
 assert_sbyte: {
-    .label msg = 7
-    .label c = 6
+    .label msg = 9
+    .label b = 2
+    .label c = 3
     // print_str(msg)
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -98,7 +104,8 @@ assert_sbyte: {
     sta.z print_str.str+1
     jsr print_str
     // if(b!=c)
-    cpx.z c
+    lda.z b
+    cmp.z c
     bne __b1
     // print_str("ok")
     lda #<str2
@@ -124,9 +131,9 @@ assert_sbyte: {
     jmp __b2
 }
 // Print a zero-terminated string
-// print_str(byte* zp(7) str)
+// print_str(byte* zp(9) str)
 print_str: {
-    .label str = 7
+    .label str = 9
   __b1:
     // while(*str)
     ldy #0
@@ -227,10 +234,10 @@ test_bytes: {
     msg2: .text "0+2-4=254"
     .byte 0
 }
-// assert_byte(byte* zp(7) msg, byte register(X) b, byte zp(6) c)
+// assert_byte(byte* zp(9) msg, byte register(X) b, byte zp(8) c)
 assert_byte: {
-    .label msg = 7
-    .label c = 6
+    .label msg = 9
+    .label c = 8
     // print_str(msg)
     jsr print_str
     // print_str(" ")
@@ -278,7 +285,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 7
+    .label dst = 9
     lda #<str
     sta.z dst
     lda #>str

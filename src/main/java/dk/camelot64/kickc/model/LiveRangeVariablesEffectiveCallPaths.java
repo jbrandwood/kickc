@@ -417,10 +417,12 @@ public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesE
       }
 
       @Override
-      public String toString() {
+      public String toString(Program program) {
          StringBuilder out = new StringBuilder();
          out.append(getCallPathString(callPath.getPath()));
          out.append(getAliveString(getEffectiveAliveAtStmt()));
+         out.append(" ");
+         out.append(getEffectiveAliasesAtStmt().toString(program));
          return out.toString();
       }
 

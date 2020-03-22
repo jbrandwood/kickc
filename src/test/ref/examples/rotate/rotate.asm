@@ -44,19 +44,20 @@ anim: {
     .label __6 = 3
     .label __8 = 3
     .label __11 = 3
-    .label __12 = 3
+    .label __12 = $f
     .label __13 = 3
     .label __14 = 3
     .label __29 = $13
-    .label x = $b
-    .label y = $c
-    .label xr = $d
-    .label yr = $f
+    .label x = 9
+    .label y = $a
+    .label xr = $b
+    .label yr = $d
+    .label xr_1 = $f
     .label xpos = $11
     // signed fixed[0.7]
     .label sprite_msb = 2
-    .label i = $a
-    .label angle = 7
+    .label i = 8
+    .label angle = 5
     .label cyclecount = $13
     lda #0
     sta.z angle
@@ -116,16 +117,20 @@ anim: {
     jsr mulf8s_prepared
     // mulf8s_prepared(y)
     // mulf8s_prepared(y)*2
-    asl.z __12
-    rol.z __12+1
+    lda.z __11
+    asl
+    sta.z __12
+    lda.z __11+1
+    rol
+    sta.z __12+1
     // xr -= mulf8s_prepared(y)*2
     lda.z xr
     sec
-    sbc.z __12
-    sta.z xr
+    sbc.z xr_1
+    sta.z xr_1
     lda.z xr+1
-    sbc.z __12+1
-    sta.z xr+1
+    sbc.z xr_1+1
+    sta.z xr_1+1
     // mulf8s_prepared(x)
     ldy.z x
     jsr mulf8s_prepared
@@ -143,7 +148,7 @@ anim: {
     adc.z __14+1
     sta.z yr+1
     // >xr
-    lda.z xr+1
+    lda.z xr_1+1
     // xpos = ((signed byte) >xr) + 24 /*border*/ + 149
     tax
     clc
@@ -248,33 +253,37 @@ print_dword_at: {
     rts
 }
 // Print a word as HEX at a specific position
-// print_word_at(word zp(3) w, byte* zp(5) at)
+// print_word_at(word zp(3) w, byte* zp($f) at)
 print_word_at: {
     .label w = 3
-    .label at = 5
+    .label at = $f
     // print_byte_at(>w, at)
     lda.z w+1
     sta.z print_byte_at.b
+    lda.z at
+    sta.z print_byte_at.at
+    lda.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // print_byte_at(<w, at+2)
     lda.z w
     sta.z print_byte_at.b
     lda #2
     clc
-    adc.z print_byte_at.at
+    adc.z at
     sta.z print_byte_at.at
-    bcc !+
-    inc.z print_byte_at.at+1
-  !:
+    lda #0
+    adc.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // }
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zp($b) b, byte* zp(5) at)
+// print_byte_at(byte zp(9) b, byte* zp($11) at)
 print_byte_at: {
-    .label b = $b
-    .label at = 5
+    .label b = 9
+    .label at = $11
     // b>>4
     lda.z b
     lsr
@@ -308,9 +317,9 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp(8) at)
+// print_char_at(byte register(X) ch, byte* zp(6) at)
 print_char_at: {
-    .label at = 8
+    .label at = 6
     // *(at) = ch
     txa
     ldy #0
@@ -472,17 +481,17 @@ init: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 7
+    .label c = 5
     // Counter used for determining x%2==0
-    .label sqr1_hi = 8
+    .label sqr1_hi = $11
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $11
-    .label sqr1_lo = 5
+    .label sqr = $d
+    .label sqr1_lo = $f
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $f
-    .label sqr2_lo = $d
+    .label sqr2_hi = $b
+    .label sqr2_lo = 6
     //Start with g(0)=f(255)
-    .label dir = $a
+    .label dir = 8
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi

@@ -38,7 +38,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
    }
 
 
-   public static Aliases findAliases(Program program) {
+   private static Aliases findAliases(Program program) {
       Aliases candidates = findAliasesCandidates(program);
       cleanupCandidates(candidates, program);
       cleanupCandidateVolatiles(candidates, program);
@@ -342,7 +342,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          }
       }
 
-      public List<VariableRef> getSymbolsToRemove(ProgramScope scope) {
+      List<VariableRef> getSymbolsToRemove(ProgramScope scope) {
          ArrayList<VariableRef> eliminates = new ArrayList<>();
          for(AliasSet alias : aliases) {
             eliminates.addAll(alias.getEliminateVars(scope));
@@ -350,7 +350,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          return eliminates;
       }
 
-      public Map<VariableRef, VariableRef> getReplacements(ProgramScope scope) {
+      Map<VariableRef, VariableRef> getReplacements(ProgramScope scope) {
          HashMap<VariableRef, VariableRef> replacements = new LinkedHashMap<>();
          for(AliasSet aliasSet : aliases) {
             VariableRef keepVar = aliasSet.getKeepVar(scope);
@@ -391,7 +391,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          }
       }
 
-      public AliasSet findAliasSet(LValue lValue) {
+      AliasSet findAliasSet(LValue lValue) {
          if(lValue instanceof VariableRef) {
             for(AliasSet alias : aliases) {
                if(alias.contains(lValue)) {
@@ -402,7 +402,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          return null;
       }
 
-      public List<AliasSet> getAliasSets() {
+      List<AliasSet> getAliasSets() {
          return aliases;
       }
 
@@ -419,17 +419,29 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             }
          }
       }
+
+      public String toString(Program program) {
+         StringBuilder str = new StringBuilder();
+         str.append("{ ");
+         for(AliasSet aliasSet : getAliasSets()) {
+            str.append("{ ");
+            str.append(aliasSet.toString(program));
+            str.append("} ");
+         }
+         str.append("} ");
+         return str.toString();
+      }
    }
 
    public static class AliasSet {
 
       private List<VariableRef> vars;
 
-      public AliasSet() {
+      AliasSet() {
          this.vars = new ArrayList<>();
       }
 
-      public AliasSet(AliasSet aliasSet) {
+      AliasSet(AliasSet aliasSet) {
          this.vars = new ArrayList<>(aliasSet.getVars());
       }
 
@@ -447,10 +459,10 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
       public String toString(Program program) {
          StringBuilder str = new StringBuilder();
-         str.append(getKeepVar(program.getScope()).toString(program));
+         str.append(getKeepVar(program.getScope()).toString(null));
          str.append(" = ");
          for(VariableRef var : getEliminateVars(program.getScope())) {
-            str.append(var.toString(program)).append(" ");
+            str.append(var.toString(null)).append(" ");
          }
          return str.toString();
       }
@@ -463,7 +475,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          vars.addAll(aliasSet.getVars());
       }
 
-      public VariableRef getKeepVar(ProgramScope scope) {
+      VariableRef getKeepVar(ProgramScope scope) {
          // Score all base names (without versions for versioned vars, full name for intermediates)
          int maxScore = 0;
          String maxName = null;
@@ -496,7 +508,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
          }
          // Find first var with highest scoring name
          List<VariableRef> vars = new ArrayList<>(this.vars);
-         Collections.sort(vars, Comparator.comparing(SymbolRef::getFullName));
+         vars.sort(Comparator.comparing(SymbolRef::getFullName));
          for(VariableRef var : vars) {
             if(var.isVersion()) {
                if(maxName.equals(var.getFullNameUnversioned())) {
@@ -513,7 +525,7 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
 
       }
 
-      public List<VariableRef> getEliminateVars(ProgramScope scope) {
+      List<VariableRef> getEliminateVars(ProgramScope scope) {
          List<VariableRef> eliminate = new ArrayList<>();
          VariableRef keepVar = getKeepVar(scope);
          for(VariableRef var : vars) {

@@ -2,13 +2,13 @@
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
-  .label last_time = $a
-  .label print_line_cursor = 6
-  .label print_char_cursor = 8
-  .label Ticks = $c
-  .label free_ = 2
-  .label root = 4
-  .label Ticks_1 = $e
+  .label last_time = $b
+  .label print_line_cursor = 7
+  .label print_char_cursor = 9
+  .label Ticks = $d
+  .label free_ = 3
+  .label root = 5
+  .label Ticks_1 = $f
 __bbegin:
   // last_time
   lda #<0
@@ -17,11 +17,13 @@ __bbegin:
   jsr main
   rts
 main: {
-    .label __5 = $c
-    .label i = 6
+    .label __5 = $d
+    .label i = 7
+    .label c = 2
     // start()
     jsr start
-    ldx #0
+    lda #0
+    sta.z c
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
@@ -38,6 +40,10 @@ main: {
     sta.z i+1
   __b2:
     // prepend(i)
+    lda.z i
+    sta.z prepend.x
+    lda.z i+1
+    sta.z prepend.x+1
     jsr prepend
     // for(i : 0..2999)
     inc.z i
@@ -56,8 +62,9 @@ main: {
     lda.z __5
     jsr print_char
     // for(c : 0..4)
-    inx
-    cpx #5
+    inc.z c
+    lda #5
+    cmp.z c
     bne __b1
     // end()
     jsr end
@@ -120,16 +127,14 @@ print_ln: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($e) w)
+// print_word(word zp($f) w)
 print_word: {
-    .label w = $e
+    .label w = $f
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts
@@ -181,9 +186,9 @@ start: {
     rts
 }
 sum: {
-    .label current = 4
-    .label s = $c
-    .label return = $c
+    .label current = 5
+    .label s = $d
+    .label return = $d
     // current = root
     lda #<0
     sta.z s
@@ -220,10 +225,10 @@ sum: {
     sta.z current
     jmp __b1
 }
-// prepend(word zp(6) x)
+// prepend(word zp($f) x)
 prepend: {
-    .label new = $10
-    .label x = 6
+    .label new = $11
+    .label x = $f
     // alloc()
     jsr alloc
     // new = alloc()
@@ -250,8 +255,8 @@ prepend: {
     rts
 }
 alloc: {
-    .label __1 = $10
-    .label return = $10
+    .label __1 = $11
+    .label return = $11
     // heap + free_
     lda.z free_
     asl

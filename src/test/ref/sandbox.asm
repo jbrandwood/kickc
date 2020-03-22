@@ -8,16 +8,19 @@
   .label TIMELO = $a2
   .label VICBANK = $d018
 main: {
-    .label __3 = 6
-    .label __4 = 6
-    .label __5 = $11
-    .label __12 = 6
-    .label __13 = 6
-    .label __14 = $f
-    .label v = 4
+    .label __3 = $c
+    .label __4 = $c
+    .label __5 = $19
+    .label __12 = $c
+    .label __13 = $c
+    .label __14 = $17
+    .label v = 6
     // test performance of 'div16u(10)'
     // test performance of 'div10'
     .label u = 2
+    // test performance of 'div16u(10)'
+    // test performance of 'div10'
+    .label u_1 = 4
     // *VICBANK = 23
     lda #$17
     sta VICBANK
@@ -39,9 +42,9 @@ main: {
     lda #0
     sta zp1
     lda #<$6e85
-    sta.z u
+    sta.z u_1
     lda #>$6e85
-    sta.z u+1
+    sta.z u_1+1
   __b7:
     // for (*zp1 = 0; *zp1 < 10; ++*zp1)
     lda zp1
@@ -85,6 +88,14 @@ main: {
     lda.z myprintf.w3+1
     adc.z __14+1
     sta.z myprintf.w3+1
+    lda.z u_1
+    sta.z myprintf.w1
+    lda.z u_1+1
+    sta.z myprintf.w1+1
+    lda.z v
+    sta.z myprintf.w2
+    lda.z v+1
+    sta.z myprintf.w2+1
     lda #<str1
     sta.z myprintf.str
     lda #>str1
@@ -93,13 +104,13 @@ main: {
     // Print()
     jsr Print
     // u -= 1234
-    lda.z u
+    lda.z u_1
     sec
     sbc #<$4d2
-    sta.z u
-    lda.z u+1
+    sta.z u_1
+    lda.z u_1+1
     sbc #>$4d2
-    sta.z u+1
+    sta.z u_1+1
     // for (*zp1 = 0; *zp1 < 10; ++*zp1)
     inc zp1
     jmp __b7
@@ -146,6 +157,14 @@ main: {
     lda.z myprintf.w3+1
     adc.z __5+1
     sta.z myprintf.w3+1
+    lda.z u
+    sta.z myprintf.w1
+    lda.z u+1
+    sta.z myprintf.w1+1
+    lda.z v
+    sta.z myprintf.w2
+    lda.z v+1
+    sta.z myprintf.w2+1
   // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
   // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --
     lda #<str
@@ -185,7 +204,7 @@ main: {
 // div16u(word zp(2) dividend)
 div16u: {
     .label divisor = $a
-    .label return = 4
+    .label return = 6
     .label dividend = 2
     // divr16u(dividend, divisor, 0)
     lda.z dividend
@@ -201,12 +220,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($17) dividend, word zp(6) rem)
+// divr16u(word zp($a) dividend, word zp(8) rem)
 divr16u: {
-    .label rem = 6
-    .label dividend = $17
-    .label quotient = 4
-    .label return = 4
+    .label rem = 8
+    .label dividend = $a
+    .label quotient = 6
+    .label return = 6
     ldx #0
     txa
     sta.z quotient
@@ -279,21 +298,21 @@ Print: {
     // }
     rts
 }
-// myprintf(byte* zp($17) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
+// myprintf(byte* zp($17) str, word zp(8) w1, word zp($a) w2, word zp($c) w3)
 myprintf: {
     .label str = $17
-    .label bDigits = $d
-    .label bLen = $e
+    .label bDigits = $13
+    .label bLen = $14
     // formats
-    .label b = $c
-    .label bArg = 9
-    .label w1 = 2
-    .label w2 = 4
-    .label w3 = 6
-    .label w = $f
-    .label bFormat = 8
-    .label bTrailing = $a
-    .label bLeadZero = $b
+    .label b = $12
+    .label bArg = $f
+    .label w1 = 8
+    .label w2 = $a
+    .label w3 = $c
+    .label w = $19
+    .label bFormat = $e
+    .label bTrailing = $10
+    .label bLeadZero = $11
     lda #0
     sta.z bLeadZero
     sta.z bDigits
@@ -596,10 +615,10 @@ myprintf: {
     jmp __b32
     buf6: .fill 6, 0
 }
-// utoa(word zp($11) value, byte* zp($13) dst)
+// utoa(word zp($1b) value, byte* zp($1d) dst)
 utoa: {
-    .label value = $11
-    .label dst = $13
+    .label value = $1b
+    .label dst = $1d
     // if (bStarted == 1 || value >= 10000)
     lda.z value+1
     cmp #>$2710
@@ -672,6 +691,10 @@ utoa: {
     rts
   __b8:
     // append(dst++, value, 10)
+    lda.z dst
+    sta.z append.dst
+    lda.z dst+1
+    sta.z append.dst+1
     lda #<$a
     sta.z append.sub
     lda #>$a
@@ -687,6 +710,10 @@ utoa: {
     jmp __b4
   __b7:
     // append(dst++, value, 100)
+    lda.z dst
+    sta.z append.dst
+    lda.z dst+1
+    sta.z append.dst+1
     lda #<$64
     sta.z append.sub
     lda #>$64
@@ -703,6 +730,10 @@ utoa: {
     jmp __b3
   __b6:
     // append(dst++, value, 1000)
+    lda.z dst
+    sta.z append.dst
+    lda.z dst+1
+    sta.z append.dst+1
     lda #<$3e8
     sta.z append.sub
     lda #>$3e8
@@ -738,11 +769,11 @@ utoa: {
     jmp __b1
 }
 // simple 'utoa' without using multiply or divide
-// append(byte* zp($13) dst, word zp($11) value, word zp($15) sub)
+// append(byte* zp($1f) dst, word zp($1b) value, word zp($15) sub)
 append: {
-    .label value = $11
-    .label return = $11
-    .label dst = $13
+    .label value = $1b
+    .label return = $1b
+    .label dst = $1f
     .label sub = $15
     // *dst = '0'
     lda #'0'
@@ -777,18 +808,18 @@ append: {
     sta.z value+1
     jmp __b1
 }
-// div10(word zp($13) val)
+// div10(word zp($1b) val)
 div10: {
-    .label __0 = $13
-    .label __2 = $15
-    .label __3 = $17
-    .label __4 = 4
-    .label val = $13
-    .label val_1 = $15
-    .label val_2 = $17
-    .label val_3 = 4
-    .label return = 4
-    .label val_4 = 2
+    .label __0 = $1b
+    .label __2 = $1d
+    .label __3 = $1f
+    .label __4 = 6
+    .label val = $1b
+    .label val_1 = $1d
+    .label val_2 = $1f
+    .label val_3 = 6
+    .label return = 6
+    .label val_4 = 4
     // val >> 1
     lda.z val_4+1
     lsr

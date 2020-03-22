@@ -35,67 +35,67 @@ main: {
     sta.z next
   __b1:
     // bitmap_line(0,next,0,100)
-    ldx.z next
+    lda.z next
     jsr bitmap_line
     // next++;
     inc.z next
     jmp __b1
 }
 // Draw a line on the bitmap
-// bitmap_line(byte register(X) x1)
+// bitmap_line(byte register(A) x1)
 bitmap_line: {
     .label x0 = 0
     .label y0 = 0
     .label y1 = $64
     // if(x0<x1)
-    cpx #x0
+    cmp #x0
     beq !+
     bcs __b1
   !:
     // xd = x0-x1
-    txa
+    tax
     // if(yd<xd)
-    cmp #y1
+    cpx #y1
     beq !+
     bcs __b4
   !:
     // bitmap_line_ydxd(y0, x0, y1, yd, xd)
-    sta.z bitmap_line_ydxd.xd
+    stx.z bitmap_line_ydxd.xd
     jsr bitmap_line_ydxd
     // }
     rts
   __b4:
     // bitmap_line_xdyd(x1, y1, x0, xd, yd)
-    stx.z bitmap_line_xdyd.x
-    sta.z bitmap_line_xdyd.xd
+    sta.z bitmap_line_xdyd.x
+    stx.z bitmap_line_xdyd.xd
     jsr bitmap_line_xdyd
     rts
   __b1:
     // xd = x1-x0
-    txa
+    tax
     // if(yd<xd)
-    cmp #y1
+    cpx #y1
     beq !+
     bcs __b7
   !:
     // bitmap_line_ydxi(y0, x0, y1, yd, xd)
-    sta.z bitmap_line_ydxi.xd
+    stx.z bitmap_line_ydxi.xd
     jsr bitmap_line_ydxi
     rts
   __b7:
     // bitmap_line_xdyi(x0, y0, x1, xd, yd)
-    stx.z bitmap_line_xdyi.x1
-    sta.z bitmap_line_xdyi.xd
+    sta.z bitmap_line_xdyi.x1
+    stx.z bitmap_line_xdyi.xd
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zp(3) x, byte zp(4) y, byte zp($b) x1, byte zp(6) xd)
+// bitmap_line_xdyi(byte zp($d) x, byte zp($17) y, byte zp($11) x1, byte zp($12) xd)
 bitmap_line_xdyi: {
-    .label x1 = $b
-    .label xd = 6
-    .label x = 3
-    .label e = 5
-    .label y = 4
+    .label x1 = $11
+    .label xd = $12
+    .label x = $d
+    .label e = 3
+    .label y = $17
     lda #bitmap_line.y1>>1
     sta.z e
     lda #bitmap_line.y0
@@ -136,9 +136,9 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
-    .label plotter_x = 7
-    .label plotter_y = 9
-    .label plotter = 7
+    .label plotter_x = $13
+    .label plotter_y = $15
+    .label plotter = $13
     // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
     lda bitmap_plot_xhi,x
     sta.z plotter_x+1
@@ -166,12 +166,12 @@ bitmap_plot: {
     // }
     rts
 }
-// bitmap_line_ydxi(byte zp(4) y, byte zp(3) x, byte zp(6) xd)
+// bitmap_line_ydxi(byte zp(5) y, byte zp(4) x, byte zp($10) xd)
 bitmap_line_ydxi: {
-    .label xd = 6
-    .label e = 5
-    .label y = 4
-    .label x = 3
+    .label xd = $10
+    .label e = 6
+    .label y = 5
+    .label x = 4
     // e = xd>>1
     lda.z xd
     lsr
@@ -210,12 +210,12 @@ bitmap_line_ydxi: {
     // }
     rts
 }
-// bitmap_line_xdyd(byte zp(3) x, byte zp(4) y, byte zp(6) xd)
+// bitmap_line_xdyd(byte zp(7) x, byte zp(8) y, byte zp($f) xd)
 bitmap_line_xdyd: {
-    .label x = 3
-    .label xd = 6
-    .label e = 5
-    .label y = 4
+    .label x = 7
+    .label xd = $f
+    .label e = 9
+    .label y = 8
     lda #bitmap_line.y1>>1
     sta.z e
     lda #bitmap_line.y1
@@ -250,12 +250,12 @@ bitmap_line_xdyd: {
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp(4) y, byte zp(3) x, byte zp(6) xd)
+// bitmap_line_ydxd(byte zp($b) y, byte zp($a) x, byte zp($e) xd)
 bitmap_line_ydxd: {
-    .label xd = 6
-    .label e = 5
-    .label y = 4
-    .label x = 3
+    .label xd = $e
+    .label e = $c
+    .label y = $b
+    .label x = $a
     // e = xd>>1
     lda.z xd
     lsr
@@ -295,7 +295,7 @@ bitmap_line_ydxd: {
     rts
 }
 init_screen: {
-    .label c = 7
+    .label c = $13
     lda #<SCREEN
     sta.z c
     lda #>SCREEN
@@ -324,8 +324,8 @@ init_screen: {
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label bitmap = 7
-    .label y = 6
+    .label bitmap = $13
+    .label y = $d
     // (byte*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap
@@ -359,8 +359,8 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label __10 = $b
-    .label yoffs = 7
+    .label __10 = $17
+    .label yoffs = $13
     ldy #$80
     ldx #0
   __b1:

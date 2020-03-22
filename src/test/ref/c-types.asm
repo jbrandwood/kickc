@@ -2,7 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 8
+  .label print_char_cursor = $c
   .label print_line_cursor = 2
 main: {
     // print_cls()
@@ -110,6 +110,14 @@ print_sdword: {
     jsr print_char
   __b2:
     // print_dword((dword)dw)
+    lda.z dw
+    sta.z print_dword.dw
+    lda.z dw+1
+    sta.z print_dword.dw+1
+    lda.z dw+2
+    sta.z print_dword.dw+2
+    lda.z dw+3
+    sta.z print_dword.dw+3
     jsr print_dword
     // }
     rts
@@ -152,9 +160,9 @@ print_char: {
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zp(4) dw)
+// print_dword(dword zp(8) dw)
 print_dword: {
-    .label dw = 4
+    .label dw = 8
     // print_word(>dw)
     lda.z dw+2
     sta.z print_word.w
@@ -171,16 +179,14 @@ print_dword: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($a) w)
+// print_word(word zp($e) w)
 print_word: {
-    .label w = $a
+    .label w = $e
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts
@@ -209,9 +215,9 @@ print_byte: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($a) str)
+// print_str(byte* zp($e) str)
 print_str: {
-    .label str = $a
+    .label str = $e
   __b1:
     // while(*str)
     ldy #0
@@ -282,9 +288,9 @@ testInt: {
     .byte 0
 }
 // Print a signed word as HEX
-// print_sword(signed word zp($a) w)
+// print_sword(signed word zp($10) w)
 print_sword: {
-    .label w = $a
+    .label w = $10
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -293,6 +299,10 @@ print_sword: {
     jsr print_char
   __b2:
     // print_word((word)w)
+    lda.z w
+    sta.z print_word.w
+    lda.z w+1
+    sta.z print_word.w+1
     jsr print_word
     // }
     rts
@@ -419,7 +429,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $a
+    .label dst = $10
     lda #<str
     sta.z dst
     lda #>str

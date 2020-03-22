@@ -2,13 +2,13 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label ba = 2
+  .label bd = 5
   .label bb = 3
   .label bb_1 = 4
-  .label bc = 5
 main: {
     lda #0
     sta.z ba
-    tay
+    sta.z bd
     tax
     sta.z bb
   __b2:
@@ -140,7 +140,8 @@ fa: {
     bne __b1
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b1:
@@ -150,7 +151,8 @@ fa: {
     bne __b2
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b2:
@@ -160,7 +162,8 @@ fa: {
     bne __b3
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b3:
@@ -170,7 +173,8 @@ fa: {
     bne __b4
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b4:
@@ -180,7 +184,8 @@ fa: {
     bne __b5
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b5:
@@ -190,7 +195,8 @@ fa: {
     bne __b6
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b6:
@@ -200,7 +206,8 @@ fa: {
     bne __b7
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b7:
@@ -210,7 +217,8 @@ fa: {
     bne __b8
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b8:
@@ -220,7 +228,8 @@ fa: {
     bne __b9
     // bc++;
     inx
-    stx.z bc
+    txa
+    tay
     // fb()
     jsr fb
   __b9:
@@ -229,8 +238,7 @@ fa: {
     cmp.z bb_1
     bne __breturn
     // fb()
-    lda #0
-    sta.z bc
+    ldy #0
     jsr fb
     ldx #0
     rts
@@ -240,103 +248,94 @@ fa: {
 }
 fb: {
     // if(bc==0)
-    lda.z bc
-    cmp #0
+    cpy #0
     bne __b1
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b1:
     // if(bc==1)
-    lda #1
-    cmp.z bc
+    cpy #1
     bne __b2
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b2:
     // if(bc==2)
-    lda #2
-    cmp.z bc
+    cpy #2
     bne __b3
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b3:
     // if(bc==3)
-    lda #3
-    cmp.z bc
+    cpy #3
     bne __b4
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b4:
     // if(bc==4)
-    lda #4
-    cmp.z bc
+    cpy #4
     bne __b5
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b5:
     // if(bc==5)
-    lda #5
-    cmp.z bc
+    cpy #5
     bne __b6
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b6:
     // if(bc==6)
-    lda #6
-    cmp.z bc
+    cpy #6
     bne __b7
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b7:
     // if(bc==7)
-    lda #7
-    cmp.z bc
+    cpy #7
     bne __b8
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b8:
     // if(bc==8)
-    lda #8
-    cmp.z bc
+    cpy #8
     bne __b9
     // bd++;
-    iny
-    tya
+    inc.z bd
+    lda.z bd
     // fc()
     jsr fc
   __b9:
     // if(bc==9)
-    lda #9
-    cmp.z bc
+    cpy #9
     bne __breturn
     // fc()
     lda #0
     jsr fc
-    ldy #0
+    lda #0
+    sta.z bd
     rts
   __breturn:
     // }

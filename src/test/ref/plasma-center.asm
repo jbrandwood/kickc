@@ -119,8 +119,8 @@ main: {
 doplasma: {
     .label angle = 7
     .label dist = 9
-    .label sin_x = $14
-    .label sin_y = $1e
+    .label sin_x = $20
+    .label sin_y = $14
     .label screen = 4
     .label y = 6
     // angle = SCREEN_ANGLE
@@ -252,12 +252,12 @@ memset: {
 // Make a plasma-friendly charset where the chars are randomly filled
 make_plasma_charset: {
     .label __7 = $16
-    .label __10 = $1e
-    .label __11 = $1e
-    .label s = $17
+    .label __10 = $17
+    .label __11 = $17
+    .label s = $19
     .label i = 6
     .label c = 9
-    .label __16 = $1e
+    .label __16 = $17
     // sid_rnd_init()
     jsr sid_rnd_init
     // print_cls()
@@ -283,10 +283,9 @@ make_plasma_charset: {
     rts
   __b2:
     // <c
-    lda.z c
+    ldx.z c
     // s = SINTABLE[<c]
-    tay
-    lda SINTABLE,y
+    lda SINTABLE,x
     sta.z s
     lda #0
     sta.z i
@@ -422,14 +421,14 @@ sid_rnd_init: {
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp(9) screen)
 init_angle_screen: {
-    .label __11 = $1c
+    .label __11 = $1e
     .label screen = 9
     .label screen_topline = 7
     .label screen_bottomline = 9
-    .label xw = $18
+    .label xw = $17
     .label yw = $1a
-    .label angle_w = $1c
-    .label ang_w = $17
+    .label angle_w = $1e
+    .label ang_w = $19
     .label x = $16
     .label xb = $b
     .label y = 6
@@ -546,17 +545,17 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($18) x, signed word zp($1a) y)
+// atan2_16(signed word zp($17) x, signed word zp($1a) y)
 atan2_16: {
     .label __2 = $14
-    .label __7 = $1e
+    .label __7 = $1c
     .label yi = $14
-    .label xi = $1e
-    .label angle = $1c
-    .label xd = $e
-    .label yd = $c
-    .label return = $1c
-    .label x = $18
+    .label xi = $1c
+    .label angle = $1e
+    .label xd = $20
+    .label yd = $e
+    .label return = $1e
+    .label x = $17
     .label y = $1a
     // (y>=0)?y:-y
     lda.z y+1
@@ -764,11 +763,11 @@ atan2_16: {
 init_dist_screen: {
     .label screen = 7
     .label screen_bottomline = 9
-    .label yds = $18
+    .label yds = $1a
     .label screen_topline = 7
     .label y = 6
-    .label xds = $1a
-    .label ds = $1a
+    .label xds = $1c
+    .label ds = $1c
     .label x = $16
     .label xb = $b
     // init_squares()
@@ -888,12 +887,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($1a) val)
+// sqrt(word zp($1c) val)
 sqrt: {
     .label __1 = $14
     .label __3 = $14
     .label found = $14
-    .label val = $1a
+    .label val = $1c
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
@@ -922,14 +921,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($1a) key, word* zp($14) items, byte register(X) num)
+// bsearch16u(word zp($1c) key, word* zp($14) items, byte register(X) num)
 bsearch16u: {
     .label __2 = $14
-    .label pivot = $1c
-    .label result = $1e
+    .label pivot = $1e
+    .label result = $20
     .label return = $14
     .label items = $14
-    .label key = $1a
+    .label key = $1c
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)
@@ -1016,8 +1015,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $1a
-    .label return_1 = $18
+    .label return = $1c
+    .label return_1 = $1a
     // return SQUARES[val];
     asl
     tay
@@ -1032,8 +1031,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $1c
-    .label sqr = $1e
+    .label squares = $1e
+    .label sqr = $1c
     // malloc(NUM_SQUARES*sizeof(word))
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta.z malloc.size

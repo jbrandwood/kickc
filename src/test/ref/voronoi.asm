@@ -117,6 +117,10 @@ render: {
     sta.z x
   __b2:
     // findcol(x, y)
+    lda.z x
+    sta.z findcol.x
+    lda.z y
+    sta.z findcol.y
     jsr findcol
     // findcol(x, y)
     txa
@@ -144,12 +148,12 @@ render: {
     // }
     rts
 }
-// findcol(byte zp(3) x, byte zp(2) y)
+// findcol(byte zp(8) x, byte zp(9) y)
 findcol: {
-    .label x = 3
-    .label y = 2
-    .label xp = 8
-    .label yp = 9
+    .label x = 8
+    .label y = 9
+    .label xp = $a
+    .label yp = $b
     .label i = 4
     .label mindiff = 5
     lda #$ff

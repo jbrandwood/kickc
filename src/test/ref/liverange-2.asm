@@ -4,42 +4,39 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    .label y = 3
-    .label x = 2
+    .label a = 2
     lda #0
-    sta.z x
+    sta.z a
   __b1:
-    lda #0
-    sta.z y
+    ldx #0
   __b2:
     ldy #0
   __b3:
-    // val1 = a+x
+    // ca = c+a
     tya
     clc
-    adc.z x
-    // print(y, val1)
-    ldx.z y
+    adc.z a
+    // print(b, ca)
     jsr print
-    // for( char a: 0..100 )
+    // for( char c: 0..100 )
     iny
     cpy #$65
     bne __b3
-    // for( char y: 0..100 )
-    inc.z y
-    lda #$65
-    cmp.z y
+    // for( char b: 0..100 )
+    inx
+    cpx #$65
     bne __b2
-    // for(char x: 0..100 )
-    inc.z x
-    cmp.z x
+    // for(char a: 0..100 )
+    inc.z a
+    lda #$65
+    cmp.z a
     bne __b1
     // }
     rts
 }
-// print(byte register(X) idx, byte register(A) val)
+// print(byte register(X) b, byte register(A) ca)
 print: {
-    // SCREEN[idx] = val
+    // SCREEN[b] = ca
     sta SCREEN,x
     // }
     rts

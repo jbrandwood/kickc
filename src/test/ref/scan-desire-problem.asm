@@ -57,19 +57,20 @@ main: {
     clc
     adc.z y
     // tile = level_address[z]
-    tay
-    lda level_address,y
+    tax
+    ldy level_address,x
     // draw_block(tile,x,y,YELLOW)
-    ldy.z x
-    ldx.z y
+    ldx.z x
+    lda.z y
+    sta.z draw_block.y
     jsr draw_block
     // for (byte y = 0; y < 9; y++)
     inc.z y
     jmp __b2
 }
-// draw_block(byte register(A) tileno, byte register(Y) x, byte register(X) y)
+// draw_block(byte register(Y) tileno, byte register(X) x, byte zp(6) y)
 draw_block: {
-    .label tileno = 6
+    .label y = 6
     .label x1 = $15
     .label z = 4
     .label z_1 = $15
@@ -82,18 +83,19 @@ draw_block: {
     .label __17 = $13
     .label __18 = $15
     // tileno = tileno << 2
-    asl
-    asl
-    sta.z tileno
-    // x1 = x << 1
     tya
+    asl
+    asl
+    tay
+    // x1 = x << 1
+    txa
     asl
     sta.z x1
     lda #0
     rol
     sta.z x1+1
     // y = y << 1
-    txa
+    lda.z y
     asl
     // mul8u(y,40)
     tax
@@ -109,7 +111,6 @@ draw_block: {
     adc.z z+1
     sta.z z_1+1
     // drawtile = tileset[tileno]
-    ldy.z tileno
     ldx tileset,y
     // screen[z] = drawtile
     lda.z z_1

@@ -12,12 +12,13 @@
   .const FF = $57
   // filled circle
   .const TT = $51
-  .label print_char_cursor = 8
-  .label print_line_cursor = 5
+  .label print_char_cursor = 9
+  .label print_line_cursor = 6
 main: {
     .label w1 = $f
     .label w2 = $11
-    .label s = 4
+    .label s = 5
+    .label op = 4
     .label j = 3
     .label i = 2
     // print_cls()
@@ -54,13 +55,19 @@ main: {
     sta.z w2
     lda swords+1,y
     sta.z w2+1
-    ldx #0
+    lda #0
+    sta.z op
   __b3:
     // compare(w1,w2,op)
     lda.z w1
     sta.z compare.w1
     lda.z w1+1
     sta.z compare.w1+1
+    lda.z w2
+    sta.z compare.w2
+    lda.z w2+1
+    sta.z compare.w2+1
+    lda.z op
     jsr compare
     // if(++s==3)
     inc.z s
@@ -77,8 +84,9 @@ main: {
     sta.z s
   __b4:
     // for( byte op: 0..5 )
-    inx
-    cpx #6
+    inc.z op
+    lda #6
+    cmp.z op
     bne __b3
     // for( byte j: 0..2)
     inc.z j
@@ -117,35 +125,35 @@ print_ln: {
     rts
 }
 // Compare two words using an operator
-// compare(signed word zp($a) w1, signed word zp($11) w2, byte register(X) op)
+// compare(signed word zp($b) w1, signed word zp($13) w2, byte register(A) op)
 compare: {
-    .label w1 = $a
-    .label w2 = $11
+    .label w1 = $b
+    .label w2 = $13
     .label ops = $d
-    .label r = 7
+    .label r = 8
     // if(op==LT)
-    cpx #LT
+    cmp #LT
     bne !__b1+
     jmp __b1
   !__b1:
     // if(op==LE)
-    cpx #LE
+    cmp #LE
     bne !__b2+
     jmp __b2
   !__b2:
     // if(op==GT)
-    cpx #GT
+    cmp #GT
     bne !__b3+
     jmp __b3
   !__b3:
     // if(op==GE)
-    cpx #GE
+    cmp #GE
     beq __b4
     // if(op==EQ)
-    cpx #EQ
+    cmp #EQ
     beq __b5
     // if(op==NE)
-    cpx #NE
+    cmp #NE
     bne b2
     // if(w1!=w2)
     lda.z w1
@@ -327,9 +335,9 @@ print_char: {
     rts
 }
 // Print a signed word as HEX
-// print_sword(signed word zp($a) w)
+// print_sword(signed word zp($b) w)
 print_sword: {
-    .label w = $a
+    .label w = $b
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -338,6 +346,10 @@ print_sword: {
     jsr print_char
   __b2:
     // print_word((word)w)
+    lda.z w
+    sta.z print_word.w
+    lda.z w+1
+    sta.z print_word.w+1
     jsr print_word
     // }
     rts
@@ -356,26 +368,23 @@ print_sword: {
     jmp __b2
 }
 // Print a word as HEX
-// print_word(word zp($a) w)
+// print_word(word zp($15) w)
 print_word: {
-    .label w = $a
+    .label w = $15
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp($c) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = $c
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -387,10 +396,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts

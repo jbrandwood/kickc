@@ -15,6 +15,10 @@ main: {
   __b1:
     // position_sprite(s, xpos, 50)
     stx.z position_sprite.spriteno
+    lda.z xpos
+    sta.z position_sprite.x
+    lda.z xpos+1
+    sta.z position_sprite.x+1
     jsr position_sprite
     // xpos += 10
     lda #$a
@@ -31,11 +35,11 @@ main: {
     // }
     rts
 }
-// position_sprite(byte zp(4) spriteno, word zp(2) x)
+// position_sprite(byte zp(4) spriteno, word zp(5) x)
 position_sprite: {
     .const y = $32
     .label spriteno = 4
-    .label x = 2
+    .label x = 5
     // spriteno * 2
     lda.z spriteno
     asl

@@ -5,8 +5,8 @@
   .label last_time = $b
   .label print_char_cursor = 9
   .label print_line_cursor = 2
-  .label Ticks = $d
-  .label Ticks_1 = $f
+  .label Ticks = $f
+  .label Ticks_1 = $11
 __bbegin:
   // last_time
   lda #<0
@@ -15,7 +15,7 @@ __bbegin:
   jsr main
   rts
 main: {
-    .label i = $d
+    .label i = $f
     // start()
     jsr start
     lda #<$400
@@ -136,7 +136,7 @@ print_str: {
 // utoa(word zp(5) value, byte* zp(7) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $f
+    .label digit_value = $11
     .label buffer = 7
     .label digit = 4
     .label value = 5
@@ -195,6 +195,10 @@ utoa: {
     jmp __b1
   __b5:
     // utoa_append(buffer++, value, digit_value)
+    lda.z buffer
+    sta.z utoa_append.buffer
+    lda.z buffer+1
+    sta.z utoa_append.buffer+1
     jsr utoa_append
     // utoa_append(buffer++, value, digit_value)
     // value = utoa_append(buffer++, value, digit_value)
@@ -214,11 +218,11 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp(7) buffer, word zp(5) value, word zp($f) sub)
+// utoa_append(byte* zp($d) buffer, word zp(5) value, word zp($11) sub)
 utoa_append: {
-    .label buffer = 7
+    .label buffer = $d
     .label value = 5
-    .label sub = $f
+    .label sub = $11
     .label return = 5
     ldx #0
   __b1:
@@ -327,16 +331,14 @@ end: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp($f) w)
+// print_word(word zp($11) w)
 print_word: {
-    .label w = $f
+    .label w = $11
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts

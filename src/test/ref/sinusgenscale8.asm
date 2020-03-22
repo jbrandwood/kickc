@@ -31,13 +31,14 @@ sin8u_table: {
     .label amplitude = max-min
     .const sum = min+max
     .const mid = sum/2+1
-    .label step = $f
-    .label sinx = $13
+    .label step = $11
+    .label sinx = $15
     .label sinx_sc = $a
+    .label sinx_tr = $16
     .label sintab = 4
     // Iterate over the table
     .label x = 2
-    .label i = $11
+    .label i = $13
     // div16u(PI2_u4f12, tabsize)
     jsr div16u
     // div16u(PI2_u4f12, tabsize)
@@ -66,8 +67,7 @@ sin8u_table: {
     sta.z print_str.str+1
     jsr print_str
     // print_byte(min)
-    lda #min
-    sta.z print_byte.b
+    ldx #min
     jsr print_byte
     // print_str(" max:")
     lda #<str2
@@ -76,8 +76,7 @@ sin8u_table: {
     sta.z print_str.str+1
     jsr print_str
     // print_byte(max)
-    lda #max
-    sta.z print_byte.b
+    ldx #max
     jsr print_byte
     // print_str(" ampl:")
     lda #<str3
@@ -86,8 +85,7 @@ sin8u_table: {
     sta.z print_str.str+1
     jsr print_str
     // print_byte(amplitude)
-    lda #amplitude
-    sta.z print_byte.b
+    ldx #amplitude
     jsr print_byte
     // print_str(" mid:")
     lda #<str4
@@ -96,8 +94,7 @@ sin8u_table: {
     sta.z print_str.str+1
     jsr print_str
     // print_byte(mid)
-    lda #mid
-    sta.z print_byte.b
+    ldx #mid
     jsr print_byte
     // print_ln()
     lda #<$400
@@ -143,10 +140,10 @@ sin8u_table: {
     // >sinx_sc
     lda.z sinx_sc+1
     // sinx_tr = mid+>sinx_sc
-    tax
-    axs #-[mid]
+    clc
+    adc #mid
+    sta.z sinx_tr
     // *sintab++ = sinx_tr
-    txa
     ldy #0
     sta (sintab),y
     // *sintab++ = sinx_tr;
@@ -199,7 +196,7 @@ sin8u_table: {
     sta.z print_str.str+1
     jsr print_str
     // print_byte(sinx_tr)
-    stx.z print_byte.b
+    ldx.z sinx_tr
     jsr print_byte
     // print_ln()
     jsr print_ln
@@ -260,11 +257,10 @@ print_ln: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp($c) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = $c
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -276,10 +272,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts
@@ -338,6 +333,10 @@ print_sword: {
     jsr print_char
   __b2:
     // print_word((word)w)
+    lda.z w
+    sta.z print_word.w
+    lda.z w+1
+    sta.z print_word.w+1
     jsr print_word
     // }
     rts
@@ -356,16 +355,14 @@ print_sword: {
     jmp __b2
 }
 // Print a word as HEX
-// print_word(word zp($d) w)
+// print_word(word zp($f) w)
 print_word: {
-    .label w = $d
+    .label w = $f
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
@@ -382,6 +379,7 @@ print_sbyte: {
     jsr print_char
   __b2:
     // print_byte((byte)b)
+    ldx.z b
     jsr print_byte
     // }
     rts
@@ -426,7 +424,7 @@ mul8su: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $d
+    .label mb = $f
     .label res = $a
     .label return = $a
     // mb = b
@@ -475,9 +473,9 @@ sin8s: {
     .const DIV_6 = $2b
     .label __4 = $d
     .label x = $d
-    .label x1 = $14
-    .label x3 = $15
-    .label usinx = $16
+    .label x1 = $17
+    .label x3 = $18
+    .label usinx = $19
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = $c
     // if(x >= PI_u4f12 )
@@ -610,11 +608,11 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($13) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($16) select)
 mulu8_sel: {
     .label __0 = $a
     .label __1 = $a
-    .label select = $13
+    .label select = $16
     // mul8u(v1, v2)
     tya
     jsr mul8u
@@ -638,7 +636,7 @@ mulu8_sel: {
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
 div16u: {
-    .label return = $f
+    .label return = $11
     // divr16u(dividend, divisor, 0)
     jsr divr16u
     // divr16u(dividend, divisor, 0)
@@ -649,12 +647,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($d) dividend, word zp($11) rem)
+// divr16u(word zp($f) dividend, word zp($d) rem)
 divr16u: {
-    .label rem = $11
-    .label dividend = $d
-    .label quotient = $f
-    .label return = $f
+    .label rem = $d
+    .label dividend = $f
+    .label quotient = $11
+    .label return = $11
     ldx #0
     txa
     sta.z quotient
@@ -731,7 +729,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = $11
+    .label dst = $13
     lda #<str
     sta.z dst
     lda #>str

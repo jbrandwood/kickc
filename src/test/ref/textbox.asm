@@ -68,6 +68,8 @@ main: {
     axs #-[$a]
     stx.z textbox.y2
     lda.z x
+    sta.z textbox.x1
+    lda.z x
     sta.z textbox.y1
     lda #<text2
     sta.z textbox.text
@@ -101,24 +103,32 @@ main: {
   !:
     jmp __b4
 }
-// textbox(byte zp(2) x1, byte zp(5) y1, byte zp(6) x2, byte zp(7) y2, byte* zp(8) text)
+// textbox(byte zp(5) x1, byte zp(6) y1, byte zp(7) x2, byte zp(8) y2, byte* zp(9) text)
 textbox: {
-    .label __3 = $c
-    .label __9 = $10
-    .label __18 = $12
-    .label x1 = 2
-    .label y1 = 5
-    .label x2 = 6
-    .label y2 = 7
-    .label y = 5
-    .label x = $b
-    .label z = $c
-    .label i = $a
-    .label text = 8
-    .label __32 = $10
-    .label __33 = $e
-    .label __34 = $c
+    .label __3 = $d
+    .label __9 = $14
+    .label __18 = $16
+    .label x1 = 5
+    .label y1 = 6
+    .label x2 = 7
+    .label y2 = 8
+    .label y = 6
+    .label x = $c
+    .label z = $d
+    .label i = $b
+    .label text = 9
+    .label __32 = $14
+    .label __33 = $12
+    .label __34 = $d
     // draw_window(x1, y1, x2, y2)
+    lda.z x1
+    sta.z draw_window.x1
+    lda.z y1
+    sta.z draw_window.y1
+    lda.z x2
+    sta.z draw_window.x2
+    lda.z y2
+    sta.z draw_window.y2
     jsr draw_window
     // y = y1+1
     inc.z y
@@ -296,35 +306,35 @@ textbox: {
     inx
     jmp __b3
 }
-// draw_window(byte zp(2) x1, byte zp(5) y1, byte zp(6) x2, byte zp(7) y2)
+// draw_window(byte zp($f) x1, byte zp($16) y1, byte zp($10) x2, byte zp($11) y2)
 draw_window: {
-    .label __2 = $17
-    .label __3 = $13
-    .label __4 = $19
-    .label __5 = $15
-    .label __14 = $23
-    .label __15 = $25
-    .label __19 = $21
-    .label __20 = $1f
-    .label __26 = $1d
-    .label x1 = 2
-    .label y1 = 5
-    .label x2 = 6
-    .label y2 = 7
-    .label z = $13
-    .label q = $15
-    .label z_1 = $1f
-    .label y3 = $12
-    .label z_2 = $1b
-    .label __27 = $23
-    .label __28 = $25
-    .label __29 = $17
-    .label __30 = $13
-    .label __31 = $21
-    .label __32 = $1f
-    .label __33 = $19
-    .label __34 = $15
-    .label __35 = $1d
+    .label __2 = $1b
+    .label __3 = $17
+    .label __4 = $1d
+    .label __5 = $19
+    .label __14 = $27
+    .label __15 = $29
+    .label __19 = $25
+    .label __20 = $23
+    .label __26 = $21
+    .label x1 = $f
+    .label y1 = $16
+    .label x2 = $10
+    .label y2 = $11
+    .label z = $17
+    .label q = $19
+    .label z_1 = $23
+    .label y3 = $16
+    .label z_2 = $1f
+    .label __27 = $27
+    .label __28 = $29
+    .label __29 = $1b
+    .label __30 = $17
+    .label __31 = $25
+    .label __32 = $23
+    .label __33 = $1d
+    .label __34 = $19
+    .label __35 = $21
     // z = y1*40
     lda.z y1
     asl
@@ -472,9 +482,7 @@ draw_window: {
     rts
   __b7:
     // y = y1+1
-    ldy.z y1
-    iny
-    sty.z y3
+    inc.z y3
   b3:
   // blank inside
     // for(byte y = y1+1; y < y2; y++)

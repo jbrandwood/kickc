@@ -4,35 +4,42 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    ldy #0
+    .label i = 2
+    .label j = 3
+    lda #0
+    sta.z i
   __b1:
     // line(i)
-    tya
-    tax
+    ldy.z i
     jsr line
     // for(byte i : 0..8)
-    iny
-    cpy #9
+    inc.z i
+    lda #9
+    cmp.z i
     bne __b1
-    ldy #$a
+    lda #$a
+    sta.z j
   __b2:
     // line(j)
-    tya
-    tax
+    ldy.z j
     jsr line
     // for(byte j : 10..18)
-    iny
-    cpy #$13
+    inc.z j
+    lda #$13
+    cmp.z j
     bne __b2
     // }
     rts
 }
-// line(byte register(X) l)
+// line(byte register(Y) l)
 line: {
     // plot(l)
+    tya
+    tax
     jsr plot
     // plot(l+20)
-    txa
+    tya
+    tax
     axs #-[$14]
     jsr plot
     // }

@@ -7,8 +7,9 @@
   // Remainder after unsigned 16-bit division
   .label rem16u = $13
   .label print_char_cursor = 5
-  .label print_line_cursor = 2
+  .label print_line_cursor = 3
 main: {
+    .label i = 2
     // lin16u_gen(557, 29793, lintab1, 20)
     lda #<lintab1
     sta.z lin16u_gen.lintab
@@ -97,10 +98,12 @@ main: {
     lda #>$400
     sta.z print_line_cursor+1
     jsr print_ln
-    ldx #0
+    lda #0
+    sta.z i
   __b1:
     // for(byte i=0; i<20; i++)
-    cpx #$14
+    lda.z i
+    cmp #$14
     bcc __b2
     lda.z print_line_cursor
     sta.z print_char_cursor
@@ -148,7 +151,7 @@ main: {
     rts
   __b2:
     // print_byte(i)
-    stx.z print_byte.b
+    ldx.z i
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -162,7 +165,7 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_word(lintab1[i])
-    txa
+    lda.z i
     asl
     tay
     lda lintab1,y
@@ -177,7 +180,7 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_word(lintab2[i])
-    txa
+    lda.z i
     asl
     tay
     lda lintab2,y
@@ -192,7 +195,7 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_word(lintab3[i])
-    txa
+    lda.z i
     asl
     tay
     lda lintab3,y
@@ -203,7 +206,7 @@ main: {
     // print_ln()
     jsr print_ln
     // for(byte i=0; i<20; i++)
-    inx
+    inc.z i
     jmp __b1
     lintab1: .fill 2*$14, 0
     lintab2: .fill 2*$14, 0
@@ -241,22 +244,19 @@ print_ln: {
 print_word: {
     .label w = 7
     // print_byte(>w)
-    lda.z w+1
-    sta.z print_byte.b
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    sta.z print_byte.b
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp(4) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = 4
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -268,10 +268,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts

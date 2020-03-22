@@ -98,7 +98,7 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias (byte) main::i#2 = (byte) main::i#3 
+Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) b::i#1 (byte) b::i#0
 Identical Phi Values (byte) c::i#2 (byte) c::i#0
@@ -213,17 +213,17 @@ c::@return: scope:[c]  from c::@1
 VARIABLE REGISTER WEIGHTS
 (void()) b((byte) b::i)
 (byte) b::i
-(byte) b::i#0 13.0
+(byte) b::i#0 1102.0
 (void()) c((byte) c::i)
 (byte) c::i
-(byte) c::i#0 17.166666666666664
+(byte) c::i#0 166833.6666666667
 (byte) c::j
-(byte) c::j#1 151.5
-(byte) c::j#2 151.5
+(byte) c::j#1 1500001.5
+(byte) c::j#2 1500001.5
 (void()) main()
 (byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#2 11.0
+(byte) main::i#1 151.5
+(byte) main::i#2 101.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -359,15 +359,15 @@ Potential registers zp[1]:4 [ b::i#0 ] : zp[1]:4 , reg byte a , reg byte x , reg
 Potential registers zp[1]:5 [ c::i#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [c] 303: zp[1]:3 [ c::j#2 c::j#1 ] 17.17: zp[1]:5 [ c::i#0 ] 
-Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [b] 13: zp[1]:4 [ b::i#0 ] 
+Uplift Scope [c] 3,000,003: zp[1]:3 [ c::j#2 c::j#1 ] 166,833.67: zp[1]:5 [ c::i#0 ] 
+Uplift Scope [b] 1,102: zp[1]:4 [ b::i#0 ] 
+Uplift Scope [main] 252.5: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
 Uplifting [c] best 2707 combination reg byte x [ c::j#2 c::j#1 ] reg byte a [ c::i#0 ] 
-Uplifting [main] best 2587 combination reg byte y [ main::i#2 main::i#1 ] 
-Uplifting [b] best 2556 combination reg byte y [ b::i#0 ] 
-Uplifting [] best 2556 combination 
+Uplifting [b] best 2674 combination reg byte a [ b::i#0 ] 
+Uplifting [main] best 2574 combination reg byte y [ main::i#2 main::i#1 ] 
+Uplifting [] best 2574 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -406,7 +406,8 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) b::i#0 ← (byte) main::i#2
+    // [6] (byte) b::i#0 ← (byte) main::i#2 -- vbuaa=vbuyy 
+    tya
     // [7] call b 
     jsr b
     jmp __b2
@@ -424,10 +425,9 @@ main: {
     rts
 }
   // b
-// b(byte register(Y) i)
+// b(byte register(A) i)
 b: {
-    // [11] (byte) c::i#0 ← (byte) b::i#0 -- vbuaa=vbuyy 
-    tya
+    // [11] (byte) c::i#0 ← (byte) b::i#0
     // [12] call c 
     // [14] phi from b to c [phi:b->c]
   c_from_b:
@@ -512,31 +512,31 @@ FINAL SYMBOL TABLE
 (void()) b((byte) b::i)
 (label) b::@return
 (byte) b::i
-(byte) b::i#0 reg byte y 13.0
+(byte) b::i#0 reg byte a 1102.0
 (void()) c((byte) c::i)
 (label) c::@1
 (label) c::@return
 (byte) c::i
-(byte) c::i#0 reg byte a 17.166666666666664
+(byte) c::i#0 reg byte a 166833.6666666667
 (byte) c::j
-(byte) c::j#1 reg byte x 151.5
-(byte) c::j#2 reg byte x 151.5
+(byte) c::j#1 reg byte x 1500001.5
+(byte) c::j#2 reg byte x 1500001.5
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte y 16.5
-(byte) main::i#2 reg byte y 11.0
+(byte) main::i#1 reg byte y 151.5
+(byte) main::i#2 reg byte y 101.0
 
 reg byte y [ main::i#2 main::i#1 ]
 reg byte x [ c::j#2 c::j#1 ]
-reg byte y [ b::i#0 ]
+reg byte a [ b::i#0 ]
 reg byte a [ c::i#0 ]
 
 
 FINAL ASSEMBLER
-Score: 1521
+Score: 1539
 
   // File Comments
   // Upstart
@@ -562,7 +562,8 @@ main: {
     // main::@1
   __b1:
     // b(i)
-    // [6] (byte) b::i#0 ← (byte) main::i#2
+    // [6] (byte) b::i#0 ← (byte) main::i#2 -- vbuaa=vbuyy 
+    tya
     // [7] call b 
     jsr b
     // main::@2
@@ -578,11 +579,10 @@ main: {
     rts
 }
   // b
-// b(byte register(Y) i)
+// b(byte register(A) i)
 b: {
     // c(i)
-    // [11] (byte) c::i#0 ← (byte) b::i#0 -- vbuaa=vbuyy 
-    tya
+    // [11] (byte) c::i#0 ← (byte) b::i#0
     // [12] call c 
     // [14] phi from b to c [phi:b->c]
     jsr c

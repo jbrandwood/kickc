@@ -6,6 +6,7 @@ main: {
     ldy #0
   __b1:
     // b(i)
+    tya
     jsr b
     // for(byte i:0..100)
     iny
@@ -14,10 +15,9 @@ main: {
     // }
     rts
 }
-// b(byte register(Y) i)
+// b(byte register(A) i)
 b: {
     // c(i)
-    tya
     jsr c
     // }
     rts

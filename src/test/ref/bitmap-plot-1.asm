@@ -269,10 +269,9 @@ bitmap_plot: {
     adc.z __1+1
     sta.z plotter+1
     // <x
-    lda.z x
+    ldx.z x
     // *plotter |= bitmap_plot_bit[<x]
-    tay
-    lda bitmap_plot_bit,y
+    lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
     sta (plotter),y
@@ -281,15 +280,15 @@ bitmap_plot: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($1b) a, signed word zp(6) b)
+// mul16s(signed word zp($14) a, signed word zp(6) b)
 mul16s: {
     .label __9 = $24
     .label __13 = $2a
     .label __16 = $24
-    .label __17 = $1b
+    .label __17 = $14
     .label m = 8
     .label return = 8
-    .label a = $1b
+    .label a = $14
     .label b = 6
     // mul16u((word)a, (word) b)
     lda.z a
@@ -480,11 +479,11 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($1d) str, byte register(X) c, word zp($1b) num)
+// memset(void* zp($1d) str, byte register(X) c, word zp($14) num)
 memset: {
-    .label end = $1b
+    .label end = $14
     .label dst = $1d
-    .label num = $1b
+    .label num = $14
     .label str = $1d
     // if(num>0)
     lda.z num
@@ -585,7 +584,7 @@ bitmap_init: {
 // Generate signed word sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zp($19) sintab)
+// sin16s_gen2(signed word* zp($1b) sintab)
 sin16s_gen2: {
     .label wavelength = $200
     .const min = -$1001
@@ -594,11 +593,11 @@ sin16s_gen2: {
     .label __6 = 8
     .label __9 = $24
     .label step = $20
-    .label sintab = $19
+    .label sintab = $1b
     // u[4.28]
     // Iterate over the table
     .label x = $c
-    .label i = $17
+    .label i = $19
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
@@ -696,16 +695,17 @@ sin16s_gen2: {
 sin16s: {
     .label __4 = $26
     .label x = $10
-    .label return = $1b
+    .label return = $14
     .label x1 = $2a
-    .label x2 = $14
-    .label x3 = $14
+    .label x2 = $24
+    .label x3 = $2e
     .label x3_6 = $2c
-    .label usinx = $1b
-    .label x4 = $14
-    .label x5 = $2c
-    .label x5_128 = $2c
-    .label sinx = $1b
+    .label usinx = $2c
+    .label x4 = $24
+    .label x5 = $14
+    .label x5_128 = $14
+    .label usinx_1 = $14
+    .label sinx = $14
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -813,10 +813,6 @@ sin16s: {
     jsr mulu16_sel
     // mulu16_sel(x1, x1, 0)
     // x2 = mulu16_sel(x1, x1, 0)
-    lda.z mulu16_sel.return
-    sta.z x2
-    lda.z mulu16_sel.return+1
-    sta.z x2+1
     // mulu16_sel(x2, x1, 1)
     lda.z x1
     sta.z mulu16_sel.v2
@@ -831,6 +827,10 @@ sin16s: {
     sta.z mulu16_sel.return_1+1
     // x3 = mulu16_sel(x2, x1, 1)
     // mulu16_sel(x3, $10000/6, 1)
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     ldx #1
     lda #<$10000/6
     sta.z mulu16_sel.v2
@@ -838,16 +838,24 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     jsr mulu16_sel
     // mulu16_sel(x3, $10000/6, 1)
+    lda.z mulu16_sel.return
+    sta.z mulu16_sel.return_2
+    lda.z mulu16_sel.return+1
+    sta.z mulu16_sel.return_2+1
     // x3_6 = mulu16_sel(x3, $10000/6, 1)
     // usinx = x1 - x3_6
     lda.z x1
     sec
-    sbc.z x3_6
+    sbc.z usinx
     sta.z usinx
     lda.z x1+1
-    sbc.z x3_6+1
+    sbc.z usinx+1
     sta.z usinx+1
     // mulu16_sel(x3, x1, 0)
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     lda.z x1
     sta.z mulu16_sel.v2
     lda.z x1+1
@@ -855,10 +863,6 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x3, x1, 0)
-    lda.z mulu16_sel.return
-    sta.z mulu16_sel.return_1
-    lda.z mulu16_sel.return+1
-    sta.z mulu16_sel.return_1+1
     // x4 = mulu16_sel(x3, x1, 0)
     // mulu16_sel(x4, x1, 0)
     lda.z x1
@@ -868,6 +872,10 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x4, x1, 0)
+    lda.z mulu16_sel.return
+    sta.z mulu16_sel.return_3
+    lda.z mulu16_sel.return+1
+    sta.z mulu16_sel.return_3+1
     // x5 = mulu16_sel(x4, x1, 0)
     // x5_128 = x5>>4
     lsr.z x5_128+1
@@ -879,13 +887,13 @@ sin16s: {
     lsr.z x5_128+1
     ror.z x5_128
     // usinx = usinx + x5_128
-    lda.z usinx
+    lda.z usinx_1
     clc
-    adc.z x5_128
-    sta.z usinx
-    lda.z usinx+1
-    adc.z x5_128+1
-    sta.z usinx+1
+    adc.z usinx
+    sta.z usinx_1
+    lda.z usinx_1+1
+    adc.z usinx+1
+    sta.z usinx_1+1
     // if(isUpper!=0)
     cpy #0
     beq __b3
@@ -903,19 +911,17 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($14) v1, word zp($1d) v2, byte register(X) select)
+// mulu16_sel(word zp($24) v1, word zp($1d) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = 8
     .label __1 = 8
-    .label v1 = $14
+    .label v1 = $24
     .label v2 = $1d
-    .label return = $2c
-    .label return_1 = $14
+    .label return = $24
+    .label return_1 = $2e
+    .label return_2 = $2c
+    .label return_3 = $14
     // mul16u(v1, v2)
-    lda.z v1
-    sta.z mul16u.a
-    lda.z v1+1
-    sta.z mul16u.a+1
     jsr mul16u
     // mul16u(v1, v2)
     // mul16u(v1, v2)<<select
@@ -940,7 +946,7 @@ mulu16_sel: {
 // Divide unsigned 32-bit dword dividend with a 16-bit word divisor
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $2c
+    .label quotient_hi = $2e
     .label quotient_lo = $1d
     .label return = $20
     // divr16u(>dividend, divisor, 0)
@@ -982,10 +988,10 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($1b) dividend, word zp($14) rem)
+// divr16u(word zp($17) dividend, word zp($14) rem)
 divr16u: {
     .label rem = $14
-    .label dividend = $1b
+    .label dividend = $17
     .label quotient = $1d
     .label return = $1d
     ldx #0

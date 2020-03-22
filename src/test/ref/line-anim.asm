@@ -63,6 +63,8 @@ main: {
     sta.z i
   __b1:
     // point_init(i)
+    lda.z i
+    sta.z point_init.point_idx
     jsr point_init
     // bitmap_plot(x_start[i], y_start[i])
     lda.z i
@@ -116,10 +118,9 @@ bitmap_plot: {
     adc.z __1+1
     sta.z plotter+1
     // <x
-    lda.z x
+    ldx.z x
     // *plotter |= bitmap_plot_bit[<x]
-    tay
-    lda bitmap_plot_bit,y
+    lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
     sta (plotter),y
@@ -127,14 +128,14 @@ bitmap_plot: {
     rts
 }
 // Initialize the points to be animated
-// point_init(byte zp(2) point_idx)
+// point_init(byte zp($13) point_idx)
 point_init: {
     .label __3 = 7
     .label __4 = $d
     .label __9 = $f
     .label __10 = $11
     .label __11 = $11
-    .label point_idx = 2
+    .label point_idx = $13
     .label y_diff = 7
     .label abs16s1_return = 3
     .label abs16s2_return = 5

@@ -34,7 +34,7 @@
   .label SCREEN = $400
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
-  .label rem16u = $12
+  .label rem16u = $10
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
@@ -77,14 +77,14 @@ main: {
     jmp __b1
 }
 render_sine: {
-    .label __1 = $c
-    .label __4 = $c
-    .label __10 = $c
-    .label __11 = $c
-    .label sin_val = $c
-    .label sin2_val = $c
+    .label __1 = $10
+    .label __4 = $10
+    .label __10 = $10
+    .label __11 = $10
+    .label sin_val = $10
+    .label sin2_val = $10
     .label xpos = 6
-    .label sin_idx = $14
+    .label sin_idx = $12
     lda #<0
     sta.z xpos
     sta.z xpos+1
@@ -132,6 +132,10 @@ render_sine: {
     // ypos = wrap_y(sin_val)
     tax
     // bitmap_plot(xpos,ypos)
+    lda.z xpos
+    sta.z bitmap_plot.x
+    lda.z xpos+1
+    sta.z bitmap_plot.x+1
     jsr bitmap_plot
     // sin2+sin_idx
     lda.z sin_idx
@@ -169,6 +173,10 @@ render_sine: {
     // ypos2 = wrap_y(sin2_val+10)
     tax
     // bitmap_plot(xpos,ypos2)
+    lda.z xpos
+    sta.z bitmap_plot.x
+    lda.z xpos+1
+    sta.z bitmap_plot.x+1
     jsr bitmap_plot
     // xpos++;
     inc.z xpos
@@ -194,11 +202,11 @@ render_sine: {
     jmp __b1
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(6) x, byte register(X) y)
+// bitmap_plot(word zp($10) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $1c
-    .label plotter = $16
-    .label x = 6
+    .label __1 = $1a
+    .label plotter = $14
+    .label x = $10
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -220,19 +228,18 @@ bitmap_plot: {
     adc.z __1+1
     sta.z plotter+1
     // <x
-    lda.z x
+    ldx.z x
     // *plotter |= bitmap_plot_bit[<x]
-    tay
-    lda bitmap_plot_bit,y
+    lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
     sta (plotter),y
     // }
     rts
 }
-// wrap_y(signed word zp($c) y)
+// wrap_y(signed word zp($10) y)
 wrap_y: {
-    .label y = $c
+    .label y = $10
   __b1:
     // while(y>=200)
     lda.z y
@@ -281,13 +288,13 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .label __6 = 8
-    .label __9 = $1c
-    .label step = $18
+    .label __9 = $1a
+    .label step = $16
     .label sintab = 6
     // u[4.28]
     // Iterate over the table
     .label x = 2
-    .label i = $14
+    .label i = $12
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
@@ -375,13 +382,13 @@ sin16s_gen2: {
 }
 // Multiply of two signed words to a signed double word
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($16) a)
+// mul16s(signed word zp($1a) a)
 mul16s: {
-    .label __9 = $22
-    .label __16 = $22
+    .label __9 = $20
+    .label __16 = $20
     .label m = 8
     .label return = 8
-    .label a = $16
+    .label a = $1a
     // mul16u((word)a, (word) b)
     lda.z a
     sta.z mul16u.a
@@ -420,13 +427,13 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-// mul16u(word zp($12) a, word zp($c) b)
+// mul16u(word zp($14) a, word zp($10) b)
 mul16u: {
-    .label mb = $e
-    .label a = $12
+    .label mb = $c
+    .label a = $14
     .label res = 8
     .label return = 8
-    .label b = $c
+    .label b = $10
     // mb = b
     lda.z b
     sta.z mb
@@ -484,20 +491,21 @@ mul16u: {
 // Calculate signed word sinus sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zp($e) x)
+// sin16s(dword zp($c) x)
 sin16s: {
-    .label __4 = $1e
-    .label x = $e
-    .label return = $16
-    .label x1 = $22
-    .label x2 = $1c
-    .label x3 = $1c
-    .label x3_6 = $24
-    .label usinx = $16
-    .label x4 = $1c
-    .label x5 = $24
-    .label x5_128 = $24
-    .label sinx = $16
+    .label __4 = $1c
+    .label x = $c
+    .label return = $1a
+    .label x1 = $20
+    .label x2 = $14
+    .label x3 = $24
+    .label x3_6 = $22
+    .label usinx = $22
+    .label x4 = $14
+    .label x5 = $14
+    .label x5_128 = $1a
+    .label usinx_1 = $1a
+    .label sinx = $1a
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -605,10 +613,6 @@ sin16s: {
     jsr mulu16_sel
     // mulu16_sel(x1, x1, 0)
     // x2 = mulu16_sel(x1, x1, 0)
-    lda.z mulu16_sel.return
-    sta.z x2
-    lda.z mulu16_sel.return+1
-    sta.z x2+1
     // mulu16_sel(x2, x1, 1)
     lda.z x1
     sta.z mulu16_sel.v2
@@ -623,6 +627,10 @@ sin16s: {
     sta.z mulu16_sel.return_1+1
     // x3 = mulu16_sel(x2, x1, 1)
     // mulu16_sel(x3, $10000/6, 1)
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     ldx #1
     lda #<$10000/6
     sta.z mulu16_sel.v2
@@ -630,16 +638,24 @@ sin16s: {
     sta.z mulu16_sel.v2+1
     jsr mulu16_sel
     // mulu16_sel(x3, $10000/6, 1)
+    lda.z mulu16_sel.return
+    sta.z mulu16_sel.return_2
+    lda.z mulu16_sel.return+1
+    sta.z mulu16_sel.return_2+1
     // x3_6 = mulu16_sel(x3, $10000/6, 1)
     // usinx = x1 - x3_6
     lda.z x1
     sec
-    sbc.z x3_6
+    sbc.z usinx
     sta.z usinx
     lda.z x1+1
-    sbc.z x3_6+1
+    sbc.z usinx+1
     sta.z usinx+1
     // mulu16_sel(x3, x1, 0)
+    lda.z x3
+    sta.z mulu16_sel.v1
+    lda.z x3+1
+    sta.z mulu16_sel.v1+1
     lda.z x1
     sta.z mulu16_sel.v2
     lda.z x1+1
@@ -647,10 +663,6 @@ sin16s: {
     ldx #0
     jsr mulu16_sel
     // mulu16_sel(x3, x1, 0)
-    lda.z mulu16_sel.return
-    sta.z mulu16_sel.return_1
-    lda.z mulu16_sel.return+1
-    sta.z mulu16_sel.return_1+1
     // x4 = mulu16_sel(x3, x1, 0)
     // mulu16_sel(x4, x1, 0)
     lda.z x1
@@ -662,8 +674,12 @@ sin16s: {
     // mulu16_sel(x4, x1, 0)
     // x5 = mulu16_sel(x4, x1, 0)
     // x5_128 = x5>>4
-    lsr.z x5_128+1
-    ror.z x5_128
+    lda.z x5+1
+    lsr
+    sta.z x5_128+1
+    lda.z x5
+    ror
+    sta.z x5_128
     lsr.z x5_128+1
     ror.z x5_128
     lsr.z x5_128+1
@@ -671,13 +687,13 @@ sin16s: {
     lsr.z x5_128+1
     ror.z x5_128
     // usinx = usinx + x5_128
-    lda.z usinx
+    lda.z usinx_1
     clc
-    adc.z x5_128
-    sta.z usinx
-    lda.z usinx+1
-    adc.z x5_128+1
-    sta.z usinx+1
+    adc.z usinx
+    sta.z usinx_1
+    lda.z usinx_1+1
+    adc.z usinx+1
+    sta.z usinx_1+1
     // if(isUpper!=0)
     cpy #0
     beq __b3
@@ -695,19 +711,16 @@ sin16s: {
 }
 // Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($1c) v1, word zp($c) v2, byte register(X) select)
+// mulu16_sel(word zp($14) v1, word zp($10) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = 8
     .label __1 = 8
-    .label v1 = $1c
-    .label v2 = $c
-    .label return = $24
-    .label return_1 = $1c
+    .label v1 = $14
+    .label v2 = $10
+    .label return = $14
+    .label return_1 = $24
+    .label return_2 = $22
     // mul16u(v1, v2)
-    lda.z v1
-    sta.z mul16u.a
-    lda.z v1+1
-    sta.z mul16u.a+1
     jsr mul16u
     // mul16u(v1, v2)
     // mul16u(v1, v2)<<select
@@ -733,8 +746,8 @@ mulu16_sel: {
 // The 16-bit word remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $24
-    .label quotient_lo = $1c
-    .label return = $18
+    .label quotient_lo = $1a
+    .label return = $16
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -774,12 +787,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($16) dividend, word zp($12) rem)
+// divr16u(word zp($14) dividend, word zp($10) rem)
 divr16u: {
-    .label rem = $12
-    .label dividend = $16
-    .label quotient = $1c
-    .label return = $1c
+    .label rem = $10
+    .label dividend = $14
+    .label quotient = $1a
+    .label return = $1a
     ldx #0
     txa
     sta.z quotient
@@ -868,12 +881,12 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($16) str, byte register(X) c, word zp($14) num)
+// memset(void* zp($14) str, byte register(X) c, word zp($12) num)
 memset: {
-    .label end = $14
-    .label dst = $16
-    .label num = $14
-    .label str = $16
+    .label end = $12
+    .label dst = $14
+    .label num = $12
+    .label str = $14
     // if(num>0)
     lda.z num
     bne !+
@@ -914,7 +927,7 @@ memset: {
 // Initialize bitmap plotting tables
 bitmap_init: {
     .label __7 = $26
-    .label yoffs = $14
+    .label yoffs = $12
     ldx #0
     lda #$80
   __b1:

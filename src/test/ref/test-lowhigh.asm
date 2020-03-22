@@ -8,10 +8,10 @@
 main: {
     .label __3 = $c
     .label __6 = $12
-    .label __16 = $14
-    .label __20 = $16
-    .label __24 = $18
-    .label __28 = $1a
+    .label __16 = $18
+    .label __20 = $1a
+    .label __24 = $1c
+    .label __28 = $1e
     .label __32 = $c
     .label __33 = $12
     .label dw2 = $e
@@ -90,6 +90,14 @@ main: {
     lda.z __33+1
     sta.z dw2+1
     // print_dword(dw2)
+    lda.z dw2
+    sta.z print_dword.dw
+    lda.z dw2+1
+    sta.z print_dword.dw+1
+    lda.z dw2+2
+    sta.z print_dword.dw+2
+    lda.z dw2+3
+    sta.z print_dword.dw+3
     // Test set/get low word of dword
     jsr print_dword
     // print_char(' ')
@@ -133,8 +141,7 @@ main: {
     lda.z dw2+3
     sta.z __20+1
     // print_byte(< >dw2)
-    lda.z __20
-    tax
+    ldx.z __20
     jsr print_byte
     // print_char(' ')
   // Test get low high byte of dword
@@ -158,8 +165,7 @@ main: {
     lda.z dw2+1
     sta.z __28+1
     // print_byte(< <dw2)
-    lda.z __28
-    tax
+    ldx.z __28
     jsr print_byte
     // print_ln()
   // Test get low low byte of dword
@@ -249,20 +255,18 @@ print_char: {
 print_word: {
     .label w = $c
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Print a dword as HEX
-// print_dword(dword zp($e) dw)
+// print_dword(dword zp($14) dw)
 print_dword: {
-    .label dw = $e
+    .label dw = $14
     // print_word(>dw)
     lda.z dw+2
     sta.z print_word.w

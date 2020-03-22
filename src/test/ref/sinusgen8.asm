@@ -9,8 +9,9 @@
   .const PI_HALF_u4f12 = $1922
   .const wavelength = $c0
   .label print_line_cursor = $400
-  .label print_char_cursor = 2
+  .label print_char_cursor = 3
 main: {
+    .label i = 2
     // sin8s_gen(sintab2, wavelength)
     jsr sin8s_gen
     // print_cls()
@@ -19,20 +20,23 @@ main: {
     sta.z print_char_cursor
     lda #>print_line_cursor
     sta.z print_char_cursor+1
-    ldx #0
+    lda #0
+    sta.z i
   __b1:
     // sb = sintab2[i]-(signed byte)sintabref[i]
-    lda sintab2,x
+    ldy.z i
+    lda sintab2,y
     sec
-    sbc sintabref,x
+    sbc sintabref,y
     // print_sbyte(sb)
     sta.z print_sbyte.b
     jsr print_sbyte
     // print_str("  ")
     jsr print_str
     // for(byte i: 0..191)
-    inx
-    cpx #$c0
+    inc.z i
+    lda #$c0
+    cmp.z i
     bne __b1
     // }
     rts
@@ -40,9 +44,9 @@ main: {
     .byte 0
 }
 // Print a zero-terminated string
-// print_str(byte* zp(4) str)
+// print_str(byte* zp(5) str)
 print_str: {
-    .label str = 4
+    .label str = 5
     lda #<main.str
     sta.z str
     lda #>main.str
@@ -72,9 +76,9 @@ print_str: {
     jmp __b1
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte zp($a) b)
+// print_sbyte(signed byte zp($b) b)
 print_sbyte: {
-    .label b = $a
+    .label b = $b
     // if(b<0)
     lda.z b
     bmi __b1
@@ -83,6 +87,7 @@ print_sbyte: {
     jsr print_char
   __b2:
     // print_byte((byte)b)
+    ldx.z b
     jsr print_byte
     // }
     rts
@@ -113,11 +118,10 @@ print_char: {
     rts
 }
 // Print a byte as HEX
-// print_byte(byte zp($a) b)
+// print_byte(byte register(X) b)
 print_byte: {
-    .label b = $a
     // b>>4
-    lda.z b
+    txa
     lsr
     lsr
     lsr
@@ -129,10 +133,9 @@ print_byte: {
     jsr print_char
     // b&$f
     lda #$f
-    and.z b
+    axs #0
     // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
+    lda print_hextab,x
     jsr print_char
     // }
     rts
@@ -150,7 +153,7 @@ memset: {
     .const num = $3e8
     .label str = print_line_cursor
     .label end = str+num
-    .label dst = 4
+    .label dst = 5
     lda #<str
     sta.z dst
     lda #>str
@@ -180,14 +183,14 @@ memset: {
 // Generate signed byte sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zp(8) sintab)
+// sin8s_gen(signed byte* zp(9) sintab)
 sin8s_gen: {
-    .label step = $10
-    .label sintab = 8
+    .label step = $11
+    .label sintab = 9
     // u[4.12]
     // Iterate over the table
-    .label x = 6
-    .label i = 4
+    .label x = 7
+    .label i = 5
     // div16u(PI2_u4f12, wavelength)
     jsr div16u
     // div16u(PI2_u4f12, wavelength)
@@ -247,17 +250,17 @@ sin8s_gen: {
 // Calculate signed byte sinus sin(x)
 // x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp($c) x)
+// sin8s(word zp($d) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = $c
-    .label x = $c
-    .label x1 = $12
-    .label x3 = $13
-    .label usinx = $14
+    .label __4 = $d
+    .label x = $d
+    .label x1 = $13
+    .label x3 = $14
+    .label usinx = $15
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-    .label isUpper = $a
+    .label isUpper = $b
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -388,11 +391,11 @@ sin8s: {
 }
 // Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($b) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($c) select)
 mulu8_sel: {
-    .label __0 = $e
-    .label __1 = $e
-    .label select = $b
+    .label __0 = $f
+    .label __1 = $f
+    .label select = $c
     // mul8u(v1, v2)
     tya
     jsr mul8u
@@ -413,9 +416,9 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $c
-    .label res = $e
-    .label return = $e
+    .label mb = $d
+    .label res = $f
+    .label return = $f
     // mb = b
     sta.z mb
     lda #0
@@ -458,7 +461,7 @@ mul8u: {
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
 div16u: {
-    .label return = $10
+    .label return = $11
     // divr16u(dividend, divisor, 0)
     jsr divr16u
     // divr16u(dividend, divisor, 0)
@@ -469,12 +472,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($e) dividend, word zp($c) rem)
+// divr16u(word zp($f) dividend, word zp($d) rem)
 divr16u: {
-    .label rem = $c
-    .label dividend = $e
-    .label quotient = $10
-    .label return = $10
+    .label rem = $d
+    .label dividend = $f
+    .label quotient = $11
+    .label return = $11
     ldx #0
     txa
     sta.z quotient

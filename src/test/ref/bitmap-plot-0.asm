@@ -72,6 +72,10 @@ main: {
     sta.z x+1
   __b2:
     // bitmap_plot(x, y)
+    lda.z x
+    sta.z bitmap_plot.x
+    lda.z x+1
+    sta.z bitmap_plot.x+1
     ldx.z y
     jsr bitmap_plot
     // x += vx
@@ -130,11 +134,11 @@ main: {
     jmp __b2
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(2) x, byte register(X) y)
+// bitmap_plot(word zp(9) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $b
-    .label plotter = 9
-    .label x = 2
+    .label __1 = $d
+    .label plotter = $b
+    .label x = 9
     // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
@@ -156,10 +160,9 @@ bitmap_plot: {
     adc.z __1+1
     sta.z plotter+1
     // <x
-    lda.z x
+    ldx.z x
     // *plotter |= bitmap_plot_bit[<x]
-    tay
-    lda bitmap_plot_bit,y
+    lda bitmap_plot_bit,x
     ldy #0
     ora (plotter),y
     sta (plotter),y
@@ -280,7 +283,7 @@ memset: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label __7 = $d
+    .label __7 = $f
     .label yoffs = $b
     ldx #0
     lda #$80

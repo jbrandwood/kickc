@@ -101,26 +101,30 @@ print_word_at: {
     // print_byte_at(>w, at)
     lda.z w+1
     sta.z print_byte_at.b
+    lda.z at
+    sta.z print_byte_at.at
+    lda.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // print_byte_at(<w, at+2)
     lda.z w
     sta.z print_byte_at.b
     lda #2
     clc
-    adc.z print_byte_at.at
+    adc.z at
     sta.z print_byte_at.at
-    bcc !+
-    inc.z print_byte_at.at+1
-  !:
+    lda #0
+    adc.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // }
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zp($b) b, byte* zp(4) at)
+// print_byte_at(byte zp($b) b, byte* zp(6) at)
 print_byte_at: {
     .label b = $b
-    .label at = 4
+    .label at = 6
     // b>>4
     lda.z b
     lsr
@@ -154,9 +158,9 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp(6) at)
+// print_char_at(byte register(X) ch, byte* zp($10) at)
 print_char_at: {
-    .label at = 6
+    .label at = $10
     // *(at) = ch
     txa
     ldy #0
@@ -456,8 +460,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $12
-    .label sqr = 6
+    .label squares = 6
+    .label sqr = $10
     // malloc(NUM_SQUARES*sizeof(word))
     jsr malloc
     lda #<SQUARES
@@ -545,12 +549,12 @@ clock_start: {
     rts
 }
 // Make charset from proto chars
-// init_font_hex(byte* zp($12) charset)
+// init_font_hex(byte* zp($10) charset)
 init_font_hex: {
     .label __0 = $18
     .label idx = $b
-    .label proto_lo = $10
-    .label charset = $12
+    .label proto_lo = $12
+    .label charset = $10
     .label c1 = $a
     .label proto_hi = 6
     .label c = 9

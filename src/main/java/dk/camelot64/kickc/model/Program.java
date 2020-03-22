@@ -99,7 +99,6 @@ public class Program {
    /** The register weight of all variables describing how much the variable would theoretically gain from being in a register. PASS 3-5 (CACHED ON-DEMAND) */
    private VariableRegisterWeights variableRegisterWeights;
    /** Enable live ranges per call path optimization, which limits memory usage and code, but takes a lot of compile time. */
-   //private boolean enableLiveRangeCallPath = true;
    private boolean enableLiveRangeCallPath = false;
 
    public Program() {

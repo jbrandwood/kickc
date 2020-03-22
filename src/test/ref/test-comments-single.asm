@@ -9,21 +9,21 @@
   .const a = 'a'
 // The program entry point
 main: {
-    ldy #0
     ldx #0
+    ldy #0
   // Do some sums
   __b1:
     // sum(a, b)
-    txa
+    tya
     jsr sum
     // SCREEN[i++] = sum(a, b)
     // Output the result on the screen
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[i++] = sum(a, b);
-    iny
-    // for(byte b: 0..10 )
     inx
-    cpx #$b
+    // for(byte b: 0..10 )
+    iny
+    cpy #$b
     bne __b1
     // }
     rts

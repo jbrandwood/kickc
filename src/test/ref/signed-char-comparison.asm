@@ -5,13 +5,15 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    ldx #-$80
+    ldy #-$80
   __b1:
     // debug(dy)
+    tya
+    tax
     jsr debug
     // for(signed char dy:-128..127)
-    inx
-    cpx #-$80
+    iny
+    cpy #-$80
     bne __b1
     // }
     rts

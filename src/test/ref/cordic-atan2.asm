@@ -32,6 +32,10 @@ main: {
     sta.z x
   __b2:
     // atan2_8(x, y)
+    lda.z x
+    sta.z atan2_8.x
+    lda.z y
+    sta.z atan2_8.y
     jsr atan2_8
     txa
     // angle = atan2_8(x, y)
@@ -61,15 +65,15 @@ main: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_8
 // Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
-// atan2_8(signed byte zp(3) x, signed byte zp(2) y)
+// atan2_8(signed byte zp($11) x, signed byte zp($f) y)
 atan2_8: {
     .label __7 = 8
     .label xi = 8
-    .label xd = $f
+    .label xd = $10
     .label angle = $e
     .label i = $d
-    .label x = 3
-    .label y = 2
+    .label x = $11
+    .label y = $f
     // (y>0)?y:-y
     lda.z y
     cmp #0
@@ -219,7 +223,7 @@ atan2_8: {
 // Make charset from proto chars
 // init_font_hex(byte* zp(9) charset)
 init_font_hex: {
-    .label __0 = $f
+    .label __0 = $11
     .label idx = $e
     .label proto_lo = $b
     .label charset = 9

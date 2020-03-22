@@ -6,6 +6,7 @@ import dk.camelot64.kickc.passes.Pass2AliasElimination;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -15,9 +16,12 @@ public class LiveRangeVariablesEffectiveSimple implements LiveRangeVariablesEffe
 
    /** All variables potentially effective alive by statement index. */
    private Map<Integer, Collection<VariableRef>> statementAliveEffective;
+   /** Block aliases for each statement. */
+   private Map<Integer, Pass2AliasElimination.Aliases> statementLocalAliases;
 
-   public LiveRangeVariablesEffectiveSimple(Map<Integer, Collection<VariableRef>> statementAliveEffective) {
+   public LiveRangeVariablesEffectiveSimple(LinkedHashMap<Integer, Collection<VariableRef>> statementAliveEffective, Map<Integer, Pass2AliasElimination.Aliases> statementLocalAliases) {
       this.statementAliveEffective = statementAliveEffective;
+      this.statementLocalAliases = statementLocalAliases;
    }
 
    /**
@@ -33,33 +37,49 @@ public class LiveRangeVariablesEffectiveSimple implements LiveRangeVariablesEffe
       return statementAliveEffective.get(statement.getIndex());
    }
 
+   /**
+    * Get local aliases at a statement.
+    *
+    * @param statement The statement to examine
+    * @return All local aliases
+    */
    @Override
    public AliveCombinations getAliveCombinations(Statement statement) {
-      return new AliveCombinationsSimple(getAliveEffective(statement));
+      return new AliveCombinationsSimple(getAliveEffective(statement), getLocalAliases(statement));
    }
 
-   public class AliveCombinationsSimple implements AliveCombinations {
+   private Pass2AliasElimination.Aliases getLocalAliases(Statement statement) {
+      return statementLocalAliases.get(statement.getIndex());
+   }
+
+   public static class AliveCombinationsSimple implements AliveCombinations {
 
       private Collection<VariableRef> alive;
 
-      public AliveCombinationsSimple(Collection<VariableRef> alive) {
+      private Pass2AliasElimination.Aliases localAliases;
+
+      AliveCombinationsSimple(Collection<VariableRef> alive, Pass2AliasElimination.Aliases localAliases) {
          this.alive = alive;
+         this.localAliases = localAliases;
       }
 
       @Override
       public Collection<AliveCombination> getAll() {
          final ArrayList<AliveCombination> aliveCombinations = new ArrayList<>();
-         aliveCombinations.add(new AliveCombinationSimple(alive));
+         aliveCombinations.add(new AliveCombinationSimple(alive, localAliases));
          return aliveCombinations;
       }
    }
 
-   public class AliveCombinationSimple implements AliveCombination {
+   public static class AliveCombinationSimple implements AliveCombination {
 
       private Collection<VariableRef> alive;
 
-      public AliveCombinationSimple(Collection<VariableRef> alive) {
+      private Pass2AliasElimination.Aliases localAliases;
+
+      AliveCombinationSimple(Collection<VariableRef> alive, Pass2AliasElimination.Aliases localAliases) {
          this.alive = alive;
+         this.localAliases = localAliases;
       }
 
       @Override
@@ -69,12 +89,19 @@ public class LiveRangeVariablesEffectiveSimple implements LiveRangeVariablesEffe
 
       @Override
       public Pass2AliasElimination.Aliases getEffectiveAliasesAtStmt() {
-         return null;
+         return localAliases;
       }
 
-      @Override
-      public String toString() {
-         return getAliveString(alive);
+      public String toString(Program program) {
+         final Pass2AliasElimination.Aliases aliases = getEffectiveAliasesAtStmt();
+         return getAliveString(alive) + " " + getAliasString(aliases, program);
+      }
+
+      private String getAliasString(Pass2AliasElimination.Aliases aliases, Program program) {
+         if(aliases == null)
+            return "";
+         else
+            return aliases.toString(program);
       }
 
       private String getAliveString(Collection<VariableRef> alive) {

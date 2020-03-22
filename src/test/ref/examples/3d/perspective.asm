@@ -51,7 +51,8 @@ do_perspective: {
     sta.z print_str.str+1
     jsr print_str
     // print_sbyte(x)
-    ldx #x
+    lda #x
+    sta.z print_sbyte.b
     jsr print_sbyte
     // print_str(",")
     lda #<str1
@@ -60,7 +61,8 @@ do_perspective: {
     sta.z print_str.str+1
     jsr print_str
     // print_sbyte(y)
-    ldx #y
+    lda #y
+    sta.z print_sbyte.b
     jsr print_sbyte
     // print_str(",")
     lda #<str1
@@ -69,7 +71,8 @@ do_perspective: {
     sta.z print_str.str+1
     jsr print_str
     // print_sbyte(z)
-    ldx #z
+    lda #z
+    sta.z print_sbyte.b
     jsr print_sbyte
     // print_str(") -> (")
     lda #<str3
@@ -237,16 +240,18 @@ perspective: {
     rts
 }
 // Print a signed byte as HEX
-// print_sbyte(signed byte register(X) b)
+// print_sbyte(signed byte zp($a) b)
 print_sbyte: {
+    .label b = $a
     // if(b<0)
-    cpx #0
+    lda.z b
     bmi __b1
     // print_char(' ')
     lda #' '
     jsr print_char
   __b2:
     // print_byte((byte)b)
+    ldx.z b
     jsr print_byte
     // }
     rts
@@ -255,11 +260,11 @@ print_sbyte: {
     lda #'-'
     jsr print_char
     // b = -b
-    txa
+    lda.z b
     eor #$ff
     clc
     adc #1
-    tax
+    sta.z b
     jmp __b2
 }
 // Clear the screen. Also resets current line/char cursor.

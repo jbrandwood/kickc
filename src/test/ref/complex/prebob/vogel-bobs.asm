@@ -49,7 +49,7 @@ main: {
     .label __10 = 6
     .label __12 = 6
     .label __13 = 6
-    .label x = $c
+    .label x = $e
     .label y = 6
     .label a = 2
     .label r = 9
@@ -158,7 +158,7 @@ main: {
     lda.z x+1
     sta.z renderBob.xpos
     lda.z y+1
-    tax
+    sta.z renderBob.ypos
     jsr renderBob
     // for(char i: 0..NUM_BOBS-1)
     inc.z i
@@ -231,21 +231,21 @@ keyboard_matrix_read: {
 // Render a single BOB at a given x/y-position
 // X-position is 0-151. Each x-position is 2 pixels wide.
 // Y-position is 0-183. Each y-position is 1 pixel high.
-// renderBob(byte zp($e) xpos, byte register(X) ypos)
+// renderBob(byte zp($10) xpos, byte zp($11) ypos)
 renderBob: {
-    .label __2 = $10
-    .label __5 = $12
-    .label xpos = $e
-    .label x_char_offset = $f
-    .label y_offset = $10
-    .label screen = $10
+    .label __2 = $12
+    .label __5 = $14
+    .label xpos = $10
+    .label ypos = $11
+    .label y_offset = $12
+    .label screen = $12
     // x_char_offset = xpos/BOB_SHIFTS_X
     lda.z xpos
     lsr
     lsr
-    sta.z x_char_offset
+    tax
     // y_char_offset = ypos/BOB_SHIFTS_Y
-    txa
+    lda.z ypos
     lsr
     lsr
     lsr
@@ -265,7 +265,7 @@ renderBob: {
     adc #>BOB_SCREEN
     sta.z __2+1
     // screen = BOB_SCREEN+y_offset+x_char_offset
-    lda.z x_char_offset
+    txa
     clc
     adc.z screen
     sta.z screen
@@ -273,8 +273,8 @@ renderBob: {
     inc.z screen+1
   !:
     // ypos&7
-    txa
-    and #7
+    lda #7
+    and.z ypos
     // (ypos&7)*BOB_SHIFTS_X
     asl
     asl
@@ -354,11 +354,11 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zp($13) b)
+// mulf8s_prepared(signed byte zp($15) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 6
-    .label b = $13
+    .label b = $15
     // mulf8u_prepared((byte) b)
     lda.z b
     jsr mulf8u_prepared
@@ -435,7 +435,7 @@ mulf8u_prepare: {
 }
 // Clean Up the rendered BOB's
 renderBobCleanup: {
-    .label screen = $14
+    .label screen = $16
     ldx #0
   __b1:
     // screen = RENDERBOB_CLEANUP[i]
@@ -487,7 +487,7 @@ memset: {
     .const c = 0
     .const num = $3e8
     .label end = str+num
-    .label dst = $c
+    .label dst = $e
     lda #<str
     sta.z dst
     lda #>str
@@ -584,10 +584,10 @@ prepareBobs: {
     .label bob_table = $16
     .label shift_y = $a
     // Populate charset and tables
-    .label bob_glyph = $c
-    .label cell = $f
-    .label bob_table_idx = $b
-    .label shift_x = $e
+    .label bob_glyph = $e
+    .label cell = $11
+    .label bob_table_idx = $d
+    .label shift_x = $10
     // progress_init(SCREEN_BASIC)
     jsr progress_init
     // bobCharsetFindOrAddGlyph(PROTO_BOB+48)
@@ -661,6 +661,10 @@ prepareBobs: {
     jmp __b2
   __b6:
     // bobCharsetFindOrAddGlyph(bob_glyph)
+    lda.z bob_glyph
+    sta.z bobCharsetFindOrAddGlyph.bob_glyph
+    lda.z bob_glyph+1
+    sta.z bobCharsetFindOrAddGlyph.bob_glyph+1
     jsr bobCharsetFindOrAddGlyph
     // bobCharsetFindOrAddGlyph(bob_glyph)
     txa
@@ -725,10 +729,10 @@ progress_inc: {
 // Looks through BOB_CHARSET to find the passed bob glyph if present.
 // If not present it is added
 // Returns the glyph ID
-// bobCharsetFindOrAddGlyph(byte* zp($c) bob_glyph)
+// bobCharsetFindOrAddGlyph(byte* zp($18) bob_glyph)
 bobCharsetFindOrAddGlyph: {
-    .label bob_glyph = $c
-    .label glyph_cursor = $18
+    .label bob_glyph = $18
+    .label glyph_cursor = $b
     lda #<BOB_CHARSET
     sta.z glyph_cursor
     lda #>BOB_CHARSET
@@ -793,8 +797,8 @@ bobCharsetFindOrAddGlyph: {
 }
 // Shift PROTO_BOB right one X pixel
 shiftProtoBobRight: {
-    .label carry = $13
-    .label i = $12
+    .label carry = $15
+    .label i = $14
     ldy #0
     ldx #0
     txa
@@ -891,13 +895,13 @@ mulf_init: {
     // Counter used for determining x%2==0
     .label sqr1_hi = $18
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $14
+    .label sqr = $12
     .label sqr1_lo = $16
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $10
-    .label sqr2_lo = $c
+    .label sqr2_hi = $e
+    .label sqr2_lo = $b
     //Start with g(0)=f(255)
-    .label dir = $b
+    .label dir = $d
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi

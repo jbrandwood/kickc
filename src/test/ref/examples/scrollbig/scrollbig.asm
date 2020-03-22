@@ -8,10 +8,12 @@
   .label RASTER = $d012
   .label BGCOL = $d020
   .label SCROLL = $d016
-  .label current_bit = 2
+  // Soft-scroll using $d016 - trigger bit-scroll/char-scroll when needed
+  .label scroll = 2
+  .label current_bit = 3
   // Scroll the next bit from the current char onto the screen - trigger next char if needed
-  .label current_chargen = 3
-  .label nxt = 5
+  .label current_chargen = 4
+  .label nxt = 6
 main: {
     // fillscreen(SCREEN, $20)
     jsr fillscreen
@@ -25,7 +27,8 @@ main: {
     sta.z nxt+1
     lda #1
     sta.z current_bit
-    ldx #7
+    lda #7
+    sta.z scroll
   // Wait for raster
   __b1:
     // while(*RASTER!=$fe)
@@ -47,22 +50,25 @@ main: {
 }
 scroll_soft: {
     // if(--scroll==$ff)
-    dex
-    cpx #$ff
+    dec.z scroll
+    lda #$ff
+    cmp.z scroll
     bne __b1
     // scroll_bit()
     jsr scroll_bit
-    ldx #7
+    lda #7
+    sta.z scroll
   __b1:
     // *SCROLL = scroll
-    stx SCROLL
+    lda.z scroll
+    sta SCROLL
     // }
     rts
 }
 scroll_bit: {
-    .label __7 = 3
-    .label c = 3
-    .label sc = 7
+    .label __7 = 4
+    .label c = 4
+    .label sc = 8
     // current_bit = current_bit/2
     lsr.z current_bit
     // if(current_bit==0)
@@ -209,7 +215,7 @@ next_char: {
 // Fill the screen with one char
 fillscreen: {
     .const fill = $20
-    .label cursor = 7
+    .label cursor = 8
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN

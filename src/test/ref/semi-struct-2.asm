@@ -33,17 +33,16 @@
   .const SIZEOF_ENTRY = $12
   // The maximal number of files
   .const MAX_FILES = $90
-  .label print_char_cursor = 6
-  .label print_line_cursor = $c
-  .label print_line_cursor_1 = 2
+  .label print_char_cursor = 4
+  .label print_line_cursor = 2
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
-    .label fileEntry1___0 = 4
-    .label fileEntry2___0 = $a
-    .label entry1 = 4
-    .label entry2 = $a
+    .label fileEntry1___0 = $a
+    .label fileEntry2___0 = 8
+    .label entry1 = $a
+    .label entry2 = 8
     // keyboard_init()
     jsr keyboard_init
     // mul8u(idx, SIZEOF_ENTRY)
@@ -102,14 +101,10 @@ main: {
     jsr print_str
     // print_ln()
     lda #<$400
-    sta.z print_line_cursor_1
+    sta.z print_line_cursor
     lda #>$400
-    sta.z print_line_cursor_1+1
+    sta.z print_line_cursor+1
     jsr print_ln
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -117,11 +112,11 @@ main: {
     // print_ln()
     jsr print_ln
     // printEntry(entry1)
+    lda.z entry1
+    sta.z printEntry.entry
+    lda.z entry1+1
+    sta.z printEntry.entry+1
     jsr printEntry
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -159,14 +154,10 @@ main: {
     jsr print_str
     // print_ln()
     lda #<$400
-    sta.z print_line_cursor_1
+    sta.z print_line_cursor
     lda #>$400
-    sta.z print_line_cursor_1+1
+    sta.z print_line_cursor+1
     jsr print_ln
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -179,10 +170,6 @@ main: {
     lda.z entry2+1
     sta.z printEntry.entry+1
     jsr printEntry
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -230,7 +217,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 2
+    .label dst = $c
     lda #<str
     sta.z dst
     lda #>str
@@ -287,9 +274,9 @@ keyboard_matrix_read: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp($c) str)
 print_str: {
-    .label str = 2
+    .label str = $c
   __b1:
     // while(*str)
     ldy #0
@@ -320,32 +307,27 @@ print_ln: {
     // print_line_cursor + $28
     lda #$28
     clc
-    adc.z print_line_cursor_1
+    adc.z print_line_cursor
     sta.z print_line_cursor
-    lda #0
-    adc.z print_line_cursor_1+1
-    sta.z print_line_cursor+1
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
     // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
-    bcc __b2
+    bcc __b1
     bne !+
     lda.z print_line_cursor
     cmp.z print_char_cursor
-    bcc __b2
+    bcc __b1
   !:
     // }
     rts
-  __b2:
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
-    jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zp(4) entry)
+// printEntry(byte* zp(6) entry)
 printEntry: {
-    .label entry = 4
+    .label entry = 6
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -364,10 +346,6 @@ printEntry: {
     sta.z print_word.w+1
     // print_word((word)*entryBufDisk(entry))
     jsr print_word
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -388,10 +366,6 @@ printEntry: {
     sta.z print_word.w+1
     // print_word((word)*entryBufEdit(entry))
     jsr print_word
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -412,10 +386,6 @@ printEntry: {
     lda (entry),y
     sta.z print_word.w+1
     jsr print_word
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -436,10 +406,6 @@ printEntry: {
     sta.z print_word.w+1
     // print_word((word)*entryTsOrder(entry))
     jsr print_word
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -457,10 +423,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -478,10 +440,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -499,10 +457,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -520,10 +474,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -544,10 +494,6 @@ printEntry: {
     lda (entry),y
     sta.z print_word.w+1
     jsr print_word
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -565,10 +511,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -586,10 +528,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -607,10 +545,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     lda.z print_line_cursor
@@ -628,10 +562,6 @@ printEntry: {
     lda (entry),y
     tax
     jsr print_byte
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
     // print_ln()
     jsr print_ln
     // }
@@ -701,30 +631,28 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(8) w)
+// print_word(word zp($c) w)
 print_word: {
-    .label w = 8
+    .label w = $c
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zp(8) entry, byte register(X) n)
+// initEntry(byte* zp(6) entry, byte register(X) n)
 initEntry: {
-    .label __1 = $e
-    .label __3 = $10
-    .label __5 = $12
-    .label __7 = $14
-    .label __17 = $16
-    .label entry = 8
+    .label __1 = $c
+    .label __3 = $e
+    .label __5 = $10
+    .label __7 = $12
+    .label __17 = $14
+    .label entry = 6
     // 0x1111+n
     txa
     clc
@@ -863,8 +791,8 @@ initEntry: {
 // mul8u(byte register(X) a)
 mul8u: {
     .label mb = $c
-    .label res = $a
-    .label return = $a
+    .label res = 8
+    .label return = 8
     lda #<SIZEOF_ENTRY
     sta.z mb
     lda #>SIZEOF_ENTRY

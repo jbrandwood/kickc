@@ -12,6 +12,7 @@
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
+  .label idx = 4
 main: {
     .label s = 2
     lda #<SCREEN
@@ -47,80 +48,66 @@ main: {
 testSimpleTypes: {
     // assertType(typeid(12ub), typeid(unsigned byte))
   // Simple types
-    ldx #0
-    lda #TYPEID_BYTE
-    sta.z assertType.t2
-    tay
+    lda #0
+    sta.z idx
+    ldy #TYPEID_BYTE
+    ldx #TYPEID_BYTE
     jsr assertType
     // assertType(typeid(12uc), typeid(unsigned byte))
-    lda #TYPEID_BYTE
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_BYTE
+    ldx #TYPEID_BYTE
     jsr assertType
     // assertType(typeid(12sb), typeid(signed byte))
-    lda #TYPEID_SIGNED_BYTE
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_BYTE
+    ldx #TYPEID_SIGNED_BYTE
     jsr assertType
     // assertType(typeid(12sc), typeid(signed byte))
-    lda #TYPEID_SIGNED_BYTE
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_BYTE
+    ldx #TYPEID_SIGNED_BYTE
     jsr assertType
     // assertType(typeid(12uw), typeid(unsigned word))
-    lda #TYPEID_WORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_WORD
+    ldx #TYPEID_WORD
     jsr assertType
     // assertType(typeid(12ui), typeid(unsigned word))
-    lda #TYPEID_WORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_WORD
+    ldx #TYPEID_WORD
     jsr assertType
     // assertType(typeid(12us), typeid(unsigned word))
-    lda #TYPEID_WORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_WORD
+    ldx #TYPEID_WORD
     jsr assertType
     // assertType(typeid(12sw), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_WORD
+    ldx #TYPEID_SIGNED_WORD
     jsr assertType
     // assertType(typeid(12si), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_WORD
+    ldx #TYPEID_SIGNED_WORD
     jsr assertType
     // assertType(typeid(12ss), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_WORD
+    ldx #TYPEID_SIGNED_WORD
     jsr assertType
     // assertType(typeid(12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_DWORD
+    ldx #TYPEID_DWORD
     jsr assertType
     // assertType(typeid(12ul), typeid(unsigned dword))
-    lda #TYPEID_DWORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_DWORD
+    ldx #TYPEID_DWORD
     jsr assertType
     // assertType(typeid(12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_DWORD
+    ldx #TYPEID_SIGNED_DWORD
     jsr assertType
     // assertType(typeid(12sl), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_DWORD
+    ldx #TYPEID_SIGNED_DWORD
     jsr assertType
     // assertType(typeid(12l), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
-    sta.z assertType.t2
-    tay
+    ldy #TYPEID_SIGNED_DWORD
+    ldx #TYPEID_SIGNED_DWORD
     jsr assertType
     // }
     rts
@@ -128,27 +115,29 @@ testSimpleTypes: {
 // Check that the two passed type IDs are equal.
 // Shows a letter symbolizing t1
 // If they are equal the letter is green - if not it is red.
-// assertType(byte register(Y) t1, byte zp(4) t2)
+// assertType(byte register(X) t1, byte register(Y) t2)
 assertType: {
-    .label t2 = 4
     // if(t1==t2)
-    tya
-    cmp.z t2
+    sty.z $ff
+    cpx.z $ff
     beq __b1
     // COLS[idx] = RED
     lda #RED
-    sta COLS,x
+    ldy.z idx
+    sta COLS,y
   __b2:
     // SCREEN[idx++] = t1
-    tya
-    sta SCREEN,x
+    ldy.z idx
+    txa
+    sta SCREEN,y
     // SCREEN[idx++] = t1;
-    inx
+    inc.z idx
     // }
     rts
   __b1:
     // COLS[idx] = GREEN
     lda #GREEN
-    sta COLS,x
+    ldy.z idx
+    sta COLS,y
     jmp __b2
 }

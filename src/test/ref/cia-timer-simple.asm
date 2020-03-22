@@ -25,9 +25,9 @@ main: {
     jmp __b1
 }
 // Print a dword as HEX at a specific position
-// print_dword_at(dword zp(9) dw)
+// print_dword_at(dword zp($b) dw)
 print_dword_at: {
-    .label dw = 9
+    .label dw = $b
     // print_word_at(>dw, at)
     lda.z dw+2
     sta.z print_word_at.w
@@ -59,26 +59,30 @@ print_word_at: {
     // print_byte_at(>w, at)
     lda.z w+1
     sta.z print_byte_at.b
+    lda.z at
+    sta.z print_byte_at.at
+    lda.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // print_byte_at(<w, at+2)
     lda.z w
     sta.z print_byte_at.b
     lda #2
     clc
-    adc.z print_byte_at.at
+    adc.z at
     sta.z print_byte_at.at
-    bcc !+
-    inc.z print_byte_at.at+1
-  !:
+    lda #0
+    adc.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // }
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zp(6) b, byte* zp(4) at)
+// print_byte_at(byte zp(6) b, byte* zp(7) at)
 print_byte_at: {
     .label b = 6
-    .label at = 4
+    .label at = 7
     // b>>4
     lda.z b
     lsr
@@ -112,9 +116,9 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp(7) at)
+// print_char_at(byte register(X) ch, byte* zp(9) at)
 print_char_at: {
-    .label at = 7
+    .label at = 9
     // *(at) = ch
     txa
     ldy #0
@@ -125,7 +129,7 @@ print_char_at: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = 9
+    .label return = $b
     // 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec

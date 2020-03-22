@@ -522,7 +522,7 @@ renderBobInit: {
 // Creates the pre-shifted bobs into BOB_CHARSET and populates the BOB_TABLES
 // Modifies PROTO_BOB by shifting it around
 prepareBobs: {
-    .label bob_table = $20
+    .label bob_table = $1e
     .label shift_y = $12
     // Populate charset and tables
     .label bob_glyph = $19
@@ -602,6 +602,10 @@ prepareBobs: {
     jmp __b2
   __b6:
     // charsetFindOrAddGlyph(bob_glyph, BOB_CHARSET)
+    lda.z bob_glyph
+    sta.z charsetFindOrAddGlyph.glyph
+    lda.z bob_glyph+1
+    sta.z charsetFindOrAddGlyph.glyph+1
     jsr charsetFindOrAddGlyph
     // charsetFindOrAddGlyph(bob_glyph, BOB_CHARSET)
     txa
@@ -665,9 +669,9 @@ progress_inc: {
 }
 // Looks through a charset to find a glyph if present. If not present it is added.
 // Returns the glyph ID
-// charsetFindOrAddGlyph(byte* zp($19) glyph)
+// charsetFindOrAddGlyph(byte* zp($20) glyph)
 charsetFindOrAddGlyph: {
-    .label glyph = $19
+    .label glyph = $20
     .label glyph_cursor = $13
     lda #<BOB_CHARSET
     sta.z glyph_cursor
@@ -829,13 +833,13 @@ mulf_init: {
     // x/2
     .label c = $12
     // Counter used for determining x%2==0
-    .label sqr1_hi = $13
+    .label sqr1_hi = $20
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $1e
-    .label sqr1_lo = $20
+    .label sqr = $1c
+    .label sqr1_lo = $1e
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $1c
-    .label sqr2_lo = $19
+    .label sqr2_hi = $19
+    .label sqr2_lo = $13
     //Start with g(0)=f(255)
     .label dir = $15
     ldx #0

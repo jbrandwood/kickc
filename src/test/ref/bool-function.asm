@@ -16,6 +16,7 @@ main: {
   !:
     eor #1
     tay
+    txa
     jsr isSet
     // if( isSet(i, (i&1)==0))
     cmp #0
@@ -38,10 +39,9 @@ main: {
 }
 // Determine whether to set a char to '*.
 // Returns true if i&8!=0 or b=true
-// isSet(byte register(X) i, bool register(Y) b)
+// isSet(byte register(A) i, bool register(Y) b)
 isSet: {
     // i&8
-    txa
     and #8
     // (i&8)!=0
     eor #0

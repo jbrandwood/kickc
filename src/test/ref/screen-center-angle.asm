@@ -96,26 +96,30 @@ print_word_at: {
     // print_byte_at(>w, at)
     lda.z w+1
     sta.z print_byte_at.b
+    lda.z at
+    sta.z print_byte_at.at
+    lda.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // print_byte_at(<w, at+2)
     lda.z w
     sta.z print_byte_at.b
     lda #2
     clc
-    adc.z print_byte_at.at
+    adc.z at
     sta.z print_byte_at.at
-    bcc !+
-    inc.z print_byte_at.at+1
-  !:
+    lda #0
+    adc.z at+1
+    sta.z print_byte_at.at+1
     jsr print_byte_at
     // }
     rts
 }
 // Print a byte as HEX at a specific position
-// print_byte_at(byte zp($1b) b, byte* zp(4) at)
+// print_byte_at(byte zp($1b) b, byte* zp(6) at)
 print_byte_at: {
     .label b = $1b
-    .label at = 4
+    .label at = 6
     // b>>4
     lda.z b
     lsr
@@ -149,9 +153,9 @@ print_byte_at: {
     rts
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp(6) at)
+// print_char_at(byte register(X) ch, byte* zp(8) at)
 print_char_at: {
-    .label at = 6
+    .label at = 8
     // *(at) = ch
     txa
     ldy #0
@@ -183,10 +187,10 @@ clock: {
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label __11 = $d
+    .label __11 = $a
     .label xw = $16
     .label yw = $18
-    .label angle_w = $d
+    .label angle_w = $a
     .label ang_w = $1a
     .label x = $c
     .label xb = $11
@@ -301,13 +305,13 @@ init_angle_screen: {
 // atan2_16(signed word zp($16) x, signed word zp($18) y)
 atan2_16: {
     .label __2 = 6
-    .label __7 = $a
+    .label __7 = 8
     .label yi = 6
-    .label xi = $a
-    .label angle = $d
-    .label xd = 8
-    .label yd = $f
-    .label return = $d
+    .label xi = 8
+    .label angle = $a
+    .label xd = $f
+    .label yd = $d
+    .label return = $a
     .label x = $16
     .label y = $18
     // (y>=0)?y:-y

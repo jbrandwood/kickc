@@ -14,19 +14,17 @@ main: {
     lda #0
     jsr get
     // get(0)
-    lda.z get.return_y
     // *SCREEN = get(0)
-    stx SCREEN
-    sta SCREEN+OFFSET_STRUCT_POINT_Y
+    sta SCREEN
+    stx SCREEN+OFFSET_STRUCT_POINT_Y
     ldy #1
   __b1:
     // get(i)
     tya
     jsr get
     // get(i)
-    lda.z get.return_y
-    stx.z __1_x
-    sta.z __1_y
+    sta.z __1_x
+    stx.z __1_y
     // SCREEN[i] = get(i)
     tya
     asl
@@ -44,7 +42,6 @@ main: {
 }
 // get(byte register(A) i)
 get: {
-    .label return_y = 2
     // if(i==0)
     cmp #0
     beq __b1
@@ -52,21 +49,18 @@ get: {
     cmp #1
     beq __b2
     // return *p2;
-    ldx p2
-    lda p2+OFFSET_STRUCT_POINT_Y
-    sta.z return_y
+    lda p2
+    ldx p2+OFFSET_STRUCT_POINT_Y
     // }
     rts
   __b2:
     // return *p1;
-    ldx p1
-    lda p1+OFFSET_STRUCT_POINT_Y
-    sta.z return_y
+    lda p1
+    ldx p1+OFFSET_STRUCT_POINT_Y
     rts
   __b1:
     // return *p0;
-    ldx p0
-    lda p0+OFFSET_STRUCT_POINT_Y
-    sta.z return_y
+    lda p0
+    ldx p0+OFFSET_STRUCT_POINT_Y
     rts
 }

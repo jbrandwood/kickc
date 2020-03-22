@@ -14,12 +14,12 @@
   // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
   // Head of the heap. Moved backward each malloc()
-  .label heap_head = $15
+  .label heap_head = $17
   // Squares for each byte value SQUARES[i] = i*i
   // Initialized by init_squares()
-  .label SQUARES = $17
-  .label SCREEN_DIST = $19
-  .label SCREEN_ANGLE = $1b
+  .label SQUARES = $19
+  .label SCREEN_DIST = $1b
+  .label SCREEN_ANGLE = $1d
 __bbegin:
   // malloc(1000)
   lda #<$3e8
@@ -51,7 +51,7 @@ __bbegin:
 main: {
     .label dist = 2
     .label angle = 4
-    .label fill = $15
+    .label fill = $17
     .label dist_angle = $a
     .label min_dist_angle = 6
     .label min_dist_angle_1 = $a
@@ -178,18 +178,18 @@ main: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zp($15) screen)
+// init_angle_screen(byte* zp($f) screen)
 init_angle_screen: {
-    .label __11 = $13
-    .label screen = $15
+    .label __11 = $15
+    .label screen = $f
     .label screen_topline = $d
-    .label screen_bottomline = $15
-    .label xw = $20
-    .label yw = $22
-    .label angle_w = $13
-    .label ang_w = $1d
-    .label x = $f
-    .label xb = $10
+    .label screen_bottomline = $f
+    .label xw = $22
+    .label yw = $24
+    .label angle_w = $15
+    .label ang_w = $1f
+    .label x = $11
+    .label xb = $12
     .label y = $c
     // screen_topline = screen+40*12
     lda.z screen
@@ -304,18 +304,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($20) x, signed word zp($22) y)
+// atan2_16(signed word zp($22) x, signed word zp($24) y)
 atan2_16: {
-    .label __2 = $11
-    .label __7 = $24
-    .label yi = $11
-    .label xi = $24
-    .label angle = $13
-    .label xd = $1e
-    .label yd = $17
-    .label return = $13
-    .label x = $20
-    .label y = $22
+    .label __2 = $13
+    .label __7 = $26
+    .label yi = $13
+    .label xi = $26
+    .label angle = $15
+    .label xd = $20
+    .label yd = $19
+    .label return = $15
+    .label x = $22
+    .label y = $24
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -521,14 +521,14 @@ atan2_16: {
 // init_dist_screen(byte* zp($d) screen)
 init_dist_screen: {
     .label screen = $d
-    .label screen_bottomline = $15
-    .label yds = $1e
+    .label screen_bottomline = $f
+    .label yds = $20
     .label screen_topline = $d
     .label y = $c
-    .label xds = $20
-    .label ds = $20
-    .label x = $f
-    .label xb = $10
+    .label xds = $22
+    .label ds = $22
+    .label x = $11
+    .label xb = $12
     // init_squares()
     jsr init_squares
     // screen_bottomline = screen+40*24
@@ -646,12 +646,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($20) val)
+// sqrt(word zp($22) val)
 sqrt: {
-    .label __1 = $11
-    .label __3 = $11
-    .label found = $11
-    .label val = $20
+    .label __1 = $13
+    .label __3 = $13
+    .label found = $13
+    .label val = $22
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
@@ -680,14 +680,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($20) key, word* zp($11) items, byte register(X) num)
+// bsearch16u(word zp($22) key, word* zp($13) items, byte register(X) num)
 bsearch16u: {
-    .label __2 = $11
-    .label pivot = $22
-    .label result = $24
-    .label return = $11
-    .label items = $11
-    .label key = $20
+    .label __2 = $13
+    .label pivot = $24
+    .label result = $26
+    .label return = $13
+    .label items = $13
+    .label key = $22
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)
@@ -774,8 +774,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $20
-    .label return_1 = $1e
+    .label return = $22
+    .label return_1 = $20
     // return SQUARES[val];
     asl
     tay
@@ -790,8 +790,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $13
-    .label sqr = $24
+    .label squares = $15
+    .label sqr = $26
     // malloc(NUM_SQUARES*sizeof(word))
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta.z malloc.size
@@ -849,10 +849,10 @@ init_squares: {
 }
 // Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zp($17) size)
+// malloc(word zp($19) size)
 malloc: {
-    .label mem = $17
-    .label size = $17
+    .label mem = $19
+    .label size = $19
     // mem = heap_head-size
     lda.z heap_head
     sec

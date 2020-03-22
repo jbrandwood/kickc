@@ -98,14 +98,14 @@ main: {
     .label bucket_size = $1c
     // Animate a spiral walking through the buckets one at a time
     .label bucket_idx = 2
-    .label offset = $18
+    .label offset = $10
     .label fill = $1d
     .label angle = $1f
     // Find the minimum unfilled angle in the current bucket
     .label min_angle = 3
     .label fill1 = 4
     .label min_offset = 4
-    .label min_offset_1 = $18
+    .label min_offset_1 = $10
     // asm
     sei
     // init_dist_screen(SCREEN_DIST)
@@ -121,6 +121,10 @@ main: {
     sta.z init_angle_screen.screen+1
     jsr init_angle_screen
     // init_buckets(SCREEN_DIST)
+    lda.z SCREEN_DIST
+    sta.z init_buckets.screen
+    lda.z SCREEN_DIST+1
+    sta.z init_buckets.screen+1
     jsr init_buckets
     lda #0
     sta.z bucket_idx
@@ -261,24 +265,24 @@ main: {
     jmp __b8
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
-// init_buckets(byte* zp($10) screen)
+// init_buckets(byte* zp($28) screen)
 init_buckets: {
     .label __4 = 6
-    .label __7 = $28
-    .label __8 = $22
-    .label __12 = $26
-    .label __13 = $28
-    .label screen = $10
+    .label __7 = $21
+    .label __8 = $24
+    .label __12 = $2a
+    .label __13 = $21
+    .label screen = $28
     .label dist = $e
     .label i1 = $1a
     .label i2 = $1d
-    .label distance = $21
-    .label bucket = $28
+    .label distance = $23
+    .label bucket = $21
     .label dist_1 = $1f
-    .label i4 = $24
+    .label i4 = $26
     .label __15 = 6
-    .label __16 = $26
-    .label __17 = $28
+    .label __16 = $2a
+    .label __17 = $21
     ldy #0
   // Init bucket sizes to 0
   __b1:
@@ -486,14 +490,14 @@ malloc: {
 // Utilizes symmetry around the center
 // init_angle_screen(byte* zp($1a) screen)
 init_angle_screen: {
-    .label __11 = $24
+    .label __11 = $26
     .label screen = $1a
     .label screen_topline = $e
     .label screen_bottomline = $1a
-    .label xw = $26
-    .label yw = $28
-    .label angle_w = $24
-    .label ang_w = $21
+    .label xw = $2a
+    .label yw = $21
+    .label angle_w = $26
+    .label ang_w = $23
     .label x = $c
     .label xb = $d
     .label y = $1c
@@ -610,18 +614,18 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($26) x, signed word zp($28) y)
+// atan2_16(signed word zp($2a) x, signed word zp($21) y)
 atan2_16: {
     .label __2 = $1d
     .label __7 = $1f
     .label yi = $1d
     .label xi = $1f
-    .label angle = $24
+    .label angle = $26
     .label xd = $a
     .label yd = 8
-    .label return = $24
-    .label x = $26
-    .label y = $28
+    .label return = $26
+    .label x = $2a
+    .label y = $21
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -829,11 +833,11 @@ atan2_16: {
 init_dist_screen: {
     .label screen = 8
     .label screen_bottomline = $a
-    .label yds = $22
+    .label yds = $24
     .label screen_topline = 8
     .label y = $1c
-    .label xds = $24
-    .label ds = $24
+    .label xds = $26
+    .label ds = $26
     .label x = $c
     .label xb = $d
     // init_squares()
@@ -953,12 +957,12 @@ init_dist_screen: {
 // Find the (integer) square root of a word value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($24) val)
+// sqrt(word zp($26) val)
 sqrt: {
     .label __1 = $e
     .label __3 = $e
     .label found = $e
-    .label val = $24
+    .label val = $26
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
@@ -987,14 +991,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($24) key, word* zp($e) items, byte register(X) num)
+// bsearch16u(word zp($26) key, word* zp($e) items, byte register(X) num)
 bsearch16u: {
     .label __2 = $e
-    .label pivot = $26
-    .label result = $28
+    .label pivot = $28
+    .label result = $2a
     .label return = $e
     .label items = $e
-    .label key = $24
+    .label key = $26
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)
@@ -1081,8 +1085,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $24
-    .label return_1 = $22
+    .label return = $26
+    .label return_1 = $24
     // return SQUARES[val];
     asl
     tay
@@ -1097,7 +1101,7 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $1a
+    .label squares = $28
     .label sqr = $e
     // malloc(NUM_SQUARES*sizeof(word))
     lda #<NUM_SQUARES*SIZEOF_WORD

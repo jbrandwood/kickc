@@ -35,9 +35,10 @@ main: {
 print2: {
     .label at = $fa
     .label msg = $fc
+    .label j = 3
     .label i = 2
-    ldx #0
-    txa
+    lda #0
+    sta.z j
     sta.z i
   __b1:
     // for(byte i=0; msg[i]; i++)
@@ -49,12 +50,15 @@ print2: {
     rts
   __b2:
     // print_char(at, j, msg[i])
+    ldx.z j
     ldy.z i
     lda (msg),y
     jsr print_char
     // j += 2
-    inx
-    inx
+    lda.z j
+    clc
+    adc #2
+    sta.z j
     // for(byte i=0; msg[i]; i++)
     inc.z i
     jmp __b1

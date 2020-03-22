@@ -29,6 +29,10 @@ main: {
     lda.z c
     asl
     tax
+    lda.z charset
+    sta.z gen_char3.dst
+    lda.z charset+1
+    sta.z gen_char3.dst+1
     lda charset_spec_row,x
     sta.z gen_char3.spec
     lda charset_spec_row+1,x
@@ -48,9 +52,9 @@ main: {
 }
 // Generate one 5x3 character from a 16-bit char spec
 // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
-// gen_char3(byte* zp(3) dst, word zp(6) spec)
+// gen_char3(byte* zp(8) dst, word zp(6) spec)
 gen_char3: {
-    .label dst = 3
+    .label dst = 8
     .label spec = 6
     .label r = 5
     lda #0

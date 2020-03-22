@@ -210,22 +210,22 @@ main: {
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
     .label __20 = 9
-    .label __24 = $14
-    .label __26 = $1d
+    .label __24 = $24
+    .label __26 = $2c
     .label __34 = 9
-    .label __38 = $1f
-    .label __40 = $1b
-    .label __47 = $10
-    .label __48 = $10
-    .label __49 = $10
-    .label __50 = $13
+    .label __38 = $2e
+    .label __40 = $2a
+    .label __47 = $1d
+    .label __48 = $1d
+    .label __49 = $1d
+    .label __50 = $21
     .label __52 = 7
     .label __53 = 7
     .label plane_a = 9
     .label plane_b = 9
-    .label vic_colors = $10
+    .label vic_colors = $1d
     .label col = 5
-    .label cy = $d
+    .label cy = $e
     // if(*form_ctrl_line!=0)
     lda form_ctrl_line
     cmp #0
@@ -393,13 +393,13 @@ gfx_mode: {
     asl
     // plane_b_offs = *form_b_start_hi*$10|*form_b_start_lo
     ora form_b_start_lo
-    tax
+    tay
     // get_plane(*form_b_pattern)
     lda form_b_pattern
     jsr get_plane
     // get_plane(*form_b_pattern)
     // plane_b = get_plane(*form_b_pattern) + plane_b_offs
-    txa
+    tya
     clc
     adc.z plane_b
     sta.z plane_b
@@ -654,9 +654,9 @@ keyboard_event_get: {
 // Handles debounce and only generates events when the status of a key changes.
 // Also stores current status of modifiers in keyboard_modifiers.
 keyboard_event_scan: {
-    .label row_scan = $16
-    .label keycode = $22
-    .label row = $e
+    .label row_scan = $22
+    .label keycode = $d
+    .label row = $f
     lda #0
     sta.z keycode
     sta.z row
@@ -791,10 +791,10 @@ keyboard_event_scan: {
 }
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zp($f) keycode)
+// keyboard_event_pressed(byte zp($10) keycode)
 keyboard_event_pressed: {
-    .label row_bits = $21
-    .label keycode = $f
+    .label row_bits = $23
+    .label keycode = $10
     // keycode>>3
     lda.z keycode
     lsr
@@ -833,7 +833,7 @@ keyboard_matrix_read: {
 // Get the VIC screen address from the screen index
 // get_vic_screen(byte register(A) idx)
 get_vic_screen: {
-    .label return = $10
+    .label return = $1d
     // if(idx==0)
     cmp #0
     beq __b1
@@ -1118,7 +1118,7 @@ get_plane: {
 }
 // Show the form - and let the user change values
 form_mode: {
-    .label preset_current = $d
+    .label preset_current = $e
     // print_set_screen(COLS)
   // Form Colors
     lda #<COLS
@@ -1257,7 +1257,7 @@ form_mode: {
 // idx is the ID of the preset
 // render_preset_name(byte register(A) idx)
 render_preset_name: {
-    .label name = $10
+    .label name = $1d
     // if(idx==0)
     cmp #0
     beq b1
@@ -1386,10 +1386,10 @@ render_preset_name: {
     .byte 0
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zp($10) str, byte* zp(5) at)
+// print_str_at(byte* zp($1d) str, byte* zp(5) at)
 print_str_at: {
     .label at = 5
-    .label str = $10
+    .label str = $1d
     lda #<FORM_SCREEN+$28*2+$a
     sta.z at
     lda #>FORM_SCREEN+$28*2+$a
@@ -1420,32 +1420,36 @@ print_str_at: {
 }
 // Render all form values from the form_fields_val array
 form_render_values: {
-    ldx #0
+    .label idx = $f
+    lda #0
+    sta.z idx
   __b1:
     // for( byte idx=0; idx<form_fields_cnt; idx++)
-    cpx #form_fields_cnt
+    lda.z idx
+    cmp #form_fields_cnt
     bcc __b2
     // }
     rts
   __b2:
     // form_field_ptr(idx)
+    ldx.z idx
     jsr form_field_ptr
     // *field = print_hextab[form_fields_val[idx]]
-    ldy form_fields_val,x
-    lda print_hextab,y
-    ldy.z form_field_ptr.x
+    ldx.z idx
+    lda form_fields_val,x
+    tax
+    lda print_hextab,x
     sta (form_field_ptr.line),y
     // for( byte idx=0; idx<form_fields_cnt; idx++)
-    inx
+    inc.z idx
     jmp __b1
 }
 // Get the screen address of a form field
 // field_idx is the index of the field to get the screen address for
 // form_field_ptr(byte register(X) field_idx)
 form_field_ptr: {
-    .label line = $14
-    .label x = $16
-    .label return = $1d
+    .label line = $24
+    .label return = $2c
     // y = form_fields_y[field_idx]
     ldy form_fields_y,x
     // (byte*) { form_line_hi[y], form_line_lo[y] }
@@ -1454,9 +1458,9 @@ form_field_ptr: {
     lda form_line_lo,y
     sta.z line
     // x = form_fields_x[field_idx]
-    lda form_fields_x,x
-    sta.z x
+    ldy form_fields_x,x
     // line+x
+    tya
     clc
     adc.z line
     sta.z return
@@ -1589,7 +1593,7 @@ apply_preset: {
 // Reads keyboard and allows the user to navigate and change the fields of the form
 // Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
-    .label field = $1d
+    .label field = $2c
     // form_field_ptr(form_field_idx)
     ldx.z form_field_idx
     jsr form_field_ptr
@@ -1725,7 +1729,7 @@ form_control: {
 // Set the screen to use for the form.
 // screen is the start address of the screen to use
 form_set_screen: {
-    .label line = $10
+    .label line = $1d
     ldx #0
     lda #<FORM_SCREEN
     sta.z line
@@ -1757,9 +1761,9 @@ form_set_screen: {
 }
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zp($10) str)
+// print_str_lines(byte* zp($1d) str)
 print_str_lines: {
-    .label str = $10
+    .label str = $1d
     lda.z print_set_screen.screen
     sta.z print_char_cursor
     lda.z print_set_screen.screen+1
@@ -1838,13 +1842,13 @@ print_cls: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($10) str)
+// memset(void* zp($1d) str)
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label end = $1f
-    .label dst = $10
-    .label str = $10
+    .label end = $2e
+    .label dst = $1d
+    .label str = $1d
     // end = (char*)str + num
     lda.z str
     clc
@@ -1935,16 +1939,16 @@ gfx_init_plane_full: {
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// gfx_init_plane_fill(dword zp(9) plane_addr, byte zp($e) fill)
+// gfx_init_plane_fill(dword zp(9) plane_addr, byte zp($d) fill)
 gfx_init_plane_fill: {
-    .label __0 = $17
-    .label __1 = $1b
-    .label __4 = $10
-    .label __5 = $10
-    .label gfxb = $10
-    .label by = $22
+    .label __0 = $26
+    .label __1 = $2a
+    .label __4 = $1d
+    .label __5 = $1d
+    .label gfxb = $1d
+    .label by = $10
     .label plane_addr = 9
-    .label fill = $e
+    .label fill = $d
     // plane_addr*4
     lda.z plane_addr
     asl
@@ -2074,8 +2078,8 @@ gfx_init_plane_vertical2: {
 // Initialize Plane with Horizontal Stripes every 2 pixels
 gfx_init_plane_horisontal2: {
     .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
-    .label gfxa = $10
-    .label ay = $f
+    .label gfxa = $1d
+    .label ay = $e
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2123,8 +2127,8 @@ gfx_init_plane_horisontal2: {
 // Initialize Plane with Vertical Stripes
 gfx_init_plane_vertical: {
     .const gfxbCpuBank = PLANE_VERTICAL/$4000
-    .label gfxb = $10
-    .label by = $d
+    .label gfxb = $1d
+    .label by = $e
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2165,8 +2169,8 @@ gfx_init_plane_vertical: {
 // Initialize Plane with Horizontal Stripes
 gfx_init_plane_horisontal: {
     .const gfxbCpuBank = PLANE_HORISONTAL/$4000
-    .label gfxa = $10
-    .label ay = $d
+    .label gfxa = $1d
+    .label ay = $f
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2226,12 +2230,12 @@ gfx_init_plane_horisontal: {
 gfx_init_plane_charset8: {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
-    .label bits = $f
-    .label chargen = $10
-    .label gfxa = $14
-    .label col = $12
-    .label cr = $22
-    .label ch = $e
+    .label bits = $d
+    .label chargen = $1d
+    .label gfxa = $24
+    .label col = $e
+    .label cr = $10
+    .label ch = $f
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -2312,10 +2316,10 @@ gfx_init_plane_charset8: {
 }
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
-    .label __5 = $1d
-    .label gfxb = $10
-    .label x = $14
-    .label y = $e
+    .label __5 = $2c
+    .label gfxb = $1d
+    .label x = $24
+    .label y = $10
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #PLANE_8BPP_CHUNKY/$4000
     jsr dtvSetCpuBankSegment1
@@ -2392,7 +2396,7 @@ gfx_init_plane_8bppchunky: {
 // Initialize VIC bitmap
 gfx_init_vic_bitmap: {
     .const lines_cnt = 9
-    .label l = $22
+    .label l = $d
     // bitmap_init(VIC_BITMAP)
   // Draw some lines on the bitmap
     jsr bitmap_init
@@ -2412,9 +2416,9 @@ gfx_init_vic_bitmap: {
     ldy.z l
     lda lines_x,y
     sta.z bitmap_line.x0
-    ldx lines_x+1,y
-    lda lines_y,y
-    sta.z bitmap_line.y0
+    lda lines_x+1,y
+    sta.z bitmap_line.x1
+    ldx lines_y,y
     lda lines_y+1,y
     sta.z bitmap_line.y1
     jsr bitmap_line
@@ -2425,29 +2429,25 @@ gfx_init_vic_bitmap: {
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zp($16) x0, byte register(X) x1, byte zp($21) y0, byte zp($13) y1)
+// bitmap_line(byte zp($19) x0, byte zp($22) x1, byte register(X) y0, byte zp($1b) y1)
 bitmap_line: {
-    .label xd = $12
-    .label x0 = $16
-    .label y0 = $21
-    .label y1 = $13
+    .label xd = $18
+    .label x0 = $19
+    .label x1 = $22
+    .label y1 = $1b
     // if(x0<x1)
-    txa
-    cmp.z x0
-    beq !+
-    bcs __b1
-  !:
+    lda.z x0
+    cmp.z x1
+    bcc __b1
     // xd = x0-x1
-    txa
-    eor #$ff
     sec
-    adc.z x0
+    sbc.z x1
     sta.z xd
     // if(y0<y1)
-    lda.z y0
-    cmp.z y1
+    cpx.z y1
     bcc __b7
     // yd = y0-y1
+    txa
     sec
     sbc.z y1
     tay
@@ -2457,57 +2457,65 @@ bitmap_line: {
     // bitmap_line_ydxi(y1, x1, y0, yd, xd)
     lda.z y1
     sta.z bitmap_line_ydxi.y
-    lda.z y0
-    sta.z bitmap_line_ydxi.y1
+    stx.z bitmap_line_ydxi.y1
     sty.z bitmap_line_ydxi.yd
+    lda.z xd
+    sta.z bitmap_line_ydxi.xd
     jsr bitmap_line_ydxi
     // }
     rts
   __b8:
     // bitmap_line_xdyi(x1, y1, x0, xd, yd)
-    stx.z bitmap_line_xdyi.x
-    lda.z y1
-    sta.z bitmap_line_xdyi.y
+    lda.z x1
+    sta.z bitmap_line_xdyi.x
     sty.z bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     rts
   __b7:
     // yd = y1-y0
-    lda.z y1
+    txa
+    eor #$ff
     sec
-    sbc.z y0
+    adc.z y1
     tay
     // if(yd<xd)
     cpy.z xd
     bcc __b9
     // bitmap_line_ydxd(y0, x0, y1, yd, xd)
-    lda.z y0
-    sta.z bitmap_line_ydxd.y
-    ldx.z x0
+    stx.z bitmap_line_ydxd.y
+    lda.z x0
+    sta.z bitmap_line_ydxd.x
     lda.z y1
     sta.z bitmap_line_ydxd.y1
     sty.z bitmap_line_ydxd.yd
+    lda.z xd
+    sta.z bitmap_line_ydxd.xd
     jsr bitmap_line_ydxd
     rts
   __b9:
     // bitmap_line_xdyd(x1, y1, x0, xd, yd)
-    stx.z bitmap_line_xdyd.x
+    lda.z x1
+    sta.z bitmap_line_xdyd.x
     lda.z y1
     sta.z bitmap_line_xdyd.y
+    lda.z x0
+    sta.z bitmap_line_xdyd.x1
+    lda.z xd
+    sta.z bitmap_line_xdyd.xd
     sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
   __b1:
     // xd = x1-x0
-    txa
+    lda.z x1
     sec
     sbc.z x0
     sta.z xd
     // if(y0<y1)
-    lda.z y0
-    cmp.z y1
+    cpx.z y1
     bcc __b11
     // yd = y0-y1
+    txa
     sec
     sbc.z y1
     tay
@@ -2517,58 +2525,74 @@ bitmap_line: {
     // bitmap_line_ydxd(y1, x1, y0, yd, xd)
     lda.z y1
     sta.z bitmap_line_ydxd.y
+    lda.z x1
+    sta.z bitmap_line_ydxd.x
+    stx.z bitmap_line_ydxd.y1
     sty.z bitmap_line_ydxd.yd
+    lda.z xd
+    sta.z bitmap_line_ydxd.xd
     jsr bitmap_line_ydxd
     rts
   __b12:
     // bitmap_line_xdyd(x0, y0, x1, xd, yd)
     lda.z x0
     sta.z bitmap_line_xdyd.x
-    stx.z bitmap_line_xdyd.x1
+    stx.z bitmap_line_xdyd.y
+    lda.z x1
+    sta.z bitmap_line_xdyd.x1
+    lda.z xd
+    sta.z bitmap_line_xdyd.xd
     sty.z bitmap_line_xdyd.yd
     jsr bitmap_line_xdyd
     rts
   __b11:
     // yd = y1-y0
-    lda.z y1
+    txa
+    eor #$ff
     sec
-    sbc.z y0
+    adc.z y1
     tay
     // if(yd<xd)
     cpy.z xd
     bcc __b13
     // bitmap_line_ydxi(y0, x0, y1, yd, xd)
-    lda.z y0
-    sta.z bitmap_line_ydxi.y
-    ldx.z x0
+    stx.z bitmap_line_ydxi.y
+    lda.z x0
+    sta.z bitmap_line_ydxi.x
+    lda.z y1
+    sta.z bitmap_line_ydxi.y1
     sty.z bitmap_line_ydxi.yd
+    lda.z xd
+    sta.z bitmap_line_ydxi.xd
     jsr bitmap_line_ydxi
     rts
   __b13:
     // bitmap_line_xdyi(x0, y0, x1, xd, yd)
     lda.z x0
     sta.z bitmap_line_xdyi.x
-    stx.z bitmap_line_xdyi.x1
+    stx.z bitmap_line_xdyi.y
+    lda.z x1
+    sta.z bitmap_line_xdyi.x1
     sty.z bitmap_line_xdyi.yd
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte zp($d) x, byte zp($21) y, byte zp($16) x1, byte zp($12) xd, byte zp($f) yd)
+// bitmap_line_xdyi(byte zp($1a) x, byte zp($1b) y, byte zp($19) x1, byte zp($18) xd, byte zp($e) yd)
 bitmap_line_xdyi: {
-    .label x = $d
-    .label y = $21
-    .label x1 = $16
-    .label xd = $12
-    .label yd = $f
-    .label e = $13
+    .label x = $1a
+    .label y = $1b
+    .label x1 = $19
+    .label xd = $18
+    .label yd = $e
+    .label e = $1c
     // e = yd>>1
     lda.z yd
     lsr
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
+    ldy.z x
+    ldx.z y
     jsr bitmap_plot
     // x++;
     inc.z x
@@ -2598,20 +2622,20 @@ bitmap_line_xdyi: {
     // }
     rts
 }
-// bitmap_plot(byte register(X) x, byte register(Y) y)
+// bitmap_plot(byte register(Y) x, byte register(X) y)
 bitmap_plot: {
-    .label plotter_x = $1d
-    .label plotter_y = $1f
-    .label plotter = $1d
+    .label plotter_x = $2c
+    .label plotter_y = $2e
+    .label plotter = $2c
     // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
-    lda bitmap_plot_xhi,x
+    lda bitmap_plot_xhi,y
     sta.z plotter_x+1
-    lda bitmap_plot_xlo,x
+    lda bitmap_plot_xlo,y
     sta.z plotter_x
     // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,y
+    lda bitmap_plot_yhi,x
     sta.z plotter_y+1
-    lda bitmap_plot_ylo,y
+    lda bitmap_plot_ylo,x
     sta.z plotter_y
     // plotter_x+plotter_y
     lda.z plotter
@@ -2622,7 +2646,7 @@ bitmap_plot: {
     adc.z plotter_y+1
     sta.z plotter+1
     // *plotter | bitmap_plot_bit[x]
-    lda bitmap_plot_bit,x
+    lda bitmap_plot_bit,y
     ldy #0
     ora (plotter),y
     // *plotter = *plotter | bitmap_plot_bit[x]
@@ -2630,20 +2654,22 @@ bitmap_plot: {
     // }
     rts
 }
-// bitmap_line_ydxi(byte zp($e) y, byte register(X) x, byte zp($13) y1, byte zp($d) yd, byte zp($12) xd)
+// bitmap_line_ydxi(byte zp($23) y, byte zp($22) x, byte zp($21) y1, byte zp($20) yd, byte zp($1f) xd)
 bitmap_line_ydxi: {
-    .label y = $e
-    .label y1 = $13
-    .label yd = $d
-    .label xd = $12
-    .label e = $f
+    .label y = $23
+    .label x = $22
+    .label y1 = $21
+    .label yd = $20
+    .label xd = $1f
+    .label e = $30
     // e = xd>>1
     lda.z xd
     lsr
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldy.z y
+    ldy.z x
+    ldx.z y
     jsr bitmap_plot
     // y++;
     inc.z y
@@ -2657,7 +2683,7 @@ bitmap_line_ydxi: {
     cmp.z e
     bcs __b2
     // x++;
-    inx
+    inc.z x
     // e = e - yd
     lda.z e
     sec
@@ -2665,31 +2691,30 @@ bitmap_line_ydxi: {
     sta.z e
   __b2:
     // y1+1
-    lda.z y1
-    clc
-    adc #1
+    ldx.z y1
+    inx
     // while (y!=(y1+1))
-    cmp.z y
+    cpx.z y
     bne __b1
     // }
     rts
 }
-// bitmap_line_xdyd(byte zp($f) x, byte zp($21) y, byte zp($16) x1, byte zp($12) xd, byte zp($e) yd)
+// bitmap_line_xdyd(byte zp($f) x, byte zp($10) y, byte zp($33) x1, byte zp($32) xd, byte zp($31) yd)
 bitmap_line_xdyd: {
     .label x = $f
-    .label y = $21
-    .label x1 = $16
-    .label xd = $12
-    .label yd = $e
-    .label e = $d
+    .label y = $10
+    .label x1 = $33
+    .label xd = $32
+    .label yd = $31
+    .label e = $11
     // e = yd>>1
     lda.z yd
     lsr
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldx.z x
-    ldy.z y
+    ldy.z x
+    ldx.z y
     jsr bitmap_plot
     // x++;
     inc.z x
@@ -2719,20 +2744,22 @@ bitmap_line_xdyd: {
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp($e) y, byte register(X) x, byte zp($21) y1, byte zp($d) yd, byte zp($12) xd)
+// bitmap_line_ydxd(byte zp($16) y, byte zp($15) x, byte zp($14) y1, byte zp($13) yd, byte zp($12) xd)
 bitmap_line_ydxd: {
-    .label y = $e
-    .label y1 = $21
-    .label yd = $d
+    .label y = $16
+    .label x = $15
+    .label y1 = $14
+    .label yd = $13
     .label xd = $12
-    .label e = $f
+    .label e = $17
     // e = xd>>1
     lda.z xd
     lsr
     sta.z e
   __b1:
     // bitmap_plot(x,y)
-    ldy.z y
+    ldy.z x
+    ldx.z y
     jsr bitmap_plot
     // y = y++;
     inc.z y
@@ -2746,7 +2773,7 @@ bitmap_line_ydxd: {
     cmp.z e
     bcs __b2
     // x--;
-    dex
+    dec.z x
     // e = e - yd
     lda.z e
     sec
@@ -2754,19 +2781,18 @@ bitmap_line_ydxd: {
     sta.z e
   __b2:
     // y1+1
-    lda.z y1
-    clc
-    adc #1
+    ldx.z y1
+    inx
     // while (y!=(y1+1))
-    cmp.z y
+    cpx.z y
     bne __b1
     // }
     rts
 }
 // Clear all graphics on the bitmap
 bitmap_clear: {
-    .label bitmap = $10
-    .label y = $16
+    .label bitmap = $1d
+    .label y = $18
     // (byte*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap
@@ -2800,8 +2826,8 @@ bitmap_clear: {
 }
 // Initialize the bitmap plotter tables for a specific bitmap
 bitmap_init: {
-    .label __10 = $21
-    .label yoffs = $14
+    .label __10 = $30
+    .label yoffs = $24
     ldy #$80
     ldx #0
   __b1:
@@ -2868,9 +2894,9 @@ bitmap_init: {
     rts
 }
 gfx_init_charset: {
-    .label charset = $10
-    .label chargen = $14
-    .label c = $21
+    .label charset = $1d
+    .label chargen = $24
+    .label c = $19
     // *PROCPORT = $32
     lda #$32
     sta PROCPORT
@@ -2917,8 +2943,8 @@ gfx_init_charset: {
 }
 // Initialize VIC screen 4 - all chars are 00
 gfx_init_screen4: {
-    .label ch = $10
-    .label cy = $e
+    .label ch = $1d
+    .label cy = $1a
     lda #0
     sta.z cy
     lda #<VIC_SCREEN4
@@ -2951,9 +2977,9 @@ gfx_init_screen4: {
 }
 // Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 gfx_init_screen3: {
-    .label __1 = $22
-    .label ch = $10
-    .label cy = $f
+    .label __1 = $31
+    .label ch = $1d
+    .label cy = $1b
     lda #<VIC_SCREEN3
     sta.z ch
     lda #>VIC_SCREEN3
@@ -2999,9 +3025,9 @@ gfx_init_screen3: {
 }
 // Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 gfx_init_screen2: {
-    .label col2 = $22
-    .label ch = $10
-    .label cy = $12
+    .label col2 = $32
+    .label ch = $1d
+    .label cy = $1c
     lda #<VIC_SCREEN2
     sta.z ch
     lda #>VIC_SCREEN2
@@ -3054,8 +3080,8 @@ gfx_init_screen2: {
 }
 // Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 gfx_init_screen1: {
-    .label ch = $14
-    .label cy = $12
+    .label ch = $24
+    .label cy = $1f
     lda #<VIC_SCREEN1
     sta.z ch
     lda #>VIC_SCREEN1
@@ -3093,9 +3119,9 @@ gfx_init_screen1: {
 }
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 gfx_init_screen0: {
-    .label __1 = $22
-    .label ch = $14
-    .label cy = $13
+    .label __1 = $33
+    .label ch = $24
+    .label cy = $20
     lda #<VIC_SCREEN0
     sta.z ch
     lda #>VIC_SCREEN0

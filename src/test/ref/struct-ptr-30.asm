@@ -5,61 +5,61 @@
   .label SCREEN = $400
   .const OFFSET_STRUCT_POINT_Y = 1
   .const SIZEOF_STRUCT_POINT = 3
-  .label idx = 2
+  .label idx = 3
 main: {
+    .label i = 2
     lda #0
     sta.z idx
-    tax
+    sta.z i
   __b1:
     // print(points[i])
-    txa
+    lda.z i
     asl
-    stx.z $ff
     clc
-    adc.z $ff
+    adc.z i
     tay
-    lda points,y
-    sta.z print.p_x
+    ldx points,y
     lda points+OFFSET_STRUCT_POINT_Y,y
     sta.z print.p_y
     lda points+OFFSET_STRUCT_POINT_Y+1,y
     sta.z print.p_y+1
     jsr print
     // for ( char i: 0..3)
-    inx
-    cpx #4
+    inc.z i
+    lda #4
+    cmp.z i
     bne __b1
     // }
     rts
 }
-// print(byte zp(3) p_x, signed word zp(4) p_y)
+// print(byte register(X) p_x, signed word zp(4) p_y)
 print: {
-    .label p_x = 3
     .label p_y = 4
     // SCREEN[idx++] = p.x
-    lda.z p_x
     ldy.z idx
+    txa
     sta SCREEN,y
     // SCREEN[idx++] = p.x;
-    iny
+    ldx.z idx
+    inx
     // <p.y
     lda.z p_y
     // SCREEN[idx++] = <p.y
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = <p.y;
-    iny
+    inx
     // >p.y
     lda.z p_y+1
     // SCREEN[idx++] = >p.y
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = >p.y;
-    iny
+    inx
     // SCREEN[idx++] = ' '
     lda #' '
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = ' ';
-    iny
-    sty.z idx
+    inx
+    stx.z idx
     // }
     rts
 }

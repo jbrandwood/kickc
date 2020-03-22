@@ -72,6 +72,10 @@ main: {
     cmp #0
     bne __b9
     // print_word(i)
+    lda.z i_1
+    sta.z print_word.w
+    lda.z i_1+1
+    sta.z print_word.w+1
     jsr print_word
     // print_char(' ')
     lda #' '
@@ -164,16 +168,14 @@ print_char: {
     rts
 }
 // Print a word as HEX
-// print_word(word zp(4) w)
+// print_word(word zp($e) w)
 print_word: {
-    .label w = 4
+    .label w = $e
     // print_byte(>w)
-    lda.z w+1
-    tax
+    ldx.z w+1
     jsr print_byte
     // print_byte(<w)
-    lda.z w
-    tax
+    ldx.z w
     jsr print_byte
     // }
     rts

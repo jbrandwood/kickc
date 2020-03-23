@@ -1,4 +1,5 @@
 // Test effective live range and register allocation
+// main::b and main::c should be allocated to hardware registers
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -3386,6 +3386,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLiveRange10() throws IOException, URISyntaxException {
+      compileAndCompare("liverange-10");
+   }
+
+   @Test
    public void testLiveRange9() throws IOException, URISyntaxException {
       compileAndCompare("liverange-9");
    }

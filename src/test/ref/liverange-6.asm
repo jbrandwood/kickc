@@ -1,4 +1,5 @@
 // Test effective live range and register allocation
+// out::c should be a hardware register, main::i should be a hardware register, global idx should be a hardware register
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

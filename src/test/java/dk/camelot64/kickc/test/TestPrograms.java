@@ -722,6 +722,11 @@ public class TestPrograms {
       compileAndCompare("problem-negative-word-const");
    }
 
+   //@Test
+   //public void testProblemConstAddition() throws IOException, URISyntaxException {
+   //   compileAndCompare("problem-const-addition", log());
+   //}
+
    @Test
    public void testInnerIncrementProblem() throws IOException, URISyntaxException {
       compileAndCompare("inner-increment-problem");
@@ -968,16 +973,23 @@ public class TestPrograms {
       compileAndCompare("unused-irq");
    }
 
-   /**
+
+/*
     * TODO: Fix error with number resolving
-    *
-    * @Test public void testNumberTernaryFail2() throws IOException, URISyntaxException {
-    * compileAndCompare("number-ternary-fail-2");
-    * }
-    * @Test public void testNumberTernaryFail() throws IOException, URISyntaxException {
-    * compileAndCompare("number-ternary-fail");
-    * }
-    */
+
+     @Test public void testNumberTernaryFail2() throws IOException, URISyntaxException {
+     compileAndCompare("number-ternary-fail-2");
+     }
+     @Test public void testNumberTernaryFail() throws IOException, URISyntaxException {
+     compileAndCompare("number-ternary-fail");
+     }
+
+   @Test public void testNumberTernaryFail3() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail-3");
+   }
+
+ */
+
 
    @Test
    public void testTextbox() throws IOException, URISyntaxException {
@@ -2014,6 +2026,11 @@ public class TestPrograms {
    @Test
    public void testFire() throws IOException, URISyntaxException {
       compileAndCompare("examples/fire/fire");
+   }
+
+   @Test
+   public void testFont2x2() throws IOException, URISyntaxException {
+      compileAndCompare("examples/font-2x2/font-2x2");
    }
 
    @Test

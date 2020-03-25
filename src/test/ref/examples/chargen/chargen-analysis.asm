@@ -262,11 +262,10 @@ main: {
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
-    .label __0 = $c
-    .label __1 = $c
-    .label __7 = $e
-    .label chargen = $c
-    .label sc = $e
+    .label __0 = $a
+    .label __1 = $a
+    .label chargen = $a
+    .label sc = $c
     .label bits = 9
     .label y = 8
     // asm
@@ -305,18 +304,20 @@ plot_chargen: {
     // *PROCPORT = $32
     lda #$32
     sta PROCPORT
-    // mul8u(pos, 10)
+    // pos*10
     tya
-    tax
-    jsr mul8u
-    // mul8u(pos, 10)
-    // sc = SCREEN+40+1+mul8u(pos, 10)
+    asl
+    asl
+    sty.z $ff
     clc
-    lda.z sc
-    adc #<SCREEN+$28+1
+    adc.z $ff
+    asl
+    // sc = SCREEN + 41 + pos*10
+    clc
+    adc #<SCREEN+$29
     sta.z sc
-    lda.z sc+1
-    adc #>SCREEN+$28+1
+    lda #>SCREEN+$29
+    adc #0
     sta.z sc+1
     lda #0
     sta.z y
@@ -373,51 +374,6 @@ plot_chargen: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
-// mul8u(byte register(X) a)
-mul8u: {
-    .const b = $a
-    .label mb = $a
-    .label res = $e
-    .label return = $e
-    lda #<b
-    sta.z mb
-    lda #>b
-    sta.z mb+1
-    lda #<0
-    sta.z res
-    sta.z res+1
-  __b1:
-    // while(a!=0)
-    cpx #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // a&1
-    txa
-    and #1
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-  __b3:
-    // a = a>>1
-    txa
-    lsr
-    tax
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
-    jmp __b1
-}
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
@@ -469,10 +425,10 @@ keyboard_get_keycode: {
     rts
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zp($c) str, byte* zp($e) at)
+// print_str_at(byte* zp($a) str, byte* zp($c) at)
 print_str_at: {
-    .label at = $e
-    .label str = $c
+    .label at = $c
+    .label str = $a
   __b1:
     // while(*str)
     ldy #0

@@ -127,6 +127,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-Wfragment"}, description = "Warning Option. Missing fragments produces a warning instead of an error.")
    private boolean warnFragmentMissing = false;
 
+   @CommandLine.Option(names = {"-Warraytype"}, description = "Warning Option. Non-standard array syntax produces a warning instead of an error.")
+   private boolean warnArrayType = false;
+
    @CommandLine.Option(names = {"-fragment"}, description = "Print the ASM code for a named fragment. The fragment is loaded/synthesized and the ASM variations are written to the output.")
    private String fragment = null;
 
@@ -277,6 +280,10 @@ public class KickC implements Callable<Void> {
 
          if(warnFragmentMissing) {
             compiler.setWarnFragmentMissing(true);
+         }
+
+         if(warnArrayType) {
+            compiler.setWarnArrayType(true);
          }
 
          if(linkScript != null) {

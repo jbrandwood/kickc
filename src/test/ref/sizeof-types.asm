@@ -57,20 +57,18 @@ main: {
     sta SCREEN+$11
     // SCREEN[idx++] = '0'+sizeof(int***)
     sta SCREEN+$12
-    // SCREEN[idx++] = '0'+sizeof(byte[])
-    sta SCREEN+$13
     // SCREEN[idx++] = '0'+sizeof(dword)
     lda #'0'+SIZEOF_DWORD
-    sta SCREEN+$15
+    sta SCREEN+$14
     // SCREEN[idx++] = '0'+sizeof(signed dword)
     lda #'0'+SIZEOF_SIGNED_DWORD
-    sta SCREEN+$16
+    sta SCREEN+$15
     // SCREEN[idx++] = '0'+sizeof(unsigned long)
     lda #'0'+SIZEOF_DWORD
-    sta SCREEN+$17
+    sta SCREEN+$16
     // SCREEN[idx++] = '0'+sizeof(signed long)
     lda #'0'+SIZEOF_SIGNED_DWORD
-    sta SCREEN+$18
+    sta SCREEN+$17
     // }
     rts
 }

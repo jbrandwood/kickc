@@ -3167,6 +3167,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testArraysNonstandardSyntax() throws IOException, URISyntaxException {
+      assertError("arrays-nonstandard-syntax", "ERROR! Non-standard array declaration.");
+   }
+
+   @Test
    public void testArraysInit() throws IOException, URISyntaxException {
       compileAndCompare("arrays-init");
    }

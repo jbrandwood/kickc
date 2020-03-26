@@ -1566,15 +1566,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
-      // throw new CompileError("Non-standard array declaration ", new StatementSource(ctx));
-      SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
-      if(ctx.expr() != null) {
-         RValue sizeVal = (RValue) visit(ctx.expr());
-         declArraySpec = new ArraySpec((ConstantValue) sizeVal);
-         return new SymbolTypePointer(elementType);
+      if(program.isWarnArrayType()) {
+         program.getLog().append("Non-standard array declaration.\n" + new StatementSource(ctx).toString());
+         SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
+         if(ctx.expr() != null) {
+            RValue sizeVal = (RValue) visit(ctx.expr());
+            declArraySpec = new ArraySpec((ConstantValue) sizeVal);
+            return new SymbolTypePointer(elementType);
+         } else {
+            declArraySpec = new ArraySpec();
+            return new SymbolTypePointer(elementType);
+         }
       } else {
-         declArraySpec = new ArraySpec();
-         return new SymbolTypePointer(elementType);
+         throw new CompileError("ERROR! Non-standard array declaration. Allow using commandline option -Warraytype", new StatementSource(ctx));
       }
    }
 

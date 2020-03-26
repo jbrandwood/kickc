@@ -61,6 +61,10 @@ public class Compiler {
       program.setWarnFragmentMissing(warnFragmentMissing);
    }
 
+   public void setWarnArrayType(boolean warnArrayType) {
+      program.setWarnArrayType(warnArrayType);
+   }
+
    public void setLinkScriptFileName(String linkScript) {
       this.linkScriptFileName = linkScript;
    }

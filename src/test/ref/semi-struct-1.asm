@@ -4,7 +4,7 @@
 //    byte xpos; // The x-position
 //    byte ypos; // The y-position
 // };
-// Point[NUM_POINTS] points;
+// Point points[NUM_POINTS];
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

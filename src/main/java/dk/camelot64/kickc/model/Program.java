@@ -40,6 +40,8 @@ public class Program {
 
    /** Missing fragments produce a warning instead of an error (STATIC) */
    private boolean warnFragmentMissing = false;
+   /** Array syntax used on types (eg. char[8] x; ) produce a warning instead of an error (STATIC) */
+   private boolean warnArrayType = false;
 
    /** Path to any custom link script file used for linking (STATIC) */
    private Path linkScriptFilePath;
@@ -177,6 +179,14 @@ public class Program {
 
    public void setWarnFragmentMissing(boolean warnFragmentMissing) {
       this.warnFragmentMissing = warnFragmentMissing;
+   }
+
+   public boolean isWarnArrayType() {
+      return warnArrayType;
+   }
+
+   public void setWarnArrayType(boolean errorArrayKickC) {
+      this.warnArrayType = errorArrayKickC;
    }
 
    public Path getAsmFragmentCacheFolder() {

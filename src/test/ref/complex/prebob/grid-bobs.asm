@@ -996,5 +996,5 @@ PROTO_BOB:
   BOB_TABLES: .fill 9*8*4, 0
   // Table used for deleting rendered BOB's. Contains pointers to first char of each BOB.
   RENDERBOB_CLEANUP: .fill 2*NUM_BOBS, 0
-  // *40 Table unsigned int[0x20] MUL40 = { ((unsigned int)i)*40 };
+  // *40 Table unsigned int MUL40[0x20] = { ((unsigned int)i)*40 };
   MUL40: .fill 2*$20, 0

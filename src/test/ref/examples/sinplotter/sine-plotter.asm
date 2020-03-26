@@ -91,7 +91,7 @@ render_sine: {
     sta.z sin_idx
     sta.z sin_idx+1
   __b1:
-    // for(word sin_idx=0; sin_idx<SIN_SIZE; sin_idx++)
+    // for(unsigned int sin_idx=0; sin_idx<SIN_SIZE; sin_idx++)
     lda.z sin_idx+1
     cmp #>SIN_SIZE
     bcc __b2
@@ -186,7 +186,7 @@ render_sine: {
     sta.z xpos
     sta.z xpos+1
   __b3:
-    // for(word sin_idx=0; sin_idx<SIN_SIZE; sin_idx++)
+    // for(unsigned int sin_idx=0; sin_idx<SIN_SIZE; sin_idx++)
     inc.z sin_idx
     bne !+
     inc.z sin_idx+1
@@ -246,7 +246,7 @@ wrap_y: {
     // while(y<0)
     lda.z y+1
     bmi __b4
-    // (byte)y
+    // (char)y
     lda.z y
     // }
     rts

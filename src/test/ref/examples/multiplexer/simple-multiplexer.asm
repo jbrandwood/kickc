@@ -67,7 +67,7 @@ loop: {
     // y_idx += 8
     txa
     axs #-[8]
-    // for(byte sy: 0..PLEX_COUNT-1)
+    // for(char sy: 0..PLEX_COUNT-1)
     iny
     cpy #PLEX_COUNT-1+1
     bne __b4
@@ -113,7 +113,7 @@ loop: {
     inc BORDERCOL
     // plexShowSprite()
     jsr plexShowSprite
-    // for( byte ss: 0..PLEX_COUNT-1)
+    // for( char ss: 0..PLEX_COUNT-1)
     inc.z ss
     lda #PLEX_COUNT-1+1
     cmp.z ss
@@ -287,7 +287,7 @@ init: {
     sta.z xp+1
     ldx #0
   __b1:
-    // PLEX_PTR[sx] = (byte)(SPRITE/$40)
+    // PLEX_PTR[sx] = (char)(SPRITE/$40)
     lda #SPRITE/$40
     sta PLEX_PTR,x
     // PLEX_XPOS[sx] = xp
@@ -306,7 +306,7 @@ init: {
     bcc !+
     inc.z xp+1
   !:
-    // for(byte sx: 0..PLEX_COUNT-1)
+    // for(char sx: 0..PLEX_COUNT-1)
     inx
     cpx #PLEX_COUNT-1+1
     bne __b1
@@ -319,7 +319,7 @@ init: {
     // SPRITES_COLS[ss] = GREEN
     lda #GREEN
     sta SPRITES_COLS,x
-    // for(byte ss: 0..7)
+    // for(char ss: 0..7)
     inx
     cpx #8
     bne __b3

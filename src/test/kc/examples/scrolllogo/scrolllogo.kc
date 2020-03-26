@@ -2,8 +2,8 @@ import "c64.kc"
 import "sinus.kc"
 import "string.kc"
 
-byte* SCREEN = $400;
-byte* LOGO = $2000;
+char* SCREEN = $400;
+char* LOGO = $2000;
 kickasm(resource "logo.png", pc LOGO, bytes 6*40*8) {{
     .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
@@ -12,9 +12,9 @@ kickasm(resource "logo.png", pc LOGO, bytes 6*40*8) {{
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
 }}
 
-const word XSIN_SIZE = 512;
+const unsigned int XSIN_SIZE = 512;
 
-signed word[XSIN_SIZE] align($100) xsin;
+signed int[XSIN_SIZE] align($100) xsin;
 
 void main() {
     asm { sei }
@@ -25,21 +25,21 @@ void main() {
     *D016 = VIC_MCM;
     memset(SCREEN, BLACK, 1000);
     memset(COLS, WHITE|8, 1000);
-    for(byte ch: 0..239) {
+    for(char ch: 0..239) {
         SCREEN[ch] = ch;
     }
     sin16s_gen2(xsin, XSIN_SIZE, -320, 320);
     loop();
 }
 
-word xsin_idx = 0;
+unsigned int xsin_idx = 0;
 
 void loop() {
     while(true) {
         // Wait for the raster to reach the bottom of the screen
         while(*RASTER!=$ff) {}
         (*BORDERCOL)++;
-        signed word xpos = *(xsin+xsin_idx);
+        signed int xpos = *(xsin+xsin_idx);
         render_logo(xpos);
         if(++xsin_idx==XSIN_SIZE) {
             xsin_idx = 0;
@@ -48,15 +48,15 @@ void loop() {
     }
 }
 
-void render_logo(signed word xpos) {
-    byte logo_idx;
-    byte screen_idx;
-    *D016 = VIC_MCM|((byte)xpos&7);
-    signed byte x_char = (signed byte)(xpos/8);
-    byte line = 0;
+void render_logo(signed int xpos) {
+    char logo_idx;
+    char screen_idx;
+    *D016 = VIC_MCM|((char)xpos&7);
+    signed char x_char = (signed char)(xpos/8);
+    char line = 0;
     if(xpos<0) {
         // Render right side of the logo and some spaces
-        logo_idx = (byte)(-x_char);
+        logo_idx = (char)(-x_char);
         screen_idx = 0;
         while(logo_idx!=40) {
             inline for(line: 0..5) {
@@ -73,7 +73,7 @@ void render_logo(signed word xpos) {
         }
     } else {
         // Render some spaces and the left of the logo
-        byte logo_start = (byte)x_char;
+        char logo_start = (char)x_char;
         screen_idx = 0;
         while(screen_idx!=logo_start) {
             inline for(line: 0..5) {

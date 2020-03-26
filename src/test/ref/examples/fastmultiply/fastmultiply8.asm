@@ -47,7 +47,7 @@ main: {
     bcc !+
     inc.z at+1
   !:
-    // for(byte k: 0..8)
+    // for(char k: 0..8)
     inc.z k
     lda #9
     cmp.z k
@@ -105,12 +105,12 @@ main: {
     lda.z at_2+1
     sta.z print_sbyte_at.at+1
     jsr print_sbyte_at
-    // for(byte j: 0..8)
+    // for(char j: 0..8)
     inc.z j
     lda #9
     cmp.z j
     bne __b3
-    // for(byte i: 0..8)
+    // for(char i: 0..8)
     inc.z i
     cmp.z i
     bne __b2
@@ -223,7 +223,7 @@ init_screen: {
     // COLS[l] = WHITE
     lda #WHITE
     sta $d800,x
-    // for(byte l: 0..39)
+    // for(char l: 0..39)
     inx
     cpx #$28
     bne __b1
@@ -254,7 +254,7 @@ init_screen: {
     bcc !+
     inc.z COLS+1
   !:
-    // for(byte m: 0..24)
+    // for(char m: 0..24)
     inx
     cpx #$19
     bne __b2

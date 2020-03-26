@@ -64,8 +64,6 @@ anim: {
     lda #0
     sta.z sy
     sta.z sx
-  //signed byte xmin = 0;
-  //signed byte xmax = 0;
   __b2:
     // while(*RASTER!=$ff)
     lda #$ff
@@ -103,8 +101,6 @@ anim: {
     sta.z rotate_matrix.z
     jsr rotate_matrix
     // xrs[i] = *xr
-    //if(*xr<xmin) xmin = *xr;
-    //if(*xr>xmax) xmax = *xr;
     lda xr
     ldy.z i
     sta xrs,y
@@ -127,19 +123,19 @@ anim: {
     tya
     asl
     tax
-    // $80+(byte)((*xp))
+    // $80+(char)((*xp))
     lda #$80
     clc
     adc xp
-    // SPRITES_XPOS[i2] = $80+(byte)((*xp))
+    // SPRITES_XPOS[i2] = $80+(char)((*xp))
     sta SPRITES_XPOS,x
-    // $80+(byte)((*yp))
+    // $80+(char)((*yp))
     lda #$80
     clc
     adc yp
-    // SPRITES_YPOS[i2] = $80+(byte)((*yp))
+    // SPRITES_YPOS[i2] = $80+(char)((*yp))
     sta SPRITES_YPOS,x
-    // for(byte i: 0..7)
+    // for(char i: 0..7)
     inc.z i
     lda #8
     cmp.z i
@@ -377,7 +373,7 @@ debug_print: {
     lax.z c
     axs #-[4]
     stx.z c
-    // for( byte i: 0..7)
+    // for( char i: 0..7)
     inc.z i
     lda #8
     cmp.z i
@@ -1086,7 +1082,7 @@ debug_print_init: {
     // *(at_cols+40*8+c+j) = col
     txa
     sta (__65),y
-    // for( byte j: 0..3)
+    // for( char j: 0..3)
     iny
     cpy #4
     beq !__b2+
@@ -1096,7 +1092,7 @@ debug_print_init: {
     lax.z c
     axs #-[4]
     stx.z c
-    // for( byte i: 0..7)
+    // for( char i: 0..7)
     inc.z i
     lda #8
     cmp.z i
@@ -1208,13 +1204,13 @@ sprites_init: {
     sta SPRITES_ENABLE
     ldx #0
   __b1:
-    // sprites_ptr[i] = (byte)(SPRITE/$40)
+    // sprites_ptr[i] = (char)(SPRITE/$40)
     lda #SPRITE/$40
     sta sprites_ptr,x
     // SPRITES_COLS[i] = GREEN
     lda #GREEN
     sta SPRITES_COLS,x
-    // for(byte i: 0..7)
+    // for(char i: 0..7)
     inx
     cpx #8
     bne __b1

@@ -3,9 +3,9 @@ import "c64"
 import "multiplexer"
 
 // Location of screen & sprites
-byte* SCREEN = $400;
+char* SCREEN = $400;
 
-byte[0x100] align(0x100) YSIN = kickasm {{
+char[0x100] align(0x100) YSIN = kickasm {{
     .var min = 50
     .var max = 250-21
     .var ampl = max-min;
@@ -13,7 +13,7 @@ byte[0x100] align(0x100) YSIN = kickasm {{
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
 }};
 
-byte* SPRITE = $2000;
+char* SPRITE = $2000;
 kickasm(pc SPRITE, resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
@@ -33,15 +33,15 @@ void init() {
     // Initialize the multiplexer
     plexInit(SCREEN);
     // Set the x-positions & pointers
-    word xp = 32;
-    for(byte sx: 0..PLEX_COUNT-1) {
-        PLEX_PTR[sx] = (byte)(SPRITE/$40);
+    unsigned int xp = 32;
+    for(char sx: 0..PLEX_COUNT-1) {
+        PLEX_PTR[sx] = (char)(SPRITE/$40);
         PLEX_XPOS[sx] = xp;
         xp += 9;
     }
     // Enable & initialize sprites
     *SPRITES_ENABLE = $ff;
-    for(byte ss: 0..7) {
+    for(char ss: 0..7) {
         SPRITES_COLS[ss] = GREEN;
     }
 }
@@ -49,13 +49,13 @@ void init() {
 // The raster loop
 void loop() {
     // The current index into the y-sinus
-    byte sin_idx = 0;
+    char sin_idx = 0;
     while(true) {
         while(*RASTER!=$ff) {}
         // Assign sinus positions
         (*BORDERCOL)++;
-        byte y_idx = sin_idx;
-        for(byte sy: 0..PLEX_COUNT-1) {
+        char y_idx = sin_idx;
+        for(char sy: 0..PLEX_COUNT-1) {
             PLEX_YPOS[sy] = YSIN[y_idx];
             y_idx += 8;
         }
@@ -66,9 +66,9 @@ void loop() {
         *BORDERCOL = BLACK;
         while((*D011&VIC_RST8)!=0) {}
         // Show the sprites
-        for( byte ss: 0..PLEX_COUNT-1) {
+        for( char ss: 0..PLEX_COUNT-1) {
             *BORDERCOL = BLACK;
-            byte rasterY = plexFreeNextYpos();
+            char rasterY = plexFreeNextYpos();
             while(*RASTER<rasterY) {}
             (*BORDERCOL)++;
             plexShowSprite();

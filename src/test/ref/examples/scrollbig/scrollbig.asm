@@ -132,7 +132,7 @@ scroll_bit: {
     bcc !+
     inc.z sc+1
   !:
-    // for(byte r:0..7)
+    // for(char r:0..7)
     inx
     cpx #8
     bne __b3
@@ -148,7 +148,7 @@ scroll_hard: {
     ldx #0
   // Hard scroll
   __b1:
-    // for(byte i=0;i!=39;i++)
+    // for(char i=0;i!=39;i++)
     cpx #$27
     bne __b2
     // }
@@ -178,7 +178,7 @@ scroll_hard: {
     // (SCREEN+40*7)[i]=(SCREEN+40*7)[i+1]
     lda SCREEN+$28*7+1,x
     sta SCREEN+$28*7,x
-    // for(byte i=0;i!=39;i++)
+    // for(char i=0;i!=39;i++)
     inx
     jmp __b1
 }
@@ -215,7 +215,7 @@ fillscreen: {
     lda #>SCREEN
     sta.z cursor+1
   __b1:
-    // for( byte* cursor = screen; cursor < screen+1000; cursor++)
+    // for( char* cursor = screen; cursor < screen+1000; cursor++)
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -231,7 +231,7 @@ fillscreen: {
     lda #fill
     ldy #0
     sta (cursor),y
-    // for( byte* cursor = screen; cursor < screen+1000; cursor++)
+    // for( char* cursor = screen; cursor < screen+1000; cursor++)
     inc.z cursor
     bne !+
     inc.z cursor+1

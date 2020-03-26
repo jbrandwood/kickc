@@ -6,20 +6,20 @@ import "c64"
 import "print"
 
 // The rotated point - updated by calling rotate_matrix()
-signed byte* xr = $f0;
-signed byte* yr = $f1;
-signed byte* zr = $f2;
+signed char* xr = $f0;
+signed char* yr = $f1;
+signed char* zr = $f2;
 
 // The rotated point with perspective
-signed byte* pp = $f3;
-signed byte* xp = $f4;
-signed byte* yp = $f5;
+signed char* pp = $f3;
+signed char* xp = $f4;
+signed char* yp = $f5;
 
 // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
 word* psp1 = $f6;
 word* psp2 = $f8;
 
-byte* SCREEN = $400;
+char* SCREEN = $400;
 
 void main() {
 	asm { sei }
@@ -36,26 +36,24 @@ void main() {
 }
 
 // Positions to rotate
-signed byte[8] xs = { -52, -52, -52,   0,  0,   52,  52,  52};
-signed byte[8] ys = { -52,   0,  52, -52,  52, -52,   0,  52};
-signed byte[8] zs = {  52,  52,  52,  52,  52,  52,  52,  52};
+signed char[8] xs = { -52, -52, -52,   0,  0,   52,  52,  52};
+signed char[8] ys = { -52,   0,  52, -52,  52, -52,   0,  52};
+signed char[8] zs = {  52,  52,  52,  52,  52,  52,  52,  52};
 // Rotated positions
-signed byte[8] xrs;
-signed byte[8] yrs;
-signed byte[8] zrs;
+signed char[8] xrs;
+signed char[8] yrs;
+signed char[8] zrs;
 // Persepctive factors (from zrs)
-signed byte[8] pps;
+signed char[8] pps;
 // Rotated positions with persepctive
-signed byte[8] xps;
-signed byte[8] yps;
+signed char[8] xps;
+signed char[8] yps;
 
-signed byte sx = 0;
-signed byte sy = 0;
-signed byte sz = 0;
+signed char sx = 0;
+signed char sy = 0;
+signed char sz = 0;
 
 void anim() {
-	//signed byte xmin = 0;
-	//signed byte xmax = 0;
 	while(true) {
 		while(*RASTER!=$ff) {}
 		while(*RASTER!=$fe) {}
@@ -64,20 +62,18 @@ void anim() {
     	//calculate_matrix_16(sx,sy,sz);
     	calculate_matrix(sx,sy,sz);
     	store_matrix();
-        for(byte i: 0..7) {
+        for(char i: 0..7) {
             (*BORDERCOL)++;
             rotate_matrix(xs[i], ys[i], zs[i]);
-            //if(*xr<xmin) xmin = *xr;
-            //if(*xr>xmax) xmax = *xr;
             xrs[i] = *xr;
             yrs[i] = *yr;
             zrs[i] = *zr;
             pps[i] = *pp;
             xps[i] = *xp;
             yps[i] = *yp;
-            byte i2 = i*2;
-       	    SPRITES_XPOS[i2] = $80+(byte)((*xp));
-       	    SPRITES_YPOS[i2] = $80+(byte)((*yp));
+            char i2 = i*2;
+       	    SPRITES_XPOS[i2] = $80+(char)((*xp));
+       	    SPRITES_YPOS[i2] = $80+(char)((*yp));
     	}
         *BORDERCOL = LIGHT_GREY;
         debug_print();
@@ -104,16 +100,16 @@ void debug_print_init() {
 	print_str_at("xp", SCREEN+40*23);
 	print_str_at("yp", SCREEN+40*24);
 
-    byte* at_line = SCREEN+16*40;
- 	byte c = 4;
- 	byte* COLS = $d800;
- 	byte* at_cols = COLS+16*40;
-    for( byte i: 0..7) {
+    char* at_line = SCREEN+16*40;
+ 	char c = 4;
+ 	char* COLS = $d800;
+ 	char* at_cols = COLS+16*40;
+    for( char i: 0..7) {
     	print_sbyte_at(xs[i], at_line+40*0+c);
     	print_sbyte_at(ys[i], at_line+40*1+c);
     	print_sbyte_at(zs[i], at_line+40*2+c);
-    	for( byte j: 0..3) {
-    		byte col = 8+i;
+    	for( char j: 0..3) {
+    		char col = 8+i;
     		*(at_cols+40*0+c+j) = col;
     		*(at_cols+40*1+c+j) = col;
     		*(at_cols+40*2+c+j) = col;
@@ -145,9 +141,9 @@ void debug_print() {
     print_sbyte_pos(rotation_matrix[6], 6, 29);    	
     print_sbyte_pos(rotation_matrix[7], 6, 33);    	
     print_sbyte_pos(rotation_matrix[8], 6, 37);    	
-    byte* at_line = SCREEN+19*40;
- 	byte c = 4;
-    for( byte i: 0..7) {
+    char* at_line = SCREEN+19*40;
+ 	char c = 4;
+    for( char i: 0..7) {
     	print_sbyte_at(xrs[i], at_line+40*0+c);
     	print_sbyte_at(yrs[i], at_line+40*1+c);
     	print_sbyte_at(zrs[i], at_line+40*2+c);
@@ -160,32 +156,32 @@ void debug_print() {
 
 // Initialize sprites
 void sprites_init() {
-	byte* SCREEN = $400;
+	char* SCREEN = $400;
     *SPRITES_ENABLE = %11111111;
-    byte* sprites_ptr = SCREEN+$3f8;
-    for(byte i: 0..7) {
-    	sprites_ptr[i] = (byte)(SPRITE/$40);
+    char* sprites_ptr = SCREEN+$3f8;
+    for(char i: 0..7) {
+    	sprites_ptr[i] = (char)(SPRITE/$40);
         SPRITES_COLS[i] = GREEN; //8+i;
     }
 }
 
 // The rotation matrix
-signed byte[9] rotation_matrix;
+signed char[9] rotation_matrix;
 
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-void calculate_matrix(signed byte sx, signed byte sy, signed byte sz) {
-	signed byte t1 = sy-sz;
-	signed byte t2 = sy+sz;
-	signed byte t3 = sx+sz;
-	signed byte t4 = sx-sz;
-	signed byte t5 = sx+t2; // = sx+sy+sz
-	signed byte t6 = sx-t1; // = sx-sy+sz
-	signed byte t7 = sx+t1; // = sx+sy-sz
-	signed byte t8 = t2-sx; // = sy+sz-sx
-	signed byte t9 = sy-sx;
-	signed byte t10 = sy+sx;
+void calculate_matrix(signed char sx, signed char sy, signed char sz) {
+	signed char t1 = sy-sz;
+	signed char t2 = sy+sz;
+	signed char t3 = sx+sz;
+	signed char t4 = sx-sz;
+	signed char t5 = sx+t2; // = sx+sy+sz
+	signed char t6 = sx-t1; // = sx-sy+sz
+	signed char t7 = sx+t1; // = sx+sy-sz
+	signed char t8 = t2-sx; // = sy+sz-sx
+	signed char t9 = sy-sx;
+	signed char t10 = sy+sx;
 	rotation_matrix[0] = COSH[t1]+COSH[t2];
 	rotation_matrix[1] = SINH[t1]-SINH[t2];
 	rotation_matrix[2] = SINH[sy]+SINH[sy];
@@ -200,9 +196,9 @@ void calculate_matrix(signed byte sx, signed byte sy, signed byte sz) {
 // Prepare the 3x3 rotation matrix into rotation_matrix[] using 16-bit sines for improved accuracy.
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-void calculate_matrix_16(signed byte sx, signed byte sy, signed byte sz) {
-	signed byte t1 = sy-sz;
-	signed byte t2 = sy+sz;
+void calculate_matrix_16(signed char sx, signed char sy, signed char sz) {
+	signed char t1 = sy-sz;
+	signed char t2 = sy+sz;
 	signed word cosh_t1 = (signed word){ COSH_HI[t1], COSH_LO[t1] };
 	signed word cosh_t2 = (signed word){ COSH_HI[t2], COSH_LO[t2] };
 	rotation_matrix[0] = round_hi(cosh_t1 + cosh_t2);
@@ -211,12 +207,12 @@ void calculate_matrix_16(signed byte sx, signed byte sy, signed byte sz) {
 	rotation_matrix[1] = round_hi(sinh_t1 - sinh_t2);
 	signed word sinh_sy = (signed word){ SINH_HI[sy], SINH_LO[sy] };	
 	rotation_matrix[2] = round_hi(sinh_sy+sinh_sy);
-	signed byte t3 = sx+sz;
-	signed byte t4 = sx-sz;
-	signed byte t5 = sx+t2; // = sx+sy+sz
-	signed byte t6 = sx-t1; // = sx-sy+sz
-	signed byte t7 = sx+t1; // = sx+sy-sz
-	signed byte t8 = t2-sx; // = sy+sz-sx
+	signed char t3 = sx+sz;
+	signed char t4 = sx-sz;
+	signed char t5 = sx+t2; // = sx+sy+sz
+	signed char t6 = sx-t1; // = sx-sy+sz
+	signed char t7 = sx+t1; // = sx+sy-sz
+	signed char t8 = t2-sx; // = sy+sz-sx
 	signed word sinh_t3 = (signed word){ SINH_HI[t3], SINH_LO[t3] };
 	signed word sinh_t4 = (signed word){ SINH_HI[t4], SINH_LO[t4] };	
 	signed word cosq_t5 = (signed word){ COSQ_HI[t5], COSH_LO[t5] };
@@ -233,8 +229,8 @@ void calculate_matrix_16(signed byte sx, signed byte sy, signed byte sz) {
 	signed word sinq_t8 = (signed word){ SINQ_HI[t8], SINH_LO[t8] };
 	rotation_matrix[4] = round_hi( cosh_t3 + cosh_t4 + sinq_t5 - sinq_t6 - sinq_t7 - sinq_t8);
 	rotation_matrix[6] = round_hi( cosh_t4 - cosh_t3 + sinq_t6 - sinq_t5 - sinq_t7 - sinq_t8);
-	signed byte t9 = sy-sx;
-	signed byte t10 = sy+sx;
+	signed char t9 = sy-sx;
+	signed char t10 = sy+sx;
 	signed word sinh_t9 = (signed word){ SINH_HI[t9], SINH_LO[t9] };
 	signed word sinh_t10 = (signed word){ SINH_HI[t10], SINH_LO[t10] };	
 	rotation_matrix[5] = round_hi( sinh_t9 - sinh_t10);
@@ -243,10 +239,10 @@ void calculate_matrix_16(signed byte sx, signed byte sy, signed byte sz) {
 	rotation_matrix[8] = round_hi( cosh_t9 + cosh_t10 );
 }
 
-// Returns the rounded high byte of the passed signed word.
-// Examines the lower byte to determine whether to round up or down
-signed byte round_hi(signed word val) {
-	return (signed byte)>(val+$80);
+// Returns the rounded high char of the passed signed word.
+// Examines the lower char to determine whether to round up or down
+signed char round_hi(signed word val) {
+	return (signed char)>(val+$80);
 }
 
 
@@ -298,7 +294,7 @@ void store_matrix() {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-void rotate_matrix(signed byte x, signed byte y, signed byte z) {
+void rotate_matrix(signed char x, signed char y, signed char z) {
 	*xr = x;
 	*yr = y;
 	*zr = z;
@@ -389,7 +385,7 @@ void rotate_matrix(signed byte x, signed byte y, signed byte z) {
 
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-byte[0x200] align(0x100) mulf_sqr1 = kickasm {{
+char[0x200] align(0x100) mulf_sqr1 = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
@@ -398,7 +394,7 @@ byte[0x200] align(0x100) mulf_sqr1 = kickasm {{
 }};
 
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-byte[0x200] align(0x100) mulf_sqr2 = kickasm {{
+char[0x200] align(0x100) mulf_sqr2 = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
@@ -442,7 +438,7 @@ void mulf_init() {
 */
 
 // A single sprite
-byte* SPRITE = $3000;
+char* SPRITE = $3000;
 kickasm(pc SPRITE, resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
@@ -451,7 +447,7 @@ kickasm(pc SPRITE, resource "balloon.png") {{
 }}
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed byte[0x100] align(0x100) PERSP_Z = kickasm {{
+signed char[0x100] align(0x100) PERSP_Z = kickasm {{
     {
     .var d = 256.0	
     .var z0 = 6.0	
@@ -469,7 +465,7 @@ signed byte[0x100] align(0x100) PERSP_Z = kickasm {{
 // Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$20;20]
-signed byte[0x140] align(0x40) SINH = kickasm {{
+signed char[0x140] align(0x40) SINH = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -480,10 +476,10 @@ signed byte[0x140] align(0x40) SINH = kickasm {{
     }
     }
 }};
-signed byte* COSH = SINH+$40; // sin(x) = cos(x+PI/2)
+signed char* COSH = SINH+$40; // sin(x) = cos(x+PI/2)
 
 // Quarter Sine/Cosine: signed fixed [-$10,$10]
-signed byte[0x140] align(0x40) SINQ = kickasm {{
+signed char[0x140] align(0x40) SINQ = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -494,12 +490,12 @@ signed byte[0x140] align(0x40) SINQ = kickasm {{
     }
     }
 }};
-signed byte* COSQ = SINQ+$40; // sin(x) = cos(x+PI/2)
+signed char* COSQ = SINQ+$40; // sin(x) = cos(x+PI/2)
 
 // 16 bit Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$1f,$1f]
-byte[0x140] align(0x40) SINH_LO = kickasm {{
+char[0x140] align(0x40) SINH_LO = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -510,9 +506,9 @@ byte[0x140] align(0x40) SINH_LO = kickasm {{
     }
     }
 }};
-byte* COSH_LO = SINH_LO+$40; // sin(x) = cos(x+PI/2)
+char* COSH_LO = SINH_LO+$40; // sin(x) = cos(x+PI/2)
 
-byte[0x140] align(0x40) SINH_HI = kickasm {{
+char[0x140] align(0x40) SINH_HI = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -523,10 +519,10 @@ byte[0x140] align(0x40) SINH_HI = kickasm {{
     }
     }
 }};
-byte* COSH_HI = SINH_HI+$40; // sin(x) = cos(x+PI/2)
+char* COSH_HI = SINH_HI+$40; // sin(x) = cos(x+PI/2)
 
 // Quarter Sine/Cosine: signed fixed [-$0f,$0f]
-byte[0x140] align(0x40) SINQ_LO = kickasm {{
+char[0x140] align(0x40) SINQ_LO = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -537,9 +533,9 @@ byte[0x140] align(0x40) SINQ_LO = kickasm {{
     }
     }
 }};
-byte* COSQ_LO = SINQ_LO+$40; // sin(x) = cos(x+PI/2)
+char* COSQ_LO = SINQ_LO+$40; // sin(x) = cos(x+PI/2)
 
-byte[0x140] align(0x40) SINQ_HI = kickasm {{
+char[0x140] align(0x40) SINQ_HI = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -550,5 +546,5 @@ byte[0x140] align(0x40) SINQ_HI = kickasm {{
     }
     }
 }};
-byte* COSQ_HI = SINQ_HI+$40; // sin(x) = cos(x+PI/2)
+char* COSQ_HI = SINQ_HI+$40; // sin(x) = cos(x+PI/2)
 

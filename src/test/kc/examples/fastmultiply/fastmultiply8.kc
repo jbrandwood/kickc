@@ -8,23 +8,23 @@
 
 import "print.kc"
 
-signed byte[] vals = {-95, -64, -32, -16, 0, 16, 32, 64, 95};
+signed char[] vals = {-95, -64, -32, -16, 0, 16, 32, 64, 95};
 
 void main() {
 	init_screen();
-	byte* at_line = $400;
-	byte* at = at_line+4;
-	for(byte k: 0..8) {
+	char* at_line = $400;
+	char* at = at_line+4;
+	for(char k: 0..8) {
 		print_sbyte_at(vals[k], at);
 		at += 4;
 	}
-	for(byte i: 0..8) {
+	for(char i: 0..8) {
 		at_line +=40;
 		at = at_line;
 		print_sbyte_at(vals[i], at);
-		for(byte j: 0..8) {
+		for(char j: 0..8) {
 			at += 4;		
-			signed byte r = fmul8(vals[i], vals[j]);
+			signed char r = fmul8(vals[i], vals[j]);
 			print_sbyte_at(r, at);			
 		}
 	}
@@ -32,12 +32,12 @@ void main() {
 
 void init_screen() {
 	print_cls();
-	byte* COLS = $d800;
-	byte WHITE = 1;
-	for(byte l: 0..39) {
+	char* COLS = $d800;
+	char WHITE = 1;
+	for(char l: 0..39) {
 		COLS[l] = WHITE;
 	}
-	for(byte m: 0..24) {
+	for(char m: 0..24) {
 		COLS[0] = WHITE;
 		COLS[1] = WHITE;
 		COLS[2] = WHITE;
@@ -48,11 +48,11 @@ void init_screen() {
 }
 
 // Pointers to a, b and c=a*b
-signed byte* ap = $fd;
-signed byte* bp = $fe;
-signed byte* cp = $ff;
+signed char* ap = $fd;
+signed char* bp = $fe;
+signed char* cp = $ff;
 
-signed byte fmul8(signed byte a, signed byte b) {
+signed char fmul8(signed char a, signed char b) {
 	*ap = a;
 	*bp = b;
 	asm {
@@ -71,7 +71,7 @@ signed byte fmul8(signed byte a, signed byte b) {
 
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-byte[0x200] align(0x100) mulf_sqr1 = kickasm {{
+char[0x200] align(0x100) mulf_sqr1 = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
@@ -81,7 +81,7 @@ byte[0x200] align(0x100) mulf_sqr1 = kickasm {{
 
 
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-byte[0x200] align(0x100) mulf_sqr2 = kickasm {{
+char[0x200] align(0x100) mulf_sqr2 = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }

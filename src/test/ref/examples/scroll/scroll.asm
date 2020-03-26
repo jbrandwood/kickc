@@ -35,7 +35,7 @@ main: {
     ldx #0
   // Hard scroll
   __b5:
-    // for(byte i=0;i!=39;i++)
+    // for(char i=0;i!=39;i++)
     cpx #$27
     bne __b6
     // c = *nxt
@@ -71,7 +71,7 @@ main: {
     // line[i]=line[i+1]
     lda line+1,x
     sta line,x
-    // for(byte i=0;i!=39;i++)
+    // for(char i=0;i!=39;i++)
     inx
     jmp __b5
 }
@@ -83,7 +83,7 @@ fillscreen: {
     lda #>SCREEN
     sta.z cursor+1
   __b1:
-    // for( byte* cursor = screen; cursor < screen+1000; cursor++)
+    // for( char* cursor = screen; cursor < screen+1000; cursor++)
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -99,7 +99,7 @@ fillscreen: {
     lda #fill
     ldy #0
     sta (cursor),y
-    // for( byte* cursor = screen; cursor < screen+1000; cursor++)
+    // for( char* cursor = screen; cursor < screen+1000; cursor++)
     inc.z cursor
     bne !+
     inc.z cursor+1

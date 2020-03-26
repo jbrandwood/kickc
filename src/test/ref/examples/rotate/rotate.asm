@@ -144,7 +144,7 @@ anim: {
     sta.z yr+1
     // >xr
     lda.z xr+1
-    // xpos = ((signed byte) >xr) + 24 /*border*/ + 149
+    // xpos = ((signed char) >xr) + 24 /*border*/ + 149
     tax
     clc
     adc #<$18+$95
@@ -184,7 +184,7 @@ anim: {
     // SPRITES_YPOS[i2] = ypos
     tya
     sta SPRITES_YPOS,x
-    // for(byte i: 0..7)
+    // for(char i: 0..7)
     inc.z i
     lda #8
     cmp.z i
@@ -456,13 +456,13 @@ init: {
     sta SPRITES_ENABLE
     ldx #0
   __b1:
-    // sprites_ptr[i] = (byte)(SPRITE/$40)
+    // sprites_ptr[i] = (char)(SPRITE/$40)
     lda #SPRITE/$40
     sta sprites_ptr,x
     // SPRITES_COLS[i] = GREEN
     lda #GREEN
     sta SPRITES_COLS,x
-    // for(byte i: 0..7)
+    // for(char i: 0..7)
     inx
     cpx #8
     bne __b1

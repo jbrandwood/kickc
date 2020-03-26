@@ -64,7 +64,7 @@ main: {
     // SCREEN[ch] = ch
     txa
     sta SCREEN,x
-    // for(byte ch: 0..239)
+    // for(char ch: 0..239)
     inx
     cpx #$f0
     bne __b1

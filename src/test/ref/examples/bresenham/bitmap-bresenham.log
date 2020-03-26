@@ -5519,7 +5519,7 @@ main: {
     // [6] *((const byte*) D011) ← (const byte) VIC_BMM|(const byte) VIC_DEN|(const byte) VIC_RSEL|(byte) 3 -- _deref_pbuc1=vbuc2 
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
+    // *VIC_MEMORY =  (char)((((unsigned int)SCREEN&$3fff)/$40)|(((unsigned int)BITMAP&$3fff)/$400))
     // [7] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN&(word) $3fff/(byte) $40|(word)(const byte*) BITMAP&(word) $3fff/(word) $400 -- _deref_pbuc1=vbuc2 
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
@@ -5556,7 +5556,7 @@ lines: {
     sta.z l
     // lines::@1
   __b1:
-    // for(byte l=0; l<lines_cnt;l++)
+    // for(char l=0; l<lines_cnt;l++)
     // [17] if((byte) lines::l#2<(const byte) lines_cnt) goto lines::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z l
     cmp #lines_cnt
@@ -5584,7 +5584,7 @@ lines: {
     // [23] call bitmap_line 
     jsr bitmap_line
     // lines::@3
-    // for(byte l=0; l<lines_cnt;l++)
+    // for(char l=0; l<lines_cnt;l++)
     // [24] (byte) lines::l#1 ← ++ (byte) lines::l#2 -- vbuz1=_inc_vbuz1 
     inc.z l
     // [16] phi from lines::@3 to lines::@1 [phi:lines::@3->lines::@1]
@@ -6179,7 +6179,7 @@ init_screen: {
     sta.z c+1
     // init_screen::@1
   __b1:
-    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
+    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
     // [156] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z c+1
     cmp #>SCREEN+$400
@@ -6198,7 +6198,7 @@ init_screen: {
     lda #$14
     ldy #0
     sta (c),y
-    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
+    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
     // [159] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2 -- pbuz1=_inc_pbuz1 
     inc.z c
     bne !+

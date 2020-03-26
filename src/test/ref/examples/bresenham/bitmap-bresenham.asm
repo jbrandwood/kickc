@@ -20,7 +20,7 @@ main: {
     // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
+    // *VIC_MEMORY =  (char)((((unsigned int)SCREEN&$3fff)/$40)|(((unsigned int)BITMAP&$3fff)/$400))
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
     sta VIC_MEMORY
     // bitmap_init(BITMAP)
@@ -39,7 +39,7 @@ lines: {
     lda #0
     sta.z l
   __b1:
-    // for(byte l=0; l<lines_cnt;l++)
+    // for(char l=0; l<lines_cnt;l++)
     lda.z l
     cmp #lines_cnt
     bcc __b2
@@ -57,7 +57,7 @@ lines: {
     ldx.z l
     ldy lines_y+1,x
     jsr bitmap_line
-    // for(byte l=0; l<lines_cnt;l++)
+    // for(char l=0; l<lines_cnt;l++)
     inc.z l
     jmp __b1
 }
@@ -399,7 +399,7 @@ init_screen: {
     lda #>SCREEN
     sta.z c+1
   __b1:
-    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
+    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
     lda.z c+1
     cmp #>SCREEN+$400
     bne __b2
@@ -413,7 +413,7 @@ init_screen: {
     lda #$14
     ldy #0
     sta (c),y
-    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
+    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
     inc.z c
     bne !+
     inc.z c+1

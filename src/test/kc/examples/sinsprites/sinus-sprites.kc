@@ -2,12 +2,12 @@ import "c64"
 import "basic-floats"
 import "print"
 
-const byte sinlen_x = 221;
-const byte[221] sintab_x;
-const byte sinlen_y = 197;
-const byte[197] sintab_y;
-const byte* sprites = $2000;
-const byte* SCREEN = $400;
+const char sinlen_x = 221;
+const char[221] sintab_x;
+const char sinlen_y = 197;
+const char[197] sintab_y;
+const char* sprites = $2000;
+const char* SCREEN = $400;
 
 void main() {
     init();
@@ -19,7 +19,7 @@ void main() {
 
 void init() {
     clear_screen();
-    for( byte i : 0..39) {
+    for( char i : 0..39) {
         COLS[i] = $0;
         COLS[40+i] = $b;
     }
@@ -33,18 +33,18 @@ void init() {
 }
 
 void clear_screen() {
-    for(byte* sc = SCREEN; sc<SCREEN+1000; sc++) {
+    for(char* sc = SCREEN; sc<SCREEN+1000; sc++) {
         *sc = ' ';
     }
 }
 
 // Current position of the progress cursor
-byte* progress_cursor = SCREEN;
+char* progress_cursor = SCREEN;
 // Current index within the progress cursor (0-7)
-byte progress_idx = 0;
+char progress_idx = 0;
 
 // Initialize the PETSCII progress bar
-void progress_init(byte* line) {
+void progress_init(char* line) {
     progress_cursor = line;
     progress_idx = 0;
 }
@@ -53,7 +53,7 @@ void progress_init(byte* line) {
 // Done by increasing the character until the idx is 8 and then moving to the next char
 void progress_inc() {
     // Progress characters
-    const byte[] progress_chars = { $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0};
+    const char[] progress_chars = { $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0};
     if(++progress_idx==8) {
         *progress_cursor = progress_chars[8];
         progress_cursor++;
@@ -63,17 +63,17 @@ void progress_inc() {
 }
 
 
-byte sin_idx_x = 0;
-byte sin_idx_y = 0;
+char sin_idx_x = 0;
+char sin_idx_y = 0;
 
 void anim() {
     (*BORDERCOL)++;
-    byte xidx = sin_idx_x;
-    byte yidx = sin_idx_y;
-    byte j2 = 12;
-    byte x_msb = 0;
-    for( byte j : 0..6) {
-        word x = (word)$1e + sintab_x[xidx];
+    char xidx = sin_idx_x;
+    char yidx = sin_idx_y;
+    char j2 = 12;
+    char x_msb = 0;
+    for( char j : 0..6) {
+        unsigned int x = (unsigned int)$1e + sintab_x[xidx];
         x_msb = x_msb*2 | >x;
         SPRITES_XPOS[j2] = <x;
         SPRITES_YPOS[j2] = sintab_y[yidx];
@@ -103,12 +103,12 @@ void place_sprites() {
     *SPRITES_ENABLE = %01111111;
     *SPRITES_EXPAND_X = %01111111;
     *SPRITES_EXPAND_Y = %01111111;
-    byte* sprites_ptr = SCREEN+$3f8;
-    byte spr_id = (byte)((word)sprites/$40);
-    byte spr_x = 60;
-    byte j2 = 0;
-    byte col = $5;
-    for( byte j : 0..6) {
+    char* sprites_ptr = SCREEN+$3f8;
+    char spr_id = (char)((unsigned int)sprites/$40);
+    char spr_x = 60;
+    char j2 = 0;
+    char col = $5;
+    for( char j : 0..6) {
         sprites_ptr[j] = spr_id++;
         SPRITES_XPOS[j2] = spr_x;
         SPRITES_YPOS[j2] = 80;
@@ -121,9 +121,9 @@ void place_sprites() {
 }
 
 void gen_sprites() {
-    byte[] cml = "camelot"z;
-    byte* spr = sprites;
-    for( byte i : 0..6 ) {
+    char[] cml = "camelot"z;
+    char* spr = sprites;
+    for( char i : 0..6 ) {
         gen_chargen_sprite(cml[i], spr);
         spr = spr + $40;
     }
@@ -132,28 +132,28 @@ void gen_sprites() {
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-void gen_chargen_sprite(byte ch, byte* sprite) {
-    byte* chargen = CHARGEN+((word)ch)*8;
+void gen_chargen_sprite(char ch, char* sprite) {
+    char* chargen = CHARGEN+((unsigned int)ch)*8;
     asm { sei }
     *PROCPORT = $32;
-    for(byte y:0..7) {
+    for(char y:0..7) {
       // current chargen line
-      byte bits = chargen[y];
-      // current sprite byte
-      byte s_gen = 0;
-      // #bits filled into current sprite byte
-      byte s_gen_cnt = 0;
-      for(byte x:0..7) {
+      char bits = chargen[y];
+      // current sprite char
+      char s_gen = 0;
+      // #bits filled into current sprite char
+      char s_gen_cnt = 0;
+      for(char x:0..7) {
         // Find the current chargen pixel (c)
-        byte c = 0;
+        char c = 0;
         if((bits & $80) != 0) {
            c = 1;
         }
-        // generate 3 pixels in the sprite byte (s_gen)
-        for(byte b : 0..2){
+        // generate 3 pixels in the sprite char (s_gen)
+        for(char b : 0..2){
             s_gen = s_gen*2 | c;
             if(++s_gen_cnt==8) {
-                // sprite byte filled - store and move to next byte
+                // sprite char filled - store and move to next char
                 sprite[0] = s_gen;
                 sprite[3] = s_gen;
                 sprite[6] = s_gen;
@@ -180,14 +180,14 @@ void gen_chargen_sprite(byte ch, byte* sprite) {
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
-void gen_sintab(byte* sintab, byte length, byte min, byte max) {
-    byte[] f_i = {0, 0, 0, 0, 0};   // i * 2 * PI
-    byte[] f_min = {0, 0, 0, 0, 0}; // amplitude/2 + min
-    byte[] f_amp = {0, 0, 0, 0, 0}; // amplitude/2
-    byte* f_2pi = $e2e5;            // 2 * PI
-    setFAC((word)max);       // fac = max
+void gen_sintab(char* sintab, char length, char min, char max) {
+    char[] f_i = {0, 0, 0, 0, 0};   // i * 2 * PI
+    char[] f_min = {0, 0, 0, 0, 0}; // amplitude/2 + min
+    char[] f_amp = {0, 0, 0, 0, 0}; // amplitude/2
+    char* f_2pi = $e2e5;            // 2 * PI
+    setFAC((unsigned int)max);       // fac = max
     setARGtoFAC();           // arg = max
-    setFAC((word)min);       // fac = min
+    setFAC((unsigned int)min);       // fac = min
     setMEMtoFAC(f_min);      // f_min = min
     subFACfromARG();         // fac = max - min
     setMEMtoFAC(f_amp);      // f_amp = max - min
@@ -196,16 +196,16 @@ void gen_sintab(byte* sintab, byte length, byte min, byte max) {
     setMEMtoFAC(f_amp);      // f_amp = (max - min) / 2
     addMEMtoFAC(f_min);      // fac = min + (max - min) / 2
     setMEMtoFAC(f_min);      // f_min = min + (max - min) / 2
-    for(byte i =0; i<length; i++) {
-        setFAC((word)i);       // fac = i
+    for(char i =0; i<length; i++) {
+        setFAC((unsigned int)i);       // fac = i
         mulFACbyMEM(f_2pi);    // fac = i * 2 * PI
         setMEMtoFAC(f_i);      // f_i = i * 2 * PI
-        setFAC((word)length);  // fac = length
+        setFAC((unsigned int)length);  // fac = length
         divMEMbyFAC(f_i);      // fac = i * 2 * PI / length
         sinFAC();              // fac = sin( i * 2 * PI / length )
         mulFACbyMEM(f_amp);    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2
         addMEMtoFAC(f_min);    // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
-        sintab[i] = (byte)getFAC();
+        sintab[i] = (char)getFAC();
         progress_inc();
     }
 }

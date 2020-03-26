@@ -4637,9 +4637,9 @@ gen_chargen_sprite: {
     .label sprite = $2b
     .label chargen = $4b
     .label bits = $25
-    // current sprite byte
+    // current sprite char
     .label s_gen = $28
-    // #bits filled into current sprite byte
+    // #bits filled into current sprite char
     .label s_gen_cnt = $29
     .label b = $2a
     .label x = $26
@@ -4754,7 +4754,7 @@ gen_chargen_sprite: {
     // [193] phi (byte) gen_chargen_sprite::s_gen_cnt#3 = (byte) gen_chargen_sprite::s_gen_cnt#4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#2] -- register_copy 
     // [193] phi (byte) gen_chargen_sprite::s_gen#3 = (byte) gen_chargen_sprite::s_gen#5 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#3] -- register_copy 
     jmp __b4
-  // generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite char (s_gen)
     // [193] phi from gen_chargen_sprite::@5 to gen_chargen_sprite::@4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4]
   __b4_from___b5:
     // [193] phi (byte*) gen_chargen_sprite::sprite#3 = (byte*) gen_chargen_sprite::sprite#4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#0] -- register_copy 
@@ -4782,7 +4782,7 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@6
   __b6:
     // [198] *((byte*) gen_chargen_sprite::sprite#3) ← (byte) gen_chargen_sprite::s_gen#1 -- _deref_pbuz1=vbuz2 
-    // sprite byte filled - store and move to next byte
+    // sprite char filled - store and move to next char
     lda.z s_gen
     ldy #0
     sta (sprite),y
@@ -6465,7 +6465,7 @@ gen_chargen_sprite: {
     .label sprite = $13
     .label chargen = $15
     .label bits = $a
-    // current sprite byte
+    // current sprite char
     .label s_gen = $f
     .label x = $b
     .label y = 9
@@ -6571,7 +6571,7 @@ gen_chargen_sprite: {
     // [193] phi (byte) gen_chargen_sprite::s_gen_cnt#3 = (byte) gen_chargen_sprite::s_gen_cnt#4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#2] -- register_copy 
     // [193] phi (byte) gen_chargen_sprite::s_gen#3 = (byte) gen_chargen_sprite::s_gen#5 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#3] -- register_copy 
     jmp __b4
-  // generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite char (s_gen)
     // [193] phi from gen_chargen_sprite::@5 to gen_chargen_sprite::@4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4]
   __b4_from___b5:
     // [193] phi (byte*) gen_chargen_sprite::sprite#3 = (byte*) gen_chargen_sprite::sprite#4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#0] -- register_copy 
@@ -6596,7 +6596,7 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@6
   __b6:
     // [198] *((byte*) gen_chargen_sprite::sprite#3) ← (byte) gen_chargen_sprite::s_gen#1 -- _deref_pbuz1=vbuz2 
-    // sprite byte filled - store and move to next byte
+    // sprite char filled - store and move to next char
     lda.z s_gen
     ldy #0
     sta (sprite),y
@@ -7519,7 +7519,7 @@ anim: {
     // [13] phi (byte) anim::xidx#3 = (byte) anim::xidx#5 [phi:anim::@5->anim::@3#4] -- register_copy 
     // anim::@3
   __b3:
-    // x = (word)$1e + sintab_x[xidx]
+    // x = (unsigned int)$1e + sintab_x[xidx]
     // [14] (word) anim::x#0 ← (word) $1e + *((const byte*) sintab_x + (byte) anim::xidx#3) -- vwuz1=vwuc1_plus_pbuc2_derefidx_vbuz2 
     ldy.z xidx
     lda sintab_x,y
@@ -7595,7 +7595,7 @@ anim: {
     // [29] (byte) anim::j2#1 ← (byte) anim::j2#2 - (byte) 2 -- vbuz1=vbuz1_minus_2 
     dec.z j2
     dec.z j2
-    // for( byte j : 0..6)
+    // for( char j : 0..6)
     // [30] (byte) anim::j#1 ← ++ (byte) anim::j#2 -- vbuz1=_inc_vbuz1 
     inc.z j
     // [31] if((byte) anim::j#1!=(byte) 7) goto anim::@3 -- vbuz1_neq_vbuc1_then_la1 
@@ -7670,7 +7670,7 @@ init: {
     // [47] *((const byte*) COLS+(byte) $28 + (byte) init::i#2) ← (byte) $b -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #$b
     sta COLS+$28,x
-    // for( byte i : 0..39)
+    // for( char i : 0..39)
     // [48] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [49] if((byte) init::i#1!=(byte) $28) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
@@ -7769,7 +7769,7 @@ clear_screen: {
     sta.z sc+1
     // clear_screen::@1
   __b1:
-    // for(byte* sc = SCREEN; sc<SCREEN+1000; sc++)
+    // for(char* sc = SCREEN; sc<SCREEN+1000; sc++)
     // [67] if((byte*) clear_screen::sc#2<(const byte*) SCREEN+(word) $3e8) goto clear_screen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
@@ -7790,7 +7790,7 @@ clear_screen: {
     lda #' '
     ldy #0
     sta (sc),y
-    // for(byte* sc = SCREEN; sc<SCREEN+1000; sc++)
+    // for(char* sc = SCREEN; sc<SCREEN+1000; sc++)
     // [70] (byte*) clear_screen::sc#1 ← ++ (byte*) clear_screen::sc#2 -- pbuz1=_inc_pbuz1 
     inc.z sc
     bne !+
@@ -7815,7 +7815,7 @@ gen_sintab: {
     .label min = 9
     .label length = $a
     .label sintab = $10
-    // setFAC((word)max)
+    // setFAC((unsigned int)max)
     // [72] (word) setFAC::w#0 ← (word)(byte) gen_sintab::max#2 -- vwuz1=_word_vbuxx 
     txa
     sta.z setFAC.w
@@ -7833,7 +7833,7 @@ gen_sintab: {
     // fac = max
     jsr setARGtoFAC
     // gen_sintab::@4
-    // setFAC((word)min)
+    // setFAC((unsigned int)min)
     // [76] (word) setFAC::w#1 ← (word)(byte) gen_sintab::min#2 -- vwuz1=_word_vbuz2 
     lda.z min
     sta.z setFAC.w
@@ -7939,7 +7939,7 @@ gen_sintab: {
   // f_min = min + (max - min) / 2
     // gen_sintab::@1
   __b1:
-    // for(byte i =0; i<length; i++)
+    // for(char i =0; i<length; i++)
     // [95] if((byte) gen_sintab::i#10<(byte) gen_sintab::length#10) goto gen_sintab::@2 -- vbuz1_lt_vbuz2_then_la1 
     lda.z i
     cmp.z length
@@ -7950,7 +7950,7 @@ gen_sintab: {
     rts
     // gen_sintab::@2
   __b2:
-    // setFAC((word)i)
+    // setFAC((unsigned int)i)
     // [97] (word) setFAC::w#3 ← (word)(byte) gen_sintab::i#10 -- vwuz1=_word_vbuz2 
     lda.z i
     sta.z setFAC.w
@@ -7985,7 +7985,7 @@ gen_sintab: {
     sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
     // gen_sintab::@15
-    // setFAC((word)length)
+    // setFAC((unsigned int)length)
     // [103] (word) setFAC::w#4 ← (word)(byte) gen_sintab::length#10 -- vwuz1=_word_vbuz2 
     lda.z length
     sta.z setFAC.w
@@ -8041,10 +8041,10 @@ gen_sintab: {
     // [115] (word) getFAC::return#2 ← (word) getFAC::return#0
     // gen_sintab::@21
     // [116] (word~) gen_sintab::$24 ← (word) getFAC::return#2
-    // (byte)getFAC()
+    // (char)getFAC()
     // [117] (byte~) gen_sintab::$25 ← (byte)(word~) gen_sintab::$24 -- vbuaa=_byte_vwuz1 
     lda.z __24
-    // sintab[i] = (byte)getFAC()
+    // sintab[i] = (char)getFAC()
     // [118] *((byte*) gen_sintab::sintab#13 + (byte) gen_sintab::i#10) ← (byte~) gen_sintab::$25 -- pbuz1_derefidx_vbuz2=vbuaa 
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy.z i
@@ -8053,7 +8053,7 @@ gen_sintab: {
     // [119] call progress_inc 
     jsr progress_inc
     // gen_sintab::@22
-    // for(byte i =0; i<length; i++)
+    // for(char i =0; i<length; i++)
     // [120] (byte) gen_sintab::i#1 ← ++ (byte) gen_sintab::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [94] phi from gen_sintab::@22 to gen_sintab::@1 [phi:gen_sintab::@22->gen_sintab::@1]
@@ -8370,7 +8370,7 @@ gen_sprites: {
     bcc !+
     inc.z spr+1
   !:
-    // for( byte i : 0..6 )
+    // for( char i : 0..6 )
     // [178] (byte) gen_sprites::i#1 ← ++ (byte) gen_sprites::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [179] if((byte) gen_sprites::i#1!=(byte) 7) goto gen_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -8394,19 +8394,19 @@ gen_chargen_sprite: {
     .label sprite = $13
     .label chargen = $15
     .label bits = $a
-    // current sprite byte
+    // current sprite char
     .label s_gen = $f
     .label x = $b
     .label y = 9
     // Find the current chargen pixel (c)
     .label c = $c
-    // (word)ch
+    // (unsigned int)ch
     // [181] (word~) gen_chargen_sprite::$0 ← (word)(byte) gen_chargen_sprite::ch#0 -- vwuz1=_word_vbuxx 
     txa
     sta.z __0
     lda #0
     sta.z __0+1
-    // ((word)ch)*8
+    // ((unsigned int)ch)*8
     // [182] (word~) gen_chargen_sprite::$1 ← (word~) gen_chargen_sprite::$0 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __1
     rol.z __1+1
@@ -8414,7 +8414,7 @@ gen_chargen_sprite: {
     rol.z __1+1
     asl.z __1
     rol.z __1+1
-    // chargen = CHARGEN+((word)ch)*8
+    // chargen = CHARGEN+((unsigned int)ch)*8
     // [183] (byte*) gen_chargen_sprite::chargen#0 ← (const byte*) CHARGEN + (word~) gen_chargen_sprite::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z chargen
@@ -8492,7 +8492,7 @@ gen_chargen_sprite: {
     ldx #0
     // [193] phi (byte) gen_chargen_sprite::s_gen_cnt#3 = (byte) gen_chargen_sprite::s_gen_cnt#4 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#2] -- register_copy 
     // [193] phi (byte) gen_chargen_sprite::s_gen#3 = (byte) gen_chargen_sprite::s_gen#5 [phi:gen_chargen_sprite::@3->gen_chargen_sprite::@4#3] -- register_copy 
-  // generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite char (s_gen)
     // [193] phi from gen_chargen_sprite::@5 to gen_chargen_sprite::@4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4]
     // [193] phi (byte*) gen_chargen_sprite::sprite#3 = (byte*) gen_chargen_sprite::sprite#4 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#0] -- register_copy 
     // [193] phi (byte) gen_chargen_sprite::b#2 = (byte) gen_chargen_sprite::b#1 [phi:gen_chargen_sprite::@5->gen_chargen_sprite::@4#1] -- register_copy 
@@ -8517,7 +8517,7 @@ gen_chargen_sprite: {
     // gen_chargen_sprite::@6
     // sprite[0] = s_gen
     // [198] *((byte*) gen_chargen_sprite::sprite#3) ← (byte) gen_chargen_sprite::s_gen#1 -- _deref_pbuz1=vbuz2 
-    // sprite byte filled - store and move to next byte
+    // sprite char filled - store and move to next char
     ldy #0
     sta (sprite),y
     // sprite[3] = s_gen
@@ -8547,7 +8547,7 @@ gen_chargen_sprite: {
     // [202] phi (byte) gen_chargen_sprite::s_gen#6 = (byte) gen_chargen_sprite::s_gen#1 [phi:gen_chargen_sprite::@4->gen_chargen_sprite::@5#2] -- register_copy 
     // gen_chargen_sprite::@5
   __b5:
-    // for(byte b : 0..2)
+    // for(char b : 0..2)
     // [203] (byte) gen_chargen_sprite::b#1 ← ++ (byte) gen_chargen_sprite::b#2 -- vbuxx=_inc_vbuxx 
     inx
     // [204] if((byte) gen_chargen_sprite::b#1!=(byte) 3) goto gen_chargen_sprite::@4 -- vbuxx_neq_vbuc1_then_la1 
@@ -8557,7 +8557,7 @@ gen_chargen_sprite: {
     // bits = bits*2
     // [205] (byte) gen_chargen_sprite::bits#1 ← (byte) gen_chargen_sprite::bits#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
     asl.z bits
-    // for(byte x:0..7)
+    // for(char x:0..7)
     // [206] (byte) gen_chargen_sprite::x#1 ← ++ (byte) gen_chargen_sprite::x#6 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [207] if((byte) gen_chargen_sprite::x#1!=(byte) 8) goto gen_chargen_sprite::@2 -- vbuz1_neq_vbuc1_then_la1 
@@ -8574,7 +8574,7 @@ gen_chargen_sprite: {
     bcc !+
     inc.z sprite+1
   !:
-    // for(byte y:0..7)
+    // for(char y:0..7)
     // [209] (byte) gen_chargen_sprite::y#1 ← ++ (byte) gen_chargen_sprite::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [210] if((byte) gen_chargen_sprite::y#1!=(byte) 8) goto gen_chargen_sprite::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -8675,7 +8675,7 @@ place_sprites: {
     // [226] (byte) place_sprites::j2#2 ← ++ (byte) place_sprites::j2#1 -- vbuz1=_inc_vbuxx 
     inx
     stx.z j2
-    // for( byte j : 0..6)
+    // for( char j : 0..6)
     // [227] (byte) place_sprites::j#1 ← ++ (byte) place_sprites::j#2 -- vbuz1=_inc_vbuz1 
     inc.z j
     // [228] if((byte) place_sprites::j#1!=(byte) 7) goto place_sprites::@1 -- vbuz1_neq_vbuc1_then_la1 

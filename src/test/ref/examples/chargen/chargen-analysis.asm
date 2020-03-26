@@ -80,7 +80,7 @@ main: {
     sta.z sc+1
   // Clear screen
   __b1:
-    // for( byte* sc=SCREEN;sc<SCREEN+1000;sc++)
+    // for( char* sc=SCREEN;sc<SCREEN+1000;sc++)
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bcs !__b2+
@@ -142,7 +142,7 @@ main: {
     ldx #0
     lda #$20
     jsr plot_chargen
-    // for(byte i : 0..3 )
+    // for(char i : 0..3 )
     inc.z i
     lda #4
     cmp.z i
@@ -233,7 +233,7 @@ main: {
     ldx.z shift
     jsr plot_chargen
   __b14:
-    // for( byte ch : 0..$3f)
+    // for( char ch : 0..$3f)
     inc.z ch
     lda #$40
     cmp.z ch
@@ -244,7 +244,7 @@ main: {
     lda #' '
     ldy #0
     sta (sc),y
-    // for( byte* sc=SCREEN;sc<SCREEN+1000;sc++)
+    // for( char* sc=SCREEN;sc<SCREEN+1000;sc++)
     inc.z sc
     bne !+
     inc.z sc+1
@@ -349,7 +349,7 @@ plot_chargen: {
   !:
     // bits = bits*2
     asl.z bits
-    // for(byte x:0..7)
+    // for(char x:0..7)
     inx
     cpx #8
     bne __b4
@@ -361,7 +361,7 @@ plot_chargen: {
     bcc !+
     inc.z sc+1
   !:
-    // for(byte y:0..7)
+    // for(char y:0..7)
     inc.z y
     lda #8
     cmp.z y

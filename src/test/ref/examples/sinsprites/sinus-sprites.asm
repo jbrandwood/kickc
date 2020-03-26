@@ -67,7 +67,7 @@ anim: {
     lda #0
     sta.z x_msb
   __b3:
-    // x = (word)$1e + sintab_x[xidx]
+    // x = (unsigned int)$1e + sintab_x[xidx]
     ldy.z xidx
     lda sintab_x,y
     clc
@@ -121,7 +121,7 @@ anim: {
     // j2 = j2-2
     dec.z j2
     dec.z j2
-    // for( byte j : 0..6)
+    // for( char j : 0..6)
     inc.z j
     lda #7
     cmp.z j
@@ -161,7 +161,7 @@ init: {
     // COLS[40+i] = $b
     lda #$b
     sta COLS+$28,x
-    // for( byte i : 0..39)
+    // for( char i : 0..39)
     inx
     cpx #$28
     bne __b1
@@ -215,7 +215,7 @@ clear_screen: {
     lda #>SCREEN
     sta.z sc+1
   __b1:
-    // for(byte* sc = SCREEN; sc<SCREEN+1000; sc++)
+    // for(char* sc = SCREEN; sc<SCREEN+1000; sc++)
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -231,7 +231,7 @@ clear_screen: {
     lda #' '
     ldy #0
     sta (sc),y
-    // for(byte* sc = SCREEN; sc<SCREEN+1000; sc++)
+    // for(char* sc = SCREEN; sc<SCREEN+1000; sc++)
     inc.z sc
     bne !+
     inc.z sc+1
@@ -252,7 +252,7 @@ gen_sintab: {
     .label min = 9
     .label length = $a
     .label sintab = $10
-    // setFAC((word)max)
+    // setFAC((unsigned int)max)
     txa
     sta.z setFAC.w
     lda #0
@@ -262,7 +262,7 @@ gen_sintab: {
     // setARGtoFAC()
     // fac = max
     jsr setARGtoFAC
-    // setFAC((word)min)
+    // setFAC((unsigned int)min)
     lda.z min
     sta.z setFAC.w
     lda #0
@@ -322,14 +322,14 @@ gen_sintab: {
     sta.z i
   // f_min = min + (max - min) / 2
   __b1:
-    // for(byte i =0; i<length; i++)
+    // for(char i =0; i<length; i++)
     lda.z i
     cmp.z length
     bcc __b2
     // }
     rts
   __b2:
-    // setFAC((word)i)
+    // setFAC((unsigned int)i)
     lda.z i
     sta.z setFAC.w
     lda #0
@@ -349,7 +349,7 @@ gen_sintab: {
     lda #>f_i
     sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    // setFAC((word)length)
+    // setFAC((unsigned int)length)
     lda.z length
     sta.z setFAC.w
     lda #0
@@ -378,15 +378,15 @@ gen_sintab: {
     jsr addMEMtoFAC
     // getFAC()
     jsr getFAC
-    // (byte)getFAC()
+    // (char)getFAC()
     lda.z __24
-    // sintab[i] = (byte)getFAC()
+    // sintab[i] = (char)getFAC()
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
     ldy.z i
     sta (sintab),y
     // progress_inc()
     jsr progress_inc
-    // for(byte i =0; i<length; i++)
+    // for(char i =0; i<length; i++)
     inc.z i
     jmp __b1
     f_i: .byte 0, 0, 0, 0, 0
@@ -601,7 +601,7 @@ gen_sprites: {
     bcc !+
     inc.z spr+1
   !:
-    // for( byte i : 0..6 )
+    // for( char i : 0..6 )
     inc.z i
     lda #7
     cmp.z i
@@ -620,25 +620,25 @@ gen_chargen_sprite: {
     .label sprite = $13
     .label chargen = $15
     .label bits = $a
-    // current sprite byte
+    // current sprite char
     .label s_gen = $f
     .label x = $b
     .label y = 9
     // Find the current chargen pixel (c)
     .label c = $c
-    // (word)ch
+    // (unsigned int)ch
     txa
     sta.z __0
     lda #0
     sta.z __0+1
-    // ((word)ch)*8
+    // ((unsigned int)ch)*8
     asl.z __1
     rol.z __1+1
     asl.z __1
     rol.z __1+1
     asl.z __1
     rol.z __1+1
-    // chargen = CHARGEN+((word)ch)*8
+    // chargen = CHARGEN+((unsigned int)ch)*8
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -678,7 +678,7 @@ gen_chargen_sprite: {
     sta.z c
   __b3:
     ldx #0
-  // generate 3 pixels in the sprite byte (s_gen)
+  // generate 3 pixels in the sprite char (s_gen)
   __b4:
     // s_gen*2
     lda.z s_gen
@@ -691,7 +691,7 @@ gen_chargen_sprite: {
     cpy #8
     bne __b5
     // sprite[0] = s_gen
-    // sprite byte filled - store and move to next byte
+    // sprite char filled - store and move to next char
     ldy #0
     sta (sprite),y
     // sprite[3] = s_gen
@@ -709,13 +709,13 @@ gen_chargen_sprite: {
     tya
     sta.z s_gen
   __b5:
-    // for(byte b : 0..2)
+    // for(char b : 0..2)
     inx
     cpx #3
     bne __b4
     // bits = bits*2
     asl.z bits
-    // for(byte x:0..7)
+    // for(char x:0..7)
     inc.z x
     lda #8
     cmp.z x
@@ -728,7 +728,7 @@ gen_chargen_sprite: {
     bcc !+
     inc.z sprite+1
   !:
-    // for(byte y:0..7)
+    // for(char y:0..7)
     inc.z y
     lda #8
     cmp.z y
@@ -796,7 +796,7 @@ place_sprites: {
     inx
     inx
     stx.z j2
-    // for( byte j : 0..6)
+    // for( char j : 0..6)
     inc.z j
     lda #7
     cmp.z j

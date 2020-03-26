@@ -69,7 +69,7 @@ main: {
     // SCREEN[ch] = ch
     txa
     sta SCREEN,x
-    // for(byte ch: 0..239)
+    // for(char ch: 0..239)
     inx
     cpx #$f0
     bne __b1
@@ -147,13 +147,13 @@ render_logo: {
     .label x_char = $1c
     .label logo_idx = 4
     .label logo_idx_1 = 5
-    // (byte)xpos
+    // (char)xpos
     lda.z xpos
-    // (byte)xpos&7
+    // (char)xpos&7
     and #7
-    // VIC_MCM|((byte)xpos&7)
+    // VIC_MCM|((char)xpos&7)
     ora #VIC_MCM
-    // *D016 = VIC_MCM|((byte)xpos&7)
+    // *D016 = VIC_MCM|((char)xpos&7)
     sta D016
     // xpos/8
     lda.z xpos+1
@@ -171,7 +171,7 @@ render_logo: {
     cmp #$80
     ror.z __3+1
     ror.z __3
-    // x_char = (signed byte)(xpos/8)
+    // x_char = (signed char)(xpos/8)
     lda.z __3
     sta.z x_char
     // if(xpos<0)

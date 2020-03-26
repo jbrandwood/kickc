@@ -5,17 +5,17 @@ import "fastmultiply"
 import "time"
 import "print"
 
-byte* SCREEN = $0400;
+char* SCREEN = $0400;
 
 // Sine and Cosine tables  
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
-byte[0x140] align(0x40) SIN = kickasm {{
+char[0x140] align(0x40) SIN = kickasm {{
     .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
 }};
 
-byte* COS = SIN+$40; // sin(x) = cos(x+PI/2)
+char* COS = SIN+$40; // sin(x) = cos(x+PI/2)
 
 void main() {
 	asm { sei }
@@ -26,42 +26,42 @@ void main() {
 void init() {
     mulf_init();	
     *SPRITES_ENABLE = %11111111;	
-    byte* sprites_ptr = SCREEN+$3f8;
-    for(byte i: 0..7) {
-    	sprites_ptr[i] = (byte)(SPRITE/$40);
+    char* sprites_ptr = SCREEN+$3f8;
+    for(char i: 0..7) {
+    	sprites_ptr[i] = (char)(SPRITE/$40);
         SPRITES_COLS[i] = GREEN;
     }
 }
 
 // Positions to rotate
-signed byte[8] xs = { -70, -70, -70,   0,   0,  70,  70,  70};
-signed byte[8] ys = { -70,   0,  70, -70,  70, -70,   0,  70};
+signed char[8] xs = { -70, -70, -70,   0,   0,  70,  70,  70};
+signed char[8] ys = { -70,   0,  70, -70,  70, -70,   0,  70};
 
 void anim() {
-	byte angle = 0;
+	char angle = 0;
 	while(true) {
 		while(*RASTER!=$ff) {}
         (*BORDERCOL)++;
         clock_start();
-        signed byte cos_a = (signed byte) COS[angle]; // signed fixed[0.7]
-        signed byte sin_a = (signed byte) SIN[angle]; // signed fixed[0.7]
-        byte sprite_msb = 0;
-        for(byte i: 0..7) {
-            signed byte x = xs[i]; // signed fixed[7.0]
-            signed byte y = ys[i]; // signed fixed[7.0]
+        signed char cos_a = (signed char) COS[angle]; // signed fixed[0.7]
+        signed char sin_a = (signed char) SIN[angle]; // signed fixed[0.7]
+        char sprite_msb = 0;
+        for(char i: 0..7) {
+            signed char x = xs[i]; // signed fixed[7.0]
+            signed char y = ys[i]; // signed fixed[7.0]
             mulf8s_prepare(cos_a);
             signed word xr = mulf8s_prepared(x)*2; // signed fixed[8.8]
             signed word yr = mulf8s_prepared(y)*2; // signed fixed[8.8]
             mulf8s_prepare(sin_a);
 	        xr -= mulf8s_prepared(y)*2; // signed fixed[8.8]
 		    yr += mulf8s_prepared(x)*2; // signed fixed[8.8]
-		    signed word xpos = ((signed byte) >xr) + 24 /*border*/ + 149 /*center*/;
+		    signed word xpos = ((signed char) >xr) + 24 /*border*/ + 149 /*center*/;
             sprite_msb = sprite_msb/2;
             if(>xpos!=0) {
                 sprite_msb |= $80;
             }
-            byte ypos = (>yr) + 89 /*center*/+ 51 /*border*/;
-            byte i2 = i*2;
+            char ypos = (>yr) + 89 /*center*/+ 51 /*border*/;
+            char i2 = i*2;
        	    SPRITES_XPOS[i2] = <xpos;
        	    SPRITES_YPOS[i2] = ypos;
         }
@@ -76,7 +76,7 @@ void anim() {
 }
 
 // A single sprite
-byte* SPRITE = $3000;
+char* SPRITE = $3000;
 kickasm(pc SPRITE, resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)

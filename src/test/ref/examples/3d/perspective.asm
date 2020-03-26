@@ -368,7 +368,7 @@ mulf_init: {
     lda.z add+1
     adc #>2
     sta.z add+1
-    // for( byte i:0..128)
+    // for( char i:0..128)
     iny
     cpy #$81
     bne __b1

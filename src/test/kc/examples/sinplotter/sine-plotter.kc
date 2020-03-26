@@ -5,14 +5,14 @@ import "sinus.kc"
 import "string.kc"
 import "bitmap2.kc"
 
-byte* SCREEN = $400;
-byte* BITMAP = $2000;
+char* SCREEN = $400;
+char* BITMAP = $2000;
 
-const word SIN_SIZE = 512;
+const unsigned int SIN_SIZE = 512;
 
-signed word[512] align($100) sin;
+signed int[512] align($100) sin;
 
-signed word[512] sin2 = kickasm {{
+signed int[512] sin2 = kickasm {{
     .for(var i=0; i<512; i++) {
   	  .word sin(toRadians([i*360]/512))*320
     }
@@ -38,14 +38,14 @@ void main() {
 }
 
 void render_sine() {
-    word xpos = 0;
-    for(word sin_idx=0; sin_idx<SIN_SIZE; sin_idx++) {
-        signed word sin_val = *(sin+sin_idx);
-        byte ypos = wrap_y(sin_val);
+    unsigned int xpos = 0;
+    for(unsigned int sin_idx=0; sin_idx<SIN_SIZE; sin_idx++) {
+        signed int sin_val = *(sin+sin_idx);
+        char ypos = wrap_y(sin_val);
         bitmap_plot(xpos,ypos);
 
-        signed word sin2_val = *(sin2+sin_idx);
-        byte ypos2 = wrap_y(sin2_val+10);
+        signed int sin2_val = *(sin2+sin_idx);
+        char ypos2 = wrap_y(sin2_val+10);
         bitmap_plot(xpos,ypos2);
 
         xpos++;
@@ -55,12 +55,12 @@ void render_sine() {
     }
 }
 
-byte wrap_y(signed word y) {
+char wrap_y(signed int y) {
     while(y>=200) {
         y -= 200;
     }
     while(y<0) {
         y += 200;
     }
-    return (byte)y;
+    return (char)y;
 }

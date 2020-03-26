@@ -383,7 +383,7 @@ sid_rnd_init: {
     // }
     rts
 }
-// Fill a screen (1000 bytes) with a specific byte
+// Fill a screen (1000 chars) with a specific char
 // fillscreen(byte* zp($b) screen, byte register(X) fill)
 fillscreen: {
     .label screen = $b

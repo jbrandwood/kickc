@@ -6,9 +6,9 @@ import "c64"
 import "print"
 
 // The rotated point - updated by calling rotate()
-signed byte* xr = $f0;
-signed byte* yr = $f1;
-signed byte* zr = $f2;
+signed char* xr = $f0;
+signed char* yr = $f1;
+signed char* zr = $f2;
 
 // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
 word* psp1 = $f3;
@@ -22,7 +22,7 @@ void main() {
 	print_cls();
 	do_perspective($39, -$47, $36);
 	/*
-	signed byte xy = -$3f;
+	signed char xy = -$3f;
 	do_perspective(xy, xy, -$3f);
 	do_perspective(xy, xy, -$30);
 	do_perspective(xy, xy, -$20);
@@ -36,9 +36,9 @@ void main() {
 }
 
 
-void do_perspective(signed byte x, signed byte y, signed byte z) {
+void do_perspective(signed char x, signed char y, signed char z) {
 	print_str("(");
-	print_sbyte(x);	
+	print_sbyte(x);
 	print_str(",");
 	print_sbyte(y);	
 	print_str(",");
@@ -55,7 +55,7 @@ void do_perspective(signed byte x, signed byte y, signed byte z) {
 
 // Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 // Implemented in assembler to utilize seriously fast multiplication 
-void perspective(signed byte x, signed byte y, signed byte z) {
+void perspective(signed char x, signed char y, signed char z) {
 	*xr = x;
 	*yr = y;
 	*zr = z;
@@ -97,16 +97,16 @@ void perspective(signed byte x, signed byte y, signed byte z) {
 // - http://codebase64.org/doku.php?id=magazines:chacking16
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-byte[512] align($100) mulf_sqr1;
+char[512] align($100) mulf_sqr1;
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-byte[512] align($100) mulf_sqr2;
+char[512] align($100) mulf_sqr2;
 
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 void mulf_init() {
 	signed word sqr = 0;	
 	signed word add = 1;
-	for( byte i:0..128) {
-		byte val = >sqr;
+	for( char i:0..128) {
+		char val = >sqr;
 		mulf_sqr1[i] = val;
 		(mulf_sqr1+$100)[i] = val;
 		mulf_sqr1[-i] = val;
@@ -121,7 +121,7 @@ void mulf_init() {
 }
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed byte[0x100] align(0x100) PERSP_Z = kickasm {{
+signed char[0x100] align(0x100) PERSP_Z = kickasm {{
     {
     .var d = 256.0	
     .var z0 = 5.0	

@@ -1566,6 +1566,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
+      // throw new CompileError("Non-standard array declaration ", new StatementSource(ctx));
       SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
       if(ctx.expr() != null) {
          RValue sizeVal = (RValue) visit(ctx.expr());

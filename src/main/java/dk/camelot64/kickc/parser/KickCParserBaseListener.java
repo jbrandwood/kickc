@@ -162,6 +162,30 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDeclVariableArray(KickCParser.DeclVariableArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclVariableArray(KickCParser.DeclVariableArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclVariableName(KickCParser.DeclVariableNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclVariableName(KickCParser.DeclVariableNameContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDeclFunction(KickCParser.DeclFunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}

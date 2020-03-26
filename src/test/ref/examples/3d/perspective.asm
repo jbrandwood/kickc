@@ -19,12 +19,12 @@ main: {
     sei
     // mulf_init()
     jsr mulf_init
-    // *psp1 = (word)mulf_sqr1
+    // *psp1 = (unsigned int)mulf_sqr1
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
     sta psp1+1
-    // *psp2 = (word)mulf_sqr2
+    // *psp2 = (unsigned int)mulf_sqr2
     lda #<mulf_sqr2
     sta psp2
     lda #>mulf_sqr2

@@ -87,6 +87,20 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code declVariableArray}
+	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclVariableArray(KickCParser.DeclVariableArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code declVariableName}
+	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclVariableName(KickCParser.DeclVariableNameContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#declFunction}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

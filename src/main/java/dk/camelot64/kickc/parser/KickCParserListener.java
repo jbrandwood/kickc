@@ -134,6 +134,30 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code declVariableArray}
+	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclVariableArray(KickCParser.DeclVariableArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declVariableArray}
+	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclVariableArray(KickCParser.DeclVariableArrayContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code declVariableName}
+	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclVariableName(KickCParser.DeclVariableNameContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code declVariableName}
+	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclVariableName(KickCParser.DeclVariableNameContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#declFunction}.
 	 * @param ctx the parse tree
 	 */

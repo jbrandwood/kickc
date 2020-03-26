@@ -13,7 +13,7 @@ import "sid"
 const unsigned char* SCREEN1 = $2800;
 const unsigned char* CHARSET = $2000;
 
-const unsigned char[0x100] align(0x100) SINTABLE = kickasm {{
+const unsigned char align(0x100) SINTABLE[0x100] = kickasm {{
     .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(toRadians(360*i/256)))
 }};
@@ -40,8 +40,8 @@ unsigned char c2B = 0;
 // Render plasma to the passed screen
 void doplasma(unsigned char* screen) {
 
-    unsigned char[40] xbuf;
-    unsigned char[25] ybuf;
+    unsigned char xbuf[40];
+    unsigned char ybuf[25];
 
     unsigned char c1a = c1A;
     unsigned char c1b = c1B;
@@ -79,7 +79,7 @@ void doplasma(unsigned char* screen) {
 
 // Make a plasma-friendly charset where the chars are randomly filled
 void makecharset(unsigned char* charset) {
-    const unsigned char[8] bittab = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
+    const unsigned char bittab[8] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
     sid_rnd_init();
     print_cls();
     for (unsigned int c = 0; c < 0x100; ++c) {

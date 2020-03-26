@@ -40,13 +40,13 @@ main: {
     sei
     // sprites_init()
     jsr sprites_init
-    // *psp1 = (word)mulf_sqr1
+    // *psp1 = (unsigned int)mulf_sqr1
     //mulf_init();
     lda #<mulf_sqr1
     sta psp1
     lda #>mulf_sqr1
     sta psp1+1
-    // *psp2 = (word)mulf_sqr2
+    // *psp2 = (unsigned int)mulf_sqr2
     lda #<mulf_sqr2
     sta psp2
     lda #>mulf_sqr2
@@ -1226,9 +1226,9 @@ sprites_init: {
   xrs: .fill 8, 0
   yrs: .fill 8, 0
   zrs: .fill 8, 0
-  // Persepctive factors (from zrs)
+  // Perspective factors (from zrs)
   pps: .fill 8, 0
-  // Rotated positions with persepctive
+  // Rotated positions with perspective
   xps: .fill 8, 0
   yps: .fill 8, 0
   // The rotation matrix

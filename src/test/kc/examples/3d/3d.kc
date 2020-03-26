@@ -16,8 +16,8 @@ signed char* xp = $f4;
 signed char* yp = $f5;
 
 // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
-word* psp1 = $f6;
-word* psp2 = $f8;
+unsigned int* psp1 = $f6;
+unsigned int* psp2 = $f8;
 
 char* SCREEN = $400;
 
@@ -25,8 +25,8 @@ void main() {
 	asm { sei }
 	sprites_init();
 	//mulf_init();
-	*psp1 = (word)mulf_sqr1;
-	*psp2 = (word)mulf_sqr2;
+	*psp1 = (unsigned int)mulf_sqr1;
+	*psp2 = (unsigned int)mulf_sqr2;
 
 	debug_print_init();
 
@@ -36,18 +36,18 @@ void main() {
 }
 
 // Positions to rotate
-signed char[8] xs = { -52, -52, -52,   0,  0,   52,  52,  52};
-signed char[8] ys = { -52,   0,  52, -52,  52, -52,   0,  52};
-signed char[8] zs = {  52,  52,  52,  52,  52,  52,  52,  52};
+signed char xs[8] = { -52, -52, -52,   0,  0,   52,  52,  52};
+signed char ys[8] = { -52,   0,  52, -52,  52, -52,   0,  52};
+signed char zs[8] = {  52,  52,  52,  52,  52,  52,  52,  52};
 // Rotated positions
-signed char[8] xrs;
-signed char[8] yrs;
-signed char[8] zrs;
-// Persepctive factors (from zrs)
-signed char[8] pps;
-// Rotated positions with persepctive
-signed char[8] xps;
-signed char[8] yps;
+signed char xrs[8];
+signed char yrs[8];
+signed char zrs[8];
+// Perspective factors (from zrs)
+signed char pps[8];
+// Rotated positions with perspective
+signed char xps[8];
+signed char yps[8];
 
 signed char sx = 0;
 signed char sy = 0;
@@ -166,7 +166,7 @@ void sprites_init() {
 }
 
 // The rotation matrix
-signed char[9] rotation_matrix;
+signed char rotation_matrix[9];
 
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
@@ -199,13 +199,13 @@ void calculate_matrix(signed char sx, signed char sy, signed char sz) {
 void calculate_matrix_16(signed char sx, signed char sy, signed char sz) {
 	signed char t1 = sy-sz;
 	signed char t2 = sy+sz;
-	signed word cosh_t1 = (signed word){ COSH_HI[t1], COSH_LO[t1] };
-	signed word cosh_t2 = (signed word){ COSH_HI[t2], COSH_LO[t2] };
+	signed int cosh_t1 = (signed int){ COSH_HI[t1], COSH_LO[t1] };
+	signed int cosh_t2 = (signed int){ COSH_HI[t2], COSH_LO[t2] };
 	rotation_matrix[0] = round_hi(cosh_t1 + cosh_t2);
-	signed word sinh_t1 = (signed word){ SINH_HI[t1], SINH_LO[t1] };
-	signed word sinh_t2 = (signed word){ SINH_HI[t2], SINH_LO[t2] };	
+	signed int sinh_t1 = (signed int){ SINH_HI[t1], SINH_LO[t1] };
+	signed int sinh_t2 = (signed int){ SINH_HI[t2], SINH_LO[t2] };	
 	rotation_matrix[1] = round_hi(sinh_t1 - sinh_t2);
-	signed word sinh_sy = (signed word){ SINH_HI[sy], SINH_LO[sy] };	
+	signed int sinh_sy = (signed int){ SINH_HI[sy], SINH_LO[sy] };	
 	rotation_matrix[2] = round_hi(sinh_sy+sinh_sy);
 	signed char t3 = sx+sz;
 	signed char t4 = sx-sz;
@@ -213,35 +213,35 @@ void calculate_matrix_16(signed char sx, signed char sy, signed char sz) {
 	signed char t6 = sx-t1; // = sx-sy+sz
 	signed char t7 = sx+t1; // = sx+sy-sz
 	signed char t8 = t2-sx; // = sy+sz-sx
-	signed word sinh_t3 = (signed word){ SINH_HI[t3], SINH_LO[t3] };
-	signed word sinh_t4 = (signed word){ SINH_HI[t4], SINH_LO[t4] };	
-	signed word cosq_t5 = (signed word){ COSQ_HI[t5], COSH_LO[t5] };
-	signed word cosq_t6 = (signed word){ COSQ_HI[t6], COSH_LO[t6] };
-	signed word cosq_t7 = (signed word){ COSQ_HI[t7], COSH_LO[t7] };
-	signed word cosq_t8 = (signed word){ COSQ_HI[t8], COSH_LO[t8] };
+	signed int sinh_t3 = (signed int){ SINH_HI[t3], SINH_LO[t3] };
+	signed int sinh_t4 = (signed int){ SINH_HI[t4], SINH_LO[t4] };	
+	signed int cosq_t5 = (signed int){ COSQ_HI[t5], COSH_LO[t5] };
+	signed int cosq_t6 = (signed int){ COSQ_HI[t6], COSH_LO[t6] };
+	signed int cosq_t7 = (signed int){ COSQ_HI[t7], COSH_LO[t7] };
+	signed int cosq_t8 = (signed int){ COSQ_HI[t8], COSH_LO[t8] };
 	rotation_matrix[3] = round_hi(sinh_t3 - sinh_t4 + cosq_t6 - cosq_t5 + cosq_t8 - cosq_t7);
 	rotation_matrix[7] = round_hi(sinh_t3 + sinh_t4 + cosq_t6 - cosq_t5 + cosq_t7 - cosq_t8);
-	signed word cosh_t3 = (signed word){ COSH_HI[t3], COSH_LO[t3] };
-	signed word cosh_t4 = (signed word){ COSH_HI[t4], COSH_LO[t4] };	
-	signed word sinq_t5 = (signed word){ SINQ_HI[t5], SINH_LO[t5] };
-	signed word sinq_t6 = (signed word){ SINQ_HI[t6], SINH_LO[t6] };
-	signed word sinq_t7 = (signed word){ SINQ_HI[t7], SINH_LO[t7] };
-	signed word sinq_t8 = (signed word){ SINQ_HI[t8], SINH_LO[t8] };
+	signed int cosh_t3 = (signed int){ COSH_HI[t3], COSH_LO[t3] };
+	signed int cosh_t4 = (signed int){ COSH_HI[t4], COSH_LO[t4] };	
+	signed int sinq_t5 = (signed int){ SINQ_HI[t5], SINH_LO[t5] };
+	signed int sinq_t6 = (signed int){ SINQ_HI[t6], SINH_LO[t6] };
+	signed int sinq_t7 = (signed int){ SINQ_HI[t7], SINH_LO[t7] };
+	signed int sinq_t8 = (signed int){ SINQ_HI[t8], SINH_LO[t8] };
 	rotation_matrix[4] = round_hi( cosh_t3 + cosh_t4 + sinq_t5 - sinq_t6 - sinq_t7 - sinq_t8);
 	rotation_matrix[6] = round_hi( cosh_t4 - cosh_t3 + sinq_t6 - sinq_t5 - sinq_t7 - sinq_t8);
 	signed char t9 = sy-sx;
 	signed char t10 = sy+sx;
-	signed word sinh_t9 = (signed word){ SINH_HI[t9], SINH_LO[t9] };
-	signed word sinh_t10 = (signed word){ SINH_HI[t10], SINH_LO[t10] };	
+	signed int sinh_t9 = (signed int){ SINH_HI[t9], SINH_LO[t9] };
+	signed int sinh_t10 = (signed int){ SINH_HI[t10], SINH_LO[t10] };	
 	rotation_matrix[5] = round_hi( sinh_t9 - sinh_t10);
-	signed word cosh_t9 = (signed word){ COSH_HI[t9], COSH_LO[t9] };
-	signed word cosh_t10 = (signed word){ COSH_HI[t10], COSH_LO[t10] };
+	signed int cosh_t9 = (signed int){ COSH_HI[t9], COSH_LO[t9] };
+	signed int cosh_t10 = (signed int){ COSH_HI[t10], COSH_LO[t10] };
 	rotation_matrix[8] = round_hi( cosh_t9 + cosh_t10 );
 }
 
-// Returns the rounded high char of the passed signed word.
+// Returns the rounded high char of the passed signed int.
 // Examines the lower char to determine whether to round up or down
-signed char round_hi(signed word val) {
+signed char round_hi(signed int val) {
 	return (signed char)>(val+$80);
 }
 
@@ -385,7 +385,7 @@ void rotate_matrix(signed char x, signed char y, signed char z) {
 
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-char[0x200] align(0x100) mulf_sqr1 = kickasm {{
+char align(0x100) mulf_sqr1[0x200] = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
@@ -394,7 +394,7 @@ char[0x200] align(0x100) mulf_sqr1 = kickasm {{
 }};
 
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-char[0x200] align(0x100) mulf_sqr2 = kickasm {{
+char align(0x100) mulf_sqr2[0x200] = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
@@ -419,8 +419,8 @@ byte[512] align($100) mulf_sqr2;
 
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 void mulf_init() {
-	signed word sqr = 0;	
-	signed word add = 1;
+	signed int sqr = 0;	
+	signed int add = 1;
 	for( byte i:0..128) {
 		byte val = >sqr;
 		mulf_sqr1[i] = val;
@@ -447,7 +447,7 @@ kickasm(pc SPRITE, resource "balloon.png") {{
 }}
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed char[0x100] align(0x100) PERSP_Z = kickasm {{
+signed char align(0x100) PERSP_Z[0x100] = kickasm {{
     {
     .var d = 256.0	
     .var z0 = 6.0	
@@ -465,7 +465,7 @@ signed char[0x100] align(0x100) PERSP_Z = kickasm {{
 // Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$20;20]
-signed char[0x140] align(0x40) SINH = kickasm {{
+signed char align(0x40) SINH[0x140] = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -479,7 +479,7 @@ signed char[0x140] align(0x40) SINH = kickasm {{
 signed char* COSH = SINH+$40; // sin(x) = cos(x+PI/2)
 
 // Quarter Sine/Cosine: signed fixed [-$10,$10]
-signed char[0x140] align(0x40) SINQ = kickasm {{
+signed char align(0x40) SINQ[0x140] = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -495,7 +495,7 @@ signed char* COSQ = SINQ+$40; // sin(x) = cos(x+PI/2)
 // 16 bit Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$1f,$1f]
-char[0x140] align(0x40) SINH_LO = kickasm {{
+char align(0x40) SINH_LO[0x140] = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -508,7 +508,7 @@ char[0x140] align(0x40) SINH_LO = kickasm {{
 }};
 char* COSH_LO = SINH_LO+$40; // sin(x) = cos(x+PI/2)
 
-char[0x140] align(0x40) SINH_HI = kickasm {{
+char align(0x40) SINH_HI[0x140] = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -522,7 +522,7 @@ char[0x140] align(0x40) SINH_HI = kickasm {{
 char* COSH_HI = SINH_HI+$40; // sin(x) = cos(x+PI/2)
 
 // Quarter Sine/Cosine: signed fixed [-$0f,$0f]
-char[0x140] align(0x40) SINQ_LO = kickasm {{
+char align(0x40) SINQ_LO[0x140] = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -535,7 +535,7 @@ char[0x140] align(0x40) SINQ_LO = kickasm {{
 }};
 char* COSQ_LO = SINQ_LO+$40; // sin(x) = cos(x+PI/2)
 
-char[0x140] align(0x40) SINQ_HI = kickasm {{
+char align(0x40) SINQ_HI[0x140] = kickasm {{
     {
     .var min = -$1000
     .var max = $1000

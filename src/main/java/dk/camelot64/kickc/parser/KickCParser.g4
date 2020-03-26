@@ -66,8 +66,13 @@ declVariableList
     ;
 
 declVariableInit
-    : NAME ('=' expr)? #declVariableInitExpr
-    | NAME '=' declKasm #declVariableInitKasm
+    : declVariable ('=' expr)? #declVariableInitExpr
+    | declVariable '=' declKasm #declVariableInitKasm
+    ;
+
+declVariable
+    : NAME  #declVariableName
+    | declVariable BRACKET_BEGIN (expr)? BRACKET_END #declVariableArray
     ;
 
 declFunction

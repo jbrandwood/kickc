@@ -11,14 +11,14 @@ signed char* yr = $f1;
 signed char* zr = $f2;
 
 // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
-word* psp1 = $f3;
-word* psp2 = $f5;
+unsigned int* psp1 = $f3;
+unsigned int* psp2 = $f5;
 
 void main() {
 	asm { sei }
 	mulf_init();
-	*psp1 = (word)mulf_sqr1;
-	*psp2 = (word)mulf_sqr2;
+	*psp1 = (unsigned int)mulf_sqr1;
+	*psp2 = (unsigned int)mulf_sqr2;
 	print_cls();
 	do_perspective($39, -$47, $36);
 	/*
@@ -97,14 +97,14 @@ void perspective(signed char x, signed char y, signed char z) {
 // - http://codebase64.org/doku.php?id=magazines:chacking16
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-char[512] align($100) mulf_sqr1;
+char align($100) mulf_sqr1[512];
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-char[512] align($100) mulf_sqr2;
+char align($100) mulf_sqr2[512];
 
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 void mulf_init() {
-	signed word sqr = 0;	
-	signed word add = 1;
+	signed int sqr = 0;	
+	signed int add = 1;
 	for( char i:0..128) {
 		char val = >sqr;
 		mulf_sqr1[i] = val;
@@ -121,7 +121,7 @@ void mulf_init() {
 }
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed char[0x100] align(0x100) PERSP_Z = kickasm {{
+signed char align(0x100) PERSP_Z[0x100] = kickasm {{
     {
     .var d = 256.0	
     .var z0 = 5.0	

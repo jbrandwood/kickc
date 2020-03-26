@@ -567,11 +567,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDeclVariableInitExpr(KickCParser.DeclVariableInitExprContext ctx) {
+      String varName = (String) this.visit(ctx.declVariable());
+      KickCParser.ExprContext initializer = ctx.expr();
       StatementSource statementSource = new StatementSource(ctx);
       StatementSource declSource = new StatementSource((ParserRuleContext) ctx.parent.parent);
       try {
-         String varName = ctx.NAME().getText();
-         KickCParser.ExprContext initializer = ctx.expr();
          if(declVarStructMember && (initializer != null))
             throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
          if(initializer != null)
@@ -593,14 +593,38 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          }
          if(initializer != null)
             PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
-         return null;
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), declSource);
       }
+      return null;
    }
 
+   @Override
+   public String visitDeclVariableName(KickCParser.DeclVariableNameContext ctx) {
+      return ctx.NAME().getText();
+   }
+
+   @Override
+   public String visitDeclVariableArray(KickCParser.DeclVariableArrayContext ctx) {
+      // Handle array type declaration by updating the declared type and the array spec
+      // TODO This fails for a comma-separated list with some array in the middle! Eg. char x, y[5], x;
+      SymbolType elementType = declVarType;
+      if(ctx.expr() != null) {
+         RValue sizeVal = (RValue) visit(ctx.expr());
+         declArraySpec = new ArraySpec((ConstantValue) sizeVal);
+         declVarType = new SymbolTypePointer(elementType);
+      } else {
+         declArraySpec = new ArraySpec();
+         declVarType = new SymbolTypePointer(elementType);
+      }
+
+      // Find the variable name
+      return (String) this.visit(ctx.declVariable());
+   }
+
+
    /**
-    * Ensure that tha initializer value is a constant. Fail if it is not
+    * Ensure that the initializer value is a constant. Fail if it is not
     *
     * @param initValue The initializer value (result from {@link Initializers#constantify(RValue, Initializers.ValueTypeSpec, Program, StatementSource)}
     * @param initializer The initializer
@@ -621,7 +645,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
-      String varName = ctx.NAME().getText();
+      String varName = (String) this.visit(ctx.declVariable());
       StatementSource statementSource = new StatementSource(ctx);
       if(!(this.declVarType instanceof SymbolTypePointer) || declArraySpec == null) {
          throw new CompileError("KickAsm initializers only supported for arrays " + declVarType.getTypeName(), statementSource);

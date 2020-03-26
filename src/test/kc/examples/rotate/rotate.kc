@@ -10,7 +10,7 @@ char* SCREEN = $0400;
 // Sine and Cosine tables  
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
-char[0x140] align(0x40) SIN = kickasm {{
+char align(0x40) SIN[0x140] = kickasm {{
     .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
 }};
@@ -34,8 +34,8 @@ void init() {
 }
 
 // Positions to rotate
-signed char[8] xs = { -70, -70, -70,   0,   0,  70,  70,  70};
-signed char[8] ys = { -70,   0,  70, -70,  70, -70,   0,  70};
+signed char xs[8] = { -70, -70, -70,   0,   0,  70,  70,  70};
+signed char ys[8] = { -70,   0,  70, -70,  70, -70,   0,  70};
 
 void anim() {
 	char angle = 0;
@@ -50,12 +50,12 @@ void anim() {
             signed char x = xs[i]; // signed fixed[7.0]
             signed char y = ys[i]; // signed fixed[7.0]
             mulf8s_prepare(cos_a);
-            signed word xr = mulf8s_prepared(x)*2; // signed fixed[8.8]
-            signed word yr = mulf8s_prepared(y)*2; // signed fixed[8.8]
+            signed int xr = mulf8s_prepared(x)*2; // signed fixed[8.8]
+            signed int yr = mulf8s_prepared(y)*2; // signed fixed[8.8]
             mulf8s_prepare(sin_a);
 	        xr -= mulf8s_prepared(y)*2; // signed fixed[8.8]
 		    yr += mulf8s_prepared(x)*2; // signed fixed[8.8]
-		    signed word xpos = ((signed char) >xr) + 24 /*border*/ + 149 /*center*/;
+		    signed int xpos = ((signed char) >xr) + 24 /*border*/ + 149 /*center*/;
             sprite_msb = sprite_msb/2;
             if(>xpos!=0) {
                 sprite_msb |= $80;
@@ -68,7 +68,7 @@ void anim() {
         *SPRITES_XMSB = sprite_msb;
 		angle++;
         // Calculate the cycle count - 0x12 is the base usage of start/read
-        dword cyclecount = clock()-CLOCKS_PER_INIT;
+        unsigned long cyclecount = clock()-CLOCKS_PER_INIT;
         // Print cycle count
         print_dword_at(cyclecount, SCREEN);
 		*BORDERCOL = LIGHT_BLUE;	

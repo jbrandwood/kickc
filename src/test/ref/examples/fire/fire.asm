@@ -401,7 +401,7 @@ fillscreen: {
     bne !+
     inc.z screen+1
   !:
-    // for( unsigned word i : 0..999)
+    // for( unsigned int i : 0..999)
     inc.z i
     bne !+
     inc.z i+1

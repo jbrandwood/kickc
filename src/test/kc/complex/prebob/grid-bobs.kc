@@ -11,7 +11,7 @@ import "fastmultiply"
 //   0 3 6
 //   1 4 7
 //   2 5 8
-const char[3*3*8] PROTO_BOB = kickasm(resource "smiley.png") {{ 
+const char PROTO_BOB[3*3*8] = kickasm(resource "smiley.png") {{
 	.var pic = LoadPicture("smiley.png", List().add($000000, $ffffff))
 	.for (var x=0;x<3; x++)
     	.for (var y=0; y<24; y++)
@@ -21,7 +21,7 @@ const char[3*3*8] PROTO_BOB = kickasm(resource "smiley.png") {{
 // Sine and Cosine tables
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
-signed char[0x140] align(0x40) SIN = kickasm {{
+signed char align(0x40) SIN[0x140] = kickasm {{
     .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
 }};
@@ -39,7 +39,7 @@ const char* BOB_CHARSET = 0x2000;
 
 // Tables containing the char to use for a specific cell of a shifted BOB.
 // char_id = BOB_TABLES[cell*BOB_SUBTABLE_SIZE + shift_y*BOB_SHIFTS_X + shift_x];
-char[9*8*4] BOB_TABLES;
+char BOB_TABLES[9*8*4];
 // The number of different X-shifts
 const char BOB_SHIFTS_X = 4;
 // The number of different Y-shifts
@@ -103,7 +103,7 @@ void main() {
 }
 
 // Table used for deleting rendered BOB's. Contains pointers to first char of each BOB.
-char*[NUM_BOBS] RENDERBOB_CLEANUP;
+char* RENDERBOB_CLEANUP[NUM_BOBS];
 
 // Pointer to the next clean-up to add
 char** renderBobCleanupNext;
@@ -267,7 +267,7 @@ void progress_init(char* line) {
 // Done by increasing the character until the idx is 8 and then moving to the next char
 void progress_inc() {
     // Progress characters
-    const char[] progress_chars = { 0x20, 0x65, 0x74, 0x75, 0x61, 0xf6, 0xe7, 0xea, 0xe0 };
+    const char progress_chars[] = { 0x20, 0x65, 0x74, 0x75, 0x61, 0xf6, 0xe7, 0xea, 0xe0 };
     if(++progress_idx==8) {
         *progress_cursor = progress_chars[8];
         progress_cursor++;

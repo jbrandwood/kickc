@@ -48,12 +48,8 @@ decl
     | typeDef ';'
     ;
 
-declTypes
-    : directive* typeDecl directive*
-    ;
-
 declVariables
-    : declTypes declVariableList
+    : declType declVariableList
     ;
 
 declVariableList
@@ -61,33 +57,84 @@ declVariableList
     | declVariableList COMMA declPointer* declVariableInit
     ;
 
+typeDef
+    : TYPEDEF declType declPointer* NAME declArray* {cParser.addTypedef($NAME.text);}
+    ;
+
+declVariableInit
+    : NAME declArray* ('=' expr)? #declVariableInitExpr
+    | NAME declArray* '=' declKasm #declVariableInitKasm
+    ;
+
+declType
+    : directive* type directive*
+    ;
+
 declPointer
     : ASTERISK directive*
     ;
 
-typeDef
-    : TYPEDEF declTypes declPointer* NAME {cParser.addTypedef($NAME.text);}
+declArray
+    : BRACKET_BEGIN (expr)? BRACKET_END
     ;
 
-declVariableInit
-    : declVariable ('=' expr)? #declVariableInitExpr
-    | declVariable '=' declKasm #declVariableInitKasm
+typeSpecifier
+    : type #typeSpecifierSimple
+    | typeSpecifier ASTERISK #typeSpecifierPointer
+    | typeSpecifier BRACKET_BEGIN (expr)? BRACKET_END #typeSpecifierArray
     ;
 
-declVariable
-    : NAME  #declVariableName
-    | declVariable BRACKET_BEGIN (expr)? BRACKET_END #declVariableArray
+type
+    : PAR_BEGIN type PAR_END #typePar
+    | SIMPLETYPE  #typeSimple
+    | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
+    | type BRACKET_BEGIN (expr)? BRACKET_END #typeArray
+    | type PAR_BEGIN PAR_END #typeProcedure
+    | structDef  #typeStructDef
+    | structRef  #typeStructRef
+    | enumDef  #typeEnumDef
+    | enumRef  #typeEnumRef
+    | TYPEDEFNAME  #typeNamedRef
+    ;
+
+structRef
+    : STRUCT NAME
+    ;
+
+structDef
+    : STRUCT NAME? CURLY_BEGIN structMembers+ CURLY_END
+    ;
+
+structMembers
+    : declVariables ';'
+    ;
+
+enumRef
+    : ENUM NAME
+    ;
+
+enumDef
+    : ENUM NAME? CURLY_BEGIN enumMemberList CURLY_END
+    ;
+
+enumMemberList
+    :  enumMember
+    |  enumMemberList COMMA enumMember
+    ;
+
+enumMember
+    :   NAME ( '=' expr )?
     ;
 
 declFunction
-    : declTypes declPointer* NAME PAR_BEGIN parameterListDecl? PAR_END CURLY_BEGIN stmtSeq? CURLY_END
+    : declType declPointer* NAME PAR_BEGIN parameterListDecl? PAR_END CURLY_BEGIN stmtSeq? CURLY_END
     ;
 
 parameterListDecl
     : parameterDecl (COMMA parameterDecl)* ;
 
 parameterDecl
-    : declTypes declPointer* NAME #parameterDeclType
+    : declType declPointer* NAME #parameterDeclType
     | SIMPLETYPE #parameterDeclVoid
     ;
 
@@ -153,60 +200,12 @@ switchCase:
 
 forLoop
     : forClassicInit ';' commaExpr ';' commaExpr? #forClassic
-    | (declTypes declPointer*)? NAME COLON expr '..' expr  #forRange
+    | (declType declPointer*)? NAME COLON expr '..' expr  #forRange
     ;
 
 forClassicInit
     : declVariables? #forClassicInitDecl
     | commaExpr      #forClassicInitExpr
-    ;
-
-typeDecl
-    : PAR_BEGIN typeDecl PAR_END #typePar
-    | SIMPLETYPE  #typeSimple
-    | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
-    | typeDecl BRACKET_BEGIN (expr)? BRACKET_END #typeArray
-    | typeDecl PAR_BEGIN PAR_END #typeProcedure
-    | structDef  #typeStructDef
-    | structRef  #typeStructRef
-    | enumDef  #typeEnumDef
-    | enumRef  #typeEnumRef
-    | TYPEDEFNAME  #typeNamedRef
-    ;
-
-typeSpecifier
-    : typeDecl #typeSpecifierSimple
-    | typeSpecifier ASTERISK #typeSpecifierPointer
-    | typeSpecifier BRACKET_BEGIN (expr)? BRACKET_END #typeSpecifierArray
-    ;
-
-structRef
-    : STRUCT NAME
-    ;
-
-structDef
-    : STRUCT NAME? CURLY_BEGIN structMembers+ CURLY_END
-    ;
-
-structMembers
-    : declVariables ';'
-    ;
-
-enumRef
-    : ENUM NAME
-    ;
-
-enumDef
-    : ENUM NAME? CURLY_BEGIN enumMemberList CURLY_END
-    ;
-
-enumMemberList
-    :  enumMember
-    |  enumMemberList COMMA enumMember
-    ;
-
-enumMember
-    :   NAME ( '=' expr )?
     ;
 
 commaExpr

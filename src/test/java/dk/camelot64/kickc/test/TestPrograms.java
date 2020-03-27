@@ -943,6 +943,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testTypedef3() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-3");
+   }
+
+   @Test
    public void testTypedef2() throws IOException, URISyntaxException {
       compileAndCompare("typedef-2");
    }

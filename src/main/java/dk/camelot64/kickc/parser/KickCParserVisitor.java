@@ -49,12 +49,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDecl(KickCParser.DeclContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#declTypes}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclTypes(KickCParser.DeclTypesContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link KickCParser#declVariables}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -66,12 +60,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitDeclVariableList(KickCParser.DeclVariableListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#declPointer}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclPointer(KickCParser.DeclPointerContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#typeDef}.
 	 * @param ctx the parse tree
@@ -93,19 +81,156 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code declVariableArray}
-	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * Visit a parse tree produced by {@link KickCParser#declType}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclVariableArray(KickCParser.DeclVariableArrayContext ctx);
+	T visitDeclType(KickCParser.DeclTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code declVariableName}
-	 * labeled alternative in {@link KickCParser#declVariable}.
+	 * Visit a parse tree produced by {@link KickCParser#declPointer}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclVariableName(KickCParser.DeclVariableNameContext ctx);
+	T visitDeclPointer(KickCParser.DeclPointerContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#declArray}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitDeclArray(KickCParser.DeclArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeSpecifierSimple}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeSpecifierSimple(KickCParser.TypeSpecifierSimpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeSpecifierPointer}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeSpecifierPointer(KickCParser.TypeSpecifierPointerContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeSpecifierArray}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeSpecifierArray(KickCParser.TypeSpecifierArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typePar}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypePar(KickCParser.TypeParContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeProcedure}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeProcedure(KickCParser.TypeProcedureContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeArray}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeArray(KickCParser.TypeArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeStructRef}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeStructRef(KickCParser.TypeStructRefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeSimple}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeSimple(KickCParser.TypeSimpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeStructDef}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeStructDef(KickCParser.TypeStructDefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeNamedRef}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeSignedSimple}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeEnumRef}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeEnumRef(KickCParser.TypeEnumRefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code typeEnumDef}
+	 * labeled alternative in {@link KickCParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#structRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructRef(KickCParser.StructRefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#structDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructDef(KickCParser.StructDefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#structMembers}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStructMembers(KickCParser.StructMembersContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumRef(KickCParser.EnumRefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumDef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumDef(KickCParser.EnumDefContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumMemberList}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumMemberList(KickCParser.EnumMemberListContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#enumMember}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumMember(KickCParser.EnumMemberContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#declFunction}.
 	 * @param ctx the parse tree
@@ -451,139 +576,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typePar}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypePar(KickCParser.TypeParContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeProcedure}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeProcedure(KickCParser.TypeProcedureContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeArray}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeArray(KickCParser.TypeArrayContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeStructRef}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeStructRef(KickCParser.TypeStructRefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeSimple}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeSimple(KickCParser.TypeSimpleContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeStructDef}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeStructDef(KickCParser.TypeStructDefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeNamedRef}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeSignedSimple}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeSignedSimple(KickCParser.TypeSignedSimpleContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeEnumRef}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeEnumRef(KickCParser.TypeEnumRefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeEnumDef}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeSpecifierSimple}
-	 * labeled alternative in {@link KickCParser#typeSpecifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeSpecifierSimple(KickCParser.TypeSpecifierSimpleContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeSpecifierPointer}
-	 * labeled alternative in {@link KickCParser#typeSpecifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeSpecifierPointer(KickCParser.TypeSpecifierPointerContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code typeSpecifierArray}
-	 * labeled alternative in {@link KickCParser#typeSpecifier}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeSpecifierArray(KickCParser.TypeSpecifierArrayContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#structRef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStructRef(KickCParser.StructRefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#structDef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStructDef(KickCParser.StructDefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#structMembers}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStructMembers(KickCParser.StructMembersContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#enumRef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEnumRef(KickCParser.EnumRefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#enumDef}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEnumDef(KickCParser.EnumDefContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#enumMemberList}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEnumMemberList(KickCParser.EnumMemberListContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link KickCParser#enumMember}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEnumMember(KickCParser.EnumMemberContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code commaNone}
 	 * labeled alternative in {@link KickCParser#commaExpr}.

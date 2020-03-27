@@ -207,8 +207,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
       this.visitDeclTypes(ctx.declTypes());
-      SymbolType type = declVarType;
-      List<Directive> directives = declVarDirectives;
+      SymbolType type = varDecl.getEffectiveType();
+      List<Directive> directives = varDecl.getEffectiveDirectives();
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentScope().addProcedure(name, type, currentCodeSegment, currentDataSegment, currentCallingConvention);
       addDirectives(procedure, directives, StatementSource.procedureBegin(ctx));
@@ -245,7 +245,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       sequence.addStatement(new StatementReturn(returnVarRef, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-      exitDeclTypes();
+      varDecl.exitVar();
+      varDecl.exitType();
       return null;
    }
 
@@ -275,9 +276,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
       this.visitDeclTypes(ctx.declTypes());
       String varName = ctx.NAME().getText();
-      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, declVarType, null, declVarDirectives, currentDataSegment, variableBuilderConfig);
+      VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), null, varDecl.getEffectiveDirectives(), currentDataSegment, variableBuilderConfig);
       Variable param = varBuilder.build();
-      exitDeclTypes();
+      varDecl.exitVar();
+      varDecl.exitType();
       return param;
    }
 
@@ -512,16 +514,116 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return new AsmDirectiveClobber(clobber);
    }
 
-   /** Holds the declared type when descending into a Variable Declaration. */
-   private SymbolType declVarType = null;
-   /** Holds the information about whether the declared variable is an array and the size of the array if it is. */
-   private ArraySpec declArraySpec;
-   /** Holds the declared directives when descending into a Variable Declaration. */
-   private List<Directive> declVarDirectives = null;
-   /** Holds the declared comments when descending into a Variable Declaration. */
-   private List<Comment> declVarComments = null;
-   /** State specifying that we are currently populating struct members. */
-   private boolean declVarStructMember = false;
+   /**
+    * Holds type, arrayness, directives, comments etc. while parsing a variable declaration.
+    * Has three levels of information pushed on top of each other:
+    * <ol>
+    *    <li>Struct Member Declaration (true while inside inside a struct declaration)</li>
+    *    <li>Type information and directives (the type)</li>
+    *    <li>Variable information and declarations (arrayness, pointerness, variable level directives)</li>
+    * </ol>
+    * <p>
+    * When parsing a declaration such as <code>volatile char a, * const b, c[]</code> the type level holds <code>volatile char</code>
+    * and the variable level holds the pointer/array-information and the const-declaration for b.
+    */
+   static class VariableDeclaration {
+
+      /** State specifying that we are currently populating struct members. */
+      private boolean structMember = false;
+
+      /** Holds the declared type (type level). */
+      private SymbolType type = null;
+      /** Holds the information about whether the declared variable is an array and the size of the array if it is (type level). */
+      private ArraySpec arraySpec;
+      /** Holds the declared directives when descending into a Variable Declaration. (type level) */
+      private List<Directive> directives = null;
+      /** Holds the declared comments when descending into a Variable Declaration. (type level) */
+      private List<Comment> comments = null;
+
+      /** Holds the type when diving into a single variable. (variable level) */
+      private SymbolType varType = null;
+      /** Holds the array information for a single variable. (variable level) */
+      private ArraySpec varArraySpec;
+      /** Holds the declared directives for a single variable. (variable level) */
+      private List<Directive> varDirectives = null;
+
+      public VariableDeclaration() {
+      }
+
+      /**
+       * Exits the type layer (clears everyting except struct information)
+       */
+      public void exitType() {
+         this.type = null;
+         this.directives = null;
+         this.arraySpec = null;
+         this.comments = null;
+      }
+
+      /**
+       * Exits the variable layer (clears variable information)
+       */
+      public void exitVar() {
+         this.varType = null;
+         this.varArraySpec = null;
+         this.varDirectives = null;
+      }
+
+      public SymbolType getEffectiveType() {
+         return varType != null ? varType : type;
+      }
+
+      public ArraySpec getEffectiveArraySpec() {
+         return varArraySpec != null ? varArraySpec : arraySpec;
+      }
+
+      public List<Directive> getEffectiveDirectives() {
+         final ArrayList<Directive> dirs = new ArrayList<>();
+         if(directives != null)
+            dirs.addAll(directives);
+         if(varDirectives != null)
+            dirs.addAll(varDirectives);
+         return dirs;
+      }
+
+      public List<Comment> getComments() {
+         return comments;
+      }
+
+      public boolean isStructMember() {
+         return structMember;
+      }
+
+      public void setType(SymbolType type) {
+         this.type = type;
+      }
+
+      public void setArraySpec(ArraySpec arraySpec) {
+         this.arraySpec = arraySpec;
+      }
+
+      public void setDirectives(List<Directive> directives) {
+         this.directives = directives;
+      }
+
+      public void setComments(List<Comment> comments) {
+         this.comments = comments;
+      }
+
+      public void setStructMember(boolean structMember) {
+         this.structMember = structMember;
+      }
+
+      public void setVarArraySpec(ArraySpec varArraySpec) {
+         this.varArraySpec = varArraySpec;
+      }
+
+      public void setVarType(SymbolType varType) {
+         this.varType = varType;
+      }
+   }
+
+   private VariableDeclaration varDecl = new VariableDeclaration();
 
    /**
     * Visit the type/directive part of a declaration. Setup the local decl-variables
@@ -532,27 +634,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDeclTypes(KickCParser.DeclTypesContext ctx) {
       List<KickCParser.DirectiveContext> directive = ctx.directive();
-      this.declVarType = (SymbolType) visit(ctx.typeDecl());
-      this.declVarDirectives = getDirectives(directive);
-      this.declVarComments = getCommentsSymbol(ctx.getParent());
+      varDecl.exitType();
+      varDecl.setType((SymbolType) visit(ctx.typeDecl()));
+      varDecl.setDirectives(getDirectives(directive));
+      varDecl.setComments(getCommentsSymbol(ctx.getParent()));
       return null;
-   }
-
-   /**
-    * Clear the local decl-variables
-    */
-   private void exitDeclTypes() {
-      this.declVarType = null;
-      this.declVarDirectives = null;
-      this.declVarComments = null;
-      this.declArraySpec = null;
    }
 
    @Override
    public Object visitDeclVariables(KickCParser.DeclVariablesContext ctx) {
       this.visit(ctx.declTypes());
       this.visit(ctx.declVariableList());
-      exitDeclTypes();
+      varDecl.exitType();
       return null;
    }
 
@@ -572,23 +665,23 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       StatementSource statementSource = new StatementSource(ctx);
       StatementSource declSource = new StatementSource((ParserRuleContext) ctx.parent.parent);
       try {
-         if(declVarStructMember && (initializer != null))
-            throw new CompileError("Initializer not supported inside structs " + declVarType.getTypeName(), statementSource);
+         if(varDecl.isStructMember() && (initializer != null))
+            throw new CompileError("Initializer not supported inside structs " + varDecl.getEffectiveType().getTypeName(), statementSource);
          if(initializer != null)
             PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
          RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
-         initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(declVarType, declArraySpec), program, statementSource);
-         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, declVarType, declArraySpec, declVarDirectives, currentDataSegment, variableBuilderConfig);
+         initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec()), program, statementSource);
+         VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec(), varDecl.getEffectiveDirectives(), currentDataSegment, variableBuilderConfig);
          Variable variable = varBuilder.build();
          boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
-         if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !declVarStructMember && variable.getRegister() == null)) {
+         if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !varDecl.isStructMember() && variable.getRegister() == null)) {
             // Set initial value
             ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
             variable.setInitValue(constInitValue);
             // Add comments to constant
-            variable.setComments(ensureUnusedComments(declVarComments));
-         } else if(!variable.isKindConstant() && !declVarStructMember) {
-            Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(declVarComments));
+            variable.setComments(ensureUnusedComments(varDecl.getComments()));
+         } else if(!variable.isKindConstant() && !varDecl.isStructMember()) {
+            Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(varDecl.getComments()));
             sequence.addStatement(initStmt);
          }
          if(initializer != null)
@@ -596,6 +689,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), declSource);
       }
+      varDecl.exitVar();
       return null;
    }
 
@@ -607,15 +701,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public String visitDeclVariableArray(KickCParser.DeclVariableArrayContext ctx) {
       // Handle array type declaration by updating the declared type and the array spec
-      // TODO This fails for a comma-separated list with some array in the middle! Eg. char x, y[5], x;
-      SymbolType elementType = declVarType;
+      SymbolType elementType = varDecl.getEffectiveType();
       if(ctx.expr() != null) {
          RValue sizeVal = (RValue) visit(ctx.expr());
-         declArraySpec = new ArraySpec((ConstantValue) sizeVal);
-         declVarType = new SymbolTypePointer(elementType);
+         varDecl.setVarArraySpec(new ArraySpec((ConstantValue) sizeVal));
+         varDecl.setVarType(new SymbolTypePointer(elementType));
       } else {
-         declArraySpec = new ArraySpec();
-         declVarType = new SymbolTypePointer(elementType);
+         varDecl.setVarArraySpec(new ArraySpec());
+         varDecl.setVarType(new SymbolTypePointer(elementType));
       }
 
       // Find the variable name
@@ -647,8 +740,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitDeclVariableInitKasm(KickCParser.DeclVariableInitKasmContext ctx) {
       String varName = (String) this.visit(ctx.declVariable());
       StatementSource statementSource = new StatementSource(ctx);
-      if(!(this.declVarType instanceof SymbolTypePointer) || declArraySpec == null) {
-         throw new CompileError("KickAsm initializers only supported for arrays " + declVarType.getTypeName(), statementSource);
+      if(!(this.varDecl.getEffectiveType() instanceof SymbolTypePointer) || varDecl.getEffectiveArraySpec() == null) {
+         throw new CompileError("KickAsm initializers only supported for arrays " + varDecl.getEffectiveType().getTypeName(), statementSource);
       }
       // Add KickAsm statement
       StatementKickAsm kasm = (StatementKickAsm) this.visit(ctx.declKasm());
@@ -664,17 +757,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(kasm.getDeclaredClobber() != null) {
          throw new CompileError("KickAsm initializers does not support 'clobbers' directive.", statementSource);
       }
-      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) this.declVarType).getElementType(), kasm.getKickAsmCode(), kasm.getUses(), declArraySpec.getArraySize());
+      ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) varDecl.getEffectiveType()).getElementType(), kasm.getKickAsmCode(), kasm.getUses(), varDecl.getEffectiveArraySpec().getArraySize());
       // Remove the KickAsm statement
       sequence.getStatements().remove(sequence.getStatements().size() - 1);
       // Add a constant variable
       Scope scope = getCurrentScope();
-      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, declVarType, declArraySpec, declVarDirectives, currentDataSegment, variableBuilderConfig);
+      VariableBuilder varBuilder = new VariableBuilder(varName, scope, false, varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec(), varDecl.getEffectiveDirectives(), currentDataSegment, variableBuilderConfig);
       Variable variable = varBuilder.build();
       // Set constant value
       variable.setInitValue(getConstInitValue(constantArrayKickAsm, null, statementSource));
       // Add comments to constant
-      variable.setComments(ensureUnusedComments(declVarComments));
+      variable.setComments(ensureUnusedComments(varDecl.getComments()));
+      varDecl.exitVar();
       return null;
    }
 
@@ -1092,7 +1186,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
    }
 
-
    @Override
    public Object visitStmtFor(KickCParser.StmtForContext ctx) {
       this.visit(ctx.forLoop());
@@ -1165,11 +1258,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.declTypes() != null) {
          this.visitDeclTypes(ctx.declTypes());
       }
-      SymbolType varType = declVarType;
+      SymbolType varType = varDecl.getEffectiveType();
       String varName = ctx.NAME().getText();
       Variable lValue;
       if(varType != null) {
-         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, null, declVarDirectives, currentDataSegment, variableBuilderConfig);
+         VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, null, varDecl.getEffectiveDirectives(), currentDataSegment, variableBuilderConfig);
          lValue = varBuilder.build();
       } else {
          lValue = getCurrentScope().getVariable(varName);
@@ -1177,7 +1270,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             throw new CompileError("Error! Loop variable not declared " + varName, statementSource);
          }
       }
-      exitDeclTypes();
+      varDecl.exitType();
       KickCParser.StmtForContext stmtForCtx = (KickCParser.StmtForContext) ctx.getParent();
       KickCParser.ExprContext rangeFirstCtx = ctx.expr(0);
       KickCParser.ExprContext rangeLastCtx = ctx.expr(1);
@@ -1188,7 +1281,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(rangeFirstValue instanceof ConstantInteger) ((ConstantInteger) rangeFirstValue).setType(varType);
          if(rangeLastValue instanceof ConstantInteger) ((ConstantInteger) rangeLastValue).setType(varType);
       }
-      boolean initialAssignment = (declVarType != null);
+      boolean initialAssignment = (varDecl.getEffectiveType() != null);
       Statement stmtInit = new StatementAssignment((LValue) lValue.getRef(), rangeFirstValue, initialAssignment, statementSource, Comment.NO_COMMENTS);
       sequence.addStatement(stmtInit);
       // Add label
@@ -1214,6 +1307,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addDirectives(doJmpStmt, stmtForCtx.directive());
       addLoopBreakLabel(loopStack.pop(), ctx);
       scopeStack.pop();
+      varDecl.exitVar();
       return null;
    }
 
@@ -1426,11 +1520,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       StructDefinition structDefinition = program.getScope().addStructDefinition(structDefName);
       scopeStack.push(structDefinition);
-      declVarStructMember = true;
+      varDecl.setStructMember(true);
       for(KickCParser.StructMembersContext memberCtx : ctx.structMembers()) {
          visit(memberCtx);
       }
-      declVarStructMember = false;
+      varDecl.setStructMember(false);
       scopeStack.pop();
       return structDefinition.getType();
    }
@@ -1571,10 +1665,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
          if(ctx.expr() != null) {
             RValue sizeVal = (RValue) visit(ctx.expr());
-            declArraySpec = new ArraySpec((ConstantValue) sizeVal);
+            varDecl.setArraySpec(new ArraySpec((ConstantValue) sizeVal));
             return new SymbolTypePointer(elementType);
          } else {
-            declArraySpec = new ArraySpec();
+            varDecl.setArraySpec(new ArraySpec());
             return new SymbolTypePointer(elementType);
          }
       } else {

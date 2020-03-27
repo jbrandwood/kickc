@@ -1928,6 +1928,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCommaDecl2() throws IOException, URISyntaxException {
+      compileAndCompare("comma-decl-2");
+   }
+
+   @Test
    public void testCommaDecl() throws IOException, URISyntaxException {
       compileAndCompare("comma-decl");
    }

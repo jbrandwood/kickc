@@ -5730,7 +5730,7 @@ initSprites: {
     jmp __b1
 }
   // init_angle_screen
-// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// Populates 1000 chars (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp($38) screen)
 init_angle_screen: {
@@ -8600,7 +8600,7 @@ initSprites: {
     jmp __b1
 }
   // init_angle_screen
-// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// Populates 1000 chars (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp($11) screen)
 init_angle_screen: {
@@ -10540,7 +10540,7 @@ main: {
   // Copy screen to screen copy
     // main::@1
   __b1:
-    // for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
+    // for( char *src=SCREEN, *dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
     // [13] if((byte*) main::src#2!=(const byte*) SCREEN+(word) $3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z src+1
     cmp #>SCREEN+$3e8
@@ -10581,7 +10581,7 @@ main: {
     iny
     cpy #SIZEOF_STRUCT_PROCESSINGSPRITE
     bne !-
-    // for( byte i: 0..NUM_PROCESSING-1 )
+    // for( char i: 0..NUM_PROCESSING-1 )
     // [21] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [22] if((byte) main::i#1!=(const byte) NUM_PROCESSING-(byte) 1+(byte) 1) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
@@ -10652,7 +10652,7 @@ main: {
     ldy #0
     lda (src),y
     sta (dst),y
-    // for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
+    // for( char *src=SCREEN, *dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
     // [42] (byte*) main::src#1 ← ++ (byte*) main::src#2 -- pbuz1=_inc_pbuz1 
     inc.z src
     bne !+
@@ -10748,13 +10748,13 @@ startProcessing: {
     jmp __b8
   !__b8:
     // startProcessing::@5
-    // (word)center.y
+    // (unsigned int)center.y
     // [55] (word~) startProcessing::$0 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
     lda.z center_y
     sta.z __0
     lda #0
     sta.z __0+1
-    // (word)center.y*40
+    // (unsigned int)center.y*40
     // [56] (word~) startProcessing::$34 ← (word~) startProcessing::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __0
     asl
@@ -10779,7 +10779,7 @@ startProcessing: {
     rol.z __1+1
     asl.z __1
     rol.z __1+1
-    // offset = (word)center.y*40+center.x
+    // offset = (unsigned int)center.y*40+center.x
     // [59] (word) startProcessing::offset#0 ← (word~) startProcessing::$1 + (byte) startProcessing::center_x#0 -- vwuz1=vwuz1_plus_vbuz2 
     lda.z center_x
     clc
@@ -10811,13 +10811,13 @@ startProcessing: {
     lda.z screenPtr+1
     adc #>SCREEN
     sta.z screenPtr+1
-    // (word)spriteIdx
+    // (unsigned int)spriteIdx
     // [63] (word~) startProcessing::$5 ← (word)(byte) startProcessing::freeIdx#2 -- vwuz1=_word_vbuz2 
     lda.z freeIdx
     sta.z __5
     tya
     sta.z __5+1
-    // (word)spriteIdx*64
+    // (unsigned int)spriteIdx*64
     // [64] (word~) startProcessing::$6 ← (word~) startProcessing::$5 << (byte) 6 -- vwuz1=vwuz1_rol_6 
     asl.z __6
     rol.z __6+1
@@ -10831,7 +10831,7 @@ startProcessing: {
     rol.z __6+1
     asl.z __6
     rol.z __6+1
-    // spriteData = SPRITE_DATA+(word)spriteIdx*64
+    // spriteData = SPRITE_DATA+(unsigned int)spriteIdx*64
     // [65] (byte*) startProcessing::spriteData#0 ← (const byte*) SPRITE_DATA + (word~) startProcessing::$6 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z spriteData
@@ -10843,12 +10843,12 @@ startProcessing: {
     // ch = (*screenPtr)
     // [66] (byte) startProcessing::ch#0 ← *((byte*) startProcessing::screenPtr#0) -- vbuaa=_deref_pbuz1 
     lda (screenPtr),y
-    // (word)ch
+    // (unsigned int)ch
     // [67] (word~) startProcessing::$8 ← (word)(byte) startProcessing::ch#0 -- vwuz1=_word_vbuaa 
     sta.z __8
     tya
     sta.z __8+1
-    // (word)ch*8
+    // (unsigned int)ch*8
     // [68] (word~) startProcessing::$9 ← (word~) startProcessing::$8 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __9
     rol.z __9+1
@@ -10856,7 +10856,7 @@ startProcessing: {
     rol.z __9+1
     asl.z __9
     rol.z __9+1
-    // chargenData = CHARGEN+(word)ch*8
+    // chargenData = CHARGEN+(unsigned int)ch*8
     // [69] (byte*) startProcessing::chargenData#0 ← (const byte*) CHARGEN + (word~) startProcessing::$9 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z chargenData
@@ -10903,7 +10903,7 @@ startProcessing: {
     bne !+
     inc.z chargenData+1
   !:
-    // for( byte i: 0..7)
+    // for( char i: 0..7)
     // [76] (byte) startProcessing::i1#1 ← ++ (byte) startProcessing::i1#2 -- vbuxx=_inc_vbuxx 
     inx
     // [77] if((byte) startProcessing::i1#1!=(byte) 8) goto startProcessing::@6 -- vbuxx_neq_vbuc1_then_la1 
@@ -10917,13 +10917,13 @@ startProcessing: {
     // asm
     // asm { cli  }
     cli
-    // (word)center.x
+    // (unsigned int)center.x
     // [80] (word~) startProcessing::$11 ← (word)(byte) startProcessing::center_x#0 -- vwuz1=_word_vbuz2 
     lda.z center_x
     sta.z __11
     lda #0
     sta.z __11+1
-    // (word)center.x*8
+    // (unsigned int)center.x*8
     // [81] (word~) startProcessing::$12 ← (word~) startProcessing::$11 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __12
     rol.z __12+1
@@ -10931,7 +10931,7 @@ startProcessing: {
     rol.z __12+1
     asl.z __12
     rol.z __12+1
-    // BORDER_XPOS_LEFT + (word)center.x*8
+    // BORDER_XPOS_LEFT + (unsigned int)center.x*8
     // [82] (word~) startProcessing::$13 ← (const byte) BORDER_XPOS_LEFT + (word~) startProcessing::$12 -- vwuz1=vbuc1_plus_vwuz1 
     lda #BORDER_XPOS_LEFT
     clc
@@ -10940,7 +10940,7 @@ startProcessing: {
     bcc !+
     inc.z __13+1
   !:
-    // spriteX = (BORDER_XPOS_LEFT + (word)center.x*8) << 4
+    // spriteX = (BORDER_XPOS_LEFT + (unsigned int)center.x*8) << 4
     // [83] (word) startProcessing::spriteX#0 ← (word~) startProcessing::$13 << (byte) 4 -- vwuz1=vwuz1_rol_4 
     asl.z spriteX
     rol.z spriteX+1
@@ -10950,13 +10950,13 @@ startProcessing: {
     rol.z spriteX+1
     asl.z spriteX
     rol.z spriteX+1
-    // (word)center.y
+    // (unsigned int)center.y
     // [84] (word~) startProcessing::$15 ← (word)(byte) startProcessing::center_y#0 -- vwuz1=_word_vbuz2 
     lda.z center_y
     sta.z __15
     lda #0
     sta.z __15+1
-    // (word)center.y*8
+    // (unsigned int)center.y*8
     // [85] (word~) startProcessing::$16 ← (word~) startProcessing::$15 << (byte) 3 -- vwuz1=vwuz1_rol_3 
     asl.z __16
     rol.z __16+1
@@ -10964,7 +10964,7 @@ startProcessing: {
     rol.z __16+1
     asl.z __16
     rol.z __16+1
-    // BORDER_YPOS_TOP + (word)center.y*8
+    // BORDER_YPOS_TOP + (unsigned int)center.y*8
     // [86] (word~) startProcessing::$17 ← (const byte) BORDER_YPOS_TOP + (word~) startProcessing::$16 -- vwuz1=vbuc1_plus_vwuz1 
     lda #BORDER_YPOS_TOP
     clc
@@ -10973,7 +10973,7 @@ startProcessing: {
     bcc !+
     inc.z __17+1
   !:
-    // spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4
+    // spriteY = (BORDER_YPOS_TOP + (unsigned int)center.y*8) << 4
     // [87] (word) startProcessing::spriteY#0 ← (word~) startProcessing::$17 << (byte) 4 -- vwuz1=vwuz1_rol_4 
     asl.z spriteY
     rol.z spriteY+1
@@ -10983,7 +10983,7 @@ startProcessing: {
     rol.z spriteY+1
     asl.z spriteY
     rol.z spriteY+1
-    // spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx
+    // spritePtr = (char)(SPRITE_DATA/64)+spriteIdx
     // [88] (byte) startProcessing::spritePtr#0 ← (byte)(const byte*) SPRITE_DATA/(byte) $40 + (byte) startProcessing::freeIdx#2 -- vbuz1=vbuc1_plus_vbuz2 
     lax.z freeIdx
     axs #-[SPRITE_DATA/$40]
@@ -10994,12 +10994,12 @@ startProcessing: {
     asl
     asl
     asl
-    // (word)(spriteIdx*8)
+    // (unsigned int)(spriteIdx*8)
     // [90] (word~) startProcessing::$21 ← (word)(byte~) startProcessing::$20 -- vwuz1=_word_vbuaa 
     sta.z __21
     lda #0
     sta.z __21+1
-    // PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr }
+    // PROCESSING[spriteIdx] = { spriteX, spriteY, (unsigned int)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr }
     // [91] (byte~) startProcessing::$37 ← (byte) startProcessing::freeIdx#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z freeIdx
     asl
@@ -11064,7 +11064,7 @@ startProcessing: {
     jmp __b1
     // startProcessing::@3
   __b3:
-    // for( byte i: 0..NUM_PROCESSING-1 )
+    // for( char i: 0..NUM_PROCESSING-1 )
     // [107] (byte) startProcessing::i#1 ← ++ (byte) startProcessing::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [108] if((byte) startProcessing::i#1!=(const byte) NUM_PROCESSING-(byte) 1+(byte) 1) goto startProcessing::@2 -- vbuz1_neq_vbuc1_then_la1 
@@ -11158,7 +11158,7 @@ getCharToProcess: {
     // [119] phi (byte) getCharToProcess::return_dist#1 = (byte) getCharToProcess::return_dist#5 [phi:getCharToProcess::@11/getCharToProcess::@12/getCharToProcess::@5->getCharToProcess::@3#2] -- register_copy 
     // getCharToProcess::@3
   __b3:
-    // for( byte x: 0..39)
+    // for( char x: 0..39)
     // [120] (byte) getCharToProcess::x#1 ← ++ (byte) getCharToProcess::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [121] if((byte) getCharToProcess::x#1!=(byte) $28) goto getCharToProcess::@10 -- vbuyy_neq_vbuc1_then_la1 
@@ -11183,7 +11183,7 @@ getCharToProcess: {
     bcc !+
     inc.z dist_line+1
   !:
-    // for( byte y: 0..24)
+    // for( char y: 0..24)
     // [124] (byte) getCharToProcess::y#1 ← ++ (byte) getCharToProcess::y#7 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [125] if((byte) getCharToProcess::y#1!=(byte) $19) goto getCharToProcess::@9 -- vbuz1_neq_vbuc1_then_la1 
@@ -11196,13 +11196,13 @@ getCharToProcess: {
     cpx #NOT_FOUND
     beq __breturn
     // getCharToProcess::@8
-    // (word)closest.y
+    // (unsigned int)closest.y
     // [127] (word~) getCharToProcess::$8 ← (word)(byte) getCharToProcess::return_y#1 -- vwuz1=_word_vbuz2 
     lda.z return_y
     sta.z __8
     lda #0
     sta.z __8+1
-    // (word)closest.y*40
+    // (unsigned int)closest.y*40
     // [128] (word~) getCharToProcess::$12 ← (word~) getCharToProcess::$8 << (byte) 2 -- vwuz1=vwuz2_rol_2 
     lda.z __8
     asl
@@ -11227,7 +11227,7 @@ getCharToProcess: {
     rol.z __9+1
     asl.z __9
     rol.z __9+1
-    // SCREEN_COPY+(word)closest.y*40
+    // SCREEN_COPY+(unsigned int)closest.y*40
     // [131] (byte*~) getCharToProcess::$10 ← (byte*)(void*) SCREEN_COPY#0 + (word~) getCharToProcess::$9 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z __10
     clc
@@ -11236,7 +11236,7 @@ getCharToProcess: {
     lda.z __10+1
     adc.z SCREEN_COPY+1
     sta.z __10+1
-    // *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' '
+    // *(SCREEN_COPY+(unsigned int)closest.y*40+closest.x) = ' '
     // [132] *((byte*~) getCharToProcess::$10 + (byte) getCharToProcess::return_x#1) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
     // clear the found char on the screen copy
     lda #' '
@@ -11345,7 +11345,7 @@ initSprites: {
   // Clear sprite data
     // initSprites::@1
   __b1:
-    // for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
+    // for( char* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
     // [150] if((byte*) initSprites::sp#2<(const byte*) SPRITE_DATA+(const byte) NUM_PROCESSING*(byte) $40) goto initSprites::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z sp+1
     cmp #>SPRITE_DATA+NUM_PROCESSING*$40
@@ -11367,7 +11367,7 @@ initSprites: {
     // [152] *((const byte*) SPRITES_COLS + (byte) initSprites::i#2) ← (const byte) LIGHT_BLUE -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #LIGHT_BLUE
     sta SPRITES_COLS,x
-    // for( byte i: 0..7)
+    // for( char i: 0..7)
     // [153] (byte) initSprites::i#1 ← ++ (byte) initSprites::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [154] if((byte) initSprites::i#1!=(byte) 8) goto initSprites::@3 -- vbuxx_neq_vbuc1_then_la1 
@@ -11395,7 +11395,7 @@ initSprites: {
     lda #0
     tay
     sta (sp),y
-    // for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
+    // for( char* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
     // [160] (byte*) initSprites::sp#1 ← ++ (byte*) initSprites::sp#2 -- pbuz1=_inc_pbuz1 
     inc.z sp
     bne !+
@@ -11406,7 +11406,7 @@ initSprites: {
     jmp __b1
 }
   // init_angle_screen
-// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// Populates 1000 chars (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp($11) screen)
 init_angle_screen: {
@@ -11460,7 +11460,7 @@ init_angle_screen: {
     sta.z x
     // init_angle_screen::@2
   __b2:
-    // for( byte x=0,xb=39; x<=19; x++, xb--)
+    // for( char x=0,xb=39; x<=19; x++, xb--)
     // [165] if((byte) init_angle_screen::x#2<(byte) $13+(byte) 1) goto init_angle_screen::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$13+1
@@ -11484,7 +11484,7 @@ init_angle_screen: {
     bcc !+
     inc.z screen_bottomline+1
   !:
-    // for(byte y: 0..12)
+    // for(char y: 0..12)
     // [168] (byte) init_angle_screen::y#1 ← ++ (byte) init_angle_screen::y#5 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [169] if((byte) init_angle_screen::y#1!=(byte) $d) goto init_angle_screen::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -11506,7 +11506,7 @@ init_angle_screen: {
     eor #$ff
     clc
     adc #$27+1
-    // (word){ 39-x*2, 0 }
+    // (unsigned int){ 39-x*2, 0 }
     // [173] (word) init_angle_screen::xw#0 ← (byte~) init_angle_screen::$4 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     ldy #0
     sta.z xw+1
@@ -11515,7 +11515,7 @@ init_angle_screen: {
     // [174] (byte~) init_angle_screen::$7 ← (byte) init_angle_screen::y#5 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z y
     asl
-    // (word){ y*2, 0 }
+    // (unsigned int){ y*2, 0 }
     // [175] (word) init_angle_screen::yw#0 ← (byte~) init_angle_screen::$7 w= (byte) 0 -- vwuz1=vbuaa_word_vbuc1 
     sta.z yw+1
     sty.z yw
@@ -11570,7 +11570,7 @@ init_angle_screen: {
     // screen_bottomline[x] = 0x80-ang_w
     // [189] *((byte*) init_angle_screen::screen_bottomline#6 + (byte) init_angle_screen::x#2) ← (byte~) init_angle_screen::$15 -- pbuz1_derefidx_vbuz2=vbuaa 
     sta (screen_bottomline),y
-    // for( byte x=0,xb=39; x<=19; x++, xb--)
+    // for( char x=0,xb=39; x<=19; x++, xb--)
     // [190] (byte) init_angle_screen::x#1 ← ++ (byte) init_angle_screen::x#2 -- vbuz1=_inc_vbuz1 
     inc.z x
     // [191] (byte) init_angle_screen::xb#1 ← -- (byte) init_angle_screen::xb#2 -- vbuz1=_dec_vbuz1 
@@ -12112,10 +12112,10 @@ processChars: {
     lda.z i
     asl
     tax
-    // (byte)xpos
+    // (char)xpos
     // [268] (byte~) processChars::$12 ← (byte)(word) processChars::xpos#0 -- vbuaa=_byte_vwuz1 
     lda.z xpos
-    // SPRITES_XPOS[i*2] = (byte)xpos
+    // SPRITES_XPOS[i*2] = (char)xpos
     // [269] *((const byte*) SPRITES_XPOS + (byte~) processChars::$15) ← (byte~) processChars::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SPRITES_XPOS,x
     // processing->y>>4
@@ -12134,7 +12134,7 @@ processChars: {
     ror.z __13
     lsr.z __13+1
     ror.z __13
-    // ypos = (byte)(processing->y>>4)
+    // ypos = (char)(processing->y>>4)
     // [271] (byte) processChars::ypos#0 ← (byte)(word~) processChars::$13 -- vbuz1=_byte_vwuz2 
     lda.z __13
     sta.z ypos
@@ -12215,10 +12215,10 @@ processChars: {
     ror.z __23
     lsr.z __23+1
     ror.z __23
-    // (byte)(xpos/8)
+    // (char)(xpos/8)
     // [278] (byte~) processChars::$24 ← (byte)(word~) processChars::$23 -- vbuaa=_byte_vwuz1 
     lda.z __23
-    // xchar = (byte)(xpos/8) - BORDER_XPOS_LEFT/8
+    // xchar = (char)(xpos/8) - BORDER_XPOS_LEFT/8
     // [279] (byte) processChars::xchar#0 ← (byte~) processChars::$24 - (const byte) BORDER_XPOS_LEFT/(byte) 8 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #BORDER_XPOS_LEFT/8
@@ -12251,13 +12251,13 @@ processChars: {
     ldy #1
     adc (processing),y
     sta (processing),y
-    // (byte)(ypos/8)
+    // (char)(ypos/8)
     // [283] (byte~) processChars::$27 ← (byte) processChars::ypos#0 >> (byte) 3 -- vbuaa=vbuz1_ror_3 
     lda.z ypos
     lsr
     lsr
     lsr
-    // ychar = (byte)(ypos/8) - BORDER_YPOS_TOP/8
+    // ychar = (char)(ypos/8) - BORDER_YPOS_TOP/8
     // [284] (byte) processChars::ychar#0 ← (byte~) processChars::$27 - (const byte) BORDER_YPOS_TOP/(byte) 8 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #BORDER_YPOS_TOP/8
@@ -12297,7 +12297,7 @@ processChars: {
     // [289] phi (byte) processChars::numActive#3 = (byte) processChars::numActive#10 [phi:processChars::@1/processChars::@7->processChars::@2#0] -- register_copy 
     // processChars::@2
   __b2:
-    // for( byte i: 0..NUM_PROCESSING-1 )
+    // for( char i: 0..NUM_PROCESSING-1 )
     // [290] (byte) processChars::i#1 ← ++ (byte) processChars::i#10 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [291] if((byte) processChars::i#1!=(const byte) NUM_PROCESSING-(byte) 1+(byte) 1) goto processChars::@1 -- vbuz1_neq_vbuc1_then_la1 

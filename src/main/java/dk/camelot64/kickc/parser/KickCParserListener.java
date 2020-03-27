@@ -70,16 +70,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDecl(KickCParser.DeclContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#typeDef}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypeDef(KickCParser.TypeDefContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#typeDef}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypeDef(KickCParser.TypeDefContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link KickCParser#declTypes}.
 	 * @param ctx the parse tree
 	 */
@@ -109,6 +99,26 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDeclVariableList(KickCParser.DeclVariableListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#declPointer}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclPointer(KickCParser.DeclPointerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declPointer}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclPointer(KickCParser.DeclPointerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link KickCParser#typeDef}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeDef(KickCParser.TypeDefContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#typeDef}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeDef(KickCParser.TypeDefContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code declVariableInitExpr}
 	 * labeled alternative in {@link KickCParser#declVariableInit}.
@@ -772,18 +782,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitTypeProcedure(KickCParser.TypeProcedureContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code typePtr}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 */
-	void enterTypePtr(KickCParser.TypePtrContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code typePtr}
-	 * labeled alternative in {@link KickCParser#typeDecl}.
-	 * @param ctx the parse tree
-	 */
-	void exitTypePtr(KickCParser.TypePtrContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code typeArray}
 	 * labeled alternative in {@link KickCParser#typeDecl}.
 	 * @param ctx the parse tree
@@ -879,6 +877,42 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTypeEnumDef(KickCParser.TypeEnumDefContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typeSpecifierSimple}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeSpecifierSimple(KickCParser.TypeSpecifierSimpleContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeSpecifierSimple}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeSpecifierSimple(KickCParser.TypeSpecifierSimpleContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typeSpecifierPointer}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeSpecifierPointer(KickCParser.TypeSpecifierPointerContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeSpecifierPointer}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeSpecifierPointer(KickCParser.TypeSpecifierPointerContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code typeSpecifierArray}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void enterTypeSpecifierArray(KickCParser.TypeSpecifierArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code typeSpecifierArray}
+	 * labeled alternative in {@link KickCParser#typeSpecifier}.
+	 * @param ctx the parse tree
+	 */
+	void exitTypeSpecifierArray(KickCParser.TypeSpecifierArrayContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#structRef}.
 	 * @param ctx the parse tree

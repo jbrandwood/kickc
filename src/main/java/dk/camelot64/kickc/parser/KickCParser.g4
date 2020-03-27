@@ -48,10 +48,6 @@ decl
     | typeDef ';'
     ;
 
-typeDef
-    : TYPEDEF typeDecl NAME {cParser.addTypedef($NAME.text);}
-    ;
-
 declTypes
     : directive* typeDecl directive*
     ;
@@ -61,8 +57,16 @@ declVariables
     ;
 
 declVariableList
-    : declVariableInit
-    | declVariableList COMMA declVariableInit
+    : declPointer* declVariableInit
+    | declVariableList COMMA declPointer* declVariableInit
+    ;
+
+declPointer
+    : ASTERISK directive*
+    ;
+
+typeDef
+    : TYPEDEF declTypes declPointer* NAME {cParser.addTypedef($NAME.text);}
     ;
 
 declVariableInit
@@ -76,14 +80,14 @@ declVariable
     ;
 
 declFunction
-    : declTypes NAME PAR_BEGIN parameterListDecl? PAR_END CURLY_BEGIN stmtSeq? CURLY_END
+    : declTypes declPointer* NAME PAR_BEGIN parameterListDecl? PAR_END CURLY_BEGIN stmtSeq? CURLY_END
     ;
 
 parameterListDecl
     : parameterDecl (COMMA parameterDecl)* ;
 
 parameterDecl
-    : declTypes NAME #parameterDeclType
+    : declTypes declPointer* NAME #parameterDeclType
     | SIMPLETYPE #parameterDeclVoid
     ;
 
@@ -149,7 +153,7 @@ switchCase:
 
 forLoop
     : forClassicInit ';' commaExpr ';' commaExpr? #forClassic
-    | declTypes? NAME COLON expr '..' expr  #forRange
+    | (declTypes declPointer*)? NAME COLON expr '..' expr  #forRange
     ;
 
 forClassicInit
@@ -161,7 +165,6 @@ typeDecl
     : PAR_BEGIN typeDecl PAR_END #typePar
     | SIMPLETYPE  #typeSimple
     | SIGNEDNESS SIMPLETYPE?  #typeSignedSimple
-    | typeDecl ASTERISK #typePtr
     | typeDecl BRACKET_BEGIN (expr)? BRACKET_END #typeArray
     | typeDecl PAR_BEGIN PAR_END #typeProcedure
     | structDef  #typeStructDef
@@ -169,6 +172,12 @@ typeDecl
     | enumDef  #typeEnumDef
     | enumRef  #typeEnumRef
     | TYPEDEFNAME  #typeNamedRef
+    ;
+
+typeSpecifier
+    : typeDecl #typeSpecifierSimple
+    | typeSpecifier ASTERISK #typeSpecifierPointer
+    | typeSpecifier BRACKET_BEGIN (expr)? BRACKET_END #typeSpecifierArray
     ;
 
 structRef
@@ -210,10 +219,10 @@ expr
     | expr DOT NAME #exprDot
     | expr '->' NAME  #exprArrow
     | expr PAR_BEGIN parameterList? PAR_END #exprCall
-    | SIZEOF PAR_BEGIN ( expr | typeDecl ) PAR_END #exprSizeOf
-    | TYPEID PAR_BEGIN ( expr | typeDecl ) PAR_END #exprTypeId
+    | SIZEOF PAR_BEGIN ( expr | typeSpecifier ) PAR_END #exprSizeOf
+    | TYPEID PAR_BEGIN ( expr | typeSpecifier ) PAR_END #exprTypeId
     | expr BRACKET_BEGIN commaExpr BRACKET_END #exprArray
-    | PAR_BEGIN typeDecl PAR_END expr #exprCast
+    | PAR_BEGIN typeSpecifier PAR_END expr #exprCast
     | ('--' | '++' ) expr #exprPreMod
     | expr ('--' | '++' ) #exprPostMod
     | ASTERISK expr #exprPtr

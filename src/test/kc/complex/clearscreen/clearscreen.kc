@@ -13,14 +13,14 @@ const byte* SCREEN = 0x0400;
 // Sprite data for the animating sprites
 const byte* SPRITE_DATA = 0x2000;
 // Values added to VX
-const word VXSIN[40] = kickasm {{
+const unsigned int VXSIN[40] = kickasm {{
   .for(var i=0; i<40; i++) {
       .word -sin(toRadians([i*360]/40))*4
     }
 }};
 
 // Values added to VY
-const word VYSIN[25] = kickasm {{
+const unsigned int VYSIN[25] = kickasm {{
   .for(var i=0; i<25; i++) {
       .word -sin(toRadians([i*360]/25))*4
     }
@@ -77,9 +77,9 @@ void main() {
     // Initialize the screen containing distance to the center
     init_angle_screen(SCREEN_DIST);
     // Copy screen to screen copy
-    for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
+    for( char *src=SCREEN, *dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++) *dst = *src;
     // Init processing array
-    for( byte i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, 0, 0, 0, STATUS_FREE, 0};
+    for( char i: 0..NUM_PROCESSING-1 ) PROCESSING[i] = { 0, 0, 0, 0, 0, 0, 0, STATUS_FREE, 0};
     // Init sprites
     initSprites();
     // Set-up raster interrupts
@@ -102,12 +102,12 @@ void main() {
 // If no non-space char is found the distance will be 0xffff
 struct ProcessingChar getCharToProcess() {
     struct ProcessingChar closest = { 0, 0, NOT_FOUND };
-    byte* screen_line = SCREEN_COPY;
-    byte* dist_line = SCREEN_DIST;
-    for( byte y: 0..24) {
-        for( byte x: 0..39) {
+    char* screen_line = SCREEN_COPY;
+    char* dist_line = SCREEN_DIST;
+    for( char y: 0..24) {
+        for( char x: 0..39) {
             if(screen_line[x]!=' ') {
-                byte dist = dist_line[x];
+                char dist = dist_line[x];
                 if(dist<closest.dist) {
                     // Update closest char
                     closest = { x, y, dist };
@@ -119,7 +119,7 @@ struct ProcessingChar getCharToProcess() {
     }
     if(closest.dist != NOT_FOUND) {
         // clear the found char on the screen copy
-        *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' ';
+        *(SCREEN_COPY+(unsigned int)closest.y*40+closest.x) = ' ';
     }
     return closest;
 }
@@ -127,9 +127,9 @@ struct ProcessingChar getCharToProcess() {
 // Start processing a char - by inserting it into the PROCESSING array
 void startProcessing(struct ProcessingChar center) {
     // Busy-wait while finding an empty slot in the PROCESSING array
-    byte freeIdx = 0xff;
+    char freeIdx = 0xff;
     do {
-        for( byte i: 0..NUM_PROCESSING-1 ) {
+        for( char i: 0..NUM_PROCESSING-1 ) {
             if(PROCESSING[i].status==STATUS_FREE) {
                 freeIdx = i;
                 break;
@@ -137,43 +137,43 @@ void startProcessing(struct ProcessingChar center) {
         }
     } while (freeIdx==0xff);
     // Found a free sprite
-    byte spriteIdx = freeIdx;
+    char spriteIdx = freeIdx;
     // Copy char into sprite
-    word offset = (word)center.y*40+center.x;
-    byte* colPtr = COLS+offset;
-    byte spriteCol = *colPtr;
-    byte* screenPtr = SCREEN+offset;
-    byte* spriteData = SPRITE_DATA+(word)spriteIdx*64;
-    byte ch = (*screenPtr);
-    byte* chargenData = CHARGEN+(word)ch*8;
+    unsigned int offset = (unsigned int)center.y*40+center.x;
+    char* colPtr = COLS+offset;
+    char spriteCol = *colPtr;
+    char* screenPtr = SCREEN+offset;
+    char* spriteData = SPRITE_DATA+(unsigned int)spriteIdx*64;
+    char ch = (*screenPtr);
+    char* chargenData = CHARGEN+(unsigned int)ch*8;
     asm { sei }
     *PROCPORT = PROCPORT_RAM_CHARROM;
-    for( byte i: 0..7) {
+    for( char i: 0..7) {
         *spriteData = *chargenData;
         spriteData += 3;
         chargenData++;
     }
     *PROCPORT = PROCPORT_RAM_IO;
     asm { cli }
-    word spriteX = (BORDER_XPOS_LEFT + (word)center.x*8) << 4;
-    word spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4;
-    byte spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx;
+    unsigned int spriteX = (BORDER_XPOS_LEFT + (unsigned int)center.x*8) << 4;
+    unsigned int spriteY = (BORDER_YPOS_TOP + (unsigned int)center.y*8) << 4;
+    char spritePtr = (char)(SPRITE_DATA/64)+spriteIdx;
     // Put the sprite into the PROCESSING array
-    PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr };
+    PROCESSING[spriteIdx] = { spriteX, spriteY, (unsigned int)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr };
 }
 
-const word XPOS_LEFTMOST = (word)(BORDER_XPOS_LEFT-8)<<4;
-const word XPOS_RIGHTMOST = (word)(BORDER_XPOS_RIGHT)<<4;
-const word YPOS_TOPMOST = (word)(BORDER_YPOS_TOP-8)<<4;
-const word YPOS_BOTTOMMOST = (word)(BORDER_YPOS_BOTTOM)<<4;
+const unsigned int XPOS_LEFTMOST = (unsigned int)(BORDER_XPOS_LEFT-8)<<4;
+const unsigned int XPOS_RIGHTMOST = (unsigned int)(BORDER_XPOS_RIGHT)<<4;
+const unsigned int YPOS_TOPMOST = (unsigned int)(BORDER_YPOS_TOP-8)<<4;
+const unsigned int YPOS_BOTTOMMOST = (unsigned int)(BORDER_YPOS_BOTTOM)<<4;
 
 
 // Process any chars in the PROCESSING array
 void processChars() {
-    byte numActive = 0;
-    for( byte i: 0..NUM_PROCESSING-1 ) {
+    char numActive = 0;
+    for( char i: 0..NUM_PROCESSING-1 ) {
         struct ProcessingSprite* processing = PROCESSING+i;
-        byte bitmask = 1<<processing->id;
+        char bitmask = 1<<processing->id;
         if(processing->status!=STATUS_FREE) {
             if(processing->status==STATUS_NEW) {
                 // Clear the char on the screen
@@ -187,15 +187,15 @@ void processChars() {
                 // Set status
                 processing->status = STATUS_PROCESSING;
             }
-            word xpos = processing->x >> 4;
+            unsigned int xpos = processing->x >> 4;
             // Set sprite position
             if(>xpos) {
                 *SPRITES_XMSB |= bitmask;
             } else {
                 *SPRITES_XMSB &= 0xff ^ bitmask;
             }
-            SPRITES_XPOS[i*2] = (byte)xpos;
-            byte ypos = (byte)(processing->y>>4);
+            SPRITES_XPOS[i*2] = (char)xpos;
+            char ypos = (char)(processing->y>>4);
             SPRITES_YPOS[i*2] = ypos;
 
             // Move sprite
@@ -205,10 +205,10 @@ void processChars() {
                 // Disable the sprite
                 *SPRITES_ENABLE &= 0xff ^ bitmask;
             } else {
-                byte xchar = (byte)(xpos/8) - BORDER_XPOS_LEFT/8;
+                char xchar = (char)(xpos/8) - BORDER_XPOS_LEFT/8;
                 processing->vx += VXSIN[xchar];
                 processing->x += processing->vx;
-                byte ychar = (byte)(ypos/8) - BORDER_YPOS_TOP/8;
+                char ychar = (char)(ypos/8) - BORDER_YPOS_TOP/8;
                 processing->vy +=   VYSIN[ychar];
                 processing->y += processing->vy;
             }
@@ -220,23 +220,23 @@ void processChars() {
     }
 }
 
-// Populates 1000 bytes (a screen) with values representing the distance to the center.
+// Populates 1000 chars (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
-void init_dist_screen(byte* screen) {
+void init_dist_screen(char* screen) {
     NUM_SQUARES = 0x30;
     init_squares();
-    byte* screen_topline = screen;
-    byte *screen_bottomline = screen+40*24;
-    for(byte y: 0..12) {
-        byte y2 = y*2;
-        byte yd = (y2>=24)?(y2-24):(24-y2);
-        word yds = sqr(yd);
-        for( byte x=0,xb=39; x<=19; x++, xb--) {
-            byte x2 = x*2;
-            byte xd = (x2>=39)?(x2-39):(39-x2);
-            word xds = sqr(xd);
-            word ds = xds+yds;
-            byte d = sqrt(ds);
+    char* screen_topline = screen;
+    char *screen_bottomline = screen+40*24;
+    for(char y: 0..12) {
+        char y2 = y*2;
+        char yd = (y2>=24)?(y2-24):(24-y2);
+        unsigned int yds = sqr(yd);
+        for( char x=0,xb=39; x<=19; x++, xb--) {
+            char x2 = x*2;
+            char xd = (x2>=39)?(x2-39):(39-x2);
+            unsigned int xds = sqr(xd);
+            unsigned int ds = xds+yds;
+            char d = sqrt(ds);
             screen_topline[x] = d;
             screen_bottomline[x] = d;
             screen_topline[xb] = d;
@@ -247,17 +247,17 @@ void init_dist_screen(byte* screen) {
     }
 }
 
-// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// Populates 1000 chars (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-void init_angle_screen(byte* screen) {
-    byte* screen_topline = screen+40*12;
-    byte *screen_bottomline = screen+40*12;
-    for(byte y: 0..12) {
-        for( byte x=0,xb=39; x<=19; x++, xb--) {
-            signed word xw = (signed word)(word){ 39-x*2, 0 };
-            signed word yw = (signed word)(word){ y*2, 0 };
-            word angle_w = atan2_16(xw, yw);
-            byte ang_w = >(angle_w+0x0080);
+void init_angle_screen(char* screen) {
+    char* screen_topline = screen+40*12;
+    char *screen_bottomline = screen+40*12;
+    for(char y: 0..12) {
+        for( char x=0,xb=39; x<=19; x++, xb--) {
+            signed int xw = (signed int)(unsigned int){ 39-x*2, 0 };
+            signed int yw = (signed int)(unsigned int){ y*2, 0 };
+            unsigned int angle_w = atan2_16(xw, yw);
+            char ang_w = >(angle_w+0x0080);
             screen_bottomline[xb] = ang_w;
             screen_topline[xb] = -ang_w;
             screen_topline[x] = 0x80+ang_w;
@@ -271,9 +271,9 @@ void init_angle_screen(byte* screen) {
 // Initialize sprites
 void initSprites() {
     // Clear sprite data
-    for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++) *sp = 0;
+    for( char* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++) *sp = 0;
     // Initialize sprite registers
-    for( byte i: 0..7) {
+    for( char i: 0..7) {
         SPRITES_COLS[i] = LIGHT_BLUE;
     }
     *SPRITES_MC = 0;
@@ -282,7 +282,7 @@ void initSprites() {
 }
 
 // Setup Raster IRQ
-void setupRasterIrq(word raster, void()* irqRoutine) {
+void setupRasterIrq(unsigned int raster, void()* irqRoutine) {
     asm { sei }
     // Disable kernal & basic
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
@@ -302,15 +302,15 @@ void setupRasterIrq(word raster, void()* irqRoutine) {
     asm { cli }
 }
 
-const byte RASTER_IRQ_TOP = 0x30;
+const char RASTER_IRQ_TOP = 0x30;
 
 // Raster Interrupt at the top of the screen
 interrupt(hardware_all) void irqTop() {
     if(DEBUG) {
-        for( byte i: 0..4) {}
+        for( char i: 0..4) {}
         *BORDERCOL = WHITE;
         *BGCOL = WHITE;
-        for( byte i: 0..7) {}
+        for( char i: 0..7) {}
         *BORDERCOL = LIGHT_BLUE;
         *BGCOL = BLUE;
     }
@@ -322,12 +322,12 @@ interrupt(hardware_all) void irqTop() {
     *IRQ_STATUS = IRQ_RASTER;
 }
 
-const byte RASTER_IRQ_MIDDLE = 0xff;
+const char RASTER_IRQ_MIDDLE = 0xff;
 
 // Raster Interrupt at the bottom of the screen
 interrupt(hardware_all) void irqBottom() {
     if(DEBUG) {
-        for( byte i: 0..4) {}
+        for( char i: 0..4) {}
         *BORDERCOL = WHITE;
         *BGCOL = WHITE;
     }

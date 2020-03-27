@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
@@ -206,13 +207,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
-      this.visitDeclTypes(ctx.declTypes());
+      this.visit(ctx.declTypes());
+      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
+         this.visit(declPointerContext);
+      }
       SymbolType type = varDecl.getEffectiveType();
       List<Directive> directives = varDecl.getEffectiveDirectives();
       String name = ctx.NAME().getText();
       Procedure procedure = getCurrentScope().addProcedure(name, type, currentCodeSegment, currentDataSegment, currentCallingConvention);
       addDirectives(procedure, directives, StatementSource.procedureBegin(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
+      varDecl.exitType();
       scopeStack.push(procedure);
       Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       Variable returnVar = null;
@@ -245,8 +250,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       sequence.addStatement(new StatementReturn(returnVarRef, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       scopeStack.pop();
       sequence.addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-      varDecl.exitVar();
-      varDecl.exitType();
       return null;
    }
 
@@ -274,11 +277,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitParameterDeclType(KickCParser.ParameterDeclTypeContext ctx) {
-      this.visitDeclTypes(ctx.declTypes());
+      this.visit(ctx.declTypes());
+      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
+         this.visit(declPointerContext);
+      }
       String varName = ctx.NAME().getText();
       VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), true, varDecl.getEffectiveType(), null, varDecl.getEffectiveDirectives(), currentDataSegment, variableBuilderConfig);
       Variable param = varBuilder.build();
-      varDecl.exitVar();
       varDecl.exitType();
       return param;
    }
@@ -547,13 +552,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       /** Holds the declared directives for a single variable. (variable level) */
       private List<Directive> varDirectives = null;
 
-      public VariableDeclaration() {
-      }
-
       /**
        * Exits the type layer (clears everyting except struct information)
        */
-      public void exitType() {
+      void exitType() {
+         exitVar();
          this.type = null;
          this.directives = null;
          this.arraySpec = null;
@@ -563,21 +566,21 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       /**
        * Exits the variable layer (clears variable information)
        */
-      public void exitVar() {
+      void exitVar() {
          this.varType = null;
          this.varArraySpec = null;
          this.varDirectives = null;
       }
 
-      public SymbolType getEffectiveType() {
+      SymbolType getEffectiveType() {
          return varType != null ? varType : type;
       }
 
-      public ArraySpec getEffectiveArraySpec() {
+      ArraySpec getEffectiveArraySpec() {
          return varArraySpec != null ? varArraySpec : arraySpec;
       }
 
-      public List<Directive> getEffectiveDirectives() {
+      List<Directive> getEffectiveDirectives() {
          final ArrayList<Directive> dirs = new ArrayList<>();
          if(directives != null)
             dirs.addAll(directives);
@@ -590,7 +593,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          return comments;
       }
 
-      public boolean isStructMember() {
+      boolean isStructMember() {
          return structMember;
       }
 
@@ -598,11 +601,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.type = type;
       }
 
-      public void setArraySpec(ArraySpec arraySpec) {
+      void setArraySpec(ArraySpec arraySpec) {
          this.arraySpec = arraySpec;
       }
 
-      public void setDirectives(List<Directive> directives) {
+      void setDirectives(List<Directive> directives) {
          this.directives = directives;
       }
 
@@ -610,20 +613,30 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.comments = comments;
       }
 
-      public void setStructMember(boolean structMember) {
+      void setStructMember(boolean structMember) {
          this.structMember = structMember;
       }
 
-      public void setVarArraySpec(ArraySpec varArraySpec) {
+      void setVarArraySpec(ArraySpec varArraySpec) {
          this.varArraySpec = varArraySpec;
       }
 
-      public void setVarType(SymbolType varType) {
+      void setVarType(SymbolType varType) {
          this.varType = varType;
       }
    }
 
    private VariableDeclaration varDecl = new VariableDeclaration();
+
+   @Override
+   public Object visitDeclPointer(KickCParser.DeclPointerContext ctx) {
+      if(!ctx.directive().isEmpty()) {
+         throw new InternalError("Not implemented!");
+      }
+      varDecl.setVarType(new SymbolTypePointer(varDecl.getEffectiveType()));
+      return null;
+   }
+
 
    /**
     * Visit the type/directive part of a declaration. Setup the local decl-variables
@@ -654,7 +667,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.declVariableList() != null) {
          this.visit(ctx.declVariableList());
       }
+      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
+         this.visit(declPointerContext);
+      }
       this.visit(ctx.declVariableInit());
+      varDecl.exitVar();
       return null;
    }
 
@@ -710,11 +727,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          varDecl.setVarArraySpec(new ArraySpec());
          varDecl.setVarType(new SymbolTypePointer(elementType));
       }
-
       // Find the variable name
       return (String) this.visit(ctx.declVariable());
    }
-
 
    /**
     * Ensure that the initializer value is a constant. Fail if it is not
@@ -1256,7 +1271,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       StatementSource statementSource = StatementSource.forRanged(ctx);
       // Create / find declared loop variable
       if(ctx.declTypes() != null) {
-         this.visitDeclTypes(ctx.declTypes());
+         this.visit(ctx.declTypes());
+         for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
+            this.visit(declPointerContext);
+         }
       }
       SymbolType varType = varDecl.getEffectiveType();
       String varName = ctx.NAME().getText();
@@ -1307,7 +1325,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addDirectives(doJmpStmt, stmtForCtx.directive());
       addLoopBreakLabel(loopStack.pop(), ctx);
       scopeStack.pop();
-      varDecl.exitVar();
       return null;
    }
 
@@ -1653,12 +1670,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public SymbolType visitTypePtr(KickCParser.TypePtrContext ctx) {
-      SymbolType elementType = (SymbolType) visit(ctx.typeDecl());
-      return new SymbolTypePointer(elementType);
-   }
-
-   @Override
    public SymbolType visitTypeArray(KickCParser.TypeArrayContext ctx) {
       if(program.isWarnArrayType()) {
          program.getLog().append("Non-standard array declaration.\n" + new StatementSource(ctx).toString());
@@ -1686,10 +1697,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitTypeDef(KickCParser.TypeDefContext ctx) {
       Scope typedefScope = program.getScope().getTypeDefScope();
       scopeStack.push(typedefScope);
-      SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+      this.visit(ctx.declTypes());
+      for(KickCParser.DeclPointerContext declPointerContext : ctx.declPointer()) {
+         this.visit(declPointerContext);
+      }
       String typedefName = ctx.NAME().getText();
-      typedefScope.add(Variable.createPhiMaster(typedefName, type, typedefScope, defaultMemoryArea, currentDataSegment));
+      typedefScope.add(Variable.createPhiMaster(typedefName, varDecl.getEffectiveType(), typedefScope, defaultMemoryArea, currentDataSegment));
       scopeStack.pop();
+      varDecl.exitType();
       return null;
    }
 
@@ -1842,9 +1857,27 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public SymbolType visitTypeSpecifierSimple(KickCParser.TypeSpecifierSimpleContext ctx) {
+      return (SymbolType) this.visit(ctx.typeDecl());
+   }
+
+   @Override
+   public SymbolType visitTypeSpecifierPointer(KickCParser.TypeSpecifierPointerContext ctx) {
+      return new SymbolTypePointer((SymbolType) this.visit(ctx.typeSpecifier()));
+   }
+
+   @Override
+   public SymbolType visitTypeSpecifierArray(KickCParser.TypeSpecifierArrayContext ctx) {
+      SymbolType elementType = (SymbolType) visit(ctx.typeSpecifier());
+      if(ctx.expr() != null)
+         throw new InternalError("Not implemented!");
+      return new SymbolTypePointer(elementType);
+   }
+
+   @Override
    public RValue visitExprCast(KickCParser.ExprCastContext ctx) {
       RValue child = (RValue) this.visit(ctx.expr());
-      SymbolType castType = (SymbolType) this.visit(ctx.typeDecl());
+      SymbolType castType = (SymbolType) this.visit(ctx.typeSpecifier());
       Operator operator = Operators.getCastUnary(castType);
       if(child instanceof ConstantValue) {
          consumeExpr(child);
@@ -1861,9 +1894,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitExprSizeOf(KickCParser.ExprSizeOfContext ctx) {
-      if(ctx.typeDecl() != null) {
+      if(ctx.typeSpecifier() != null) {
          // sizeof(type) - add directly
-         SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+         SymbolType type = (SymbolType) this.visit(ctx.typeSpecifier());
          return SizeOfConstants.getSizeOfConstantVar(program.getScope(), type);
       } else {
          // sizeof(expression) - add a unary expression to be resolved later
@@ -1879,9 +1912,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitExprTypeId(KickCParser.ExprTypeIdContext ctx) {
-      if(ctx.typeDecl() != null) {
+      if(ctx.typeSpecifier() != null) {
          // typeid(type) - add directly
-         SymbolType type = (SymbolType) this.visit(ctx.typeDecl());
+         SymbolType type = (SymbolType) this.visit(ctx.typeSpecifier());
          return OperatorTypeId.getTypeIdConstantVar(program.getScope(), type);
       } else {
          // typeid(expression) - add a unary expression to be resolved later

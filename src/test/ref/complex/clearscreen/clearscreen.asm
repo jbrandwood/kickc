@@ -119,7 +119,7 @@ main: {
     sta.z src+1
   // Copy screen to screen copy
   __b1:
-    // for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
+    // for( char *src=SCREEN, *dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
     lda.z src+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -148,7 +148,7 @@ main: {
     iny
     cpy #SIZEOF_STRUCT_PROCESSINGSPRITE
     bne !-
-    // for( byte i: 0..NUM_PROCESSING-1 )
+    // for( char i: 0..NUM_PROCESSING-1 )
     inc.z i
     lda #NUM_PROCESSING-1+1
     cmp.z i
@@ -188,7 +188,7 @@ main: {
     ldy #0
     lda (src),y
     sta (dst),y
-    // for( byte* src=SCREEN, dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
+    // for( char *src=SCREEN, *dst=SCREEN_COPY; src!=SCREEN+1000; src++, dst++)
     inc.z src
     bne !+
     inc.z src+1
@@ -259,12 +259,12 @@ startProcessing: {
     bne !__b8+
     jmp __b8
   !__b8:
-    // (word)center.y
+    // (unsigned int)center.y
     lda.z center_y
     sta.z __0
     lda #0
     sta.z __0+1
-    // (word)center.y*40
+    // (unsigned int)center.y*40
     lda.z __0
     asl
     sta.z __34
@@ -286,7 +286,7 @@ startProcessing: {
     rol.z __1+1
     asl.z __1
     rol.z __1+1
-    // offset = (word)center.y*40+center.x
+    // offset = (unsigned int)center.y*40+center.x
     lda.z center_x
     clc
     adc.z offset
@@ -314,12 +314,12 @@ startProcessing: {
     lda.z screenPtr+1
     adc #>SCREEN
     sta.z screenPtr+1
-    // (word)spriteIdx
+    // (unsigned int)spriteIdx
     lda.z freeIdx
     sta.z __5
     tya
     sta.z __5+1
-    // (word)spriteIdx*64
+    // (unsigned int)spriteIdx*64
     asl.z __6
     rol.z __6+1
     asl.z __6
@@ -332,7 +332,7 @@ startProcessing: {
     rol.z __6+1
     asl.z __6
     rol.z __6+1
-    // spriteData = SPRITE_DATA+(word)spriteIdx*64
+    // spriteData = SPRITE_DATA+(unsigned int)spriteIdx*64
     clc
     lda.z spriteData
     adc #<SPRITE_DATA
@@ -342,18 +342,18 @@ startProcessing: {
     sta.z spriteData+1
     // ch = (*screenPtr)
     lda (screenPtr),y
-    // (word)ch
+    // (unsigned int)ch
     sta.z __8
     tya
     sta.z __8+1
-    // (word)ch*8
+    // (unsigned int)ch*8
     asl.z __9
     rol.z __9+1
     asl.z __9
     rol.z __9+1
     asl.z __9
     rol.z __9+1
-    // chargenData = CHARGEN+(word)ch*8
+    // chargenData = CHARGEN+(unsigned int)ch*8
     clc
     lda.z chargenData
     adc #<CHARGEN
@@ -385,7 +385,7 @@ startProcessing: {
     bne !+
     inc.z chargenData+1
   !:
-    // for( byte i: 0..7)
+    // for( char i: 0..7)
     inx
     cpx #8
     bne __b6
@@ -394,19 +394,19 @@ startProcessing: {
     sta PROCPORT
     // asm
     cli
-    // (word)center.x
+    // (unsigned int)center.x
     lda.z center_x
     sta.z __11
     lda #0
     sta.z __11+1
-    // (word)center.x*8
+    // (unsigned int)center.x*8
     asl.z __12
     rol.z __12+1
     asl.z __12
     rol.z __12+1
     asl.z __12
     rol.z __12+1
-    // BORDER_XPOS_LEFT + (word)center.x*8
+    // BORDER_XPOS_LEFT + (unsigned int)center.x*8
     lda #BORDER_XPOS_LEFT
     clc
     adc.z __13
@@ -414,7 +414,7 @@ startProcessing: {
     bcc !+
     inc.z __13+1
   !:
-    // spriteX = (BORDER_XPOS_LEFT + (word)center.x*8) << 4
+    // spriteX = (BORDER_XPOS_LEFT + (unsigned int)center.x*8) << 4
     asl.z spriteX
     rol.z spriteX+1
     asl.z spriteX
@@ -423,19 +423,19 @@ startProcessing: {
     rol.z spriteX+1
     asl.z spriteX
     rol.z spriteX+1
-    // (word)center.y
+    // (unsigned int)center.y
     lda.z center_y
     sta.z __15
     lda #0
     sta.z __15+1
-    // (word)center.y*8
+    // (unsigned int)center.y*8
     asl.z __16
     rol.z __16+1
     asl.z __16
     rol.z __16+1
     asl.z __16
     rol.z __16+1
-    // BORDER_YPOS_TOP + (word)center.y*8
+    // BORDER_YPOS_TOP + (unsigned int)center.y*8
     lda #BORDER_YPOS_TOP
     clc
     adc.z __17
@@ -443,7 +443,7 @@ startProcessing: {
     bcc !+
     inc.z __17+1
   !:
-    // spriteY = (BORDER_YPOS_TOP + (word)center.y*8) << 4
+    // spriteY = (BORDER_YPOS_TOP + (unsigned int)center.y*8) << 4
     asl.z spriteY
     rol.z spriteY+1
     asl.z spriteY
@@ -452,7 +452,7 @@ startProcessing: {
     rol.z spriteY+1
     asl.z spriteY
     rol.z spriteY+1
-    // spritePtr = (byte)(SPRITE_DATA/64)+spriteIdx
+    // spritePtr = (char)(SPRITE_DATA/64)+spriteIdx
     lax.z freeIdx
     axs #-[SPRITE_DATA/$40]
     stx.z spritePtr
@@ -461,11 +461,11 @@ startProcessing: {
     asl
     asl
     asl
-    // (word)(spriteIdx*8)
+    // (unsigned int)(spriteIdx*8)
     sta.z __21
     lda #0
     sta.z __21+1
-    // PROCESSING[spriteIdx] = { spriteX, spriteY, (word)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr }
+    // PROCESSING[spriteIdx] = { spriteX, spriteY, (unsigned int)(spriteIdx*8), 60, spriteIdx, spritePtr, spriteCol, STATUS_NEW, screenPtr }
     lda.z freeIdx
     asl
     clc
@@ -509,7 +509,7 @@ startProcessing: {
     ldx.z freeIdx
     jmp __b1
   __b3:
-    // for( byte i: 0..NUM_PROCESSING-1 )
+    // for( char i: 0..NUM_PROCESSING-1 )
     inc.z i
     lda #NUM_PROCESSING-1+1
     cmp.z i
@@ -570,7 +570,7 @@ getCharToProcess: {
     lda.z y
     sta.z return_y
   __b3:
-    // for( byte x: 0..39)
+    // for( char x: 0..39)
     iny
     cpy #$28
     bne __b10
@@ -590,7 +590,7 @@ getCharToProcess: {
     bcc !+
     inc.z dist_line+1
   !:
-    // for( byte y: 0..24)
+    // for( char y: 0..24)
     inc.z y
     lda #$19
     cmp.z y
@@ -598,12 +598,12 @@ getCharToProcess: {
     // if(closest.dist != NOT_FOUND)
     cpx #NOT_FOUND
     beq __breturn
-    // (word)closest.y
+    // (unsigned int)closest.y
     lda.z return_y
     sta.z __8
     lda #0
     sta.z __8+1
-    // (word)closest.y*40
+    // (unsigned int)closest.y*40
     lda.z __8
     asl
     sta.z __12
@@ -625,7 +625,7 @@ getCharToProcess: {
     rol.z __9+1
     asl.z __9
     rol.z __9+1
-    // SCREEN_COPY+(word)closest.y*40
+    // SCREEN_COPY+(unsigned int)closest.y*40
     lda.z __10
     clc
     adc.z SCREEN_COPY
@@ -633,7 +633,7 @@ getCharToProcess: {
     lda.z __10+1
     adc.z SCREEN_COPY+1
     sta.z __10+1
-    // *(SCREEN_COPY+(word)closest.y*40+closest.x) = ' '
+    // *(SCREEN_COPY+(unsigned int)closest.y*40+closest.x) = ' '
     // clear the found char on the screen copy
     lda #' '
     ldy.z return_x
@@ -701,7 +701,7 @@ initSprites: {
     sta.z sp+1
   // Clear sprite data
   __b1:
-    // for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
+    // for( char* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
     lda.z sp+1
     cmp #>SPRITE_DATA+NUM_PROCESSING*$40
     bcc __b2
@@ -716,7 +716,7 @@ initSprites: {
     // SPRITES_COLS[i] = LIGHT_BLUE
     lda #LIGHT_BLUE
     sta SPRITES_COLS,x
-    // for( byte i: 0..7)
+    // for( char i: 0..7)
     inx
     cpx #8
     bne __b3
@@ -734,14 +734,14 @@ initSprites: {
     lda #0
     tay
     sta (sp),y
-    // for( byte* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
+    // for( char* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++)
     inc.z sp
     bne !+
     inc.z sp+1
   !:
     jmp __b1
 }
-// Populates 1000 bytes (a screen) with values representing the angle to the center.
+// Populates 1000 chars (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp($11) screen)
 init_angle_screen: {
@@ -780,7 +780,7 @@ init_angle_screen: {
     lda #0
     sta.z x
   __b2:
-    // for( byte x=0,xb=39; x<=19; x++, xb--)
+    // for( char x=0,xb=39; x<=19; x++, xb--)
     lda.z x
     cmp #$13+1
     bcc __b3
@@ -800,7 +800,7 @@ init_angle_screen: {
     bcc !+
     inc.z screen_bottomline+1
   !:
-    // for(byte y: 0..12)
+    // for(char y: 0..12)
     inc.z y
     lda #$d
     cmp.z y
@@ -815,14 +815,14 @@ init_angle_screen: {
     eor #$ff
     clc
     adc #$27+1
-    // (word){ 39-x*2, 0 }
+    // (unsigned int){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // (word){ y*2, 0 }
+    // (unsigned int){ y*2, 0 }
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
@@ -861,7 +861,7 @@ init_angle_screen: {
     sbc.z ang_w
     // screen_bottomline[x] = 0x80-ang_w
     sta (screen_bottomline),y
-    // for( byte x=0,xb=39; x<=19; x++, xb--)
+    // for( char x=0,xb=39; x<=19; x++, xb--)
     inc.z x
     dec.z xb
     jmp __b2
@@ -1260,9 +1260,9 @@ processChars: {
     lda.z i
     asl
     tax
-    // (byte)xpos
+    // (char)xpos
     lda.z xpos
-    // SPRITES_XPOS[i*2] = (byte)xpos
+    // SPRITES_XPOS[i*2] = (char)xpos
     sta SPRITES_XPOS,x
     // processing->y>>4
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
@@ -1279,7 +1279,7 @@ processChars: {
     ror.z __13
     lsr.z __13+1
     ror.z __13
-    // ypos = (byte)(processing->y>>4)
+    // ypos = (char)(processing->y>>4)
     lda.z __13
     sta.z ypos
     // SPRITES_YPOS[i*2] = ypos
@@ -1349,9 +1349,9 @@ processChars: {
     ror.z __23
     lsr.z __23+1
     ror.z __23
-    // (byte)(xpos/8)
+    // (char)(xpos/8)
     lda.z __23
-    // xchar = (byte)(xpos/8) - BORDER_XPOS_LEFT/8
+    // xchar = (char)(xpos/8) - BORDER_XPOS_LEFT/8
     sec
     sbc #BORDER_XPOS_LEFT/8
     // processing->vx += VXSIN[xchar]
@@ -1380,12 +1380,12 @@ processChars: {
     ldy #1
     adc (processing),y
     sta (processing),y
-    // (byte)(ypos/8)
+    // (char)(ypos/8)
     lda.z ypos
     lsr
     lsr
     lsr
-    // ychar = (byte)(ypos/8) - BORDER_YPOS_TOP/8
+    // ychar = (char)(ypos/8) - BORDER_YPOS_TOP/8
     sec
     sbc #BORDER_YPOS_TOP/8
     // processing->vy +=   VYSIN[ychar]
@@ -1416,7 +1416,7 @@ processChars: {
     // numActive++;
     inc.z numActive
   __b2:
-    // for( byte i: 0..NUM_PROCESSING-1 )
+    // for( char i: 0..NUM_PROCESSING-1 )
     inc.z i
     lda #NUM_PROCESSING-1+1
     cmp.z i

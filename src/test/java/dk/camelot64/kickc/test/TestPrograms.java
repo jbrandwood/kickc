@@ -942,10 +942,10 @@ public class TestPrograms {
       compileAndCompare("enum-0");
    }
 
-   @Test
-   public void testTypedef3() throws IOException, URISyntaxException {
-      compileAndCompare("typedef-3");
-   }
+   //@Test
+   //public void testTypedef3() throws IOException, URISyntaxException {
+   //   compileAndCompare("typedef-3");
+   //}
 
    @Test
    public void testTypedef2() throws IOException, URISyntaxException {
@@ -1775,6 +1775,21 @@ public class TestPrograms {
    @Test
    public void testPaulNelsenSandbox() throws IOException, URISyntaxException {
       compileAndCompare("sandbox");
+   }
+
+   @Test
+   public void testPointerConstDeep() throws IOException, URISyntaxException {
+      assertError("pointer-const-deep", "Deep const/volatile not supported");
+   }
+
+   @Test
+   public void testPointerConstTypedef() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-const-typedef");
+   }
+
+   @Test
+   public void testPointerConst() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-const");
    }
 
    @Test

@@ -68,6 +68,12 @@ public class Variable implements Symbol {
    /** Specifies that the variable must always live in memory to be available for any multi-threaded accees (eg. in interrupts). (volatile keyword) [Only Variables] */
    private boolean isVolatile;
 
+   /** Specifies that the variable points to a volatile. (volatile* keyword) */
+   private boolean isToVolatile;
+
+   /** Specifies that the variable points to a a nomodify. (const* keyword) */
+   private boolean isToNoModify;
+
    /** Specifies that the variable must always be added to the output ASM even if it is never used anywhere. (export keyword) */
    private boolean export;
 
@@ -188,6 +194,8 @@ public class Variable implements Symbol {
       version.setNoModify(phiMaster.isNoModify());
       version.setRegister(phiMaster.getRegister());
       version.setVolatile(phiMaster.isVolatile());
+      version.setToNoModify(phiMaster.isToNoModify());
+      version.setToVolatile(phiMaster.isToVolatile());
       version.setPermanent(phiMaster.isPermanent());
       version.setExport(phiMaster.isExport());
       version.setComments(phiMaster.getComments());
@@ -232,6 +240,8 @@ public class Variable implements Symbol {
       constVar.setNoModify(variable.isNoModify());
       constVar.setRegister(variable.getRegister());
       constVar.setVolatile(variable.isVolatile());
+      constVar.setToNoModify(variable.isToNoModify());
+      constVar.setToVolatile(variable.isToVolatile());
       constVar.setPermanent(variable.isPermanent());
       constVar.setExport(variable.isExport());
       constVar.setComments(variable.getComments());
@@ -252,6 +262,8 @@ public class Variable implements Symbol {
       copy.setNoModify(original.isNoModify());
       copy.setPermanent(original.isPermanent());
       copy.setVolatile(original.isVolatile());
+      copy.setToNoModify(original.isToNoModify());
+      copy.setToVolatile(original.isToVolatile());
       copy.setExport(original.isExport());
       copy.setRegister(original.getRegister());
       copy.setComments(original.getComments());
@@ -282,6 +294,8 @@ public class Variable implements Symbol {
       }
       memberVariable.setVolatile(structVar.isVolatile());
       memberVariable.setNoModify(structVar.isNoModify());
+      memberVariable.setToNoModify(structVar.isToNoModify());
+      memberVariable.setToVolatile(structVar.isToVolatile());
       memberVariable.setExport(structVar.isExport());
       memberVariable.setPermanent(structVar.isPermanent());
       return memberVariable;
@@ -479,20 +493,36 @@ public class Variable implements Symbol {
       this.noModify = noModify;
    }
 
-   public boolean isPermanent() {
-      return permanent;
-   }
-
-   public void setPermanent(boolean permanent) {
-      this.permanent = permanent;
-   }
-
    public boolean isVolatile() {
       return isVolatile;
    }
 
    public void setVolatile(boolean aVolatile) {
       this.isVolatile = aVolatile;
+   }
+
+   public boolean isToNoModify() {
+      return isToNoModify;
+   }
+
+   public void setToNoModify(boolean toNoModify) {
+      isToNoModify = toNoModify;
+   }
+
+   public boolean isToVolatile() {
+      return isToVolatile;
+   }
+
+   public void setToVolatile(boolean toVolatile) {
+      isToVolatile = toVolatile;
+   }
+
+   public boolean isPermanent() {
+      return permanent;
+   }
+
+   public void setPermanent(boolean permanent) {
+      this.permanent = permanent;
    }
 
    public boolean isExport() {
@@ -582,6 +612,10 @@ public class Variable implements Symbol {
       return new StringBuilder()
             .append("(")
             .append(isKindConstant() ? "const " : "")
+            //.append(isNoModify() ? "nomodify " : "")
+            //.append(isVolatile() ? "volatile " : "")
+            //.append(isToNoModify() ? "to_nomodify " : "")
+            //.append(isToVolatile() ? "to_volatile " : "")
             .append(getType().getTypeName())
             .append(isKindIntermediate() ? "~" : "")
             .append(") ")

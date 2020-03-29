@@ -48,7 +48,7 @@ void mulf_init() {
 
 // Prepare for fast multiply with an unsigned byte to a word result
 void mulf8u_prepare(byte a) {
-    const byte* memA = $fd;
+    byte* const memA = $fd;
     *memA = a;
     asm {
         lda memA
@@ -63,8 +63,8 @@ void mulf8u_prepare(byte a) {
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8u_prepare(byte a)
 word mulf8u_prepared(byte b) {
-    const byte* resL = $fe;
-    const byte* memB = $ff;
+    byte* const resL = $fe;
+    byte* const memB = $ff;
     *memB = b;
     asm {
         ldx memB
@@ -97,7 +97,7 @@ inline void mulf8s_prepare(signed byte a) {
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
 signed word mulf8s_prepared(signed byte b) {
-    const signed byte* memA = $fd; 
+    signed byte* const memA = $fd;
     word m = mulf8u_prepared((byte) b);
     if(*memA<0) {
         >m = (>m)-(byte)b;
@@ -117,9 +117,9 @@ signed word mulf8s(signed byte a, signed byte b) {
 // Fast multiply two unsigned words to a double word result
 // Done in assembler to utilize fast addition A+X
 dword mulf16u(word a, word b) {
-    const word* memA = $f8;
-    const word* memB = $fa;
-    const dword* memR = $fc;
+    word* const memA = $f8;
+    word* const memB = $fa;
+    dword* const memR = $fc;
     *memA = a;
     *memB = b;
     asm {

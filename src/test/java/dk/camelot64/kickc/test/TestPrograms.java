@@ -37,7 +37,6 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-
    @Test
    public void testMaCoalesceProblem() throws IOException, URISyntaxException {
       compileAndCompare("ma_coalesce_problem");

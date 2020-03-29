@@ -2,8 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // Pointer to const
-  .label pc0 = $400
   // Const pointer
   .label cp0 = $400
   .label cp2 = $400
@@ -11,6 +9,8 @@
   .label cpc0 = $400
   .label cpc1 = $400
   .label cpc2 = $400
+  // Pointer to const
+  .label pc0 = $400
   .label pc1 = $400
   .label pc2 = $400
   .label cp1 = $400

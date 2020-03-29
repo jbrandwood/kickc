@@ -15,8 +15,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) main::SCREEN + (number) 0) ← (const byte) main::button_color
-  *((const byte*) main::SCREEN + (number) 1) ← (const byte) main::button_size
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← (const byte) main::button_color
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← (const byte) main::button_size
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -40,12 +40,12 @@ SYMBOL TABLE SSA
 (const byte) RED = (number) 2
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (const byte) main::button_color = (const byte) RED
 (const byte) main::button_size = (byte) $18
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (const byte) main::button_color
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (const byte) main::button_size
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (const byte) main::button_color
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (const byte) main::button_size
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -54,7 +54,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero main::SCREEN in [0] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::button_color
+Simplifying expression containing zero main::SCREEN in [0] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (const byte) main::button_color
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant inlined Button::$0::RED = (number) 2
 Constant inlined main::button_color = (const byte) RED
@@ -89,8 +89,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← (const byte) RED
-  [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size
+  [4] *((const nomodify byte*) main::SCREEN) ← (const byte) RED
+  [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -133,10 +133,10 @@ __bend:
 main: {
     .label SCREEN = $400
     .const button_size = $18
-    // [4] *((const byte*) main::SCREEN) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size -- _deref_pbuc1=vbuc2 
     lda #button_size
     sta SCREEN+1
     jmp __breturn
@@ -148,8 +148,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← (const byte) RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) main::SCREEN) ← (const byte) RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Button] 
@@ -189,10 +189,10 @@ __bend:
 main: {
     .label SCREEN = $400
     .const button_size = $18
-    // [4] *((const byte*) main::SCREEN) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size -- _deref_pbuc1=vbuc2 
     lda #button_size
     sta SCREEN+1
     jmp __breturn
@@ -230,7 +230,7 @@ FINAL SYMBOL TABLE
 (const byte) RED = (number) 2
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (const byte) main::button_size = (byte) $18
 
 
@@ -257,11 +257,11 @@ main: {
     .label SCREEN = $400
     .const button_size = $18
     // SCREEN[0] = button.color
-    // [4] *((const byte*) main::SCREEN) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta SCREEN
     // SCREEN[1] = button.size
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::button_size -- _deref_pbuc1=vbuc2 
     lda #button_size
     sta SCREEN+1
     // main::@return

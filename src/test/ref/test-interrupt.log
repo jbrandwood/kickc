@@ -11,13 +11,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL)
+  *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -25,7 +25,7 @@ main::@return: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   asm { lda$dc0d  }
   to:irq::@return
 irq::@return: scope:[irq]  from irq
@@ -43,9 +43,9 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d020
-(const byte*) FGCOL = (byte*)(number) $d021
-(const void()**) KERNEL_IRQ = (void()**)(number) $314
+(const nomodify byte*) BGCOL = (byte*)(number) $d020
+(const nomodify byte*) FGCOL = (byte*)(number) $d021
+(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -92,15 +92,15 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL)
+  [5] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL)
   to:main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   asm { lda$dc0d  }
   to:irq::@return
 irq::@return: scope:[irq]  from irq
@@ -142,7 +142,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -150,14 +150,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp __b1
 }
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // asm { lda$dc0d  }
     lda $dc0d
@@ -170,7 +170,7 @@ irq: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -208,7 +208,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -216,14 +216,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp __b1
 }
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // asm { lda$dc0d  }
     lda $dc0d
@@ -258,9 +258,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53280
-(const byte*) FGCOL = (byte*) 53281
-(const void()**) KERNEL_IRQ = (void()**) 788
+(const nomodify byte*) BGCOL = (byte*) 53280
+(const nomodify byte*) FGCOL = (byte*) 53281
+(const nomodify void()**) KERNEL_IRQ = (void()**) 788
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -289,7 +289,7 @@ Score: 115
   // main
 main: {
     // *KERNEL_IRQ = &irq
-    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -297,7 +297,7 @@ main: {
     // main::@1
   __b1:
     // (*FGCOL)++;
-    // [5] *((const byte*) FGCOL) ← ++ *((const byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp __b1
 }
@@ -305,7 +305,7 @@ main: {
 irq: {
     // entry interrupt(KERNEL_MIN)
     // (*BGCOL)++;
-    // [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // asm
     // asm { lda$dc0d  }

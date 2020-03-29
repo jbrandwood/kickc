@@ -5,19 +5,19 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) x ← (byte) $c
+  (volatile byte) x ← (byte) $c
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte) x ← ++ (byte) x
-  (bool~) main::$0 ← (byte) x < (number) $32
+  (volatile byte) x ← ++ (volatile byte) x
+  (bool~) main::$0 ← (volatile byte) x < (number) $32
   if((bool~) main::$0) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  (byte) x ← (number) 0
+  (volatile byte) x ← (number) 0
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -39,12 +39,12 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@3
 (label) main::@return
-(byte) x loadstore
+(volatile byte) x loadstore
 
-Adding number conversion cast (unumber) $32 in (bool~) main::$0 ← (byte) x < (number) $32
-Adding number conversion cast (unumber) 0 in (byte) x ← (number) 0
+Adding number conversion cast (unumber) $32 in (bool~) main::$0 ← (volatile byte) x < (number) $32
+Adding number conversion cast (unumber) 0 in (volatile byte) x ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) x ← (unumber)(number) 0
+Inlining cast (volatile byte) x ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $32
 Simplifying constant integer cast 0
@@ -52,7 +52,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $32
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [3] if((byte) x<(byte) $32) goto main::@1
+Simple Condition (bool~) main::$0 [3] if((volatile byte) x<(byte) $32) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -71,7 +71,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) x ← (byte) $c
+  [0] (volatile byte) x ← (byte) $c
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -85,11 +85,11 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte) x ← ++ (byte) x
-  [6] if((byte) x<(byte) $32) goto main::@1
+  [5] (volatile byte) x ← ++ (volatile byte) x
+  [6] if((volatile byte) x<(byte) $32) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte) x ← (byte) 0
+  [7] (volatile byte) x ← (byte) 0
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [8] return 
@@ -98,7 +98,7 @@ main::@return: scope:[main]  from main::@2
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) x loadstore 63.2
+(volatile byte) x loadstore 63.2
 
 Initial phi equivalence classes
 Added variable x to live range equivalence class [ x ]
@@ -118,7 +118,7 @@ Target platform is c64basic / MOS6502X
   .label x = 2
   // @begin
 __bbegin:
-  // [0] (byte) x ← (byte) $c -- vbuz1=vbuc1 
+  // [0] (volatile byte) x ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -140,16 +140,16 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] (byte) x ← ++ (byte) x -- vbuz1=_inc_vbuz1 
+    // [5] (volatile byte) x ← ++ (volatile byte) x -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [6] if((byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((volatile byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
     bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [7] (byte) x ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (volatile byte) x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
     jmp __breturn
@@ -161,9 +161,9 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) x ← (byte) $c [ x ] (  [ x ] { }  ) always clobbers reg byte a 
-Statement [6] if((byte) x<(byte) $32) goto main::@1 [ x ] ( main:2 [ x ] { }  ) always clobbers reg byte a 
-Statement [7] (byte) x ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] (volatile byte) x ← (byte) $c [ x ] (  [ x ] { }  ) always clobbers reg byte a 
+Statement [6] if((volatile byte) x<(byte) $32) goto main::@1 [ x ] ( main:2 [ x ] { }  ) always clobbers reg byte a 
+Statement [7] (volatile byte) x ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ x ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -186,7 +186,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label x = 2
   // @begin
 __bbegin:
-  // [0] (byte) x ← (byte) $c -- vbuz1=vbuc1 
+  // [0] (volatile byte) x ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -208,16 +208,16 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] (byte) x ← ++ (byte) x -- vbuz1=_inc_vbuz1 
+    // [5] (volatile byte) x ← ++ (volatile byte) x -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [6] if((byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((volatile byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
     bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [7] (byte) x ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (volatile byte) x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
     jmp __breturn
@@ -255,7 +255,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte) x loadstore zp[1]:2 63.2
+(volatile byte) x loadstore zp[1]:2 63.2
 
 zp[1]:2 [ x ]
 
@@ -274,7 +274,7 @@ Score: 153
   // @begin
 __bbegin:
   // x = 12
-  // [0] (byte) x ← (byte) $c -- vbuz1=vbuc1 
+  // [0] (volatile byte) x ← (byte) $c -- vbuz1=vbuc1 
   lda #$c
   sta.z x
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -290,15 +290,15 @@ main: {
     // main::@1
   __b1:
     // while(++x<50)
-    // [5] (byte) x ← ++ (byte) x -- vbuz1=_inc_vbuz1 
+    // [5] (volatile byte) x ← ++ (volatile byte) x -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [6] if((byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((volatile byte) x<(byte) $32) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$32
     bcc __b1
     // main::@2
     // x = 0
-    // [7] (byte) x ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (volatile byte) x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z x
     // main::@return

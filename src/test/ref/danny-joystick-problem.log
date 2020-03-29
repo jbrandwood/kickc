@@ -10,10 +10,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @5
-  *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (number) $7f
+  *((const nomodify byte*) CIA2_PORT_B) ← *((const nomodify byte*) CIA2_PORT_B) & (number) $7f
   asm { lda#0  }
-  (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B)
-  *((const byte*) SCREEN) ← (byte) main::port4Value#0
+  (byte) main::port4Value#0 ← *((const nomodify byte*) CIA2_PORT_B)
+  *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -30,14 +30,14 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(const byte*) CIA2_PORT_B = (byte*)(number) $dd01
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) CIA2_PORT_B = (byte*)(number) $dd01
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@return
 (byte) main::port4Value
 (byte) main::port4Value#0
 
-Adding number conversion cast (unumber) $7f in *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (number) $7f
+Adding number conversion cast (unumber) $7f in *((const nomodify byte*) CIA2_PORT_B) ← *((const nomodify byte*) CIA2_PORT_B) & (number) $7f
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 56577
 Simplifying constant pointer cast (byte*) 1024
@@ -73,10 +73,10 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (byte) $7f
+  [4] *((const nomodify byte*) CIA2_PORT_B) ← *((const nomodify byte*) CIA2_PORT_B) & (byte) $7f
   asm { lda#0  }
-  [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B)
-  [7] *((const byte*) SCREEN) ← (byte) main::port4Value#0
+  [6] (byte) main::port4Value#0 ← *((const nomodify byte*) CIA2_PORT_B)
+  [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -124,16 +124,16 @@ __bend:
   // main
 main: {
     .label port4Value = 2
-    // [4] *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [4] *((const nomodify byte*) CIA2_PORT_B) ← *((const nomodify byte*) CIA2_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2_PORT_B
     sta CIA2_PORT_B
     // asm { lda#0  }
     lda #0
-    // [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B) -- vbuz1=_deref_pbuc1 
+    // [6] (byte) main::port4Value#0 ← *((const nomodify byte*) CIA2_PORT_B) -- vbuz1=_deref_pbuc1 
     lda CIA2_PORT_B
     sta.z port4Value
-    // [7] *((const byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuz1 
     lda.z port4Value
     sta SCREEN
     jmp __breturn
@@ -145,7 +145,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) CIA2_PORT_B) ← *((const nomodify byte*) CIA2_PORT_B) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::port4Value#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
@@ -184,15 +184,15 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [4] *((const nomodify byte*) CIA2_PORT_B) ← *((const nomodify byte*) CIA2_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2_PORT_B
     sta CIA2_PORT_B
     // asm { lda#0  }
     lda #0
-    // [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B) -- vbuaa=_deref_pbuc1 
+    // [6] (byte) main::port4Value#0 ← *((const nomodify byte*) CIA2_PORT_B) -- vbuaa=_deref_pbuc1 
     lda CIA2_PORT_B
-    // [7] *((const byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
+    // [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp __breturn
     // main::@return
@@ -224,8 +224,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) CIA2_PORT_B = (byte*) 56577
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) CIA2_PORT_B = (byte*) 56577
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 (byte) main::port4Value
@@ -257,7 +257,7 @@ Score: 26
   // main
 main: {
     // (*CIA2_PORT_B) &= 0x7f
-    // [4] *((const byte*) CIA2_PORT_B) ← *((const byte*) CIA2_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [4] *((const nomodify byte*) CIA2_PORT_B) ← *((const nomodify byte*) CIA2_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2_PORT_B
     sta CIA2_PORT_B
@@ -265,10 +265,10 @@ main: {
     // asm { lda#0  }
     lda #0
     // port4Value = *CIA2_PORT_B
-    // [6] (byte) main::port4Value#0 ← *((const byte*) CIA2_PORT_B) -- vbuaa=_deref_pbuc1 
+    // [6] (byte) main::port4Value#0 ← *((const nomodify byte*) CIA2_PORT_B) -- vbuaa=_deref_pbuc1 
     lda CIA2_PORT_B
     // *SCREEN = port4Value
-    // [7] *((const byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
+    // [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // main::@return
     // }

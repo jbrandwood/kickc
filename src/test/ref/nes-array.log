@@ -27,10 +27,10 @@ foo::@return: scope:[foo]  from foo
 (void()) main()
 main: scope:[main]  from @2
   (signed word*) main::SCREEN#0 ← (signed word*)(number) $400
-  (signed word) main::y1 ← (signed word) $1234
-  (signed word) main::y2 ← (signed word) $1234
+  (volatile signed word) main::y1 ← (signed word) $1234
+  (volatile signed word) main::y2 ← (signed word) $1234
   (byte) foo::x#0 ← (number) 1
-  (signed word*) foo::y#0 ← &(signed word) main::y1
+  (signed word*) foo::y#0 ← &(volatile signed word) main::y1
   call foo 
   (signed word) foo::return#2 ← (signed word) foo::return#1
   to:main::@1
@@ -41,7 +41,7 @@ main::@1: scope:[main]  from main
   *((signed word*) main::SCREEN#3) ← (signed word~) main::$0
   (signed word*) main::SCREEN#1 ← (signed word*) main::SCREEN#3 + (const byte) SIZEOF_SIGNED_WORD
   (byte) foo::x#1 ← (number) 2
-  (signed word*) foo::y#1 ← &(signed word) main::y2
+  (signed word*) foo::y#1 ← &(volatile signed word) main::y2
   call foo 
   (signed word) foo::return#3 ← (signed word) foo::return#1
   to:main::@2
@@ -100,8 +100,8 @@ SYMBOL TABLE SSA
 (signed word*) main::SCREEN#2
 (signed word*) main::SCREEN#3
 (signed word*) main::SCREEN#4
-(signed word) main::y1 loadstore
-(signed word) main::y2 loadstore
+(volatile signed word) main::y1 loadstore
+(volatile signed word) main::y2 loadstore
 (const signed word*) wow[(number) 4]  = { (signed word)(number) $cafe, (signed word)(number) $babe, (signed word) $1234, (signed word) $5678 }
 
 Adding number conversion cast (unumber) 1 in (byte) foo::x#0 ← (number) 1
@@ -143,9 +143,9 @@ Inlining constant with var siblings (const byte) foo::x#0
 Inlining constant with var siblings (const signed word*) foo::y#0
 Inlining constant with var siblings (const byte) foo::x#1
 Inlining constant with var siblings (const signed word*) foo::y#1
-Constant inlined foo::y#0 = &(signed word) main::y1
+Constant inlined foo::y#0 = &(volatile signed word) main::y1
 Constant inlined foo::x#1 = (byte) 2
-Constant inlined foo::y#1 = &(signed word) main::y2
+Constant inlined foo::y#1 = &(volatile signed word) main::y2
 Constant inlined foo::x#0 = (byte) 1
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN#0+SIZEOF_SIGNED_WORD)
@@ -179,8 +179,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (signed word) main::y1 ← (signed word) $1234
-  [5] (signed word) main::y2 ← (signed word) $1234
+  [4] (volatile signed word) main::y1 ← (signed word) $1234
+  [5] (volatile signed word) main::y2 ← (signed word) $1234
   [6] call foo 
   [7] (signed word) foo::return#2 ← (signed word) foo::return#0
   to:main::@1
@@ -200,7 +200,7 @@ main::@return: scope:[main]  from main::@2
 
 (signed word()) foo((byte) foo::x , (signed word*) foo::y)
 foo: scope:[foo]  from main main::@1
-  [15] (signed word*) foo::y#2 ← phi( main/&(signed word) main::y1 main::@1/&(signed word) main::y2 )
+  [15] (signed word*) foo::y#2 ← phi( main/&(volatile signed word) main::y1 main::@1/&(volatile signed word) main::y2 )
   [15] (byte) foo::x#2 ← phi( main/(byte) 1 main::@1/(byte) 2 )
   [16] (byte~) foo::$1 ← (byte) foo::x#2 << (byte) 1
   [17] (signed word) foo::return#0 ← *((const signed word*) wow + (byte~) foo::$1) + *((signed word*) foo::y#2)
@@ -225,8 +225,8 @@ VARIABLE REGISTER WEIGHTS
 (signed word~) main::$0 22.0
 (signed word~) main::$1 22.0
 (signed word*) main::SCREEN
-(signed word) main::y1 loadstore 110.0
-(signed word) main::y2 loadstore 110.0
+(volatile signed word) main::y1 loadstore 110.0
+(volatile signed word) main::y2 loadstore 110.0
 
 Initial phi equivalence classes
 [ foo::x#2 ]
@@ -293,12 +293,12 @@ main: {
     .label y2 = 7
     .label __0 = $b
     .label __1 = $f
-    // [4] (signed word) main::y1 ← (signed word) $1234 -- vwsz1=vwsc1 
+    // [4] (volatile signed word) main::y1 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
     sta.z y1
     lda #>$1234
     sta.z y1+1
-    // [5] (signed word) main::y2 ← (signed word) $1234 -- vwsz1=vwsc1 
+    // [5] (volatile signed word) main::y2 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
     sta.z y2
     lda #>$1234
@@ -306,7 +306,7 @@ main: {
     // [6] call foo 
     // [15] phi from main to foo [phi:main->foo]
   foo_from_main:
-    // [15] phi (signed word*) foo::y#2 = &(signed word) main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) foo::y#2 = &(volatile signed word) main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
     lda #<y1
     sta.z foo.y
     lda #>y1
@@ -336,7 +336,7 @@ main: {
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
   foo_from___b1:
-    // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) foo::y#2 = &(volatile signed word) main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
     sta.z foo.y
     lda #>y2
@@ -403,8 +403,8 @@ foo: {
   wow: .word $cafe, $babe, $1234, $5678
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (signed word) main::y1 ← (signed word) $1234 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
-Statement [5] (signed word) main::y2 ← (signed word) $1234 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
+Statement [4] (volatile signed word) main::y1 ← (signed word) $1234 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
+Statement [5] (volatile signed word) main::y2 ← (signed word) $1234 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
 Statement [7] (signed word) foo::return#2 ← (signed word) foo::return#0 [ foo::return#2 ] ( main:2 [ foo::return#2 ] { { foo::return#0 = foo::return#2 } }  ) always clobbers reg byte a 
 Statement [8] (signed word~) main::$0 ← (signed word) foo::return#2 [ main::$0 ] ( main:2 [ main::$0 ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
 Statement [9] *((const signed word*) main::SCREEN#0) ← (signed word~) main::$0 [ ] ( main:2 [ ] { { foo::return#0 = foo::return#3 } }  ) always clobbers reg byte a 
@@ -472,12 +472,12 @@ main: {
     .label y2 = 6
     .label __0 = 2
     .label __1 = 2
-    // [4] (signed word) main::y1 ← (signed word) $1234 -- vwsz1=vwsc1 
+    // [4] (volatile signed word) main::y1 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
     sta.z y1
     lda #>$1234
     sta.z y1+1
-    // [5] (signed word) main::y2 ← (signed word) $1234 -- vwsz1=vwsc1 
+    // [5] (volatile signed word) main::y2 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
     sta.z y2
     lda #>$1234
@@ -485,7 +485,7 @@ main: {
     // [6] call foo 
     // [15] phi from main to foo [phi:main->foo]
   foo_from_main:
-    // [15] phi (signed word*) foo::y#2 = &(signed word) main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) foo::y#2 = &(volatile signed word) main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
     lda #<y1
     sta.z foo.y
     lda #>y1
@@ -506,7 +506,7 @@ main: {
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
   foo_from___b1:
-    // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) foo::y#2 = &(volatile signed word) main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
     sta.z foo.y
     lda #>y2
@@ -610,8 +610,8 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (signed word*) main::SCREEN
 (const signed word*) main::SCREEN#0 SCREEN = (signed word*) 1024
-(signed word) main::y1 loadstore zp[2]:4 110.0
-(signed word) main::y2 loadstore zp[2]:6 110.0
+(volatile signed word) main::y1 loadstore zp[2]:4 110.0
+(volatile signed word) main::y2 loadstore zp[2]:6 110.0
 (const signed word*) wow[(number) 4]  = { (signed word) $cafe, (signed word) $babe, (signed word) $1234, (signed word) $5678 }
 
 reg byte x [ foo::x#2 ]
@@ -647,13 +647,13 @@ main: {
     .label __0 = 2
     .label __1 = 2
     // y1 = 0x1234
-    // [4] (signed word) main::y1 ← (signed word) $1234 -- vwsz1=vwsc1 
+    // [4] (volatile signed word) main::y1 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
     sta.z y1
     lda #>$1234
     sta.z y1+1
     // y2 = 0x1234
-    // [5] (signed word) main::y2 ← (signed word) $1234 -- vwsz1=vwsc1 
+    // [5] (volatile signed word) main::y2 ← (signed word) $1234 -- vwsz1=vwsc1 
     lda #<$1234
     sta.z y2
     lda #>$1234
@@ -661,7 +661,7 @@ main: {
     // foo(1, &y1)
     // [6] call foo 
     // [15] phi from main to foo [phi:main->foo]
-    // [15] phi (signed word*) foo::y#2 = &(signed word) main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) foo::y#2 = &(volatile signed word) main::y1 [phi:main->foo#0] -- pwsz1=pwsc1 
     lda #<y1
     sta.z foo.y
     lda #>y1
@@ -682,7 +682,7 @@ main: {
     // foo(2, &y2)
     // [10] call foo 
     // [15] phi from main::@1 to foo [phi:main::@1->foo]
-    // [15] phi (signed word*) foo::y#2 = &(signed word) main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
+    // [15] phi (signed word*) foo::y#2 = &(volatile signed word) main::y2 [phi:main::@1->foo#0] -- pwsz1=pwsc1 
     lda #<y2
     sta.z foo.y
     lda #>y2

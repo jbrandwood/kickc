@@ -6,7 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::b#0 ← (const byte*) main::BITMAP+(number) $1fff
+  (byte*) main::b#0 ← (const nomodify byte*) main::BITMAP+(number) $1fff
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte*) main::b#2 ← phi( main/(byte*) main::b#0 main::@1/(byte*) main::b#1 )
@@ -34,13 +34,13 @@ SYMBOL TABLE SSA
 (bool~) main::$0
 (label) main::@1
 (label) main::@return
-(const byte*) main::BITMAP = (byte*)(number) $2000
+(const nomodify byte*) main::BITMAP = (byte*)(number) $2000
 (byte*) main::b
 (byte*) main::b#0
 (byte*) main::b#1
 (byte*) main::b#2
 
-Adding number conversion cast (unumber) $1fff in (byte*) main::b#0 ← (const byte*) main::BITMAP+(number) $1fff
+Adding number conversion cast (unumber) $1fff in (byte*) main::b#0 ← (const nomodify byte*) main::BITMAP+(number) $1fff
 Adding number conversion cast (unumber) $5a in *((byte*) main::b#2) ← (number) $5a
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*) main::b#2) ← (unumber)(number) $5a
@@ -57,16 +57,16 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::b#0 = main::BITMAP+$1fff
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [3] main::b#1 ← -- main::b#2 to --
-Resolved ranged comparison value [5] if(main::b#1!=rangelast(main::BITMAP+$1fff,main::BITMAP)) goto main::@1 to (byte*)(const byte*) main::BITMAP-(number) 1
-Adding number conversion cast (unumber) 1 in if((byte*) main::b#1!=(byte*)(const byte*) main::BITMAP-(number) 1) goto main::@1
+Resolved ranged comparison value [5] if(main::b#1!=rangelast(main::BITMAP+$1fff,main::BITMAP)) goto main::@1 to (byte*)(const nomodify byte*) main::BITMAP-(number) 1
+Adding number conversion cast (unumber) 1 in if((byte*) main::b#1!=(byte*)(const nomodify byte*) main::BITMAP-(number) 1) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast (const byte*) main::BITMAP-(unumber)(number) 1
+Simplifying constant integer cast (const nomodify byte*) main::BITMAP-(unumber)(number) 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte*) main::b#0
-Constant inlined main::b#0 = (const byte*) main::BITMAP+(word) $1fff
+Constant inlined main::b#0 = (const nomodify byte*) main::BITMAP+(word) $1fff
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
@@ -103,10 +103,10 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte*) main::b#2 ← phi( main/(const byte*) main::BITMAP+(word) $1fff main::@1/(byte*) main::b#1 )
+  [5] (byte*) main::b#2 ← phi( main/(const nomodify byte*) main::BITMAP+(word) $1fff main::@1/(byte*) main::b#1 )
   [6] *((byte*) main::b#2) ← (byte) $5a
   [7] (byte*) main::b#1 ← -- (byte*) main::b#2
-  [8] if((byte*) main::b#1!=(const byte*) main::BITMAP-(byte) 1) goto main::@1
+  [8] if((byte*) main::b#1!=(const nomodify byte*) main::BITMAP-(byte) 1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [9] return 
@@ -157,7 +157,7 @@ main: {
     .label b = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte*) main::b#2 = (const byte*) main::BITMAP+(word) $1fff [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::b#2 = (const nomodify byte*) main::BITMAP+(word) $1fff [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<BITMAP+$1fff
     sta.z b
     lda #>BITMAP+$1fff
@@ -179,7 +179,7 @@ main: {
     dec.z b+1
   !:
     dec.z b
-    // [8] if((byte*) main::b#1!=(const byte*) main::BITMAP-(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [8] if((byte*) main::b#1!=(const nomodify byte*) main::BITMAP-(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z b+1
     cmp #>BITMAP-1
     bne __b1_from___b1
@@ -197,7 +197,7 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] *((byte*) main::b#2) ← (byte) $5a [ main::b#2 ] ( main:2 [ main::b#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [7] (byte*) main::b#1 ← -- (byte*) main::b#2 [ main::b#1 ] ( main:2 [ main::b#1 ] { }  ) always clobbers reg byte a 
-Statement [8] if((byte*) main::b#1!=(const byte*) main::BITMAP-(byte) 1) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] { }  ) always clobbers reg byte a 
+Statement [8] if((byte*) main::b#1!=(const nomodify byte*) main::BITMAP-(byte) 1) goto main::@1 [ main::b#1 ] ( main:2 [ main::b#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::b#2 main::b#1 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -238,7 +238,7 @@ main: {
     .label b = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte*) main::b#2 = (const byte*) main::BITMAP+(word) $1fff [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::b#2 = (const nomodify byte*) main::BITMAP+(word) $1fff [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<BITMAP+$1fff
     sta.z b
     lda #>BITMAP+$1fff
@@ -260,7 +260,7 @@ main: {
     dec.z b+1
   !:
     dec.z b
-    // [8] if((byte*) main::b#1!=(const byte*) main::BITMAP-(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [8] if((byte*) main::b#1!=(const nomodify byte*) main::BITMAP-(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z b+1
     cmp #>BITMAP-1
     bne __b1_from___b1
@@ -308,7 +308,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte*) main::BITMAP = (byte*) 8192
+(const nomodify byte*) main::BITMAP = (byte*) 8192
 (byte*) main::b
 (byte*) main::b#1 b zp[2]:2 151.5
 (byte*) main::b#2 b zp[2]:2 151.5
@@ -339,7 +339,7 @@ main: {
     .label BITMAP = $2000
     .label b = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte*) main::b#2 = (const byte*) main::BITMAP+(word) $1fff [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) main::b#2 = (const nomodify byte*) main::BITMAP+(word) $1fff [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<BITMAP+$1fff
     sta.z b
     lda #>BITMAP+$1fff
@@ -360,7 +360,7 @@ main: {
     dec.z b+1
   !:
     dec.z b
-    // [8] if((byte*) main::b#1!=(const byte*) main::BITMAP-(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [8] if((byte*) main::b#1!=(const nomodify byte*) main::BITMAP-(byte) 1) goto main::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z b+1
     cmp #>BITMAP-1
     bne __b1

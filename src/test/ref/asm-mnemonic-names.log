@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  *((const byte*) lda) ← (const byte) main::jmp
+  *((const nomodify byte*) lda) ← (const byte) main::jmp
   (byte) bne::jsr#0 ← (const byte) main::jmp
   call bne 
   to:main::@1
@@ -21,7 +21,7 @@ main::@return: scope:[main]  from main::@1
 (void()) bne((byte) bne::jsr)
 bne: scope:[bne]  from main
   (byte) bne::jsr#1 ← phi( main/(byte) bne::jsr#0 )
-  *((const byte*) lda + (number) 1) ← (byte) bne::jsr#1
+  *((const nomodify byte*) lda + (number) 1) ← (byte) bne::jsr#1
   to:bne::@return
 bne::@return: scope:[bne]  from bne
   return 
@@ -43,13 +43,13 @@ SYMBOL TABLE SSA
 (byte) bne::jsr
 (byte) bne::jsr#0
 (byte) bne::jsr#1
-(const byte*) lda = (byte*)(number) $400
+(const nomodify byte*) lda = (byte*)(number) $400
 (void()) main()
 (label) main::@1
 (label) main::@return
 (const byte) main::jmp = (byte) 1
 
-Adding number conversion cast (unumber) 1 in *((const byte*) lda + (number) 1) ← (byte) bne::jsr#1
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) lda + (number) 1) ← (byte) bne::jsr#1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -93,7 +93,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) lda) ← (const byte) main::jmp
+  [4] *((const nomodify byte*) lda) ← (const byte) main::jmp
   [5] call bne 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -105,7 +105,7 @@ main::@return: scope:[main]  from main::@1
 
 (void()) bne((byte) bne::jsr)
 bne: scope:[bne]  from main
-  [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp
+  [8] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp
   to:bne::@return
 bne::@return: scope:[bne]  from bne
   [9] return 
@@ -148,7 +148,7 @@ __bend:
   // main
 main: {
     .label jmp = 1
-    // [4] *((const byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // [5] call bne 
@@ -170,7 +170,7 @@ main: {
 }
   // bne
 bne: {
-    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     jmp __breturn
@@ -182,9 +182,9 @@ bne: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) lda) ← (const byte) main::jmp [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) lda) ← (const byte) main::jmp [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldaa jmpa bnea a:  } always clobbers reg byte a 
-Statement [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp [ ] ( main:2::bne:5 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp [ ] ( main:2::bne:5 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -222,7 +222,7 @@ __bend:
   // main
 main: {
     .label jmp = 1
-    // [4] *((const byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // [5] call bne 
@@ -244,7 +244,7 @@ main: {
 }
   // bne
 bne: {
-    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     jmp __breturn
@@ -287,7 +287,7 @@ FINAL SYMBOL TABLE
 (void()) bne((byte) bne::jsr)
 (label) bne::@return
 (byte) bne::jsr
-(const byte*) lda = (byte*) 1024
+(const nomodify byte*) lda = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -317,7 +317,7 @@ Score: 40
 main: {
     .label jmp = 1
     // *lda = jmp
-    // [4] *((const byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // bne(jmp)
@@ -338,7 +338,7 @@ main: {
   // bne
 bne: {
     // lda[1] = jsr
-    // [8] *((const byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     // bne::@return

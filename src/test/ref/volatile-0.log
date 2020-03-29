@@ -5,19 +5,19 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) i ← (byte) 3
+  (volatile byte) i ← (byte) 3
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (bool~) main::$0 ← (byte) i < (number) 7
+  (bool~) main::$0 ← (volatile byte) i < (number) 7
   if((bool~) main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((const byte*) SCREEN + (byte) i) ← (byte) i
-  (byte) i ← ++ (byte) i
+  *((const nomodify byte*) SCREEN + (volatile byte) i) ← (volatile byte) i
+  (volatile byte) i ← ++ (volatile byte) i
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -34,22 +34,22 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
-(byte) i loadstore
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(volatile byte) i loadstore
 (void()) main()
 (bool~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) 7 in (bool~) main::$0 ← (byte) i < (number) 7
+Adding number conversion cast (unumber) 7 in (bool~) main::$0 ← (volatile byte) i < (number) 7
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [2] if((byte) i<(byte) 7) goto main::@2
+Simple Condition (bool~) main::$0 [2] if((volatile byte) i<(byte) 7) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -67,7 +67,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) i ← (byte) 3
+  [0] (volatile byte) i ← (byte) 3
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -81,19 +81,19 @@ main: scope:[main]  from @1
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] if((byte) i<(byte) 7) goto main::@2
+  [5] if((volatile byte) i<(byte) 7) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [7] *((const byte*) SCREEN + (byte) i) ← (byte) i
-  [8] (byte) i ← ++ (byte) i
+  [7] *((const nomodify byte*) SCREEN + (volatile byte) i) ← (volatile byte) i
+  [8] (volatile byte) i ← ++ (volatile byte) i
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) i loadstore 84.49999999999999
+(volatile byte) i loadstore 84.49999999999999
 (void()) main()
 
 Initial phi equivalence classes
@@ -115,7 +115,7 @@ Target platform is c64basic / MOS6502X
   .label i = 2
   // @begin
 __bbegin:
-  // [0] (byte) i ← (byte) 3 -- vbuz1=vbuc1 
+  // [0] (volatile byte) i ← (byte) 3 -- vbuz1=vbuc1 
   lda #3
   sta.z i
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -137,7 +137,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] if((byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [5] if((volatile byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #7
     bcc __b2
@@ -148,20 +148,20 @@ main: {
     rts
     // main::@2
   __b2:
-    // [7] *((const byte*) SCREEN + (byte) i) ← (byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) i) ← (volatile byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
-    // [8] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) i ← ++ (volatile byte) i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) i ← (byte) 3 [ i ] (  [ i ] { }  ) always clobbers reg byte a 
-Statement [5] if((byte) i<(byte) 7) goto main::@2 [ i ] ( main:2 [ i ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN + (byte) i) ← (byte) i [ i ] ( main:2 [ i ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] (volatile byte) i ← (byte) 3 [ i ] (  [ i ] { }  ) always clobbers reg byte a 
+Statement [5] if((volatile byte) i<(byte) 7) goto main::@2 [ i ] ( main:2 [ i ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN + (volatile byte) i) ← (volatile byte) i [ i ] ( main:2 [ i ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ i ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -185,7 +185,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label i = 2
   // @begin
 __bbegin:
-  // [0] (byte) i ← (byte) 3 -- vbuz1=vbuc1 
+  // [0] (volatile byte) i ← (byte) 3 -- vbuz1=vbuc1 
   lda #3
   sta.z i
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -207,7 +207,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] if((byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [5] if((volatile byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #7
     bcc __b2
@@ -218,11 +218,11 @@ main: {
     rts
     // main::@2
   __b2:
-    // [7] *((const byte*) SCREEN + (byte) i) ← (byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) i) ← (volatile byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
-    // [8] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) i ← ++ (volatile byte) i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }
@@ -249,8 +249,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
-(byte) i loadstore zp[1]:2 84.49999999999999
+(const nomodify byte*) SCREEN = (byte*) 1024
+(volatile byte) i loadstore zp[1]:2 84.49999999999999
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -274,7 +274,7 @@ Score: 278
   // @begin
 __bbegin:
   // i = 3
-  // [0] (byte) i ← (byte) 3 -- vbuz1=vbuc1 
+  // [0] (volatile byte) i ← (byte) 3 -- vbuz1=vbuc1 
   lda #3
   sta.z i
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -290,7 +290,7 @@ main: {
     // main::@1
   __b1:
     // while(i<7)
-    // [5] if((byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [5] if((volatile byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #7
     bcc __b2
@@ -301,12 +301,12 @@ main: {
     // main::@2
   __b2:
     // SCREEN[i++] = i
-    // [7] *((const byte*) SCREEN + (byte) i) ← (byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) i) ← (volatile byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
     // SCREEN[i++] = i;
-    // [8] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) i ← ++ (volatile byte) i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }

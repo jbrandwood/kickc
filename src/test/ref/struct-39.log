@@ -1,6 +1,6 @@
 Fixing pointer array-indexing *((const struct Segment*) letter_c + (byte) main::i)
-Fixing pointer array-indexing *((const signed word*) SCREEN + (byte) main::j)
-Fixing pointer array-indexing *((const signed word*) SCREEN + (byte) main::j)
+Fixing pointer array-indexing *((const nomodify signed word*) SCREEN + (byte) main::j)
+Fixing pointer array-indexing *((const nomodify signed word*) SCREEN + (byte) main::j)
 Adding value bulk copy *(&(struct Vector) main::to) ← memcpy(*((struct Vector*)(const struct Segment*) letter_c+(const byte) OFFSET_STRUCT_SEGMENT_TO + (byte~) main::$1), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
 Replacing struct member reference (struct Vector) main::to.x with member unwinding reference *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_X)
 Replacing struct member reference (struct Vector) main::to.y with member unwinding reference *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y)
@@ -22,10 +22,10 @@ main::@1: scope:[main]  from main main::@1
   *(&(struct Vector) main::to) ← memcpy(*((struct Vector*)(const struct Segment*) letter_c+(const byte) OFFSET_STRUCT_SEGMENT_TO + (byte~) main::$1), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
   (struct Vector) main::to ← struct-unwound {*(&(struct Vector) main::to)}
   (byte~) main::$2 ← (byte) main::j#3 * (const byte) SIZEOF_SIGNED_WORD
-  *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_X)
+  *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_X)
   (byte) main::j#1 ← ++ (byte) main::j#3
   (byte~) main::$3 ← (byte) main::j#1 * (const byte) SIZEOF_SIGNED_WORD
-  *((const signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y)
+  *((const nomodify signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y)
   (byte) main::j#2 ← ++ (byte) main::j#1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,2)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,2)
@@ -50,7 +50,7 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_SEGMENT_TO = (byte) 1
 (const byte) OFFSET_STRUCT_VECTOR_X = (byte) 0
 (const byte) OFFSET_STRUCT_VECTOR_Y = (byte) 2
-(const signed word*) SCREEN = (signed word*)(number) $400
+(const nomodify signed word*) SCREEN = (signed word*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (const byte) SIZEOF_STRUCT_SEGMENT = (byte) 9
 (const byte) SIZEOF_STRUCT_VECTOR = (byte) 4
@@ -92,7 +92,7 @@ Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [12] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [14] if(main::i#1!=rangelast(0,2)) goto main::@1 to (number) 3
-Simplifying expression containing zero (signed word*)&main::to in [7] *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_X)
+Simplifying expression containing zero (signed word*)&main::to in [7] *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_VECTOR_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -158,10 +158,10 @@ main::@1: scope:[main]  from main main::@1
   [7] (byte~) main::$1 ← (byte~) main::$4 + (byte) main::i#2
   [8] *(&(struct Vector) main::to) ← memcpy(*((struct Vector*)(const struct Segment*) letter_c+(const byte) OFFSET_STRUCT_SEGMENT_TO + (byte~) main::$1), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR)
   [9] (byte~) main::$2 ← (byte) main::j#3 << (byte) 1
-  [10] *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to)
+  [10] *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to)
   [11] (byte) main::j#1 ← ++ (byte) main::j#3
   [12] (byte~) main::$3 ← (byte) main::j#1 << (byte) 1
-  [13] *((const signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y)
+  [13] *((const nomodify signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y)
   [14] (byte) main::j#2 ← ++ (byte) main::j#1
   [15] (byte) main::i#1 ← ++ (byte) main::i#2
   [16] if((byte) main::i#1!=(byte) 3) goto main::@1
@@ -300,7 +300,7 @@ main: {
     lda.z j_1
     asl
     sta.z __2
-    // [10] *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) -- pwsc1_derefidx_vbuz1=_deref_pwsc2 
+    // [10] *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) -- pwsc1_derefidx_vbuz1=_deref_pwsc2 
     ldy.z __2
     lda.z to
     sta SCREEN,y
@@ -314,7 +314,7 @@ main: {
     lda.z j
     asl
     sta.z __3
-    // [13] *((const signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) -- pwsc1_derefidx_vbuz1=_deref_pwsc2 
+    // [13] *((const nomodify signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) -- pwsc1_derefidx_vbuz1=_deref_pwsc2 
     ldy.z __3
     lda to+OFFSET_STRUCT_VECTOR_Y
     sta SCREEN,y
@@ -356,18 +356,18 @@ Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i
 Removing always clobbered register reg byte x as potential for zp[1]:3 [ main::j#3 main::j#2 ]
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ main::j#3 main::j#2 ]
 Statement [9] (byte~) main::$2 ← (byte) main::j#3 << (byte) 1 [ main::i#2 main::j#3 main::to main::$2 ] ( main:2 [ main::i#2 main::j#3 main::to main::$2 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) [ main::i#2 main::j#3 main::to ] ( main:2 [ main::i#2 main::j#3 main::to ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) [ main::i#2 main::j#3 main::to ] ( main:2 [ main::i#2 main::j#3 main::to ] { }  ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::j#1 << (byte) 1 [ main::i#2 main::to main::j#1 main::$3 ] ( main:2 [ main::i#2 main::to main::j#1 main::$3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::j#1 ]
-Statement [13] *((const signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) [ main::i#2 main::to main::j#1 ] ( main:2 [ main::i#2 main::to main::j#1 ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) [ main::i#2 main::to main::j#1 ] ( main:2 [ main::i#2 main::to main::j#1 ] { }  ) always clobbers reg byte a 
 Statement [16] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 main::j#2 main::to ] ( main:2 [ main::i#1 main::j#2 main::to ] { }  ) always clobbers reg byte a 
 Statement [6] (byte~) main::$4 ← (byte) main::i#2 << (byte) 3 [ main::i#2 main::j#3 main::$4 main::to ] ( main:2 [ main::i#2 main::j#3 main::$4 main::to ] { }  ) always clobbers reg byte a 
 Statement [7] (byte~) main::$1 ← (byte~) main::$4 + (byte) main::i#2 [ main::i#2 main::j#3 main::$1 main::to ] ( main:2 [ main::i#2 main::j#3 main::$1 main::to ] { }  ) always clobbers reg byte a 
 Statement [8] *(&(struct Vector) main::to) ← memcpy(*((struct Vector*)(const struct Segment*) letter_c+(const byte) OFFSET_STRUCT_SEGMENT_TO + (byte~) main::$1), struct Vector, (const byte) SIZEOF_STRUCT_VECTOR) [ main::i#2 main::j#3 main::to ] ( main:2 [ main::i#2 main::j#3 main::to ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [9] (byte~) main::$2 ← (byte) main::j#3 << (byte) 1 [ main::i#2 main::j#3 main::to main::$2 ] ( main:2 [ main::i#2 main::j#3 main::to main::$2 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) [ main::i#2 main::j#3 main::to ] ( main:2 [ main::i#2 main::j#3 main::to ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) [ main::i#2 main::j#3 main::to ] ( main:2 [ main::i#2 main::j#3 main::to ] { }  ) always clobbers reg byte a 
 Statement [12] (byte~) main::$3 ← (byte) main::j#1 << (byte) 1 [ main::i#2 main::to main::j#1 main::$3 ] ( main:2 [ main::i#2 main::to main::j#1 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [13] *((const signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) [ main::i#2 main::to main::j#1 ] ( main:2 [ main::i#2 main::to main::j#1 ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) [ main::i#2 main::to main::j#1 ] ( main:2 [ main::i#2 main::to main::j#1 ] { }  ) always clobbers reg byte a 
 Statement [16] if((byte) main::i#1!=(byte) 3) goto main::@1 [ main::i#1 main::j#2 main::to ] ( main:2 [ main::i#1 main::j#2 main::to ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ main::j#3 main::j#2 ] : zp[1]:3 , 
@@ -471,7 +471,7 @@ main: {
     // [9] (byte~) main::$2 ← (byte) main::j#3 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z j
     asl
-    // [10] *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
+    // [10] *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
     tay
     lda.z to
     sta SCREEN,y
@@ -483,7 +483,7 @@ main: {
     // [12] (byte~) main::$3 ← (byte) main::j#1 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [13] *((const signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
+    // [13] *((const nomodify signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
     tay
     lda to+OFFSET_STRUCT_VECTOR_Y
     sta SCREEN,y
@@ -547,7 +547,7 @@ FINAL SYMBOL TABLE
 (const byte) MOVE_TO = (byte) 0
 (const byte) OFFSET_STRUCT_SEGMENT_TO = (byte) 1
 (const byte) OFFSET_STRUCT_VECTOR_Y = (byte) 2
-(const signed word*) SCREEN = (signed word*) 1024
+(const nomodify signed word*) SCREEN = (signed word*) 1024
 (const byte) SIZEOF_STRUCT_VECTOR = (byte) 4
 (const byte) SPLINE_TO = (byte) 1
 (const byte) Segment::SegmentType::LINE_TO = (byte) 2
@@ -647,7 +647,7 @@ main: {
     // [9] (byte~) main::$2 ← (byte) main::j#3 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z j
     asl
-    // [10] *((const signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
+    // [10] *((const nomodify signed word*) SCREEN + (byte~) main::$2) ← *((signed word*)&(struct Vector) main::to) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
     tay
     lda.z to
     sta SCREEN,y
@@ -661,7 +661,7 @@ main: {
     // [12] (byte~) main::$3 ← (byte) main::j#1 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [13] *((const signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
+    // [13] *((const nomodify signed word*) SCREEN + (byte~) main::$3) ← *((signed word*)&(struct Vector) main::to+(const byte) OFFSET_STRUCT_VECTOR_Y) -- pwsc1_derefidx_vbuaa=_deref_pwsc2 
     tay
     lda to+OFFSET_STRUCT_VECTOR_Y
     sta SCREEN,y

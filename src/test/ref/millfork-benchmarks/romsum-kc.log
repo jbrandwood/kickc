@@ -381,7 +381,7 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#49 ← phi( print_word/(byte*) print_char_cursor#47 print_word::@1/(byte*) print_char_cursor#5 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -389,7 +389,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#32 ← phi( print_byte/(byte*) print_char_cursor#14 )
   (byte*) print_char_cursor#10 ← (byte*) print_char_cursor#32
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -417,7 +417,7 @@ print_char::@return: scope:[print_char]  from print_char
 @43: scope:[]  from @13
   (byte*) print_line_cursor#26 ← phi( @13/(byte*) print_line_cursor#0 )
   (byte*) print_char_cursor#59 ← phi( @13/(byte*) print_char_cursor#0 )
-  (word) last_time ← (word) 0
+  (volatile word) last_time ← (word) 0
   (word) Ticks#0 ← (word) 0
   to:@48
 
@@ -433,15 +433,15 @@ start::@return: scope:[start]  from start
 end: scope:[end]  from main::@3
   (byte*) print_line_cursor#27 ← phi( main::@3/(byte*) print_line_cursor#21 )
   (byte*) print_char_cursor#56 ← phi( main::@3/(byte*) print_char_cursor#52 )
-  (word) Ticks#1 ← (word) last_time
+  (word) Ticks#1 ← (volatile word) last_time
   call start 
   to:end::@1
 end::@1: scope:[end]  from end
   (byte*) print_line_cursor#23 ← phi( end/(byte*) print_line_cursor#27 )
   (byte*) print_char_cursor#50 ← phi( end/(byte*) print_char_cursor#56 )
   (word) Ticks#7 ← phi( end/(word) Ticks#1 )
-  (word) last_time ← (word) last_time - (word) Ticks#7
-  (word) Ticks#2 ← (word) last_time
+  (volatile word) last_time ← (volatile word) last_time - (word) Ticks#7
+  (word) Ticks#2 ← (volatile word) last_time
   (word) print_word::w#0 ← (word) Ticks#2
   call print_word 
   to:end::@2
@@ -476,7 +476,7 @@ sum: scope:[sum]  from main::@2
   (byte) sum::page#0 ← (byte) 0
   (byte) sum::i#0 ← (byte) 0
   (byte) sum::tmp#0 ← (byte) 0
-  (byte*) sum::p#1 ← (const byte*) rom
+  (byte*) sum::p#1 ← (const nomodify byte*) rom
   (word) sum::s#1 ← (number) 0
   (byte) sum::page#1 ← (number) 0
   to:sum::@1
@@ -672,7 +672,7 @@ SYMBOL TABLE SSA
 (label) end::@2
 (label) end::@3
 (label) end::@return
-(word) last_time loadstore
+(volatile word) last_time loadstore
 (signed word()) main()
 (bool~) main::$2
 (word~) main::$3
@@ -779,7 +779,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -848,10 +848,10 @@ SYMBOL TABLE SSA
 (word) print_word_decimal::w
 (word) print_word_decimal::w#0
 (word) print_word_decimal::w#1
-(const byte*) rom = (byte*)(number) $e000
+(const nomodify byte*) rom = (byte*)(number) $e000
 (void()) start()
 (label) start::@return
-(const word*) start::LAST_TIME = &(word) last_time
+(const nomodify word*) start::LAST_TIME = &(volatile word) last_time
 (word()) sum()
 (bool~) sum::$0
 (bool~) sum::$1
@@ -1402,7 +1402,7 @@ Constant inlined utoa::$5 = (const byte) utoa::max_digits#1-(byte) 1
 Constant inlined print_str::str#1 = (const byte*) decimal_digits
 Constant inlined sum::s#1 = (byte) 0
 Constant inlined main::i#1 = (byte) 0
-Constant inlined sum::p#1 = (const byte*) rom
+Constant inlined sum::p#1 = (const nomodify byte*) rom
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
@@ -1526,7 +1526,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (word) last_time ← (word) 0
+  [1] (volatile word) last_time ← (word) 0
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -1686,7 +1686,7 @@ sum: scope:[sum]  from main::@2
   [66] phi()
   to:sum::@1
 sum::@1: scope:[sum]  from sum sum::@3
-  [67] (byte*) sum::p#5 ← phi( sum/(const byte*) rom sum::@3/(byte*) sum::p#2 )
+  [67] (byte*) sum::p#5 ← phi( sum/(const nomodify byte*) rom sum::@3/(byte*) sum::p#2 )
   [67] (word) sum::s#3 ← phi( sum/(byte) 0 sum::@3/(word) sum::s#2 )
   [67] (byte) sum::page#3 ← phi( sum/(byte) 0 sum::@3/(byte) sum::page#2 )
   [68] if((byte) sum::page#3<(byte) $20) goto sum::@2
@@ -1709,12 +1709,12 @@ sum::@3: scope:[sum]  from sum::@2
 
 (void()) end()
 end: scope:[end]  from main::@3
-  [77] (word) Ticks#1 ← (word) last_time
+  [77] (word) Ticks#1 ← (volatile word) last_time
   [78] call start 
   to:end::@1
 end::@1: scope:[end]  from end
-  [79] (word) last_time ← (word) last_time - (word) Ticks#1
-  [80] (word) Ticks#12 ← (word) last_time
+  [79] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1
+  [80] (word) Ticks#12 ← (volatile word) last_time
   [81] (word) print_word::w#0 ← (word) Ticks#12
   [82] call print_word 
   to:end::@2
@@ -1781,7 +1781,7 @@ VARIABLE REGISTER WEIGHTS
 (word) Ticks#1 101.0
 (word) Ticks#12 202.0
 (void()) end()
-(word) last_time loadstore 21.368421052631582
+(volatile word) last_time loadstore 21.368421052631582
 (signed word()) main()
 (word) main::i
 (word) main::i#2 101.0
@@ -2000,7 +2000,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   lda #>0
@@ -2464,7 +2464,7 @@ sum: {
     .label return = $1d
     // [67] phi from sum to sum::@1 [phi:sum->sum::@1]
   __b1_from_sum:
-    // [67] phi (byte*) sum::p#5 = (const byte*) rom [phi:sum->sum::@1#0] -- pbuz1=pbuc1 
+    // [67] phi (byte*) sum::p#5 = (const nomodify byte*) rom [phi:sum->sum::@1#0] -- pbuz1=pbuc1 
     lda #<rom
     sta.z p
     lda #>rom
@@ -2544,7 +2544,7 @@ sum: {
 }
   // end
 end: {
-    // [77] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [77] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -2554,7 +2554,7 @@ end: {
     jmp __b1
     // end::@1
   __b1:
-    // [79] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [79] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -2562,7 +2562,7 @@ end: {
     lda.z last_time+1
     sbc.z Ticks+1
     sta.z last_time+1
-    // [80] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [80] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -2712,7 +2712,7 @@ start: {
   decimal_digits: .fill 6, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
 Statement [8] if((word) main::i#3<(byte) 6) goto main::@2 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 ] ( main:3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 ] { }  ) always clobbers reg byte a 
 Statement [14] (word) sum::return#2 ← (word) sum::s#3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::return#2 ] ( main:3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::return#2 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
 Statement [15] (word) print_word_decimal::w#0 ← (word) sum::return#2 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 print_word_decimal::w#0 ] ( main:3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 print_word_decimal::w#0 ] { { print_word_decimal::w#0 = sum::return#2 } }  ) always clobbers reg byte a 
@@ -2746,9 +2746,9 @@ Removing always clobbered register reg byte a as potential for zp[1]:17 [ sum::p
 Removing always clobbered register reg byte a as potential for zp[1]:20 [ sum::i#3 sum::i#2 ]
 Statement [72] (word) sum::s#2 ← (word) sum::s#4 + (byte) sum::tmp#1 [ sum::page#3 sum::p#5 sum::s#2 sum::i#3 ] ( main:3::sum:13 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::page#3 sum::p#5 sum::s#2 sum::i#3 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
 Statement [75] (byte*) sum::p#2 ← (byte*) sum::p#5 + (word) $100 [ sum::page#3 sum::s#2 sum::p#2 ] ( main:3::sum:13 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::page#3 sum::s#2 sum::p#2 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
-Statement [77] (word) Ticks#1 ← (word) last_time [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] { }  ) always clobbers reg byte a 
-Statement [79] (word) last_time ← (word) last_time - (word) Ticks#1 [ last_time print_char_cursor#51 print_line_cursor#20 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
-Statement [80] (word) Ticks#12 ← (word) last_time [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] ( main:3::end:10 [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [77] (word) Ticks#1 ← (volatile word) last_time [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] { }  ) always clobbers reg byte a 
+Statement [79] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 [ last_time print_char_cursor#51 print_line_cursor#20 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [80] (word) Ticks#12 ← (volatile word) last_time [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] ( main:3::end:10 [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [81] (word) print_word::w#0 ← (word) Ticks#12 [ print_char_cursor#51 print_line_cursor#20 print_word::w#0 ] ( main:3::end:10 [ print_char_cursor#51 print_line_cursor#20 print_word::w#0 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [92] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_char_cursor#49 print_byte::$0 ] ( main:3::end:10::print_word:82::print_byte:87 [ print_line_cursor#20 print_word::w#0 print_byte::b#2 print_char_cursor#49 print_byte::$0 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char_cursor#35 = print_char_cursor#49 print_char_cursor#51 } { print_char::ch#0 = print_char::ch#2 } }  main:3::end:10::print_word:82::print_byte:89 [ print_line_cursor#20 print_byte::b#2 print_char_cursor#49 print_byte::$0 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#13 = print_char_cursor#49 print_char_cursor#35 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:23 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
@@ -2756,7 +2756,7 @@ Statement [95] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ p
 Statement [100] *((byte*) print_char_cursor#35) ← (byte) print_char::ch#2 [ print_char_cursor#35 ] ( main:3::end:10::print_word:82::print_byte:87::print_char:94 [ print_line_cursor#20 print_word::w#0 print_byte::b#2 print_char_cursor#35 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char_cursor#35 = print_char_cursor#49 print_char_cursor#51 } { print_char::ch#0 = print_char::ch#2 } }  main:3::end:10::print_word:82::print_byte:89::print_char:94 [ print_line_cursor#20 print_byte::b#2 print_char_cursor#35 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#13 = print_char_cursor#49 print_char_cursor#35 } { print_char::ch#0 = print_char::ch#2 } }  main:3::end:10::print_word:82::print_byte:87::print_char:97 [ print_line_cursor#20 print_word::w#0 print_char_cursor#35 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char_cursor#49 = print_char_cursor#51 } { print_char::ch#1 = print_char::ch#2 } { print_char_cursor#13 = print_char_cursor#35 } }  main:3::end:10::print_word:82::print_byte:89::print_char:97 [ print_line_cursor#20 print_char_cursor#35 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#13 = print_char_cursor#49 print_char_cursor#35 } { print_char::ch#1 = print_char::ch#2 } }  ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:23 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement asm { jsr$FFDE staLAST_TIME stxLAST_TIME+1  } always clobbers reg byte a reg byte x reg byte y 
-Statement [1] (word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
 Statement [8] if((word) main::i#3<(byte) 6) goto main::@2 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 ] ( main:3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 ] { }  ) always clobbers reg byte a 
 Statement [14] (word) sum::return#2 ← (word) sum::s#3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::return#2 ] ( main:3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::return#2 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
 Statement [15] (word) print_word_decimal::w#0 ← (word) sum::return#2 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 print_word_decimal::w#0 ] ( main:3 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 print_word_decimal::w#0 ] { { print_word_decimal::w#0 = sum::return#2 } }  ) always clobbers reg byte a 
@@ -2784,9 +2784,9 @@ Statement [65] (word) utoa_append::value#1 ← (word) utoa_append::value#2 - (wo
 Statement [71] (byte) sum::tmp#1 ← *((byte*) sum::p#5 + (byte) sum::i#3) [ sum::page#3 sum::p#5 sum::i#3 sum::s#4 sum::tmp#1 ] ( main:3::sum:13 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::page#3 sum::p#5 sum::i#3 sum::s#4 sum::tmp#1 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
 Statement [72] (word) sum::s#2 ← (word) sum::s#4 + (byte) sum::tmp#1 [ sum::page#3 sum::p#5 sum::s#2 sum::i#3 ] ( main:3::sum:13 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::page#3 sum::p#5 sum::s#2 sum::i#3 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
 Statement [75] (byte*) sum::p#2 ← (byte*) sum::p#5 + (word) $100 [ sum::page#3 sum::s#2 sum::p#2 ] ( main:3::sum:13 [ last_time main::i#3 print_char_cursor#51 print_line_cursor#20 sum::page#3 sum::s#2 sum::p#2 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
-Statement [77] (word) Ticks#1 ← (word) last_time [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] { }  ) always clobbers reg byte a 
-Statement [79] (word) last_time ← (word) last_time - (word) Ticks#1 [ last_time print_char_cursor#51 print_line_cursor#20 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
-Statement [80] (word) Ticks#12 ← (word) last_time [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] ( main:3::end:10 [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [77] (word) Ticks#1 ← (volatile word) last_time [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 Ticks#1 ] { }  ) always clobbers reg byte a 
+Statement [79] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 [ last_time print_char_cursor#51 print_line_cursor#20 ] ( main:3::end:10 [ last_time print_char_cursor#51 print_line_cursor#20 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [80] (word) Ticks#12 ← (volatile word) last_time [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] ( main:3::end:10 [ print_char_cursor#51 print_line_cursor#20 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [81] (word) print_word::w#0 ← (word) Ticks#12 [ print_char_cursor#51 print_line_cursor#20 print_word::w#0 ] ( main:3::end:10 [ print_char_cursor#51 print_line_cursor#20 print_word::w#0 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [92] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ print_byte::b#2 print_char_cursor#49 print_byte::$0 ] ( main:3::end:10::print_word:82::print_byte:87 [ print_line_cursor#20 print_word::w#0 print_byte::b#2 print_char_cursor#49 print_byte::$0 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char_cursor#35 = print_char_cursor#49 print_char_cursor#51 } { print_char::ch#0 = print_char::ch#2 } }  main:3::end:10::print_word:82::print_byte:89 [ print_line_cursor#20 print_byte::b#2 print_char_cursor#49 print_byte::$0 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#13 = print_char_cursor#49 print_char_cursor#35 } { print_char::ch#0 = print_char::ch#2 } }  ) always clobbers reg byte a 
 Statement [95] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#13 print_byte::$2 ] ( main:3::end:10::print_word:82::print_byte:87 [ print_line_cursor#20 print_word::w#0 print_char_cursor#13 print_byte::$2 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char_cursor#49 = print_char_cursor#51 } { print_char::ch#1 = print_char::ch#2 } { print_char_cursor#13 = print_char_cursor#35 } }  main:3::end:10::print_word:82::print_byte:89 [ print_line_cursor#20 print_char_cursor#13 print_byte::$2 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#13 = print_char_cursor#49 print_char_cursor#35 } { print_char::ch#1 = print_char::ch#2 } }  ) always clobbers reg byte a 
@@ -2897,7 +2897,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   lda #>0
@@ -3311,7 +3311,7 @@ sum: {
     .label return = 5
     // [67] phi from sum to sum::@1 [phi:sum->sum::@1]
   __b1_from_sum:
-    // [67] phi (byte*) sum::p#5 = (const byte*) rom [phi:sum->sum::@1#0] -- pbuz1=pbuc1 
+    // [67] phi (byte*) sum::p#5 = (const nomodify byte*) rom [phi:sum->sum::@1#0] -- pbuz1=pbuc1 
     lda #<rom
     sta.z p
     lda #>rom
@@ -3384,7 +3384,7 @@ sum: {
 }
   // end
 end: {
-    // [77] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [77] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -3394,7 +3394,7 @@ end: {
     jmp __b1
     // end::@1
   __b1:
-    // [79] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [79] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -3402,7 +3402,7 @@ end: {
     lda.z last_time+1
     sbc.z Ticks+1
     sta.z last_time+1
-    // [80] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [80] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -3680,7 +3680,7 @@ FINAL SYMBOL TABLE
 (label) end::@1
 (label) end::@2
 (label) end::@return
-(word) last_time loadstore zp[2]:11 21.368421052631582
+(volatile word) last_time loadstore zp[2]:11 21.368421052631582
 (signed word()) main()
 (label) main::@1
 (label) main::@2
@@ -3742,10 +3742,10 @@ FINAL SYMBOL TABLE
 (label) print_word_decimal::@return
 (word) print_word_decimal::w
 (word) print_word_decimal::w#0 w zp[2]:5 1102.0
-(const byte*) rom = (byte*) 57344
+(const nomodify byte*) rom = (byte*) 57344
 (void()) start()
 (label) start::@return
-(const word*) start::LAST_TIME = &(word) last_time
+(const nomodify word*) start::LAST_TIME = &(volatile word) last_time
 (word()) sum()
 (label) sum::@1
 (label) sum::@2
@@ -3860,7 +3860,7 @@ Score: 101225
 __bbegin:
   // @1
   // last_time
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   sta.z last_time+1
@@ -4242,7 +4242,7 @@ sum: {
     .label p = 7
     .label return = 5
     // [67] phi from sum to sum::@1 [phi:sum->sum::@1]
-    // [67] phi (byte*) sum::p#5 = (const byte*) rom [phi:sum->sum::@1#0] -- pbuz1=pbuc1 
+    // [67] phi (byte*) sum::p#5 = (const nomodify byte*) rom [phi:sum->sum::@1#0] -- pbuz1=pbuc1 
     lda #<rom
     sta.z p
     lda #>rom
@@ -4314,7 +4314,7 @@ sum: {
   // end
 end: {
     // Ticks = last_time
-    // [77] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [77] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -4324,7 +4324,7 @@ end: {
     jsr start
     // end::@1
     // last_time -= Ticks
-    // [79] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [79] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -4333,7 +4333,7 @@ end: {
     sbc.z Ticks+1
     sta.z last_time+1
     // Ticks = last_time
-    // [80] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [80] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1

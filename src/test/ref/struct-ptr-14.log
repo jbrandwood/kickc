@@ -1,5 +1,5 @@
-Setting struct to load/store in variable affected by address-of (struct Point*) main::q ← &(struct Point) main::p
-Adding value bulk copy *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Setting struct to load/store in variable affected by address-of (struct Point*) main::q ← &(volatile struct Point) main::p
+Adding value bulk copy *(&(volatile struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Replacing struct member reference *((struct Point*) main::q).x with member unwinding reference *((byte*~) main::$1)
 Replacing struct member reference *((struct Point*) main::q).y with member unwinding reference *((byte*~) main::$2)
 Replacing struct member reference *((struct Point*) set::ptr).x with member unwinding reference *((byte*~) set::$0)
@@ -13,16 +13,16 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-  (struct Point) main::p ← struct-unwound {*(&(struct Point) main::p)}
+  *(&(volatile struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  (volatile struct Point) main::p ← struct-unwound {*(&(volatile struct Point) main::p)}
   (struct Point*) set::ptr#0 ← (const struct Point*) main::q
   call set 
   to:main::@1
 main::@1: scope:[main]  from main
   (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
-  *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
   (byte*~) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
-  *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$2)
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$2)
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -62,9 +62,9 @@ SYMBOL TABLE SSA
 (byte*~) main::$2
 (label) main::@1
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
-(struct Point) main::p loadstore
-(const struct Point*) main::q = &(struct Point) main::p
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
+(volatile struct Point) main::p loadstore
+(const struct Point*) main::q = &(volatile struct Point) main::p
 (void()) set((struct Point*) set::ptr)
 (byte*~) set::$0
 (byte*~) set::$1
@@ -73,8 +73,8 @@ SYMBOL TABLE SSA
 (struct Point*) set::ptr#0
 (struct Point*) set::ptr#1
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$2)
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$2)
 Adding number conversion cast (unumber) 4 in *((byte*~) set::$0) ← (number) 4
 Adding number conversion cast (unumber) 5 in *((byte*~) set::$1) ← (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -94,7 +94,7 @@ Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values (struct Point*) set::ptr#1 (struct Point*) set::ptr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Removing C-classic struct-unwound assignment [1] (struct Point) main::p ← struct-unwound {*(&(struct Point) main::p)}
+Removing C-classic struct-unwound assignment [1] (volatile struct Point) main::p ← struct-unwound {*(&(volatile struct Point) main::p)}
 Constant right-side identified [4] (byte*~) main::$1 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_X
 Constant right-side identified [6] (byte*~) main::$2 ← (byte*)(const struct Point*) main::q + (const byte) OFFSET_STRUCT_POINT_Y
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -109,7 +109,7 @@ Converting *(pointer+n) to pointer[n] [11] *((byte*~) set::$0) ← (byte) 4  -- 
 Converting *(pointer+n) to pointer[n] [13] *((byte*~) set::$1) ← (byte) 5  -- *((byte*)set::ptr#0 + OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying expression containing zero (byte*)main::q in 
-Simplifying expression containing zero main::SCREEN in [5] *((const byte*) main::SCREEN + (byte) 0) ← *((const byte*) main::$1)
+Simplifying expression containing zero main::SCREEN in [5] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((const byte*) main::$1)
 Simplifying expression containing zero (byte*)set::ptr#0 in [10] (byte*~) set::$0 ← (byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X
 Simplifying expression containing zero (byte*)set::ptr#0 in [11] *((byte*)(const struct Point*) set::ptr#0 + (const byte) OFFSET_STRUCT_POINT_X) ← (byte) 4
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -153,12 +153,12 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  [4] *(&(volatile struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   [5] call set 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q)
-  [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y)
+  [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q)
+  [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [8] return 
@@ -178,7 +178,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) Point::x
 (byte) Point::y
 (void()) main()
-(struct Point) main::p loadstore
+(volatile struct Point) main::p loadstore
 (void()) set((struct Point*) set::ptr)
 (struct Point*) set::ptr
 
@@ -218,7 +218,7 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // [4] *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    // [4] *(&(volatile struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
@@ -230,10 +230,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
-    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
@@ -260,9 +260,9 @@ set: {
   __0: .byte 2, 3
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *(&(volatile struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [9] *((byte*)(const struct Point*) main::q) ← (byte) 4 [ ] ( main:2::set:5 [ ] { }  ) always clobbers reg byte a 
 Statement [10] *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 5 [ ] ( main:2::set:5 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
@@ -307,7 +307,7 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // [4] *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    // [4] *(&(volatile struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
@@ -319,10 +319,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
-    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
@@ -382,9 +382,9 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
-(struct Point) main::p loadstore zp[2]:2
-(const struct Point*) main::q = &(struct Point) main::p
+(const nomodify byte*) main::SCREEN = (byte*) 1024
+(volatile struct Point) main::p loadstore zp[2]:2
+(const struct Point*) main::q = &(volatile struct Point) main::p
 (void()) set((struct Point*) set::ptr)
 (label) set::@return
 (struct Point*) set::ptr
@@ -416,7 +416,7 @@ main: {
     .label q = p
     .label p = 2
     // p = { 2, 3 }
-    // [4] *(&(struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    // [4] *(&(volatile struct Point) main::p) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
@@ -428,11 +428,11 @@ main: {
     jsr set
     // main::@1
     // SCREEN[0] = q->x
-    // [6] *((const byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct Point*) main::q) -- _deref_pbuc1=_deref_pbuc2 
     lda.z q
     sta SCREEN
     // SCREEN[1] = q->y
-    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct Point*) main::q+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda q+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // main::@return

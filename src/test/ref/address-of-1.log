@@ -10,27 +10,27 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte) main::b1 ← (byte) 0
-  (byte) main::b2 ← (byte) 0
-  (byte) main::b3 ← (byte) 0
-  (byte*) setByte::ptr#0 ← &(byte) main::b1
+  (volatile byte) main::b1 ← (byte) 0
+  (volatile byte) main::b2 ← (byte) 0
+  (volatile byte) main::b3 ← (byte) 0
+  (byte*) setByte::ptr#0 ← &(volatile byte) main::b1
   (byte) setByte::b#0 ← (byte) 'c'
   call setByte 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) setByte::ptr#1 ← &(byte) main::b2
+  (byte*) setByte::ptr#1 ← &(volatile byte) main::b2
   (byte) setByte::b#1 ← (byte) 'm'
   call setByte 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte*) setByte::ptr#2 ← &(byte) main::b3
+  (byte*) setByte::ptr#2 ← &(volatile byte) main::b3
   (byte) setByte::b#2 ← (byte) 'l'
   call setByte 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::b1
-  *((const byte*) main::SCREEN + (number) 1) ← (byte) main::b2
-  *((const byte*) main::SCREEN + (number) 2) ← (byte) main::b3
+  *((const byte*) main::SCREEN + (number) 0) ← (volatile byte) main::b1
+  *((const byte*) main::SCREEN + (number) 1) ← (volatile byte) main::b2
+  *((const byte*) main::SCREEN + (number) 2) ← (volatile byte) main::b3
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -63,9 +63,9 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
-(byte) main::b1 loadstore
-(byte) main::b2 loadstore
-(byte) main::b3 loadstore
+(volatile byte) main::b1 loadstore
+(volatile byte) main::b2 loadstore
+(volatile byte) main::b3 loadstore
 (void()) setByte((byte*) setByte::ptr , (byte) setByte::b)
 (label) setByte::@return
 (byte) setByte::b
@@ -79,9 +79,9 @@ SYMBOL TABLE SSA
 (byte*) setByte::ptr#2
 (byte*) setByte::ptr#3
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::b1
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) main::b2
-Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← (byte) main::b3
+Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (volatile byte) main::b1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (volatile byte) main::b2
+Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← (volatile byte) main::b3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -99,7 +99,7 @@ Constant (const byte) setByte::b#1 = 'm'
 Constant (const byte*) setByte::ptr#2 = &main::b3
 Constant (const byte) setByte::b#2 = 'l'
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [12] *((const byte*) main::SCREEN + (byte) 0) ← (byte) main::b1
+Simplifying expression containing zero main::SCREEN in [12] *((const byte*) main::SCREEN + (byte) 0) ← (volatile byte) main::b1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte*) setByte::ptr#0
 Inlining constant with var siblings (const byte) setByte::b#0
@@ -107,9 +107,9 @@ Inlining constant with var siblings (const byte*) setByte::ptr#1
 Inlining constant with var siblings (const byte) setByte::b#1
 Inlining constant with var siblings (const byte*) setByte::ptr#2
 Inlining constant with var siblings (const byte) setByte::b#2
-Constant inlined setByte::ptr#1 = &(byte) main::b2
-Constant inlined setByte::ptr#2 = &(byte) main::b3
-Constant inlined setByte::ptr#0 = &(byte) main::b1
+Constant inlined setByte::ptr#1 = &(volatile byte) main::b2
+Constant inlined setByte::ptr#2 = &(volatile byte) main::b3
+Constant inlined setByte::ptr#0 = &(volatile byte) main::b1
 Constant inlined setByte::b#2 = (byte) 'l'
 Constant inlined setByte::b#1 = (byte) 'm'
 Constant inlined setByte::b#0 = (byte) 'c'
@@ -150,9 +150,9 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte) main::b1 ← (byte) 0
-  [5] (byte) main::b2 ← (byte) 0
-  [6] (byte) main::b3 ← (byte) 0
+  [4] (volatile byte) main::b1 ← (byte) 0
+  [5] (volatile byte) main::b2 ← (byte) 0
+  [6] (volatile byte) main::b3 ← (byte) 0
   [7] call setByte 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -164,9 +164,9 @@ main::@2: scope:[main]  from main::@1
   [11] call setByte 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [12] *((const byte*) main::SCREEN) ← (byte) main::b1
-  [13] *((const byte*) main::SCREEN+(byte) 1) ← (byte) main::b2
-  [14] *((const byte*) main::SCREEN+(byte) 2) ← (byte) main::b3
+  [12] *((const byte*) main::SCREEN) ← (volatile byte) main::b1
+  [13] *((const byte*) main::SCREEN+(byte) 1) ← (volatile byte) main::b2
+  [14] *((const byte*) main::SCREEN+(byte) 2) ← (volatile byte) main::b3
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [15] return 
@@ -174,7 +174,7 @@ main::@return: scope:[main]  from main::@3
 
 (void()) setByte((byte*) setByte::ptr , (byte) setByte::b)
 setByte: scope:[setByte]  from main main::@1 main::@2
-  [16] (byte*) setByte::ptr#3 ← phi( main/&(byte) main::b1 main::@1/&(byte) main::b2 main::@2/&(byte) main::b3 )
+  [16] (byte*) setByte::ptr#3 ← phi( main/&(volatile byte) main::b1 main::@1/&(volatile byte) main::b2 main::@2/&(volatile byte) main::b3 )
   [16] (byte) setByte::b#3 ← phi( main/(byte) 'c' main::@1/(byte) 'm' main::@2/(byte) 'l' )
   [17] *((byte*) setByte::ptr#3) ← (byte) setByte::b#3
   to:setByte::@return
@@ -185,9 +185,9 @@ setByte::@return: scope:[setByte]  from setByte
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::b1 loadstore 2.0
-(byte) main::b2 loadstore 2.0
-(byte) main::b3 loadstore 2.0
+(volatile byte) main::b1 loadstore 2.0
+(volatile byte) main::b2 loadstore 2.0
+(volatile byte) main::b3 loadstore 2.0
 (void()) setByte((byte*) setByte::ptr , (byte) setByte::b)
 (byte) setByte::b
 (byte) setByte::b#3 101.0
@@ -241,19 +241,19 @@ main: {
     .label b1 = 5
     .label b2 = 6
     .label b3 = 7
-    // [4] (byte) main::b1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b1
-    // [5] (byte) main::b2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [5] (volatile byte) main::b2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b2
-    // [6] (byte) main::b3 ← (byte) 0 -- vbuz1=vbuc1 
+    // [6] (volatile byte) main::b3 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b3
     // [7] call setByte 
     // [16] phi from main to setByte [phi:main->setByte]
   setByte_from_main:
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
     lda #<b1
     sta.z setByte.ptr
     lda #>b1
@@ -270,7 +270,7 @@ main: {
     // [9] call setByte 
     // [16] phi from main::@1 to setByte [phi:main::@1->setByte]
   setByte_from___b1:
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
     lda #<b2
     sta.z setByte.ptr
     lda #>b2
@@ -287,7 +287,7 @@ main: {
     // [11] call setByte 
     // [16] phi from main::@2 to setByte [phi:main::@2->setByte]
   setByte_from___b2:
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
     lda #<b3
     sta.z setByte.ptr
     lda #>b3
@@ -299,13 +299,13 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [12] *((const byte*) main::SCREEN) ← (byte) main::b1 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) main::SCREEN) ← (volatile byte) main::b1 -- _deref_pbuc1=vbuz1 
     lda.z b1
     sta SCREEN
-    // [13] *((const byte*) main::SCREEN+(byte) 1) ← (byte) main::b2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) main::SCREEN+(byte) 1) ← (volatile byte) main::b2 -- _deref_pbuc1=vbuz1 
     lda.z b2
     sta SCREEN+1
-    // [14] *((const byte*) main::SCREEN+(byte) 2) ← (byte) main::b3 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) main::SCREEN+(byte) 2) ← (volatile byte) main::b3 -- _deref_pbuc1=vbuz1 
     lda.z b3
     sta SCREEN+2
     jmp __breturn
@@ -332,12 +332,12 @@ setByte: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) main::b1 ← (byte) 0 [ main::b1 ] ( main:2 [ main::b1 ] { }  ) always clobbers reg byte a 
-Statement [5] (byte) main::b2 ← (byte) 0 [ main::b1 main::b2 ] ( main:2 [ main::b1 main::b2 ] { }  ) always clobbers reg byte a 
-Statement [6] (byte) main::b3 ← (byte) 0 [ main::b1 main::b2 main::b3 ] ( main:2 [ main::b1 main::b2 main::b3 ] { }  ) always clobbers reg byte a 
-Statement [12] *((const byte*) main::SCREEN) ← (byte) main::b1 [ main::b2 main::b3 ] ( main:2 [ main::b2 main::b3 ] { }  ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::SCREEN+(byte) 1) ← (byte) main::b2 [ main::b3 ] ( main:2 [ main::b3 ] { }  ) always clobbers reg byte a 
-Statement [14] *((const byte*) main::SCREEN+(byte) 2) ← (byte) main::b3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] (volatile byte) main::b1 ← (byte) 0 [ main::b1 ] ( main:2 [ main::b1 ] { }  ) always clobbers reg byte a 
+Statement [5] (volatile byte) main::b2 ← (byte) 0 [ main::b1 main::b2 ] ( main:2 [ main::b1 main::b2 ] { }  ) always clobbers reg byte a 
+Statement [6] (volatile byte) main::b3 ← (byte) 0 [ main::b1 main::b2 main::b3 ] ( main:2 [ main::b1 main::b2 main::b3 ] { }  ) always clobbers reg byte a 
+Statement [12] *((const byte*) main::SCREEN) ← (volatile byte) main::b1 [ main::b2 main::b3 ] ( main:2 [ main::b2 main::b3 ] { }  ) always clobbers reg byte a 
+Statement [13] *((const byte*) main::SCREEN+(byte) 1) ← (volatile byte) main::b2 [ main::b3 ] ( main:2 [ main::b3 ] { }  ) always clobbers reg byte a 
+Statement [14] *((const byte*) main::SCREEN+(byte) 2) ← (volatile byte) main::b3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [17] *((byte*) setByte::ptr#3) ← (byte) setByte::b#3 [ main::b1 main::b2 main::b3 ] ( main:2::setByte:7 [ main::b1 main::b2 main::b3 ] { }  main:2::setByte:9 [ main::b1 main::b2 main::b3 ] { }  main:2::setByte:11 [ main::b1 main::b2 main::b3 ] { }  ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ setByte::b#3 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ setByte::ptr#3 ] : zp[2]:3 , 
@@ -392,19 +392,19 @@ main: {
     .label b1 = 4
     .label b2 = 5
     .label b3 = 6
-    // [4] (byte) main::b1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b1
-    // [5] (byte) main::b2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [5] (volatile byte) main::b2 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b2
-    // [6] (byte) main::b3 ← (byte) 0 -- vbuz1=vbuc1 
+    // [6] (volatile byte) main::b3 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b3
     // [7] call setByte 
     // [16] phi from main to setByte [phi:main->setByte]
   setByte_from_main:
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
     lda #<b1
     sta.z setByte.ptr
     lda #>b1
@@ -420,7 +420,7 @@ main: {
     // [9] call setByte 
     // [16] phi from main::@1 to setByte [phi:main::@1->setByte]
   setByte_from___b1:
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
     lda #<b2
     sta.z setByte.ptr
     lda #>b2
@@ -436,7 +436,7 @@ main: {
     // [11] call setByte 
     // [16] phi from main::@2 to setByte [phi:main::@2->setByte]
   setByte_from___b2:
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
     lda #<b3
     sta.z setByte.ptr
     lda #>b3
@@ -447,13 +447,13 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [12] *((const byte*) main::SCREEN) ← (byte) main::b1 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) main::SCREEN) ← (volatile byte) main::b1 -- _deref_pbuc1=vbuz1 
     lda.z b1
     sta SCREEN
-    // [13] *((const byte*) main::SCREEN+(byte) 1) ← (byte) main::b2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) main::SCREEN+(byte) 1) ← (volatile byte) main::b2 -- _deref_pbuc1=vbuz1 
     lda.z b2
     sta SCREEN+1
-    // [14] *((const byte*) main::SCREEN+(byte) 2) ← (byte) main::b3 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) main::SCREEN+(byte) 2) ← (volatile byte) main::b3 -- _deref_pbuc1=vbuz1 
     lda.z b3
     sta SCREEN+2
     jmp __breturn
@@ -522,9 +522,9 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(byte) main::b1 loadstore zp[1]:4 2.0
-(byte) main::b2 loadstore zp[1]:5 2.0
-(byte) main::b3 loadstore zp[1]:6 2.0
+(volatile byte) main::b1 loadstore zp[1]:4 2.0
+(volatile byte) main::b2 loadstore zp[1]:5 2.0
+(volatile byte) main::b3 loadstore zp[1]:6 2.0
 (void()) setByte((byte*) setByte::ptr , (byte) setByte::b)
 (label) setByte::@return
 (byte) setByte::b
@@ -562,19 +562,19 @@ main: {
     .label b2 = 5
     .label b3 = 6
     // b1 = 0
-    // [4] (byte) main::b1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b1
     // b2 = 0
-    // [5] (byte) main::b2 ← (byte) 0 -- vbuz1=vbuc1 
+    // [5] (volatile byte) main::b2 ← (byte) 0 -- vbuz1=vbuc1 
     sta.z b2
     // b3 = 0
-    // [6] (byte) main::b3 ← (byte) 0 -- vbuz1=vbuc1 
+    // [6] (volatile byte) main::b3 ← (byte) 0 -- vbuz1=vbuc1 
     sta.z b3
     // setByte(&b1, 'c')
     // [7] call setByte 
     // [16] phi from main to setByte [phi:main->setByte]
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b1 [phi:main->setByte#0] -- pbuz1=pbuc1 
     lda #<b1
     sta.z setByte.ptr
     lda #>b1
@@ -587,7 +587,7 @@ main: {
     // setByte(&b2, 'm')
     // [9] call setByte 
     // [16] phi from main::@1 to setByte [phi:main::@1->setByte]
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b2 [phi:main::@1->setByte#0] -- pbuz1=pbuc1 
     lda #<b2
     sta.z setByte.ptr
     lda #>b2
@@ -600,7 +600,7 @@ main: {
     // setByte(&b3, 'l')
     // [11] call setByte 
     // [16] phi from main::@2 to setByte [phi:main::@2->setByte]
-    // [16] phi (byte*) setByte::ptr#3 = &(byte) main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) setByte::ptr#3 = &(volatile byte) main::b3 [phi:main::@2->setByte#0] -- pbuz1=pbuc1 
     lda #<b3
     sta.z setByte.ptr
     lda #>b3
@@ -610,15 +610,15 @@ main: {
     jsr setByte
     // main::@3
     // SCREEN[0] = b1
-    // [12] *((const byte*) main::SCREEN) ← (byte) main::b1 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) main::SCREEN) ← (volatile byte) main::b1 -- _deref_pbuc1=vbuz1 
     lda.z b1
     sta SCREEN
     // SCREEN[1] = b2
-    // [13] *((const byte*) main::SCREEN+(byte) 1) ← (byte) main::b2 -- _deref_pbuc1=vbuz1 
+    // [13] *((const byte*) main::SCREEN+(byte) 1) ← (volatile byte) main::b2 -- _deref_pbuc1=vbuz1 
     lda.z b2
     sta SCREEN+1
     // SCREEN[2] = b3
-    // [14] *((const byte*) main::SCREEN+(byte) 2) ← (byte) main::b3 -- _deref_pbuc1=vbuz1 
+    // [14] *((const byte*) main::SCREEN+(byte) 2) ← (volatile byte) main::b3 -- _deref_pbuc1=vbuz1 
     lda.z b3
     sta SCREEN+2
     // main::@return

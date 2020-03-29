@@ -8,9 +8,9 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::b ← (byte) 'a'
-  (byte*) main::pb ← &(byte) main::b
-  *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
+  (volatile byte) main::b ← (byte) 'a'
+  (volatile byte*) main::pb ← &(volatile byte) main::b
+  *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,10 +29,10 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
-(byte) main::b loadstore
-(byte*) main::pb loadstore
-(const byte**) main::ppb = &(byte*) main::pb
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
+(volatile byte) main::b loadstore
+(volatile byte*) main::pb loadstore
+(const byte**) main::ppb = &(volatile byte*) main::pb
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -63,9 +63,9 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte) main::b ← (byte) 'a'
-  [5] (byte*) main::pb ← &(byte) main::b
-  [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
+  [4] (volatile byte) main::b ← (byte) 'a'
+  [5] (volatile byte*) main::pb ← &(volatile byte) main::b
+  [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
   to:main::@return
 main::@return: scope:[main]  from main
   [7] return 
@@ -74,8 +74,8 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::b loadstore 11.0
-(byte*) main::pb loadstore 110.0
+(volatile byte) main::b loadstore 11.0
+(volatile byte*) main::pb loadstore 110.0
 
 Initial phi equivalence classes
 Added variable main::b to live range equivalence class [ main::b ]
@@ -115,15 +115,15 @@ main: {
     .label ppb = pb
     .label b = 2
     .label pb = 3
-    // [4] (byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
-    // [5] (byte*) main::pb ← &(byte) main::b -- pbuz1=pbuc1 
+    // [5] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
-    // [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -140,9 +140,9 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) main::b ← (byte) 'a' [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte a 
-Statement [5] (byte*) main::pb ← &(byte) main::b [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] (volatile byte) main::b ← (byte) 'a' [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte a 
+Statement [5] (volatile byte*) main::pb ← &(volatile byte) main::b [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::b ] : zp[1]:2 , 
 Potential registers zp[2]:3 [ main::pb ] : zp[2]:3 , 
 
@@ -183,15 +183,15 @@ main: {
     .label ppb = pb
     .label b = 2
     .label pb = 3
-    // [4] (byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
-    // [5] (byte*) main::pb ← &(byte) main::b -- pbuz1=pbuc1 
+    // [5] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
-    // [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -231,10 +231,10 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
-(byte) main::b loadstore zp[1]:2 11.0
-(byte*) main::pb loadstore zp[2]:3 110.0
-(const byte**) main::ppb = &(byte*) main::pb
+(const nomodify byte*) main::SCREEN = (byte*) 1024
+(volatile byte) main::b loadstore zp[1]:2 11.0
+(volatile byte*) main::pb loadstore zp[2]:3 110.0
+(const byte**) main::ppb = &(volatile byte*) main::pb
 
 zp[1]:2 [ main::b ]
 zp[2]:3 [ main::pb ]
@@ -263,17 +263,17 @@ main: {
     .label b = 2
     .label pb = 3
     // b = 'a'
-    // [4] (byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
     // pb = &b
-    // [5] (byte*) main::pb ← &(byte) main::b -- pbuz1=pbuc1 
+    // [5] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
     // *SCREEN = **ppb
-    // [6] *((const byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1

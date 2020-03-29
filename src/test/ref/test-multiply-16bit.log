@@ -367,7 +367,7 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#142 ← phi( print_word/(byte*) print_char_cursor#137 print_word::@1/(byte*) print_char_cursor#9 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#4 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -375,7 +375,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#85 ← phi( print_byte/(byte*) print_char_cursor#23 )
   (byte*) print_char_cursor#19 ← (byte*) print_char_cursor#85
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#5 ← *((const byte*) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#5 ← *((const to_nomodify byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -637,10 +637,10 @@ mulf_init::@return: scope:[mulf_init]  from mulf_init::@11
 mulf16u: scope:[mulf16u]  from mul16u_compare::@14 mulf16s
   (word) mulf16u::b#2 ← phi( mul16u_compare::@14/(word) mulf16u::b#1 mulf16s/(word) mulf16u::b#0 )
   (word) mulf16u::a#2 ← phi( mul16u_compare::@14/(word) mulf16u::a#1 mulf16s/(word) mulf16u::a#0 )
-  *((const word*) mulf16u::memA) ← (word) mulf16u::a#2
-  *((const word*) mulf16u::memB) ← (word) mulf16u::b#2
+  *((const nomodify word*) mulf16u::memA) ← (word) mulf16u::a#2
+  *((const nomodify word*) mulf16u::memB) ← (word) mulf16u::b#2
   asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  }
-  (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR)
+  (dword) mulf16u::return#0 ← *((const nomodify dword*) mulf16u::memR)
   to:mulf16u::@return
 mulf16u::@return: scope:[mulf16u]  from mulf16u
   (dword) mulf16u::return#4 ← phi( mulf16u/(dword) mulf16u::return#0 )
@@ -2138,9 +2138,9 @@ SYMBOL TABLE SSA
 (word) mulf16u::b#0
 (word) mulf16u::b#1
 (word) mulf16u::b#2
-(const word*) mulf16u::memA = (word*)(number) $f8
-(const word*) mulf16u::memB = (word*)(number) $fa
-(const dword*) mulf16u::memR = (dword*)(number) $fc
+(const nomodify word*) mulf16u::memA = (word*)(number) $f8
+(const nomodify word*) mulf16u::memB = (word*)(number) $fa
+(const nomodify dword*) mulf16u::memR = (dword*)(number) $fc
 (dword) mulf16u::return
 (dword) mulf16u::return#0
 (dword) mulf16u::return#1
@@ -2561,7 +2561,7 @@ SYMBOL TABLE SSA
 (dword) print_dword::dw#3
 (dword) print_dword::dw#4
 (dword) print_dword::dw#5
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -4199,12 +4199,12 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   [121] (byte*) print_char_cursor#142 ← phi( print_word/(byte*) print_char_cursor#137 print_word::@1/(byte*) print_char_cursor#22 )
   [121] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [122] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [123] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  [123] (byte) print_char::ch#4 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   [124] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [125] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [126] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
+  [126] (byte) print_char::ch#5 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2)
   [127] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -4273,10 +4273,10 @@ mulf16s::@return: scope:[mulf16s]  from mulf16s::@2
 mulf16u: scope:[mulf16u]  from mul16u_compare::@11 mulf16s
   [157] (word) mulf16u::b#2 ← phi( mul16u_compare::@11/(word) mulf16u::b#1 mulf16s/(word) mulf16u::b#0 )
   [157] (word) mulf16u::a#2 ← phi( mul16u_compare::@11/(word) mulf16u::a#1 mulf16s/(word) mulf16u::a#0 )
-  [158] *((const word*) mulf16u::memA) ← (word) mulf16u::a#2
-  [159] *((const word*) mulf16u::memB) ← (word) mulf16u::b#2
+  [158] *((const nomodify word*) mulf16u::memA) ← (word) mulf16u::a#2
+  [159] *((const nomodify word*) mulf16u::memB) ← (word) mulf16u::b#2
   asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  }
-  [161] (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR)
+  [161] (dword) mulf16u::return#0 ← *((const nomodify dword*) mulf16u::memR)
   to:mulf16u::@return
 mulf16u::@return: scope:[mulf16u]  from mulf16u
   [162] return 
@@ -6049,7 +6049,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [123] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [123] (byte) print_char::ch#4 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -6067,7 +6067,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [126] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [126] (byte) print_char::ch#5 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -6294,12 +6294,12 @@ mulf16u: {
     .label b = $23
     .label return_1 = $90
     .label return_2 = $c9
-    // [158] *((const word*) mulf16u::memA) ← (word) mulf16u::a#2 -- _deref_pwuc1=vwuz1 
+    // [158] *((const nomodify word*) mulf16u::memA) ← (word) mulf16u::a#2 -- _deref_pwuc1=vwuz1 
     lda.z a
     sta memA
     lda.z a+1
     sta memA+1
-    // [159] *((const word*) mulf16u::memB) ← (word) mulf16u::b#2 -- _deref_pwuc1=vwuz1 
+    // [159] *((const nomodify word*) mulf16u::memB) ← (word) mulf16u::b#2 -- _deref_pwuc1=vwuz1 
     lda.z b
     sta memB
     lda.z b+1
@@ -6397,7 +6397,7 @@ mulf16u: {
     bcc !+
     inc memR+3
   !:
-    // [161] (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR) -- vduz1=_deref_pduc1 
+    // [161] (dword) mulf16u::return#0 ← *((const nomodify dword*) mulf16u::memR) -- vduz1=_deref_pduc1 
     lda memR
     sta.z return
     lda memR+1
@@ -7830,15 +7830,15 @@ Statement [151] (word~) mulf16s::$13 ← > (dword) mulf16s::m#5 [ mulf16s::a#0 m
 Statement [152] (word~) mulf16s::$17 ← (word~) mulf16s::$13 - (word)(signed word) mulf16s::a#0 [ mulf16s::m#5 mulf16s::$17 ] ( main:2::mul16s_compare:11::mulf16s:31 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::m#5 mulf16s::$17 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } }  ) always clobbers reg byte a 
 Statement [153] (dword) mulf16s::m#2 ← (dword) mulf16s::m#5 hi= (word~) mulf16s::$17 [ mulf16s::m#2 ] ( main:2::mul16s_compare:11::mulf16s:31 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::m#2 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } }  ) always clobbers reg byte a 
 Statement [155] (signed dword) mulf16s::return#0 ← (signed dword)(dword) mulf16s::m#4 [ mulf16s::return#0 ] ( main:2::mul16s_compare:11::mulf16s:31 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::return#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } }  ) always clobbers reg byte a 
-Statement [158] *((const word*) mulf16u::memA) ← (word) mulf16u::a#2 [ mulf16u::b#2 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::b#2 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::b#2 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
+Statement [158] *((const nomodify word*) mulf16u::memA) ← (word) mulf16u::a#2 [ mulf16u::b#2 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::b#2 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::b#2 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:66 [ mul16u_compare::j#10 mul16u_compare::j#1 ]
-Statement [159] *((const word*) mulf16u::memB) ← (word) mulf16u::b#2 [ ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
+Statement [159] *((const nomodify word*) mulf16u::memB) ← (word) mulf16u::b#2 [ ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  } always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ mul16s_compare::i#12 mul16s_compare::i#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:7 [ mul16s_compare::j#10 mul16s_compare::j#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:61 [ mul16u_compare::i#12 mul16u_compare::i#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:66 [ mul16u_compare::j#10 mul16u_compare::j#1 ]
-Statement [161] (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR) [ mulf16u::return#0 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::return#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::return#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
+Statement [161] (dword) mulf16u::return#0 ← *((const nomodify dword*) mulf16u::memR) [ mulf16u::return#0 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::return#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::return#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
 Statement [163] (word) mul16u::a#1 ← (word)(signed word) mul16s::a#0 [ mul16s::a#0 mul16s::b#0 mul16u::a#1 ] ( main:2::mul16s_compare:11::mul16s:26 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s::a#0 mul16s::b#0 mul16u::a#1 ] { { mul16s::a#0 = mul16s_compare::a#1 } { mul16s::b#0 = mul16s_compare::b#1 } { mul16s::return#0 = mul16s::return#2 } { mul16u::b#0 = mul16u::b#2 } { mul16u::a#1 = mul16u::a#6 } { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Statement [164] (word) mul16u::b#0 ← (word)(signed word) mul16s::b#0 [ mul16s::a#0 mul16s::b#0 mul16u::a#1 mul16u::b#0 ] ( main:2::mul16s_compare:11::mul16s:26 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s::a#0 mul16s::b#0 mul16u::a#1 mul16u::b#0 ] { { mul16s::a#0 = mul16s_compare::a#1 } { mul16s::b#0 = mul16s_compare::b#1 } { mul16s::return#0 = mul16s::return#2 } { mul16u::b#0 = mul16u::b#2 } { mul16u::a#1 = mul16u::a#6 } { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Statement [166] (dword) mul16u::return#2 ← (dword) mul16u::res#2 [ mul16s::a#0 mul16s::b#0 mul16u::return#2 ] ( main:2::mul16s_compare:11::mul16s:26 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s::a#0 mul16s::b#0 mul16u::return#2 ] { { mul16s::a#0 = mul16s_compare::a#1 } { mul16s::b#0 = mul16s_compare::b#1 } { mul16s::return#0 = mul16s::return#2 } { mul16u::b#0 = mul16u::b#2 } { mul16u::a#1 = mul16u::a#6 } { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
@@ -7976,10 +7976,10 @@ Statement [151] (word~) mulf16s::$13 ← > (dword) mulf16s::m#5 [ mulf16s::a#0 m
 Statement [152] (word~) mulf16s::$17 ← (word~) mulf16s::$13 - (word)(signed word) mulf16s::a#0 [ mulf16s::m#5 mulf16s::$17 ] ( main:2::mul16s_compare:11::mulf16s:31 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::m#5 mulf16s::$17 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } }  ) always clobbers reg byte a 
 Statement [153] (dword) mulf16s::m#2 ← (dword) mulf16s::m#5 hi= (word~) mulf16s::$17 [ mulf16s::m#2 ] ( main:2::mul16s_compare:11::mulf16s:31 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::m#2 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } }  ) always clobbers reg byte a 
 Statement [155] (signed dword) mulf16s::return#0 ← (signed dword)(dword) mulf16s::m#4 [ mulf16s::return#0 ] ( main:2::mul16s_compare:11::mulf16s:31 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::return#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } }  ) always clobbers reg byte a 
-Statement [158] *((const word*) mulf16u::memA) ← (word) mulf16u::a#2 [ mulf16u::b#2 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::b#2 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::b#2 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
-Statement [159] *((const word*) mulf16u::memB) ← (word) mulf16u::b#2 [ ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
+Statement [158] *((const nomodify word*) mulf16u::memA) ← (word) mulf16u::a#2 [ mulf16u::b#2 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::b#2 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::b#2 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
+Statement [159] *((const nomodify word*) mulf16u::memB) ← (word) mulf16u::b#2 [ ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1a+1 stasm3a+1 stasm5a+1 stasm7a+1 eor#$ff stasm2a+1 stasm4a+1 stasm6a+1 stasm8a+1 ldamemA+1 stasm1b+1 stasm3b+1 stasm5b+1 stasm7b+1 eor#$ff stasm2b+1 stasm4b+1 stasm6b+1 stasm8b+1 ldxmemB sec sm1a: ldamulf_sqr1_lo,x sm2a: sbcmulf_sqr2_lo,x stamemR+0 sm3a: ldamulf_sqr1_hi,x sm4a: sbcmulf_sqr2_hi,x sta_AA+1 sec sm1b: ldamulf_sqr1_lo,x sm2b: sbcmulf_sqr2_lo,x sta_cc+1 sm3b: ldamulf_sqr1_hi,x sm4b: sbcmulf_sqr2_hi,x sta_CC+1 ldxmemB+1 sec sm5a: ldamulf_sqr1_lo,x sm6a: sbcmulf_sqr2_lo,x sta_bb+1 sm7a: ldamulf_sqr1_hi,x sm8a: sbcmulf_sqr2_hi,x sta_BB+1 sec sm5b: ldamulf_sqr1_lo,x sm6b: sbcmulf_sqr2_lo,x sta_dd+1 sm7b: ldamulf_sqr1_hi,x sm8b: sbcmulf_sqr2_hi,x stamemR+3 clc _AA: lda#0 _bb: adc#0 stamemR+1 _BB: lda#0 _CC: adc#0 stamemR+2 bcc!+ incmemR+3 clc !: _cc: lda#0 adcmemR+1 stamemR+1 _dd: lda#0 adcmemR+2 stamemR+2 bcc!+ incmemR+3 !:  } always clobbers reg byte a reg byte x 
-Statement [161] (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR) [ mulf16u::return#0 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::return#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::return#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
+Statement [161] (dword) mulf16u::return#0 ← *((const nomodify dword*) mulf16u::memR) [ mulf16u::return#0 ] ( main:2::mul16s_compare:11::mulf16s:31::mulf16u:142 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s_compare::mn#0 mulf16s::a#0 mulf16s::b#0 mulf16u::return#0 ] { { mulf16s::a#0 = mul16s_compare::a#1 } { mulf16s::b#0 = mul16s_compare::b#1 } { mulf16s::return#0 = mulf16s::return#2 } { mulf16u::a#0 = mulf16u::a#2 } { mulf16u::b#0 = mulf16u::b#2 } { mulf16u::return#0 = mulf16u::return#2 } }  main:2::mul16u_compare:9::mulf16u:221 [ print_char_cursor#132 mul16u_compare::i#12 mul16u_compare::a#1 mul16u_compare::b#1 mul16u_compare::j#10 mul16u_compare::ms#0 mul16u_compare::mn#0 mulf16u::return#0 ] { { mulf16u::a#1 = mulf16u::a#2 mul16u_compare::a#1 } { mulf16u::b#1 = mulf16u::b#2 mul16u_compare::b#1 } { mulf16u::return#0 = mulf16u::return#3 } }  ) always clobbers reg byte a 
 Statement [163] (word) mul16u::a#1 ← (word)(signed word) mul16s::a#0 [ mul16s::a#0 mul16s::b#0 mul16u::a#1 ] ( main:2::mul16s_compare:11::mul16s:26 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s::a#0 mul16s::b#0 mul16u::a#1 ] { { mul16s::a#0 = mul16s_compare::a#1 } { mul16s::b#0 = mul16s_compare::b#1 } { mul16s::return#0 = mul16s::return#2 } { mul16u::b#0 = mul16u::b#2 } { mul16u::a#1 = mul16u::a#6 } { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Statement [164] (word) mul16u::b#0 ← (word)(signed word) mul16s::b#0 [ mul16s::a#0 mul16s::b#0 mul16u::a#1 mul16u::b#0 ] ( main:2::mul16s_compare:11::mul16s:26 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s::a#0 mul16s::b#0 mul16u::a#1 mul16u::b#0 ] { { mul16s::a#0 = mul16s_compare::a#1 } { mul16s::b#0 = mul16s_compare::b#1 } { mul16s::return#0 = mul16s::return#2 } { mul16u::b#0 = mul16u::b#2 } { mul16u::a#1 = mul16u::a#6 } { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Statement [166] (dword) mul16u::return#2 ← (dword) mul16u::res#2 [ mul16s::a#0 mul16s::b#0 mul16u::return#2 ] ( main:2::mul16s_compare:11::mul16s:26 [ print_line_cursor#1 mul16s_compare::i#12 print_char_cursor#132 mul16s_compare::a#1 mul16s_compare::b#1 mul16s_compare::j#10 mul16s_compare::ms#0 mul16s::a#0 mul16s::b#0 mul16u::return#2 ] { { mul16s::a#0 = mul16s_compare::a#1 } { mul16s::b#0 = mul16s_compare::b#1 } { mul16s::return#0 = mul16s::return#2 } { mul16u::b#0 = mul16u::b#2 } { mul16u::a#1 = mul16u::a#6 } { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
@@ -9002,7 +9002,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [123] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [123] (byte) print_char::ch#4 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [124] call print_char 
@@ -9018,7 +9018,7 @@ print_byte: {
     // [125] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [126] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [126] (byte) print_char::ch#5 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [127] call print_char 
     // [105] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -9210,12 +9210,12 @@ mulf16u: {
     .label return = $a
     .label a = $1c
     .label b = $1e
-    // [158] *((const word*) mulf16u::memA) ← (word) mulf16u::a#2 -- _deref_pwuc1=vwuz1 
+    // [158] *((const nomodify word*) mulf16u::memA) ← (word) mulf16u::a#2 -- _deref_pwuc1=vwuz1 
     lda.z a
     sta memA
     lda.z a+1
     sta memA+1
-    // [159] *((const word*) mulf16u::memB) ← (word) mulf16u::b#2 -- _deref_pwuc1=vwuz1 
+    // [159] *((const nomodify word*) mulf16u::memB) ← (word) mulf16u::b#2 -- _deref_pwuc1=vwuz1 
     lda.z b
     sta memB
     lda.z b+1
@@ -9313,7 +9313,7 @@ mulf16u: {
     bcc !+
     inc memR+3
   !:
-    // [161] (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR) -- vduz1=_deref_pduc1 
+    // [161] (dword) mulf16u::return#0 ← *((const nomodify dword*) mulf16u::memR) -- vduz1=_deref_pduc1 
     lda memR
     sta.z return
     lda memR+1
@@ -11170,9 +11170,9 @@ FINAL SYMBOL TABLE
 (word) mulf16u::b#0 b zp[2]:30 200002.0
 (word) mulf16u::b#1 b zp[2]:30 20002.0
 (word) mulf16u::b#2 b zp[2]:30 555001.5
-(const word*) mulf16u::memA = (word*) 248
-(const word*) mulf16u::memB = (word*) 250
-(const dword*) mulf16u::memR = (dword*) 252
+(const nomodify word*) mulf16u::memA = (word*) 248
+(const nomodify word*) mulf16u::memB = (word*) 250
+(const nomodify dword*) mulf16u::memR = (dword*) 252
 (dword) mulf16u::return
 (dword) mulf16u::return#0 return zp[4]:10 277500.75
 (dword) mulf16u::return#2 return zp[4]:10 200002.0
@@ -11310,7 +11310,7 @@ FINAL SYMBOL TABLE
 (dword) print_dword::dw#2 dw zp[4]:4 2002.0
 (dword) print_dword::dw#3 dw zp[4]:4 2002.0
 (dword) print_dword::dw#4 dw zp[4]:4 71002.0
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:2 3866.7948717948716
 (byte*) print_line_cursor#22 print_line_cursor zp[2]:2 210003.0
@@ -12041,7 +12041,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [123] (byte) print_char::ch#4 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [123] (byte) print_char::ch#4 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [124] call print_char 
@@ -12056,7 +12056,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [126] (byte) print_char::ch#5 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [126] (byte) print_char::ch#5 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [127] call print_char 
     // [105] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -12234,13 +12234,13 @@ mulf16u: {
     .label a = $1c
     .label b = $1e
     // *memA = a
-    // [158] *((const word*) mulf16u::memA) ← (word) mulf16u::a#2 -- _deref_pwuc1=vwuz1 
+    // [158] *((const nomodify word*) mulf16u::memA) ← (word) mulf16u::a#2 -- _deref_pwuc1=vwuz1 
     lda.z a
     sta memA
     lda.z a+1
     sta memA+1
     // *memB = b
-    // [159] *((const word*) mulf16u::memB) ← (word) mulf16u::b#2 -- _deref_pwuc1=vwuz1 
+    // [159] *((const nomodify word*) mulf16u::memB) ← (word) mulf16u::b#2 -- _deref_pwuc1=vwuz1 
     lda.z b
     sta memB
     lda.z b+1
@@ -12340,7 +12340,7 @@ mulf16u: {
     inc memR+3
   !:
     // return *memR;
-    // [161] (dword) mulf16u::return#0 ← *((const dword*) mulf16u::memR) -- vduz1=_deref_pduc1 
+    // [161] (dword) mulf16u::return#0 ← *((const nomodify dword*) mulf16u::memR) -- vduz1=_deref_pduc1 
     lda memR
     sta.z return
     lda memR+1

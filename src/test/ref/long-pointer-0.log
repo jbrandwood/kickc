@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (dword) main::long_ptr ← (dword) $12345678
+  (volatile dword) main::long_ptr ← (dword) $12345678
   asm { nop lda(long_ptr_zp),y sta$ff  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -27,8 +27,8 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(dword) main::long_ptr loadstore
-(const byte) main::long_ptr_zp = <&(dword) main::long_ptr
+(volatile dword) main::long_ptr loadstore
+(const byte) main::long_ptr_zp = <&(volatile dword) main::long_ptr
 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
@@ -57,7 +57,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (dword) main::long_ptr ← (dword) $12345678
+  [4] (volatile dword) main::long_ptr ← (dword) $12345678
   asm { nop lda(long_ptr_zp),y sta$ff  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -67,7 +67,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(dword) main::long_ptr loadstore 110.0
+(volatile dword) main::long_ptr loadstore 110.0
 
 Initial phi equivalence classes
 Added variable main::long_ptr to live range equivalence class [ main::long_ptr ]
@@ -102,7 +102,7 @@ __bend:
 main: {
     .const long_ptr_zp = <long_ptr
     .label long_ptr = 2
-    // [4] (dword) main::long_ptr ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (volatile dword) main::long_ptr ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z long_ptr
     lda #>$12345678
@@ -124,7 +124,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (dword) main::long_ptr ← (dword) $12345678 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] (volatile dword) main::long_ptr ← (dword) $12345678 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement asm { nop lda(long_ptr_zp),y sta$ff  } always clobbers reg byte a 
 Potential registers zp[4]:2 [ main::long_ptr ] : zp[4]:2 , 
 
@@ -161,7 +161,7 @@ __bend:
 main: {
     .const long_ptr_zp = <long_ptr
     .label long_ptr = 2
-    // [4] (dword) main::long_ptr ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (volatile dword) main::long_ptr ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z long_ptr
     lda #>$12345678
@@ -206,8 +206,8 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(dword) main::long_ptr loadstore zp[4]:2 110.0
-(const byte) main::long_ptr_zp = <&(dword) main::long_ptr
+(volatile dword) main::long_ptr loadstore zp[4]:2 110.0
+(const byte) main::long_ptr_zp = <&(volatile dword) main::long_ptr
 
 zp[4]:2 [ main::long_ptr ]
 
@@ -233,7 +233,7 @@ main: {
     .const long_ptr_zp = <long_ptr
     .label long_ptr = 2
     // long_ptr = 0x12345678
-    // [4] (dword) main::long_ptr ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (volatile dword) main::long_ptr ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z long_ptr
     lda #>$12345678

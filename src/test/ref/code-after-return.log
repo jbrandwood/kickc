@@ -5,13 +5,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main main::@1
   return 
   to:@return
 main::@1: scope:[main]  from
-  *((const byte*) SCREEN + (number) 1) ← (byte) 'a'
+  *((const nomodify byte*) SCREEN + (number) 1) ← (byte) 'a'
   to:main::@return
 @1: scope:[]  from @begin
   call main 
@@ -25,13 +25,13 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@1
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -40,7 +40,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@1
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -71,7 +71,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (byte) 'a'
+  [4] *((const nomodify byte*) SCREEN) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -110,7 +110,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __breturn
@@ -122,7 +122,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -156,7 +156,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __breturn
@@ -189,7 +189,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 
@@ -215,7 +215,7 @@ Score: 12
   // main
 main: {
     // SCREEN[0] = 'a'
-    // [4] *((const byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@return

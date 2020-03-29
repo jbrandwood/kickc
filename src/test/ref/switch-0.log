@@ -20,7 +20,7 @@ main::@1: scope:[main]  from main main::@10
   to:main::@11
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((const byte*) main::SCREEN + (byte) main::i#3) ← (byte) '1'
+  *((const nomodify byte*) main::SCREEN + (byte) main::i#3) ← (byte) '1'
   to:main::@10
 main::@11: scope:[main]  from main::@1
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
@@ -32,7 +32,7 @@ main::@12: scope:[main]  from main::@11
   to:main::@13
 main::@4: scope:[main]  from main::@11 main::@12
   (byte) main::i#6 ← phi( main::@11/(byte) main::i#4 main::@12/(byte) main::i#5 )
-  *((const byte*) main::SCREEN + (byte) main::i#6) ← (byte) '3'
+  *((const nomodify byte*) main::SCREEN + (byte) main::i#6) ← (byte) '3'
   to:main::@5
 main::@13: scope:[main]  from main::@12
   (byte) main::i#7 ← phi( main::@12/(byte) main::i#5 )
@@ -40,11 +40,11 @@ main::@13: scope:[main]  from main::@12
   to:main::@6
 main::@5: scope:[main]  from main::@13 main::@4
   (byte) main::i#8 ← phi( main::@13/(byte) main::i#7 main::@4/(byte) main::i#6 )
-  *((const byte*) main::SCREEN + (byte) main::i#8) ← (byte) '4'
+  *((const nomodify byte*) main::SCREEN + (byte) main::i#8) ← (byte) '4'
   to:main::@10
 main::@6: scope:[main]  from main::@13
   (byte) main::i#9 ← phi( main::@13/(byte) main::i#7 )
-  *((const byte*) main::SCREEN + (byte) main::i#9) ← (byte) 'd'
+  *((const nomodify byte*) main::SCREEN + (byte) main::i#9) ← (byte) 'd'
   to:main::@10
 main::@10: scope:[main]  from main::@2 main::@5 main::@6
   (byte) main::i#10 ← phi( main::@2/(byte) main::i#3 main::@5/(byte) main::i#8 main::@6/(byte) main::i#9 )
@@ -79,7 +79,7 @@ SYMBOL TABLE SSA
 (label) main::@5
 (label) main::@6
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -187,7 +187,7 @@ main::@9: scope:[main]  from main::@8
   [9] if((byte) main::i#10==(byte) 4) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@9
-  [10] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd'
+  [10] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd'
   to:main::@6
 main::@6: scope:[main]  from main::@2 main::@4 main::@5
   [11] (byte) main::i#1 ← ++ (byte) main::i#10
@@ -197,13 +197,13 @@ main::@return: scope:[main]  from main::@6
   [13] return 
   to:@return
 main::@4: scope:[main]  from main::@3 main::@9
-  [14] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4'
+  [14] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4'
   to:main::@6
 main::@3: scope:[main]  from main::@7 main::@8
-  [15] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3'
+  [15] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3'
   to:main::@4
 main::@2: scope:[main]  from main::@1
-  [16] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1'
+  [16] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1'
   to:main::@6
 
 
@@ -290,7 +290,7 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [10] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' -- pbuc1_derefidx_vbuz1=vbuc2 
     // No case for 0 & 5
     lda #'d'
     ldy.z i
@@ -311,14 +311,14 @@ main: {
     rts
     // main::@4
   __b4:
-    // [14] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'4'
     ldy.z i
     sta SCREEN,y
     jmp __b6
     // main::@3
   __b3:
-    // [15] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [15] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' -- pbuc1_derefidx_vbuz1=vbuc2 
     // A case with fall-through
     lda #'3'
     ldy.z i
@@ -326,7 +326,7 @@ main: {
     jmp __b4
     // main::@2
   __b2:
-    // [16] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' -- pbuc1_derefidx_vbuz1=vbuc2 
     // A simple case with a break
     lda #'1'
     ldy.z i
@@ -336,15 +336,15 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [10] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#10 main::i#1 ]
-Statement [14] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
-Statement [15] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
-Statement [16] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
-Statement [14] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
-Statement [15] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
-Statement [16] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [15] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [15] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' [ main::i#10 ] ( main:2 [ main::i#10 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#10 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -418,7 +418,7 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [10] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' -- pbuc1_derefidx_vbuxx=vbuc2 
     // No case for 0 & 5
     lda #'d'
     sta SCREEN,x
@@ -437,20 +437,20 @@ main: {
     rts
     // main::@4
   __b4:
-    // [14] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'4'
     sta SCREEN,x
     jmp __b6
     // main::@3
   __b3:
-    // [15] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [15] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' -- pbuc1_derefidx_vbuxx=vbuc2 
     // A case with fall-through
     lda #'3'
     sta SCREEN,x
     jmp __b4
     // main::@2
   __b2:
-    // [16] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' -- pbuc1_derefidx_vbuxx=vbuc2 
     // A simple case with a break
     lda #'1'
     sta SCREEN,x
@@ -507,7 +507,7 @@ FINAL SYMBOL TABLE
 (label) main::@8
 (label) main::@9
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 151.5
 (byte) main::i#10 reg byte x 112.22222222222223
@@ -572,7 +572,7 @@ main: {
     beq __b4
     // main::@5
     // SCREEN[i] = 'd'
-    // [10] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) 'd' -- pbuc1_derefidx_vbuxx=vbuc2 
     // No case for 0 & 5
     lda #'d'
     sta SCREEN,x
@@ -591,14 +591,14 @@ main: {
     // main::@4
   __b4:
     // SCREEN[i] = '4'
-    // [14] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '4' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'4'
     sta SCREEN,x
     jmp __b6
     // main::@3
   __b3:
     // SCREEN[i] = '3'
-    // [15] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [15] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '3' -- pbuc1_derefidx_vbuxx=vbuc2 
     // A case with fall-through
     lda #'3'
     sta SCREEN,x
@@ -606,7 +606,7 @@ main: {
     // main::@2
   __b2:
     // SCREEN[i] = '1'
-    // [16] *((const byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::i#10) ← (byte) '1' -- pbuc1_derefidx_vbuxx=vbuc2 
     // A simple case with a break
     lda #'1'
     sta SCREEN,x

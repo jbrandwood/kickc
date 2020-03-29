@@ -5,7 +5,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) main::SCREEN) ← (byte) 'a'-(number) 1
+  *((const nomodify byte*) main::SCREEN) ← (byte) 'a'-(number) 1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -24,12 +24,12 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 
-Adding number conversion cast (unumber) 'a'-1 in *((const byte*) main::SCREEN) ← (byte) 'a'-(number) 1
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN) ← ((unumber)) (byte) 'a'-(number) 1
+Adding number conversion cast (unumber) 'a'-1 in *((const nomodify byte*) main::SCREEN) ← (byte) 'a'-(number) 1
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN) ← ((unumber)) (byte) 'a'-(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) main::SCREEN) ← (unumber)(byte) 'a'-(unumber)(number) 1
+Inlining cast *((const nomodify byte*) main::SCREEN) ← (unumber)(byte) 'a'-(unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast (byte) 'a'-(unumber)(number) 1
@@ -64,7 +64,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← (byte) 'a'-(byte) 1
+  [4] *((const nomodify byte*) main::SCREEN) ← (byte) 'a'-(byte) 1
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -103,7 +103,7 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 -- _deref_pbuc1=vbuc2 
     lda #'a'-1
     sta SCREEN
     jmp __breturn
@@ -115,7 +115,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -149,7 +149,7 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 -- _deref_pbuc1=vbuc2 
     lda #'a'-1
     sta SCREEN
     jmp __breturn
@@ -184,7 +184,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 
 
 
@@ -208,7 +208,7 @@ Score: 12
 main: {
     .label SCREEN = $400
     // *SCREEN = 'a' - 1
-    // [4] *((const byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (byte) 'a'-(byte) 1 -- _deref_pbuc1=vbuc2 
     lda #'a'-1
     sta SCREEN
     // main::@return

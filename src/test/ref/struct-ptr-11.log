@@ -1,12 +1,12 @@
 Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i)
 Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i1)
-Fixing pointer array-indexing *((const struct Point*) main::SCREEN + (byte) main::i1)
+Fixing pointer array-indexing *((const nomodify struct Point*) main::SCREEN + (byte) main::i1)
 Constantified RValue *((const struct Point*) points + (byte~) main::$6) ← (struct Point){ (signed byte~) main::$0, (signed byte~) main::$2, (signed byte~) main::$3 }
 Unwinding value copy *((const struct Point*) points + (byte~) main::$6) ← (struct Point){ (signed byte~) main::$0, (signed byte~) main::$2, (signed byte~) main::$3 }
 Adding value simple copy *((signed byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$6) ← (signed byte~) main::$0
 Adding value simple copy *((signed byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$6) ← (signed byte~) main::$2
 Adding value simple copy *((signed byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Z + (byte~) main::$6) ← (signed byte~) main::$3
-Adding value bulk copy *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Adding value bulk copy *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
@@ -37,7 +37,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2 main::@3
   (byte) main::i1#2 ← phi( main::@2/(byte) main::i1#0 main::@3/(byte) main::i1#1 )
   (byte~) main::$7 ← (byte) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
-  *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (byte) main::i1#1 ← (byte) main::i1#2 + rangenext(0,3)
   (bool~) main::$5 ← (byte) main::i1#1 != rangelast(0,3)
   if((bool~) main::$5) goto main::@3
@@ -77,7 +77,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(const struct Point*) main::SCREEN = (struct Point*)(number) $400
+(const nomodify struct Point*) main::SCREEN = (struct Point*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -186,7 +186,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   [14] (byte) main::i1#2 ← phi( main::@1/(byte) 0 main::@2/(byte) main::i1#1 )
   [15] (byte~) main::$10 ← (byte) main::i1#2 << (byte) 1
   [16] (byte~) main::$7 ← (byte~) main::$10 + (byte) main::i1#2
-  [17] *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  [17] *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   [18] (byte) main::i1#1 ← ++ (byte) main::i1#2
   [19] if((byte) main::i1#1!=(byte) 4) goto main::@2
   to:main::@return
@@ -340,7 +340,7 @@ main: {
     clc
     adc.z i1
     sta.z __7
-    // [17] *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- pssc1_derefidx_vbuz1=pssc2_derefidx_vbuz1_memcpy_vbuc3 
+    // [17] *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- pssc1_derefidx_vbuz1=pssc2_derefidx_vbuz1_memcpy_vbuc3 
     ldx #SIZEOF_STRUCT_POINT
     ldy.z __7
   !:
@@ -377,7 +377,7 @@ Statement [11] *((signed byte*)(const struct Point*) points+(const byte) OFFSET_
 Statement [15] (byte~) main::$10 ← (byte) main::i1#2 << (byte) 1 [ main::i1#2 main::$10 ] ( main:2 [ main::i1#2 main::$10 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i1#2 main::i1#1 ]
 Statement [16] (byte~) main::$7 ← (byte~) main::$10 + (byte) main::i1#2 [ main::i1#2 main::$7 ] ( main:2 [ main::i1#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [17] *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::i1#2 ] ( main:2 [ main::i1#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [17] *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::i1#2 ] ( main:2 [ main::i1#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:3 [ main::i1#2 main::i1#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ main::i1#2 main::i1#1 ]
 Statement [19] if((byte) main::i1#1!=(byte) 4) goto main::@2 [ main::i1#1 ] ( main:2 [ main::i1#1 ] { }  ) always clobbers reg byte a 
@@ -389,7 +389,7 @@ Statement [10] *((signed byte*)(const struct Point*) points+(const byte) OFFSET_
 Statement [11] *((signed byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Z + (byte~) main::$6) ← (signed byte)(byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [15] (byte~) main::$10 ← (byte) main::i1#2 << (byte) 1 [ main::i1#2 main::$10 ] ( main:2 [ main::i1#2 main::$10 ] { }  ) always clobbers reg byte a 
 Statement [16] (byte~) main::$7 ← (byte~) main::$10 + (byte) main::i1#2 [ main::i1#2 main::$7 ] ( main:2 [ main::i1#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [17] *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::i1#2 ] ( main:2 [ main::i1#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [17] *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::i1#2 ] ( main:2 [ main::i1#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [19] if((byte) main::i1#1!=(byte) 4) goto main::@2 [ main::i1#1 ] ( main:2 [ main::i1#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::i1#2 main::i1#1 ] : zp[1]:3 , 
@@ -506,7 +506,7 @@ main: {
     // [16] (byte~) main::$7 ← (byte~) main::$10 + (byte) main::i1#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
     adc.z i1
-    // [17] *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- pssc1_derefidx_vbuaa=pssc2_derefidx_vbuaa_memcpy_vbuc3 
+    // [17] *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- pssc1_derefidx_vbuaa=pssc2_derefidx_vbuaa_memcpy_vbuc3 
     ldx #SIZEOF_STRUCT_POINT
     tay
   !:
@@ -579,7 +579,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const struct Point*) main::SCREEN = (struct Point*) 1024
+(const nomodify struct Point*) main::SCREEN = (struct Point*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte x 151.5
 (byte) main::i#2 reg byte x 57.714285714285715
@@ -675,7 +675,7 @@ main: {
     // [16] (byte~) main::$7 ← (byte~) main::$10 + (byte) main::i1#2 -- vbuaa=vbuaa_plus_vbuz1 
     clc
     adc.z i1
-    // [17] *((const struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- pssc1_derefidx_vbuaa=pssc2_derefidx_vbuaa_memcpy_vbuc3 
+    // [17] *((const nomodify struct Point*) main::SCREEN + (byte~) main::$7) ← memcpy(*((const struct Point*) points + (byte~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- pssc1_derefidx_vbuaa=pssc2_derefidx_vbuaa_memcpy_vbuc3 
     ldx #SIZEOF_STRUCT_POINT
     tay
   !:

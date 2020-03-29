@@ -19,7 +19,7 @@ main::@return: scope:[main]  from main::@1
 (void()) output((dword) output::dw)
 output: scope:[output]  from main
   (dword) output::dw#1 ← phi( main/(dword) output::dw#0 )
-  *((const dword*) screen) ← (dword) output::dw#1
+  *((const nomodify dword*) screen) ← (dword) output::dw#1
   to:output::@return
 output::@return: scope:[output]  from output
   return 
@@ -39,14 +39,14 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const dword) main::dw = (dword)(const byte*) main::msg
-(const byte*) main::msg[]  = (byte*) "camelot"
+(const dword) main::dw = (dword)(const to_nomodify byte*) main::msg
+(const to_nomodify byte*) main::msg[]  = (byte*) "camelot"
 (void()) output((dword) output::dw)
 (label) output::@return
 (dword) output::dw
 (dword) output::dw#0
 (dword) output::dw#1
-(const dword*) screen = (dword*)(number) $400
+(const nomodify dword*) screen = (dword*)(number) $400
 
 Simplifying constant pointer cast (dword*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -98,7 +98,7 @@ main::@return: scope:[main]  from main
 
 (void()) output((dword) output::dw)
 output: scope:[output]  from main
-  [7] *((const dword*) screen) ← (const dword) main::dw
+  [7] *((const nomodify dword*) screen) ← (const dword) main::dw
   to:output::@return
 output::@return: scope:[output]  from output
   [8] return 
@@ -154,7 +154,7 @@ main: {
 }
   // output
 output: {
-    // [7] *((const dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
+    // [7] *((const nomodify dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw
@@ -172,7 +172,7 @@ output: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((const dword*) screen) ← (const dword) main::dw [ ] ( main:2::output:5 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify dword*) screen) ← (const dword) main::dw [ ] ( main:2::output:5 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -223,7 +223,7 @@ main: {
 }
   // output
 output: {
-    // [7] *((const dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
+    // [7] *((const nomodify dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw
@@ -267,12 +267,12 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const dword) main::dw = (dword)(const byte*) main::msg
-(const byte*) main::msg[]  = (byte*) "camelot"
+(const dword) main::dw = (dword)(const to_nomodify byte*) main::msg
+(const to_nomodify byte*) main::msg[]  = (byte*) "camelot"
 (void()) output((dword) output::dw)
 (label) output::@return
 (dword) output::dw
-(const dword*) screen = (dword*) 1024
+(const nomodify dword*) screen = (dword*) 1024
 
 
 
@@ -310,7 +310,7 @@ main: {
   // output
 output: {
     // *screen = dw
-    // [7] *((const dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
+    // [7] *((const nomodify dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw

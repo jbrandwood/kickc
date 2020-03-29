@@ -1,5 +1,5 @@
-Resolved forward reference b to (const byte) b
-Resolved forward reference screen to (const byte*) screen
+Resolved forward reference b to (const nomodify byte) b
+Resolved forward reference screen to (const nomodify byte*) screen
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) screen) ← (const byte) b
+  *((const nomodify byte*) screen) ← (const nomodify byte) b
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -24,10 +24,10 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte) b = (byte) 'a'
+(const nomodify byte) b = (byte) 'a'
 (void()) main()
 (label) main::@return
-(const byte*) screen = (byte*)(number) $400
+(const nomodify byte*) screen = (byte*)(number) $400
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -58,7 +58,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) screen) ← (const byte) b
+  [4] *((const nomodify byte*) screen) ← (const nomodify byte) b
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -98,7 +98,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) screen) ← (const byte) b -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) screen) ← (const nomodify byte) b -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     jmp __breturn
@@ -110,7 +110,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) screen) ← (const byte) b [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) screen) ← (const nomodify byte) b [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -145,7 +145,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) screen) ← (const byte) b -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) screen) ← (const nomodify byte) b -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     jmp __breturn
@@ -178,10 +178,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) b = (byte) 'a'
+(const nomodify byte) b = (byte) 'a'
 (void()) main()
 (label) main::@return
-(const byte*) screen = (byte*) 1024
+(const nomodify byte*) screen = (byte*) 1024
 
 
 
@@ -206,7 +206,7 @@ Score: 12
   // main
 main: {
     // *screen = b
-    // [4] *((const byte*) screen) ← (const byte) b -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) screen) ← (const nomodify byte) b -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     // main::@return

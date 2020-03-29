@@ -7,10 +7,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word) main::w ← (word) $4d2
+  (volatile word) main::w ← (word) $4d2
   (void*) main::vp#0 ← ((void*)) (const word*) main::wp
   (byte*) main::bp#0 ← ((byte*)) (void*) main::vp#0
-  *((const byte*) main::SCREEN) ← *((byte*) main::bp#0)
+  *((const nomodify byte*) main::SCREEN) ← *((byte*) main::bp#0)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,13 +29,13 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (byte*) main::bp
 (byte*) main::bp#0
 (void*) main::vp
 (void*) main::vp#0
-(word) main::w loadstore
-(const word*) main::wp = &(word) main::w
+(volatile word) main::w loadstore
+(const word*) main::wp = &(volatile word) main::w
 
 Inlining cast (void*) main::vp#0 ← (void*)(const word*) main::wp
 Inlining cast (byte*) main::bp#0 ← (byte*)(void*) main::vp#0
@@ -75,8 +75,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (word) main::w ← (word) $4d2
-  [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0)
+  [4] (volatile word) main::w ← (word) $4d2
+  [5] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0)
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -87,7 +87,7 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) main::bp
 (void*) main::vp
-(word) main::w loadstore 110.0
+(volatile word) main::w loadstore 110.0
 
 Initial phi equivalence classes
 Added variable main::w to live range equivalence class [ main::w ]
@@ -125,12 +125,12 @@ main: {
     .label vp = wp
     .label bp = vp
     .label w = 2
-    // [4] (word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (volatile word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2
     sta.z w+1
-    // [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     jmp __breturn
@@ -142,8 +142,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (word) main::w ← (word) $4d2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] (volatile word) main::w ← (word) $4d2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::w ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -182,12 +182,12 @@ main: {
     .label vp = wp
     .label bp = vp
     .label w = 2
-    // [4] (word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (volatile word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2
     sta.z w+1
-    // [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     jmp __breturn
@@ -222,13 +222,13 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (byte*) main::bp
 (const byte*) main::bp#0 bp = (byte*)(const void*) main::vp#0
 (void*) main::vp
 (const void*) main::vp#0 vp = (void*)(const word*) main::wp
-(word) main::w loadstore zp[2]:2 110.0
-(const word*) main::wp = &(word) main::w
+(volatile word) main::w loadstore zp[2]:2 110.0
+(const word*) main::wp = &(volatile word) main::w
 
 zp[2]:2 [ main::w ]
 
@@ -257,13 +257,13 @@ main: {
     .label bp = vp
     .label w = 2
     // w = 1234
-    // [4] (word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
+    // [4] (volatile word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2
     sta.z w+1
     // *SCREEN = *bp
-    // [5] *((const byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     // main::@return

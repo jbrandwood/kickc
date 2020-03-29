@@ -12,7 +12,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   (byte) main::idx#2 ← phi( main/(byte) main::idx#0 main::@1/(byte) main::idx#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2)
+  *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2)
   (byte) main::idx#1 ← ++ (byte) main::idx#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,2)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,2)
@@ -38,7 +38,7 @@ SYMBOL TABLE SSA
 (bool~) main::$0
 (label) main::@1
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
@@ -106,7 +106,7 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::idx#2 ← phi( main/(byte) 0 main::@1/(byte) main::idx#1 )
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2)
+  [6] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2)
   [7] (byte) main::idx#1 ← ++ (byte) main::idx#2
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte) 3) goto main::@1
@@ -181,7 +181,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [6] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z i
     lda chars,y
     ldy.z idx
@@ -204,10 +204,10 @@ main: {
   chars: .byte 1, 2, 3
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::idx#2 main::idx#1 ]
-Statement [6] *((const byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::idx#2 main::idx#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 
@@ -260,7 +260,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+    // [6] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda chars,y
     sta SCREEN,x
     // [7] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
@@ -312,7 +312,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
 (byte) main::i#1 reg byte y 151.5
 (byte) main::i#2 reg byte y 101.0
@@ -356,7 +356,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[idx++] = chars[i]
-    // [6] *((const byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+    // [6] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← *((const byte*) chars + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda chars,y
     sta SCREEN,x
     // SCREEN[idx++] = chars[i];

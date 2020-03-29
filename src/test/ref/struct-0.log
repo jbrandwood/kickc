@@ -11,8 +11,8 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X) ← (number) 2
   *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) ← (number) 3
-  *((const byte*) main::SCREEN + (number) 0) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X)
-  *((const byte*) main::SCREEN + (number) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y)
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X)
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -35,13 +35,13 @@ SYMBOL TABLE SSA
 (byte) Point::y
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (struct Point) point loadstore = {}
 
 Adding number conversion cast (unumber) 2 in *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X) ← (number) 2
 Adding number conversion cast (unumber) 3 in *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) ← (number) 3
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X)
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y)
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X)
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X) ← (unumber)(number) 2
 Inlining cast *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) ← (unumber)(number) 3
@@ -58,8 +58,8 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero (byte*)&point in [0] *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X) ← (byte) 2
-Simplifying expression containing zero (byte*)&point in [2] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point)
+Simplifying expression containing zero (byte*)&point in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((byte*)&(struct Point) point)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
@@ -94,8 +94,8 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] *((byte*)&(struct Point) point) ← (byte) 2
   [5] *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3
-  [6] *((const byte*) main::SCREEN) ← *((byte*)&(struct Point) point)
-  [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y)
+  [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct Point) point)
+  [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y)
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -147,10 +147,10 @@ main: {
     // [5] *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta point+OFFSET_STRUCT_POINT_Y
-    // [6] *((const byte*) main::SCREEN) ← *((byte*)&(struct Point) point) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct Point) point) -- _deref_pbuc1=_deref_pbuc2 
     lda point
     sta SCREEN
-    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
@@ -165,8 +165,8 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((byte*)&(struct Point) point) ← (byte) 2 [ point ] ( main:2 [ point ] { }  ) always clobbers reg byte a 
 Statement [5] *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 [ point ] ( main:2 [ point ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN) ← *((byte*)&(struct Point) point) [ point ] ( main:2 [ point ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct Point) point) [ point ] ( main:2 [ point ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[2] [ point ] : mem[2] , 
 
 REGISTER UPLIFT SCOPES
@@ -211,10 +211,10 @@ main: {
     // [5] *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta point+OFFSET_STRUCT_POINT_Y
-    // [6] *((const byte*) main::SCREEN) ← *((byte*)&(struct Point) point) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct Point) point) -- _deref_pbuc1=_deref_pbuc2 
     lda point
     sta SCREEN
-    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     jmp __breturn
@@ -254,7 +254,7 @@ FINAL SYMBOL TABLE
 (const byte) SIZEOF_STRUCT_POINT = (byte) 2
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (struct Point) point loadstore mem[2] = {}
 
 mem[2] [ point ]
@@ -290,11 +290,11 @@ main: {
     lda #3
     sta point+OFFSET_STRUCT_POINT_Y
     // SCREEN[0] = point.x
-    // [6] *((const byte*) main::SCREEN) ← *((byte*)&(struct Point) point) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct Point) point) -- _deref_pbuc1=_deref_pbuc2 
     lda point
     sta SCREEN
     // SCREEN[1] = point.y
-    // [7] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct Point) point+(const byte) OFFSET_STRUCT_POINT_Y) -- _deref_pbuc1=_deref_pbuc2 
     lda point+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // main::@return

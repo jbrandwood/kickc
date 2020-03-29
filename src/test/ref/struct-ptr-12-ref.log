@@ -7,11 +7,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (word) main::p ← (byte) 2*(word) $100+(byte) 3
+  (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3
   (byte~) main::$0 ← < *((const word*) main::q)
-  *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
   (byte~) main::$1 ← > *((const word*) main::q)
-  *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -32,12 +32,12 @@ SYMBOL TABLE SSA
 (byte~) main::$0
 (byte~) main::$1
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
-(word) main::p loadstore
-(const word*) main::q = &(word) main::p
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
+(volatile word) main::p loadstore
+(const word*) main::q = &(volatile word) main::p
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -46,7 +46,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
+Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -77,11 +77,11 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (word) main::p ← (byte) 2*(word) $100+(byte) 3
+  [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3
   [5] (byte~) main::$0 ← < *((const word*) main::q)
-  [6] *((const byte*) main::SCREEN) ← (byte~) main::$0
+  [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0
   [7] (byte~) main::$1 ← > *((const word*) main::q)
-  [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1
+  [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   [9] return 
@@ -92,7 +92,7 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte~) main::$0 22.0
 (byte~) main::$1 22.0
-(word) main::p loadstore 110.0
+(volatile word) main::p loadstore 110.0
 
 Initial phi equivalence classes
 Added variable main::p to live range equivalence class [ main::p ]
@@ -136,7 +136,7 @@ main: {
     .label p = 2
     .label __0 = 4
     .label __1 = 5
-    // [4] (word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
@@ -144,13 +144,13 @@ main: {
     // [5] (byte~) main::$0 ← < *((const word*) main::q) -- vbuz1=_lo__deref_pwuc1 
     lda.z q
     sta.z __0
-    // [6] *((const byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
     sta SCREEN
     // [7] (byte~) main::$1 ← > *((const word*) main::q) -- vbuz1=_hi__deref_pwuc1 
     lda.z q+1
     sta.z __1
-    // [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta SCREEN+1
     jmp __breturn
@@ -162,7 +162,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (word) main::p ← (byte) 2*(word) $100+(byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -201,18 +201,18 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // [4] (word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
     sta.z p+1
     // [5] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
     lda.z q
-    // [6] *((const byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // [7] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
     lda.z q+1
-    // [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -248,9 +248,9 @@ FINAL SYMBOL TABLE
 (byte~) main::$0 reg byte a 22.0
 (byte~) main::$1 reg byte a 22.0
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
-(word) main::p loadstore zp[2]:2 110.0
-(const word*) main::q = &(word) main::p
+(const nomodify byte*) main::SCREEN = (byte*) 1024
+(volatile word) main::p loadstore zp[2]:2 110.0
+(const word*) main::q = &(volatile word) main::p
 
 zp[2]:2 [ main::p ]
 reg byte a [ main::$0 ]
@@ -279,7 +279,7 @@ main: {
     .label q = p
     .label p = 2
     // p = { 2, 3 }
-    // [4] (word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
@@ -288,13 +288,13 @@ main: {
     // [5] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
     lda.z q
     // SCREEN[0] = <*q
-    // [6] *((const byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // >*q
     // [7] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
     lda.z q+1
     // SCREEN[1] = >*q
-    // [8] *((const byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // main::@return
     // }

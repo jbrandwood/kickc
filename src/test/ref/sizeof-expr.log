@@ -1,8 +1,8 @@
-Setting inferred volatile on symbol affected by address-of (word*) main::wp ← &(word) main::w
+Setting inferred volatile on symbol affected by address-of (word*) main::wp ← &(volatile word) main::w
 Resolving sizeof() (byte~) main::$2 ← sizeof  (byte) main::idx
-Resolving sizeof() (byte~) main::$4 ← sizeof  (byte) main::b
+Resolving sizeof() (byte~) main::$4 ← sizeof  (volatile byte) main::b
 Resolving sizeof() (byte~) main::$7 ← sizeof  (number~) main::$6
-Resolving sizeof() (byte~) main::$11 ← sizeof  (word) main::w
+Resolving sizeof() (byte~) main::$11 ← sizeof  (volatile word) main::w
 Resolving sizeof() (byte~) main::$13 ← sizeof  (byte*) main::bp
 Resolving sizeof() (byte~) main::$15 ← sizeof  (word*) main::wp
 Identified constant variable (byte*) main::bp
@@ -17,37 +17,37 @@ main: scope:[main]  from @1
   (byte) main::idx#0 ← (byte) 0
   (byte~) main::$0 ← sizeof  (number) 0
   (byte~) main::$1 ← (byte) '0' + (byte~) main::$0
-  *((const byte*) SCREEN + (byte) main::idx#0) ← (byte~) main::$1
+  *((const nomodify byte*) SCREEN + (byte) main::idx#0) ← (byte~) main::$1
   (byte) main::idx#1 ← ++ (byte) main::idx#0
   (byte~) main::$2 ← (const byte) SIZEOF_BYTE
   (byte~) main::$3 ← (byte) '0' + (byte~) main::$2
-  *((const byte*) SCREEN + (byte) main::idx#1) ← (byte~) main::$3
+  *((const nomodify byte*) SCREEN + (byte) main::idx#1) ← (byte~) main::$3
   (byte) main::idx#2 ← ++ (byte) main::idx#1
   (byte~) main::$4 ← (const byte) SIZEOF_BYTE
   (byte~) main::$5 ← (byte) '0' + (byte~) main::$4
-  *((const byte*) SCREEN + (byte) main::idx#2) ← (byte~) main::$5
+  *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← (byte~) main::$5
   (byte) main::idx#3 ← ++ (byte) main::idx#2
   (byte~) main::$7 ← (const byte) SIZEOF_NUMBER
   (byte~) main::$8 ← (byte) '0' + (byte~) main::$7
-  *((const byte*) SCREEN + (byte) main::idx#3) ← (byte~) main::$8
+  *((const nomodify byte*) SCREEN + (byte) main::idx#3) ← (byte~) main::$8
   (byte) main::idx#4 ← ++ (byte) main::idx#3
   (byte) main::idx#5 ← ++ (byte) main::idx#4
   (byte~) main::$9 ← sizeof  (number) $43ff
   (byte~) main::$10 ← (byte) '0' + (byte~) main::$9
-  *((const byte*) SCREEN + (byte) main::idx#5) ← (byte~) main::$10
+  *((const nomodify byte*) SCREEN + (byte) main::idx#5) ← (byte~) main::$10
   (byte) main::idx#6 ← ++ (byte) main::idx#5
   (byte~) main::$11 ← (const byte) SIZEOF_WORD
   (byte~) main::$12 ← (byte) '0' + (byte~) main::$11
-  *((const byte*) SCREEN + (byte) main::idx#6) ← (byte~) main::$12
+  *((const nomodify byte*) SCREEN + (byte) main::idx#6) ← (byte~) main::$12
   (byte) main::idx#7 ← ++ (byte) main::idx#6
   (byte) main::idx#8 ← ++ (byte) main::idx#7
   (byte~) main::$13 ← (const byte) SIZEOF_POINTER
   (byte~) main::$14 ← (byte) '0' + (byte~) main::$13
-  *((const byte*) SCREEN + (byte) main::idx#8) ← (byte~) main::$14
+  *((const nomodify byte*) SCREEN + (byte) main::idx#8) ← (byte~) main::$14
   (byte) main::idx#9 ← ++ (byte) main::idx#8
   (byte~) main::$15 ← (const byte) SIZEOF_POINTER
   (byte~) main::$16 ← (byte) '0' + (byte~) main::$15
-  *((const byte*) SCREEN + (byte) main::idx#9) ← (byte~) main::$16
+  *((const nomodify byte*) SCREEN + (byte) main::idx#9) ← (byte~) main::$16
   (byte) main::idx#10 ← ++ (byte) main::idx#9
   to:main::@return
 main::@return: scope:[main]  from main
@@ -65,7 +65,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_BYTE = (byte) 1
 (const byte) SIZEOF_NUMBER = (byte) $ff
 (const byte) SIZEOF_POINTER = (byte) 2
@@ -116,7 +116,7 @@ Constant (const byte) main::$11 = SIZEOF_WORD
 Constant (const byte) main::$13 = SIZEOF_POINTER
 Constant (const byte) main::$15 = SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [3] *((const byte*) SCREEN + (const byte) main::idx#0) ← (byte~) main::$1
+Simplifying expression containing zero SCREEN in [3] *((const nomodify byte*) SCREEN + (const byte) main::idx#0) ← (byte~) main::$1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) main::idx#10 and assignment [25] (byte) main::idx#10 ← ++ (byte) main::idx#9
 Successful SSA optimization PassNEliminateUnusedVars
@@ -265,14 +265,14 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER
-  [5] *((const byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE
-  [6] *((const byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE
-  [7] *((const byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER
-  [8] *((const byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER
-  [9] *((const byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD
-  [10] *((const byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER
-  [11] *((const byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER
+  [4] *((const nomodify byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER
+  [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE
+  [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE
+  [7] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER
+  [8] *((const nomodify byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER
+  [9] *((const nomodify byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD
+  [10] *((const nomodify byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER
+  [11] *((const nomodify byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER
   to:main::@return
 main::@return: scope:[main]  from main
   [12] return 
@@ -316,28 +316,28 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN
-    // [5] *((const byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_BYTE
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_BYTE
     sta SCREEN+2
-    // [7] *((const byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN+3
-    // [8] *((const byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN+5
-    // [9] *((const byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_WORD
     sta SCREEN+6
-    // [10] *((const byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
+    // [10] *((const nomodify byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_POINTER
     sta SCREEN+8
-    // [11] *((const byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
+    // [11] *((const nomodify byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_POINTER
     sta SCREEN+9
     jmp __breturn
@@ -349,14 +349,14 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -394,28 +394,28 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN
-    // [5] *((const byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_BYTE
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_BYTE
     sta SCREEN+2
-    // [7] *((const byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN+3
-    // [8] *((const byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN+5
-    // [9] *((const byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_WORD
     sta SCREEN+6
-    // [10] *((const byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
+    // [10] *((const nomodify byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_POINTER
     sta SCREEN+8
-    // [11] *((const byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
+    // [11] *((const nomodify byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_POINTER
     sta SCREEN+9
     jmp __breturn
@@ -452,7 +452,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (const byte) SIZEOF_BYTE = (byte) 1
 (const byte) SIZEOF_NUMBER = (byte) $ff
 (const byte) SIZEOF_POINTER = (byte) 2
@@ -487,33 +487,33 @@ Score: 48
   // main
 main: {
     // SCREEN[idx++] = '0'+sizeof(0)
-    // [4] *((const byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN
     // SCREEN[idx++] = '0'+sizeof(idx)
-    // [5] *((const byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_BYTE
     sta SCREEN+1
     // SCREEN[idx++] = '0'+sizeof(b)
-    // [6] *((const byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '0'+(const byte) SIZEOF_BYTE -- _deref_pbuc1=vbuc2 
     sta SCREEN+2
     // SCREEN[idx++] = '0'+sizeof(b*2)
-    // [7] *((const byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_NUMBER
     sta SCREEN+3
     // SCREEN[idx++] = '0'+sizeof($43ff)
-    // [8] *((const byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN+(byte) 5) ← (byte) '0'+(const byte) SIZEOF_NUMBER -- _deref_pbuc1=vbuc2 
     sta SCREEN+5
     // SCREEN[idx++] = '0'+sizeof(w)
-    // [9] *((const byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) SCREEN+(byte) 6) ← (byte) '0'+(const byte) SIZEOF_WORD -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_WORD
     sta SCREEN+6
     // SCREEN[idx++] = '0'+sizeof(bp)
-    // [10] *((const byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
+    // [10] *((const nomodify byte*) SCREEN+(byte) 8) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
     lda #'0'+SIZEOF_POINTER
     sta SCREEN+8
     // SCREEN[idx++] = '0'+sizeof(wp)
-    // [11] *((const byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
+    // [11] *((const nomodify byte*) SCREEN+(byte) 9) ← (byte) '0'+(const byte) SIZEOF_POINTER -- _deref_pbuc1=vbuc2 
     sta SCREEN+9
     // main::@return
     // }

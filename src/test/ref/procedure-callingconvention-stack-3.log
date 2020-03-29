@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((const word*) SCREEN + (number) 0)
+Fixing pointer array-indexing *((const nomodify word*) SCREEN + (number) 0)
 Culled Empty Block (label) @1
 Culled Empty Block (label) plus::@1
 Calling convention STACK_CALL adding prepare/execute/finalize for (word~) main::$0 ← call plus (byte) '0' (number) 7 
@@ -21,7 +21,7 @@ main: scope:[main]  from @2
   sideeffect stackpullbytes((number) 2)
   (word~) main::$0 ← stackpull(word)
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_WORD
-  *((const word*) SCREEN + (number~) main::$1) ← (word~) main::$0
+  *((const nomodify word*) SCREEN + (number~) main::$1) ← (word~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -51,7 +51,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const word*) SCREEN = (word*)(number) $400
+(const nomodify word*) SCREEN = (word*)(number) $400
 (const byte) SIZEOF_WORD = (byte) 2
 (const word) STACK_BASE = (word) $103
 (void()) main()
@@ -94,7 +94,7 @@ Constant (const byte) main::$1 = 0*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_WORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN in [6] *((const word*) SCREEN + (const byte) main::$1) ← (word~) main::$0
+Simplifying expression containing zero SCREEN in [6] *((const nomodify word*) SCREEN + (const byte) main::$1) ← (word~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$1
 Eliminating unused constant (const byte) SIZEOF_WORD
@@ -133,7 +133,7 @@ main: scope:[main]  from @1
   [6] callexecute plus 
   sideeffect stackpullbytes((number) 2)
   [8] (word~) main::$0 ← stackpull(word)
-  [9] *((const word*) SCREEN) ← (word~) main::$0
+  [9] *((const nomodify word*) SCREEN) ← (word~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   [10] return 
@@ -228,7 +228,7 @@ main: {
     sta.z __0
     pla
     sta.z __0+1
-    // [9] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [9] *((const nomodify word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -287,7 +287,7 @@ Statement [4] stackpush(word) ← (byte) '0' [ ] ( main:2 [ ] { }  ) always clob
 Statement [5] stackpush(word) ← (byte) 7 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes((number) 2) always clobbers reg byte a 
 Statement [8] (word~) main::$0 ← stackpull(word) [ main::$0 ] ( main:2 [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [9] *((const word*) SCREEN) ← (word~) main::$0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify word*) SCREEN) ← (word~) main::$0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [11] (word) plus::a#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_A) [ plus::a#0 ] ( main:2::plus:6 [ plus::a#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [12] (word) plus::b#0 ← stackidx(word,(const byte) plus::OFFSET_STACK_B) [ plus::a#0 plus::b#0 ] ( main:2::plus:6 [ plus::a#0 plus::b#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [13] (word) plus::return#0 ← (word) plus::a#0 + (word) plus::b#0 [ plus::return#0 ] ( main:2::plus:6 [ plus::return#0 ] { }  ) always clobbers reg byte a 
@@ -357,7 +357,7 @@ main: {
     sta.z __0
     pla
     sta.z __0+1
-    // [9] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [9] *((const nomodify word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -435,7 +435,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const word*) SCREEN = (word*) 1024
+(const nomodify word*) SCREEN = (word*) 1024
 (const word) STACK_BASE = (word) $103
 (void()) main()
 (word~) main::$0 zp[2]:2 22.0
@@ -503,7 +503,7 @@ main: {
     pla
     sta.z __0+1
     // SCREEN[0] = plus('0', 7)
-    // [9] *((const word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
+    // [9] *((const nomodify word*) SCREEN) ← (word~) main::$0 -- _deref_pwuc1=vwuz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1

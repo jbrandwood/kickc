@@ -5,7 +5,7 @@ Culled Empty Block (label) main::@6
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) ch ← (byte) 3
+  (nomodify volatile byte) ch ← (byte) 3
   to:@1
 
 (void()) main()
@@ -19,7 +19,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((const byte*) SCREEN + (byte) main::i#3) ← (byte) ch
+  *((const nomodify byte*) SCREEN + (byte) main::i#3) ← (nomodify volatile byte) ch
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -37,8 +37,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
-(byte) ch loadstore
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(nomodify volatile byte) ch loadstore
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -83,7 +83,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) ch ← (byte) 3
+  [0] (nomodify volatile byte) ch ← (byte) 3
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -104,13 +104,13 @@ main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) ch
+  [8] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (nomodify volatile byte) ch
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) ch loadstore 14.714285714285715
+(nomodify volatile byte) ch loadstore 14.714285714285715
 (void()) main()
 (byte) main::i
 (byte) main::i#1 202.0
@@ -138,7 +138,7 @@ Target platform is c64basic / MOS6502X
   .label ch = 3
   // @begin
 __bbegin:
-  // [0] (byte) ch ← (byte) 3 -- vbuz1=vbuc1 
+  // [0] (nomodify volatile byte) ch ← (byte) 3 -- vbuz1=vbuc1 
   lda #3
   sta.z ch
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -177,7 +177,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) ch -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (nomodify volatile byte) ch -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z ch
     ldy.z i
     sta SCREEN,y
@@ -191,11 +191,11 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) ch ← (byte) 3 [ ch ] (  [ ch ] { }  ) always clobbers reg byte a 
-Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) ch [ ch main::i#2 ] ( main:2 [ ch main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [0] (nomodify volatile byte) ch ← (byte) 3 [ ch ] (  [ ch ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (nomodify volatile byte) ch [ ch main::i#2 ] ( main:2 [ ch main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [0] (byte) ch ← (byte) 3 [ ch ] (  [ ch ] { }  ) always clobbers reg byte a 
-Statement [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) ch [ ch main::i#2 ] ( main:2 [ ch main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [0] (nomodify volatile byte) ch ← (byte) 3 [ ch ] (  [ ch ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (nomodify volatile byte) ch [ ch main::i#2 ] ( main:2 [ ch main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ ch ] : zp[1]:3 , 
 
@@ -221,7 +221,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label ch = 2
   // @begin
 __bbegin:
-  // [0] (byte) ch ← (byte) 3 -- vbuz1=vbuc1 
+  // [0] (nomodify volatile byte) ch ← (byte) 3 -- vbuz1=vbuc1 
   lda #3
   sta.z ch
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -257,7 +257,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) ch -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [8] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (nomodify volatile byte) ch -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z ch
     sta SCREEN,x
     // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -292,8 +292,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
-(byte) ch loadstore zp[1]:2 14.714285714285715
+(const nomodify byte*) SCREEN = (byte*) 1024
+(nomodify volatile byte) ch loadstore zp[1]:2 14.714285714285715
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -321,7 +321,7 @@ Score: 218
   // @begin
 __bbegin:
   // ch = 3
-  // [0] (byte) ch ← (byte) 3 -- vbuz1=vbuc1 
+  // [0] (nomodify volatile byte) ch ← (byte) 3 -- vbuz1=vbuc1 
   lda #3
   sta.z ch
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -350,7 +350,7 @@ main: {
     // main::@2
   __b2:
     // SCREEN[i++] = ch
-    // [8] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) ch -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [8] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (nomodify volatile byte) ch -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z ch
     sta SCREEN,x
     // SCREEN[i++] = ch;

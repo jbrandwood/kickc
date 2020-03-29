@@ -11,7 +11,7 @@ CONTROL FLOW GRAPH SSA
 @4: scope:[]  from @begin
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)
+  kickasm(location (const nomodify byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@5
 
@@ -20,13 +20,13 @@ main: scope:[main]  from @5
   asm { jsrmusic.init  }
   to:main::@2
 main::@2: scope:[main]  from main main::@2 main::@3
-  (bool~) main::$0 ← *((const byte*) RASTER) != (number) $fd
+  (bool~) main::$0 ← *((const nomodify byte*) RASTER) != (number) $fd
   if((bool~) main::$0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
+  *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
+  *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
   if(true) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@3
@@ -45,16 +45,16 @@ SYMBOL TABLE SSA
 (label) @6
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL = (byte*)(number) $d020
-(const byte*) MUSIC = (byte*)(number) $1000
-(const byte*) RASTER = (byte*)(number) $d012
+(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
+(const nomodify byte*) MUSIC = (byte*)(number) $1000
+(const nomodify byte*) RASTER = (byte*)(number) $d012
 (void()) main()
 (bool~) main::$0
 (label) main::@2
 (label) main::@3
 (label) main::@return
 
-Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((const byte*) RASTER) != (number) $fd
+Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((const nomodify byte*) RASTER) != (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
@@ -63,7 +63,7 @@ Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [4] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@2
+Simple Condition (bool~) main::$0 [4] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [8] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -94,7 +94,7 @@ FINAL CONTROL FLOW GRAPH
 @1: scope:[]  from @begin
   kickasm() {{ .const music = LoadSid("toiletrensdyr.sid")
  }}
-  kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)
+  kickasm(location (const nomodify byte*) MUSIC) {{ .fill music.size, music.getData(i)
  }}
   to:@2
 @2: scope:[]  from @1
@@ -109,12 +109,12 @@ main: scope:[main]  from @2
   asm { jsrmusic.init  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1
+  [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL)
+  [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
   asm { jsrmusic.play  }
-  [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL)
+  [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
   to:main::@1
 
 
@@ -145,7 +145,7 @@ __b1:
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const nomodify byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
 __b2_from___b1:
@@ -169,19 +169,19 @@ main: {
   // Wait for the RASTER
     // main::@1
   __b1:
-    // [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
-    // [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp __b1
 }
@@ -192,7 +192,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { jsrmusic.init  } always clobbers reg byte a reg byte x reg byte y 
-Statement [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
 Statement asm { jsrmusic.play  } always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -222,7 +222,7 @@ __b1:
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const nomodify byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
 __b2_from___b1:
@@ -246,19 +246,19 @@ main: {
   // Wait for the RASTER
     // main::@1
   __b1:
-    // [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
-    // [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp __b1
 }
@@ -293,9 +293,9 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL = (byte*) 53280
-(const byte*) MUSIC = (byte*) 4096
-(const byte*) RASTER = (byte*) 53266
+(const nomodify byte*) BORDERCOL = (byte*) 53280
+(const nomodify byte*) MUSIC = (byte*) 4096
+(const nomodify byte*) RASTER = (byte*) 53266
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -322,7 +322,7 @@ Score: 3882
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
 
-  // kickasm(location (const byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
+  // kickasm(location (const nomodify byte*) MUSIC) {{ .fill music.size, music.getData(i)  }}
 // Place the SID into memory
   // [3] phi from @1 to @2 [phi:@1->@2]
   // @2
@@ -340,20 +340,20 @@ main: {
     // main::@1
   __b1:
     // while (*RASTER != $fd)
-    // [7] if(*((const byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
     cmp RASTER
     bne __b1
     // main::@2
     // (*BORDERCOL)++;
-    // [8] *((const byte*) BORDERCOL) ← ++ *((const byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDERCOL
     // asm
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
     // (*BORDERCOL)--;
-    // [10] *((const byte*) BORDERCOL) ← -- *((const byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BORDERCOL
     jmp __b1
 }

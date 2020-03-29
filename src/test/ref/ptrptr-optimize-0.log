@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) main::screen ← (byte*)(number) $400
+  (volatile byte*) main::screen ← (byte*)(number) $400
   *(*((const byte**) main::pscreen)) ← (byte) 'a'
   *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
   *(*((const byte**) main::pscreen)) ← (byte) 'b'
@@ -29,8 +29,8 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte**) main::pscreen = &(byte*) main::screen
-(byte*) main::screen loadstore
+(const byte**) main::pscreen = &(volatile byte*) main::screen
+(volatile byte*) main::screen loadstore
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -61,7 +61,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte*) main::screen ← (byte*) 1024
+  [4] (volatile byte*) main::screen ← (byte*) 1024
   [5] *(*((const byte**) main::pscreen)) ← (byte) 'a'
   [6] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
   [7] *(*((const byte**) main::pscreen)) ← (byte) 'b'
@@ -73,7 +73,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) main::screen loadstore 110.0
+(volatile byte*) main::screen loadstore 110.0
 
 Initial phi equivalence classes
 Added variable main::screen to live range equivalence class [ main::screen ]
@@ -108,7 +108,7 @@ __bend:
 main: {
     .label pscreen = screen
     .label screen = 2
-    // [4] (byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [4] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -143,7 +143,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte*) main::screen ← (byte*) 1024 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] (volatile byte*) main::screen ← (byte*) 1024 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *(*((const byte**) main::pscreen)) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [7] *(*((const byte**) main::pscreen)) ← (byte) 'b' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::screen ] : zp[2]:2 , 
@@ -181,7 +181,7 @@ __bend:
 main: {
     .label pscreen = screen
     .label screen = 2
-    // [4] (byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [4] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -239,8 +239,8 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte**) main::pscreen = &(byte*) main::screen
-(byte*) main::screen loadstore zp[2]:2 110.0
+(const byte**) main::pscreen = &(volatile byte*) main::screen
+(volatile byte*) main::screen loadstore zp[2]:2 110.0
 
 zp[2]:2 [ main::screen ]
 
@@ -266,7 +266,7 @@ main: {
     .label pscreen = screen
     .label screen = 2
     // screen = 0x400
-    // [4] (byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [4] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400

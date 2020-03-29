@@ -56,9 +56,9 @@ print: scope:[print]  from main::@1
   (byte) print::p_y#1 ← phi( main::@1/(byte) print::p_y#0 )
   (byte) idx#9 ← phi( main::@1/(byte) idx#12 )
   (byte) print::p_x#1 ← phi( main::@1/(byte) print::p_x#0 )
-  *((const byte*) SCREEN + (byte) idx#9) ← (byte) print::p_x#1
+  *((const nomodify byte*) SCREEN + (byte) idx#9) ← (byte) print::p_x#1
   (byte) idx#3 ← ++ (byte) idx#9
-  *((const byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#1
+  *((const nomodify byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#1
   (byte) idx#4 ← ++ (byte) idx#3
   to:print::@return
 print::@return: scope:[print]  from print
@@ -87,7 +87,7 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_STRUCT_POINT = (byte) 2
 (byte) idx
 (byte) idx#0
@@ -247,9 +247,9 @@ main::@return: scope:[main]  from main::@2
 
 (void()) print((byte) print::p_x , (byte) print::p_y)
 print: scope:[print]  from main::@1
-  [14] *((const byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0
+  [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0
   [15] (byte) idx#3 ← ++ (byte) idx#12
-  [16] *((const byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0
+  [16] *((const nomodify byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0
   [17] (byte) idx#10 ← ++ (byte) idx#3
   to:print::@return
 print::@return: scope:[print]  from print
@@ -393,7 +393,7 @@ main: {
 print: {
     .label p_x = 5
     .label p_y = 6
-    // [14] *((const byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z p_x
     ldy.z idx_1
     sta SCREEN,y
@@ -401,7 +401,7 @@ print: {
     ldy.z idx_1
     iny
     sty.z idx
-    // [16] *((const byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [16] *((const nomodify byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z p_y
     ldy.z idx
     sta SCREEN,y
@@ -542,12 +542,12 @@ main: {
 // print(byte zp(3) p_x, byte register(Y) p_y)
 print: {
     .label p_x = 3
-    // [14] *((const byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z p_x
     sta SCREEN,x
     // [15] (byte) idx#3 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
-    // [16] *((const byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [16] *((const nomodify byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta SCREEN,x
     // [17] (byte) idx#10 ← ++ (byte) idx#3 -- vbuxx=_inc_vbuxx 
@@ -601,7 +601,7 @@ FINAL SYMBOL TABLE
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (const byte) SIZEOF_STRUCT_POINT = (byte) 2
 (byte) idx
 (byte) idx#10 reg byte x 220.39999999999998
@@ -712,14 +712,14 @@ main: {
 print: {
     .label p_x = 3
     // SCREEN[idx++] = p.x
-    // [14] *((const byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z p_x
     sta SCREEN,x
     // SCREEN[idx++] = p.x;
     // [15] (byte) idx#3 ← ++ (byte) idx#12 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = p.y
-    // [16] *((const byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [16] *((const nomodify byte*) SCREEN + (byte) idx#3) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta SCREEN,x
     // SCREEN[idx++] = p.y;

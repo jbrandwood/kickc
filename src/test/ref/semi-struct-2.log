@@ -342,7 +342,7 @@ print_byte: scope:[print_byte]  from printEntry::@10 printEntry::@11 printEntry:
   (byte*) print_char_cursor#145 ← phi( printEntry::@10/(byte*) print_char_cursor#159 printEntry::@11/(byte*) print_char_cursor#160 printEntry::@12/(byte*) print_char_cursor#161 printEntry::@13/(byte*) print_char_cursor#162 printEntry::@5/(byte*) print_char_cursor#154 printEntry::@6/(byte*) print_char_cursor#155 printEntry::@7/(byte*) print_char_cursor#156 printEntry::@8/(byte*) print_char_cursor#157 print_word/(byte*) print_char_cursor#144 print_word::@1/(byte*) print_char_cursor#5 )
   (byte) print_byte::b#10 ← phi( printEntry::@10/(byte) print_byte::b#6 printEntry::@11/(byte) print_byte::b#7 printEntry::@12/(byte) print_byte::b#8 printEntry::@13/(byte) print_byte::b#9 printEntry::@5/(byte) print_byte::b#2 printEntry::@6/(byte) print_byte::b#3 printEntry::@7/(byte) print_byte::b#4 printEntry::@8/(byte) print_byte::b#5 print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#10 >> (number) 4
-  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -350,7 +350,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#79 ← phi( print_byte/(byte*) print_char_cursor#12 )
   (byte*) print_char_cursor#8 ← (byte*) print_char_cursor#79
   (number~) print_byte::$2 ← (byte) print_byte::b#11 & (number) $f
-  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -400,8 +400,8 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
 
 (void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main
-  *((const byte*) CIA1_PORT_A_DDR) ← (number) $ff
-  *((const byte*) CIA1_PORT_B_DDR) ← (number) 0
+  *((const nomodify byte*) CIA1_PORT_A_DDR) ← (number) $ff
+  *((const nomodify byte*) CIA1_PORT_B_DDR) ← (number) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
@@ -410,8 +410,8 @@ keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
-  (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
+  *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  (byte~) keyboard_matrix_read::$0 ← ~ *((const nomodify byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
@@ -464,7 +464,7 @@ main::fileEntry1: scope:[main]  from main::@15
   (byte*) print_screen#30 ← phi( main::@15/(byte*) print_screen#33 )
   (byte) main::fileEntry1_idx#1 ← phi( main::@15/(byte) main::fileEntry1_idx#0 )
   (byte) mul8u::a#1 ← (byte) main::fileEntry1_idx#1
-  (byte) mul8u::b#0 ← (const byte) SIZEOF_ENTRY
+  (byte) mul8u::b#0 ← (const nomodify byte) SIZEOF_ENTRY
   call mul8u 
   (word) mul8u::return#2 ← (word) mul8u::return#1
   to:main::@16
@@ -500,7 +500,7 @@ main::fileEntry2: scope:[main]  from main::@13
   (byte*) main::entry1#7 ← phi( main::@13/(byte*) main::entry1#0 )
   (byte) main::fileEntry2_idx#1 ← phi( main::@13/(byte) main::fileEntry2_idx#0 )
   (byte) mul8u::a#2 ← (byte) main::fileEntry2_idx#1
-  (byte) mul8u::b#1 ← (const byte) SIZEOF_ENTRY
+  (byte) mul8u::b#1 ← (const nomodify byte) SIZEOF_ENTRY
   call mul8u 
   (word) mul8u::return#3 ← (word) mul8u::return#1
   to:main::@17
@@ -624,7 +624,7 @@ main::@1: scope:[main]  from main::@26 main::@27
   (byte*) print_char_cursor#182 ← phi( main::@26/(byte*) print_char_cursor#21 main::@27/(byte*) print_char_cursor#166 )
   (byte*) print_line_cursor#100 ← phi( main::@26/(byte*) print_line_cursor#116 main::@27/(byte*) print_line_cursor#84 )
   (byte*) print_screen#10 ← phi( main::@26/(byte*) print_screen#13 main::@27/(byte*) print_screen#7 )
-  (byte) keyboard_key_pressed::key#0 ← (const byte) KEY_SPACE
+  (byte) keyboard_key_pressed::key#0 ← (const nomodify byte) KEY_SPACE
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
   to:main::@27
@@ -709,7 +709,7 @@ main::@7: scope:[main]  from main::@34 main::@35
   (byte*) print_char_cursor#183 ← phi( main::@34/(byte*) print_char_cursor#28 main::@35/(byte*) print_char_cursor#167 )
   (byte*) print_line_cursor#101 ← phi( main::@34/(byte*) print_line_cursor#117 main::@35/(byte*) print_line_cursor#85 )
   (byte*) print_screen#11 ← phi( main::@34/(byte*) print_screen#14 main::@35/(byte*) print_screen#8 )
-  (byte) keyboard_key_pressed::key#1 ← (const byte) KEY_SPACE
+  (byte) keyboard_key_pressed::key#1 ← (const nomodify byte) KEY_SPACE
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#1
   to:main::@35
@@ -1700,18 +1700,18 @@ SYMBOL TABLE SSA
 (label) @71
 (label) @begin
 (label) @end
-(const byte*) CIA1_PORT_A = (byte*)(number) $dc00
-(const byte*) CIA1_PORT_A_DDR = (byte*)(number) $dc02
-(const byte*) CIA1_PORT_B = (byte*)(number) $dc01
-(const byte*) CIA1_PORT_B_DDR = (byte*)(number) $dc03
-(const byte) KEY_SPACE = (byte) $3c
-(const byte) MAX_FILES = (byte) $90
+(const nomodify byte*) CIA1_PORT_A = (byte*)(number) $dc00
+(const nomodify byte*) CIA1_PORT_A_DDR = (byte*)(number) $dc02
+(const nomodify byte*) CIA1_PORT_B = (byte*)(number) $dc01
+(const nomodify byte*) CIA1_PORT_B_DDR = (byte*)(number) $dc03
+(const nomodify byte) KEY_SPACE = (byte) $3c
+(const nomodify byte) MAX_FILES = (byte) $90
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const byte) SIZEOF_ENTRY = (byte) $12
-(const byte*) files[(word)(const byte) MAX_FILES*(const byte) SIZEOF_ENTRY]  = { fill( (word)MAX_FILES*SIZEOF_ENTRY, 0) }
+(const nomodify byte) SIZEOF_ENTRY = (byte) $12
+(const byte*) files[(word)(const nomodify byte) MAX_FILES*(const nomodify byte) SIZEOF_ENTRY]  = { fill( (word)MAX_FILES*SIZEOF_ENTRY, 0) }
 (void()) initEntry((byte*) initEntry::entry , (byte) initEntry::n)
 (byte**~) initEntry::$0
 (number~) initEntry::$1
@@ -2769,7 +2769,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -3022,8 +3022,8 @@ Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) p
 Adding number conversion cast (unumber) $f in (number~) print_byte::$2 ← (byte) print_byte::b#11 & (number) $f
 Adding number conversion cast (unumber) print_byte::$2 in (number~) print_byte::$2 ← (byte) print_byte::b#11 & (unumber)(number) $f
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) $ff in *((const byte*) CIA1_PORT_A_DDR) ← (number) $ff
-Adding number conversion cast (unumber) 0 in *((const byte*) CIA1_PORT_B_DDR) ← (number) 0
+Adding number conversion cast (unumber) $ff in *((const nomodify byte*) CIA1_PORT_A_DDR) ← (number) $ff
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) CIA1_PORT_B_DDR) ← (number) 0
 Adding number conversion cast (unumber) 7 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#2 & (number) 7
 Adding number conversion cast (unumber) keyboard_key_pressed::$0 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#2 & (unumber)(number) 7
 Adding number conversion cast (unumber) 3 in (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#2 >> (number) 3
@@ -3089,8 +3089,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast *((const byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
-Inlining cast *((const byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
+Inlining cast *((const nomodify byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
 Inlining cast (byte) main::fileEntry1_idx#0 ← (unumber)(number) 1
 Inlining cast (byte) main::fileEntry2_idx#0 ← (unumber)(number) 2
 Inlining cast (byte) initEntry::n#0 ← (unumber)(number) 0
@@ -3734,14 +3734,14 @@ Constant inlined print_str::str#14 = (const byte*) printEntry::str9
 Constant inlined initEntry::n#1 = (byte) $11
 Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined initEntry::n#0 = (byte) 0
-Constant inlined keyboard_key_pressed::key#0 = (const byte) KEY_SPACE
-Constant inlined keyboard_key_pressed::key#1 = (const byte) KEY_SPACE
+Constant inlined keyboard_key_pressed::key#0 = (const nomodify byte) KEY_SPACE
+Constant inlined keyboard_key_pressed::key#1 = (const nomodify byte) KEY_SPACE
 Constant inlined print_line_cursor#0 = (byte*) 1024
 Constant inlined print_str::str#9 = (const byte*) printEntry::str4
 Constant inlined mul8u::res#0 = (word) 0
-Constant inlined mul8u::b#1 = (const byte) SIZEOF_ENTRY
+Constant inlined mul8u::b#1 = (const nomodify byte) SIZEOF_ENTRY
 Constant inlined mul8u::a#2 = (const byte) main::fileEntry2_idx#0
-Constant inlined mul8u::b#0 = (const byte) SIZEOF_ENTRY
+Constant inlined mul8u::b#0 = (const nomodify byte) SIZEOF_ENTRY
 Constant inlined mul8u::a#1 = (const byte) main::fileEntry1_idx#0
 Constant inlined print_str::str#4 = (const byte*) main::str1
 Constant inlined print_str::str#3 = (const byte*) main::str2
@@ -3753,12 +3753,12 @@ Constant inlined print_str::str#7 = (const byte*) printEntry::str2
 Constant inlined print_str::str#6 = (const byte*) printEntry::str1
 Constant inlined print_str::str#5 = (const byte*) printEntry::str
 Successful SSA optimization Pass2ConstantInlining
-Identical Phi Values (byte) mul8u::b#2 (const byte) SIZEOF_ENTRY
-Identical Phi Values (byte) keyboard_key_pressed::key#2 (const byte) KEY_SPACE
+Identical Phi Values (byte) mul8u::b#2 (const nomodify byte) SIZEOF_ENTRY
+Identical Phi Values (byte) keyboard_key_pressed::key#2 (const nomodify byte) KEY_SPACE
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [1] (word) mul8u::mb#0 ← (word)(const byte) SIZEOF_ENTRY
-Constant right-side identified [55] (byte) keyboard_key_pressed::colidx#0 ← (const byte) KEY_SPACE & (byte) 7
-Constant right-side identified [56] (byte) keyboard_key_pressed::rowidx#0 ← (const byte) KEY_SPACE >> (byte) 3
+Constant right-side identified [1] (word) mul8u::mb#0 ← (word)(const nomodify byte) SIZEOF_ENTRY
+Constant right-side identified [55] (byte) keyboard_key_pressed::colidx#0 ← (const nomodify byte) KEY_SPACE & (byte) 7
+Constant right-side identified [56] (byte) keyboard_key_pressed::rowidx#0 ← (const nomodify byte) KEY_SPACE >> (byte) 3
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) mul8u::mb#0 = (word)SIZEOF_ENTRY
 Constant (const byte) keyboard_key_pressed::colidx#0 = KEY_SPACE&7
@@ -3767,7 +3767,7 @@ Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const word) mul8u::mb#0
-Constant inlined mul8u::mb#0 = (word)(const byte) SIZEOF_ENTRY
+Constant inlined mul8u::mb#0 = (word)(const nomodify byte) SIZEOF_ENTRY
 Constant inlined keyboard_matrix_read::rowid#0 = (const byte) keyboard_key_pressed::rowidx#0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(keyboard_matrix_row_bitmask+keyboard_key_pressed::rowidx#0)
@@ -4303,8 +4303,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
-  [80] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0)
-  [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B)
+  [80] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0)
+  [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [82] return 
@@ -4552,12 +4552,12 @@ print_byte: scope:[print_byte]  from printEntry::@10 printEntry::@11 printEntry:
   [189] (byte*) print_char_cursor#145 ← phi( printEntry::@10/(byte*) print_char_cursor#142 printEntry::@11/(byte*) print_char_cursor#142 printEntry::@12/(byte*) print_char_cursor#142 printEntry::@13/(byte*) print_char_cursor#142 printEntry::@5/(byte*) print_char_cursor#142 printEntry::@6/(byte*) print_char_cursor#142 printEntry::@7/(byte*) print_char_cursor#142 printEntry::@8/(byte*) print_char_cursor#142 print_word/(byte*) print_char_cursor#142 print_word::@1/(byte*) print_char_cursor#11 )
   [189] (byte) print_byte::b#10 ← phi( printEntry::@10/(byte) print_byte::b#6 printEntry::@11/(byte) print_byte::b#7 printEntry::@12/(byte) print_byte::b#8 printEntry::@13/(byte) print_byte::b#9 printEntry::@5/(byte) print_byte::b#2 printEntry::@6/(byte) print_byte::b#3 printEntry::@7/(byte) print_byte::b#4 printEntry::@8/(byte) print_byte::b#5 print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [190] (byte~) print_byte::$0 ← (byte) print_byte::b#10 >> (byte) 4
-  [191] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  [191] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   [192] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [193] (byte~) print_byte::$2 ← (byte) print_byte::b#10 & (byte) $f
-  [194] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
+  [194] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2)
   [195] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -4694,7 +4694,7 @@ mul8u: scope:[mul8u]  from main::fileEntry1 main::fileEntry2
   [248] (byte) mul8u::a#6 ← phi( main::fileEntry1/(const byte) main::fileEntry1_idx#0 main::fileEntry2/(const byte) main::fileEntry2_idx#0 )
   to:mul8u::@1
 mul8u::@1: scope:[mul8u]  from mul8u mul8u::@3
-  [249] (word) mul8u::mb#2 ← phi( mul8u/(word)(const byte) SIZEOF_ENTRY mul8u::@3/(word) mul8u::mb#1 )
+  [249] (word) mul8u::mb#2 ← phi( mul8u/(word)(const nomodify byte) SIZEOF_ENTRY mul8u::@3/(word) mul8u::mb#1 )
   [249] (word) mul8u::res#2 ← phi( mul8u/(word) 0 mul8u::@3/(word) mul8u::res#6 )
   [249] (byte) mul8u::a#3 ← phi( mul8u/(byte) mul8u::a#6 mul8u::@3/(byte) mul8u::a#0 )
   [250] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2
@@ -4717,8 +4717,8 @@ mul8u::@3: scope:[mul8u]  from mul8u::@2 mul8u::@4
 
 (void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main
-  [258] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff
-  [259] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0
+  [258] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff
+  [259] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   [260] return 
@@ -5641,10 +5641,10 @@ keyboard_key_pressed: {
 keyboard_matrix_read: {
     .label return = $2b
     .label return_1 = $28
-    // [80] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [80] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
-    // [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
+    // [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta.z return
@@ -6445,7 +6445,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [191] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [191] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -6463,7 +6463,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [194] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [194] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -6812,7 +6812,7 @@ mul8u: {
     .label return_1 = $1e
     // [249] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   __b1_from_mul8u:
-    // [249] phi (word) mul8u::mb#2 = (word)(const byte) SIZEOF_ENTRY [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    // [249] phi (word) mul8u::mb#2 = (word)(const nomodify byte) SIZEOF_ENTRY [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
     lda #<SIZEOF_ENTRY
     sta.z mb
     lda #>SIZEOF_ENTRY
@@ -6878,11 +6878,11 @@ mul8u: {
   // keyboard_init
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // [258] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [258] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    // [259] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [259] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
@@ -6924,8 +6924,8 @@ Statement [53] (byte*) print_char_cursor#228 ← (byte*) print_line_cursor#1 [ p
 Statement [55] (byte*) print_char_cursor#207 ← (byte*) print_line_cursor#1 [ print_char_cursor#207 ] ( main:2 [ print_char_cursor#207 ] { { print_char_cursor#164 = print_char_cursor#207 } }  ) always clobbers reg byte a 
 Statement [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:63::memset:66 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:63::memset:66 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [80] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [80] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [85] if((byte) 0!=*((byte*) print_str::str#18)) goto print_str::@2 [ print_str::str#18 print_char_cursor#142 ] ( main:2::print_str:23 [ main::entry1#0 main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:35 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#206 } }  main:2::print_str:44 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:56 [ print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#207 } }  main:2::printEntry:30::print_str:98 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:51::print_str:98 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:30::print_str:105 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:51::print_str:105 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:30::print_str:112 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:51::print_str:112 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:30::print_str:119 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:51::print_str:119 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:30::print_str:126 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:51::print_str:126 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:30::print_str:133 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:51::print_str:133 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:30::print_str:140 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:51::print_str:140 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:30::print_str:147 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:51::print_str:147 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:30::print_str:154 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:51::print_str:154 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:30::print_str:161 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:51::print_str:161 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:30::print_str:168 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:51::print_str:168 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:30::print_str:175 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:51::print_str:175 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:30::print_str:182 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#220 } }  main:2::printEntry:51::print_str:182 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#220 } }  ) always clobbers reg byte a reg byte y 
 Statement [87] *((byte*) print_char_cursor#142) ← *((byte*) print_str::str#18) [ print_str::str#18 print_char_cursor#142 ] ( main:2::print_str:23 [ main::entry1#0 main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:35 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#206 } }  main:2::print_str:44 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:56 [ print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#207 } }  main:2::printEntry:30::print_str:98 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:51::print_str:98 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:30::print_str:105 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:51::print_str:105 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:30::print_str:112 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:51::print_str:112 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:30::print_str:119 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:51::print_str:119 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:30::print_str:126 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:51::print_str:126 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:30::print_str:133 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:51::print_str:133 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:30::print_str:140 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:51::print_str:140 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:30::print_str:147 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:51::print_str:147 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:30::print_str:154 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:51::print_str:154 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:30::print_str:161 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:51::print_str:161 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:30::print_str:168 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:51::print_str:168 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:30::print_str:175 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:51::print_str:175 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:30::print_str:182 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#220 } }  main:2::printEntry:51::print_str:182 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#220 } }  ) always clobbers reg byte a reg byte y 
 Statement [92] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#32 + (byte) $28 [ print_line_cursor#1 print_char_cursor#143 ] ( main:2::print_ln:25 [ main::entry1#0 main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_char_cursor#142 = print_char_cursor#143 } }  main:2::print_ln:28 [ main::entry1#0 main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#153 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#224 } }  main:2::print_ln:33 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#154 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#225 } }  main:2::print_ln:46 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_char_cursor#142 = print_char_cursor#143 } }  main:2::print_ln:49 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#155 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#227 } }  main:2::print_ln:54 [ print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#156 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#228 } }  main:2::printEntry:30::print_ln:103 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#157 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:103 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#157 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:110 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#158 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:110 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#158 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:117 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#159 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:117 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#159 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:124 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#160 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:124 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#160 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:131 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#161 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:131 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#161 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:138 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#162 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:138 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#162 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:145 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#163 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:145 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#163 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:152 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#164 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:152 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#164 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:159 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#165 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:159 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#165 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:166 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#166 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:166 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#166 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:173 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#167 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:173 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#167 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:180 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#168 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:180 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#168 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:187 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#169 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:187 [ print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#169 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  ) always clobbers reg byte a 
@@ -7005,8 +7005,8 @@ Statement [245] (byte~) initEntry::$25 ← (byte) $dd + (byte) initEntry::n#10 [
 Statement [246] *((byte*) initEntry::entry#10 + (byte) $11) ← (byte~) initEntry::$25 [ ] ( main:2::initEntry:17 [ main::entry1#0 main::entry2#0 ] { { initEntry::entry#0 = initEntry::entry#10 main::entry1#0 } }  main:2::initEntry:19 [ main::entry1#0 main::entry2#0 ] { { initEntry::entry#1 = initEntry::entry#10 main::entry2#0 } }  ) always clobbers reg byte y 
 Statement [254] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( main:2::mul8u:7 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::return#2 = mul8u::res#2 } }  main:2::mul8u:12 [ main::entry1#0 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ mul8u::a#3 mul8u::a#6 mul8u::a#0 ]
-Statement [258] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [259] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [258] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [259] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [8] (word) mul8u::return#2 ← (word) mul8u::res#2 [ mul8u::return#2 ] ( main:2 [ mul8u::return#2 ] { { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Statement [9] (word~) main::fileEntry1_$0 ← (word) mul8u::return#2 [ main::fileEntry1_$0 ] ( main:2 [ main::fileEntry1_$0 ] { }  ) always clobbers reg byte a 
 Statement [10] (byte*) main::entry1#0 ← (const byte*) files + (word~) main::fileEntry1_$0 [ main::entry1#0 ] ( main:2 [ main::entry1#0 ] { }  ) always clobbers reg byte a 
@@ -7029,8 +7029,8 @@ Statement [53] (byte*) print_char_cursor#228 ← (byte*) print_line_cursor#1 [ p
 Statement [55] (byte*) print_char_cursor#207 ← (byte*) print_line_cursor#1 [ print_char_cursor#207 ] ( main:2 [ print_char_cursor#207 ] { { print_char_cursor#164 = print_char_cursor#207 } }  ) always clobbers reg byte a 
 Statement [70] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:63::memset:66 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [72] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::print_cls:21::memset:66 [ main::entry1#0 main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:42::memset:66 [ main::entry2#0 memset::dst#2 ] { }  main:2::print_cls:63::memset:66 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [80] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [80] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:37::keyboard_matrix_read:75 [ main::entry2#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:75 [ keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [85] if((byte) 0!=*((byte*) print_str::str#18)) goto print_str::@2 [ print_str::str#18 print_char_cursor#142 ] ( main:2::print_str:23 [ main::entry1#0 main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:35 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#206 } }  main:2::print_str:44 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:56 [ print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#207 } }  main:2::printEntry:30::print_str:98 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:51::print_str:98 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:30::print_str:105 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:51::print_str:105 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:30::print_str:112 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:51::print_str:112 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:30::print_str:119 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:51::print_str:119 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:30::print_str:126 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:51::print_str:126 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:30::print_str:133 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:51::print_str:133 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:30::print_str:140 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:51::print_str:140 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:30::print_str:147 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:51::print_str:147 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:30::print_str:154 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:51::print_str:154 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:30::print_str:161 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:51::print_str:161 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:30::print_str:168 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:51::print_str:168 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:30::print_str:175 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:51::print_str:175 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:30::print_str:182 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#220 } }  main:2::printEntry:51::print_str:182 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#220 } }  ) always clobbers reg byte a reg byte y 
 Statement [87] *((byte*) print_char_cursor#142) ← *((byte*) print_str::str#18) [ print_str::str#18 print_char_cursor#142 ] ( main:2::print_str:23 [ main::entry1#0 main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:35 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#206 } }  main:2::print_str:44 [ main::entry2#0 print_str::str#18 print_char_cursor#142 ] { }  main:2::print_str:56 [ print_str::str#18 print_char_cursor#142 ] { { print_char_cursor#164 = print_char_cursor#207 } }  main:2::printEntry:30::print_str:98 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:51::print_str:98 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#208 } }  main:2::printEntry:30::print_str:105 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:51::print_str:105 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#209 } }  main:2::printEntry:30::print_str:112 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:51::print_str:112 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#210 } }  main:2::printEntry:30::print_str:119 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:51::print_str:119 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#211 } }  main:2::printEntry:30::print_str:126 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:51::print_str:126 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#212 } }  main:2::printEntry:30::print_str:133 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:51::print_str:133 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#213 } }  main:2::printEntry:30::print_str:140 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:51::print_str:140 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#214 } }  main:2::printEntry:30::print_str:147 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:51::print_str:147 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#215 } }  main:2::printEntry:30::print_str:154 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:51::print_str:154 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#216 } }  main:2::printEntry:30::print_str:161 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:51::print_str:161 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#217 } }  main:2::printEntry:30::print_str:168 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:51::print_str:168 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#218 } }  main:2::printEntry:30::print_str:175 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:51::print_str:175 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#219 } }  main:2::printEntry:30::print_str:182 [ main::entry2#0 print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_char_cursor#164 = print_char_cursor#220 } }  main:2::printEntry:51::print_str:182 [ print_line_cursor#1 printEntry::entry#10 print_str::str#18 print_char_cursor#142 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_char_cursor#164 = print_char_cursor#220 } }  ) always clobbers reg byte a reg byte y 
 Statement [92] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#32 + (byte) $28 [ print_line_cursor#1 print_char_cursor#143 ] ( main:2::print_ln:25 [ main::entry1#0 main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_char_cursor#142 = print_char_cursor#143 } }  main:2::print_ln:28 [ main::entry1#0 main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#153 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#224 } }  main:2::print_ln:33 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#154 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#225 } }  main:2::print_ln:46 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_char_cursor#142 = print_char_cursor#143 } }  main:2::print_ln:49 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#155 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#227 } }  main:2::print_ln:54 [ print_line_cursor#1 print_char_cursor#143 ] { { print_line_cursor#156 = print_line_cursor#63 } { print_char_cursor#143 = print_char_cursor#228 } }  main:2::printEntry:30::print_ln:103 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#157 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:103 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#157 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:110 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#158 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:110 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#158 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:117 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#159 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:117 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#159 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:124 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#160 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:124 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#160 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:131 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#161 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:131 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#161 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:138 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#162 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:138 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#162 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:145 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#163 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:145 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#163 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:152 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#164 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:152 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#164 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:159 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#165 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:159 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#165 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:166 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#166 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:166 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#166 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:173 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#167 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:173 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#167 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:180 [ main::entry2#0 printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#168 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:180 [ printEntry::entry#10 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#168 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:30::print_ln:187 [ main::entry2#0 print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#0 = printEntry::entry#10 main::entry1#0 } { print_line_cursor#169 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  main:2::printEntry:51::print_ln:187 [ print_line_cursor#1 print_char_cursor#143 ] { { printEntry::entry#1 = printEntry::entry#10 main::entry2#0 } { print_line_cursor#169 = print_line_cursor#63 } { print_char_cursor#11 = print_char_cursor#143 } }  ) always clobbers reg byte a 
@@ -7106,8 +7106,8 @@ Statement [245] (byte~) initEntry::$25 ← (byte) $dd + (byte) initEntry::n#10 [
 Statement [246] *((byte*) initEntry::entry#10 + (byte) $11) ← (byte~) initEntry::$25 [ ] ( main:2::initEntry:17 [ main::entry1#0 main::entry2#0 ] { { initEntry::entry#0 = initEntry::entry#10 main::entry1#0 } }  main:2::initEntry:19 [ main::entry1#0 main::entry2#0 ] { { initEntry::entry#1 = initEntry::entry#10 main::entry2#0 } }  ) always clobbers reg byte y 
 Statement [252] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 [ mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] ( main:2::mul8u:7 [ mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] { { mul8u::return#2 = mul8u::res#2 } }  main:2::mul8u:12 [ main::entry1#0 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] { { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Statement [254] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( main:2::mul8u:7 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::return#2 = mul8u::res#2 } }  main:2::mul8u:12 [ main::entry1#0 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [258] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [259] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [258] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [259] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ memset::dst#2 memset::dst#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ print_str::str#18 print_str::str#20 print_str::str#0 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#153 print_line_cursor#154 print_line_cursor#155 print_line_cursor#156 print_line_cursor#157 print_line_cursor#158 print_line_cursor#159 print_line_cursor#160 print_line_cursor#161 print_line_cursor#162 print_line_cursor#163 print_line_cursor#164 print_line_cursor#165 print_line_cursor#166 print_line_cursor#167 print_line_cursor#168 print_line_cursor#169 print_line_cursor#171 ] : zp[2]:6 , 
@@ -7738,10 +7738,10 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-    // [80] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [80] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
-    // [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp __breturn
@@ -8537,7 +8537,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [191] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [191] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [192] call print_char 
@@ -8553,7 +8553,7 @@ print_byte: {
     // [193] (byte~) print_byte::$2 ← (byte) print_byte::b#10 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [194] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [194] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [195] call print_char 
     // [197] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -8876,7 +8876,7 @@ mul8u: {
     .label return = $a
     // [249] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   __b1_from_mul8u:
-    // [249] phi (word) mul8u::mb#2 = (word)(const byte) SIZEOF_ENTRY [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    // [249] phi (word) mul8u::mb#2 = (word)(const nomodify byte) SIZEOF_ENTRY [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
     lda #<SIZEOF_ENTRY
     sta.z mb
     lda #>SIZEOF_ENTRY
@@ -8941,11 +8941,11 @@ mul8u: {
   // keyboard_init
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // [258] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [258] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    // [259] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [259] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
@@ -9351,18 +9351,18 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) CIA1_PORT_A = (byte*) 56320
-(const byte*) CIA1_PORT_A_DDR = (byte*) 56322
-(const byte*) CIA1_PORT_B = (byte*) 56321
-(const byte*) CIA1_PORT_B_DDR = (byte*) 56323
-(const byte) KEY_SPACE = (byte) $3c
-(const byte) MAX_FILES = (byte) $90
+(const nomodify byte*) CIA1_PORT_A = (byte*) 56320
+(const nomodify byte*) CIA1_PORT_A_DDR = (byte*) 56322
+(const nomodify byte*) CIA1_PORT_B = (byte*) 56321
+(const nomodify byte*) CIA1_PORT_B_DDR = (byte*) 56323
+(const nomodify byte) KEY_SPACE = (byte) $3c
+(const nomodify byte) MAX_FILES = (byte) $90
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const byte) SIZEOF_ENTRY = (byte) $12
-(const byte*) files[(word)(const byte) MAX_FILES*(const byte) SIZEOF_ENTRY]  = { fill( (word)MAX_FILES*SIZEOF_ENTRY, 0) }
+(const nomodify byte) SIZEOF_ENTRY = (byte) $12
+(const byte*) files[(word)(const nomodify byte) MAX_FILES*(const nomodify byte) SIZEOF_ENTRY]  = { fill( (word)MAX_FILES*SIZEOF_ENTRY, 0) }
 (void()) initEntry((byte*) initEntry::entry , (byte) initEntry::n)
 (word~) initEntry::$1 zp[2]:14 101.0
 (byte~) initEntry::$11 reg byte a 202.0
@@ -9443,14 +9443,14 @@ FINAL SYMBOL TABLE
 (label) keyboard_key_pressed::@1
 (label) keyboard_key_pressed::@return
 (byte) keyboard_key_pressed::colidx
-(const byte) keyboard_key_pressed::colidx#0 colidx = (const byte) KEY_SPACE&(byte) 7
+(const byte) keyboard_key_pressed::colidx#0 colidx = (const nomodify byte) KEY_SPACE&(byte) 7
 (byte) keyboard_key_pressed::key
 (byte) keyboard_key_pressed::return
 (byte) keyboard_key_pressed::return#0 reg byte a 300.75
 (byte) keyboard_key_pressed::return#2 reg byte a 202.0
 (byte) keyboard_key_pressed::return#3 reg byte a 202.0
 (byte) keyboard_key_pressed::rowidx
-(const byte) keyboard_key_pressed::rowidx#0 rowidx = (const byte) KEY_SPACE>>(byte) 3
+(const byte) keyboard_key_pressed::rowidx#0 rowidx = (const nomodify byte) KEY_SPACE>>(byte) 3
 (const byte*) keyboard_matrix_col_bitmask[(number) 8]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (label) keyboard_matrix_read::@return
@@ -9690,7 +9690,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#82 print_char_cursor zp[2]:6 110002.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:12 337.5154639175262
 (byte*) print_line_cursor#153 print_line_cursor_1 zp[2]:2 11.0
@@ -10228,11 +10228,11 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
     // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [80] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [80] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) -- _deref_pbuc1=_deref_pbuc2 
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
     sta CIA1_PORT_A
     // ~*CIA1_PORT_B
-    // [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [81] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     // keyboard_matrix_read::@return
@@ -10908,7 +10908,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [191] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [191] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [192] call print_char 
@@ -10923,7 +10923,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [194] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [194] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [195] call print_char 
     // [197] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -11201,7 +11201,7 @@ mul8u: {
     .label res = $a
     .label return = $a
     // [249] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
-    // [249] phi (word) mul8u::mb#2 = (word)(const byte) SIZEOF_ENTRY [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    // [249] phi (word) mul8u::mb#2 = (word)(const nomodify byte) SIZEOF_ENTRY [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
     lda #<SIZEOF_ENTRY
     sta.z mb
     lda #>SIZEOF_ENTRY
@@ -11264,12 +11264,12 @@ mul8u: {
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
     // *CIA1_PORT_A_DDR = $ff
-    // [258] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [258] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
     // *CIA1_PORT_B_DDR = $00
-    // [259] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [259] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR

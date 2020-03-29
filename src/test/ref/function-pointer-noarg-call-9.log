@@ -3,12 +3,12 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) idx ← (byte) 0
+  (volatile byte) idx ← (byte) 0
   to:@2
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  (byte) idx ← ++ (byte) idx
+  (volatile byte) idx ← ++ (volatile byte) idx
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
@@ -17,9 +17,9 @@ fn1::@return: scope:[fn1]  from fn1
 (void()) main()
 main: scope:[main]  from @2
   call *((const void()*) main::f) 
-  *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
+  *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
   call *((const void()*) main::f) 
-  *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
+  *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -36,10 +36,10 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) fn1()
 (label) fn1::@return
-(byte) idx loadstore
+(volatile byte) idx loadstore
 (void()) main()
 (label) main::@return
 (const void()*) main::f = &(void()) fn1()
@@ -69,7 +69,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) idx ← (byte) 0
+  [0] (volatile byte) idx ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -82,9 +82,9 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] phi()
   [5] call fn1 
-  [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
+  [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
   [7] call fn1 
-  [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a'
+  [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [9] return 
@@ -92,7 +92,7 @@ main::@return: scope:[main]  from main
 
 (void()) fn1()
 fn1: scope:[fn1]  from main
-  [10] (byte) idx ← ++ (byte) idx
+  [10] (volatile byte) idx ← ++ (volatile byte) idx
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   [11] return 
@@ -101,7 +101,7 @@ fn1::@return: scope:[fn1]  from fn1
 
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
-(byte) idx loadstore 28.25
+(volatile byte) idx loadstore 28.25
 (void()) main()
 
 Initial phi equivalence classes
@@ -123,7 +123,7 @@ Target platform is c64basic / MOS6502X
   .label idx = 2
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -144,13 +144,13 @@ __bend:
 main: {
     // [5] call fn1 
     jsr fn1
-    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
-    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -162,7 +162,7 @@ main: {
 }
   // fn1
 fn1: {
-    // [10] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
+    // [10] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     jmp __breturn
     // fn1::@return
@@ -173,9 +173,9 @@ fn1: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' [ idx ] ( main:2 [ idx ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] (volatile byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' [ idx ] ( main:2 [ idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ idx ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -201,7 +201,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label idx = 2
   // @begin
 __bbegin:
-  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -222,13 +222,13 @@ __bend:
 main: {
     // [5] call fn1 
     jsr fn1
-    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // [7] call fn1 
     jsr fn1
-    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -240,7 +240,7 @@ main: {
 }
   // fn1
 fn1: {
-    // [10] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
+    // [10] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     jmp __breturn
     // fn1::@return
@@ -272,10 +272,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) fn1()
 (label) fn1::@return
-(byte) idx loadstore zp[1]:2 28.25
+(volatile byte) idx loadstore zp[1]:2 28.25
 (void()) main()
 (label) main::@return
 
@@ -297,7 +297,7 @@ Score: 66
   // @begin
 __bbegin:
   // idx = 0
-  // [0] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -314,7 +314,7 @@ main: {
     // [5] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -322,7 +322,7 @@ main: {
     // [7] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
@@ -334,7 +334,7 @@ main: {
   // fn1
 fn1: {
     // idx++;
-    // [10] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
+    // [10] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // fn1::@return
     // }

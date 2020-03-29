@@ -6,9 +6,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte) main::state#0 ← (const byte) main::ON
-  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::state#0
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte) main::state#0
   (byte) main::state#1 ← (const byte) main::OFF
-  *((const byte*) main::SCREEN + (number) 1) ← (byte) main::state#1
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte) main::state#1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,13 +29,13 @@ SYMBOL TABLE SSA
 (label) main::@return
 (const byte) main::OFF = (byte) 0
 (const byte) main::ON = (byte) 1
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (byte) main::state
 (byte) main::state#0
 (byte) main::state#1
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::state#0
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) main::state#1
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte) main::state#0
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte) main::state#1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -47,7 +47,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant (const byte) main::state#0 = main::ON
 Constant (const byte) main::state#1 = main::OFF
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [1] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::state#0
+Simplifying expression containing zero main::SCREEN in [1] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (const byte) main::state#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant inlined main::state#1 = (const byte) main::OFF
 Constant inlined main::state#0 = (const byte) main::ON
@@ -81,8 +81,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← (const byte) main::ON
-  [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF
+  [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON
+  [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -124,10 +124,10 @@ main: {
     .const OFF = 0
     .const ON = 1
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
     lda #OFF
     sta SCREEN+1
     jmp __breturn
@@ -139,8 +139,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::ON [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -176,10 +176,10 @@ main: {
     .const OFF = 0
     .const ON = 1
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
     lda #OFF
     sta SCREEN+1
     jmp __breturn
@@ -216,7 +216,7 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (const byte) main::OFF = (byte) 0
 (const byte) main::ON = (byte) 1
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (byte) main::state
 
 
@@ -243,11 +243,11 @@ main: {
     .const ON = 1
     .label SCREEN = $400
     // SCREEN[0] = state
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // SCREEN[1] = state
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::OFF -- _deref_pbuc1=vbuc2 
     lda #OFF
     sta SCREEN+1
     // main::@return

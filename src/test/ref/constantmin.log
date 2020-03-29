@@ -12,13 +12,13 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte*) BGCOL#1 ← phi( @1/(byte*) BGCOL#2 )
-  *((const byte*) SCREEN) ← (const byte) STAR
+  *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR
   *((byte*) BGCOL#1) ← (const byte) RED
   (byte) main::i#0 ← (byte) $28
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(number) 1
+  *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(number) 1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext($28,$4f)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast($28,$4f)
   if((bool~) main::$0) goto main::@1
@@ -46,8 +46,8 @@ SYMBOL TABLE SSA
 (byte*) BGCOL#1
 (byte*) BGCOL#2
 (const byte) RED = (byte) 2
-(const byte*) SCREEN = (byte*)(number) $400
-(const byte) STAR = (byte) $51
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte) STAR = (byte) $51
 (const byte*) VIC = (byte*)(number) $d000
 (void()) main()
 (bool~) main::$0
@@ -60,15 +60,15 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $10*2 in (byte*~) $0 ← (const byte*) VIC + (number) $10*(number) 2
 Adding number conversion cast (unumber) 1 in (byte*~) $1 ← (byte*~) $0 + (number) 1
-Adding number conversion cast (unumber) STAR+1 in *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(number) 1
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (byte) main::i#2) ← ((unumber)) (const byte) STAR+(number) 1
+Adding number conversion cast (unumber) STAR+1 in *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(number) 1
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (byte) main::i#2) ← ((unumber)) (const nomodify byte) STAR+(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) SCREEN + (byte) main::i#2) ← (unumber)(const byte) STAR+(unumber)(number) 1
+Inlining cast *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (unumber)(const nomodify byte) STAR+(unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant integer cast 1
-Simplifying constant integer cast (const byte) STAR+(unumber)(number) 1
+Simplifying constant integer cast (const nomodify byte) STAR+(unumber)(number) 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
@@ -133,12 +133,12 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (const byte) STAR
+  [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR
   [5] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [6] (byte) main::i#2 ← phi( main/(byte) $28 main::@1/(byte) main::i#1 )
-  [7] *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(byte) 1
+  [7] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte) $50) goto main::@1
   to:main::@return
@@ -189,7 +189,7 @@ __bend:
   // main
 main: {
     .label i = 2
-    // [4] *((const byte*) SCREEN) ← (const byte) STAR -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR -- _deref_pbuc1=vbuc2 
     lda #STAR
     sta SCREEN
     // [5] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED -- _deref_pbuc1=vbuc2 
@@ -207,7 +207,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #STAR+1
     ldy.z i
     sta SCREEN,y
@@ -226,13 +226,13 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (const byte) STAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(byte) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [4] *((const byte*) SCREEN) ← (const byte) STAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(byte) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -269,7 +269,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (const byte) STAR -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR -- _deref_pbuc1=vbuc2 
     lda #STAR
     sta SCREEN
     // [5] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED -- _deref_pbuc1=vbuc2 
@@ -286,7 +286,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #STAR+1
     sta SCREEN,x
     // [8] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -332,8 +332,8 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte*) BGCOL
 (const byte) RED = (byte) 2
-(const byte*) SCREEN = (byte*) 1024
-(const byte) STAR = (byte) $51
+(const nomodify byte*) SCREEN = (byte*) 1024
+(const nomodify byte) STAR = (byte) $51
 (const byte*) VIC = (byte*) 53248
 (void()) main()
 (label) main::@1
@@ -367,7 +367,7 @@ Score: 173
   // main
 main: {
     // *SCREEN = STAR
-    // [4] *((const byte*) SCREEN) ← (const byte) STAR -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR -- _deref_pbuc1=vbuc2 
     lda #STAR
     sta SCREEN
     // *BGCOL = RED
@@ -382,7 +382,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = (STAR+1)
-    // [7] *((const byte*) SCREEN + (byte) main::i#2) ← (const byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #STAR+1
     sta SCREEN,x
     // for(byte i: 40..79)

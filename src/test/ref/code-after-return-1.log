@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) b#6 ← phi( @2/(byte) b#12 )
-  *((const byte*) SCREEN + (number) 0) ← (byte) b#6
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte) b#6
   to:main::@return
 main::@return: scope:[main]  from main main::@2
   (byte) b#7 ← phi( main/(byte) b#6 main::@2/(byte) b#2 )
@@ -22,7 +22,7 @@ main::@1: scope:[main]  from
 main::@2: scope:[main]  from main::@1
   (byte) b#8 ← phi( main::@1/(byte) b#4 )
   (byte) b#2 ← (byte) b#8
-  *((const byte*) SCREEN + (number) 1) ← (byte) b#2
+  *((const nomodify byte*) SCREEN + (number) 1) ← (byte) b#2
   to:main::@return
 
 (void()) bb()
@@ -50,7 +50,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (byte) b
 (byte) b#0
 (byte) b#1
@@ -73,8 +73,8 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) b#6
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) b#2
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte) b#6
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (byte) b#2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -96,7 +96,7 @@ Identical Phi Values (byte) b#11 (byte) b#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte) b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (byte) 0) ← (const byte) b#0
+Simplifying expression containing zero SCREEN in [2] *((const nomodify byte*) SCREEN + (byte) 0) ← (const byte) b#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable - keeping the phi block (byte) b#1
 Successful SSA optimization PassNEliminateUnusedVars
@@ -136,7 +136,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (const byte) b#0
+  [4] *((const nomodify byte*) SCREEN) ← (const byte) b#0
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -177,7 +177,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     jmp __breturn
@@ -189,7 +189,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (const byte) b#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (const byte) b#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -224,7 +224,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     jmp __breturn
@@ -257,7 +257,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (byte) b
 (const byte) b#0 b = (byte) 0
 (void()) main()
@@ -286,7 +286,7 @@ Score: 12
   // main
 main: {
     // SCREEN[0] = b
-    // [4] *((const byte*) SCREEN) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     // main::@return

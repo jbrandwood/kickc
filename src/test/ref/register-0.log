@@ -22,7 +22,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte) idx ← (byte) 0
+  (volatile byte) idx ← (byte) 0
   to:@2
 
 (void()) print((byte) print::ch)
@@ -47,8 +47,8 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
-(byte) idx loadstore !zp[-1]:3
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(volatile byte) idx loadstore !zp[-1]:3
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -103,7 +103,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (byte) idx ← (byte) 0
+  [1] (volatile byte) idx ← (byte) 0
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -141,7 +141,7 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx loadstore !zp[-1]:3 0.18181818181818182
+(volatile byte) idx loadstore !zp[-1]:3 0.18181818181818182
 (void()) main()
 (void()) print((byte) print::ch)
 (byte) print::ch !reg byte a
@@ -171,7 +171,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -243,7 +243,7 @@ print: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldxidx staSCREEN,x incidx  } always clobbers reg byte x 
 Potential registers reg byte a [ print::ch#3 ] : reg byte a , 
 Potential registers zp[1]:3 [ idx ] : zp[1]:3 , 
@@ -275,7 +275,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [2] phi from @1 to @2 [phi:@1->@2]
@@ -380,8 +380,8 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
-(byte) idx loadstore !zp[-1]:3 zp[1]:3 0.18181818181818182
+(const nomodify byte*) SCREEN = (byte*) 1024
+(volatile byte) idx loadstore !zp[-1]:3 zp[1]:3 0.18181818181818182
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -412,7 +412,7 @@ Score: 324
 __bbegin:
   // @1
   // idx
-  // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+  // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z idx
   // [2] phi from @1 to @2 [phi:@1->@2]

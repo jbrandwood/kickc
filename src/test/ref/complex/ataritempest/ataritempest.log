@@ -24,7 +24,7 @@ entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
 
 interrupt(HARDWARE_ALL)(void()) nmiHandler()
 nmiHandler: scope:[nmiHandler]  from
-  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   to:nmiHandler::@return
 nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
   return 
@@ -32,7 +32,7 @@ nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
 
 (void()) main()
 main: scope:[main]  from @3
-  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -49,10 +49,10 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $c01a
+(const nomodify byte*) BGCOL = (byte*)(number) $c01a
 (const byte*) MESSAGE[]  = (byte*) "hello world"
 (const byte*) SCREEN[(number) $32]  = { fill( $32, 0) }
-(const void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
+(const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
 (void()) entryPoint()
 (bool~) entryPoint::$0
 (label) entryPoint::@1
@@ -116,7 +116,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  [4] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -124,7 +124,7 @@ main::@return: scope:[main]  from main
 
 interrupt(HARDWARE_ALL)(void()) nmiHandler()
 nmiHandler: scope:[nmiHandler]  from
-  [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   to:nmiHandler::@return
 nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
   [7] return 
@@ -193,7 +193,7 @@ __bend:
 .segment Code
   // main
 main: {
-    // [4] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [4] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp __breturn
     // main::@return
@@ -207,7 +207,7 @@ nmiHandler: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp __breturn
     // nmiHandler::@return
@@ -313,7 +313,7 @@ __bend:
 .segment Code
   // main
 main: {
-    // [4] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [4] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp __breturn
     // main::@return
@@ -327,7 +327,7 @@ nmiHandler: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     jmp __breturn
     // nmiHandler::@return
@@ -406,10 +406,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 49178
+(const nomodify byte*) BGCOL = (byte*) 49178
 (const byte*) MESSAGE[]  = (byte*) "hello world"
 (const byte*) SCREEN[(number) $32]  = { fill( $32, 0) }
-(const void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
+(const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
 (void()) entryPoint()
 (label) entryPoint::@1
 (label) entryPoint::@return
@@ -453,7 +453,7 @@ __bbegin:
   // main
 main: {
     // (*BGCOL)++;
-    // [4] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [4] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // main::@return
     // }
@@ -467,7 +467,7 @@ nmiHandler: {
     stx regx+1
     sty regy+1
     // (*BGCOL)++;
-    // [6] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [6] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // nmiHandler::@return
     // }

@@ -58,9 +58,9 @@ print: scope:[print]  from main main::@1
   (byte) print::p_y#2 ← phi( main/(byte) print::p_y#0 main::@1/(byte) print::p_y#1 )
   (byte) idx#11 ← phi( main/(byte) idx#14 main::@1/(byte) idx#0 )
   (byte) print::p_x#2 ← phi( main/(byte) print::p_x#0 main::@1/(byte) print::p_x#1 )
-  *((const byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2
+  *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2
   (byte) idx#4 ← ++ (byte) idx#11
-  *((const byte*) SCREEN + (byte) idx#4) ← (byte) print::p_y#2
+  *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) print::p_y#2
   (byte) idx#5 ← ++ (byte) idx#4
   to:print::@return
 print::@return: scope:[print]  from print
@@ -86,7 +86,7 @@ SYMBOL TABLE SSA
 (label) @end
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -241,9 +241,9 @@ main::@return: scope:[main]  from main::@1
 print: scope:[print]  from main main::@1
   [9] (byte) idx#11 ← phi( main/(byte) 0 main::@1/(byte) idx#12 )
   [9] (byte) print::p_x#2 ← phi( main/(byte) 1 main::@1/(byte) 2 )
-  [10] *((const byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2
+  [10] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2
   [11] (byte) idx#4 ← ++ (byte) idx#11
-  [12] *((const byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1
+  [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1
   [13] (byte) idx#12 ← ++ (byte) idx#4
   to:print::@return
 print::@return: scope:[print]  from print
@@ -343,7 +343,7 @@ main: {
 // print(byte zp(2) p_x)
 print: {
     .label p_x = 2
-    // [10] *((const byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z p_x
     ldy.z idx_1
     sta SCREEN,y
@@ -351,7 +351,7 @@ print: {
     ldy.z idx_1
     iny
     sty.z idx
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #main.p1_y
     ldy.z idx
     sta SCREEN,y
@@ -368,9 +368,9 @@ print: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 [ idx#4 ] ( main:2::print:5 [ idx#4 ] { }  main:2::print:7 [ idx#4 ] { { idx#11 = idx#12 } }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 [ idx#4 ] ( main:2::print:5 [ idx#4 ] { }  main:2::print:7 [ idx#4 ] { { idx#11 = idx#12 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ idx#4 ]
-Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 [ idx#4 ] ( main:2::print:5 [ idx#4 ] { }  main:2::print:7 [ idx#4 ] { { idx#11 = idx#12 } }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 [ idx#4 ] ( main:2::print:5 [ idx#4 ] { }  main:2::print:7 [ idx#4 ] { { idx#11 = idx#12 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ print::p_x#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ idx#11 idx#12 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ idx#4 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -443,11 +443,11 @@ main: {
   // print
 // print(byte register(A) p_x)
 print: {
-    // [10] *((const byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #main.p1_y
     sta SCREEN,x
     // [13] (byte) idx#12 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
@@ -492,7 +492,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (byte) idx
 (byte) idx#11 reg byte x 106.5
 (byte) idx#12 reg byte x 28.0
@@ -562,13 +562,13 @@ main: {
 // print(byte register(A) p_x)
 print: {
     // SCREEN[idx++] = p.x
-    // [10] *((const byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) print::p_x#2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // SCREEN[idx++] = p.x;
     // [11] (byte) idx#4 ← ++ (byte) idx#11 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = p.y
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (const byte) main::p1_y#1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #main.p1_y
     sta SCREEN,x
     // SCREEN[idx++] = p.y;

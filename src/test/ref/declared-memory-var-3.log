@@ -11,10 +11,10 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 0
   (byte*~) main::$0 ← (byte*)(const struct foo*) main::barp + (const byte) OFFSET_STRUCT_FOO_THING1
-  *((const byte*) main::SCREEN + (byte) main::i#0) ← *((byte*~) main::$0)
+  *((const nomodify byte*) main::SCREEN + (byte) main::i#0) ← *((byte*~) main::$0)
   (byte) main::i#1 ← ++ (byte) main::i#0
   (byte*~) main::$1 ← (byte*)(const struct foo*) main::barp + (const byte) OFFSET_STRUCT_FOO_THING2
-  *((const byte*) main::SCREEN + (byte) main::i#1) ← *((byte*~) main::$1)
+  *((const nomodify byte*) main::SCREEN + (byte) main::i#1) ← *((byte*~) main::$1)
   (byte) main::i#2 ← ++ (byte) main::i#1
   to:main::@return
 main::@return: scope:[main]  from main
@@ -41,7 +41,7 @@ SYMBOL TABLE SSA
 (byte*~) main::$0
 (byte*~) main::$1
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (const struct foo*) main::barp = &(struct foo) bar
 (byte) main::i
 (byte) main::i#0
@@ -58,7 +58,7 @@ Constant (const byte*) main::$0 = (byte*)main::barp+OFFSET_STRUCT_FOO_THING1
 Constant (const byte*) main::$1 = (byte*)main::barp+OFFSET_STRUCT_FOO_THING2
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero (byte*)main::barp in 
-Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (const byte) main::i#0) ← *((const byte*) main::$0)
+Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (const byte) main::i#0) ← *((const byte*) main::$0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) main::i#2 and assignment [3] (byte) main::i#2 ← ++ (byte) main::i#1
 Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
@@ -105,8 +105,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp)
-  [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2)
+  [4] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp)
+  [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2)
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -155,10 +155,10 @@ __bend:
 main: {
     .label SCREEN = $400
     .label barp = bar
-    // [4] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) -- _deref_pbuc1=_deref_pbuc2 
     lda barp
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda barp+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     jmp __breturn
@@ -171,8 +171,8 @@ main: {
   bar: .byte 'a', 'b'
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[2] [ bar ] : mem[2] , 
 
 REGISTER UPLIFT SCOPES
@@ -212,10 +212,10 @@ __bend:
 main: {
     .label SCREEN = $400
     .label barp = bar
-    // [4] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) -- _deref_pbuc1=_deref_pbuc2 
     lda barp
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda barp+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     jmp __breturn
@@ -255,7 +255,7 @@ FINAL SYMBOL TABLE
 (byte) foo::thing2
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (const struct foo*) main::barp = &(struct foo) bar
 (byte) main::i
 
@@ -285,11 +285,11 @@ main: {
     .label SCREEN = $400
     .label barp = bar
     // SCREEN[i++] = barp->thing1
-    // [4] *((const byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← *((byte*)(const struct foo*) main::barp) -- _deref_pbuc1=_deref_pbuc2 
     lda barp
     sta SCREEN
     // SCREEN[i++] = barp->thing2
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda barp+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     // main::@return

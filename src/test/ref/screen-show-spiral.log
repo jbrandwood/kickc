@@ -568,9 +568,9 @@ main::@2: scope:[main]  from main::@1
   (byte*) SCREEN_DIST#2 ← phi( main::@1/(byte*) SCREEN_DIST#4 )
   (byte*) main::dist#0 ← (byte*) SCREEN_DIST#2
   (byte*) main::angle#0 ← (byte*) SCREEN_ANGLE#2
-  (byte*) main::fill#0 ← (const byte*) SCREEN_FILL
+  (byte*) main::fill#0 ← (const nomodify byte*) SCREEN_FILL
   (word) main::min_dist_angle#0 ← (word) $ffff
-  (byte*) main::min_fill#0 ← (const byte*) SCREEN_FILL
+  (byte*) main::min_fill#0 ← (const nomodify byte*) SCREEN_FILL
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@5
   (byte*) SCREEN_ANGLE#10 ← phi( main::@2/(byte*) SCREEN_ANGLE#2 main::@5/(byte*) SCREEN_ANGLE#9 )
@@ -583,7 +583,7 @@ main::@4: scope:[main]  from main::@2 main::@5
   (byte*) main::angle#4 ← phi( main::@2/(byte*) main::angle#0 main::@5/(byte*) main::angle#1 )
   (byte*) main::dist#4 ← phi( main::@2/(byte*) main::dist#0 main::@5/(byte*) main::dist#1 )
   (byte*) main::fill#2 ← phi( main::@2/(byte*) main::fill#0 main::@5/(byte*) main::fill#1 )
-  (bool~) main::$2 ← *((byte*) main::fill#2) != (const byte) FILL_CHAR
+  (bool~) main::$2 ← *((byte*) main::fill#2) != (const nomodify byte) FILL_CHAR
   (bool~) main::$3 ← ! (bool~) main::$2
   if((bool~) main::$3) goto main::@5
   to:main::@7
@@ -601,7 +601,7 @@ main::@5: scope:[main]  from main::@4 main::@7 main::@8
   (byte*) main::dist#1 ← ++ (byte*) main::dist#2
   (byte*) main::angle#1 ← ++ (byte*) main::angle#2
   (byte*) main::fill#1 ← ++ (byte*) main::fill#3
-  (bool~) main::$6 ← (byte*) main::fill#1 < (const byte*) SCREEN_FILL+(number) $3e8
+  (bool~) main::$6 ← (byte*) main::fill#1 < (const nomodify byte*) SCREEN_FILL+(number) $3e8
   if((bool~) main::$6) goto main::@4
   to:main::@9
 main::@7: scope:[main]  from main::@4
@@ -652,7 +652,7 @@ main::@12: scope:[main]  from main::@9
   (byte*) SCREEN_ANGLE#6 ← phi( main::@9/(byte*) SCREEN_ANGLE#8 )
   (byte*) SCREEN_DIST#5 ← phi( main::@9/(byte*) SCREEN_DIST#9 )
   (byte*) main::min_fill#2 ← phi( main::@9/(byte*) main::min_fill#3 )
-  *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR
+  *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR
   to:main::@1
 main::@return: scope:[main]  from main::@1 main::@9
   (word*) SQUARES#13 ← phi( main::@1/(word*) SQUARES#22 main::@9/(word*) SQUARES#23 )
@@ -988,11 +988,11 @@ SYMBOL TABLE SSA
 (label) @5
 (label) @begin
 (label) @end
-(const word*) CORDIC_ATAN2_ANGLES_16[(const byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+(const word*) CORDIC_ATAN2_ANGLES_16[(const nomodify byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-(const byte) CORDIC_ITERATIONS_16 = (byte) $f
-(const byte) FILL_CHAR = (byte) '@'
+(const nomodify byte) CORDIC_ITERATIONS_16 = (byte) $f
+(const nomodify byte) FILL_CHAR = (byte) '@'
 (const byte*) HEAP_TOP = (byte*)(number) $a000
 (byte) NUM_SQUARES
 (byte) NUM_SQUARES#0
@@ -1071,7 +1071,7 @@ SYMBOL TABLE SSA
 (byte*) SCREEN_DIST#7
 (byte*) SCREEN_DIST#8
 (byte*) SCREEN_DIST#9
-(const byte*) SCREEN_FILL = (byte*)(number) $400
+(const nomodify byte*) SCREEN_FILL = (byte*)(number) $400
 (const byte) SIZEOF_WORD = (byte) 2
 (word*) SQUARES
 (word*) SQUARES#0
@@ -1823,7 +1823,7 @@ Adding number conversion cast (unumber) $8000 in (number~) atan2_16::$12 ← (nu
 Adding number conversion cast (unumber) atan2_16::$12 in (number~) atan2_16::$12 ← (unumber)(number) $8000 - (word) atan2_16::angle#9
 Adding number conversion cast (unumber) $3e8 in (word) malloc::size#1 ← (number) $3e8
 Adding number conversion cast (unumber) $3e8 in (word) malloc::size#2 ← (number) $3e8
-Adding number conversion cast (unumber) $3e8 in (bool~) main::$6 ← (byte*) main::fill#1 < (const byte*) SCREEN_FILL+(number) $3e8
+Adding number conversion cast (unumber) $3e8 in (bool~) main::$6 ← (byte*) main::fill#1 < (const nomodify byte*) SCREEN_FILL+(number) $3e8
 Adding number conversion cast (unumber) $ffff in (bool~) main::$7 ← (word) main::min_dist_angle#3 == (number) $ffff
 Adding number conversion cast (unumber) $28*$c in (byte*~) init_angle_screen::$0 ← (byte*) init_angle_screen::screen#1 + (number) $28*(number) $c
 Adding number conversion cast (unumber) $28*$c in (byte*~) init_angle_screen::$1 ← (byte*) init_angle_screen::screen#1 + (number) $28*(number) $c
@@ -2035,7 +2035,7 @@ Inversing boolean not [128] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi
 Inversing boolean not [137] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [136] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
 Inversing boolean not [148] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [147] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
 Inversing boolean not [172] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [171] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
-Inversing boolean not [220] (bool~) main::$3 ← *((byte*) main::fill#2) == (const byte) FILL_CHAR from [219] (bool~) main::$2 ← *((byte*) main::fill#2) != (const byte) FILL_CHAR
+Inversing boolean not [220] (bool~) main::$3 ← *((byte*) main::fill#2) == (const nomodify byte) FILL_CHAR from [219] (bool~) main::$2 ← *((byte*) main::fill#2) != (const nomodify byte) FILL_CHAR
 Inversing boolean not [232] (bool~) main::$5 ← (word) main::dist_angle#0 >= (word) main::min_dist_angle#2 from [231] (bool~) main::$4 ← (word) main::dist_angle#0 < (word) main::min_dist_angle#2
 Inversing boolean not [239] (bool~) main::$8 ← (word) main::min_dist_angle#3 != (word) $ffff from [238] (bool~) main::$7 ← (word) main::min_dist_angle#3 == (word) $ffff
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -2335,8 +2335,8 @@ Simple Condition (bool~) atan2_16::$19 [94] if((byte) 0==(byte) atan2_16::shift#
 Simple Condition (bool~) atan2_16::$20 [97] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@26
 Simple Condition (bool~) atan2_16::$21 [111] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@15
 Simple Condition (bool~) atan2_16::$14 [114] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
-Simple Condition (bool~) main::$3 [146] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@5
-Simple Condition (bool~) main::$6 [152] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@4
+Simple Condition (bool~) main::$3 [146] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@5
+Simple Condition (bool~) main::$6 [152] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@4
 Simple Condition (bool~) main::$5 [155] if((word) main::dist_angle#0>=(word) main::min_dist_angle#2) goto main::@5
 Simple Condition (bool~) main::$8 [157] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@12
 Simple Condition (bool~) init_angle_screen::$2 [170] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
@@ -2378,7 +2378,7 @@ Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [138] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [109] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
-Resolved ranged comparison value [111] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
+Resolved ranged comparison value [111] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
 Resolved ranged next value [196] init_angle_screen::y#1 ← ++ init_angle_screen::y#5 to ++
 Resolved ranged comparison value [198] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
 Resolved ranged next value [227] init_dist_screen::y#1 ← ++ init_dist_screen::y#10 to ++
@@ -2388,8 +2388,8 @@ Rewriting conditional comparison [221] if((byte) init_dist_screen::x#2<=(byte) $
 Eliminating unused constant (const byte) NUM_SQUARES#0
 Eliminating unused constant (const word*) SQUARES#0
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) CORDIC_ITERATIONS_16-1+1 in if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
-Adding number conversion cast (unumber) 1 in if((byte) atan2_16::i#1==(unumber)(const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
+Adding number conversion cast (unumber) CORDIC_ITERATIONS_16-1+1 in if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
+Adding number conversion cast (unumber) 1 in if((byte) atan2_16::i#1==(unumber)(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
 Adding number conversion cast (unumber) $13+1 in if((byte) init_angle_screen::x#2<(byte) $13+(number) 1) goto init_angle_screen::@3
 Adding number conversion cast (unumber) 1 in if((byte) init_angle_screen::x#2<(unumber)(byte) $13+(number) 1) goto init_angle_screen::@3
 Adding number conversion cast (unumber) $d in if((byte) init_angle_screen::y#1!=(number) $d) goto init_angle_screen::@1
@@ -2397,7 +2397,7 @@ Adding number conversion cast (unumber) $13+1 in if((byte) init_dist_screen::x#2
 Adding number conversion cast (unumber) 1 in if((byte) init_dist_screen::x#2<(unumber)(byte) $13+(number) 1) goto init_dist_screen::@6
 Adding number conversion cast (unumber) $d in if((byte) init_dist_screen::y#1!=(number) $d) goto init_dist_screen::@1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast (const byte) CORDIC_ITERATIONS_16-(byte) 1+(unumber)(number) 1
+Simplifying constant integer cast (const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(unumber)(number) 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast (byte) $13+(unumber)(number) 1
 Simplifying constant integer cast 1
@@ -2462,7 +2462,7 @@ Inlining constant with var siblings (const byte) init_dist_screen::y#0
 Inlining constant with var siblings (const byte) init_dist_screen::x#0
 Inlining constant with var siblings (const byte) init_dist_screen::xb#0
 Inlining constant with var siblings (const byte*) heap_head#0
-Constant inlined main::fill#0 = (const byte*) SCREEN_FILL
+Constant inlined main::fill#0 = (const nomodify byte*) SCREEN_FILL
 Constant inlined malloc::size#2 = (word) $3e8
 Constant inlined init_squares::sqr#0 = (word) 0
 Constant inlined bsearch16u::num#2 = (const byte) NUM_SQUARES#3
@@ -2480,7 +2480,7 @@ Constant inlined init_dist_screen::xb#0 = (byte) $27
 Constant inlined main::min_dist_angle#0 = (word) $ffff
 Constant inlined init_dist_screen::x#0 = (byte) 0
 Constant inlined init_squares::i#0 = (byte) 0
-Constant inlined main::min_fill#0 = (const byte*) SCREEN_FILL
+Constant inlined main::min_fill#0 = (const nomodify byte*) SCREEN_FILL
 Constant inlined heap_head#0 = (const byte*) HEAP_TOP
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting bsearch16u::@18(between bsearch16u::@9 and bsearch16u::@10)
@@ -2701,12 +2701,12 @@ main::@1: scope:[main]  from main::@7 main::@8
   [14] (byte*) main::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@9
-  [15] (byte*) main::min_fill#5 ← phi( main::@1/(const byte*) SCREEN_FILL main::@9/(byte*) main::min_fill#2 )
+  [15] (byte*) main::min_fill#5 ← phi( main::@1/(const nomodify byte*) SCREEN_FILL main::@9/(byte*) main::min_fill#2 )
   [15] (word) main::min_dist_angle#2 ← phi( main::@1/(word) $ffff main::@9/(word) main::min_dist_angle#6 )
   [15] (byte*) main::angle#2 ← phi( main::@1/(byte*) main::angle#0 main::@9/(byte*) main::angle#1 )
   [15] (byte*) main::dist#2 ← phi( main::@1/(byte*) main::dist#0 main::@9/(byte*) main::dist#1 )
-  [15] (byte*) main::fill#2 ← phi( main::@1/(const byte*) SCREEN_FILL main::@9/(byte*) main::fill#1 )
-  [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10
+  [15] (byte*) main::fill#2 ← phi( main::@1/(const nomodify byte*) SCREEN_FILL main::@9/(byte*) main::fill#1 )
+  [16] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@10
   to:main::@4
 main::@4: scope:[main]  from main::@2
   [17] (word) main::dist_angle#0 ← *((byte*) main::dist#2) w= *((byte*) main::angle#2)
@@ -2721,7 +2721,7 @@ main::@3: scope:[main]  from main::@10 main::@11 main::@5
   [21] (byte*) main::dist#1 ← ++ (byte*) main::dist#2
   [22] (byte*) main::angle#1 ← ++ (byte*) main::angle#2
   [23] (byte*) main::fill#1 ← ++ (byte*) main::fill#2
-  [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9
+  [24] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@9
   to:main::@6
 main::@6: scope:[main]  from main::@3
   [25] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@7
@@ -2730,7 +2730,7 @@ main::@return: scope:[main]  from main::@6
   [26] return 
   to:@return
 main::@7: scope:[main]  from main::@6
-  [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR
+  [27] *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR
   to:main::@1
 main::@9: scope:[main]  from main::@3
   [28] (word) main::min_dist_angle#6 ← (word) main::min_dist_angle#3
@@ -2871,7 +2871,7 @@ atan2_16::@19: scope:[atan2_16]  from atan2_16::@18 atan2_16::@20
   [93] (word) atan2_16::angle#13 ← phi( atan2_16::@18/(word) atan2_16::angle#2 atan2_16::@20/(word) atan2_16::angle#3 )
   [93] (signed word) atan2_16::yi#8 ← phi( atan2_16::@18/(signed word) atan2_16::yi#1 atan2_16::@20/(signed word) atan2_16::yi#2 )
   [94] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2
-  [95] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12
+  [95] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12
   to:atan2_16::@10
 atan2_16::@18: scope:[atan2_16]  from atan2_16::@17
   [96] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5
@@ -3679,7 +3679,7 @@ main: {
     sta.z angle+1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
-    // [15] phi (byte*) main::min_fill#5 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) main::min_fill#5 = (const nomodify byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z min_fill
     lda #>SCREEN_FILL
@@ -3691,7 +3691,7 @@ main: {
     sta.z min_dist_angle+1
     // [15] phi (byte*) main::angle#2 = (byte*) main::angle#0 [phi:main::@1->main::@2#2] -- register_copy 
     // [15] phi (byte*) main::dist#2 = (byte*) main::dist#0 [phi:main::@1->main::@2#3] -- register_copy 
-    // [15] phi (byte*) main::fill#2 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#4] -- pbuz1=pbuc1 
+    // [15] phi (byte*) main::fill#2 = (const nomodify byte*) SCREEN_FILL [phi:main::@1->main::@2#4] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z fill
     lda #>SCREEN_FILL
@@ -3699,7 +3699,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    // [16] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #FILL_CHAR
     ldy #0
     cmp (fill),y
@@ -3754,7 +3754,7 @@ main: {
     bne !+
     inc.z fill+1
   !:
-    // [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
+    // [24] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
     lda.z fill+1
     cmp #>SCREEN_FILL+$3e8
     bcc __b9
@@ -3780,7 +3780,7 @@ main: {
     rts
     // main::@7
   __b7:
-    // [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
+    // [27] *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
     // Fill the found location
     lda #FILL_CHAR
     ldy #0
@@ -4266,7 +4266,7 @@ atan2_16: {
   __b19:
     // [94] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [95] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
+    // [95] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_16-1+1
     cmp.z i
     beq __b12_from___b19
@@ -4981,13 +4981,13 @@ Statement [9] (byte*) init_dist_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#
 Statement [11] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 ] { }  ) always clobbers reg byte a 
 Statement [13] (byte*) main::dist#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 ] { }  ) always clobbers reg byte a 
 Statement [14] (byte*) main::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 main::angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 main::angle#0 ] { }  ) always clobbers reg byte a 
-Statement [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [17] (word) main::dist_angle#0 ← *((byte*) main::dist#2) w= *((byte*) main::angle#2) [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [18] if((word) main::dist_angle#0>=(word) main::min_dist_angle#2) goto main::@11 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] { }  ) always clobbers reg byte a 
 Statement [19] (byte*) main::min_fill#10 ← (byte*) main::fill#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::dist_angle#0 main::min_fill#10 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::dist_angle#0 main::min_fill#10 ] { }  ) always clobbers reg byte a 
-Statement [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] { }  ) always clobbers reg byte a 
+Statement [24] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@9 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] { }  ) always clobbers reg byte a 
 Statement [25] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::min_fill#2 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::min_fill#2 ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [27] *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [28] (word) main::min_dist_angle#6 ← (word) main::min_dist_angle#3 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_dist_angle#6 main::min_fill#2 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_dist_angle#6 main::min_fill#2 ] { }  ) always clobbers reg byte a 
 Statement [29] (word) main::min_dist_angle#8 ← (word) main::min_dist_angle#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#8 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#8 ] { }  ) always clobbers reg byte a 
 Statement [30] (word) main::min_dist_angle#7 ← (word) main::min_dist_angle#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#7 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#7 ] { }  ) always clobbers reg byte a 
@@ -5105,13 +5105,13 @@ Statement [9] (byte*) init_dist_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#
 Statement [11] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 ] { }  ) always clobbers reg byte a 
 Statement [13] (byte*) main::dist#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 ] { }  ) always clobbers reg byte a 
 Statement [14] (byte*) main::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 main::angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 main::angle#0 ] { }  ) always clobbers reg byte a 
-Statement [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [17] (word) main::dist_angle#0 ← *((byte*) main::dist#2) w= *((byte*) main::angle#2) [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [18] if((word) main::dist_angle#0>=(word) main::min_dist_angle#2) goto main::@11 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] { }  ) always clobbers reg byte a 
 Statement [19] (byte*) main::min_fill#10 ← (byte*) main::fill#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::dist_angle#0 main::min_fill#10 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::dist_angle#0 main::min_fill#10 ] { }  ) always clobbers reg byte a 
-Statement [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] { }  ) always clobbers reg byte a 
+Statement [24] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@9 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] { }  ) always clobbers reg byte a 
 Statement [25] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::min_fill#2 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::min_fill#2 ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [27] *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [28] (word) main::min_dist_angle#6 ← (word) main::min_dist_angle#3 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_dist_angle#6 main::min_fill#2 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_dist_angle#6 main::min_fill#2 ] { }  ) always clobbers reg byte a 
 Statement [29] (word) main::min_dist_angle#8 ← (word) main::min_dist_angle#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#8 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#8 ] { }  ) always clobbers reg byte a 
 Statement [30] (word) main::min_dist_angle#7 ← (word) main::min_dist_angle#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#7 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#7 ] { }  ) always clobbers reg byte a 
@@ -5214,13 +5214,13 @@ Statement [9] (byte*) init_dist_screen::screen#0 ← (byte*)(void*) SCREEN_DIST#
 Statement [11] (byte*) init_angle_screen::screen#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 ] { }  ) always clobbers reg byte a 
 Statement [13] (byte*) main::dist#0 ← (byte*)(void*) SCREEN_DIST#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 ] { }  ) always clobbers reg byte a 
 Statement [14] (byte*) main::angle#0 ← (byte*)(void*) SCREEN_ANGLE#0 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 main::angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::dist#0 main::angle#0 ] { }  ) always clobbers reg byte a 
-Statement [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@10 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [17] (word) main::dist_angle#0 ← *((byte*) main::dist#2) w= *((byte*) main::angle#2) [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [18] if((word) main::dist_angle#0>=(word) main::min_dist_angle#2) goto main::@11 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_dist_angle#2 main::min_fill#5 main::dist_angle#0 ] { }  ) always clobbers reg byte a 
 Statement [19] (byte*) main::min_fill#10 ← (byte*) main::fill#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::dist_angle#0 main::min_fill#10 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::dist_angle#0 main::min_fill#10 ] { }  ) always clobbers reg byte a 
-Statement [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] { }  ) always clobbers reg byte a 
+Statement [24] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@9 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_fill#2 main::min_dist_angle#3 ] { }  ) always clobbers reg byte a 
 Statement [25] if((word) main::min_dist_angle#3!=(word) $ffff) goto main::@7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::min_fill#2 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::min_fill#2 ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [27] *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [28] (word) main::min_dist_angle#6 ← (word) main::min_dist_angle#3 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_dist_angle#6 main::min_fill#2 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#1 main::dist#1 main::angle#1 main::min_dist_angle#6 main::min_fill#2 ] { }  ) always clobbers reg byte a 
 Statement [29] (word) main::min_dist_angle#8 ← (word) main::min_dist_angle#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#8 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#8 ] { }  ) always clobbers reg byte a 
 Statement [30] (word) main::min_dist_angle#7 ← (word) main::min_dist_angle#2 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#7 ] ( main:7 [ SCREEN_DIST#0 SCREEN_ANGLE#0 main::fill#2 main::dist#2 main::angle#2 main::min_fill#5 main::min_dist_angle#7 ] { }  ) always clobbers reg byte a 
@@ -5631,7 +5631,7 @@ main: {
     sta.z angle+1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
-    // [15] phi (byte*) main::min_fill#5 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) main::min_fill#5 = (const nomodify byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z min_fill
     lda #>SCREEN_FILL
@@ -5643,7 +5643,7 @@ main: {
     sta.z min_dist_angle+1
     // [15] phi (byte*) main::angle#2 = (byte*) main::angle#0 [phi:main::@1->main::@2#2] -- register_copy 
     // [15] phi (byte*) main::dist#2 = (byte*) main::dist#0 [phi:main::@1->main::@2#3] -- register_copy 
-    // [15] phi (byte*) main::fill#2 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#4] -- pbuz1=pbuc1 
+    // [15] phi (byte*) main::fill#2 = (const nomodify byte*) SCREEN_FILL [phi:main::@1->main::@2#4] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z fill
     lda #>SCREEN_FILL
@@ -5651,7 +5651,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    // [16] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #FILL_CHAR
     ldy #0
     cmp (fill),y
@@ -5706,7 +5706,7 @@ main: {
     bne !+
     inc.z fill+1
   !:
-    // [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
+    // [24] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
     lda.z fill+1
     cmp #>SCREEN_FILL+$3e8
     bcc __b9
@@ -5732,7 +5732,7 @@ main: {
     rts
     // main::@7
   __b7:
-    // [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
+    // [27] *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
     // Fill the found location
     lda #FILL_CHAR
     ldy #0
@@ -6172,7 +6172,7 @@ atan2_16: {
   __b19:
     // [94] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [95] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
+    // [95] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
     beq __b12_from___b19
     // [68] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
@@ -7004,11 +7004,11 @@ FINAL SYMBOL TABLE
 (label) @4
 (label) @begin
 (label) @end
-(const word*) CORDIC_ATAN2_ANGLES_16[(const byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+(const word*) CORDIC_ATAN2_ANGLES_16[(const nomodify byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-(const byte) CORDIC_ITERATIONS_16 = (byte) $f
-(const byte) FILL_CHAR = (byte) '@'
+(const nomodify byte) CORDIC_ITERATIONS_16 = (byte) $f
+(const nomodify byte) FILL_CHAR = (byte) '@'
 (const byte*) HEAP_TOP = (byte*) 40960
 (byte) NUM_SQUARES
 (const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
@@ -7020,7 +7020,7 @@ FINAL SYMBOL TABLE
 (void*) SCREEN_ANGLE#0 SCREEN_ANGLE zp[2]:27 0.08695652173913043
 (byte*) SCREEN_DIST
 (void*) SCREEN_DIST#0 SCREEN_DIST zp[2]:25 0.08
-(const byte*) SCREEN_FILL = (byte*) 1024
+(const nomodify byte*) SCREEN_FILL = (byte*) 1024
 (const byte) SIZEOF_WORD = (byte) 2
 (word*) SQUARES
 (void*) SQUARES#1 SQUARES zp[2]:23 16.14516129032258
@@ -7485,7 +7485,7 @@ main: {
     lda.z SCREEN_ANGLE+1
     sta.z angle+1
     // [15] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-    // [15] phi (byte*) main::min_fill#5 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) main::min_fill#5 = (const nomodify byte*) SCREEN_FILL [phi:main::@1->main::@2#0] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z min_fill
     lda #>SCREEN_FILL
@@ -7497,7 +7497,7 @@ main: {
     sta.z min_dist_angle+1
     // [15] phi (byte*) main::angle#2 = (byte*) main::angle#0 [phi:main::@1->main::@2#2] -- register_copy 
     // [15] phi (byte*) main::dist#2 = (byte*) main::dist#0 [phi:main::@1->main::@2#3] -- register_copy 
-    // [15] phi (byte*) main::fill#2 = (const byte*) SCREEN_FILL [phi:main::@1->main::@2#4] -- pbuz1=pbuc1 
+    // [15] phi (byte*) main::fill#2 = (const nomodify byte*) SCREEN_FILL [phi:main::@1->main::@2#4] -- pbuz1=pbuc1 
     lda #<SCREEN_FILL
     sta.z fill
     lda #>SCREEN_FILL
@@ -7505,7 +7505,7 @@ main: {
     // main::@2
   __b2:
     // if(*fill!=FILL_CHAR)
-    // [16] if(*((byte*) main::fill#2)==(const byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    // [16] if(*((byte*) main::fill#2)==(const nomodify byte) FILL_CHAR) goto main::@10 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #FILL_CHAR
     ldy #0
     cmp (fill),y
@@ -7557,7 +7557,7 @@ main: {
     inc.z fill+1
   !:
     // while (fill<SCREEN_FILL+1000)
-    // [24] if((byte*) main::fill#1<(const byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
+    // [24] if((byte*) main::fill#1<(const nomodify byte*) SCREEN_FILL+(word) $3e8) goto main::@9 -- pbuz1_lt_pbuc1_then_la1 
     lda.z fill+1
     cmp #>SCREEN_FILL+$3e8
     bcc __b9
@@ -7582,7 +7582,7 @@ main: {
     // main::@7
   __b7:
     // *min_fill = FILL_CHAR
-    // [27] *((byte*) main::min_fill#2) ← (const byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
+    // [27] *((byte*) main::min_fill#2) ← (const nomodify byte) FILL_CHAR -- _deref_pbuz1=vbuc1 
     // Fill the found location
     lda #FILL_CHAR
     ldy #0
@@ -8006,7 +8006,7 @@ atan2_16: {
     // for( byte i: 0..CORDIC_ITERATIONS_16-1)
     // [94] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [95] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
+    // [95] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+
     jmp __b12

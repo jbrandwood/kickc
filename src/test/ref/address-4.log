@@ -20,10 +20,10 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte~) main::$1 ← (byte) main::i * (const byte) SIZEOF_WORD
-  *((const word*) SCREEN + (byte~) main::$1) ← (const word) main::ch
+  *((const word*) SCREEN + (byte~) main::$1) ← (const nomodify word) main::ch
   (byte) main::i ← ++ (byte) main::i
   (byte~) main::$2 ← (byte) main::i * (const byte) SIZEOF_WORD
-  *((const word*) SCREEN + (byte~) main::$2) ← (const word) main::ch
+  *((const word*) SCREEN + (byte~) main::$2) ← (const nomodify word) main::ch
   (byte) main::i ← ++ (byte) main::i
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -50,7 +50,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const word) main::ch = (word) $102
+(const nomodify word) main::ch = (word) $102
 (byte) main::i loadstore !zp[-1]:2
 
 Adding number conversion cast (unumber) 8 in (bool~) main::$0 ← (byte) main::i < (number) 8
@@ -104,10 +104,10 @@ main::@return: scope:[main]  from main::@1
   to:@return
 main::@2: scope:[main]  from main::@1
   [7] (byte~) main::$1 ← (byte) main::i << (byte) 1
-  [8] *((const word*) SCREEN + (byte~) main::$1) ← (const word) main::ch
+  [8] *((const word*) SCREEN + (byte~) main::$1) ← (const nomodify word) main::ch
   [9] (byte) main::i ← ++ (byte) main::i
   [10] (byte~) main::$2 ← (byte) main::i << (byte) 1
-  [11] *((const word*) SCREEN + (byte~) main::$2) ← (const word) main::ch
+  [11] *((const word*) SCREEN + (byte~) main::$2) ← (const nomodify word) main::ch
   [12] (byte) main::i ← ++ (byte) main::i
   to:main::@1
 
@@ -181,7 +181,7 @@ main: {
     lda.z i
     asl
     sta.z __1
-    // [8] *((const word*) SCREEN + (byte~) main::$1) ← (const word) main::ch -- pwuc1_derefidx_vbuz1=vwuc2 
+    // [8] *((const word*) SCREEN + (byte~) main::$1) ← (const nomodify word) main::ch -- pwuc1_derefidx_vbuz1=vwuc2 
     ldy.z __1
     lda #<ch
     sta SCREEN,y
@@ -193,7 +193,7 @@ main: {
     lda.z i
     asl
     sta.z __2
-    // [11] *((const word*) SCREEN + (byte~) main::$2) ← (const word) main::ch -- pwuc1_derefidx_vbuz1=vwuc2 
+    // [11] *((const word*) SCREEN + (byte~) main::$2) ← (const nomodify word) main::ch -- pwuc1_derefidx_vbuz1=vwuc2 
     ldy.z __2
     lda #<ch
     sta SCREEN,y
@@ -209,9 +209,9 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] (byte) main::i ← (byte) 0 [ main::i ] ( main:2 [ main::i ] { }  ) always clobbers reg byte a 
 Statement [5] if((byte) main::i<(byte) 8) goto main::@2 [ main::i ] ( main:2 [ main::i ] { }  ) always clobbers reg byte a 
 Statement [7] (byte~) main::$1 ← (byte) main::i << (byte) 1 [ main::i main::$1 ] ( main:2 [ main::i main::$1 ] { }  ) always clobbers reg byte a 
-Statement [8] *((const word*) SCREEN + (byte~) main::$1) ← (const word) main::ch [ main::i ] ( main:2 [ main::i ] { }  ) always clobbers reg byte a 
+Statement [8] *((const word*) SCREEN + (byte~) main::$1) ← (const nomodify word) main::ch [ main::i ] ( main:2 [ main::i ] { }  ) always clobbers reg byte a 
 Statement [10] (byte~) main::$2 ← (byte) main::i << (byte) 1 [ main::i main::$2 ] ( main:2 [ main::i main::$2 ] { }  ) always clobbers reg byte a 
-Statement [11] *((const word*) SCREEN + (byte~) main::$2) ← (const word) main::ch [ main::i ] ( main:2 [ main::i ] { }  ) always clobbers reg byte a 
+Statement [11] *((const word*) SCREEN + (byte~) main::$2) ← (const nomodify word) main::ch [ main::i ] ( main:2 [ main::i ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::$2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -273,7 +273,7 @@ main: {
     // [7] (byte~) main::$1 ← (byte) main::i << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [8] *((const word*) SCREEN + (byte~) main::$1) ← (const word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
+    // [8] *((const word*) SCREEN + (byte~) main::$1) ← (const nomodify word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
     tay
     lda #<ch
     sta SCREEN,y
@@ -284,7 +284,7 @@ main: {
     // [10] (byte~) main::$2 ← (byte) main::i << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [11] *((const word*) SCREEN + (byte~) main::$2) ← (const word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
+    // [11] *((const word*) SCREEN + (byte~) main::$2) ← (const nomodify word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
     tay
     lda #<ch
     sta SCREEN,y
@@ -326,7 +326,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const word) main::ch = (word) $102
+(const nomodify word) main::ch = (word) $102
 (byte) main::i loadstore !zp[-1]:2 zp[1]:2 89.75
 
 zp[1]:2 [ main::i ]
@@ -377,7 +377,7 @@ main: {
     // [7] (byte~) main::$1 ← (byte) main::i << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [8] *((const word*) SCREEN + (byte~) main::$1) ← (const word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
+    // [8] *((const word*) SCREEN + (byte~) main::$1) ← (const nomodify word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
     tay
     lda #<ch
     sta SCREEN,y
@@ -390,7 +390,7 @@ main: {
     // [10] (byte~) main::$2 ← (byte) main::i << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z i
     asl
-    // [11] *((const word*) SCREEN + (byte~) main::$2) ← (const word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
+    // [11] *((const word*) SCREEN + (byte~) main::$2) ← (const nomodify word) main::ch -- pwuc1_derefidx_vbuaa=vwuc2 
     tay
     lda #<ch
     sta SCREEN,y

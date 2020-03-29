@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   *((const byte*) main::screen) ← (number) 1
-  *((const byte*) BGCOL) ← (const byte) RED
+  *((const nomodify byte*) BGCOL) ← (const nomodify byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -24,8 +24,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d021
-(const byte) RED = (byte) 2
+(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte) RED = (byte) 2
 (void()) main()
 (label) main::@return
 (const byte*) main::screen = (byte*)(number) $400
@@ -68,7 +68,7 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] *((const byte*) main::screen) ← (byte) 1
-  [5] *((const byte*) BGCOL) ← (const byte) RED
+  [5] *((const nomodify byte*) BGCOL) ← (const nomodify byte) RED
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -111,7 +111,7 @@ main: {
     // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
-    // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) BGCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     jmp __breturn
@@ -124,7 +124,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const byte*) main::screen) ← (byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) BGCOL) ← (const byte) RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) BGCOL) ← (const nomodify byte) RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -162,7 +162,7 @@ main: {
     // [4] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
-    // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) BGCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     jmp __breturn
@@ -195,8 +195,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53281
-(const byte) RED = (byte) 2
+(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte) RED = (byte) 2
 (void()) main()
 (label) main::@return
 (const byte*) main::screen = (byte*) 1024
@@ -228,7 +228,7 @@ main: {
     lda #1
     sta screen
     // *BGCOL = RED
-    // [5] *((const byte*) BGCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) BGCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BGCOL
     // main::@return

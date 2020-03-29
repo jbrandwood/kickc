@@ -9,14 +9,14 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte) main::b ← (byte) 0
+  (volatile byte) main::b ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (number~) main::$0 ← *((const byte*) main::bp) + (number) 1
   (byte) main::c#0 ← (number~) main::$0
-  *((const byte*) main::SCREEN + (byte) main::b) ← (byte) main::c#0
-  (byte) main::b ← (byte) main::b + rangenext(0,$a)
-  (bool~) main::$1 ← (byte) main::b != rangelast(0,$a)
+  *((const byte*) main::SCREEN + (volatile byte) main::b) ← (byte) main::c#0
+  (volatile byte) main::b ← (volatile byte) main::b + rangenext(0,$a)
+  (bool~) main::$1 ← (volatile byte) main::b != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
@@ -40,8 +40,8 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
-(byte) main::b loadstore
-(const byte*) main::bp = &(byte) main::b
+(volatile byte) main::b loadstore
+(const byte*) main::bp = &(volatile byte) main::b
 (byte) main::c
 (byte) main::c#0
 
@@ -56,11 +56,11 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$0 ← *((const byte*) main::bp) + (byte) 1
 Alias main::c#0 = main::$0 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [5] if((byte) main::b!=rangelast(0,$a)) goto main::@1
+Simple Condition (bool~) main::$1 [5] if((volatile byte) main::b!=rangelast(0,$a)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Resolved ranged next value [3] main::b ← ++ main::b to ++
 Resolved ranged comparison value [5] if(main::b!=rangelast(0,$a)) goto main::@1 to (number) $b
-Adding number conversion cast (unumber) $b in if((byte) main::b!=(number) $b) goto main::@1
+Adding number conversion cast (unumber) $b in if((volatile byte) main::b!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
@@ -93,13 +93,13 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (byte) main::b ← (byte) 0
+  [4] (volatile byte) main::b ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::c#0 ← *((const byte*) main::bp) + (byte) 1
-  [6] *((const byte*) main::SCREEN + (byte) main::b) ← (byte) main::c#0
-  [7] (byte) main::b ← ++ (byte) main::b
-  [8] if((byte) main::b!=(byte) $b) goto main::@1
+  [6] *((const byte*) main::SCREEN + (volatile byte) main::b) ← (byte) main::c#0
+  [7] (volatile byte) main::b ← ++ (volatile byte) main::b
+  [8] if((volatile byte) main::b!=(byte) $b) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [9] return 
@@ -108,7 +108,7 @@ main::@return: scope:[main]  from main::@1
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte) main::b loadstore 83.0
+(volatile byte) main::b loadstore 83.0
 (byte) main::c
 (byte) main::c#0 202.0
 
@@ -150,7 +150,7 @@ main: {
     .label bp = b
     .label b = 2
     .label c = 3
-    // [4] (byte) main::b ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b
     jmp __b1
@@ -160,13 +160,13 @@ main: {
     ldy.z bp
     iny
     sty.z c
-    // [6] *((const byte*) main::SCREEN + (byte) main::b) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [6] *((const byte*) main::SCREEN + (volatile byte) main::b) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z c
     ldy.z b
     sta SCREEN,y
-    // [7] (byte) main::b ← ++ (byte) main::b -- vbuz1=_inc_vbuz1 
+    // [7] (volatile byte) main::b ← ++ (volatile byte) main::b -- vbuz1=_inc_vbuz1 
     inc.z b
-    // [8] if((byte) main::b!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((volatile byte) main::b!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z b
     bne __b1
@@ -179,9 +179,9 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte) main::b ← (byte) 0 [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN + (byte) main::b) ← (byte) main::c#0 [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte y 
-Statement [8] if((byte) main::b!=(byte) $b) goto main::@1 [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte a 
+Statement [4] (volatile byte) main::b ← (byte) 0 [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::SCREEN + (volatile byte) main::b) ← (byte) main::c#0 [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte y 
+Statement [8] if((volatile byte) main::b!=(byte) $b) goto main::@1 [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::b ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ main::c#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -221,7 +221,7 @@ main: {
     .label SCREEN = $400
     .label bp = b
     .label b = 2
-    // [4] (byte) main::b ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b
     jmp __b1
@@ -231,12 +231,12 @@ main: {
     lda.z bp
     clc
     adc #1
-    // [6] *((const byte*) main::SCREEN + (byte) main::b) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [6] *((const byte*) main::SCREEN + (volatile byte) main::b) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z b
     sta SCREEN,y
-    // [7] (byte) main::b ← ++ (byte) main::b -- vbuz1=_inc_vbuz1 
+    // [7] (volatile byte) main::b ← ++ (volatile byte) main::b -- vbuz1=_inc_vbuz1 
     inc.z b
-    // [8] if((byte) main::b!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((volatile byte) main::b!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z b
     bne __b1
@@ -275,8 +275,8 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@return
 (const byte*) main::SCREEN = (byte*) 1024
-(byte) main::b loadstore zp[1]:2 83.0
-(const byte*) main::bp = &(byte) main::b
+(volatile byte) main::b loadstore zp[1]:2 83.0
+(const byte*) main::bp = &(volatile byte) main::b
 (byte) main::c
 (byte) main::c#0 reg byte a 202.0
 
@@ -306,7 +306,7 @@ main: {
     .label bp = b
     .label b = 2
     // for( byte b: 0..10)
-    // [4] (byte) main::b ← (byte) 0 -- vbuz1=vbuc1 
+    // [4] (volatile byte) main::b ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z b
     // main::@1
@@ -317,13 +317,13 @@ main: {
     clc
     adc #1
     // SCREEN[b] = c
-    // [6] *((const byte*) main::SCREEN + (byte) main::b) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
+    // [6] *((const byte*) main::SCREEN + (volatile byte) main::b) ← (byte) main::c#0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z b
     sta SCREEN,y
     // for( byte b: 0..10)
-    // [7] (byte) main::b ← ++ (byte) main::b -- vbuz1=_inc_vbuz1 
+    // [7] (volatile byte) main::b ← ++ (volatile byte) main::b -- vbuz1=_inc_vbuz1 
     inc.z b
-    // [8] if((byte) main::b!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((volatile byte) main::b!=(byte) $b) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z b
     bne __b1

@@ -64,7 +64,7 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
 
 (void()) main()
 main: scope:[main]  from @10
-  *((const byte*) BGCOL) ← (const byte) BLACK
+  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
   (void*) memcpy::destination#0 ← (void*)(const byte*) SCREEN
   (void*) memcpy::source#0 ← (void*)(const byte*) MEDUSA_SCREEN
   (word) memcpy::num#0 ← (number) $3e8
@@ -72,7 +72,7 @@ main: scope:[main]  from @10
   (void*) memcpy::return#2 ← (void*) memcpy::return#1
   to:main::@7
 main::@7: scope:[main]  from main
-  (void*) memcpy::destination#1 ← (void*)(const byte*) COLS
+  (void*) memcpy::destination#1 ← (void*)(const nomodify byte*) COLS
   (void*) memcpy::source#1 ← (void*)(const byte*) MEDUSA_COLORS
   (word) memcpy::num#1 ← (number) $3e8
   call memcpy 
@@ -102,9 +102,9 @@ SYMBOL TABLE SSA
 (label) @11
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d021
-(const byte) BLACK = (byte) 0
-(const byte*) COLS = (byte*)(number) $d800
+(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte) BLACK = (byte) 0
+(const nomodify byte*) COLS = (byte*)(number) $d800
 (const byte*) MEDUSA_COLORS[]  = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
@@ -231,7 +231,7 @@ Constant inlined memcpy::num#0 = (word) $3e8
 Constant inlined memcpy::source#1 = (void*)(const byte*) MEDUSA_COLORS
 Constant inlined main::$2 = (const byte*) SCREEN+(word) $3e7
 Constant inlined memcpy::destination#0 = (void*)(const byte*) SCREEN
-Constant inlined memcpy::destination#1 = (void*)(const byte*) COLS
+Constant inlined memcpy::destination#1 = (void*)(const nomodify byte*) COLS
 Constant inlined memcpy::source#0 = (void*)(const byte*) MEDUSA_SCREEN
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) memcpy::num#2 (word) $3e8
@@ -277,7 +277,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) BGCOL) ← (const byte) BLACK
+  [4] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
   [5] call memcpy 
   to:main::@2
 main::@2: scope:[main]  from main
@@ -290,7 +290,7 @@ main::@1: scope:[main]  from main::@1 main::@2
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main main::@2
-  [9] (void*) memcpy::destination#2 ← phi( main/(void*)(const byte*) SCREEN main::@2/(void*)(const byte*) COLS )
+  [9] (void*) memcpy::destination#2 ← phi( main/(void*)(const byte*) SCREEN main::@2/(void*)(const nomodify byte*) COLS )
   [9] (void*) memcpy::source#2 ← phi( main/(void*)(const byte*) MEDUSA_SCREEN main::@2/(void*)(const byte*) MEDUSA_COLORS )
   [10] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) $3e8
   [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
@@ -381,7 +381,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     // [5] call memcpy 
@@ -406,7 +406,7 @@ main: {
     // [7] call memcpy 
     // [9] phi from main::@2 to memcpy [phi:main::@2->memcpy]
   memcpy_from___b2:
-    // [9] phi (void*) memcpy::destination#2 = (void*)(const byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memcpy.destination
     lda #>COLS
@@ -504,7 +504,7 @@ MEDUSA_COLORS:
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) BGCOL) ← (const byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((const byte*) SCREEN+(word) $3e7) ← *((const byte*) SCREEN+(word) $3e7) ^ (byte) $e [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [10] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) $3e8 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:2::memcpy:5 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { }  main:2::memcpy:7 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { }  ) always clobbers reg byte a 
 Statement [11] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:5 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { }  main:2::memcpy:7 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { }  ) always clobbers reg byte a 
@@ -560,7 +560,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     // [5] call memcpy 
@@ -585,7 +585,7 @@ main: {
     // [7] call memcpy 
     // [9] phi from main::@2 to memcpy [phi:main::@2->memcpy]
   memcpy_from___b2:
-    // [9] phi (void*) memcpy::destination#2 = (void*)(const byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memcpy.destination
     lda #>COLS
@@ -708,9 +708,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53281
-(const byte) BLACK = (byte) 0
-(const byte*) COLS = (byte*) 55296
+(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte) BLACK = (byte) 0
+(const nomodify byte*) COLS = (byte*) 55296
 (const byte*) MEDUSA_COLORS[]  = kickasm {{ .var fileCols = LoadBinary("medusac.prg", BF_C64FILE)
     .fill fileCols.getSize(), fileCols.get(i)
  }}
@@ -773,7 +773,7 @@ Score: 797
   // main
 main: {
     // *BGCOL = BLACK
-    // [4] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     // memcpy(SCREEN, MEDUSA_SCREEN, 1000)
@@ -795,7 +795,7 @@ main: {
     // memcpy(COLS, MEDUSA_COLORS, 1000)
     // [7] call memcpy 
     // [9] phi from main::@2 to memcpy [phi:main::@2->memcpy]
-    // [9] phi (void*) memcpy::destination#2 = (void*)(const byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
+    // [9] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) COLS [phi:main::@2->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memcpy.destination
     lda #>COLS

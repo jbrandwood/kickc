@@ -13,7 +13,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @6
   asm { sei  }
-  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq()
+  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -22,8 +22,8 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 irq: scope:[irq]  from
-  *((const byte*) BGCOL) ← (const byte) WHITE
-  *((const byte*) BGCOL) ← (const byte) BLACK
+  *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
+  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -40,10 +40,10 @@ SYMBOL TABLE SSA
 (label) @7
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d021
-(const byte) BLACK = (byte) 0
-(const void()**) KERNEL_IRQ = (void()**)(number) $314
-(const byte) WHITE = (byte) 1
+(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte) BLACK = (byte) 0
+(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
+(const nomodify byte) WHITE = (byte) 1
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -81,7 +81,7 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   asm { sei  }
-  [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq()
+  [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -90,8 +90,8 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 irq: scope:[irq]  from
-  [8] *((const byte*) BGCOL) ← (const byte) WHITE
-  [9] *((const byte*) BGCOL) ← (const byte) BLACK
+  [8] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
+  [9] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [10] return 
@@ -139,7 +139,7 @@ __bend:
 main: {
     // asm { sei  }
     sei
-    // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -156,10 +156,10 @@ main: {
 // The Interrupt Handler
 irq: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [8] *((const byte*) BGCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-    // [9] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     jmp __breturn
@@ -171,9 +171,9 @@ irq: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const byte*) BGCOL) ← (const byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) BGCOL) ← (const byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -217,7 +217,7 @@ __bend:
 main: {
     // asm { sei  }
     sei
-    // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -234,10 +234,10 @@ main: {
 // The Interrupt Handler
 irq: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [8] *((const byte*) BGCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
-    // [9] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     jmp __breturn
@@ -272,10 +272,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53281
-(const byte) BLACK = (byte) 0
-(const void()**) KERNEL_IRQ = (void()**) 788
-(const byte) WHITE = (byte) 1
+(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte) BLACK = (byte) 0
+(const nomodify void()**) KERNEL_IRQ = (void()**) 788
+(const nomodify byte) WHITE = (byte) 1
 interrupt(KERNEL_KEYBOARD)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -312,7 +312,7 @@ main: {
     // asm { sei  }
     sei
     // *KERNEL_IRQ = &irq
-    // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -330,11 +330,11 @@ main: {
 irq: {
     // entry interrupt(KERNEL_KEYBOARD)
     // *BGCOL = WHITE
-    // [8] *((const byte*) BGCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BGCOL
     // *BGCOL = BLACK
-    // [9] *((const byte*) BGCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BGCOL
     // irq::@return

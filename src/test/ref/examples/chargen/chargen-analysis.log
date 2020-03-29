@@ -34,8 +34,8 @@ CONTROL FLOW GRAPH SSA
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
   (byte) keyboard_matrix_read::rowid#1 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 )
-  *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
-  (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
+  *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#1)
+  (byte~) keyboard_matrix_read::$0 ← ~ *((const nomodify byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
@@ -72,7 +72,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@16
   (byte) keyboard_get_keycode::ch#1 ← phi( main::@16/(byte) keyboard_get_keycode::ch#0 )
-  (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#1)
+  (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#1)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
   (byte) keyboard_get_keycode::return#3 ← phi( keyboard_get_keycode/(byte) keyboard_get_keycode::return#0 )
@@ -144,7 +144,7 @@ main::@8: scope:[main]  from main::@33
   to:main::@9
 main::@9: scope:[main]  from main::@21 main::@8
   (byte) main::cur_pos#25 ← phi( main::@21/(byte) main::cur_pos#26 main::@8/(byte) main::cur_pos#0 )
-  (byte) keyboard_key_pressed::key#0 ← (const byte) KEY_F1
+  (byte) keyboard_key_pressed::key#0 ← (const nomodify byte) KEY_F1
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#1
   to:main::@34
@@ -158,7 +158,7 @@ main::@34: scope:[main]  from main::@9
   to:main::@23
 main::@10: scope:[main]  from main::@23 main::@34
   (byte) main::cur_pos#23 ← phi( main::@23/(byte) main::cur_pos#1 main::@34/(byte) main::cur_pos#24 )
-  (byte) keyboard_key_pressed::key#1 ← (const byte) KEY_F3
+  (byte) keyboard_key_pressed::key#1 ← (const nomodify byte) KEY_F3
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#1
   to:main::@35
@@ -175,7 +175,7 @@ main::@23: scope:[main]  from main::@34
   to:main::@10
 main::@11: scope:[main]  from main::@24 main::@35
   (byte) main::cur_pos#21 ← phi( main::@24/(byte) main::cur_pos#2 main::@35/(byte) main::cur_pos#22 )
-  (byte) keyboard_key_pressed::key#2 ← (const byte) KEY_F5
+  (byte) keyboard_key_pressed::key#2 ← (const nomodify byte) KEY_F5
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#1
   to:main::@36
@@ -192,7 +192,7 @@ main::@24: scope:[main]  from main::@35
   to:main::@11
 main::@12: scope:[main]  from main::@25 main::@36
   (byte) main::cur_pos#19 ← phi( main::@25/(byte) main::cur_pos#3 main::@36/(byte) main::cur_pos#20 )
-  (byte) keyboard_key_pressed::key#3 ← (const byte) KEY_F7
+  (byte) keyboard_key_pressed::key#3 ← (const nomodify byte) KEY_F7
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#5 ← (byte) keyboard_key_pressed::return#1
   to:main::@37
@@ -209,7 +209,7 @@ main::@25: scope:[main]  from main::@36
   to:main::@12
 main::@13: scope:[main]  from main::@26 main::@37
   (byte) main::cur_pos#17 ← phi( main::@26/(byte) main::cur_pos#4 main::@37/(byte) main::cur_pos#18 )
-  (byte) keyboard_key_pressed::key#4 ← (const byte) KEY_LSHIFT
+  (byte) keyboard_key_pressed::key#4 ← (const nomodify byte) KEY_LSHIFT
   call keyboard_key_pressed 
   (byte) keyboard_key_pressed::return#6 ← (byte) keyboard_key_pressed::return#1
   to:main::@38
@@ -343,7 +343,7 @@ plot_chargen: scope:[plot_chargen]  from main::@20 main::@7
   asm { sei  }
   (word~) plot_chargen::$0 ← ((word)) (byte) plot_chargen::ch#2
   (number~) plot_chargen::$1 ← (word~) plot_chargen::$0 * (number) 8
-  (byte*~) plot_chargen::$2 ← (const byte*) CHARGEN + (number~) plot_chargen::$1
+  (byte*~) plot_chargen::$2 ← (const nomodify byte*) CHARGEN + (number~) plot_chargen::$1
   (byte*) plot_chargen::chargen#0 ← (byte*~) plot_chargen::$2
   (bool~) plot_chargen::$3 ← (byte) plot_chargen::shift#2 != (number) 0
   (bool~) plot_chargen::$4 ← ! (bool~) plot_chargen::$3
@@ -352,7 +352,7 @@ plot_chargen: scope:[plot_chargen]  from main::@20 main::@7
 plot_chargen::@1: scope:[plot_chargen]  from plot_chargen plot_chargen::@2
   (byte*) plot_chargen::chargen#4 ← phi( plot_chargen/(byte*) plot_chargen::chargen#0 plot_chargen::@2/(byte*) plot_chargen::chargen#1 )
   (byte) plot_chargen::pos#2 ← phi( plot_chargen/(byte) plot_chargen::pos#3 plot_chargen::@2/(byte) plot_chargen::pos#4 )
-  *((const byte*) PROCPORT) ← (number) $32
+  *((const nomodify byte*) PROCPORT) ← (number) $32
   (byte*~) plot_chargen::$5 ← (const byte*) SCREEN + (number) $29
   (number~) plot_chargen::$6 ← (byte) plot_chargen::pos#2 * (number) $a
   (byte*~) plot_chargen::$7 ← (byte*~) plot_chargen::$5 + (number~) plot_chargen::$6
@@ -418,7 +418,7 @@ plot_chargen::@7: scope:[plot_chargen]  from plot_chargen::@5
   if((bool~) plot_chargen::$15) goto plot_chargen::@3
   to:plot_chargen::@8
 plot_chargen::@8: scope:[plot_chargen]  from plot_chargen::@7
-  *((const byte*) PROCPORT) ← (number) $37
+  *((const nomodify byte*) PROCPORT) ← (number) $37
   asm { cli  }
   to:plot_chargen::@return
 plot_chargen::@return: scope:[plot_chargen]  from plot_chargen::@8
@@ -436,67 +436,67 @@ SYMBOL TABLE SSA
 (label) @15
 (label) @begin
 (label) @end
-(const byte*) CHARGEN = (byte*)(number) $d000
-(const byte*) CIA1_PORT_A = (byte*)(number) $dc00
-(const byte*) CIA1_PORT_B = (byte*)(number) $dc01
-(const byte) KEY_0 = (byte) $23
-(const byte) KEY_1 = (byte) $38
-(const byte) KEY_2 = (byte) $3b
-(const byte) KEY_3 = (byte) 8
-(const byte) KEY_4 = (byte) $b
-(const byte) KEY_5 = (byte) $10
-(const byte) KEY_6 = (byte) $13
-(const byte) KEY_7 = (byte) $18
-(const byte) KEY_8 = (byte) $1b
-(const byte) KEY_9 = (byte) $20
-(const byte) KEY_A = (byte) $a
-(const byte) KEY_ARROW_LEFT = (byte) $39
-(const byte) KEY_ARROW_UP = (byte) $36
-(const byte) KEY_ASTERISK = (byte) $31
-(const byte) KEY_AT = (byte) $2e
-(const byte) KEY_B = (byte) $1c
-(const byte) KEY_C = (byte) $14
-(const byte) KEY_COLON = (byte) $2d
-(const byte) KEY_COMMA = (byte) $2f
-(const byte) KEY_D = (byte) $12
-(const byte) KEY_DOT = (byte) $2c
-(const byte) KEY_E = (byte) $e
-(const byte) KEY_EQUALS = (byte) $35
-(const byte) KEY_F = (byte) $15
-(const byte) KEY_F1 = (byte) 4
-(const byte) KEY_F3 = (byte) 5
-(const byte) KEY_F5 = (byte) 6
-(const byte) KEY_F7 = (byte) 3
-(const byte) KEY_G = (byte) $1a
-(const byte) KEY_H = (byte) $1d
-(const byte) KEY_I = (byte) $21
-(const byte) KEY_J = (byte) $22
-(const byte) KEY_K = (byte) $25
-(const byte) KEY_L = (byte) $2a
-(const byte) KEY_LSHIFT = (byte) $f
-(const byte) KEY_M = (byte) $24
-(const byte) KEY_MINUS = (byte) $2b
-(const byte) KEY_N = (byte) $27
-(const byte) KEY_O = (byte) $26
-(const byte) KEY_P = (byte) $29
-(const byte) KEY_PLUS = (byte) $28
-(const byte) KEY_POUND = (byte) $30
-(const byte) KEY_Q = (byte) $3e
-(const byte) KEY_R = (byte) $11
-(const byte) KEY_S = (byte) $d
-(const byte) KEY_SEMICOLON = (byte) $32
-(const byte) KEY_SLASH = (byte) $37
-(const byte) KEY_SPACE = (byte) $3c
-(const byte) KEY_T = (byte) $16
-(const byte) KEY_U = (byte) $1e
-(const byte) KEY_V = (byte) $1f
-(const byte) KEY_W = (byte) 9
-(const byte) KEY_X = (byte) $17
-(const byte) KEY_Y = (byte) $19
-(const byte) KEY_Z = (byte) $c
-(const byte*) PROCPORT = (byte*)(number) 1
+(const nomodify byte*) CHARGEN = (byte*)(number) $d000
+(const nomodify byte*) CIA1_PORT_A = (byte*)(number) $dc00
+(const nomodify byte*) CIA1_PORT_B = (byte*)(number) $dc01
+(const nomodify byte) KEY_0 = (byte) $23
+(const nomodify byte) KEY_1 = (byte) $38
+(const nomodify byte) KEY_2 = (byte) $3b
+(const nomodify byte) KEY_3 = (byte) 8
+(const nomodify byte) KEY_4 = (byte) $b
+(const nomodify byte) KEY_5 = (byte) $10
+(const nomodify byte) KEY_6 = (byte) $13
+(const nomodify byte) KEY_7 = (byte) $18
+(const nomodify byte) KEY_8 = (byte) $1b
+(const nomodify byte) KEY_9 = (byte) $20
+(const nomodify byte) KEY_A = (byte) $a
+(const nomodify byte) KEY_ARROW_LEFT = (byte) $39
+(const nomodify byte) KEY_ARROW_UP = (byte) $36
+(const nomodify byte) KEY_ASTERISK = (byte) $31
+(const nomodify byte) KEY_AT = (byte) $2e
+(const nomodify byte) KEY_B = (byte) $1c
+(const nomodify byte) KEY_C = (byte) $14
+(const nomodify byte) KEY_COLON = (byte) $2d
+(const nomodify byte) KEY_COMMA = (byte) $2f
+(const nomodify byte) KEY_D = (byte) $12
+(const nomodify byte) KEY_DOT = (byte) $2c
+(const nomodify byte) KEY_E = (byte) $e
+(const nomodify byte) KEY_EQUALS = (byte) $35
+(const nomodify byte) KEY_F = (byte) $15
+(const nomodify byte) KEY_F1 = (byte) 4
+(const nomodify byte) KEY_F3 = (byte) 5
+(const nomodify byte) KEY_F5 = (byte) 6
+(const nomodify byte) KEY_F7 = (byte) 3
+(const nomodify byte) KEY_G = (byte) $1a
+(const nomodify byte) KEY_H = (byte) $1d
+(const nomodify byte) KEY_I = (byte) $21
+(const nomodify byte) KEY_J = (byte) $22
+(const nomodify byte) KEY_K = (byte) $25
+(const nomodify byte) KEY_L = (byte) $2a
+(const nomodify byte) KEY_LSHIFT = (byte) $f
+(const nomodify byte) KEY_M = (byte) $24
+(const nomodify byte) KEY_MINUS = (byte) $2b
+(const nomodify byte) KEY_N = (byte) $27
+(const nomodify byte) KEY_O = (byte) $26
+(const nomodify byte) KEY_P = (byte) $29
+(const nomodify byte) KEY_PLUS = (byte) $28
+(const nomodify byte) KEY_POUND = (byte) $30
+(const nomodify byte) KEY_Q = (byte) $3e
+(const nomodify byte) KEY_R = (byte) $11
+(const nomodify byte) KEY_S = (byte) $d
+(const nomodify byte) KEY_SEMICOLON = (byte) $32
+(const nomodify byte) KEY_SLASH = (byte) $37
+(const nomodify byte) KEY_SPACE = (byte) $3c
+(const nomodify byte) KEY_T = (byte) $16
+(const nomodify byte) KEY_U = (byte) $1e
+(const nomodify byte) KEY_V = (byte) $1f
+(const nomodify byte) KEY_W = (byte) 9
+(const nomodify byte) KEY_X = (byte) $17
+(const nomodify byte) KEY_Y = (byte) $19
+(const nomodify byte) KEY_Z = (byte) $c
+(const nomodify byte*) PROCPORT = (byte*)(number) 1
 (const byte*) SCREEN = (byte*)(number) $400
-(const byte*) keyboard_char_keycodes[]  = { (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (byte) $3f, (const byte) KEY_POUND, (byte) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (byte) $3f, (const byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
+(const to_nomodify byte*) keyboard_char_keycodes[]  = { (const nomodify byte) KEY_AT, (const nomodify byte) KEY_A, (const nomodify byte) KEY_B, (const nomodify byte) KEY_C, (const nomodify byte) KEY_D, (const nomodify byte) KEY_E, (const nomodify byte) KEY_F, (const nomodify byte) KEY_G, (const nomodify byte) KEY_H, (const nomodify byte) KEY_I, (const nomodify byte) KEY_J, (const nomodify byte) KEY_K, (const nomodify byte) KEY_L, (const nomodify byte) KEY_M, (const nomodify byte) KEY_N, (const nomodify byte) KEY_O, (const nomodify byte) KEY_P, (const nomodify byte) KEY_Q, (const nomodify byte) KEY_R, (const nomodify byte) KEY_S, (const nomodify byte) KEY_T, (const nomodify byte) KEY_U, (const nomodify byte) KEY_V, (const nomodify byte) KEY_W, (const nomodify byte) KEY_X, (const nomodify byte) KEY_Y, (const nomodify byte) KEY_Z, (byte) $3f, (const nomodify byte) KEY_POUND, (byte) $3f, (const nomodify byte) KEY_ARROW_UP, (const nomodify byte) KEY_ARROW_LEFT, (const nomodify byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const nomodify byte) KEY_ASTERISK, (const nomodify byte) KEY_PLUS, (const nomodify byte) KEY_COMMA, (const nomodify byte) KEY_MINUS, (const nomodify byte) KEY_DOT, (const nomodify byte) KEY_SLASH, (const nomodify byte) KEY_0, (const nomodify byte) KEY_1, (const nomodify byte) KEY_2, (const nomodify byte) KEY_3, (const nomodify byte) KEY_4, (const nomodify byte) KEY_5, (const nomodify byte) KEY_6, (const nomodify byte) KEY_7, (const nomodify byte) KEY_8, (const nomodify byte) KEY_9, (const nomodify byte) KEY_COLON, (const nomodify byte) KEY_SEMICOLON, (byte) $3f, (const nomodify byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 (label) keyboard_get_keycode::@return
 (byte) keyboard_get_keycode::ch
@@ -840,7 +840,7 @@ Adding number conversion cast (unumber) 0 in (bool~) print_str_at::$0 ← (numbe
 Adding number conversion cast (unumber) 8 in (number~) plot_chargen::$1 ← (word~) plot_chargen::$0 * (number) 8
 Adding number conversion cast (unumber) plot_chargen::$1 in (number~) plot_chargen::$1 ← (word~) plot_chargen::$0 * (unumber)(number) 8
 Adding number conversion cast (unumber) 0 in (bool~) plot_chargen::$3 ← (byte) plot_chargen::shift#2 != (number) 0
-Adding number conversion cast (unumber) $32 in *((const byte*) PROCPORT) ← (number) $32
+Adding number conversion cast (unumber) $32 in *((const nomodify byte*) PROCPORT) ← (number) $32
 Adding number conversion cast (unumber) $29 in (byte*~) plot_chargen::$5 ← (const byte*) SCREEN + (number) $29
 Adding number conversion cast (unumber) $a in (number~) plot_chargen::$6 ← (byte) plot_chargen::pos#2 * (number) $a
 Adding number conversion cast (unumber) plot_chargen::$6 in (number~) plot_chargen::$6 ← (byte) plot_chargen::pos#2 * (unumber)(number) $a
@@ -851,7 +851,7 @@ Adding number conversion cast (unumber) 0 in (bool~) plot_chargen::$10 ← (unum
 Adding number conversion cast (unumber) 2 in (number~) plot_chargen::$12 ← (byte) plot_chargen::bits#3 * (number) 2
 Adding number conversion cast (unumber) plot_chargen::$12 in (number~) plot_chargen::$12 ← (byte) plot_chargen::bits#3 * (unumber)(number) 2
 Adding number conversion cast (unumber) $20 in (byte*~) plot_chargen::$14 ← (byte*) plot_chargen::sc#4 + (number) $20
-Adding number conversion cast (unumber) $37 in *((const byte*) PROCPORT) ← (number) $37
+Adding number conversion cast (unumber) $37 in *((const nomodify byte*) PROCPORT) ← (number) $37
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) plot_chargen::ch#0 ← (unumber)(number) $20
 Inlining cast (byte) plot_chargen::shift#0 ← (unumber)(number) 0
@@ -862,8 +862,8 @@ Inlining cast (byte) main::cur_pos#4 ← (unumber)(number) 3
 Inlining cast (byte) main::shift#1 ← (unumber)(number) 1
 Inlining cast (byte) main::shift#2 ← (unumber)(number) 0
 Inlining cast (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2
-Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $32
-Inlining cast *((const byte*) PROCPORT) ← (unumber)(number) $37
+Inlining cast *((const nomodify byte*) PROCPORT) ← (unumber)(number) $32
+Inlining cast *((const nomodify byte*) PROCPORT) ← (unumber)(number) $37
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1
 Simplifying constant pointer cast (byte*) 53248
@@ -1176,12 +1176,12 @@ Constant inlined main::i#0 = (byte) 0
 Constant inlined plot_chargen::$5 = (const byte*) SCREEN+(byte) $29
 Constant inlined plot_chargen::shift#0 = (byte) 0
 Constant inlined main::ch#0 = (byte) 0
-Constant inlined keyboard_key_pressed::key#0 = (const byte) KEY_F1
+Constant inlined keyboard_key_pressed::key#0 = (const nomodify byte) KEY_F1
 Constant inlined plot_chargen::ch#0 = (byte) $20
-Constant inlined keyboard_key_pressed::key#1 = (const byte) KEY_F3
-Constant inlined keyboard_key_pressed::key#4 = (const byte) KEY_LSHIFT
-Constant inlined keyboard_key_pressed::key#2 = (const byte) KEY_F5
-Constant inlined keyboard_key_pressed::key#3 = (const byte) KEY_F7
+Constant inlined keyboard_key_pressed::key#1 = (const nomodify byte) KEY_F3
+Constant inlined keyboard_key_pressed::key#4 = (const nomodify byte) KEY_LSHIFT
+Constant inlined keyboard_key_pressed::key#2 = (const nomodify byte) KEY_F5
+Constant inlined keyboard_key_pressed::key#3 = (const nomodify byte) KEY_F7
 Constant inlined main::sc#0 = (const byte*) SCREEN
 Constant inlined main::cur_pos#3 = (byte) 2
 Constant inlined main::cur_pos#4 = (byte) 3
@@ -1472,7 +1472,7 @@ plot_chargen: scope:[plot_chargen]  from main::@16 main::@4
   asm { sei  }
   [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2
   [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3
-  [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN + (word~) plot_chargen::$1
+  [75] (byte*) plot_chargen::chargen#0 ← (const nomodify byte*) CHARGEN + (word~) plot_chargen::$1
   [76] if((byte) plot_chargen::shift#2==(byte) 0) goto plot_chargen::@1
   to:plot_chargen::@2
 plot_chargen::@2: scope:[plot_chargen]  from plot_chargen
@@ -1480,7 +1480,7 @@ plot_chargen::@2: scope:[plot_chargen]  from plot_chargen
   to:plot_chargen::@1
 plot_chargen::@1: scope:[plot_chargen]  from plot_chargen plot_chargen::@2
   [78] (byte*) plot_chargen::chargen#4 ← phi( plot_chargen/(byte*) plot_chargen::chargen#0 plot_chargen::@2/(byte*) plot_chargen::chargen#1 )
-  [79] *((const byte*) PROCPORT) ← (byte) $32
+  [79] *((const nomodify byte*) PROCPORT) ← (byte) $32
   [80] (byte~) plot_chargen::$16 ← (byte) plot_chargen::pos#2 << (byte) 2
   [81] (byte~) plot_chargen::$17 ← (byte~) plot_chargen::$16 + (byte) plot_chargen::pos#2
   [82] (byte~) plot_chargen::$6 ← (byte~) plot_chargen::$17 << (byte) 1
@@ -1515,7 +1515,7 @@ plot_chargen::@7: scope:[plot_chargen]  from plot_chargen::@5
   [98] if((byte) plot_chargen::y#1!=(byte) 8) goto plot_chargen::@3
   to:plot_chargen::@8
 plot_chargen::@8: scope:[plot_chargen]  from plot_chargen::@7
-  [99] *((const byte*) PROCPORT) ← (byte) $37
+  [99] *((const nomodify byte*) PROCPORT) ← (byte) $37
   asm { cli  }
   to:plot_chargen::@return
 plot_chargen::@return: scope:[plot_chargen]  from plot_chargen::@8
@@ -1524,7 +1524,7 @@ plot_chargen::@return: scope:[plot_chargen]  from plot_chargen::@8
 
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@15 main::@5 main::@6 main::@7 main::@8 main::@9
-  [102] (byte) keyboard_key_pressed::key#6 ← phi( main::@6/(const byte) KEY_F3 main::@7/(const byte) KEY_F5 main::@8/(const byte) KEY_F7 main::@9/(const byte) KEY_LSHIFT main::@15/(byte) keyboard_key_pressed::key#5 main::@5/(const byte) KEY_F1 )
+  [102] (byte) keyboard_key_pressed::key#6 ← phi( main::@6/(const nomodify byte) KEY_F3 main::@7/(const nomodify byte) KEY_F5 main::@8/(const nomodify byte) KEY_F7 main::@9/(const nomodify byte) KEY_LSHIFT main::@15/(byte) keyboard_key_pressed::key#5 main::@5/(const nomodify byte) KEY_F1 )
   [103] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#6 & (byte) 7
   [104] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3
   [105] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0
@@ -1541,8 +1541,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
-  [111] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0)
-  [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B)
+  [111] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0)
+  [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [113] return 
@@ -1550,7 +1550,7 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@12
-  [114] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0)
+  [114] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
   [115] return 
@@ -2073,7 +2073,7 @@ main: {
     // [21] call keyboard_key_pressed 
     // [102] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
   keyboard_key_pressed_from___b5:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1 [phi:main::@5->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F1 [phi:main::@5->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F1
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
@@ -2110,7 +2110,7 @@ main: {
     // [27] call keyboard_key_pressed 
     // [102] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
   keyboard_key_pressed_from___b6:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3 [phi:main::@6->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F3 [phi:main::@6->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F3
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
@@ -2147,7 +2147,7 @@ main: {
     // [33] call keyboard_key_pressed 
     // [102] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
   keyboard_key_pressed_from___b7:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5 [phi:main::@7->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F5 [phi:main::@7->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F5
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
@@ -2184,7 +2184,7 @@ main: {
     // [39] call keyboard_key_pressed 
     // [102] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
   keyboard_key_pressed_from___b8:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7 [phi:main::@8->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F7 [phi:main::@8->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_F7
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
@@ -2221,7 +2221,7 @@ main: {
     // [45] call keyboard_key_pressed 
     // [102] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
   keyboard_key_pressed_from___b9:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT [phi:main::@9->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_LSHIFT [phi:main::@9->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_LSHIFT
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
@@ -2417,7 +2417,7 @@ plot_chargen: {
     rol.z __1+1
     asl.z __1
     rol.z __1+1
-    // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [75] (byte*) plot_chargen::chargen#0 ← (const nomodify byte*) CHARGEN + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z __1
     clc
     adc #<CHARGEN
@@ -2447,7 +2447,7 @@ plot_chargen: {
     jmp __b1
     // plot_chargen::@1
   __b1:
-    // [79] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [79] *((const nomodify byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
     // [80] (byte~) plot_chargen::$16 ← (byte) plot_chargen::pos#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
@@ -2570,7 +2570,7 @@ plot_chargen: {
     jmp __b8
     // plot_chargen::@8
   __b8:
-    // [99] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [99] *((const nomodify byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm { cli  }
@@ -2645,11 +2645,11 @@ keyboard_matrix_read: {
     .label return = $35
     .label rowid = $31
     .label return_1 = $32
-    // [111] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    // [111] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy.z rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
-    // [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
+    // [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta.z return
@@ -2669,7 +2669,7 @@ keyboard_get_keycode: {
     .label return = $36
     .label ch = $23
     .label return_1 = $24
-    // [114] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [114] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z ch
     lda keyboard_char_keycodes,y
     sta.z return
@@ -2742,9 +2742,9 @@ Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::c
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::shift#9 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::ch#2 main::ch#1 ]
 Statement [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 [ plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$1 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$1 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$1 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
-Statement [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN + (word~) plot_chargen::$1 [ plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
+Statement [75] (byte*) plot_chargen::chargen#0 ← (const nomodify byte*) CHARGEN + (word~) plot_chargen::$1 [ plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 [ plot_chargen::pos#2 plot_chargen::chargen#1 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#1 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#1 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
-Statement [79] *((const byte*) PROCPORT) ← (byte) $32 [ plot_chargen::pos#2 plot_chargen::chargen#4 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
+Statement [79] *((const nomodify byte*) PROCPORT) ← (byte) $32 [ plot_chargen::pos#2 plot_chargen::chargen#4 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [80] (byte~) plot_chargen::$16 ← (byte) plot_chargen::pos#2 << (byte) 2 [ plot_chargen::pos#2 plot_chargen::chargen#4 plot_chargen::$16 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#4 plot_chargen::$16 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#4 plot_chargen::$16 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [81] (byte~) plot_chargen::$17 ← (byte~) plot_chargen::$16 + (byte) plot_chargen::pos#2 [ plot_chargen::chargen#4 plot_chargen::$17 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::$17 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::$17 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [82] (byte~) plot_chargen::$6 ← (byte~) plot_chargen::$17 << (byte) 1 [ plot_chargen::chargen#4 plot_chargen::$6 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::$6 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::$6 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
@@ -2760,20 +2760,20 @@ Removing always clobbered register reg byte y as potential for zp[1]:5 [ main::c
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ main::shift#9 ]
 Removing always clobbered register reg byte y as potential for zp[1]:7 [ main::ch#2 main::ch#1 ]
 Statement [96] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 [ plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#2 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#2 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#2 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
-Statement [99] *((const byte*) PROCPORT) ← (byte) $37 [ ] ( main:2::plot_chargen:17 [ main::i#2 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
+Statement [99] *((const nomodify byte*) PROCPORT) ← (byte) $37 [ ] ( main:2::plot_chargen:17 [ main::i#2 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [104] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:21 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:47 [ keyboard_key_pressed::colidx#0 ]
-Statement [111] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [111] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [118] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2 [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:8 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [120] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:8 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [6] if((byte*) main::sc#2<(const byte*) SCREEN+(word) $3e8) goto main::@2 [ main::sc#2 ] ( main:2 [ main::sc#2 ] { }  ) always clobbers reg byte a 
 Statement [69] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [73] (word~) plot_chargen::$0 ← (word)(byte) plot_chargen::ch#2 [ plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$0 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$0 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$0 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [74] (word~) plot_chargen::$1 ← (word~) plot_chargen::$0 << (byte) 3 [ plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$1 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$1 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::$1 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
-Statement [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN + (word~) plot_chargen::$1 [ plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
+Statement [75] (byte*) plot_chargen::chargen#0 ← (const nomodify byte*) CHARGEN + (word~) plot_chargen::$1 [ plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::shift#2 plot_chargen::pos#2 plot_chargen::chargen#0 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [77] (byte*) plot_chargen::chargen#1 ← (byte*) plot_chargen::chargen#0 + (word) $800 [ plot_chargen::pos#2 plot_chargen::chargen#1 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#1 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#1 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
-Statement [79] *((const byte*) PROCPORT) ← (byte) $32 [ plot_chargen::pos#2 plot_chargen::chargen#4 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
+Statement [79] *((const nomodify byte*) PROCPORT) ← (byte) $32 [ plot_chargen::pos#2 plot_chargen::chargen#4 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#4 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [80] (byte~) plot_chargen::$16 ← (byte) plot_chargen::pos#2 << (byte) 2 [ plot_chargen::pos#2 plot_chargen::chargen#4 plot_chargen::$16 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::pos#2 plot_chargen::chargen#4 plot_chargen::$16 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::pos#2 plot_chargen::chargen#4 plot_chargen::$16 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [81] (byte~) plot_chargen::$17 ← (byte~) plot_chargen::$16 + (byte) plot_chargen::pos#2 [ plot_chargen::chargen#4 plot_chargen::$17 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::$17 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::$17 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [82] (byte~) plot_chargen::$6 ← (byte~) plot_chargen::$17 << (byte) 1 [ plot_chargen::chargen#4 plot_chargen::$6 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::$6 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::$6 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
@@ -2781,10 +2781,10 @@ Statement [83] (byte*) plot_chargen::sc#0 ← (const byte*) SCREEN+(byte) $29 + 
 Statement [85] (byte) plot_chargen::bits#0 ← *((byte*) plot_chargen::chargen#4 + (byte) plot_chargen::y#2) [ plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#7 plot_chargen::bits#0 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#7 plot_chargen::bits#0 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#7 plot_chargen::bits#0 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a reg byte y 
 Statement [91] *((byte*) plot_chargen::sc#3) ← (byte) plot_chargen::c#2 [ plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::bits#2 plot_chargen::sc#3 plot_chargen::x#2 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::bits#2 plot_chargen::sc#3 plot_chargen::x#2 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::bits#2 plot_chargen::sc#3 plot_chargen::x#2 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte y 
 Statement [96] (byte*) plot_chargen::sc#2 ← (byte*) plot_chargen::sc#1 + (byte) $20 [ plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#2 ] ( main:2::plot_chargen:17 [ main::i#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#2 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 plot_chargen::chargen#4 plot_chargen::y#2 plot_chargen::sc#2 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
-Statement [99] *((const byte*) PROCPORT) ← (byte) $37 [ ] ( main:2::plot_chargen:17 [ main::i#2 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
+Statement [99] *((const nomodify byte*) PROCPORT) ← (byte) $37 [ ] ( main:2::plot_chargen:17 [ main::i#2 ] { { plot_chargen::pos#0 = plot_chargen::pos#2 main::i#2 } }  main:2::plot_chargen:66 [ main::cur_pos#11 main::shift#9 main::ch#2 ] { { plot_chargen::ch#1 = plot_chargen::ch#2 main::ch#2 } { plot_chargen::shift#1 = plot_chargen::shift#2 main::shift#9 } { plot_chargen::pos#1 = plot_chargen::pos#2 main::cur_pos#11 } }  ) always clobbers reg byte a 
 Statement [104] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#6 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:21 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [111] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [111] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:21::keyboard_matrix_read:106 [ main::cur_pos#24 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:27::keyboard_matrix_read:106 [ main::cur_pos#22 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:106 [ main::cur_pos#20 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#11 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:39::keyboard_matrix_read:106 [ main::cur_pos#18 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#12 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:45::keyboard_matrix_read:106 [ main::cur_pos#11 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#13 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::keyboard_key_pressed:58::keyboard_matrix_read:106 [ main::cur_pos#11 main::shift#9 main::ch#2 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#5 = keyboard_key_pressed::key#6 main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#14 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [118] if((byte) 0!=*((byte*) print_str_at::str#5)) goto print_str_at::@2 [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:8 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [120] *((byte*) print_str_at::at#5) ← *((byte*) print_str_at::str#5) [ print_str_at::str#5 print_str_at::at#5 ] ( main:2::print_str_at:8 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:10 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:12 [ print_str_at::str#5 print_str_at::at#5 ] { }  main:2::print_str_at:14 [ print_str_at::str#5 print_str_at::at#5 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::sc#2 main::sc#1 ] : zp[2]:2 , 
@@ -3149,7 +3149,7 @@ main: {
     // [21] call keyboard_key_pressed 
     // [102] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
   keyboard_key_pressed_from___b5:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F1 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F1
     jsr keyboard_key_pressed
     // [22] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
@@ -3180,7 +3180,7 @@ main: {
     // [27] call keyboard_key_pressed 
     // [102] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
   keyboard_key_pressed_from___b6:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F3 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F3
     jsr keyboard_key_pressed
     // [28] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
@@ -3211,7 +3211,7 @@ main: {
     // [33] call keyboard_key_pressed 
     // [102] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
   keyboard_key_pressed_from___b7:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F5 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F5
     jsr keyboard_key_pressed
     // [34] (byte) keyboard_key_pressed::return#11 ← (byte) keyboard_key_pressed::return#0
@@ -3242,7 +3242,7 @@ main: {
     // [39] call keyboard_key_pressed 
     // [102] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
   keyboard_key_pressed_from___b8:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F7 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F7
     jsr keyboard_key_pressed
     // [40] (byte) keyboard_key_pressed::return#12 ← (byte) keyboard_key_pressed::return#0
@@ -3273,7 +3273,7 @@ main: {
     // [45] call keyboard_key_pressed 
     // [102] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
   keyboard_key_pressed_from___b9:
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT [phi:main::@9->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_LSHIFT [phi:main::@9->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     // [46] (byte) keyboard_key_pressed::return#13 ← (byte) keyboard_key_pressed::return#0
@@ -3433,7 +3433,7 @@ plot_chargen: {
     rol.z __1+1
     asl.z __1
     rol.z __1+1
-    // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [75] (byte*) plot_chargen::chargen#0 ← (const nomodify byte*) CHARGEN + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -3462,7 +3462,7 @@ plot_chargen: {
     jmp __b1
     // plot_chargen::@1
   __b1:
-    // [79] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [79] *((const nomodify byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
     // [80] (byte~) plot_chargen::$16 ← (byte) plot_chargen::pos#2 << (byte) 2 -- vbuaa=vbuyy_rol_2 
@@ -3573,7 +3573,7 @@ plot_chargen: {
     jmp __b8
     // plot_chargen::@8
   __b8:
-    // [99] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [99] *((const nomodify byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm { cli  }
@@ -3625,10 +3625,10 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // [111] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [111] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
-    // [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp __breturn
@@ -3644,7 +3644,7 @@ keyboard_matrix_read: {
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
-    // [114] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [114] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
     jmp __breturn
     // keyboard_get_keycode::@return
@@ -3875,67 +3875,67 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) CHARGEN = (byte*) 53248
-(const byte*) CIA1_PORT_A = (byte*) 56320
-(const byte*) CIA1_PORT_B = (byte*) 56321
-(const byte) KEY_0 = (byte) $23
-(const byte) KEY_1 = (byte) $38
-(const byte) KEY_2 = (byte) $3b
-(const byte) KEY_3 = (byte) 8
-(const byte) KEY_4 = (byte) $b
-(const byte) KEY_5 = (byte) $10
-(const byte) KEY_6 = (byte) $13
-(const byte) KEY_7 = (byte) $18
-(const byte) KEY_8 = (byte) $1b
-(const byte) KEY_9 = (byte) $20
-(const byte) KEY_A = (byte) $a
-(const byte) KEY_ARROW_LEFT = (byte) $39
-(const byte) KEY_ARROW_UP = (byte) $36
-(const byte) KEY_ASTERISK = (byte) $31
-(const byte) KEY_AT = (byte) $2e
-(const byte) KEY_B = (byte) $1c
-(const byte) KEY_C = (byte) $14
-(const byte) KEY_COLON = (byte) $2d
-(const byte) KEY_COMMA = (byte) $2f
-(const byte) KEY_D = (byte) $12
-(const byte) KEY_DOT = (byte) $2c
-(const byte) KEY_E = (byte) $e
-(const byte) KEY_EQUALS = (byte) $35
-(const byte) KEY_F = (byte) $15
-(const byte) KEY_F1 = (byte) 4
-(const byte) KEY_F3 = (byte) 5
-(const byte) KEY_F5 = (byte) 6
-(const byte) KEY_F7 = (byte) 3
-(const byte) KEY_G = (byte) $1a
-(const byte) KEY_H = (byte) $1d
-(const byte) KEY_I = (byte) $21
-(const byte) KEY_J = (byte) $22
-(const byte) KEY_K = (byte) $25
-(const byte) KEY_L = (byte) $2a
-(const byte) KEY_LSHIFT = (byte) $f
-(const byte) KEY_M = (byte) $24
-(const byte) KEY_MINUS = (byte) $2b
-(const byte) KEY_N = (byte) $27
-(const byte) KEY_O = (byte) $26
-(const byte) KEY_P = (byte) $29
-(const byte) KEY_PLUS = (byte) $28
-(const byte) KEY_POUND = (byte) $30
-(const byte) KEY_Q = (byte) $3e
-(const byte) KEY_R = (byte) $11
-(const byte) KEY_S = (byte) $d
-(const byte) KEY_SEMICOLON = (byte) $32
-(const byte) KEY_SLASH = (byte) $37
-(const byte) KEY_SPACE = (byte) $3c
-(const byte) KEY_T = (byte) $16
-(const byte) KEY_U = (byte) $1e
-(const byte) KEY_V = (byte) $1f
-(const byte) KEY_W = (byte) 9
-(const byte) KEY_X = (byte) $17
-(const byte) KEY_Y = (byte) $19
-(const byte) KEY_Z = (byte) $c
-(const byte*) PROCPORT = (byte*) 1
+(const nomodify byte*) CHARGEN = (byte*) 53248
+(const nomodify byte*) CIA1_PORT_A = (byte*) 56320
+(const nomodify byte*) CIA1_PORT_B = (byte*) 56321
+(const nomodify byte) KEY_0 = (byte) $23
+(const nomodify byte) KEY_1 = (byte) $38
+(const nomodify byte) KEY_2 = (byte) $3b
+(const nomodify byte) KEY_3 = (byte) 8
+(const nomodify byte) KEY_4 = (byte) $b
+(const nomodify byte) KEY_5 = (byte) $10
+(const nomodify byte) KEY_6 = (byte) $13
+(const nomodify byte) KEY_7 = (byte) $18
+(const nomodify byte) KEY_8 = (byte) $1b
+(const nomodify byte) KEY_9 = (byte) $20
+(const nomodify byte) KEY_A = (byte) $a
+(const nomodify byte) KEY_ARROW_LEFT = (byte) $39
+(const nomodify byte) KEY_ARROW_UP = (byte) $36
+(const nomodify byte) KEY_ASTERISK = (byte) $31
+(const nomodify byte) KEY_AT = (byte) $2e
+(const nomodify byte) KEY_B = (byte) $1c
+(const nomodify byte) KEY_C = (byte) $14
+(const nomodify byte) KEY_COLON = (byte) $2d
+(const nomodify byte) KEY_COMMA = (byte) $2f
+(const nomodify byte) KEY_D = (byte) $12
+(const nomodify byte) KEY_DOT = (byte) $2c
+(const nomodify byte) KEY_E = (byte) $e
+(const nomodify byte) KEY_EQUALS = (byte) $35
+(const nomodify byte) KEY_F = (byte) $15
+(const nomodify byte) KEY_F1 = (byte) 4
+(const nomodify byte) KEY_F3 = (byte) 5
+(const nomodify byte) KEY_F5 = (byte) 6
+(const nomodify byte) KEY_F7 = (byte) 3
+(const nomodify byte) KEY_G = (byte) $1a
+(const nomodify byte) KEY_H = (byte) $1d
+(const nomodify byte) KEY_I = (byte) $21
+(const nomodify byte) KEY_J = (byte) $22
+(const nomodify byte) KEY_K = (byte) $25
+(const nomodify byte) KEY_L = (byte) $2a
+(const nomodify byte) KEY_LSHIFT = (byte) $f
+(const nomodify byte) KEY_M = (byte) $24
+(const nomodify byte) KEY_MINUS = (byte) $2b
+(const nomodify byte) KEY_N = (byte) $27
+(const nomodify byte) KEY_O = (byte) $26
+(const nomodify byte) KEY_P = (byte) $29
+(const nomodify byte) KEY_PLUS = (byte) $28
+(const nomodify byte) KEY_POUND = (byte) $30
+(const nomodify byte) KEY_Q = (byte) $3e
+(const nomodify byte) KEY_R = (byte) $11
+(const nomodify byte) KEY_S = (byte) $d
+(const nomodify byte) KEY_SEMICOLON = (byte) $32
+(const nomodify byte) KEY_SLASH = (byte) $37
+(const nomodify byte) KEY_SPACE = (byte) $3c
+(const nomodify byte) KEY_T = (byte) $16
+(const nomodify byte) KEY_U = (byte) $1e
+(const nomodify byte) KEY_V = (byte) $1f
+(const nomodify byte) KEY_W = (byte) 9
+(const nomodify byte) KEY_X = (byte) $17
+(const nomodify byte) KEY_Y = (byte) $19
+(const nomodify byte) KEY_Z = (byte) $c
+(const nomodify byte*) PROCPORT = (byte*) 1
 (const byte*) SCREEN = (byte*) 1024
-(const byte*) keyboard_char_keycodes[]  = { (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (byte) $3f, (const byte) KEY_POUND, (byte) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (byte) $3f, (const byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
+(const to_nomodify byte*) keyboard_char_keycodes[]  = { (const nomodify byte) KEY_AT, (const nomodify byte) KEY_A, (const nomodify byte) KEY_B, (const nomodify byte) KEY_C, (const nomodify byte) KEY_D, (const nomodify byte) KEY_E, (const nomodify byte) KEY_F, (const nomodify byte) KEY_G, (const nomodify byte) KEY_H, (const nomodify byte) KEY_I, (const nomodify byte) KEY_J, (const nomodify byte) KEY_K, (const nomodify byte) KEY_L, (const nomodify byte) KEY_M, (const nomodify byte) KEY_N, (const nomodify byte) KEY_O, (const nomodify byte) KEY_P, (const nomodify byte) KEY_Q, (const nomodify byte) KEY_R, (const nomodify byte) KEY_S, (const nomodify byte) KEY_T, (const nomodify byte) KEY_U, (const nomodify byte) KEY_V, (const nomodify byte) KEY_W, (const nomodify byte) KEY_X, (const nomodify byte) KEY_Y, (const nomodify byte) KEY_Z, (byte) $3f, (const nomodify byte) KEY_POUND, (byte) $3f, (const nomodify byte) KEY_ARROW_UP, (const nomodify byte) KEY_ARROW_LEFT, (const nomodify byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const nomodify byte) KEY_ASTERISK, (const nomodify byte) KEY_PLUS, (const nomodify byte) KEY_COMMA, (const nomodify byte) KEY_MINUS, (const nomodify byte) KEY_DOT, (const nomodify byte) KEY_SLASH, (const nomodify byte) KEY_0, (const nomodify byte) KEY_1, (const nomodify byte) KEY_2, (const nomodify byte) KEY_3, (const nomodify byte) KEY_4, (const nomodify byte) KEY_5, (const nomodify byte) KEY_6, (const nomodify byte) KEY_7, (const nomodify byte) KEY_8, (const nomodify byte) KEY_9, (const nomodify byte) KEY_COLON, (const nomodify byte) KEY_SEMICOLON, (byte) $3f, (const nomodify byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 (label) keyboard_get_keycode::@return
 (byte) keyboard_get_keycode::ch
@@ -4354,7 +4354,7 @@ main: {
     // keyboard_key_pressed(KEY_F1)
     // [21] call keyboard_key_pressed 
     // [102] phi from main::@5 to keyboard_key_pressed [phi:main::@5->keyboard_key_pressed]
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F1 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F1 [phi:main::@5->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F1
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_F1)
@@ -4378,7 +4378,7 @@ main: {
     // keyboard_key_pressed(KEY_F3)
     // [27] call keyboard_key_pressed 
     // [102] phi from main::@6 to keyboard_key_pressed [phi:main::@6->keyboard_key_pressed]
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F3 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F3 [phi:main::@6->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F3
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_F3)
@@ -4402,7 +4402,7 @@ main: {
     // keyboard_key_pressed(KEY_F5)
     // [33] call keyboard_key_pressed 
     // [102] phi from main::@7 to keyboard_key_pressed [phi:main::@7->keyboard_key_pressed]
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F5 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F5 [phi:main::@7->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F5
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_F5)
@@ -4426,7 +4426,7 @@ main: {
     // keyboard_key_pressed(KEY_F7)
     // [39] call keyboard_key_pressed 
     // [102] phi from main::@8 to keyboard_key_pressed [phi:main::@8->keyboard_key_pressed]
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_F7 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_F7 [phi:main::@8->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_F7
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_F7)
@@ -4450,7 +4450,7 @@ main: {
     // keyboard_key_pressed(KEY_LSHIFT)
     // [45] call keyboard_key_pressed 
     // [102] phi from main::@9 to keyboard_key_pressed [phi:main::@9->keyboard_key_pressed]
-    // [102] phi (byte) keyboard_key_pressed::key#6 = (const byte) KEY_LSHIFT [phi:main::@9->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [102] phi (byte) keyboard_key_pressed::key#6 = (const nomodify byte) KEY_LSHIFT [phi:main::@9->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_LSHIFT
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_LSHIFT)
@@ -4601,7 +4601,7 @@ plot_chargen: {
     asl.z __1
     rol.z __1+1
     // chargen = CHARGEN+(unsigned int)ch*8
-    // [75] (byte*) plot_chargen::chargen#0 ← (const byte*) CHARGEN + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [75] (byte*) plot_chargen::chargen#0 ← (const nomodify byte*) CHARGEN + (word~) plot_chargen::$1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z chargen
     adc #<CHARGEN
@@ -4628,7 +4628,7 @@ plot_chargen: {
     // plot_chargen::@1
   __b1:
     // *PROCPORT = $32
-    // [79] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [79] *((const nomodify byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
     // pos*10
@@ -4734,7 +4734,7 @@ plot_chargen: {
     bne __b3
     // plot_chargen::@8
     // *PROCPORT = $37
-    // [99] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [99] *((const nomodify byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm
@@ -4788,11 +4788,11 @@ keyboard_key_pressed: {
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [111] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [111] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     // ~*CIA1_PORT_B
-    // [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [112] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     // keyboard_matrix_read::@return
@@ -4808,7 +4808,7 @@ keyboard_matrix_read: {
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
     // return keyboard_char_keycodes[ch];
-    // [114] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [114] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
     // keyboard_get_keycode::@return
     // }

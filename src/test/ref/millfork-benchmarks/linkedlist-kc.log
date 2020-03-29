@@ -140,7 +140,7 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#37 ← phi( print_word/(byte*) print_char_cursor#36 print_word::@1/(byte*) print_char_cursor#3 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -148,7 +148,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#23 ← phi( print_byte/(byte*) print_char_cursor#10 )
   (byte*) print_char_cursor#6 ← (byte*) print_char_cursor#23
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -176,7 +176,7 @@ print_char::@return: scope:[print_char]  from print_char
 @43: scope:[]  from @13
   (byte*) print_line_cursor#24 ← phi( @13/(byte*) print_line_cursor#0 )
   (byte*) print_char_cursor#45 ← phi( @13/(byte*) print_char_cursor#0 )
-  (word) last_time ← (word) 0
+  (volatile word) last_time ← (word) 0
   (word) Ticks#0 ← (word) 0
   to:@46
 
@@ -192,15 +192,15 @@ start::@return: scope:[start]  from start
 end: scope:[end]  from main::@4
   (byte*) print_line_cursor#23 ← phi( main::@4/(byte*) print_line_cursor#18 )
   (byte*) print_char_cursor#42 ← phi( main::@4/(byte*) print_char_cursor#40 )
-  (word) Ticks#1 ← (word) last_time
+  (word) Ticks#1 ← (volatile word) last_time
   call start 
   to:end::@1
 end::@1: scope:[end]  from end
   (byte*) print_line_cursor#20 ← phi( end/(byte*) print_line_cursor#23 )
   (byte*) print_char_cursor#39 ← phi( end/(byte*) print_char_cursor#42 )
   (word) Ticks#7 ← phi( end/(word) Ticks#1 )
-  (word) last_time ← (word) last_time - (word) Ticks#7
-  (word) Ticks#2 ← (word) last_time
+  (volatile word) last_time ← (volatile word) last_time - (word) Ticks#7
+  (word) Ticks#2 ← (volatile word) last_time
   (word) print_word::w#0 ← (word) Ticks#2
   call print_word 
   to:end::@2
@@ -576,7 +576,7 @@ SYMBOL TABLE SSA
 (const struct node*) heap[(number) $fa0]  = { fill( $fa0, 0) }
 (void()) init()
 (label) init::@return
-(word) last_time loadstore
+(volatile word) last_time loadstore
 (void()) main()
 (bool~) main::$4
 (word~) main::$5
@@ -696,7 +696,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -780,7 +780,7 @@ SYMBOL TABLE SSA
 (struct node*) root#9
 (void()) start()
 (label) start::@return
-(const word*) start::LAST_TIME = &(word) last_time
+(const nomodify word*) start::LAST_TIME = &(volatile word) last_time
 (word()) sum()
 (word*~) sum::$0
 (struct node**~) sum::$1
@@ -1120,7 +1120,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (word) last_time ← (word) 0
+  [1] (volatile word) last_time ← (word) 0
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -1174,12 +1174,12 @@ main::@return: scope:[main]  from main::@4
 
 (void()) end()
 end: scope:[end]  from main::@4
-  [25] (word) Ticks#1 ← (word) last_time
+  [25] (word) Ticks#1 ← (volatile word) last_time
   [26] call start 
   to:end::@1
 end::@1: scope:[end]  from end
-  [27] (word) last_time ← (word) last_time - (word) Ticks#1
-  [28] (word) Ticks#12 ← (word) last_time
+  [27] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1
+  [28] (word) Ticks#12 ← (volatile word) last_time
   [29] (word) print_word::w#0 ← (word) Ticks#12
   [30] call print_word 
   to:end::@2
@@ -1221,12 +1221,12 @@ print_word::@return: scope:[print_word]  from print_word::@1
 print_byte: scope:[print_byte]  from print_word print_word::@1
   [44] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [45] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [46] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  [46] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   [47] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [48] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [49] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
+  [49] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2)
   [50] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -1319,7 +1319,7 @@ VARIABLE REGISTER WEIGHTS
 (word) free_#13 8416.833333333332
 (word) free_#22 40200.600000000006
 (void()) init()
-(word) last_time loadstore 17.652173913043477
+(volatile word) last_time loadstore 17.652173913043477
 (void()) main()
 (word~) main::$5 101.0
 (byte) main::c
@@ -1468,7 +1468,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   lda #>0
@@ -1619,7 +1619,7 @@ main: {
 }
   // end
 end: {
-    // [25] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [25] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -1629,7 +1629,7 @@ end: {
     jmp __b1
     // end::@1
   __b1:
-    // [27] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [27] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -1637,7 +1637,7 @@ end: {
     lda.z last_time+1
     sbc.z Ticks+1
     sta.z last_time+1
-    // [28] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [28] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -1748,7 +1748,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [46] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [46] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -1766,7 +1766,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [49] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [49] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -1966,16 +1966,16 @@ init: {
   heap: .fill 4*$fa0, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
 Statement [10] (word) prepend::x#0 ← (word) main::i#3 [ last_time print_char_cursor#48 main::c#8 main::i#3 free_#22 root#20 prepend::x#0 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 main::i#3 free_#22 root#20 prepend::x#0 ] { { prepend::x#0 = main::i#3 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::c#8 main::c#2 ]
 Statement [13] if((word) main::i#2!=(word) $bb8) goto main::@2 [ last_time print_char_cursor#48 main::c#8 main::i#2 free_#13 root#11 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 main::i#2 free_#13 root#11 ] { }  ) always clobbers reg byte a 
 Statement [16] (word) sum::return#2 ← (word) sum::s#3 [ last_time print_char_cursor#48 main::c#8 sum::return#2 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 sum::return#2 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
 Statement [17] (word~) main::$5 ← (word) sum::return#2 [ last_time print_char_cursor#48 main::c#8 main::$5 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 main::$5 ] { { print_char::ch#2 = print_char::ch#3 } { print_char_cursor#26 = print_char_cursor#48 } }  ) always clobbers reg byte a 
 Statement [18] (byte) print_char::ch#2 ← (byte)(word~) main::$5 [ last_time print_char_cursor#48 main::c#8 print_char::ch#2 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 print_char::ch#2 ] { { print_char::ch#2 = print_char::ch#3 } { print_char_cursor#26 = print_char_cursor#48 } }  ) always clobbers reg byte a 
-Statement [25] (word) Ticks#1 ← (word) last_time [ last_time print_char_cursor#10 Ticks#1 ] ( main:3::end:23 [ last_time print_char_cursor#10 Ticks#1 ] { }  ) always clobbers reg byte a 
-Statement [27] (word) last_time ← (word) last_time - (word) Ticks#1 [ last_time print_char_cursor#10 ] ( main:3::end:23 [ last_time print_char_cursor#10 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
-Statement [28] (word) Ticks#12 ← (word) last_time [ print_char_cursor#10 Ticks#12 ] ( main:3::end:23 [ print_char_cursor#10 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [25] (word) Ticks#1 ← (volatile word) last_time [ last_time print_char_cursor#10 Ticks#1 ] ( main:3::end:23 [ last_time print_char_cursor#10 Ticks#1 ] { }  ) always clobbers reg byte a 
+Statement [27] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 [ last_time print_char_cursor#10 ] ( main:3::end:23 [ last_time print_char_cursor#10 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [28] (word) Ticks#12 ← (volatile word) last_time [ print_char_cursor#10 Ticks#12 ] ( main:3::end:23 [ print_char_cursor#10 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [29] (word) print_word::w#0 ← (word) Ticks#12 [ print_char_cursor#10 print_word::w#0 ] ( main:3::end:23 [ print_char_cursor#10 print_word::w#0 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [36] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#8 + (byte) $28 [ print_char_cursor#10 print_line_cursor#1 ] ( main:3::end:23::print_ln:32 [ print_char_cursor#10 print_line_cursor#1 ] { }  ) always clobbers reg byte a 
 Statement [37] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 [ print_char_cursor#10 print_line_cursor#1 ] ( main:3::end:23::print_ln:32 [ print_char_cursor#10 print_line_cursor#1 ] { }  ) always clobbers reg byte a 
@@ -1997,15 +1997,15 @@ Statement [69] *((word*)(struct node*) prepend::new#1 + (const byte) OFFSET_STRU
 Statement [70] (struct node*) root#11 ← (struct node*) prepend::new#1 [ free_#13 root#11 ] ( main:3::prepend:11 [ last_time print_char_cursor#48 main::c#8 main::i#3 free_#13 root#11 ] { { prepend::x#0 = main::i#3 } }  ) always clobbers reg byte a 
 Statement [72] (word~) alloc::$1 ← (word) free_#22 << (byte) 2 [ free_#22 alloc::$1 ] ( main:3::prepend:11::alloc:65 [ last_time print_char_cursor#48 main::c#8 main::i#3 root#20 prepend::x#0 free_#22 alloc::$1 ] { { prepend::x#0 = main::i#3 } { alloc::return#0 = alloc::return#2 } }  ) always clobbers reg byte a 
 Statement [73] (struct node*) alloc::return#0 ← (const struct node*) heap + (word~) alloc::$1 [ free_#22 alloc::return#0 ] ( main:3::prepend:11::alloc:65 [ last_time print_char_cursor#48 main::c#8 main::i#3 root#20 prepend::x#0 free_#22 alloc::return#0 ] { { prepend::x#0 = main::i#3 } { alloc::return#0 = alloc::return#2 } }  ) always clobbers reg byte a 
-Statement [1] (word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
 Statement [10] (word) prepend::x#0 ← (word) main::i#3 [ last_time print_char_cursor#48 main::c#8 main::i#3 free_#22 root#20 prepend::x#0 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 main::i#3 free_#22 root#20 prepend::x#0 ] { { prepend::x#0 = main::i#3 } }  ) always clobbers reg byte a 
 Statement [13] if((word) main::i#2!=(word) $bb8) goto main::@2 [ last_time print_char_cursor#48 main::c#8 main::i#2 free_#13 root#11 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 main::i#2 free_#13 root#11 ] { }  ) always clobbers reg byte a 
 Statement [16] (word) sum::return#2 ← (word) sum::s#3 [ last_time print_char_cursor#48 main::c#8 sum::return#2 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 sum::return#2 ] { { sum::return#2 = sum::s#3 } }  ) always clobbers reg byte a 
 Statement [17] (word~) main::$5 ← (word) sum::return#2 [ last_time print_char_cursor#48 main::c#8 main::$5 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 main::$5 ] { { print_char::ch#2 = print_char::ch#3 } { print_char_cursor#26 = print_char_cursor#48 } }  ) always clobbers reg byte a 
 Statement [18] (byte) print_char::ch#2 ← (byte)(word~) main::$5 [ last_time print_char_cursor#48 main::c#8 print_char::ch#2 ] ( main:3 [ last_time print_char_cursor#48 main::c#8 print_char::ch#2 ] { { print_char::ch#2 = print_char::ch#3 } { print_char_cursor#26 = print_char_cursor#48 } }  ) always clobbers reg byte a 
-Statement [25] (word) Ticks#1 ← (word) last_time [ last_time print_char_cursor#10 Ticks#1 ] ( main:3::end:23 [ last_time print_char_cursor#10 Ticks#1 ] { }  ) always clobbers reg byte a 
-Statement [27] (word) last_time ← (word) last_time - (word) Ticks#1 [ last_time print_char_cursor#10 ] ( main:3::end:23 [ last_time print_char_cursor#10 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
-Statement [28] (word) Ticks#12 ← (word) last_time [ print_char_cursor#10 Ticks#12 ] ( main:3::end:23 [ print_char_cursor#10 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [25] (word) Ticks#1 ← (volatile word) last_time [ last_time print_char_cursor#10 Ticks#1 ] ( main:3::end:23 [ last_time print_char_cursor#10 Ticks#1 ] { }  ) always clobbers reg byte a 
+Statement [27] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 [ last_time print_char_cursor#10 ] ( main:3::end:23 [ last_time print_char_cursor#10 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [28] (word) Ticks#12 ← (volatile word) last_time [ print_char_cursor#10 Ticks#12 ] ( main:3::end:23 [ print_char_cursor#10 Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [29] (word) print_word::w#0 ← (word) Ticks#12 [ print_char_cursor#10 print_word::w#0 ] ( main:3::end:23 [ print_char_cursor#10 print_word::w#0 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [36] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#8 + (byte) $28 [ print_char_cursor#10 print_line_cursor#1 ] ( main:3::end:23::print_ln:32 [ print_char_cursor#10 print_line_cursor#1 ] { }  ) always clobbers reg byte a 
 Statement [37] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 [ print_char_cursor#10 print_line_cursor#1 ] ( main:3::end:23::print_ln:32 [ print_char_cursor#10 print_line_cursor#1 ] { }  ) always clobbers reg byte a 
@@ -2117,7 +2117,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   lda #>0
@@ -2252,7 +2252,7 @@ main: {
 }
   // end
 end: {
-    // [25] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [25] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -2262,7 +2262,7 @@ end: {
     jmp __b1
     // end::@1
   __b1:
-    // [27] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [27] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -2270,7 +2270,7 @@ end: {
     lda.z last_time+1
     sbc.z Ticks+1
     sta.z last_time+1
-    // [28] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [28] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -2371,7 +2371,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [46] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [46] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [47] call print_char 
@@ -2387,7 +2387,7 @@ print_byte: {
     // [48] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [49] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [49] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [50] call print_char 
     // [52] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -2697,7 +2697,7 @@ FINAL SYMBOL TABLE
 (const struct node*) heap[(number) $fa0]  = { fill( $fa0, 0) }
 (void()) init()
 (label) init::@return
-(word) last_time loadstore zp[2]:10 17.652173913043477
+(volatile word) last_time loadstore zp[2]:10 17.652173913043477
 (void()) main()
 (word~) main::$5 zp[2]:12 101.0
 (label) main::@1
@@ -2743,7 +2743,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#10 print_char_cursor zp[2]:8 4336.833333333334
 (byte*) print_char_cursor#26 print_char_cursor zp[2]:8 110052.5
 (byte*) print_char_cursor#48 print_char_cursor zp[2]:8 16.833333333333332
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:6 15001.5
 (byte*) print_line_cursor#8 print_line_cursor zp[2]:6 20002.0
@@ -2761,7 +2761,7 @@ FINAL SYMBOL TABLE
 (struct node*) root#20 root zp[2]:4 1833.6666666666665
 (void()) start()
 (label) start::@return
-(const word*) start::LAST_TIME = &(word) last_time
+(const nomodify word*) start::LAST_TIME = &(volatile word) last_time
 (word()) sum()
 (label) sum::@1
 (label) sum::@2
@@ -2812,7 +2812,7 @@ Score: 14179
 __bbegin:
   // @1
   // last_time
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   sta.z last_time+1
@@ -2920,7 +2920,7 @@ main: {
   // end
 end: {
     // Ticks = last_time
-    // [25] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [25] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -2930,7 +2930,7 @@ end: {
     jsr start
     // end::@1
     // last_time -= Ticks
-    // [27] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [27] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -2939,7 +2939,7 @@ end: {
     sbc.z Ticks+1
     sta.z last_time+1
     // Ticks = last_time
-    // [28] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [28] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -3033,7 +3033,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [46] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [46] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [47] call print_char 
@@ -3048,7 +3048,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [49] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [49] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [50] call print_char 
     // [52] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]

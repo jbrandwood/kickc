@@ -14,13 +14,13 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @7
-  *((const byte*) GHOST_BYTE) ← (number) 0
+  *((const nomodify byte*) GHOST_BYTE) ← (number) 0
   asm { sei  }
-  *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
-  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
-  *((const byte*) RASTER) ← (number) $fa
-  *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
+  *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
+  *((const nomodify byte*) RASTER) ← (number) $fa
+  *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
+  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -29,12 +29,12 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
-  *((const byte*) BORDERCOL) ← (const byte) WHITE
-  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $ff^(const byte) VIC_RSEL
-  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
-  *((const byte*) RASTER) ← (number) $fd
-  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-  *((const byte*) BORDERCOL) ← (const byte) RED
+  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
+  *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $ff^(const nomodify byte) VIC_RSEL
+  *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  *((const nomodify byte*) RASTER) ← (number) $fd
+  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
+  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
   to:irq_bottom_1::@return
 irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
   return 
@@ -42,12 +42,12 @@ irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
-  *((const byte*) BORDERCOL) ← (const byte) WHITE
-  *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL
-  *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
-  *((const byte*) RASTER) ← (number) $fa
-  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  *((const byte*) BORDERCOL) ← (const byte) RED
+  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
+  *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL
+  *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  *((const nomodify byte*) RASTER) ← (number) $fa
+  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
+  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
   to:irq_bottom_2::@return
 irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
   return 
@@ -64,19 +64,19 @@ SYMBOL TABLE SSA
 (label) @8
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL = (byte*)(number) $d020
-(const byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
-(const byte*) GHOST_BYTE = (byte*)(number) $3fff
-(const byte*) IRQ_ENABLE = (byte*)(number) $d01a
-(const byte) IRQ_RASTER = (byte) 1
-(const byte*) IRQ_STATUS = (byte*)(number) $d019
-(const void()**) KERNEL_IRQ = (void()**)(number) $314
-(const byte*) RASTER = (byte*)(number) $d012
-(const byte) RED = (byte) 2
-(const byte*) VIC_CONTROL = (byte*)(number) $d011
-(const byte) VIC_RSEL = (byte) 8
-(const byte) WHITE = (byte) 1
+(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
+(const nomodify byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const nomodify byte*) GHOST_BYTE = (byte*)(number) $3fff
+(const nomodify byte*) IRQ_ENABLE = (byte*)(number) $d01a
+(const nomodify byte) IRQ_RASTER = (byte) 1
+(const nomodify byte*) IRQ_STATUS = (byte*)(number) $d019
+(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
+(const nomodify byte*) RASTER = (byte*)(number) $d012
+(const nomodify byte) RED = (byte) 2
+(const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
+(const nomodify byte) VIC_RSEL = (byte) 8
+(const nomodify byte) WHITE = (byte) 1
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 (label) irq_bottom_1::@return
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
@@ -84,18 +84,18 @@ interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) GHOST_BYTE) ← (number) 0
-Adding number conversion cast (unumber) $7f in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $fa in *((const byte*) RASTER) ← (number) $fa
-Adding number conversion cast (unumber) $ff^VIC_RSEL in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (number) $ff^(const byte) VIC_RSEL
-Adding number conversion cast (unumber) $ff in *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (unumber)(number) $ff^(const byte) VIC_RSEL
-Adding number conversion cast (unumber) $fd in *((const byte*) RASTER) ← (number) $fd
-Adding number conversion cast (unumber) $fa in *((const byte*) RASTER) ← (number) $fa
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) GHOST_BYTE) ← (number) 0
+Adding number conversion cast (unumber) $7f in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
+Adding number conversion cast (unumber) $fa in *((const nomodify byte*) RASTER) ← (number) $fa
+Adding number conversion cast (unumber) $ff^VIC_RSEL in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $ff^(const nomodify byte) VIC_RSEL
+Adding number conversion cast (unumber) $ff in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (unumber)(number) $ff^(const nomodify byte) VIC_RSEL
+Adding number conversion cast (unumber) $fd in *((const nomodify byte*) RASTER) ← (number) $fd
+Adding number conversion cast (unumber) $fa in *((const nomodify byte*) RASTER) ← (number) $fa
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) GHOST_BYTE) ← (unumber)(number) 0
-Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fa
-Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fd
-Inlining cast *((const byte*) RASTER) ← (unumber)(number) $fa
+Inlining cast *((const nomodify byte*) GHOST_BYTE) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) RASTER) ← (unumber)(number) $fa
+Inlining cast *((const nomodify byte*) RASTER) ← (unumber)(number) $fd
+Inlining cast *((const nomodify byte*) RASTER) ← (unumber)(number) $fa
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
@@ -108,7 +108,7 @@ Simplifying constant pointer cast (byte*) 16383
 Simplifying constant integer cast 0
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $fa
-Simplifying constant integer cast (unumber)(number) $ff^(const byte) VIC_RSEL
+Simplifying constant integer cast (unumber)(number) $ff^(const nomodify byte) VIC_RSEL
 Simplifying constant integer cast $ff
 Simplifying constant integer cast $fd
 Simplifying constant integer cast $fa
@@ -148,13 +148,13 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) GHOST_BYTE) ← (byte) 0
+  [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0
   asm { sei  }
-  [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR
-  [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f
-  [8] *((const byte*) RASTER) ← (byte) $fa
-  [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER
-  [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
+  [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
+  [8] *((const nomodify byte*) RASTER) ← (byte) $fa
+  [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
+  [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -163,12 +163,12 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
-  [13] *((const byte*) BORDERCOL) ← (const byte) WHITE
-  [14] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL
-  [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
-  [16] *((const byte*) RASTER) ← (byte) $fa
-  [17] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  [18] *((const byte*) BORDERCOL) ← (const byte) RED
+  [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
+  [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL
+  [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  [16] *((const nomodify byte*) RASTER) ← (byte) $fa
+  [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
+  [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
   to:irq_bottom_2::@return
 irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
   [19] return 
@@ -176,12 +176,12 @@ irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
 
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
-  [20] *((const byte*) BORDERCOL) ← (const byte) WHITE
-  [21] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $ff^(const byte) VIC_RSEL
-  [22] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER
-  [23] *((const byte*) RASTER) ← (byte) $fd
-  [24] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-  [25] *((const byte*) BORDERCOL) ← (const byte) RED
+  [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
+  [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL
+  [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  [23] *((const nomodify byte*) RASTER) ← (byte) $fd
+  [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
+  [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
   to:irq_bottom_1::@return
 irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
   [26] return 
@@ -240,28 +240,28 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) GHOST_BYTE) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
     // asm { sei  }
     sei
-    // [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [8] *((const byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-    // [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
@@ -279,28 +279,28 @@ main: {
 // Interrupt Routine 2
 irq_bottom_2: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [13] *((const byte*) BORDERCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-    // [14] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
     ora VIC_CONTROL
     sta VIC_CONTROL
-    // [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [16] *((const byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    // [16] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
-    // [17] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    // [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-    // [18] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp __breturn
@@ -313,28 +313,28 @@ irq_bottom_2: {
 // Interrupt Routine 1
 irq_bottom_1: {
     // entry interrupt(KERNEL_MIN)
-    // [20] *((const byte*) BORDERCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-    // [21] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $ff^(const byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [22] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [23] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
-    // [24] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+    // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-    // [25] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp __breturn
@@ -346,24 +346,24 @@ irq_bottom_1: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) GHOST_BYTE) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const byte*) RASTER) ← (byte) $fa [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const byte*) BORDERCOL) ← (const byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((const byte*) RASTER) ← (byte) $fa [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [17] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [18] *((const byte*) BORDERCOL) ← (const byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [20] *((const byte*) BORDERCOL) ← (const byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $ff^(const byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [22] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [23] *((const byte*) RASTER) ← (byte) $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [24] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [25] *((const byte*) BORDERCOL) ← (const byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) RASTER) ← (byte) $fa [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) RASTER) ← (byte) $fa [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [23] *((const nomodify byte*) RASTER) ← (byte) $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -419,28 +419,28 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) GHOST_BYTE) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
     // asm { sei  }
     sei
-    // [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [8] *((const byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
-    // [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
@@ -458,28 +458,28 @@ main: {
 // Interrupt Routine 2
 irq_bottom_2: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [13] *((const byte*) BORDERCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-    // [14] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
     ora VIC_CONTROL
     sta VIC_CONTROL
-    // [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [16] *((const byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    // [16] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
-    // [17] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    // [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-    // [18] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp __breturn
@@ -492,28 +492,28 @@ irq_bottom_2: {
 // Interrupt Routine 1
 irq_bottom_1: {
     // entry interrupt(KERNEL_MIN)
-    // [20] *((const byte*) BORDERCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
-    // [21] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $ff^(const byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [22] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [23] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
-    // [24] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+    // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-    // [25] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     jmp __breturn
@@ -550,19 +550,19 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BORDERCOL = (byte*) 53280
-(const byte*) CIA1_INTERRUPT = (byte*) 56333
-(const byte) CIA_INTERRUPT_CLEAR = (byte) $7f
-(const byte*) GHOST_BYTE = (byte*) 16383
-(const byte*) IRQ_ENABLE = (byte*) 53274
-(const byte) IRQ_RASTER = (byte) 1
-(const byte*) IRQ_STATUS = (byte*) 53273
-(const void()**) KERNEL_IRQ = (void()**) 788
-(const byte*) RASTER = (byte*) 53266
-(const byte) RED = (byte) 2
-(const byte*) VIC_CONTROL = (byte*) 53265
-(const byte) VIC_RSEL = (byte) 8
-(const byte) WHITE = (byte) 1
+(const nomodify byte*) BORDERCOL = (byte*) 53280
+(const nomodify byte*) CIA1_INTERRUPT = (byte*) 56333
+(const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const nomodify byte*) GHOST_BYTE = (byte*) 16383
+(const nomodify byte*) IRQ_ENABLE = (byte*) 53274
+(const nomodify byte) IRQ_RASTER = (byte) 1
+(const nomodify byte*) IRQ_STATUS = (byte*) 53273
+(const nomodify void()**) KERNEL_IRQ = (void()**) 788
+(const nomodify byte*) RASTER = (byte*) 53266
+(const nomodify byte) RED = (byte) 2
+(const nomodify byte*) VIC_CONTROL = (byte*) 53265
+(const nomodify byte) VIC_RSEL = (byte) 8
+(const nomodify byte) WHITE = (byte) 1
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 (label) irq_bottom_1::@return
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
@@ -610,34 +610,34 @@ Score: 154
   // main
 main: {
     // *GHOST_BYTE = 0
-    // [4] *((const byte*) GHOST_BYTE) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta GHOST_BYTE
     // asm
     // asm { sei  }
     sei
     // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [6] *((const byte*) CIA1_INTERRUPT) ← (const byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // *VIC_CONTROL &=$7f
-    // [7] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
     // *RASTER = $fa
-    // [8] *((const byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
     sta RASTER
     // *IRQ_ENABLE = IRQ_RASTER
-    // [9] *((const byte*) IRQ_ENABLE) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
     // *KERNEL_IRQ = &irq_bottom_1
-    // [10] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
     sta KERNEL_IRQ
@@ -656,33 +656,33 @@ main: {
 irq_bottom_2: {
     // entry interrupt(KERNEL_KEYBOARD)
     // *BORDERCOL = WHITE
-    // [13] *((const byte*) BORDERCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
     // *VIC_CONTROL |= VIC_RSEL
-    // [14] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) | (const byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
     ora VIC_CONTROL
     sta VIC_CONTROL
     // *IRQ_STATUS = IRQ_RASTER
-    // [15] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // *RASTER = $fa
-    // [16] *((const byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    // [16] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
     sta RASTER
     // *KERNEL_IRQ = &irq_bottom_1
-    // [17] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
+    // [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
     // *BORDERCOL = RED
-    // [18] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     // irq_bottom_2::@return
@@ -695,33 +695,33 @@ irq_bottom_2: {
 irq_bottom_1: {
     // entry interrupt(KERNEL_MIN)
     // *BORDERCOL = WHITE
-    // [20] *((const byte*) BORDERCOL) ← (const byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BORDERCOL
     // *VIC_CONTROL &= ($ff^VIC_RSEL)
-    // [21] *((const byte*) VIC_CONTROL) ← *((const byte*) VIC_CONTROL) & (byte) $ff^(const byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
     and VIC_CONTROL
     sta VIC_CONTROL
     // *IRQ_STATUS = IRQ_RASTER
-    // [22] *((const byte*) IRQ_STATUS) ← (const byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // *RASTER = $fd
-    // [23] *((const byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
     sta RASTER
     // *KERNEL_IRQ = &irq_bottom_2
-    // [24] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
+    // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
     // *BORDERCOL = RED
-    // [25] *((const byte*) BORDERCOL) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDERCOL
     // irq_bottom_1::@return

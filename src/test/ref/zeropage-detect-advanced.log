@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (dword) main::t ← (dword) 0
+  (volatile dword) main::t ← (dword) 0
   *((byte*)(number) $400) ← *((const byte*) main::c + (number) 0)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -27,8 +27,8 @@ SYMBOL TABLE SSA
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::c = (byte*)&(dword) main::t
-(dword) main::t loadstore
+(const byte*) main::c = (byte*)&(volatile dword) main::t
+(volatile dword) main::t loadstore
 
 Adding number conversion cast (unumber) 0 in *((byte*)(number) $400) ← *((const byte*) main::c + (number) 0)
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -66,7 +66,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (dword) main::t ← (dword) 0
+  [4] (volatile dword) main::t ← (dword) 0
   [5] *((byte*) 1024) ← *((const byte*) main::c)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -76,7 +76,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(dword) main::t loadstore 110.0
+(volatile dword) main::t loadstore 110.0
 
 Initial phi equivalence classes
 Added variable main::t to live range equivalence class [ main::t ]
@@ -112,7 +112,7 @@ __bend:
 main: {
     .label c = t
     .label t = 2
-    // [4] (dword) main::t ← (dword) 0 -- vduz1=vduc1 
+    // [4] (volatile dword) main::t ← (dword) 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     lda #>0
@@ -133,7 +133,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (dword) main::t ← (dword) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] (volatile dword) main::t ← (dword) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((byte*) 1024) ← *((const byte*) main::c) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[4]:2 [ main::t ] : zp[4]:2 , 
 
@@ -171,7 +171,7 @@ __bend:
 main: {
     .label c = t
     .label t = 2
-    // [4] (dword) main::t ← (dword) 0 -- vduz1=vduc1 
+    // [4] (volatile dword) main::t ← (dword) 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     lda #>0
@@ -217,8 +217,8 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::c = (byte*)&(dword) main::t
-(dword) main::t loadstore zp[4]:2 110.0
+(const byte*) main::c = (byte*)&(volatile dword) main::t
+(volatile dword) main::t loadstore zp[4]:2 110.0
 
 zp[4]:2 [ main::t ]
 
@@ -245,7 +245,7 @@ main: {
     .label c = t
     .label t = 2
     // t
-    // [4] (dword) main::t ← (dword) 0 -- vduz1=vduc1 
+    // [4] (volatile dword) main::t ← (dword) 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     sta.z t+1

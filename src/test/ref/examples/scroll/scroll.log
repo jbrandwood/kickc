@@ -16,30 +16,30 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte*) fillscreen::screen#0 ← (const byte*) SCREEN
+  (byte*) fillscreen::screen#0 ← (const nomodify byte*) SCREEN
   (byte) fillscreen::fill#0 ← (number) $20
   call fillscreen 
   to:main::@17
 main::@17: scope:[main]  from main
   (byte) main::scroll#0 ← (byte) 7
-  (byte*) main::nxt#0 ← (const byte*) TEXT
+  (byte*) main::nxt#0 ← (const to_nomodify byte*) TEXT
   to:main::@2
 main::@2: scope:[main]  from main::@17 main::@2 main::@7
   (byte*) main::nxt#10 ← phi( main::@17/(byte*) main::nxt#0 main::@2/(byte*) main::nxt#10 main::@7/(byte*) main::nxt#11 )
   (byte) main::scroll#7 ← phi( main::@17/(byte) main::scroll#0 main::@2/(byte) main::scroll#7 main::@7/(byte) main::scroll#4 )
-  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
+  (bool~) main::$1 ← *((const nomodify byte*) RASTER) != (number) $fe
   if((bool~) main::$1) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@4
   (byte*) main::nxt#9 ← phi( main::@2/(byte*) main::nxt#10 main::@4/(byte*) main::nxt#9 )
   (byte) main::scroll#5 ← phi( main::@2/(byte) main::scroll#7 main::@4/(byte) main::scroll#5 )
-  (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
+  (bool~) main::$2 ← *((const nomodify byte*) RASTER) != (number) $ff
   if((bool~) main::$2) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@4
   (byte*) main::nxt#8 ← phi( main::@4/(byte*) main::nxt#9 )
   (byte) main::scroll#3 ← phi( main::@4/(byte) main::scroll#5 )
-  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   (byte) main::scroll#1 ← -- (byte) main::scroll#3
   (bool~) main::$4 ← (byte) main::scroll#1 == (number) $ff
   (bool~) main::$5 ← ! (bool~) main::$4
@@ -48,8 +48,8 @@ main::@5: scope:[main]  from main::@4
 main::@7: scope:[main]  from main::@15 main::@5
   (byte*) main::nxt#11 ← phi( main::@15/(byte*) main::nxt#1 main::@5/(byte*) main::nxt#8 )
   (byte) main::scroll#4 ← phi( main::@15/(byte) main::scroll#6 main::@5/(byte) main::scroll#1 )
-  *((const byte*) SCROLL) ← (byte) main::scroll#4
-  *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
+  *((const nomodify byte*) SCROLL) ← (byte) main::scroll#4
+  *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL)
   if(true) goto main::@2
   to:main::@return
 main::@6: scope:[main]  from main::@5
@@ -69,7 +69,7 @@ main::@9: scope:[main]  from main::@8
   (byte*) main::nxt#7 ← phi( main::@8/(byte*) main::nxt#5 )
   (byte) main::i#3 ← phi( main::@8/(byte) main::i#2 )
   (number~) main::$7 ← (byte) main::i#3 + (number) 1
-  *((const byte*) main::line + (byte) main::i#3) ← *((const byte*) main::line + (number~) main::$7)
+  *((const nomodify byte*) main::line + (byte) main::i#3) ← *((const nomodify byte*) main::line + (number~) main::$7)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@8
 main::@10: scope:[main]  from main::@8
@@ -84,12 +84,12 @@ main::@15: scope:[main]  from main::@10 main::@14
   (byte) main::scroll#6 ← phi( main::@10/(byte) main::scroll#8 main::@14/(byte) main::scroll#9 )
   (byte*) main::nxt#4 ← phi( main::@10/(byte*) main::nxt#3 main::@14/(byte*) main::nxt#2 )
   (byte) main::c#2 ← phi( main::@10/(byte) main::c#0 main::@14/(byte) main::c#1 )
-  *((const byte*) main::line + (number) $27) ← (byte) main::c#2
+  *((const nomodify byte*) main::line + (number) $27) ← (byte) main::c#2
   (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   to:main::@7
 main::@14: scope:[main]  from main::@10
   (byte) main::scroll#9 ← phi( main::@10/(byte) main::scroll#8 )
-  (byte*) main::nxt#2 ← (const byte*) TEXT
+  (byte*) main::nxt#2 ← (const to_nomodify byte*) TEXT
   (byte) main::c#1 ← *((byte*) main::nxt#2)
   to:main::@15
 main::@return: scope:[main]  from main::@7
@@ -132,11 +132,11 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d020
-(const byte*) RASTER = (byte*)(number) $d012
-(const byte*) SCREEN = (byte*)(number) $400
-(const byte*) SCROLL = (byte*)(number) $d016
-(const byte*) TEXT[]  = (byte*) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
+(const nomodify byte*) BGCOL = (byte*)(number) $d020
+(const nomodify byte*) RASTER = (byte*)(number) $d012
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCROLL = (byte*)(number) $d016
+(const to_nomodify byte*) TEXT[]  = (byte*) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (byte*~) fillscreen::$0
 (bool~) fillscreen::$1
@@ -188,7 +188,7 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 (byte) main::i#3
-(const byte*) main::line = (const byte*) SCREEN+(number) $28
+(const nomodify byte*) main::line = (const nomodify byte*) SCREEN+(number) $28
 (byte*) main::nxt
 (byte*) main::nxt#0
 (byte*) main::nxt#1
@@ -218,15 +218,15 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $28 in 
 Adding number conversion cast (unumber) $20 in (byte) fillscreen::fill#0 ← (number) $20
-Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
-Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((const nomodify byte*) RASTER) != (number) $fe
+Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((const nomodify byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) $ff in (bool~) main::$4 ← (byte) main::scroll#1 == (number) $ff
 Adding number conversion cast (unumber) 7 in (byte) main::scroll#2 ← (number) 7
 Adding number conversion cast (unumber) $27 in (bool~) main::$6 ← (byte) main::i#2 != (number) $27
 Adding number conversion cast (unumber) 1 in (number~) main::$7 ← (byte) main::i#3 + (number) 1
 Adding number conversion cast (unumber) main::$7 in (number~) main::$7 ← (byte) main::i#3 + (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) main::$8 ← (byte) main::c#0 == (number) 0
-Adding number conversion cast (unumber) $27 in *((const byte*) main::line + (number) $27) ← (byte) main::c#2
+Adding number conversion cast (unumber) $27 in *((const nomodify byte*) main::line + (number) $27) ← (byte) main::c#2
 Adding number conversion cast (unumber) $3e8 in (byte*~) fillscreen::$0 ← (byte*) fillscreen::screen#2 + (number) $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) fillscreen::fill#0 ← (unumber)(number) $20
@@ -285,8 +285,8 @@ Identical Phi Values (byte) fillscreen::fill#3 (byte) fillscreen::fill#0
 Identical Phi Values (byte*) fillscreen::screen#2 (byte*) fillscreen::cursor#0
 Identical Phi Values (byte) fillscreen::fill#1 (byte) fillscreen::fill#3
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@2
-Simple Condition (bool~) main::$2 [10] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
+Simple Condition (bool~) main::$1 [7] if(*((const nomodify byte*) RASTER)!=(byte) $fe) goto main::@2
+Simple Condition (bool~) main::$2 [10] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4
 Simple Condition (bool~) main::$5 [14] if((byte) main::scroll#1!=(byte) $ff) goto main::@7
 Simple Condition (bool~) main::$6 [23] if((byte) main::i#2!=(byte) $27) goto main::@9
 Simple Condition (bool~) main::$9 [29] if((byte) main::c#0!=(byte) 0) goto main::@15
@@ -313,13 +313,13 @@ Inlining constant with var siblings (const byte*) main::nxt#0
 Inlining constant with var siblings (const byte) main::scroll#2
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) main::nxt#2
-Constant inlined main::nxt#0 = (const byte*) TEXT
+Constant inlined main::nxt#0 = (const to_nomodify byte*) TEXT
 Constant inlined main::scroll#0 = (byte) 7
-Constant inlined fillscreen::screen#0 = (const byte*) SCREEN
-Constant inlined fillscreen::$0 = (const byte*) SCREEN+(word) $3e8
+Constant inlined fillscreen::screen#0 = (const nomodify byte*) SCREEN
+Constant inlined fillscreen::$0 = (const nomodify byte*) SCREEN+(word) $3e8
 Constant inlined main::scroll#2 = (byte) 7
 Constant inlined main::i#0 = (byte) 0
-Constant inlined main::nxt#2 = (const byte*) TEXT
+Constant inlined main::nxt#2 = (const to_nomodify byte*) TEXT
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in assignment *(main::line+1 + main::$7)
 Consolidated array index constant in *(main::line+$27)
@@ -394,15 +394,15 @@ main: scope:[main]  from @1
   [5] call fillscreen 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@4
-  [6] (byte*) main::nxt#10 ← phi( main/(const byte*) TEXT main::@1/(byte*) main::nxt#10 main::@4/(byte*) main::nxt#11 )
+  [6] (byte*) main::nxt#10 ← phi( main/(const to_nomodify byte*) TEXT main::@1/(byte*) main::nxt#10 main::@4/(byte*) main::nxt#11 )
   [6] (byte) main::scroll#7 ← phi( main/(byte) 7 main::@1/(byte) main::scroll#7 main::@4/(byte) main::scroll#4 )
-  [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1
+  [7] if(*((const nomodify byte*) RASTER)!=(byte) $fe) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+  [8] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [9] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  [9] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
   [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7
   [11] if((byte) main::scroll#1!=(byte) $ff) goto main::@4
   to:main::@5
@@ -415,22 +415,22 @@ main::@7: scope:[main]  from main::@5
   [15] if((byte) main::c#0!=(byte) 0) goto main::@9
   to:main::@8
 main::@8: scope:[main]  from main::@7
-  [16] (byte) main::c#1 ← *((const byte*) TEXT)
+  [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT)
   to:main::@9
 main::@9: scope:[main]  from main::@7 main::@8
-  [17] (byte*) main::nxt#4 ← phi( main::@7/(byte*) main::nxt#10 main::@8/(const byte*) TEXT )
+  [17] (byte*) main::nxt#4 ← phi( main::@7/(byte*) main::nxt#10 main::@8/(const to_nomodify byte*) TEXT )
   [17] (byte) main::c#2 ← phi( main::@7/(byte) main::c#0 main::@8/(byte) main::c#1 )
-  [18] *((const byte*) main::line+(byte) $27) ← (byte) main::c#2
+  [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2
   [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@9
   [20] (byte*) main::nxt#11 ← phi( main::@9/(byte*) main::nxt#1 main::@3/(byte*) main::nxt#10 )
   [20] (byte) main::scroll#4 ← phi( main::@9/(byte) 7 main::@3/(byte) main::scroll#1 )
-  [21] *((const byte*) SCROLL) ← (byte) main::scroll#4
-  [22] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
+  [21] *((const nomodify byte*) SCROLL) ← (byte) main::scroll#4
+  [22] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL)
   to:main::@1
 main::@6: scope:[main]  from main::@5
-  [23] *((const byte*) main::line + (byte) main::i#2) ← *((const byte*) main::line+(byte) 1 + (byte) main::i#2)
+  [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2)
   [24] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@5
 
@@ -439,8 +439,8 @@ fillscreen: scope:[fillscreen]  from main
   [25] phi()
   to:fillscreen::@1
 fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@2
-  [26] (byte*) fillscreen::cursor#2 ← phi( fillscreen/(const byte*) SCREEN fillscreen::@2/(byte*) fillscreen::cursor#1 )
-  [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2
+  [26] (byte*) fillscreen::cursor#2 ← phi( fillscreen/(const nomodify byte*) SCREEN fillscreen::@2/(byte*) fillscreen::cursor#1 )
+  [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2
   to:fillscreen::@return
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
   [28] return 
@@ -535,7 +535,7 @@ main: {
     jsr fillscreen
     // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte*) main::nxt#10 = (const byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [6] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -553,21 +553,21 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b2
     jmp __b3
     // main::@3
   __b3:
-    // [9] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuz1=_dec_vbuz1 
     dec.z scroll
@@ -603,12 +603,12 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [16] (byte) main::c#1 ← *((const byte*) TEXT) -- vbuz1=_deref_pbuc1 
+    // [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuz1=_deref_pbuc1 
     lda TEXT
     sta.z c
     // [17] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
   __b9_from___b8:
-    // [17] phi (byte*) main::nxt#4 = (const byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
+    // [17] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -622,7 +622,7 @@ main: {
     jmp __b9
     // main::@9
   __b9:
-    // [18] *((const byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuz1 
+    // [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuz1 
     lda.z c
     sta line+$27
     // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
@@ -644,15 +644,15 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [21] *((const byte*) SCROLL) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuz1 
+    // [21] *((const nomodify byte*) SCROLL) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuz1 
     lda.z scroll
     sta SCROLL
-    // [22] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [22] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp __b1_from___b4
     // main::@6
   __b6:
-    // [23] *((const byte*) main::line + (byte) main::i#2) ← *((const byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda line+1,y
     sta line,y
@@ -669,7 +669,7 @@ fillscreen: {
     .label cursor = 7
     // [26] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   __b1_from_fillscreen:
-    // [26] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN
@@ -677,7 +677,7 @@ fillscreen: {
     jmp __b1
     // fillscreen::@1
   __b1:
-    // [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -712,19 +712,19 @@ fillscreen: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ]
-Statement [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [8] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
 Statement [14] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] ( main:2 [ main::nxt#10 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((const byte*) main::line + (byte) main::i#2) ← *((const byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#2 main::i#1 ]
-Statement [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
+Statement [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
 Statement [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
-Statement [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [8] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
 Statement [14] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] ( main:2 [ main::nxt#10 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((const byte*) main::line + (byte) main::i#2) ← *((const byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
+Statement [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
 Statement [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte x , reg byte y , 
@@ -780,7 +780,7 @@ main: {
     jsr fillscreen
     // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte*) main::nxt#10 = (const byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [6] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -797,21 +797,21 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b2
     jmp __b3
     // main::@3
   __b3:
-    // [9] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuxx=_dec_vbuxx 
     dex
@@ -843,11 +843,11 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [16] (byte) main::c#1 ← *((const byte*) TEXT) -- vbuxx=_deref_pbuc1 
+    // [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuxx=_deref_pbuc1 
     ldx TEXT
     // [17] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
   __b9_from___b8:
-    // [17] phi (byte*) main::nxt#4 = (const byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
+    // [17] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -861,7 +861,7 @@ main: {
     jmp __b9
     // main::@9
   __b9:
-    // [18] *((const byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
+    // [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
     stx line+$27
     // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
     inc.z nxt
@@ -881,14 +881,14 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [21] *((const byte*) SCROLL) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
+    // [21] *((const nomodify byte*) SCROLL) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
     stx SCROLL
-    // [22] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [22] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp __b1_from___b4
     // main::@6
   __b6:
-    // [23] *((const byte*) main::line + (byte) main::i#2) ← *((const byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda line+1,x
     sta line,x
     // [24] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -904,7 +904,7 @@ fillscreen: {
     .label cursor = 4
     // [26] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   __b1_from_fillscreen:
-    // [26] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN
@@ -912,7 +912,7 @@ fillscreen: {
     jmp __b1
     // fillscreen::@1
   __b1:
-    // [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -1001,11 +1001,11 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53280
-(const byte*) RASTER = (byte*) 53266
-(const byte*) SCREEN = (byte*) 1024
-(const byte*) SCROLL = (byte*) 53270
-(const byte*) TEXT[]  = (byte*) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
+(const nomodify byte*) BGCOL = (byte*) 53280
+(const nomodify byte*) RASTER = (byte*) 53266
+(const nomodify byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCROLL = (byte*) 53270
+(const to_nomodify byte*) TEXT[]  = (byte*) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (label) fillscreen::@1
 (label) fillscreen::@2
@@ -1033,7 +1033,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 2002.0
 (byte) main::i#2 reg byte x 1668.3333333333335
-(const byte*) main::line = (const byte*) SCREEN+(byte) $28
+(const nomodify byte*) main::line = (const nomodify byte*) SCREEN+(byte) $28
 (byte*) main::nxt
 (byte*) main::nxt#1 nxt zp[2]:2 202.0
 (byte*) main::nxt#10 nxt zp[2]:2 200.49999999999997
@@ -1080,7 +1080,7 @@ main: {
     // [25] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
     // [6] phi from main to main::@1 [phi:main->main::@1]
-    // [6] phi (byte*) main::nxt#10 = (const byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [6] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -1094,20 +1094,20 @@ main: {
     // main::@1
   __b1:
     // while(*RASTER!=$fe)
-    // [7] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne __b1
     // main::@2
   __b2:
     // while(*RASTER!=$ff)
-    // [8] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [8] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b2
     // main::@3
     // ++*BGCOL;
-    // [9] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BGCOL
     // if(--scroll==$ff)
     // [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuxx=_dec_vbuxx 
@@ -1138,10 +1138,10 @@ main: {
     bne __b9
     // main::@8
     // c = *nxt
-    // [16] (byte) main::c#1 ← *((const byte*) TEXT) -- vbuxx=_deref_pbuc1 
+    // [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuxx=_deref_pbuc1 
     ldx TEXT
     // [17] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
-    // [17] phi (byte*) main::nxt#4 = (const byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
+    // [17] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
@@ -1153,7 +1153,7 @@ main: {
     // main::@9
   __b9:
     // line[39] = c
-    // [18] *((const byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
+    // [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
     stx line+$27
     // nxt++;
     // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
@@ -1171,16 +1171,16 @@ main: {
     // main::@4
   __b4:
     // *SCROLL = scroll
-    // [21] *((const byte*) SCROLL) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
+    // [21] *((const nomodify byte*) SCROLL) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
     stx SCROLL
     // --*BGCOL;
-    // [22] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [22] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BGCOL
     jmp __b1
     // main::@6
   __b6:
     // line[i]=line[i+1]
-    // [23] *((const byte*) main::line + (byte) main::i#2) ← *((const byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda line+1,x
     sta line,x
     // for(char i=0;i!=39;i++)
@@ -1195,7 +1195,7 @@ fillscreen: {
     .const fill = $20
     .label cursor = 4
     // [26] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-    // [26] phi (byte*) fillscreen::cursor#2 = (const byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [26] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN
@@ -1203,7 +1203,7 @@ fillscreen: {
     // fillscreen::@1
   __b1:
     // for( char* cursor = screen; cursor < screen+1000; cursor++)
-    // [27] if((byte*) fillscreen::cursor#2<(const byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2

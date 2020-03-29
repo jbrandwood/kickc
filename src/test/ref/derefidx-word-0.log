@@ -18,7 +18,7 @@ main::@1: scope:[main]  from main main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (word) main::i#3 ← phi( main::@1/(word) main::i#2 )
-  *((const byte*) main::screen + (word) main::i#3) ← (byte) 'a'
+  *((const nomodify byte*) main::screen + (word) main::i#3) ← (byte) 'a'
   (word) main::i#1 ← (word) main::i#3 + (number) $28
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -46,7 +46,7 @@ SYMBOL TABLE SSA
 (word) main::i#1
 (word) main::i#2
 (word) main::i#3
-(const byte*) main::screen = (byte*)(number) $400
+(const nomodify byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) $3e8 in (bool~) main::$0 ← (word) main::i#2 < (number) $3e8
 Adding number conversion cast (unumber) $28 in (word) main::i#1 ← (word) main::i#3 + (number) $28
@@ -64,7 +64,7 @@ Simple Condition (bool~) main::$0 [3] if((word) main::i#2<(word) $3e8) goto main
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const word) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [4] *((const byte*) main::screen + (word) main::i#2) ← (byte) 'a'
+De-inlining pointer[w] to *(pointer+w)   [4] *((const nomodify byte*) main::screen + (word) main::i#2) ← (byte) 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Inlining constant with var siblings (const word) main::i#0
 Constant inlined main::i#0 = (word) 0
@@ -109,7 +109,7 @@ main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2
+  [8] (byte*~) main::$1 ← (const nomodify byte*) main::screen + (word) main::i#2
   [9] *((byte*~) main::$1) ← (byte) 'a'
   [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28
   to:main::@1
@@ -187,7 +187,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$1 ← (const nomodify byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i
     clc
     adc #<screen
@@ -216,7 +216,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if((word) main::i#2<(word) $3e8) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [8] (byte*~) main::$1 ← (const nomodify byte*) main::screen + (word) main::i#2 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
 Statement [9] *((byte*~) main::$1) ← (byte) 'a' [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] (word) main::i#1 ← (word) main::i#2 + (byte) $28 [ main::i#1 ] ( main:2 [ main::i#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
@@ -284,7 +284,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$1 ← (const nomodify byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i
     clc
     adc #<screen
@@ -347,7 +347,7 @@ FINAL SYMBOL TABLE
 (word) main::i
 (word) main::i#1 i zp[2]:2 202.0
 (word) main::i#2 i zp[2]:2 101.0
-(const byte*) main::screen = (byte*) 1024
+(const nomodify byte*) main::screen = (byte*) 1024
 
 zp[2]:2 [ main::i#2 main::i#1 ]
 zp[2]:4 [ main::$1 ]
@@ -399,7 +399,7 @@ main: {
     // main::@2
   __b2:
     // screen[i] = 'a'
-    // [8] (byte*~) main::$1 ← (const byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
+    // [8] (byte*~) main::$1 ← (const nomodify byte*) main::screen + (word) main::i#2 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z i
     clc
     adc #<screen

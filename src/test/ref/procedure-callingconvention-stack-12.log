@@ -53,7 +53,7 @@ print::@1: scope:[print]  from print print::@4
 print::@2: scope:[print]  from print::@1
   (byte) print::spacing#2 ← phi( print::@1/(byte) print::spacing#4 )
   (byte*) print::str#3 ← phi( print::@1/(byte*) print::str#2 )
-  *((const byte*) SCREEN + (byte) idx) ← *((byte*) print::str#3)
+  *((const nomodify byte*) SCREEN + (byte) idx) ← *((byte*) print::str#3)
   (byte) idx ← ++ (byte) idx
   (byte*) print::str#1 ← ++ (byte*) print::str#3
   (byte) print::c#0 ← (byte) 0
@@ -69,7 +69,7 @@ print::@5: scope:[print]  from print::@4
   (byte*) print::str#5 ← phi( print::@4/(byte*) print::str#4 )
   (byte) print::spacing#3 ← phi( print::@4/(byte) print::spacing#1 )
   (byte) print::c#3 ← phi( print::@4/(byte) print::c#2 )
-  *((const byte*) SCREEN + (byte) idx) ← (byte) ' '
+  *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) ' '
   (byte) idx ← ++ (byte) idx
   (byte) print::c#1 ← ++ (byte) print::c#3
   to:print::@4
@@ -85,7 +85,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (const word) STACK_BASE = (word) $103
 (byte) idx loadstore
 __stackcall (void()) main()
@@ -199,7 +199,7 @@ print::@return: scope:[print]  from print::@1
   [8] return 
   to:@return
 print::@2: scope:[print]  from print::@1
-  [9] *((const byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2)
+  [9] *((const nomodify byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2)
   [10] (byte) idx ← ++ (byte) idx
   [11] (byte*) print::str#1 ← ++ (byte*) print::str#2
   to:print::@3
@@ -208,7 +208,7 @@ print::@3: scope:[print]  from print::@2 print::@4
   [13] if((byte) print::c#2<(byte) print::spacing#0) goto print::@4
   to:print::@1
 print::@4: scope:[print]  from print::@3
-  [14] *((const byte*) SCREEN + (byte) idx) ← (byte) ' '
+  [14] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) ' '
   [15] (byte) idx ← ++ (byte) idx
   [16] (byte) print::c#1 ← ++ (byte) print::c#2
   to:print::@3
@@ -325,7 +325,7 @@ print: {
     rts
     // print::@2
   __b2:
-    // [9] *((const byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
+    // [9] *((const nomodify byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
     ldx.z idx
     ldy #0
     lda (str),y
@@ -352,7 +352,7 @@ print: {
     jmp __b1_from___b3
     // print::@4
   __b4:
-    // [14] *((const byte*) SCREEN + (byte) idx) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx
     sta SCREEN,y
@@ -418,9 +418,9 @@ Statement [5] (byte) print::spacing#0 ← stackidx(byte,(const byte) print::OFFS
 Statement [7] if((byte) 0!=*((byte*) print::str#2)) goto print::@2 [ idx print::spacing#0 print::str#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ print::spacing#0 ]
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ print::spacing#0 ]
-Statement [9] *((const byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) [ idx print::spacing#0 print::str#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [9] *((const nomodify byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) [ idx print::spacing#0 print::str#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:6 [ print::spacing#0 ]
-Statement [14] *((const byte*) SCREEN + (byte) idx) ← (byte) ' ' [ idx print::spacing#0 print::str#1 print::c#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) ' ' [ idx print::spacing#0 print::str#1 print::c#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ print::c#2 print::c#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ print::c#2 print::c#1 ]
 Statement [17] stackpush(byte*) ← (const byte*) main::str [ idx ] ( main:2 [ idx ] { }  ) always clobbers reg byte a 
@@ -433,8 +433,8 @@ Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers 
 Statement [4] (byte*) print::str#0 ← stackidx(byte*,(const byte) print::OFFSET_STACK_STR) [ idx print::str#0 ] ( main:2::print:19 [ idx print::str#0 ] { }  main:2::print:23 [ idx print::str#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [5] (byte) print::spacing#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_SPACING) [ idx print::str#0 print::spacing#0 ] ( main:2::print:19 [ idx print::str#0 print::spacing#0 ] { }  main:2::print:23 [ idx print::str#0 print::spacing#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [7] if((byte) 0!=*((byte*) print::str#2)) goto print::@2 [ idx print::spacing#0 print::str#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [9] *((const byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) [ idx print::spacing#0 print::str#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [14] *((const byte*) SCREEN + (byte) idx) ← (byte) ' ' [ idx print::spacing#0 print::str#1 print::c#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] *((const nomodify byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) [ idx print::spacing#0 print::str#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [14] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) ' ' [ idx print::spacing#0 print::str#1 print::c#2 ] ( main:2::print:19 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  main:2::print:23 [ idx print::spacing#0 print::str#1 print::c#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [17] stackpush(byte*) ← (const byte*) main::str [ idx ] ( main:2 [ idx ] { }  ) always clobbers reg byte a 
 Statement [18] stackpush(byte) ← (byte) 1 [ idx ] ( main:2 [ idx ] { }  ) always clobbers reg byte a 
 Statement sideeffect stackpullbytes((number) 3) always clobbers reg byte a reg byte x 
@@ -526,7 +526,7 @@ print: {
     rts
     // print::@2
   __b2:
-    // [9] *((const byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
+    // [9] *((const nomodify byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
     ldx.z idx
     ldy #0
     lda (str),y
@@ -551,7 +551,7 @@ print: {
     jmp __b1_from___b3
     // print::@4
   __b4:
-    // [14] *((const byte*) SCREEN + (byte) idx) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx
     sta SCREEN,y
@@ -638,7 +638,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (const word) STACK_BASE = (word) $103
 (byte) idx loadstore zp[1]:4 1571.8095238095236
 __stackcall (void()) main()
@@ -731,7 +731,7 @@ print: {
     // print::@2
   __b2:
     // SCREEN[idx++] = *(str++)
-    // [9] *((const byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
+    // [9] *((const nomodify byte*) SCREEN + (byte) idx) ← *((byte*) print::str#2) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
     ldx.z idx
     ldy #0
     lda (str),y
@@ -757,7 +757,7 @@ print: {
     // print::@4
   __b4:
     // SCREEN[idx++] = ' '
-    // [14] *((const byte*) SCREEN + (byte) idx) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx
     sta SCREEN,y

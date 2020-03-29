@@ -5,9 +5,9 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) SCREEN) ← (number) 0
+  *((const nomodify byte*) SCREEN) ← (number) 0
   asm { lda#0 staSCREEN+1 lda#0 staSCREEN+2  }
-  *((const byte*) SCREEN + (number) 3) ← (number) 0
+  *((const nomodify byte*) SCREEN + (number) 3) ← (number) 0
   asm { lda#0 staSCREEN+4  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -25,16 +25,16 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 3) ← (number) 0
-Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← ((unumber)) (number) 0
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 3) ← (number) 0
+Adding number conversion cast (unumber) 3 in *((const nomodify byte*) SCREEN + (number) 3) ← ((unumber)) (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) SCREEN) ← (unumber)(number) 0
-Inlining cast *((const byte*) SCREEN + (unumber)(number) 3) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) SCREEN) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) SCREEN + (unumber)(number) 3) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -74,9 +74,9 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (byte) 0
+  [4] *((const nomodify byte*) SCREEN) ← (byte) 0
   asm { lda#0 staSCREEN+1 lda#0 staSCREEN+2  }
-  [6] *((const byte*) SCREEN+(byte) 3) ← (byte) 0
+  [6] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) 0
   asm { lda#0 staSCREEN+4  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -116,7 +116,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
     // asm { lda#0 staSCREEN+1 lda#0 staSCREEN+2  }
@@ -124,7 +124,7 @@ main: {
     sta SCREEN+1
     lda #0
     sta SCREEN+2
-    // [6] *((const byte*) SCREEN+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+3
     // asm { lda#0 staSCREEN+4  }
@@ -139,9 +139,9 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0 staSCREEN+1 lda#0 staSCREEN+2  } always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN+(byte) 3) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0 staSCREEN+4  } always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -176,7 +176,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
     // asm { lda#0 staSCREEN+1 lda#0 staSCREEN+2  }
@@ -184,7 +184,7 @@ main: {
     sta SCREEN+1
     lda #0
     sta SCREEN+2
-    // [6] *((const byte*) SCREEN+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+3
     // asm { lda#0 staSCREEN+4  }
@@ -225,7 +225,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 
@@ -251,7 +251,7 @@ Score: 28
   // main
 main: {
     // *SCREEN = 0
-    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
     // asm
@@ -259,7 +259,7 @@ main: {
     sta SCREEN+1
     sta SCREEN+2
     // SCREEN[3] = 0
-    // [6] *((const byte*) SCREEN+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta SCREEN+3
     // asm
     // asm { lda#0 staSCREEN+4  }

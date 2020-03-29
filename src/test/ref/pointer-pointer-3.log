@@ -1,28 +1,28 @@
 Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call setscreen &(byte*) screen (byte*) screen1 
-Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call setscreen &(byte*) screen (byte*) screen2 
+Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call setscreen &(volatile byte*) screen (byte*) screen2 
 Identified constant variable (byte*) screen1
 Identified constant variable (byte*) screen2
 Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte*) screen ← (byte*)(number) $400
+  (volatile byte*) screen ← (byte*)(number) $400
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  (byte**) setscreen::screen#0 ← &(byte*) screen
+  (byte**) setscreen::screen#0 ← &(volatile byte*) screen
   (byte*) setscreen::val#0 ← (const byte*) screen1
   call setscreen 
   to:main::@1
 main::@1: scope:[main]  from main
-  *((byte*) screen + (number) 0) ← (byte) 'a'
-  (byte**) setscreen::screen#1 ← &(byte*) screen
+  *((volatile byte*) screen + (number) 0) ← (byte) 'a'
+  (byte**) setscreen::screen#1 ← &(volatile byte*) screen
   (byte*) setscreen::val#1 ← (const byte*) screen2
   call setscreen 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  *((byte*) screen + (number) 0) ← (byte) 'a'
+  *((volatile byte*) screen + (number) 0) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -53,7 +53,7 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) screen loadstore
+(volatile byte*) screen loadstore
 (const byte*) screen1 = (byte*)(number) $400
 (const byte*) screen2 = (byte*)(number) $400+(number) $28
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
@@ -67,8 +67,8 @@ SYMBOL TABLE SSA
 (byte*) setscreen::val#1
 (byte*) setscreen::val#2
 
-Adding number conversion cast (unumber) 0 in *((byte*) screen + (number) 0) ← (byte) 'a'
-Adding number conversion cast (unumber) 0 in *((byte*) screen + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in *((volatile byte*) screen + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in *((volatile byte*) screen + (number) 0) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1024
@@ -83,19 +83,19 @@ Constant (const byte*) setscreen::val#0 = screen1
 Constant (const byte**) setscreen::screen#1 = &screen
 Constant (const byte*) setscreen::val#1 = screen2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero screen in [4] *((byte*) screen + (byte) 0) ← (byte) 'a'
-Simplifying expression containing zero screen in [8] *((byte*) screen + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen in [4] *((volatile byte*) screen + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen in [8] *((volatile byte*) screen + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte**) setscreen::screen#0
 Inlining constant with var siblings (const byte*) setscreen::val#0
 Inlining constant with var siblings (const byte**) setscreen::screen#1
 Inlining constant with var siblings (const byte*) setscreen::val#1
-Constant inlined setscreen::screen#0 = &(byte*) screen
+Constant inlined setscreen::screen#0 = &(volatile byte*) screen
 Constant inlined setscreen::val#1 = (const byte*) screen2
-Constant inlined setscreen::screen#1 = &(byte*) screen
+Constant inlined setscreen::screen#1 = &(volatile byte*) screen
 Constant inlined setscreen::val#0 = (const byte*) screen1
 Successful SSA optimization Pass2ConstantInlining
-Identical Phi Values (byte**) setscreen::screen#2 &(byte*) screen
+Identical Phi Values (byte**) setscreen::screen#2 &(volatile byte*) screen
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
@@ -115,7 +115,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte*) screen ← (byte*) 1024
+  [0] (volatile byte*) screen ← (byte*) 1024
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -130,11 +130,11 @@ main: scope:[main]  from @1
   [5] call setscreen 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((byte*) screen) ← (byte) 'a'
+  [6] *((volatile byte*) screen) ← (byte) 'a'
   [7] call setscreen 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((byte*) screen) ← (byte) 'a'
+  [8] *((volatile byte*) screen) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [9] return 
@@ -143,7 +143,7 @@ main::@return: scope:[main]  from main::@2
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 setscreen: scope:[setscreen]  from main main::@1
   [10] (byte*) setscreen::val#2 ← phi( main/(const byte*) screen1 main::@1/(const byte*) screen2 )
-  [11] *(&(byte*) screen) ← (byte*) setscreen::val#2
+  [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2
   to:setscreen::@return
 setscreen::@return: scope:[setscreen]  from setscreen
   [12] return 
@@ -152,7 +152,7 @@ setscreen::@return: scope:[setscreen]  from setscreen
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte*) screen loadstore 2.666666666666667
+(volatile byte*) screen loadstore 2.666666666666667
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 (byte**) setscreen::screen
 (byte*) setscreen::val
@@ -181,7 +181,7 @@ Target platform is c64basic / MOS6502X
   .label screen = 4
   // @begin
 __bbegin:
-  // [0] (byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [0] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta.z screen
   lda #>$400
@@ -214,7 +214,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [6] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
@@ -230,7 +230,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [8] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
@@ -244,7 +244,7 @@ main: {
 // setscreen(byte* zp(2) val)
 setscreen: {
     .label val = 2
-    // [11] *(&(byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+    // [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda.z val
     sta.z screen
     lda.z val+1
@@ -258,10 +258,10 @@ setscreen: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte*) screen ← (byte*) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*) screen) ← (byte) 'a' [ screen ] ( main:2 [ screen ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] *((byte*) screen) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [11] *(&(byte*) screen) ← (byte*) setscreen::val#2 [ screen ] ( main:2::setscreen:5 [ screen ] { }  main:2::setscreen:7 [ screen ] { }  ) always clobbers reg byte a 
+Statement [0] (volatile byte*) screen ← (byte*) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
+Statement [6] *((volatile byte*) screen) ← (byte) 'a' [ screen ] ( main:2 [ screen ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *((volatile byte*) screen) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 [ screen ] ( main:2::setscreen:5 [ screen ] { }  main:2::setscreen:7 [ screen ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ setscreen::val#2 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ screen ] : zp[2]:4 , 
 
@@ -287,7 +287,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label screen = 4
   // @begin
 __bbegin:
-  // [0] (byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [0] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta.z screen
   lda #>$400
@@ -320,7 +320,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [6] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
@@ -336,7 +336,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [8] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
@@ -350,7 +350,7 @@ main: {
 // setscreen(byte* zp(2) val)
 setscreen: {
     .label val = 2
-    // [11] *(&(byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+    // [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda.z val
     sta.z screen
     lda.z val+1
@@ -395,7 +395,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte*) screen loadstore zp[2]:4 2.666666666666667
+(volatile byte*) screen loadstore zp[2]:4 2.666666666666667
 (const byte*) screen1 = (byte*) 1024
 (const byte*) screen2 = (byte*)(number) $400+(number) $28
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
@@ -424,7 +424,7 @@ Score: 98
   // @begin
 __bbegin:
   // screen = $400
-  // [0] (byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+  // [0] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
   lda #<$400
   sta.z screen
   lda #>$400
@@ -450,7 +450,7 @@ main: {
     jsr setscreen
     // main::@1
     // screen[0] = 'a'
-    // [6] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [6] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
@@ -465,7 +465,7 @@ main: {
     jsr setscreen
     // main::@2
     // screen[0] = 'a'
-    // [8] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [8] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
@@ -479,7 +479,7 @@ main: {
 setscreen: {
     .label val = 2
     // *screen = val
-    // [11] *(&(byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+    // [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda.z val
     sta.z screen
     lda.z val+1

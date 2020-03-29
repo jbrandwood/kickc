@@ -12,7 +12,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p)
+  *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p)
   *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,5)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
@@ -33,9 +33,9 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
-(byte) idx loadstore = (byte) 0
-(const byte*) idx_p = &(byte) idx
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(volatile byte) idx loadstore = (byte) 0
+(const byte*) idx_p = &(volatile byte) idx
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -98,7 +98,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p)
+  [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p)
   [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte) 6) goto main::@1
@@ -109,7 +109,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx loadstore = (byte) 0
+(volatile byte) idx loadstore = (byte) 0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 151.5
@@ -167,7 +167,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuz1=_deref_pbuc2 
     lda idx_p
     ldy.z i
     sta SCREEN,y
@@ -192,10 +192,10 @@ main: {
   idx: .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers mem[1] [ idx ] : mem[1] , 
@@ -249,7 +249,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
     lda idx_p
     sta SCREEN,x
     // [7] *((const byte*) idx_p) ← *((const byte*) idx_p) + (byte) main::i#2 -- _deref_pbuc1=_deref_pbuc1_plus_vbuxx 
@@ -300,9 +300,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
-(byte) idx loadstore mem[1] = (byte) 0
-(const byte*) idx_p = &(byte) idx
+(const nomodify byte*) SCREEN = (byte*) 1024
+(volatile byte) idx loadstore mem[1] = (byte) 0
+(const byte*) idx_p = &(volatile byte) idx
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -344,7 +344,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = *idx_p
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) idx_p) -- pbuc1_derefidx_vbuxx=_deref_pbuc2 
     lda idx_p
     sta SCREEN,x
     // *idx_p +=i

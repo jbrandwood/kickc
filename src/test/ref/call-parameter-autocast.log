@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((const word*) SCREEN + (byte) idx)
+Fixing pointer array-indexing *((const nomodify word*) SCREEN + (byte) idx)
 Identified constant variable (word) main::w
 
 CONTROL FLOW GRAPH SSA
@@ -41,7 +41,7 @@ print: scope:[print]  from main main::@1 main::@2
   (word) print::w#3 ← phi( main/(word) print::w#0 main::@1/(word) print::w#1 main::@2/(word) print::w#2 )
   (byte) idx#12 ← phi( main/(byte) idx#15 main::@1/(byte) idx#0 main::@2/(byte) idx#1 )
   (byte~) print::$0 ← (byte) idx#12 * (const byte) SIZEOF_WORD
-  *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3
+  *((const nomodify word*) SCREEN + (byte~) print::$0) ← (word) print::w#3
   (byte) idx#5 ← ++ (byte) idx#12
   to:print::@return
 print::@return: scope:[print]  from print
@@ -65,7 +65,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const word*) SCREEN = (word*)(number) $400
+(const nomodify word*) SCREEN = (word*)(number) $400
 (const byte) SIZEOF_WORD = (byte) 2
 (byte) idx
 (byte) idx#0
@@ -219,7 +219,7 @@ print: scope:[print]  from main main::@1 main::@2
   [11] (word) print::w#3 ← phi( main/(word) $1234 main::@1/(const word) main::w main::@2/(byte) $12*(word) $100+(byte) $34 )
   [11] (byte) idx#12 ← phi( main/(byte) 0 main::@1/(byte) idx#13 main::@2/(byte) idx#13 )
   [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1
-  [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3
+  [13] *((const nomodify word*) SCREEN + (byte~) print::$0) ← (word) print::w#3
   [14] (byte) idx#13 ← ++ (byte) idx#12
   to:print::@return
 print::@return: scope:[print]  from print
@@ -336,7 +336,7 @@ print: {
     lda.z idx
     asl
     sta.z __0
-    // [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuz1=vwuz2 
+    // [13] *((const nomodify word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuz1=vwuz2 
     ldy.z __0
     lda.z w
     sta SCREEN,y
@@ -355,9 +355,9 @@ print: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::w#3 print::$0 ] ( main:2::print:5 [ idx#12 print::w#3 print::$0 ] { }  main:2::print:7 [ idx#12 print::w#3 print::$0 ] { { idx#12 = idx#13 } }  main:2::print:9 [ idx#12 print::w#3 print::$0 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ idx#12 idx#13 ]
-Statement [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 [ idx#12 ] ( main:2::print:5 [ idx#12 ] { }  main:2::print:7 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 [ idx#12 ] ( main:2::print:5 [ idx#12 ] { }  main:2::print:7 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a 
 Statement [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 [ idx#12 print::w#3 print::$0 ] ( main:2::print:5 [ idx#12 print::w#3 print::$0 ] { }  main:2::print:7 [ idx#12 print::w#3 print::$0 ] { { idx#12 = idx#13 } }  main:2::print:9 [ idx#12 print::w#3 print::$0 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a 
-Statement [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 [ idx#12 ] ( main:2::print:5 [ idx#12 ] { }  main:2::print:7 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 [ idx#12 ] ( main:2::print:5 [ idx#12 ] { }  main:2::print:7 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ idx#12 idx#13 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ print::w#3 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ print::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -454,7 +454,7 @@ print: {
     // [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [13] *((const nomodify word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda.z w
     sta SCREEN,y
@@ -504,7 +504,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const word*) SCREEN = (word*) 1024
+(const nomodify word*) SCREEN = (word*) 1024
 (byte) idx
 (byte) idx#12 reg byte x 74.66666666666666
 (byte) idx#13 reg byte x 20.5
@@ -593,7 +593,7 @@ print: {
     // [12] (byte~) print::$0 ← (byte) idx#12 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [13] *((const word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [13] *((const nomodify word*) SCREEN + (byte~) print::$0) ← (word) print::w#3 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda.z w
     sta SCREEN,y

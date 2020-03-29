@@ -8,12 +8,12 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) col1 ← (byte) 0
+  (volatile byte) col1 ← (byte) 0
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@8
   if(true) goto main::@2
@@ -35,7 +35,7 @@ main::@6: scope:[main]  from main::@5 main::@6
   (byte) main::y#2 ← phi( main::@5/(byte) main::y#4 main::@6/(byte) main::y#2 )
   (byte) main::a#2 ← phi( main::@5/(byte) main::a#0 main::@6/(byte) main::a#1 )
   (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#2
-  *((const byte*) SCREEN + (byte) main::x#2) ← (byte~) main::$0
+  *((const nomodify byte*) SCREEN + (byte) main::x#2) ← (byte~) main::$0
   (byte) main::a#1 ← (byte) main::a#2 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::a#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@6
@@ -59,10 +59,10 @@ main::@return: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  *((const byte*) IRQ_STATUS) ← (number) 1
+  *((const nomodify byte*) IRQ_STATUS) ← (number) 1
   asm { lda$dc0d  }
-  *((const byte*) SCREEN + (number) $28) ← (byte) col1
-  (byte) col1 ← ++ (byte) col1
+  *((const nomodify byte*) SCREEN + (number) $28) ← (volatile byte) col1
+  (volatile byte) col1 ← ++ (volatile byte) col1
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -79,10 +79,10 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) IRQ_STATUS = (byte*)(number) $d019
-(const void()**) KERNEL_IRQ = (void()**)(number) $314
-(const byte*) SCREEN = (byte*)(number) $400
-(byte) col1 loadstore
+(const nomodify byte*) IRQ_STATUS = (byte*)(number) $d019
+(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(volatile byte) col1 loadstore
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -117,10 +117,10 @@ interrupt(KERNEL_MIN)(void()) irq()
 (byte) main::y#3
 (byte) main::y#4
 
-Adding number conversion cast (unumber) 1 in *((const byte*) IRQ_STATUS) ← (number) 1
-Adding number conversion cast (unumber) $28 in *((const byte*) SCREEN + (number) $28) ← (byte) col1
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) IRQ_STATUS) ← (number) 1
+Adding number conversion cast (unumber) $28 in *((const nomodify byte*) SCREEN + (number) $28) ← (volatile byte) col1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) IRQ_STATUS) ← (unumber)(number) 1
+Inlining cast *((const nomodify byte*) IRQ_STATUS) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53273
@@ -212,7 +212,7 @@ Adding NOP phi() at start of main::@6
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) col1 ← (byte) 0
+  [0] (volatile byte) col1 ← (byte) 0
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -223,7 +223,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@5 main::@6
   [5] (byte) main::x#6 ← phi( main/(byte) 0 main::@6/(byte) main::x#1 main::@5/(byte) 0 )
@@ -234,7 +234,7 @@ main::@2: scope:[main]  from main::@1 main::@4
 main::@3: scope:[main]  from main::@2 main::@3
   [7] (byte) main::a#2 ← phi( main::@2/(byte) 0 main::@3/(byte) main::a#1 )
   [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4
-  [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0
+  [9] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0
   [10] (byte) main::a#1 ← ++ (byte) main::a#2
   [11] if((byte) main::a#1!=(byte) $b) goto main::@3
   to:main::@4
@@ -252,10 +252,10 @@ main::@6: scope:[main]  from main::@5
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  [17] *((const byte*) IRQ_STATUS) ← (byte) 1
+  [17] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1
   asm { lda$dc0d  }
-  [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1
-  [20] (byte) col1 ← ++ (byte) col1
+  [19] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1
+  [20] (volatile byte) col1 ← ++ (volatile byte) col1
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [21] return 
@@ -263,7 +263,7 @@ irq::@return: scope:[irq]  from irq
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) col1 loadstore 2.6666666666666665
+(volatile byte) col1 loadstore 2.6666666666666665
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 (byte~) main::$0 200002.0
@@ -310,7 +310,7 @@ Target platform is c64basic / MOS6502X
   .label col1 = 5
   // @begin
 __bbegin:
-  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -331,7 +331,7 @@ main: {
     .label a = 4
     .label y = 3
     .label x = 2
-    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -374,7 +374,7 @@ main: {
     clc
     adc.z y
     sta.z __0
-    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __0
     ldy.z x
     sta SCREEN,y
@@ -416,16 +416,16 @@ main: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [17] *((const byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #1
     sta IRQ_STATUS
     // asm { lda$dc0d  }
     lda $dc0d
-    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
+    // [19] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
-    // [20] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
+    // [20] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     jmp __breturn
     // irq::@return
@@ -436,21 +436,21 @@ irq: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] (volatile byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::x#6 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::y#4 main::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::a#2 main::a#1 ]
-Statement [17] *((const byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [17] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
-Statement [0] (byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [0] (volatile byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [8] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:2 [ main::x#6 main::y#4 main::a#2 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [17] *((const byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [17] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::x#6 main::x#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::y#4 main::y#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::a#2 main::a#1 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -487,7 +487,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col1 = 3
   // @begin
 __bbegin:
-  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -505,7 +505,7 @@ __bend:
   // main
 main: {
     .label y = 2
-    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -545,7 +545,7 @@ main: {
     tya
     clc
     adc.z y
-    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
     iny
@@ -583,16 +583,16 @@ main: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [17] *((const byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #1
     sta IRQ_STATUS
     // asm { lda$dc0d  }
     lda $dc0d
-    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
+    // [19] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
-    // [20] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
+    // [20] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     jmp __breturn
     // irq::@return
@@ -650,10 +650,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) IRQ_STATUS = (byte*) 53273
-(const void()**) KERNEL_IRQ = (void()**) 788
-(const byte*) SCREEN = (byte*) 1024
-(byte) col1 loadstore zp[1]:3 2.6666666666666665
+(const nomodify byte*) IRQ_STATUS = (byte*) 53273
+(const nomodify void()**) KERNEL_IRQ = (void()**) 788
+(const nomodify byte*) SCREEN = (byte*) 1024
+(volatile byte) col1 loadstore zp[1]:3 2.6666666666666665
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -698,7 +698,7 @@ Score: 223704
   // @begin
 __bbegin:
   // col1 = 0
-  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -712,7 +712,7 @@ __bbegin:
 main: {
     .label y = 2
     // *KERNEL_IRQ = &irq
-    // [4] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -744,7 +744,7 @@ main: {
     clc
     adc.z y
     // SCREEN[x] = a+y
-    // [9] *((const byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // for (byte a:0..10)
     // [10] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
@@ -777,7 +777,7 @@ main: {
 irq: {
     // entry interrupt(KERNEL_MIN)
     // *IRQ_STATUS = 1
-    // [17] *((const byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #1
     sta IRQ_STATUS
@@ -785,11 +785,11 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // SCREEN[40] = col1++
-    // [19] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
+    // [19] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
     // SCREEN[40] = col1++;
-    // [20] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
+    // [20] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     // irq::@return
     // }

@@ -1,11 +1,11 @@
 Fixing pointer array-indexing *((const struct Point*) points + (word) main::i)
 Fixing pointer array-indexing *((const struct Point*) points + (word) main::i1)
-Fixing pointer array-indexing *((const struct Point*) main::SCREEN + (word) main::i1)
+Fixing pointer array-indexing *((const nomodify struct Point*) main::SCREEN + (word) main::i1)
 Constantified RValue *((const struct Point*) points + (word~) main::$3) ← (struct Point){ (byte) 2, (byte~) main::$0 }
 Unwinding value copy *((const struct Point*) points + (word~) main::$3) ← (struct Point){ (byte) 2, (byte~) main::$0 }
 Adding value simple copy *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (word~) main::$3) ← (byte) 2
 Adding value simple copy *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3) ← (byte~) main::$0
-Adding value bulk copy *((const struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((const struct Point*) points + (word~) main::$4), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+Adding value bulk copy *((const nomodify struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((const struct Point*) points + (word~) main::$4), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Culled Empty Block (label) main::@4
 
 CONTROL FLOW GRAPH SSA
@@ -32,7 +32,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2 main::@3
   (word) main::i1#2 ← phi( main::@2/(word) main::i1#0 main::@3/(word) main::i1#1 )
   (word~) main::$4 ← (word) main::i1#2 * (const byte) SIZEOF_STRUCT_POINT
-  *((const struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((const struct Point*) points + (word~) main::$4), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  *((const nomodify struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((const struct Point*) points + (word~) main::$4), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (word) main::i1#1 ← (word) main::i1#2 + rangenext(0,$1f3)
   (bool~) main::$2 ← (word) main::i1#1 != rangelast(0,$1f3)
   if((bool~) main::$2) goto main::@3
@@ -67,7 +67,7 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(const struct Point*) main::SCREEN = (struct Point*)(number) $400
+(const nomodify struct Point*) main::SCREEN = (struct Point*)(number) $400
 (word) main::i
 (word) main::i#0
 (word) main::i#1
@@ -94,8 +94,8 @@ Resolved ranged next value [13] main::i1#1 ← ++ main::i1#2 to ++
 Resolved ranged comparison value [15] if(main::i1#1!=rangelast(0,$1f3)) goto main::@3 to (number) $1f4
 De-inlining pointer[w] to *(pointer+w)   [4] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (word~) main::$3) ← (byte) 2
 De-inlining pointer[w] to *(pointer+w)   [5] *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (word~) main::$3) ← (byte~) main::$0
-De-inlining pointer[w] to *(pointer+w)   [12] *((const struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((const struct Point*) points + (word~) main::$4), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-De-inlining pointer[w] to *(pointer+w)   [12] *((const struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((struct Point*~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+De-inlining pointer[w] to *(pointer+w)   [12] *((const nomodify struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((const struct Point*) points + (word~) main::$4), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+De-inlining pointer[w] to *(pointer+w)   [12] *((const nomodify struct Point*) main::SCREEN + (word~) main::$4) ← memcpy(*((struct Point*~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Simplifying expression containing zero (byte*)points in (byte*~) main::$5 ← (byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (word~) main::$3
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -173,7 +173,7 @@ main::@2: scope:[main]  from main::@1 main::@2
   [14] (word) main::i1#2 ← phi( main::@1/(word) 0 main::@2/(word) main::i1#1 )
   [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1
   [16] (struct Point*~) main::$7 ← (const struct Point*) points + (word~) main::$4
-  [17] (struct Point*~) main::$8 ← (const struct Point*) main::SCREEN + (word~) main::$4
+  [17] (struct Point*~) main::$8 ← (const nomodify struct Point*) main::SCREEN + (word~) main::$4
   [18] *((struct Point*~) main::$8) ← memcpy(*((struct Point*~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   [19] (word) main::i1#1 ← ++ (word) main::i1#2
   [20] if((word) main::i1#1!=(word) $1f4) goto main::@2
@@ -359,7 +359,7 @@ main: {
     lda.z __4+1
     adc #>points
     sta.z __7+1
-    // [17] (struct Point*~) main::$8 ← (const struct Point*) main::SCREEN + (word~) main::$4 -- pssz1=pssc1_plus_vwuz2 
+    // [17] (struct Point*~) main::$8 ← (const nomodify struct Point*) main::SCREEN + (word~) main::$4 -- pssz1=pssc1_plus_vwuz2 
     lda.z __4
     clc
     adc #<SCREEN
@@ -408,7 +408,7 @@ Statement [11] *((byte*~) main::$6) ← (byte~) main::$0 [ main::i#2 ] ( main:2 
 Statement [13] if((word) main::i#1!=(word) $1f4) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] { }  ) always clobbers reg byte a 
 Statement [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 [ main::i1#2 main::$4 ] ( main:2 [ main::i1#2 main::$4 ] { }  ) always clobbers reg byte a 
 Statement [16] (struct Point*~) main::$7 ← (const struct Point*) points + (word~) main::$4 [ main::i1#2 main::$4 main::$7 ] ( main:2 [ main::i1#2 main::$4 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [17] (struct Point*~) main::$8 ← (const struct Point*) main::SCREEN + (word~) main::$4 [ main::i1#2 main::$7 main::$8 ] ( main:2 [ main::i1#2 main::$7 main::$8 ] { }  ) always clobbers reg byte a 
+Statement [17] (struct Point*~) main::$8 ← (const nomodify struct Point*) main::SCREEN + (word~) main::$4 [ main::i1#2 main::$7 main::$8 ] ( main:2 [ main::i1#2 main::$7 main::$8 ] { }  ) always clobbers reg byte a 
 Statement [18] *((struct Point*~) main::$8) ← memcpy(*((struct Point*~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::i1#2 ] ( main:2 [ main::i1#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [20] if((word) main::i1#1!=(word) $1f4) goto main::@2 [ main::i1#1 ] ( main:2 [ main::i1#1 ] { }  ) always clobbers reg byte a 
 Statement [6] (byte~) main::$0 ← (byte)(word) main::i#2 [ main::i#2 main::$0 ] ( main:2 [ main::i#2 main::$0 ] { }  ) always clobbers reg byte a 
@@ -420,7 +420,7 @@ Statement [11] *((byte*~) main::$6) ← (byte~) main::$0 [ main::i#2 ] ( main:2 
 Statement [13] if((word) main::i#1!=(word) $1f4) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] { }  ) always clobbers reg byte a 
 Statement [15] (word~) main::$4 ← (word) main::i1#2 << (byte) 1 [ main::i1#2 main::$4 ] ( main:2 [ main::i1#2 main::$4 ] { }  ) always clobbers reg byte a 
 Statement [16] (struct Point*~) main::$7 ← (const struct Point*) points + (word~) main::$4 [ main::i1#2 main::$4 main::$7 ] ( main:2 [ main::i1#2 main::$4 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [17] (struct Point*~) main::$8 ← (const struct Point*) main::SCREEN + (word~) main::$4 [ main::i1#2 main::$7 main::$8 ] ( main:2 [ main::i1#2 main::$7 main::$8 ] { }  ) always clobbers reg byte a 
+Statement [17] (struct Point*~) main::$8 ← (const nomodify struct Point*) main::SCREEN + (word~) main::$4 [ main::i1#2 main::$7 main::$8 ] ( main:2 [ main::i1#2 main::$7 main::$8 ] { }  ) always clobbers reg byte a 
 Statement [18] *((struct Point*~) main::$8) ← memcpy(*((struct Point*~) main::$7), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::i1#2 ] ( main:2 [ main::i1#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [20] if((word) main::i1#1!=(word) $1f4) goto main::@2 [ main::i1#1 ] ( main:2 [ main::i1#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
@@ -574,7 +574,7 @@ main: {
     lda.z __4+1
     adc #>points
     sta.z __7+1
-    // [17] (struct Point*~) main::$8 ← (const struct Point*) main::SCREEN + (word~) main::$4 -- pssz1=pssc1_plus_vwuz1 
+    // [17] (struct Point*~) main::$8 ← (const nomodify struct Point*) main::SCREEN + (word~) main::$4 -- pssz1=pssc1_plus_vwuz1 
     clc
     lda.z __8
     adc #<SCREEN
@@ -667,7 +667,7 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(const struct Point*) main::SCREEN = (struct Point*) 1024
+(const nomodify struct Point*) main::SCREEN = (struct Point*) 1024
 (word) main::i
 (word) main::i#1 i zp[2]:2 151.5
 (word) main::i#2 i zp[2]:2 43.285714285714285
@@ -796,7 +796,7 @@ main: {
     lda.z __4+1
     adc #>points
     sta.z __7+1
-    // [17] (struct Point*~) main::$8 ← (const struct Point*) main::SCREEN + (word~) main::$4 -- pssz1=pssc1_plus_vwuz1 
+    // [17] (struct Point*~) main::$8 ← (const nomodify struct Point*) main::SCREEN + (word~) main::$4 -- pssz1=pssc1_plus_vwuz1 
     clc
     lda.z __8
     adc #<SCREEN

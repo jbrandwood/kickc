@@ -12,9 +12,9 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @2
   (byte) idx#15 ← phi( @2/(byte) idx#16 )
-  (dword) main::d ← (dword) $12345678
-  (word) main::w ← (word) $1234
-  (byte) main::b ← (byte) $12
+  (volatile dword) main::d ← (dword) $12345678
+  (volatile word) main::w ← (word) $1234
+  (volatile byte) main::b ← (byte) $12
   (void*) print::ptr#0 ← (const void*) main::vb
   call print 
   to:main::@1
@@ -48,7 +48,7 @@ print: scope:[print]  from main main::@1 main::@2
   (byte) idx#12 ← phi( main/(byte) idx#15 main::@1/(byte) idx#0 main::@2/(byte) idx#1 )
   (void*) print::ptr#3 ← phi( main/(void*) print::ptr#0 main::@1/(void*) print::ptr#1 main::@2/(void*) print::ptr#2 )
   (byte*~) print::$0 ← ((byte*)) (void*) print::ptr#3
-  *((const byte*) SCREEN + (byte) idx#12) ← *((byte*~) print::$0)
+  *((const nomodify byte*) SCREEN + (byte) idx#12) ← *((byte*~) print::$0)
   (byte) idx#5 ← ++ (byte) idx#12
   to:print::@return
 print::@return: scope:[print]  from print
@@ -72,7 +72,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (byte) idx
 (byte) idx#0
 (byte) idx#1
@@ -96,12 +96,12 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@3
 (label) main::@return
-(byte) main::b loadstore
-(dword) main::d loadstore
-(const void*) main::vb = (void*)&(byte) main::b
-(const void*) main::vd = (void*)&(dword) main::d
-(const void*) main::vw = (void*)&(word) main::w
-(word) main::w loadstore
+(volatile byte) main::b loadstore
+(volatile dword) main::d loadstore
+(const void*) main::vb = (void*)&(volatile byte) main::b
+(const void*) main::vd = (void*)&(volatile dword) main::d
+(const void*) main::vw = (void*)&(volatile word) main::w
+(volatile word) main::w loadstore
 (void()) print((void*) print::ptr)
 (byte*~) print::$0
 (label) print::@return
@@ -181,9 +181,9 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] (dword) main::d ← (dword) $12345678
-  [5] (word) main::w ← (word) $1234
-  [6] (byte) main::b ← (byte) $12
+  [4] (volatile dword) main::d ← (dword) $12345678
+  [5] (volatile word) main::w ← (word) $1234
+  [6] (volatile byte) main::b ← (byte) $12
   [7] call print 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -202,7 +202,7 @@ main::@return: scope:[main]  from main::@2
 print: scope:[print]  from main main::@1 main::@2
   [13] (byte) idx#12 ← phi( main/(byte) 0 main::@1/(byte) idx#13 main::@2/(byte) idx#13 )
   [13] (void*) print::ptr#3 ← phi( main/(const void*) main::vb main::@1/(const void*) main::vw main::@2/(const void*) main::vd )
-  [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3)
+  [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3)
   [15] (byte) idx#13 ← ++ (byte) idx#12
   to:print::@return
 print::@return: scope:[print]  from print
@@ -215,9 +215,9 @@ VARIABLE REGISTER WEIGHTS
 (byte) idx#12 112.0
 (byte) idx#13 20.5
 (void()) main()
-(byte) main::b loadstore 110.0
-(dword) main::d loadstore 110.0
-(word) main::w loadstore 110.0
+(volatile byte) main::b loadstore 110.0
+(volatile dword) main::d loadstore 110.0
+(volatile word) main::w loadstore 110.0
 (void()) print((void*) print::ptr)
 (void*) print::ptr
 (void*) print::ptr#3
@@ -273,7 +273,7 @@ main: {
     .label d = 5
     .label w = 9
     .label b = $b
-    // [4] (dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (volatile dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -282,12 +282,12 @@ main: {
     sta.z d+2
     lda #>$12345678>>$10
     sta.z d+3
-    // [5] (word) main::w ← (word) $1234 -- vwuz1=vwuc1 
+    // [5] (volatile word) main::w ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
-    // [6] (byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
+    // [6] (volatile byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // [7] call print 
@@ -342,7 +342,7 @@ main: {
 // print(void* zp(2) ptr)
 print: {
     .label ptr = 2
-    // [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
     ldx.z idx
     ldy #0
     lda (ptr),y
@@ -358,16 +358,16 @@ print: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (dword) main::d ← (dword) $12345678 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] (word) main::w ← (word) $1234 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte) main::b ← (byte) $12 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) [ idx#12 ] ( main:2::print:7 [ idx#12 ] { }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:11 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a reg byte y 
+Statement [4] (volatile dword) main::d ← (dword) $12345678 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] (volatile word) main::w ← (word) $1234 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] (volatile byte) main::b ← (byte) $12 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) [ idx#12 ] ( main:2::print:7 [ idx#12 ] { }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:11 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ idx#12 idx#13 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ idx#12 idx#13 ]
-Statement [4] (dword) main::d ← (dword) $12345678 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] (word) main::w ← (word) $1234 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte) main::b ← (byte) $12 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) [ idx#12 ] ( main:2::print:7 [ idx#12 ] { }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:11 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a reg byte y 
+Statement [4] (volatile dword) main::d ← (dword) $12345678 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] (volatile word) main::w ← (word) $1234 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] (volatile byte) main::b ← (byte) $12 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) [ idx#12 ] ( main:2::print:7 [ idx#12 ] { }  main:2::print:9 [ idx#12 ] { { idx#12 = idx#13 } }  main:2::print:11 [ idx#12 ] { { idx#12 = idx#13 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ print::ptr#3 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ idx#12 idx#13 ] : zp[1]:4 , reg byte x , 
 Potential registers zp[4]:5 [ main::d ] : zp[4]:5 , 
@@ -419,7 +419,7 @@ main: {
     .label d = 4
     .label w = 8
     .label b = $a
-    // [4] (dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (volatile dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -428,12 +428,12 @@ main: {
     sta.z d+2
     lda #>$12345678>>$10
     sta.z d+3
-    // [5] (word) main::w ← (word) $1234 -- vwuz1=vwuc1 
+    // [5] (volatile word) main::w ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
-    // [6] (byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
+    // [6] (volatile byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // [7] call print 
@@ -487,7 +487,7 @@ main: {
 // print(void* zp(2) ptr)
 print: {
     .label ptr = 2
-    // [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x
@@ -534,7 +534,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (byte) idx
 (byte) idx#12 reg byte x 112.0
 (byte) idx#13 reg byte x 20.5
@@ -542,12 +542,12 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@return
-(byte) main::b loadstore zp[1]:10 110.0
-(dword) main::d loadstore zp[4]:4 110.0
-(const void*) main::vb = (void*)&(byte) main::b
-(const void*) main::vd = (void*)&(dword) main::d
-(const void*) main::vw = (void*)&(word) main::w
-(word) main::w loadstore zp[2]:8 110.0
+(volatile byte) main::b loadstore zp[1]:10 110.0
+(volatile dword) main::d loadstore zp[4]:4 110.0
+(const void*) main::vb = (void*)&(volatile byte) main::b
+(const void*) main::vd = (void*)&(volatile dword) main::d
+(const void*) main::vw = (void*)&(volatile word) main::w
+(volatile word) main::w loadstore zp[2]:8 110.0
 (void()) print((void*) print::ptr)
 (label) print::@return
 (void*) print::ptr
@@ -586,7 +586,7 @@ main: {
     .label w = 8
     .label b = $a
     // d = 0x12345678
-    // [4] (dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
+    // [4] (volatile dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -596,13 +596,13 @@ main: {
     lda #>$12345678>>$10
     sta.z d+3
     // w = 0x1234
-    // [5] (word) main::w ← (word) $1234 -- vwuz1=vwuc1 
+    // [5] (volatile word) main::w ← (word) $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
     // b = 0x12
-    // [6] (byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
+    // [6] (volatile byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // print(vb)
@@ -650,7 +650,7 @@ main: {
 print: {
     .label ptr = 2
     // SCREEN[idx++] = *((byte*)ptr)
-    // [14] *((const byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#12) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x

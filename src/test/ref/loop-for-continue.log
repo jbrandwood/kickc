@@ -1,4 +1,4 @@
-Warning! Adding boolean cast to non-boolean condition *((const byte*) MESSAGE + (byte) main::i)
+Warning! Adding boolean cast to non-boolean condition *((const to_nomodify byte*) MESSAGE + (byte) main::i)
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@7
@@ -18,20 +18,20 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@5
   (byte) main::idx#4 ← phi( main/(byte) main::idx#0 main::@5/(byte) main::idx#5 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@5/(byte) main::i#1 )
-  (bool~) main::$2 ← (number) 0 != *((const byte*) MESSAGE + (byte) main::i#2)
+  (bool~) main::$2 ← (number) 0 != *((const to_nomodify byte*) MESSAGE + (byte) main::i#2)
   if((bool~) main::$2) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#4 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (bool~) main::$0 ← *((const byte*) MESSAGE + (byte) main::i#3) == (byte) ' '
+  (bool~) main::$0 ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#3) == (byte) ' '
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@4
   to:main::@5
 main::@4: scope:[main]  from main::@2
   (byte) main::idx#2 ← phi( main::@2/(byte) main::idx#3 )
   (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
-  *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte*) MESSAGE + (byte) main::i#4)
+  *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#4)
   (byte) main::idx#1 ← ++ (byte) main::idx#2
   to:main::@5
 main::@5: scope:[main]  from main::@2 main::@4
@@ -54,8 +54,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) MESSAGE[]  = (byte*) "hello brave new world!"
-(const byte*) SCREEN = (byte*)(number) $400
+(const to_nomodify byte*) MESSAGE[]  = (byte*) "hello brave new world!"
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -80,24 +80,24 @@ SYMBOL TABLE SSA
 (byte) main::idx#4
 (byte) main::idx#5
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((const byte*) MESSAGE + (byte) main::i#2)
+Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((const to_nomodify byte*) MESSAGE + (byte) main::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [7] (bool~) main::$1 ← *((const byte*) MESSAGE + (byte) main::i#3) != (byte) ' ' from [6] (bool~) main::$0 ← *((const byte*) MESSAGE + (byte) main::i#3) == (byte) ' '
+Inversing boolean not [7] (bool~) main::$1 ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#3) != (byte) ' ' from [6] (bool~) main::$0 ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#3) == (byte) ' '
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::i#2 = main::i#3 main::i#4 
 Alias main::idx#2 = main::idx#3 main::idx#4 
 Successful SSA optimization Pass2AliasElimination
 Alias main::i#2 = main::i#5 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$2 [4] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@2
-Simple Condition (bool~) main::$1 [6] if(*((const byte*) MESSAGE + (byte) main::i#2)!=(byte) ' ') goto main::@4
+Simple Condition (bool~) main::$2 [4] if((byte) 0!=*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)) goto main::@2
+Simple Condition (bool~) main::$1 [6] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)!=(byte) ' ') goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [6] if(*((const byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@5
+Negating conditional jump and destination [6] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@5
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::i#0 = 0
@@ -149,16 +149,16 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@4
   [5] (byte) main::idx#2 ← phi( main/(byte) 0 main::@4/(byte) main::idx#5 )
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
-  [6] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@2
+  [6] if((byte) 0!=*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] if(*((const byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4
+  [8] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte*) MESSAGE + (byte) main::i#2)
+  [9] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#2)
   [10] (byte) main::idx#1 ← ++ (byte) main::idx#2
   to:main::@4
 main::@4: scope:[main]  from main::@2 main::@3
@@ -227,7 +227,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [6] if((byte) 0!=*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
@@ -239,7 +239,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] if(*((const byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuz1_eq_vbuc2_then_la1 
+    // [8] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuz1_eq_vbuc2_then_la1 
     ldy.z i
     lda MESSAGE,y
     cmp #' '
@@ -247,7 +247,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z i
     lda MESSAGE,y
     ldy.z idx
@@ -274,14 +274,14 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@2 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [6] if((byte) 0!=*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)) goto main::@2 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::idx#2 main::idx#5 main::idx#1 ]
-Statement [8] if(*((const byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte*) MESSAGE + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [6] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@2 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [8] if(*((const byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte*) MESSAGE + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [8] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [6] if((byte) 0!=*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)) goto main::@2 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [8] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#2) [ main::i#2 main::idx#2 ] ( main:2 [ main::i#2 main::idx#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::idx#2 main::idx#5 main::idx#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 
@@ -328,7 +328,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [6] if((byte) 0!=*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b2
@@ -339,14 +339,14 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] if(*((const byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuxx_eq_vbuc2_then_la1 
+    // [8] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuxx_eq_vbuc2_then_la1 
     lda MESSAGE,x
     cmp #' '
     beq __b4_from___b2
     jmp __b3
     // main::@3
   __b3:
-    // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,y
     // [10] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuyy=_inc_vbuyy 
@@ -402,8 +402,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) MESSAGE[]  = (byte*) "hello brave new world!"
-(const byte*) SCREEN = (byte*) 1024
+(const to_nomodify byte*) MESSAGE[]  = (byte*) "hello brave new world!"
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -450,7 +450,7 @@ main: {
     // main::@1
   __b1:
     // for( char i =0; MESSAGE[i]; i++)
-    // [6] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [6] if((byte) 0!=*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b2
@@ -461,13 +461,13 @@ main: {
     // main::@2
   __b2:
     // if(MESSAGE[i]==' ')
-    // [8] if(*((const byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuxx_eq_vbuc2_then_la1 
+    // [8] if(*((const to_nomodify byte*) MESSAGE + (byte) main::i#2)==(byte) ' ') goto main::@4 -- pbuc1_derefidx_vbuxx_eq_vbuc2_then_la1 
     lda MESSAGE,x
     cmp #' '
     beq __b4
     // main::@3
     // SCREEN[idx++] = MESSAGE[i]
-    // [9] *((const byte*) SCREEN + (byte) main::idx#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((const to_nomodify byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,y
     // SCREEN[idx++] = MESSAGE[i];

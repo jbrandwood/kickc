@@ -12,8 +12,8 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
   (byte) main::a#1 ← (byte) main::i#2
-  *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::a#1
-  *((const byte*) SCREEN+(number) $50 + (byte) main::i#2) ← (byte) main::a#1
+  *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) main::a#1
+  *((const nomodify byte*) SCREEN+(number) $50 + (byte) main::i#2) ← (byte) main::a#1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$27)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,$27)
   if((bool~) main::$0) goto main::@1
@@ -33,7 +33,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -46,7 +46,7 @@ SYMBOL TABLE SSA
 (byte) main::i#1
 (byte) main::i#2
 
-Adding number conversion cast (unumber) $50 in *((const byte*) SCREEN+(number) $50 + (byte) main::i#2) ← (byte) main::a#1
+Adding number conversion cast (unumber) $50 in *((const nomodify byte*) SCREEN+(number) $50 + (byte) main::i#2) ← (byte) main::a#1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $50
@@ -109,8 +109,8 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::a#1 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1
-  [7] *((const byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1
+  [6] *((const nomodify byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1
+  [7] *((const nomodify byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1
   [8] (byte) main::i#1 ← ++ (byte) main::a#1
   [9] if((byte) main::i#1!=(byte) $28) goto main::@1
   to:main::@return
@@ -173,11 +173,11 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z a
     tya
     sta SCREEN,y
-    // [7] *((const byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z a
     tya
     sta SCREEN+$50,y
@@ -242,10 +242,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-    // [7] *((const byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [7] *((const nomodify byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$50,x
     // [8] (byte) main::i#1 ← ++ (byte) main::a#1 -- vbuxx=_inc_vbuxx 
@@ -290,7 +290,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -329,11 +329,11 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = a = i
-    // [6] *((const byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // (SCREEN+80)[i] = a
-    // [7] *((const byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [7] *((const nomodify byte*) SCREEN+(byte) $50 + (byte) main::a#1) ← (byte) main::a#1 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$50,x
     // for( byte i : 0..39)

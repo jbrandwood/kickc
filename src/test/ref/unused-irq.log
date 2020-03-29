@@ -8,7 +8,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @3
-  *((const byte*) SCREEN) ← (byte) 'x'
+  *((const nomodify byte*) SCREEN) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -16,7 +16,7 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq1()
 irq1: scope:[irq1]  from
-  *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
+  *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   return 
@@ -24,7 +24,7 @@ irq1::@return: scope:[irq1]  from irq1
 
 interrupt(KERNEL_MIN)(void()) irq2()
 irq2: scope:[irq2]  from
-  *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
+  *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   return 
@@ -41,8 +41,8 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(const void()**) HARDWARE_IRQ = (void()**)(number) $fffe
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify void()**) HARDWARE_IRQ = (void()**)(number) $fffe
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 interrupt(KERNEL_MIN)(void()) irq1()
 (label) irq1::@return
 interrupt(KERNEL_MIN)(void()) irq2()
@@ -81,7 +81,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (byte) 'x'
+  [4] *((const nomodify byte*) SCREEN) ← (byte) 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -89,7 +89,7 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq2()
 irq2: scope:[irq2]  from
-  [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
+  [6] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   [7] return 
@@ -97,7 +97,7 @@ irq2::@return: scope:[irq2]  from irq2
 
 interrupt(KERNEL_MIN)(void()) irq1()
 irq1: scope:[irq1]  from
-  [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
+  [8] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   [9] return 
@@ -139,7 +139,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     jmp __breturn
@@ -152,7 +152,7 @@ main: {
 // Unused Interrupt Routine
 irq2: {
     // entry interrupt(KERNEL_MIN)
-    // [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
+    // [6] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -167,7 +167,7 @@ irq2: {
 // Unused Interrupt Routine
 irq1: {
     // entry interrupt(KERNEL_MIN)
-    // [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
+    // [8] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2
@@ -181,9 +181,9 @@ irq1: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (byte) 'x' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -222,7 +222,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     jmp __breturn
@@ -235,7 +235,7 @@ main: {
 // Unused Interrupt Routine
 irq2: {
     // entry interrupt(KERNEL_MIN)
-    // [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
+    // [6] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -250,7 +250,7 @@ irq2: {
 // Unused Interrupt Routine
 irq1: {
     // entry interrupt(KERNEL_MIN)
-    // [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
+    // [8] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2
@@ -289,8 +289,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const void()**) HARDWARE_IRQ = (void()**) 65534
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify void()**) HARDWARE_IRQ = (void()**) 65534
+(const nomodify byte*) SCREEN = (byte*) 1024
 interrupt(KERNEL_MIN)(void()) irq1()
 (label) irq1::@return
 interrupt(KERNEL_MIN)(void()) irq2()
@@ -321,7 +321,7 @@ Score: 42
   // main
 main: {
     // *SCREEN = 'x'
-    // [4] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     // main::@return
@@ -334,7 +334,7 @@ main: {
 irq2: {
     // entry interrupt(KERNEL_MIN)
     // *HARDWARE_IRQ = &irq1
-    // [6] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
+    // [6] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_pptc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -349,7 +349,7 @@ irq2: {
 irq1: {
     // entry interrupt(KERNEL_MIN)
     // *HARDWARE_IRQ = &irq2
-    // [8] *((const void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
+    // [8] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_pptc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2

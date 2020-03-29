@@ -19,7 +19,7 @@ Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte*) main::BASE_SCREEN
 Identified constant variable (byte*) main::BASE_CHARSET
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Inlined call (byte~) main::$1 ← call toD018 (const byte*) SCREEN (const byte*) CHARSET 
+Inlined call (byte~) main::$1 ← call toD018 (const nomodify byte*) SCREEN (const nomodify byte*) CHARSET 
 Inlined call (byte~) main::$7 ← call toD018 (const byte*) main::BASE_SCREEN (const byte*) main::BASE_CHARSET 
 Culled Empty Block (label) @1
 Culled Empty Block (label) @2
@@ -377,7 +377,7 @@ atan2_16::@return: scope:[atan2_16]  from atan2_16::@8
 
 (dword()) clock()
 clock: scope:[clock]  from main::@5
-  (number~) clock::$0 ← (number) $ffffffff - *((const dword*) CIA2_TIMER_AB)
+  (number~) clock::$0 ← (number) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
   (dword) clock::return#0 ← (number~) clock::$0
   to:clock::@return
 clock::@return: scope:[clock]  from clock
@@ -388,11 +388,11 @@ clock::@return: scope:[clock]  from clock
 
 (void()) clock_start()
 clock_start: scope:[clock_start]  from main::@1
-  *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
-  *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  *((const dword*) CIA2_TIMER_AB) ← (number) $ffffffff
-  *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+  *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_STOP|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+  *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_STOP|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  *((const nomodify dword*) CIA2_TIMER_AB) ← (number) $ffffffff
+  *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
   to:clock_start::@return
 clock_start::@return: scope:[clock_start]  from clock_start
   return 
@@ -451,7 +451,7 @@ print_byte_at: scope:[print_byte_at]  from print_word_at print_word_at::@1
   (byte*) print_byte_at::at#2 ← phi( print_word_at/(byte*) print_byte_at::at#0 print_word_at::@1/(byte*) print_byte_at::at#1 )
   (byte) print_byte_at::b#2 ← phi( print_word_at/(byte) print_byte_at::b#0 print_word_at::@1/(byte) print_byte_at::b#1 )
   (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (number) 4
-  (byte) print_char_at::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0)
+  (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0)
   (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2
   call print_char_at 
   to:print_byte_at::@1
@@ -460,7 +460,7 @@ print_byte_at::@1: scope:[print_byte_at]  from print_byte_at
   (byte) print_byte_at::b#3 ← phi( print_byte_at/(byte) print_byte_at::b#2 )
   (number~) print_byte_at::$2 ← (byte) print_byte_at::b#3 & (number) $f
   (byte*~) print_byte_at::$3 ← (byte*) print_byte_at::at#3 + (number) 1
-  (byte) print_char_at::ch#1 ← *((const byte*) print_hextab + (number~) print_byte_at::$2)
+  (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (number~) print_byte_at::$2)
   (byte*) print_char_at::at#1 ← (byte*~) print_byte_at::$3
   call print_char_at 
   to:print_byte_at::@2
@@ -482,12 +482,12 @@ print_char_at::@return: scope:[print_char_at]  from print_char_at
 
 (void()) main()
 main: scope:[main]  from @48
-  (byte*) init_font_hex::charset#1 ← (const byte*) CHARSET
+  (byte*) init_font_hex::charset#1 ← (const nomodify byte*) CHARSET
   call init_font_hex 
   to:main::@3
 main::@3: scope:[main]  from main
-  (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
-  (byte*) main::toD0181_gfx#0 ← (const byte*) CHARSET
+  (byte*) main::toD0181_screen#0 ← (const nomodify byte*) SCREEN
+  (byte*) main::toD0181_gfx#0 ← (const nomodify byte*) CHARSET
   to:main::toD0181
 main::toD0181: scope:[main]  from main::@3
   (byte*) main::toD0181_gfx#1 ← phi( main::@3/(byte*) main::toD0181_gfx#0 )
@@ -510,11 +510,11 @@ main::toD0181_@return: scope:[main]  from main::toD0181
 main::@1: scope:[main]  from main::toD0181_@return
   (byte) main::toD0181_return#3 ← phi( main::toD0181_@return/(byte) main::toD0181_return#1 )
   (byte~) main::$1 ← (byte) main::toD0181_return#3
-  *((const byte*) D018) ← (byte~) main::$1
+  *((const nomodify byte*) D018) ← (byte~) main::$1
   call clock_start 
   to:main::@4
 main::@4: scope:[main]  from main::@1
-  (byte*) init_angle_screen::screen#0 ← (const byte*) SCREEN
+  (byte*) init_angle_screen::screen#0 ← (const nomodify byte*) SCREEN
   call init_angle_screen 
   to:main::@5
 main::@5: scope:[main]  from main::@4
@@ -524,7 +524,7 @@ main::@5: scope:[main]  from main::@4
 main::@6: scope:[main]  from main::@5
   (dword) clock::return#4 ← phi( main::@5/(dword) clock::return#2 )
   (dword~) main::$4 ← (dword) clock::return#4
-  (dword~) main::$5 ← (dword~) main::$4 - (const dword) CLOCKS_PER_INIT
+  (dword~) main::$5 ← (dword~) main::$4 - (const nomodify dword) CLOCKS_PER_INIT
   (dword) main::cyclecount#0 ← (dword~) main::$5
   (dword) print_dword_at::dw#0 ← (dword) main::cyclecount#0
   (byte*) print_dword_at::at#0 ← (const byte*) main::BASE_SCREEN
@@ -555,7 +555,7 @@ main::toD0182_@return: scope:[main]  from main::toD0182
 main::@2: scope:[main]  from main::toD0182_@return
   (byte) main::toD0182_return#3 ← phi( main::toD0182_@return/(byte) main::toD0182_return#1 )
   (byte~) main::$7 ← (byte) main::toD0182_return#3
-  *((const byte*) D018) ← (byte~) main::$7
+  *((const nomodify byte*) D018) ← (byte~) main::$7
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
@@ -653,27 +653,27 @@ SYMBOL TABLE SSA
 (label) @49
 (label) @begin
 (label) @end
-(const byte*) CHARSET = (byte*)(number) $2000
-(const dword*) CIA2_TIMER_AB = (dword*)(number) $dd04
-(const byte*) CIA2_TIMER_A_CONTROL = (byte*)(number) $dd0e
-(const byte*) CIA2_TIMER_B_CONTROL = (byte*)(number) $dd0f
-(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES = (byte) 0
-(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (byte) $40
-(const byte) CIA_TIMER_CONTROL_CONTINUOUS = (byte) 0
-(const byte) CIA_TIMER_CONTROL_START = (byte) 1
-(const byte) CIA_TIMER_CONTROL_STOP = (byte) 0
-(const dword) CLOCKS_PER_INIT = (dword) $12
-(const word*) CORDIC_ATAN2_ANGLES_16[(const byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+(const nomodify byte*) CHARSET = (byte*)(number) $2000
+(const nomodify dword*) CIA2_TIMER_AB = (dword*)(number) $dd04
+(const nomodify byte*) CIA2_TIMER_A_CONTROL = (byte*)(number) $dd0e
+(const nomodify byte*) CIA2_TIMER_B_CONTROL = (byte*)(number) $dd0f
+(const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES = (byte) 0
+(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (byte) $40
+(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS = (byte) 0
+(const nomodify byte) CIA_TIMER_CONTROL_START = (byte) 1
+(const nomodify byte) CIA_TIMER_CONTROL_STOP = (byte) 0
+(const nomodify dword) CLOCKS_PER_INIT = (dword) $12
+(const word*) CORDIC_ATAN2_ANGLES_16[(const nomodify byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-(const byte) CORDIC_ITERATIONS_16 = (byte) $f
-(const byte*) D018 = (byte*)(number) $d018
+(const nomodify byte) CORDIC_ITERATIONS_16 = (byte) $f
+(const nomodify byte*) D018 = (byte*)(number) $d018
 (const byte*) FONT_HEX_PROTO[]  = { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const byte*) SCREEN = (byte*)(number) $2800
+(const nomodify byte*) SCREEN = (byte*)(number) $2800
 (const byte) SIZEOF_WORD = (byte) 2
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 (bool~) atan2_16::$0
@@ -1112,7 +1112,7 @@ SYMBOL TABLE SSA
 (dword) print_dword_at::dw#0
 (dword) print_dword_at::dw#1
 (dword) print_dword_at::dw#2
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (void()) print_word_at((word) print_word_at::w , (byte*) print_word_at::at)
 (byte~) print_word_at::$0
 (byte~) print_word_at::$2
@@ -1159,9 +1159,9 @@ Adding number conversion cast (unumber) 1 in (byte) atan2_16::i#1 ← (byte) ata
 Adding number conversion cast (snumber) 0 in (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (number) 0
 Adding number conversion cast (unumber) $8000 in (number~) atan2_16::$12 ← (number) $8000 - (word) atan2_16::angle#9
 Adding number conversion cast (unumber) atan2_16::$12 in (number~) atan2_16::$12 ← (unumber)(number) $8000 - (word) atan2_16::angle#9
-Adding number conversion cast (unumber) $ffffffff in (number~) clock::$0 ← (number) $ffffffff - *((const dword*) CIA2_TIMER_AB)
-Adding number conversion cast (unumber) clock::$0 in (number~) clock::$0 ← (unumber)(number) $ffffffff - *((const dword*) CIA2_TIMER_AB)
-Adding number conversion cast (unumber) $ffffffff in *((const dword*) CIA2_TIMER_AB) ← (number) $ffffffff
+Adding number conversion cast (unumber) $ffffffff in (number~) clock::$0 ← (number) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
+Adding number conversion cast (unumber) clock::$0 in (number~) clock::$0 ← (unumber)(number) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
+Adding number conversion cast (unumber) $ffffffff in *((const nomodify dword*) CIA2_TIMER_AB) ← (number) $ffffffff
 Adding number conversion cast (unumber) 2 in (byte*~) print_word_at::$3 ← (byte*) print_word_at::at#3 + (number) 2
 Adding number conversion cast (unumber) 4 in (byte*~) print_dword_at::$3 ← (byte*) print_dword_at::at#2 + (number) 4
 Adding number conversion cast (unumber) 4 in (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (number) 4
@@ -1210,7 +1210,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#0) ← (unumber)(number) 0
 Inlining cast *((byte*) init_font_hex::charset#4 + (byte) init_font_hex::idx#6) ← (unumber)(number) 0
 Inlining cast *((byte*) init_font_hex::charset#4 + (byte) init_font_hex::idx#3) ← (unumber)(number) 0
-Inlining cast *((const dword*) CIA2_TIMER_AB) ← (unumber)(number) $ffffffff
+Inlining cast *((const nomodify dword*) CIA2_TIMER_AB) ← (unumber)(number) $ffffffff
 Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
 Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (word~) main::toD0182_$0 ← (word)(byte*) main::toD0182_screen#1
@@ -1327,7 +1327,7 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in (unumber~) atan2_16::$12 ← (word) $8000 - (word) atan2_16::angle#9
-Inferred type updated to dword in (unumber~) clock::$0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB)
+Inferred type updated to dword in (unumber~) clock::$0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
 Inferred type updated to byte in (unumber~) print_byte_at::$2 ← (byte) print_byte_at::b#3 & (byte) $f
 Inferred type updated to word in (unumber~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (word) $3fff
 Inferred type updated to word in (unumber~) main::toD0181_$2 ← (word~) main::toD0181_$1 * (byte) 4
@@ -1522,30 +1522,30 @@ Resolved ranged comparison value [28] if(init_font_hex::c1#1!=rangelast(0,$f)) g
 Resolved ranged next value [30] init_font_hex::c#1 ← ++ init_font_hex::c#6 to ++
 Resolved ranged comparison value [32] if(init_font_hex::c#1!=rangelast(0,$f)) goto init_font_hex::@1 to (number) $10
 Resolved ranged next value [74] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
-Resolved ranged comparison value [76] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
+Resolved ranged comparison value [76] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@17 to (const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
 Resolved ranged next value [193] init_angle_screen::y#1 ← ++ init_angle_screen::y#5 to ++
 Resolved ranged comparison value [195] if(init_angle_screen::y#1!=rangelast(0,$c)) goto init_angle_screen::@1 to (number) $d
 Rewriting conditional comparison [167] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
-Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES in [86] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
-Simplifying constant evaluating to zero (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS in [87] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_STOP|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying constant evaluating to zero (const nomodify byte) CIA_TIMER_CONTROL_STOP|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES in [86] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_STOP|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying constant evaluating to zero (const nomodify byte) CIA_TIMER_CONTROL_STOP|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS in [87] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_STOP|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero init_font_hex::charset#2 in [8] *((byte*) init_font_hex::charset#2 + (const byte) init_font_hex::idx#0) ← (byte) 0
-Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [87] *((const byte*) CIA2_TIMER_B_CONTROL) ← (byte) 0|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Simplifying expression containing zero CIA_TIMER_CONTROL_START in [89] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [90] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS|(const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [87] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (byte) 0|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [89] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [90] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS|(const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Simplifying expression containing zero CIA_TIMER_CONTROL_START in [90] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_CONTINUOUS
+Simplifying expression containing zero CIA_TIMER_CONTROL_START in [90] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [15] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
-Eliminating unused constant (const byte) CIA_TIMER_CONTROL_STOP
-Eliminating unused constant (const byte) CIA_TIMER_CONTROL_CONTINUOUS
-Eliminating unused constant (const byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Eliminating unused constant (const nomodify byte) CIA_TIMER_CONTROL_STOP
+Eliminating unused constant (const nomodify byte) CIA_TIMER_CONTROL_CONTINUOUS
+Eliminating unused constant (const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) 5 in if((byte) init_font_hex::i#1!=(number) 5) goto init_font_hex::@3
 Adding number conversion cast (unumber) $10 in if((byte) init_font_hex::c1#1!=(number) $10) goto init_font_hex::@2
 Adding number conversion cast (unumber) $10 in if((byte) init_font_hex::c#1!=(number) $10) goto init_font_hex::@1
-Adding number conversion cast (unumber) CORDIC_ITERATIONS_16-1+1 in if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
-Adding number conversion cast (unumber) 1 in if((byte) atan2_16::i#1==(unumber)(const byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
+Adding number conversion cast (unumber) CORDIC_ITERATIONS_16-1+1 in if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
+Adding number conversion cast (unumber) 1 in if((byte) atan2_16::i#1==(unumber)(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1) goto atan2_16::@17
 Adding number conversion cast (unumber) $13+1 in if((byte) init_angle_screen::x#2<(byte) $13+(number) 1) goto init_angle_screen::@3
 Adding number conversion cast (unumber) 1 in if((byte) init_angle_screen::x#2<(unumber)(byte) $13+(number) 1) goto init_angle_screen::@3
 Adding number conversion cast (unumber) $d in if((byte) init_angle_screen::y#1!=(number) $d) goto init_angle_screen::@1
@@ -1553,7 +1553,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 5
 Simplifying constant integer cast $10
 Simplifying constant integer cast $10
-Simplifying constant integer cast (const byte) CORDIC_ITERATIONS_16-(byte) 1+(unumber)(number) 1
+Simplifying constant integer cast (const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(unumber)(number) 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast (byte) $13+(unumber)(number) 1
 Simplifying constant integer cast 1
@@ -1638,8 +1638,8 @@ Inlining constant with var siblings (const byte) init_angle_screen::x#0
 Inlining constant with var siblings (const byte) init_angle_screen::xb#0
 Inlining constant with var siblings (const byte*) init_angle_screen::screen_topline#0
 Inlining constant with var siblings (const byte*) init_angle_screen::screen_bottomline#0
-Constant inlined main::toD0181_screen#0 = (const byte*) SCREEN
-Constant inlined main::toD0181_gfx#0 = (const byte*) CHARSET
+Constant inlined main::toD0181_screen#0 = (const nomodify byte*) SCREEN
+Constant inlined main::toD0181_gfx#0 = (const nomodify byte*) CHARSET
 Constant inlined init_font_hex::proto_hi#0 = (const byte*) FONT_HEX_PROTO
 Constant inlined main::toD0182_$4 = (word)(const byte*) main::BASE_CHARSET
 Constant inlined init_angle_screen::y#0 = (byte) 0
@@ -1650,27 +1650,27 @@ Constant inlined main::toD0182_$7 = >(word)(const byte*) main::BASE_CHARSET/(byt
 Constant inlined main::toD0182_$0 = (word)(const byte*) main::BASE_SCREEN
 Constant inlined atan2_16::angle#0 = (word) 0
 Constant inlined main::toD0182_$1 = (word)(const byte*) main::BASE_SCREEN&(word) $3fff
-Constant inlined init_angle_screen::screen_bottomline#0 = (const byte*) SCREEN+(word)(number) $28*(number) $c
+Constant inlined init_angle_screen::screen_bottomline#0 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c
 Constant inlined main::toD0182_$2 = (word)(const byte*) main::BASE_SCREEN&(word) $3fff*(byte) 4
 Constant inlined main::toD0182_$3 = >(word)(const byte*) main::BASE_SCREEN&(word) $3fff*(byte) 4
-Constant inlined init_font_hex::charset#1 = (const byte*) CHARSET
+Constant inlined init_font_hex::charset#1 = (const nomodify byte*) CHARSET
 Constant inlined print_dword_at::at#0 = (const byte*) main::BASE_SCREEN
-Constant inlined init_angle_screen::screen#0 = (const byte*) SCREEN
+Constant inlined init_angle_screen::screen#0 = (const nomodify byte*) SCREEN
 Constant inlined init_font_hex::c1#0 = (byte) 0
-Constant inlined main::toD0181_$7 = >(word)(const byte*) CHARSET/(byte) 4&(byte) $f
+Constant inlined main::toD0181_$7 = >(word)(const nomodify byte*) CHARSET/(byte) 4&(byte) $f
 Constant inlined main::toD0182_gfx#0 = (const byte*) main::BASE_CHARSET
 Constant inlined init_angle_screen::xb#0 = (byte) $27
-Constant inlined main::toD0181_$2 = (word)(const byte*) SCREEN&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$2 = (word)(const nomodify byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined atan2_16::i#0 = (byte) 0
-Constant inlined main::toD0181_$1 = (word)(const byte*) SCREEN&(word) $3fff
-Constant inlined main::toD0181_$0 = (word)(const byte*) SCREEN
-Constant inlined main::toD0181_$6 = >(word)(const byte*) CHARSET/(byte) 4
+Constant inlined main::toD0181_$1 = (word)(const nomodify byte*) SCREEN&(word) $3fff
+Constant inlined main::toD0181_$0 = (word)(const nomodify byte*) SCREEN
+Constant inlined main::toD0181_$6 = >(word)(const nomodify byte*) CHARSET/(byte) 4
 Constant inlined init_font_hex::i#0 = (byte) 0
-Constant inlined main::toD0181_$5 = >(word)(const byte*) CHARSET
-Constant inlined main::toD0181_$4 = (word)(const byte*) CHARSET
-Constant inlined main::toD0181_$3 = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$5 = >(word)(const nomodify byte*) CHARSET
+Constant inlined main::toD0181_$4 = (word)(const nomodify byte*) CHARSET
+Constant inlined main::toD0181_$3 = >(word)(const nomodify byte*) SCREEN&(word) $3fff*(byte) 4
 Constant inlined init_font_hex::idx#1 = ++(byte) 0
-Constant inlined init_angle_screen::screen_topline#0 = (const byte*) SCREEN+(word)(number) $28*(number) $c
+Constant inlined init_angle_screen::screen_topline#0 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c
 Constant inlined init_font_hex::idx#0 = (byte) 0
 Constant inlined main::toD0182_screen#0 = (const byte*) main::BASE_SCREEN
 Constant inlined init_font_hex::proto_lo#0 = (const byte*) FONT_HEX_PROTO
@@ -1843,7 +1843,7 @@ main::toD0181: scope:[main]  from main
   [6] phi()
   to:main::@1
 main::@1: scope:[main]  from main::toD0181
-  [7] *((const byte*) D018) ← (const byte) main::toD0181_return#0
+  [7] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0
   [8] call clock_start 
   to:main::@3
 main::@3: scope:[main]  from main::@1
@@ -1857,7 +1857,7 @@ main::@4: scope:[main]  from main::@3
   to:main::@5
 main::@5: scope:[main]  from main::@4
   [14] (dword~) main::$4 ← (dword) clock::return#2
-  [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const dword) CLOCKS_PER_INIT
+  [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const nomodify dword) CLOCKS_PER_INIT
   [16] (dword) print_dword_at::dw#0 ← (dword) main::cyclecount#0
   [17] call print_dword_at 
   to:main::toD0182
@@ -1865,7 +1865,7 @@ main::toD0182: scope:[main]  from main::@5
   [18] phi()
   to:main::@2
 main::@2: scope:[main]  from main::toD0182
-  [19] *((const byte*) D018) ← (const byte) main::toD0182_return#0
+  [19] *((const nomodify byte*) D018) ← (const byte) main::toD0182_return#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [20] return 
@@ -1906,14 +1906,14 @@ print_byte_at: scope:[print_byte_at]  from print_word_at print_word_at::@1
   [34] (byte*) print_byte_at::at#2 ← phi( print_word_at/(byte*) print_byte_at::at#0 print_word_at::@1/(byte*) print_byte_at::at#1 )
   [34] (byte) print_byte_at::b#2 ← phi( print_word_at/(byte) print_byte_at::b#0 print_word_at::@1/(byte) print_byte_at::b#1 )
   [35] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#2 >> (byte) 4
-  [36] (byte) print_char_at::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0)
+  [36] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0)
   [37] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2
   [38] call print_char_at 
   to:print_byte_at::@1
 print_byte_at::@1: scope:[print_byte_at]  from print_byte_at
   [39] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f
   [40] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1
-  [41] (byte) print_char_at::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2)
+  [41] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2)
   [42] call print_char_at 
   to:print_byte_at::@return
 print_byte_at::@return: scope:[print_byte_at]  from print_byte_at::@1
@@ -1932,7 +1932,7 @@ print_char_at::@return: scope:[print_char_at]  from print_char_at
 
 (dword()) clock()
 clock: scope:[clock]  from main::@4
-  [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB)
+  [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
   to:clock::@return
 clock::@return: scope:[clock]  from clock
   [48] return 
@@ -1943,8 +1943,8 @@ init_angle_screen: scope:[init_angle_screen]  from main::@3
   [49] phi()
   to:init_angle_screen::@1
 init_angle_screen::@1: scope:[init_angle_screen]  from init_angle_screen init_angle_screen::@4
-  [50] (byte*) init_angle_screen::screen_bottomline#6 ← phi( init_angle_screen/(const byte*) SCREEN+(word)(number) $28*(number) $c init_angle_screen::@4/(byte*) init_angle_screen::screen_bottomline#1 )
-  [50] (byte*) init_angle_screen::screen_topline#6 ← phi( init_angle_screen/(const byte*) SCREEN+(word)(number) $28*(number) $c init_angle_screen::@4/(byte*) init_angle_screen::screen_topline#1 )
+  [50] (byte*) init_angle_screen::screen_bottomline#6 ← phi( init_angle_screen/(const nomodify byte*) SCREEN+(word)(number) $28*(number) $c init_angle_screen::@4/(byte*) init_angle_screen::screen_bottomline#1 )
+  [50] (byte*) init_angle_screen::screen_topline#6 ← phi( init_angle_screen/(const nomodify byte*) SCREEN+(word)(number) $28*(number) $c init_angle_screen::@4/(byte*) init_angle_screen::screen_topline#1 )
   [50] (byte) init_angle_screen::y#5 ← phi( init_angle_screen/(byte) 0 init_angle_screen::@4/(byte) init_angle_screen::y#1 )
   to:init_angle_screen::@2
 init_angle_screen::@2: scope:[init_angle_screen]  from init_angle_screen::@1 init_angle_screen::@5
@@ -2066,7 +2066,7 @@ atan2_16::@19: scope:[atan2_16]  from atan2_16::@18 atan2_16::@20
   [110] (word) atan2_16::angle#13 ← phi( atan2_16::@18/(word) atan2_16::angle#2 atan2_16::@20/(word) atan2_16::angle#3 )
   [110] (signed word) atan2_16::yi#8 ← phi( atan2_16::@18/(signed word) atan2_16::yi#1 atan2_16::@20/(signed word) atan2_16::yi#2 )
   [111] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2
-  [112] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12
+  [112] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12
   to:atan2_16::@10
 atan2_16::@18: scope:[atan2_16]  from atan2_16::@17
   [113] (signed word) atan2_16::xi#1 ← (signed word) atan2_16::xi#3 + (signed word) atan2_16::yd#5
@@ -2088,11 +2088,11 @@ atan2_16::@1: scope:[atan2_16]  from atan2_16
 
 (void()) clock_start()
 clock_start: scope:[clock_start]  from main::@1
-  [122] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0
-  [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  [124] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff
-  [125] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START
+  [122] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0
+  [123] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  [124] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff
+  [125] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  [126] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START
   to:clock_start::@return
 clock_start::@return: scope:[clock_start]  from clock_start
   [127] return 
@@ -2105,7 +2105,7 @@ init_font_hex: scope:[init_font_hex]  from main
 init_font_hex::@1: scope:[init_font_hex]  from init_font_hex init_font_hex::@5
   [129] (byte) init_font_hex::c#6 ← phi( init_font_hex/(byte) 0 init_font_hex::@5/(byte) init_font_hex::c#1 )
   [129] (byte*) init_font_hex::proto_hi#6 ← phi( init_font_hex/(const byte*) FONT_HEX_PROTO init_font_hex::@5/(byte*) init_font_hex::proto_hi#1 )
-  [129] (byte*) init_font_hex::charset#5 ← phi( init_font_hex/(const byte*) CHARSET init_font_hex::@5/(byte*) init_font_hex::charset#0 )
+  [129] (byte*) init_font_hex::charset#5 ← phi( init_font_hex/(const nomodify byte*) CHARSET init_font_hex::@5/(byte*) init_font_hex::charset#0 )
   to:init_font_hex::@2
 init_font_hex::@2: scope:[init_font_hex]  from init_font_hex::@1 init_font_hex::@4
   [130] (byte) init_font_hex::c1#4 ← phi( init_font_hex::@1/(byte) 0 init_font_hex::@4/(byte) init_font_hex::c1#1 )
@@ -2531,7 +2531,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [8] call clock_start 
@@ -2573,7 +2573,7 @@ main: {
     sta.z __4+2
     lda.z clock.return_1+3
     sta.z __4+3
-    // [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const dword) CLOCKS_PER_INIT -- vduz1=vduz2_minus_vduc1 
+    // [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz2_minus_vduc1 
     lda.z __4
     sec
     sbc #<CLOCKS_PER_INIT
@@ -2606,7 +2606,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [19] *((const byte*) D018) ← (const byte) main::toD0182_return#0 -- _deref_pbuc1=vbuc2 
+    // [19] *((const nomodify byte*) D018) ← (const byte) main::toD0182_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0182_return
     sta D018
     jmp __breturn
@@ -2720,7 +2720,7 @@ print_byte_at: {
     lsr
     lsr
     sta.z __0
-    // [36] (byte) print_char_at::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [36] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -2751,7 +2751,7 @@ print_byte_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [41] (byte) print_char_at::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [41] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -2789,7 +2789,7 @@ print_char_at: {
 clock: {
     .label return = $3d
     .label return_1 = $2b
-    // [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
+    // [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -2831,12 +2831,12 @@ init_angle_screen: {
     .label y = $c
     // [50] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
   __b1_from_init_angle_screen:
-    // [50] phi (byte*) init_angle_screen::screen_bottomline#6 = (const byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
+    // [50] phi (byte*) init_angle_screen::screen_bottomline#6 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta.z screen_bottomline
     lda #>SCREEN+$28*$c
     sta.z screen_bottomline+1
-    // [50] phi (byte*) init_angle_screen::screen_topline#6 = (const byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
+    // [50] phi (byte*) init_angle_screen::screen_topline#6 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta.z screen_topline
     lda #>SCREEN+$28*$c
@@ -3247,7 +3247,7 @@ atan2_16: {
   __b19:
     // [111] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [112] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
+    // [112] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuz1_eq_vbuc1_then_la1 
     lda #CORDIC_ITERATIONS_16-1+1
     cmp.z i
     beq __b12_from___b19
@@ -3335,14 +3335,14 @@ atan2_16: {
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-    // [122] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [122] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2_TIMER_A_CONTROL
-    // [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [123] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-    // [124] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+    // [124] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -3351,10 +3351,10 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-    // [125] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [125] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-    // [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // [126] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
     jmp __breturn
@@ -3388,7 +3388,7 @@ init_font_hex: {
     sta.z proto_hi
     lda #>FONT_HEX_PROTO
     sta.z proto_hi+1
-    // [129] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [129] phi (byte*) init_font_hex::charset#5 = (const nomodify byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta.z charset
     lda #>CHARSET
@@ -3542,12 +3542,12 @@ CORDIC_ATAN2_ANGLES_16:
   print_hextab: .text "0123456789abcdef"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [13] (dword) clock::return#2 ← (dword) clock::return#0 [ clock::return#2 ] ( main:2 [ clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [14] (dword~) main::$4 ← (dword) clock::return#2 [ main::$4 ] ( main:2 [ main::$4 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] ( main:2 [ main::cyclecount#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const nomodify dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] ( main:2 [ main::cyclecount#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [16] (dword) print_dword_at::dw#0 ← (dword) main::cyclecount#0 [ print_dword_at::dw#0 ] ( main:2 [ print_dword_at::dw#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [19] *((const byte*) D018) ← (const byte) main::toD0182_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) D018) ← (const byte) main::toD0182_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [21] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 [ print_dword_at::dw#0 print_word_at::w#0 ] ( main:2::print_dword_at:17 [ print_dword_at::dw#0 print_word_at::w#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } }  ) always clobbers reg byte a 
 Statement [23] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 [ print_word_at::w#1 ] ( main:2::print_dword_at:17 [ print_word_at::w#1 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } }  ) always clobbers reg byte a 
 Statement [28] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::b#0 print_byte_at::at#0 ] ( main:2::print_dword_at:17::print_word_at:22 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 print_byte_at::b#0 print_byte_at::at#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::b#0 print_byte_at::at#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } }  ) always clobbers reg byte a 
@@ -3561,7 +3561,7 @@ Statement [40] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (by
 Removing always clobbered register reg byte a as potential for zp[1]:60 [ print_byte_at::$2 ]
 Statement [45] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 [ ] ( main:2::print_dword_at:17::print_word_at:22::print_byte_at:29::print_char_at:38 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#0 print_word_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:29::print_char_at:38 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#0 print_word_at::at#2 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:32::print_char_at:38 [ print_dword_at::dw#0 print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#1 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:32::print_char_at:38 [ print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#1 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:29::print_char_at:42 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:29::print_char_at:42 [ print_word_at::w#2 print_word_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:32::print_char_at:42 [ print_dword_at::dw#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:32::print_char_at:42 [ ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ print_byte_at::b#2 print_byte_at::b#0 print_byte_at::b#1 ]
-Statement [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:12 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:12 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [53] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 [ init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] ( main:2::init_angle_screen:10 [ init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:12 [ init_angle_screen::y#5 init_angle_screen::y#1 ]
 Statement [54] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#6 + (byte) $28 [ init_angle_screen::y#5 init_angle_screen::screen_topline#1 init_angle_screen::screen_bottomline#1 ] ( main:2::init_angle_screen:10 [ init_angle_screen::y#5 init_angle_screen::screen_topline#1 init_angle_screen::screen_bottomline#1 ] { }  ) always clobbers reg byte a 
@@ -3618,11 +3618,11 @@ Statement [117] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >>
 Statement [118] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:2::init_angle_screen:10::atan2_16:65 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [120] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:2::init_angle_screen:10::atan2_16:65 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [121] (signed word) atan2_16::yi#16 ← (signed word) atan2_16::y#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] ( main:2::init_angle_screen:10::atan2_16:65 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
-Statement [122] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [124] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [125] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [122] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [123] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [124] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [125] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [126] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
 Statement [131] *((byte*) init_font_hex::charset#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:35 [ init_font_hex::c#6 init_font_hex::c#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:35 [ init_font_hex::c#6 init_font_hex::c#1 ]
@@ -3638,12 +3638,12 @@ Statement [142] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3
 Statement [143] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
 Statement [144] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
 Statement [147] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] ( main:2::init_font_hex:5 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [13] (dword) clock::return#2 ← (dword) clock::return#0 [ clock::return#2 ] ( main:2 [ clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [14] (dword~) main::$4 ← (dword) clock::return#2 [ main::$4 ] ( main:2 [ main::$4 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] ( main:2 [ main::cyclecount#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const nomodify dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] ( main:2 [ main::cyclecount#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [16] (dword) print_dword_at::dw#0 ← (dword) main::cyclecount#0 [ print_dword_at::dw#0 ] ( main:2 [ print_dword_at::dw#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [19] *((const byte*) D018) ← (const byte) main::toD0182_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) D018) ← (const byte) main::toD0182_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [21] (word) print_word_at::w#0 ← > (dword) print_dword_at::dw#0 [ print_dword_at::dw#0 print_word_at::w#0 ] ( main:2::print_dword_at:17 [ print_dword_at::dw#0 print_word_at::w#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } }  ) always clobbers reg byte a 
 Statement [23] (word) print_word_at::w#1 ← < (dword) print_dword_at::dw#0 [ print_word_at::w#1 ] ( main:2::print_dword_at:17 [ print_word_at::w#1 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } }  ) always clobbers reg byte a 
 Statement [28] (byte*) print_byte_at::at#0 ← (byte*) print_word_at::at#2 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::b#0 print_byte_at::at#0 ] ( main:2::print_dword_at:17::print_word_at:22 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 print_byte_at::b#0 print_byte_at::at#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::b#0 print_byte_at::at#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } }  ) always clobbers reg byte a 
@@ -3653,7 +3653,7 @@ Statement [37] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 [ pri
 Statement [39] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (byte) $f [ print_byte_at::at#2 print_byte_at::$2 ] ( main:2::print_dword_at:17::print_word_at:22::print_byte_at:29 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 print_byte_at::at#2 print_byte_at::$2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:29 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::at#2 print_byte_at::$2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:32 [ print_dword_at::dw#0 print_byte_at::at#2 print_byte_at::$2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:32 [ print_byte_at::at#2 print_byte_at::$2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
 Statement [40] (byte*) print_char_at::at#1 ← (byte*) print_byte_at::at#2 + (byte) 1 [ print_byte_at::$2 print_char_at::at#1 ] ( main:2::print_dword_at:17::print_word_at:22::print_byte_at:29 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 print_byte_at::$2 print_char_at::at#1 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:29 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::$2 print_char_at::at#1 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:32 [ print_dword_at::dw#0 print_byte_at::$2 print_char_at::at#1 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:32 [ print_byte_at::$2 print_char_at::at#1 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
 Statement [45] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 [ ] ( main:2::print_dword_at:17::print_word_at:22::print_byte_at:29::print_char_at:38 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#0 print_word_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:29::print_char_at:38 [ print_word_at::w#2 print_word_at::at#2 print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#0 print_word_at::at#2 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:32::print_char_at:38 [ print_dword_at::dw#0 print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#1 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:32::print_char_at:38 [ print_byte_at::b#2 print_byte_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_byte_at::at#2 print_byte_at::at#1 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:29::print_char_at:42 [ print_dword_at::dw#0 print_word_at::w#2 print_word_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:29::print_char_at:42 [ print_word_at::w#2 print_word_at::at#2 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#0 = print_byte_at::b#2 } { print_byte_at::at#0 = print_byte_at::at#2 print_word_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:22::print_byte_at:32::print_char_at:42 [ print_dword_at::dw#0 ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#0 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_dword_at:17::print_word_at:24::print_byte_at:32::print_char_at:42 [ ] { { print_dword_at::dw#0 = main::cyclecount#0 } { print_word_at::w#1 = print_word_at::w#2 } { print_byte_at::b#1 = print_byte_at::b#2 } { print_byte_at::at#1 = print_byte_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:12 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:12 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [53] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 [ init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] ( main:2::init_angle_screen:10 [ init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] { }  ) always clobbers reg byte a 
 Statement [54] (byte*) init_angle_screen::screen_bottomline#1 ← (byte*) init_angle_screen::screen_bottomline#6 + (byte) $28 [ init_angle_screen::y#5 init_angle_screen::screen_topline#1 init_angle_screen::screen_bottomline#1 ] ( main:2::init_angle_screen:10 [ init_angle_screen::y#5 init_angle_screen::screen_topline#1 init_angle_screen::screen_bottomline#1 ] { }  ) always clobbers reg byte a 
 Statement [58] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#2 << (byte) 1 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 init_angle_screen::$3 ] ( main:2::init_angle_screen:10 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 init_angle_screen::$3 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
@@ -3700,11 +3700,11 @@ Statement [117] (signed word) atan2_16::xd#1 ← (signed word) atan2_16::xd#3 >>
 Statement [118] (signed word) atan2_16::yd#1 ← (signed word) atan2_16::yd#3 >> (signed byte) 2 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] ( main:2::init_angle_screen:10::atan2_16:65 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#3 atan2_16::xi#3 atan2_16::i#2 atan2_16::angle#12 atan2_16::shift#2 atan2_16::xd#1 atan2_16::yd#1 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [120] (signed word) atan2_16::xi#13 ← (signed word) atan2_16::x#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] ( main:2::init_angle_screen:10::atan2_16:65 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#0 atan2_16::xi#13 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
 Statement [121] (signed word) atan2_16::yi#16 ← (signed word) atan2_16::y#0 [ atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] ( main:2::init_angle_screen:10::atan2_16:65 [ init_angle_screen::y#5 init_angle_screen::screen_topline#6 init_angle_screen::screen_bottomline#6 init_angle_screen::x#2 init_angle_screen::xb#2 atan2_16::x#0 atan2_16::y#0 atan2_16::yi#16 ] { { atan2_16::return#0 = atan2_16::return#2 } }  ) always clobbers reg byte a 
-Statement [122] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [124] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [125] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
-Statement [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [122] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [123] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [124] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [125] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
+Statement [126] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::clock_start:8 [ ] { }  ) always clobbers reg byte a 
 Statement [131] *((byte*) init_font_hex::charset#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [133] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] { }  ) always clobbers reg byte a 
 Statement [134] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] ( main:2::init_font_hex:5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] { }  ) always clobbers reg byte a 
@@ -3922,7 +3922,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // [8] call clock_start 
@@ -3948,7 +3948,7 @@ main: {
     // main::@5
   __b5:
     // [14] (dword~) main::$4 ← (dword) clock::return#2
-    // [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -3973,7 +3973,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [19] *((const byte*) D018) ← (const byte) main::toD0182_return#0 -- _deref_pbuc1=vbuc2 
+    // [19] *((const nomodify byte*) D018) ← (const byte) main::toD0182_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0182_return
     sta D018
     jmp __breturn
@@ -4080,7 +4080,7 @@ print_byte_at: {
     lsr
     lsr
     lsr
-    // [36] (byte) print_char_at::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [36] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
     // [37] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
@@ -4110,7 +4110,7 @@ print_byte_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [41] (byte) print_char_at::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [41] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
     // [42] call print_char_at 
     // [44] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
@@ -4144,7 +4144,7 @@ print_char_at: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = $12
-    // [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
+    // [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -4180,12 +4180,12 @@ init_angle_screen: {
     .label y = $1b
     // [50] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
   __b1_from_init_angle_screen:
-    // [50] phi (byte*) init_angle_screen::screen_bottomline#6 = (const byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
+    // [50] phi (byte*) init_angle_screen::screen_bottomline#6 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta.z screen_bottomline
     lda #>SCREEN+$28*$c
     sta.z screen_bottomline+1
-    // [50] phi (byte*) init_angle_screen::screen_topline#6 = (const byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
+    // [50] phi (byte*) init_angle_screen::screen_topline#6 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta.z screen_topline
     lda #>SCREEN+$28*$c
@@ -4556,7 +4556,7 @@ atan2_16: {
   __b19:
     // [111] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [112] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
+    // [112] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
     beq __b12_from___b19
     // [85] phi from atan2_16::@19 to atan2_16::@10 [phi:atan2_16::@19->atan2_16::@10]
@@ -4642,14 +4642,14 @@ atan2_16: {
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-    // [122] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [122] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2_TIMER_A_CONTROL
-    // [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [123] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-    // [124] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+    // [124] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -4658,10 +4658,10 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-    // [125] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [125] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
-    // [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // [126] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
     jmp __breturn
@@ -4691,7 +4691,7 @@ init_font_hex: {
     sta.z proto_hi
     lda #>FONT_HEX_PROTO
     sta.z proto_hi+1
-    // [129] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [129] phi (byte*) init_font_hex::charset#5 = (const nomodify byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta.z charset
     lda #>CHARSET
@@ -5006,24 +5006,24 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) CHARSET = (byte*) 8192
-(const dword*) CIA2_TIMER_AB = (dword*) 56580
-(const byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
-(const byte*) CIA2_TIMER_B_CONTROL = (byte*) 56591
-(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (byte) $40
-(const byte) CIA_TIMER_CONTROL_START = (byte) 1
-(const dword) CLOCKS_PER_INIT = (dword) $12
-(const word*) CORDIC_ATAN2_ANGLES_16[(const byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
+(const nomodify byte*) CHARSET = (byte*) 8192
+(const nomodify dword*) CIA2_TIMER_AB = (dword*) 56580
+(const nomodify byte*) CIA2_TIMER_A_CONTROL = (byte*) 56590
+(const nomodify byte*) CIA2_TIMER_B_CONTROL = (byte*) 56591
+(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (byte) $40
+(const nomodify byte) CIA_TIMER_CONTROL_START = (byte) 1
+(const nomodify dword) CLOCKS_PER_INIT = (dword) $12
+(const word*) CORDIC_ATAN2_ANGLES_16[(const nomodify byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
         .word 256*2*256*atan(1/pow(2,i))/PI/2
  }}
-(const byte) CORDIC_ITERATIONS_16 = (byte) $f
-(const byte*) D018 = (byte*) 53272
+(const nomodify byte) CORDIC_ITERATIONS_16 = (byte) $f
+(const nomodify byte*) D018 = (byte*) 53272
 (const byte*) FONT_HEX_PROTO[]  = { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const byte*) SCREEN = (byte*) 10240
+(const nomodify byte*) SCREEN = (byte*) 10240
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 (signed word~) atan2_16::$2 zp[2]:6 200002.0
 (byte~) atan2_16::$22 reg byte a 2.00000002E8
@@ -5194,7 +5194,7 @@ FINAL SYMBOL TABLE
 (label) main::toD0181
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
-(const byte) main::toD0181_return#0 toD0181_return = >(word)(const byte*) SCREEN&(word) $3fff*(byte) 4|>(word)(const byte*) CHARSET/(byte) 4&(byte) $f
+(const byte) main::toD0181_return#0 toD0181_return = >(word)(const nomodify byte*) SCREEN&(word) $3fff*(byte) 4|>(word)(const nomodify byte*) CHARSET/(byte) 4&(byte) $f
 (byte*) main::toD0181_screen
 (label) main::toD0182
 (byte*) main::toD0182_gfx
@@ -5230,7 +5230,7 @@ FINAL SYMBOL TABLE
 (byte*) print_dword_at::at
 (dword) print_dword_at::dw
 (dword) print_dword_at::dw#0 dw zp[4]:18 71.0
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (void()) print_word_at((word) print_word_at::w , (byte*) print_word_at::at)
 (label) print_word_at::@1
 (label) print_word_at::@return
@@ -5326,7 +5326,7 @@ main: {
     // main::toD0181
     // main::@1
     // *D018 = toD018(SCREEN, CHARSET)
-    // [7] *((const byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // clock_start()
@@ -5347,7 +5347,7 @@ main: {
     // main::@5
     // [14] (dword~) main::$4 ← (dword) clock::return#2
     // cyclecount = clock()-CLOCKS_PER_INIT
-    // [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // [15] (dword) main::cyclecount#0 ← (dword~) main::$4 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -5369,7 +5369,7 @@ main: {
     // main::toD0182
     // main::@2
     // *D018 = toD018(BASE_SCREEN, BASE_CHARSET)
-    // [19] *((const byte*) D018) ← (const byte) main::toD0182_return#0 -- _deref_pbuc1=vbuc2 
+    // [19] *((const nomodify byte*) D018) ← (const byte) main::toD0182_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0182_return
     sta D018
     // main::@return
@@ -5471,7 +5471,7 @@ print_byte_at: {
     lsr
     lsr
     // print_char_at(print_hextab[b>>4], at)
-    // [36] (byte) print_char_at::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [36] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
     // [37] (byte*) print_char_at::at#0 ← (byte*) print_byte_at::at#2 -- pbuz1=pbuz2 
@@ -5500,7 +5500,7 @@ print_byte_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [41] (byte) print_char_at::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [41] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
     // [42] call print_char_at 
     // [44] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
@@ -5533,7 +5533,7 @@ print_char_at: {
 clock: {
     .label return = $12
     // 0xffffffff - *CIA2_TIMER_AB
-    // [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
+    // [47] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -5567,12 +5567,12 @@ init_angle_screen: {
     .label screen_bottomline = 4
     .label y = $1b
     // [50] phi from init_angle_screen to init_angle_screen::@1 [phi:init_angle_screen->init_angle_screen::@1]
-    // [50] phi (byte*) init_angle_screen::screen_bottomline#6 = (const byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
+    // [50] phi (byte*) init_angle_screen::screen_bottomline#6 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta.z screen_bottomline
     lda #>SCREEN+$28*$c
     sta.z screen_bottomline+1
-    // [50] phi (byte*) init_angle_screen::screen_topline#6 = (const byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
+    // [50] phi (byte*) init_angle_screen::screen_topline#6 = (const nomodify byte*) SCREEN+(word)(number) $28*(number) $c [phi:init_angle_screen->init_angle_screen::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+$28*$c
     sta.z screen_topline
     lda #>SCREEN+$28*$c
@@ -5927,7 +5927,7 @@ atan2_16: {
     // for( byte i: 0..CORDIC_ITERATIONS_16-1)
     // [111] (byte) atan2_16::i#1 ← ++ (byte) atan2_16::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [112] if((byte) atan2_16::i#1==(const byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
+    // [112] if((byte) atan2_16::i#1==(const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(byte) 1) goto atan2_16::@12 -- vbuxx_eq_vbuc1_then_la1 
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+
     jmp __b12
@@ -6023,16 +6023,16 @@ atan2_16: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // [122] *((const byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [122] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2_TIMER_A_CONTROL
     // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    // [123] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [123] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
     // *CIA2_TIMER_AB = 0xffffffff
-    // [124] *((const dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+    // [124] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -6042,11 +6042,11 @@ clock_start: {
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
     // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    // [125] *((const byte*) CIA2_TIMER_B_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START|(const byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [125] *((const nomodify byte*) CIA2_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2_TIMER_B_CONTROL
     // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // [126] *((const byte*) CIA2_TIMER_A_CONTROL) ← (const byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // [126] *((const nomodify byte*) CIA2_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2_TIMER_A_CONTROL
     // clock_start::@return
@@ -6074,7 +6074,7 @@ init_font_hex: {
     sta.z proto_hi
     lda #>FONT_HEX_PROTO
     sta.z proto_hi+1
-    // [129] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [129] phi (byte*) init_font_hex::charset#5 = (const nomodify byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta.z charset
     lda #>CHARSET

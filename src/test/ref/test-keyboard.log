@@ -32,8 +32,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main::@3
-  *((const byte*) CIA1_PORT_A_DDR) ← (number) $ff
-  *((const byte*) CIA1_PORT_B_DDR) ← (number) 0
+  *((const nomodify byte*) CIA1_PORT_A_DDR) ← (number) $ff
+  *((const nomodify byte*) CIA1_PORT_B_DDR) ← (number) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   return 
@@ -42,8 +42,8 @@ keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@12
   (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@12/(byte) keyboard_matrix_read::rowid#1 )
-  *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2)
-  (byte~) keyboard_matrix_read::$0 ← ~ *((const byte*) CIA1_PORT_B)
+  *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2)
+  (byte~) keyboard_matrix_read::$0 ← ~ *((const nomodify byte*) CIA1_PORT_B)
   (byte) keyboard_matrix_read::row_pressed_bits#0 ← (byte~) keyboard_matrix_read::$0
   (byte) keyboard_matrix_read::return#0 ← (byte) keyboard_matrix_read::row_pressed_bits#0
   to:keyboard_matrix_read::@return
@@ -80,7 +80,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@20
   (byte) keyboard_get_keycode::ch#1 ← phi( main::@20/(byte) keyboard_get_keycode::ch#0 )
-  (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#1)
+  (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#1)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
   (byte) keyboard_get_keycode::return#3 ← phi( keyboard_get_keycode/(byte) keyboard_get_keycode::return#0 )
@@ -111,7 +111,7 @@ main::@7: scope:[main]  from main::@26 main::@31
   if(true) goto main::@10
   to:main::@return
 main::@10: scope:[main]  from main::@10 main::@7
-  (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
+  (bool~) main::$2 ← *((const nomodify byte*) RASTER) != (number) $ff
   if((bool~) main::$2) goto main::@10
   to:main::@11
 main::@11: scope:[main]  from main::@10
@@ -259,62 +259,62 @@ SYMBOL TABLE SSA
 (label) @13
 (label) @begin
 (label) @end
-(const byte*) CIA1_PORT_A = (byte*)(number) $dc00
-(const byte*) CIA1_PORT_A_DDR = (byte*)(number) $dc02
-(const byte*) CIA1_PORT_B = (byte*)(number) $dc01
-(const byte*) CIA1_PORT_B_DDR = (byte*)(number) $dc03
-(const byte) KEY_0 = (byte) $23
-(const byte) KEY_1 = (byte) $38
-(const byte) KEY_2 = (byte) $3b
-(const byte) KEY_3 = (byte) 8
-(const byte) KEY_4 = (byte) $b
-(const byte) KEY_5 = (byte) $10
-(const byte) KEY_6 = (byte) $13
-(const byte) KEY_7 = (byte) $18
-(const byte) KEY_8 = (byte) $1b
-(const byte) KEY_9 = (byte) $20
-(const byte) KEY_A = (byte) $a
-(const byte) KEY_ARROW_LEFT = (byte) $39
-(const byte) KEY_ARROW_UP = (byte) $36
-(const byte) KEY_ASTERISK = (byte) $31
-(const byte) KEY_AT = (byte) $2e
-(const byte) KEY_B = (byte) $1c
-(const byte) KEY_C = (byte) $14
-(const byte) KEY_COLON = (byte) $2d
-(const byte) KEY_COMMA = (byte) $2f
-(const byte) KEY_D = (byte) $12
-(const byte) KEY_DOT = (byte) $2c
-(const byte) KEY_E = (byte) $e
-(const byte) KEY_EQUALS = (byte) $35
-(const byte) KEY_F = (byte) $15
-(const byte) KEY_G = (byte) $1a
-(const byte) KEY_H = (byte) $1d
-(const byte) KEY_I = (byte) $21
-(const byte) KEY_J = (byte) $22
-(const byte) KEY_K = (byte) $25
-(const byte) KEY_L = (byte) $2a
-(const byte) KEY_M = (byte) $24
-(const byte) KEY_MINUS = (byte) $2b
-(const byte) KEY_N = (byte) $27
-(const byte) KEY_O = (byte) $26
-(const byte) KEY_P = (byte) $29
-(const byte) KEY_PLUS = (byte) $28
-(const byte) KEY_POUND = (byte) $30
-(const byte) KEY_Q = (byte) $3e
-(const byte) KEY_R = (byte) $11
-(const byte) KEY_S = (byte) $d
-(const byte) KEY_SEMICOLON = (byte) $32
-(const byte) KEY_SLASH = (byte) $37
-(const byte) KEY_SPACE = (byte) $3c
-(const byte) KEY_T = (byte) $16
-(const byte) KEY_U = (byte) $1e
-(const byte) KEY_V = (byte) $1f
-(const byte) KEY_W = (byte) 9
-(const byte) KEY_X = (byte) $17
-(const byte) KEY_Y = (byte) $19
-(const byte) KEY_Z = (byte) $c
-(const byte*) RASTER = (byte*)(number) $d012
-(const byte*) keyboard_char_keycodes[]  = { (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (byte) $3f, (const byte) KEY_POUND, (byte) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (byte) $3f, (const byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
+(const nomodify byte*) CIA1_PORT_A = (byte*)(number) $dc00
+(const nomodify byte*) CIA1_PORT_A_DDR = (byte*)(number) $dc02
+(const nomodify byte*) CIA1_PORT_B = (byte*)(number) $dc01
+(const nomodify byte*) CIA1_PORT_B_DDR = (byte*)(number) $dc03
+(const nomodify byte) KEY_0 = (byte) $23
+(const nomodify byte) KEY_1 = (byte) $38
+(const nomodify byte) KEY_2 = (byte) $3b
+(const nomodify byte) KEY_3 = (byte) 8
+(const nomodify byte) KEY_4 = (byte) $b
+(const nomodify byte) KEY_5 = (byte) $10
+(const nomodify byte) KEY_6 = (byte) $13
+(const nomodify byte) KEY_7 = (byte) $18
+(const nomodify byte) KEY_8 = (byte) $1b
+(const nomodify byte) KEY_9 = (byte) $20
+(const nomodify byte) KEY_A = (byte) $a
+(const nomodify byte) KEY_ARROW_LEFT = (byte) $39
+(const nomodify byte) KEY_ARROW_UP = (byte) $36
+(const nomodify byte) KEY_ASTERISK = (byte) $31
+(const nomodify byte) KEY_AT = (byte) $2e
+(const nomodify byte) KEY_B = (byte) $1c
+(const nomodify byte) KEY_C = (byte) $14
+(const nomodify byte) KEY_COLON = (byte) $2d
+(const nomodify byte) KEY_COMMA = (byte) $2f
+(const nomodify byte) KEY_D = (byte) $12
+(const nomodify byte) KEY_DOT = (byte) $2c
+(const nomodify byte) KEY_E = (byte) $e
+(const nomodify byte) KEY_EQUALS = (byte) $35
+(const nomodify byte) KEY_F = (byte) $15
+(const nomodify byte) KEY_G = (byte) $1a
+(const nomodify byte) KEY_H = (byte) $1d
+(const nomodify byte) KEY_I = (byte) $21
+(const nomodify byte) KEY_J = (byte) $22
+(const nomodify byte) KEY_K = (byte) $25
+(const nomodify byte) KEY_L = (byte) $2a
+(const nomodify byte) KEY_M = (byte) $24
+(const nomodify byte) KEY_MINUS = (byte) $2b
+(const nomodify byte) KEY_N = (byte) $27
+(const nomodify byte) KEY_O = (byte) $26
+(const nomodify byte) KEY_P = (byte) $29
+(const nomodify byte) KEY_PLUS = (byte) $28
+(const nomodify byte) KEY_POUND = (byte) $30
+(const nomodify byte) KEY_Q = (byte) $3e
+(const nomodify byte) KEY_R = (byte) $11
+(const nomodify byte) KEY_S = (byte) $d
+(const nomodify byte) KEY_SEMICOLON = (byte) $32
+(const nomodify byte) KEY_SLASH = (byte) $37
+(const nomodify byte) KEY_SPACE = (byte) $3c
+(const nomodify byte) KEY_T = (byte) $16
+(const nomodify byte) KEY_U = (byte) $1e
+(const nomodify byte) KEY_V = (byte) $1f
+(const nomodify byte) KEY_W = (byte) 9
+(const nomodify byte) KEY_X = (byte) $17
+(const nomodify byte) KEY_Y = (byte) $19
+(const nomodify byte) KEY_Z = (byte) $c
+(const nomodify byte*) RASTER = (byte*)(number) $d012
+(const to_nomodify byte*) keyboard_char_keycodes[]  = { (const nomodify byte) KEY_AT, (const nomodify byte) KEY_A, (const nomodify byte) KEY_B, (const nomodify byte) KEY_C, (const nomodify byte) KEY_D, (const nomodify byte) KEY_E, (const nomodify byte) KEY_F, (const nomodify byte) KEY_G, (const nomodify byte) KEY_H, (const nomodify byte) KEY_I, (const nomodify byte) KEY_J, (const nomodify byte) KEY_K, (const nomodify byte) KEY_L, (const nomodify byte) KEY_M, (const nomodify byte) KEY_N, (const nomodify byte) KEY_O, (const nomodify byte) KEY_P, (const nomodify byte) KEY_Q, (const nomodify byte) KEY_R, (const nomodify byte) KEY_S, (const nomodify byte) KEY_T, (const nomodify byte) KEY_U, (const nomodify byte) KEY_V, (const nomodify byte) KEY_W, (const nomodify byte) KEY_X, (const nomodify byte) KEY_Y, (const nomodify byte) KEY_Z, (byte) $3f, (const nomodify byte) KEY_POUND, (byte) $3f, (const nomodify byte) KEY_ARROW_UP, (const nomodify byte) KEY_ARROW_LEFT, (const nomodify byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const nomodify byte) KEY_ASTERISK, (const nomodify byte) KEY_PLUS, (const nomodify byte) KEY_COMMA, (const nomodify byte) KEY_MINUS, (const nomodify byte) KEY_DOT, (const nomodify byte) KEY_SLASH, (const nomodify byte) KEY_0, (const nomodify byte) KEY_1, (const nomodify byte) KEY_2, (const nomodify byte) KEY_3, (const nomodify byte) KEY_4, (const nomodify byte) KEY_5, (const nomodify byte) KEY_6, (const nomodify byte) KEY_7, (const nomodify byte) KEY_8, (const nomodify byte) KEY_9, (const nomodify byte) KEY_COLON, (const nomodify byte) KEY_SEMICOLON, (byte) $3f, (const nomodify byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 (label) keyboard_get_keycode::@return
 (byte) keyboard_get_keycode::ch
@@ -482,13 +482,13 @@ SYMBOL TABLE SSA
 (byte*) main::screen#8
 (byte*) main::screen#9
 
-Adding number conversion cast (unumber) $ff in *((const byte*) CIA1_PORT_A_DDR) ← (number) $ff
-Adding number conversion cast (unumber) 0 in *((const byte*) CIA1_PORT_B_DDR) ← (number) 0
+Adding number conversion cast (unumber) $ff in *((const nomodify byte*) CIA1_PORT_A_DDR) ← (number) $ff
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) CIA1_PORT_B_DDR) ← (number) 0
 Adding number conversion cast (unumber) 7 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (number) 7
 Adding number conversion cast (unumber) keyboard_key_pressed::$0 in (number~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#1 & (unumber)(number) 7
 Adding number conversion cast (unumber) 3 in (byte~) keyboard_key_pressed::$1 ← (byte) keyboard_key_pressed::key#1 >> (number) 3
 Adding number conversion cast (unumber) $400+$3e8 in (bool~) main::$1 ← (byte*) main::sc#2 < (number) $400+(number) $3e8
-Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((const nomodify byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) $80 in (number~) main::$4 ← (byte) main::row_pressed_bits#2 & (number) $80
 Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (byte) main::row_pressed_bits#2 & (unumber)(number) $80
 Adding number conversion cast (unumber) 0 in (bool~) main::$5 ← (unumber~) main::$4 != (number) 0
@@ -500,8 +500,8 @@ Adding number conversion cast (unumber) $3f in (bool~) main::$12 ← (byte) main
 Adding number conversion cast (unumber) 0 in (bool~) main::$15 ← (byte~) main::$14 != (number) 0
 Adding number conversion cast (unumber) 5 in (bool~) main::$18 ← (byte) main::i#2 < (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
-Inlining cast *((const byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) CIA1_PORT_A_DDR) ← (unumber)(number) $ff
+Inlining cast *((const nomodify byte*) CIA1_PORT_B_DDR) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 56320
@@ -586,7 +586,7 @@ Identical Phi Values (byte*) main::screen#11 (byte*) main::screen#2
 Identical Phi Values (byte*) main::screen#8 (byte*) main::screen#11
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [22] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2
-Simple Condition (bool~) main::$2 [28] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@10
+Simple Condition (bool~) main::$2 [28] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@10
 Simple Condition (bool~) main::$5 [40] if((byte~) main::$4!=(byte) 0) goto main::@14
 Simple Condition (bool~) main::$7 [46] if((byte) main::col#1!=rangelast(0,7)) goto main::@13
 Simple Condition (bool~) main::$9 [50] if((byte) main::row#1!=rangelast(0,7)) goto main::@12
@@ -736,7 +736,7 @@ main::@3: scope:[main]  from main::@1
   [8] call keyboard_init 
   to:main::@4
 main::@4: scope:[main]  from main::@16 main::@3 main::@4
-  [9] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4
+  [9] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@10 main::@4
   [10] (byte*) main::screen#13 ← phi( main::@4/(byte*) 1024 main::@10/(byte*) main::screen#1 )
@@ -832,8 +832,8 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@5
   [57] (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@5/(byte) keyboard_matrix_read::rowid#1 )
-  [58] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2)
-  [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B)
+  [58] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2)
+  [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
   [60] return 
@@ -841,7 +841,7 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@12
-  [61] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0)
+  [61] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
   [62] return 
@@ -849,8 +849,8 @@ keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_k
 
 (void()) keyboard_init()
 keyboard_init: scope:[keyboard_init]  from main::@3
-  [63] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff
-  [64] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0
+  [63] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff
+  [64] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0
   to:keyboard_init::@return
 keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
   [65] return 
@@ -1122,7 +1122,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [9] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [9] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b4
@@ -1413,11 +1413,11 @@ keyboard_matrix_read: {
     .label rowid = $b
     .label return_1 = $18
     .label return_2 = $c
-    // [58] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    // [58] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy.z rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1_PORT_A
-    // [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
+    // [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     sta.z return
@@ -1437,7 +1437,7 @@ keyboard_get_keycode: {
     .label return = $1c
     .label ch = $10
     .label return_1 = $11
-    // [61] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [61] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z ch
     lda keyboard_char_keycodes,y
     sta.z return
@@ -1450,11 +1450,11 @@ keyboard_get_keycode: {
   // keyboard_init
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // [63] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [63] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    // [64] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [64] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
@@ -1475,7 +1475,7 @@ keyboard_init: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 [ main::sc#2 ] ( main:2 [ main::sc#2 ] { }  ) always clobbers reg byte a 
-Statement [9] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::row#2 main::row#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::row_pressed_bits#2 main::row_pressed_bits#1 main::row_pressed_bits#0 ]
@@ -1489,12 +1489,12 @@ Statement [47] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ ma
 Statement [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:33 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::ch#2 main::ch#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ keyboard_key_pressed::colidx#0 ]
-Statement [58] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [63] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
-Statement [64] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
+Statement [58] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [63] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
+Statement [64] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
 Statement [6] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 [ main::sc#2 ] ( main:2 [ main::sc#2 ] { }  ) always clobbers reg byte a 
-Statement [9] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [16] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] { }  ) always clobbers reg byte a 
 Statement [18] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '0' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] { }  ) always clobbers reg byte a 
 Statement [22] (byte*) main::screen#1 ← (byte*) main::screen#13 + (byte) $28 [ main::row#2 main::screen#1 ] ( main:2 [ main::row#2 main::screen#1 ] { }  ) always clobbers reg byte a 
@@ -1504,10 +1504,10 @@ Statement [43] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' [ mai
 Statement [46] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] ( main:2 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] { }  ) always clobbers reg byte a 
 Statement [47] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] ( main:2 [ main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [50] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::keyboard_key_pressed:33 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [58] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [63] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
-Statement [64] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
+Statement [58] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_matrix_read:12 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  main:2::keyboard_key_pressed:33::keyboard_matrix_read:52 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [63] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
+Statement [64] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 [ ] ( main:2::keyboard_init:8 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::sc#2 main::sc#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::row#2 main::row#1 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[2]:5 [ main::screen#13 main::screen#1 ] : zp[2]:5 , 
@@ -1692,7 +1692,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [9] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [9] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b4
@@ -1944,10 +1944,10 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // [58] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [58] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
-    // [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     jmp __breturn
@@ -1963,7 +1963,7 @@ keyboard_matrix_read: {
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
-    // [61] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [61] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
     jmp __breturn
     // keyboard_get_keycode::@return
@@ -1974,11 +1974,11 @@ keyboard_get_keycode: {
   // keyboard_init
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // [63] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [63] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
-    // [64] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [64] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR
@@ -2085,62 +2085,62 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) CIA1_PORT_A = (byte*) 56320
-(const byte*) CIA1_PORT_A_DDR = (byte*) 56322
-(const byte*) CIA1_PORT_B = (byte*) 56321
-(const byte*) CIA1_PORT_B_DDR = (byte*) 56323
-(const byte) KEY_0 = (byte) $23
-(const byte) KEY_1 = (byte) $38
-(const byte) KEY_2 = (byte) $3b
-(const byte) KEY_3 = (byte) 8
-(const byte) KEY_4 = (byte) $b
-(const byte) KEY_5 = (byte) $10
-(const byte) KEY_6 = (byte) $13
-(const byte) KEY_7 = (byte) $18
-(const byte) KEY_8 = (byte) $1b
-(const byte) KEY_9 = (byte) $20
-(const byte) KEY_A = (byte) $a
-(const byte) KEY_ARROW_LEFT = (byte) $39
-(const byte) KEY_ARROW_UP = (byte) $36
-(const byte) KEY_ASTERISK = (byte) $31
-(const byte) KEY_AT = (byte) $2e
-(const byte) KEY_B = (byte) $1c
-(const byte) KEY_C = (byte) $14
-(const byte) KEY_COLON = (byte) $2d
-(const byte) KEY_COMMA = (byte) $2f
-(const byte) KEY_D = (byte) $12
-(const byte) KEY_DOT = (byte) $2c
-(const byte) KEY_E = (byte) $e
-(const byte) KEY_EQUALS = (byte) $35
-(const byte) KEY_F = (byte) $15
-(const byte) KEY_G = (byte) $1a
-(const byte) KEY_H = (byte) $1d
-(const byte) KEY_I = (byte) $21
-(const byte) KEY_J = (byte) $22
-(const byte) KEY_K = (byte) $25
-(const byte) KEY_L = (byte) $2a
-(const byte) KEY_M = (byte) $24
-(const byte) KEY_MINUS = (byte) $2b
-(const byte) KEY_N = (byte) $27
-(const byte) KEY_O = (byte) $26
-(const byte) KEY_P = (byte) $29
-(const byte) KEY_PLUS = (byte) $28
-(const byte) KEY_POUND = (byte) $30
-(const byte) KEY_Q = (byte) $3e
-(const byte) KEY_R = (byte) $11
-(const byte) KEY_S = (byte) $d
-(const byte) KEY_SEMICOLON = (byte) $32
-(const byte) KEY_SLASH = (byte) $37
-(const byte) KEY_SPACE = (byte) $3c
-(const byte) KEY_T = (byte) $16
-(const byte) KEY_U = (byte) $1e
-(const byte) KEY_V = (byte) $1f
-(const byte) KEY_W = (byte) 9
-(const byte) KEY_X = (byte) $17
-(const byte) KEY_Y = (byte) $19
-(const byte) KEY_Z = (byte) $c
-(const byte*) RASTER = (byte*) 53266
-(const byte*) keyboard_char_keycodes[]  = { (const byte) KEY_AT, (const byte) KEY_A, (const byte) KEY_B, (const byte) KEY_C, (const byte) KEY_D, (const byte) KEY_E, (const byte) KEY_F, (const byte) KEY_G, (const byte) KEY_H, (const byte) KEY_I, (const byte) KEY_J, (const byte) KEY_K, (const byte) KEY_L, (const byte) KEY_M, (const byte) KEY_N, (const byte) KEY_O, (const byte) KEY_P, (const byte) KEY_Q, (const byte) KEY_R, (const byte) KEY_S, (const byte) KEY_T, (const byte) KEY_U, (const byte) KEY_V, (const byte) KEY_W, (const byte) KEY_X, (const byte) KEY_Y, (const byte) KEY_Z, (byte) $3f, (const byte) KEY_POUND, (byte) $3f, (const byte) KEY_ARROW_UP, (const byte) KEY_ARROW_LEFT, (const byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const byte) KEY_ASTERISK, (const byte) KEY_PLUS, (const byte) KEY_COMMA, (const byte) KEY_MINUS, (const byte) KEY_DOT, (const byte) KEY_SLASH, (const byte) KEY_0, (const byte) KEY_1, (const byte) KEY_2, (const byte) KEY_3, (const byte) KEY_4, (const byte) KEY_5, (const byte) KEY_6, (const byte) KEY_7, (const byte) KEY_8, (const byte) KEY_9, (const byte) KEY_COLON, (const byte) KEY_SEMICOLON, (byte) $3f, (const byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
+(const nomodify byte*) CIA1_PORT_A = (byte*) 56320
+(const nomodify byte*) CIA1_PORT_A_DDR = (byte*) 56322
+(const nomodify byte*) CIA1_PORT_B = (byte*) 56321
+(const nomodify byte*) CIA1_PORT_B_DDR = (byte*) 56323
+(const nomodify byte) KEY_0 = (byte) $23
+(const nomodify byte) KEY_1 = (byte) $38
+(const nomodify byte) KEY_2 = (byte) $3b
+(const nomodify byte) KEY_3 = (byte) 8
+(const nomodify byte) KEY_4 = (byte) $b
+(const nomodify byte) KEY_5 = (byte) $10
+(const nomodify byte) KEY_6 = (byte) $13
+(const nomodify byte) KEY_7 = (byte) $18
+(const nomodify byte) KEY_8 = (byte) $1b
+(const nomodify byte) KEY_9 = (byte) $20
+(const nomodify byte) KEY_A = (byte) $a
+(const nomodify byte) KEY_ARROW_LEFT = (byte) $39
+(const nomodify byte) KEY_ARROW_UP = (byte) $36
+(const nomodify byte) KEY_ASTERISK = (byte) $31
+(const nomodify byte) KEY_AT = (byte) $2e
+(const nomodify byte) KEY_B = (byte) $1c
+(const nomodify byte) KEY_C = (byte) $14
+(const nomodify byte) KEY_COLON = (byte) $2d
+(const nomodify byte) KEY_COMMA = (byte) $2f
+(const nomodify byte) KEY_D = (byte) $12
+(const nomodify byte) KEY_DOT = (byte) $2c
+(const nomodify byte) KEY_E = (byte) $e
+(const nomodify byte) KEY_EQUALS = (byte) $35
+(const nomodify byte) KEY_F = (byte) $15
+(const nomodify byte) KEY_G = (byte) $1a
+(const nomodify byte) KEY_H = (byte) $1d
+(const nomodify byte) KEY_I = (byte) $21
+(const nomodify byte) KEY_J = (byte) $22
+(const nomodify byte) KEY_K = (byte) $25
+(const nomodify byte) KEY_L = (byte) $2a
+(const nomodify byte) KEY_M = (byte) $24
+(const nomodify byte) KEY_MINUS = (byte) $2b
+(const nomodify byte) KEY_N = (byte) $27
+(const nomodify byte) KEY_O = (byte) $26
+(const nomodify byte) KEY_P = (byte) $29
+(const nomodify byte) KEY_PLUS = (byte) $28
+(const nomodify byte) KEY_POUND = (byte) $30
+(const nomodify byte) KEY_Q = (byte) $3e
+(const nomodify byte) KEY_R = (byte) $11
+(const nomodify byte) KEY_S = (byte) $d
+(const nomodify byte) KEY_SEMICOLON = (byte) $32
+(const nomodify byte) KEY_SLASH = (byte) $37
+(const nomodify byte) KEY_SPACE = (byte) $3c
+(const nomodify byte) KEY_T = (byte) $16
+(const nomodify byte) KEY_U = (byte) $1e
+(const nomodify byte) KEY_V = (byte) $1f
+(const nomodify byte) KEY_W = (byte) 9
+(const nomodify byte) KEY_X = (byte) $17
+(const nomodify byte) KEY_Y = (byte) $19
+(const nomodify byte) KEY_Z = (byte) $c
+(const nomodify byte*) RASTER = (byte*) 53266
+(const to_nomodify byte*) keyboard_char_keycodes[]  = { (const nomodify byte) KEY_AT, (const nomodify byte) KEY_A, (const nomodify byte) KEY_B, (const nomodify byte) KEY_C, (const nomodify byte) KEY_D, (const nomodify byte) KEY_E, (const nomodify byte) KEY_F, (const nomodify byte) KEY_G, (const nomodify byte) KEY_H, (const nomodify byte) KEY_I, (const nomodify byte) KEY_J, (const nomodify byte) KEY_K, (const nomodify byte) KEY_L, (const nomodify byte) KEY_M, (const nomodify byte) KEY_N, (const nomodify byte) KEY_O, (const nomodify byte) KEY_P, (const nomodify byte) KEY_Q, (const nomodify byte) KEY_R, (const nomodify byte) KEY_S, (const nomodify byte) KEY_T, (const nomodify byte) KEY_U, (const nomodify byte) KEY_V, (const nomodify byte) KEY_W, (const nomodify byte) KEY_X, (const nomodify byte) KEY_Y, (const nomodify byte) KEY_Z, (byte) $3f, (const nomodify byte) KEY_POUND, (byte) $3f, (const nomodify byte) KEY_ARROW_UP, (const nomodify byte) KEY_ARROW_LEFT, (const nomodify byte) KEY_SPACE, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (byte) $3f, (const nomodify byte) KEY_ASTERISK, (const nomodify byte) KEY_PLUS, (const nomodify byte) KEY_COMMA, (const nomodify byte) KEY_MINUS, (const nomodify byte) KEY_DOT, (const nomodify byte) KEY_SLASH, (const nomodify byte) KEY_0, (const nomodify byte) KEY_1, (const nomodify byte) KEY_2, (const nomodify byte) KEY_3, (const nomodify byte) KEY_4, (const nomodify byte) KEY_5, (const nomodify byte) KEY_6, (const nomodify byte) KEY_7, (const nomodify byte) KEY_8, (const nomodify byte) KEY_9, (const nomodify byte) KEY_COLON, (const nomodify byte) KEY_SEMICOLON, (byte) $3f, (const nomodify byte) KEY_EQUALS, (byte) $3f, (byte) $3f }
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 (label) keyboard_get_keycode::@return
 (byte) keyboard_get_keycode::ch
@@ -2368,7 +2368,7 @@ main: {
     // main::@4
   __b4:
     // while (*RASTER!=$ff)
-    // [9] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [9] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b4
@@ -2608,11 +2608,11 @@ keyboard_key_pressed: {
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [58] *((const byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [58] *((const nomodify byte*) CIA1_PORT_A) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1_PORT_A
     // ~*CIA1_PORT_B
-    // [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [59] (byte) keyboard_matrix_read::return#0 ← ~ *((const nomodify byte*) CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1_PORT_B
     eor #$ff
     // keyboard_matrix_read::@return
@@ -2628,7 +2628,7 @@ keyboard_matrix_read: {
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
     // return keyboard_char_keycodes[ch];
-    // [61] (byte) keyboard_get_keycode::return#0 ← *((const byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [61] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
     // keyboard_get_keycode::@return
     // }
@@ -2639,12 +2639,12 @@ keyboard_get_keycode: {
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
     // *CIA1_PORT_A_DDR = $ff
-    // [63] *((const byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [63] *((const nomodify byte*) CIA1_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
     lda #$ff
     sta CIA1_PORT_A_DDR
     // *CIA1_PORT_B_DDR = $00
-    // [64] *((const byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [64] *((const nomodify byte*) CIA1_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Read Mode
     lda #0
     sta CIA1_PORT_B_DDR

@@ -10,9 +10,9 @@ main: scope:[main]  from @1
   (byte) main::c#0 ← (number~) main::$0
   (number~) main::$1 ← (byte) main::c#0 + (number) 1
   (byte) main::d#0 ← (number~) main::$1
-  *((const byte*) main::SCREEN + (number) 0) ← (const byte) main::b
-  *((const byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
-  *((const byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← (const byte) main::b
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
+  *((const nomodify byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -33,7 +33,7 @@ SYMBOL TABLE SSA
 (number~) main::$0
 (number~) main::$1
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (const byte) main::b = (byte) 'c'
 (byte) main::c
 (byte) main::c#0
@@ -44,9 +44,9 @@ Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (const byte)
 Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (const byte) main::b + (unumber)(number) 1
 Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (byte) main::c#0 + (number) 1
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (byte) main::c#0 + (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (const byte) main::b
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
-Adding number conversion cast (unumber) 2 in *((const byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (const byte) main::b
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte) main::c#0
+Adding number conversion cast (unumber) 2 in *((const nomodify byte*) main::SCREEN + (number) 2) ← (byte) main::d#0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -70,7 +70,7 @@ Constant right-side identified [0] (byte) main::c#0 ← (const byte) main::b + (
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::c#0 = main::b+1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (byte) 0) ← (const byte) main::b
+Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (const byte) main::b
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (byte) main::d#0 ← (const byte) main::c#0 + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -106,9 +106,9 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← (const byte) main::b
-  [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0
-  [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0
+  [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::b
+  [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0
+  [6] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0
   to:main::@return
 main::@return: scope:[main]  from main
   [7] return 
@@ -152,13 +152,13 @@ main: {
     .const b = 'c'
     .const c = b+1
     .const d = c+1
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN+1
-    // [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 -- _deref_pbuc1=vbuc2 
     lda #d
     sta SCREEN+2
     jmp __breturn
@@ -170,9 +170,9 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← (const byte) main::b [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::b [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -209,13 +209,13 @@ main: {
     .const b = 'c'
     .const c = b+1
     .const d = c+1
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN+1
-    // [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 -- _deref_pbuc1=vbuc2 
     lda #d
     sta SCREEN+2
     jmp __breturn
@@ -250,7 +250,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 (const byte) main::b = (byte) 'c'
 (byte) main::c
 (const byte) main::c#0 c = (const byte) main::b+(byte) 1
@@ -282,15 +282,15 @@ main: {
     .const c = b+1
     .const d = c+1
     // SCREEN[0] = b
-    // [4] *((const byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) main::b -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     // SCREEN[1] = c
-    // [5] *((const byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN+1
     // SCREEN[2] = d
-    // [6] *((const byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::d#0 -- _deref_pbuc1=vbuc2 
     lda #d
     sta SCREEN+2
     // main::@return

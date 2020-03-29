@@ -10,7 +10,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx
+  *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) idx
   (byte) idx ← (byte) idx + (byte) main::i#2
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,5)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,5)
@@ -31,7 +31,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (byte) idx loadstore = (byte) 0
 (void()) main()
 (bool~) main::$0
@@ -95,7 +95,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx
+  [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) idx
   [7] (byte) idx ← (byte) idx + (byte) main::i#2
   [8] (byte) main::i#1 ← ++ (byte) main::i#2
   [9] if((byte) main::i#1!=(byte) 6) goto main::@1
@@ -162,7 +162,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuz1=vbum2 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuz1=vbum2 
     lda idx
     ldy.z i
     sta SCREEN,y
@@ -187,10 +187,10 @@ main: {
   idx: .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) idx [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] { }  ) always clobbers reg byte a 
 Statement [7] (byte) idx ← (byte) idx + (byte) main::i#2 [ main::i#2 idx ] ( main:2 [ main::i#2 idx ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers mem[1] [ idx ] : mem[1] , 
@@ -242,7 +242,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuxx=vbum1 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuxx=vbum1 
     lda idx
     sta SCREEN,x
     // [7] (byte) idx ← (byte) idx + (byte) main::i#2 -- vbum1=vbum1_plus_vbuxx 
@@ -293,7 +293,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (byte) idx loadstore mem[1] 37.875 = (byte) 0
 (void()) main()
 (label) main::@1
@@ -334,7 +334,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = idx
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuxx=vbum1 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (byte) idx -- pbuc1_derefidx_vbuxx=vbum1 
     lda idx
     sta SCREEN,x
     // idx +=i

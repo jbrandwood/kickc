@@ -15,8 +15,8 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) SCREEN + (number) 0) ← (const byte) main::point1_x
-  *((const byte*) SCREEN + (number) 1) ← (const byte) main::point1_y
+  *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) main::point1_x
+  *((const nomodify byte*) SCREEN + (number) 1) ← (const byte) main::point1_y
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -35,14 +35,14 @@ SYMBOL TABLE SSA
 (label) @end
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@return
 (const byte) main::point1_x = (byte) 2
 (const byte) main::point1_y = (byte) 3
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (const byte) main::point1_x
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (const byte) main::point1_y
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) main::point1_x
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (const byte) main::point1_y
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -51,7 +51,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← (const byte) main::point1_x
+Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (const byte) main::point1_x
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -82,8 +82,8 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (const byte) main::point1_x
-  [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y
+  [4] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x
+  [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -126,10 +126,10 @@ __bend:
 main: {
     .const point1_x = 2
     .const point1_y = 3
-    // [4] *((const byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
-    // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
     lda #point1_y
     sta SCREEN+1
     jmp __breturn
@@ -141,8 +141,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (const byte) main::point1_x [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Point] 
@@ -180,10 +180,10 @@ __bend:
 main: {
     .const point1_x = 2
     .const point1_y = 3
-    // [4] *((const byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
-    // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
     lda #point1_y
     sta SCREEN+1
     jmp __breturn
@@ -218,7 +218,7 @@ FINAL SYMBOL TABLE
 (label) @end
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 (const byte) main::point1_x = (byte) 2
@@ -248,11 +248,11 @@ main: {
     .const point1_x = 2
     .const point1_y = 3
     // SCREEN[0] = point1.x
-    // [4] *((const byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
     // SCREEN[1] = point1.y
-    // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
     lda #point1_y
     sta SCREEN+1
     // main::@return

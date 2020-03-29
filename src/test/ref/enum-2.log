@@ -6,7 +6,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) main::SCREEN) ← (const byte) main::letter
+  *((const nomodify byte*) main::SCREEN) ← (const byte) main::letter
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,7 +29,7 @@ SYMBOL TABLE SSA
 (const byte) Letter::C = (byte) 'b'+(byte) 1
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (const byte) main::letter = (const byte) B
 
 Simplifying constant pointer cast (byte*) 1024
@@ -63,7 +63,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::SCREEN) ← (const byte) B
+  [4] *((const nomodify byte*) main::SCREEN) ← (const byte) B
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -103,7 +103,7 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN
     jmp __breturn
@@ -115,7 +115,7 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::SCREEN) ← (const byte) B [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) main::SCREEN) ← (const byte) B [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Letter] 
@@ -152,7 +152,7 @@ __bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN
     jmp __breturn
@@ -191,7 +191,7 @@ FINAL SYMBOL TABLE
 (const byte) Letter::C = (byte) 'b'+(byte) 1
 (void()) main()
 (label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+(const nomodify byte*) main::SCREEN = (byte*) 1024
 
 
 
@@ -216,7 +216,7 @@ Score: 12
 main: {
     .label SCREEN = $400
     // *SCREEN = letter
-    // [4] *((const byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN
     // main::@return

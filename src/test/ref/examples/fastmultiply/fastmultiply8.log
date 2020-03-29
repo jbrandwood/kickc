@@ -167,7 +167,7 @@ print_byte_at: scope:[print_byte_at]  from print_sbyte_at::@2
   (byte*) print_byte_at::at#1 ← phi( print_sbyte_at::@2/(byte*) print_byte_at::at#0 )
   (byte) print_byte_at::b#1 ← phi( print_sbyte_at::@2/(byte) print_byte_at::b#0 )
   (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#1 >> (number) 4
-  (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0)
+  (byte) print_char_at::ch#2 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0)
   (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#1
   call print_char_at 
   to:print_byte_at::@1
@@ -176,7 +176,7 @@ print_byte_at::@1: scope:[print_byte_at]  from print_byte_at
   (byte) print_byte_at::b#2 ← phi( print_byte_at/(byte) print_byte_at::b#1 )
   (number~) print_byte_at::$2 ← (byte) print_byte_at::b#2 & (number) $f
   (byte*~) print_byte_at::$3 ← (byte*) print_byte_at::at#2 + (number) 1
-  (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (number~) print_byte_at::$2)
+  (byte) print_char_at::ch#3 ← *((const to_nomodify byte*) print_hextab + (number~) print_byte_at::$2)
   (byte*) print_char_at::at#3 ← (byte*~) print_byte_at::$3
   call print_char_at 
   to:print_byte_at::@2
@@ -558,7 +558,7 @@ SYMBOL TABLE SSA
 (void()) print_cls()
 (label) print_cls::@1
 (label) print_cls::@return
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (void()) print_sbyte_at((signed byte) print_sbyte_at::b , (byte*) print_sbyte_at::at)
 (bool~) print_sbyte_at::$0
 (byte~) print_sbyte_at::$1
@@ -1014,14 +1014,14 @@ print_char_at::@return: scope:[print_char_at]  from print_char_at
 (void()) print_byte_at((byte) print_byte_at::b , (byte*) print_byte_at::at)
 print_byte_at: scope:[print_byte_at]  from print_sbyte_at::@2
   [49] (byte~) print_byte_at::$0 ← (byte) print_byte_at::b#0 >> (byte) 4
-  [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0)
+  [50] (byte) print_char_at::ch#2 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0)
   [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
   [52] call print_char_at 
   to:print_byte_at::@1
 print_byte_at::@1: scope:[print_byte_at]  from print_byte_at
   [53] (byte~) print_byte_at::$2 ← (byte) print_byte_at::b#0 & (byte) $f
   [54] (byte*) print_char_at::at#3 ← (byte*) print_byte_at::at#0 + (byte) 1
-  [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2)
+  [55] (byte) print_char_at::ch#3 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2)
   [56] call print_char_at 
   to:print_byte_at::@return
 print_byte_at::@return: scope:[print_byte_at]  from print_byte_at::@1
@@ -1581,7 +1581,7 @@ print_byte_at: {
     lsr
     lsr
     sta.z __0
-    // [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [50] (byte) print_char_at::ch#2 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -1612,7 +1612,7 @@ print_byte_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [55] (byte) print_char_at::ch#3 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char_at.ch
@@ -2306,7 +2306,7 @@ print_byte_at: {
     lsr
     lsr
     lsr
-    // [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [50] (byte) print_char_at::ch#2 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
     // [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
@@ -2329,7 +2329,7 @@ print_byte_at: {
     bne !+
     inc.z print_char_at.at+1
   !:
-    // [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [55] (byte) print_char_at::ch#3 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
     // [56] call print_char_at 
     // [46] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]
@@ -2746,7 +2746,7 @@ FINAL SYMBOL TABLE
 (byte) print_char_at::ch#4 reg byte x 1200003.0
 (void()) print_cls()
 (label) print_cls::@return
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (void()) print_sbyte_at((signed byte) print_sbyte_at::b , (byte*) print_sbyte_at::at)
 (label) print_sbyte_at::@1
 (label) print_sbyte_at::@2
@@ -3071,7 +3071,7 @@ print_byte_at: {
     lsr
     lsr
     // print_char_at(print_hextab[b>>4], at)
-    // [50] (byte) print_char_at::ch#2 ← *((const byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [50] (byte) print_char_at::ch#2 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
     // [51] (byte*) print_char_at::at#2 ← (byte*) print_byte_at::at#0
@@ -3093,7 +3093,7 @@ print_byte_at: {
     bne !+
     inc.z print_char_at.at+1
   !:
-    // [55] (byte) print_char_at::ch#3 ← *((const byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [55] (byte) print_char_at::ch#3 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
     // [56] call print_char_at 
     // [46] phi from print_byte_at::@1 to print_char_at [phi:print_byte_at::@1->print_char_at]

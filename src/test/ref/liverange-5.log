@@ -72,8 +72,8 @@ print::@return: scope:[print]  from print::@1
 out: scope:[out]  from print
   (byte) out::b#1 ← phi( print/(byte) out::b#0 )
   (byte) out::ca#1 ← phi( print/(byte) out::ca#0 )
-  *((const byte*) SCREEN+(number) $3e7) ← ++ *((const byte*) SCREEN+(number) $3e7)
-  *((const byte*) SCREEN + (byte) out::b#1) ← (byte) out::ca#1
+  *((const nomodify byte*) SCREEN+(number) $3e7) ← ++ *((const nomodify byte*) SCREEN+(number) $3e7)
+  *((const nomodify byte*) SCREEN + (byte) out::b#1) ← (byte) out::ca#1
   to:out::@return
 out::@return: scope:[out]  from out
   return 
@@ -90,7 +90,7 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte~) main::$0
 (bool~) main::$2
@@ -144,7 +144,7 @@ SYMBOL TABLE SSA
 (byte) print::ca#0
 (byte) print::ca#1
 
-Adding number conversion cast (unumber) $3e7 in *((const byte*) SCREEN+(number) $3e7) ← ++ *((const byte*) SCREEN+(number) $3e7)
+Adding number conversion cast (unumber) $3e7 in *((const nomodify byte*) SCREEN+(number) $3e7) ← ++ *((const nomodify byte*) SCREEN+(number) $3e7)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3e7
@@ -285,8 +285,8 @@ print::@return: scope:[print]  from print
 
 (void()) out((byte) out::b , (byte) out::ca)
 out: scope:[out]  from print
-  [23] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7)
-  [24] *((const byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0
+  [23] *((const nomodify byte*) SCREEN+(word) $3e7) ← ++ *((const nomodify byte*) SCREEN+(word) $3e7)
+  [24] *((const nomodify byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0
   to:out::@return
 out::@return: scope:[out]  from out
   [25] return 
@@ -483,9 +483,9 @@ print: {
 out: {
     .label b = 8
     .label ca = 9
-    // [23] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [23] *((const nomodify byte*) SCREEN+(word) $3e7) ← ++ *((const nomodify byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
-    // [24] *((const byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [24] *((const nomodify byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z ca
     ldy.z b
     sta SCREEN,y
@@ -644,9 +644,9 @@ print: {
   // out
 // out(byte register(X) b, byte register(A) ca)
 out: {
-    // [23] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [23] *((const nomodify byte*) SCREEN+(word) $3e7) ← ++ *((const nomodify byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
-    // [24] *((const byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [24] *((const nomodify byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     jmp __breturn
     // out::@return
@@ -705,7 +705,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -846,10 +846,10 @@ print: {
 // out(byte register(X) b, byte register(A) ca)
 out: {
     // (*(SCREEN+999))++;
-    // [23] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [23] *((const nomodify byte*) SCREEN+(word) $3e7) ← ++ *((const nomodify byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     // SCREEN[b] = ca
-    // [24] *((const byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [24] *((const nomodify byte*) SCREEN + (byte) out::b#0) ← (byte) out::ca#0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // out::@return
     // }

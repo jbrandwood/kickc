@@ -31,8 +31,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte) SZ = (byte) $f
-(const byte*) items[(const byte) SZ]  = { fill( SZ, 0) }
+(const nomodify byte) SZ = (byte) $f
+(const byte*) items[(const nomodify byte) SZ]  = { fill( SZ, 0) }
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -48,11 +48,11 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::sub#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [3] main::sub#1 ← ++ main::sub#2 to ++
-Resolved ranged comparison value [5] if(main::sub#1!=rangelast(0,SZ)) goto main::@1 to (const byte) SZ+(number) 1
-Adding number conversion cast (unumber) SZ+1 in if((byte) main::sub#1!=(const byte) SZ+(number) 1) goto main::@1
-Adding number conversion cast (unumber) 1 in if((byte) main::sub#1!=(unumber)(const byte) SZ+(number) 1) goto main::@1
+Resolved ranged comparison value [5] if(main::sub#1!=rangelast(0,SZ)) goto main::@1 to (const nomodify byte) SZ+(number) 1
+Adding number conversion cast (unumber) SZ+1 in if((byte) main::sub#1!=(const nomodify byte) SZ+(number) 1) goto main::@1
+Adding number conversion cast (unumber) 1 in if((byte) main::sub#1!=(unumber)(const nomodify byte) SZ+(number) 1) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast (const byte) SZ+(unumber)(number) 1
+Simplifying constant integer cast (const nomodify byte) SZ+(unumber)(number) 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
@@ -99,7 +99,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::sub#2 ← phi( main/(byte) 0 main::@1/(byte) main::sub#1 )
   [6] *((const byte*) items + (byte) main::sub#2) ← (byte) main::sub#2
   [7] (byte) main::sub#1 ← ++ (byte) main::sub#2
-  [8] if((byte) main::sub#1!=(const byte) SZ+(byte) 1) goto main::@1
+  [8] if((byte) main::sub#1!=(const nomodify byte) SZ+(byte) 1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [9] return 
@@ -166,7 +166,7 @@ main: {
     sta items,y
     // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
     inc.z sub
-    // [8] if((byte) main::sub#1!=(const byte) SZ+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) main::sub#1!=(const nomodify byte) SZ+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #SZ+1
     cmp.z sub
     bne __b1_from___b1
@@ -233,7 +233,7 @@ main: {
     sta items,x
     // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [8] if((byte) main::sub#1!=(const byte) SZ+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::sub#1!=(const nomodify byte) SZ+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #SZ+1
     bne __b1_from___b1
     jmp __breturn
@@ -274,8 +274,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) SZ = (byte) $f
-(const byte*) items[(const byte) SZ]  = { fill( SZ, 0) }
+(const nomodify byte) SZ = (byte) $f
+(const byte*) items[(const nomodify byte) SZ]  = { fill( SZ, 0) }
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -321,7 +321,7 @@ main: {
     // for( byte sub: 0..SZ)
     // [7] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [8] if((byte) main::sub#1!=(const byte) SZ+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::sub#1!=(const nomodify byte) SZ+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #SZ+1
     bne __b1
     // main::@return

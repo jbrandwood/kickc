@@ -2,7 +2,7 @@ Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  kickasm(location (const byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
+  kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
  }}
   to:@1
 
@@ -16,7 +16,7 @@ main::@1: scope:[main]  from main main::@1
   (byte*) main::cols#2 ← phi( main/(byte*) main::cols#0 main::@1/(byte*) main::cols#1 )
   (byte*) main::screen#2 ← phi( main/(byte*) main::screen#0 main::@1/(byte*) main::screen#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2)
+  (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2)
   *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*'
   (byte*) main::screen#1 ← (byte*) main::screen#2 + (number) $28
   *((byte*) main::cols#2 + (byte) main::sin#0) ← (number) 1
@@ -58,7 +58,7 @@ SYMBOL TABLE SSA
 (byte*) main::screen#2
 (byte) main::sin
 (byte) main::sin#0
-(const byte*) sintab = (byte*)(number) $1000
+(const nomodify byte*) sintab = (byte*)(number) $1000
 
 Adding number conversion cast (unumber) $28 in (byte*) main::screen#1 ← (byte*) main::screen#2 + (number) $28
 Adding number conversion cast (unumber) 1 in *((byte*) main::cols#2 + (byte) main::sin#0) ← (number) 1
@@ -119,7 +119,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  kickasm(location (const byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
+  kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
  }}
   to:@1
 @1: scope:[]  from @begin
@@ -137,7 +137,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte*) main::cols#2 ← phi( main/(byte*) 55296 main::@1/(byte*) main::cols#1 )
   [5] (byte*) main::screen#2 ← phi( main/(byte*) 1024 main::@1/(byte*) main::screen#1 )
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2)
+  [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2)
   [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*'
   [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28
   [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1
@@ -191,7 +191,7 @@ Target platform is c64basic / MOS6502X
   .label sintab = $1000
   // @begin
 __bbegin:
-  // kickasm(location (const byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
+  // kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -236,7 +236,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda sintab,y
     sta.z sin
@@ -317,7 +317,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label sintab = $1000
   // @begin
 __bbegin:
-  // kickasm(location (const byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
+  // kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
   // [1] phi from @begin to @1 [phi:@begin->@1]
 __b1_from___bbegin:
   jmp __b1
@@ -359,7 +359,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
+    // [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
     ldy sintab,x
     // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'*'
@@ -442,7 +442,7 @@ FINAL SYMBOL TABLE
 (byte*) main::screen#2 screen zp[2]:2 101.0
 (byte) main::sin
 (byte) main::sin#0 reg byte y 101.0
-(const byte*) sintab = (byte*) 4096
+(const nomodify byte*) sintab = (byte*) 4096
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::screen#2 main::screen#1 ]
@@ -463,7 +463,7 @@ Score: 3406
   .label sintab = $1000
   // @begin
   // kickasm
-  // kickasm(location (const byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
+  // kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
   // [2] call main 
@@ -494,7 +494,7 @@ main: {
     // main::@1
   __b1:
     // sin = sintab[i]
-    // [6] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
+    // [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
     ldy sintab,x
     // screen[sin] = '*'
     // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 

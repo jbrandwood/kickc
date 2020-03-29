@@ -7,12 +7,12 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) A ← (byte) 'a'
+  (volatile byte) A ← (byte) 'a'
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  *((const byte*) SCREEN + (number) 0) ← (byte) A
+  *((const byte*) SCREEN + (number) 0) ← (volatile byte) A
   *((const byte*) SCREEN + (number) 1) ← (const byte) main::B
   *((const byte*) SCREEN + (number) 2) ← *((const byte*) main::addrA)
   call sub 
@@ -26,7 +26,7 @@ main::@return: scope:[main]  from main::@1
 (void()) sub()
 sub: scope:[sub]  from main
   *((const byte*) SCREEN + (number) 3) ← (const byte) sub::C
-  (number~) sub::$0 ← (byte) A + (number) 1
+  (number~) sub::$0 ← (volatile byte) A + (number) 1
   (byte) sub::D#0 ← (number~) sub::$0
   *((const byte*) SCREEN + (number) 4) ← (byte) sub::D#0
   to:sub::@return
@@ -45,13 +45,13 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(byte) A loadstore
+(volatile byte) A loadstore
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@1
 (label) main::@return
 (const byte) main::B = (byte) 'b'
-(const byte*) main::addrA = &(byte) A
+(const byte*) main::addrA = &(volatile byte) A
 (void()) sub()
 (number~) sub::$0
 (label) sub::@return
@@ -59,12 +59,12 @@ SYMBOL TABLE SSA
 (byte) sub::D
 (byte) sub::D#0
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) A
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (volatile byte) A
 Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (const byte) main::B
 Adding number conversion cast (unumber) 2 in *((const byte*) SCREEN + (number) 2) ← *((const byte*) main::addrA)
 Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← (const byte) sub::C
-Adding number conversion cast (unumber) 1 in (number~) sub::$0 ← (byte) A + (number) 1
-Adding number conversion cast (unumber) sub::$0 in (number~) sub::$0 ← (byte) A + (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) sub::$0 ← (volatile byte) A + (number) 1
+Adding number conversion cast (unumber) sub::$0 in (number~) sub::$0 ← (volatile byte) A + (unumber)(number) 1
 Adding number conversion cast (unumber) 4 in *((const byte*) SCREEN + (number) 4) ← (byte) sub::D#0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
@@ -82,10 +82,10 @@ Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) sub::$0 ← (byte) A + (byte) 1
+Inferred type updated to byte in (unumber~) sub::$0 ← (volatile byte) A + (byte) 1
 Alias sub::D#0 = sub::$0 
 Successful SSA optimization Pass2AliasElimination
-Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (byte) A
+Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (volatile byte) A
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *(SCREEN+2)
@@ -110,7 +110,7 @@ Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) A ← (byte) 'a'
+  [0] (volatile byte) A ← (byte) 'a'
   to:@1
 @1: scope:[]  from @begin
   [1] phi()
@@ -121,7 +121,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (byte) A
+  [4] *((const byte*) SCREEN) ← (volatile byte) A
   [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B
   [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA)
   [7] call sub 
@@ -133,7 +133,7 @@ main::@return: scope:[main]  from main
 (void()) sub()
 sub: scope:[sub]  from main
   [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C
-  [10] (byte) sub::D#0 ← (byte) A + (byte) 1
+  [10] (byte) sub::D#0 ← (volatile byte) A + (byte) 1
   [11] *((const byte*) SCREEN+(byte) 4) ← (byte) sub::D#0
   to:sub::@return
 sub::@return: scope:[sub]  from sub
@@ -142,7 +142,7 @@ sub::@return: scope:[sub]  from sub
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) A loadstore 19.0
+(volatile byte) A loadstore 19.0
 (void()) main()
 (void()) sub()
 (byte) sub::D
@@ -170,7 +170,7 @@ Target platform is c64basic / MOS6502X
   .label A = 2
   // @begin
 __bbegin:
-  // [0] (byte) A ← (byte) 'a' -- vbuz1=vbuc1 
+  // [0] (volatile byte) A ← (byte) 'a' -- vbuz1=vbuc1 
   // Not an early constant (address-of is used)
   lda #'a'
   sta.z A
@@ -190,7 +190,7 @@ __bend:
 main: {
     .const B = 'b'
     .label addrA = A
-    // [4] *((const byte*) SCREEN) ← (byte) A -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) SCREEN) ← (volatile byte) A -- _deref_pbuc1=vbuz1 
     lda.z A
     sta SCREEN
     // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B -- _deref_pbuc1=vbuc2 
@@ -214,7 +214,7 @@ sub: {
     // [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
-    // [10] (byte) sub::D#0 ← (byte) A + (byte) 1 -- vbuz1=vbuz2_plus_1 
+    // [10] (byte) sub::D#0 ← (volatile byte) A + (byte) 1 -- vbuz1=vbuz2_plus_1 
     ldy.z A
     iny
     sty.z D
@@ -230,8 +230,8 @@ sub: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) A ← (byte) 'a' [ A ] (  [ A ] { }  ) always clobbers reg byte a 
-Statement [4] *((const byte*) SCREEN) ← (byte) A [ A ] ( main:2 [ A ] { }  ) always clobbers reg byte a 
+Statement [0] (volatile byte) A ← (byte) 'a' [ A ] (  [ A ] { }  ) always clobbers reg byte a 
+Statement [4] *((const byte*) SCREEN) ← (volatile byte) A [ A ] ( main:2 [ A ] { }  ) always clobbers reg byte a 
 Statement [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B [ A ] ( main:2 [ A ] { }  ) always clobbers reg byte a 
 Statement [6] *((const byte*) SCREEN+(byte) 2) ← *((const byte*) main::addrA) [ A ] ( main:2 [ A ] { }  ) always clobbers reg byte a 
 Statement [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C [ A ] ( main:2::sub:7 [ A ] { }  ) always clobbers reg byte a 
@@ -261,7 +261,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label A = 2
   // @begin
 __bbegin:
-  // [0] (byte) A ← (byte) 'a' -- vbuz1=vbuc1 
+  // [0] (volatile byte) A ← (byte) 'a' -- vbuz1=vbuc1 
   // Not an early constant (address-of is used)
   lda #'a'
   sta.z A
@@ -281,7 +281,7 @@ __bend:
 main: {
     .const B = 'b'
     .label addrA = A
-    // [4] *((const byte*) SCREEN) ← (byte) A -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) SCREEN) ← (volatile byte) A -- _deref_pbuc1=vbuz1 
     lda.z A
     sta SCREEN
     // [5] *((const byte*) SCREEN+(byte) 1) ← (const byte) main::B -- _deref_pbuc1=vbuc2 
@@ -304,7 +304,7 @@ sub: {
     // [9] *((const byte*) SCREEN+(byte) 3) ← (const byte) sub::C -- _deref_pbuc1=vbuc2 
     lda #C
     sta SCREEN+3
-    // [10] (byte) sub::D#0 ← (byte) A + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    // [10] (byte) sub::D#0 ← (volatile byte) A + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx.z A
     inx
     // [11] *((const byte*) SCREEN+(byte) 4) ← (byte) sub::D#0 -- _deref_pbuc1=vbuxx 
@@ -338,12 +338,12 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte) A loadstore zp[1]:2 19.0
+(volatile byte) A loadstore zp[1]:2 19.0
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 (const byte) main::B = (byte) 'b'
-(const byte*) main::addrA = &(byte) A
+(const byte*) main::addrA = &(volatile byte) A
 (void()) sub()
 (label) sub::@return
 (const byte) sub::C = (byte) 'c'
@@ -369,7 +369,7 @@ Score: 70
   // @begin
 __bbegin:
   // A = 'a'
-  // [0] (byte) A ← (byte) 'a' -- vbuz1=vbuc1 
+  // [0] (volatile byte) A ← (byte) 'a' -- vbuz1=vbuc1 
   // Not an early constant (address-of is used)
   lda #'a'
   sta.z A
@@ -385,7 +385,7 @@ main: {
     .const B = 'b'
     .label addrA = A
     // SCREEN[0] = A
-    // [4] *((const byte*) SCREEN) ← (byte) A -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) SCREEN) ← (volatile byte) A -- _deref_pbuc1=vbuz1 
     lda.z A
     sta SCREEN
     // SCREEN[1] = B
@@ -412,7 +412,7 @@ sub: {
     lda #C
     sta SCREEN+3
     // D = A+1
-    // [10] (byte) sub::D#0 ← (byte) A + (byte) 1 -- vbuxx=vbuz1_plus_1 
+    // [10] (byte) sub::D#0 ← (volatile byte) A + (byte) 1 -- vbuxx=vbuz1_plus_1 
     ldx.z A
     inx
     // SCREEN[4] = D

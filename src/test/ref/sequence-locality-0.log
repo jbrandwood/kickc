@@ -19,14 +19,14 @@ main::@1: scope:[main]  from main main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#5 )
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#3
+  *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#3
   (byte) main::idx#1 ← ++ (byte) main::idx#3
   to:main::@3
 main::@4: scope:[main]  from main::@1
   (byte) main::idx#4 ← phi( main::@1/(byte) main::idx#5 )
   (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
   (number~) main::$1 ← (byte) main::i#4 - (number) 5
-  *((const byte*) main::screen + (byte) main::idx#4) ← (number~) main::$1
+  *((const nomodify byte*) main::screen + (byte) main::idx#4) ← (number~) main::$1
   (byte) main::idx#2 ← ++ (byte) main::idx#4
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
@@ -75,7 +75,7 @@ SYMBOL TABLE SSA
 (byte) main::idx#4
 (byte) main::idx#5
 (byte) main::idx#6
-(const byte*) main::screen = (byte*)(number) $400
+(const nomodify byte*) main::screen = (byte*)(number) $400
 
 Adding number conversion cast (unumber) 5 in (bool~) main::$0 ← (byte) main::i#2 > (number) 5
 Adding number conversion cast (unumber) 5 in (number~) main::$1 ← (byte) main::i#4 - (number) 5
@@ -163,7 +163,7 @@ main::@1: scope:[main]  from main main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@1
   [7] (byte~) main::$1 ← (byte) main::i#2 - (byte) 5
-  [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1
+  [8] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1
   [9] (byte) main::idx#2 ← ++ (byte) main::idx#3
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
@@ -175,7 +175,7 @@ main::@return: scope:[main]  from main::@3
   [13] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2
+  [14] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2
   [15] (byte) main::idx#1 ← ++ (byte) main::idx#3
   to:main::@3
 
@@ -262,7 +262,7 @@ main: {
     lax.z i
     axs #5
     stx.z __1
-    // [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __1
     ldy.z idx
     sta screen,y
@@ -288,7 +288,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [14] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z i
     ldy.z idx
     sta screen,y
@@ -361,7 +361,7 @@ main: {
     txa
     sec
     sbc #5
-    // [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [8] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta screen,y
     // [9] (byte) main::idx#2 ← ++ (byte) main::idx#3 -- vbuyy=_inc_vbuyy 
     iny
@@ -384,7 +384,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
+    // [14] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
     txa
     sta screen,y
     // [15] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuyy=_inc_vbuyy 
@@ -443,7 +443,7 @@ FINAL SYMBOL TABLE
 (byte) main::idx#2 reg byte y 202.0
 (byte) main::idx#3 reg byte y 101.0
 (byte) main::idx#6 reg byte y 101.0
-(const byte*) main::screen = (byte*) 1024
+(const nomodify byte*) main::screen = (byte*) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::idx#3 main::idx#6 main::idx#1 main::idx#2 ]
@@ -491,7 +491,7 @@ main: {
     sec
     sbc #5
     // screen[idx++] = i-5
-    // [8] *((const byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [8] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte~) main::$1 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta screen,y
     // screen[idx++] = i-5;
     // [9] (byte) main::idx#2 ← ++ (byte) main::idx#3 -- vbuyy=_inc_vbuyy 
@@ -513,7 +513,7 @@ main: {
     // main::@2
   __b2:
     // screen[idx++] = i
-    // [14] *((const byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
+    // [14] *((const nomodify byte*) main::screen + (byte) main::idx#3) ← (byte) main::i#2 -- pbuc1_derefidx_vbuyy=vbuxx 
     txa
     sta screen,y
     // screen[idx++] = i;

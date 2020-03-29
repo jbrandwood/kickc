@@ -109,9 +109,9 @@ __stackcall (void()) print((byte) print::p_x , (byte) print::p_y)
 print: scope:[print]  from
   (byte) print::p_x#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_X)
   (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y)
-  *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0
+  *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0
   (byte) idx ← ++ (byte) idx
-  *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0
+  *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0
   (byte) idx ← ++ (byte) idx
   to:print::@return
 print::@return: scope:[print]  from print
@@ -130,7 +130,7 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (const word) STACK_BASE = (word) $103
 __stackcall (struct Point()) get((byte) get::i)
 (number~) get::$0
@@ -242,9 +242,9 @@ __stackcall (void()) print((byte) print::p_x , (byte) print::p_y)
 print: scope:[print]  from
   [4] (byte) print::p_x#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_X)
   [5] (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y)
-  [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0
+  [6] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0
   [7] (byte) idx ← ++ (byte) idx
-  [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0
+  [8] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0
   [9] (byte) idx ← ++ (byte) idx
   to:print::@return
 print::@return: scope:[print]  from print
@@ -389,13 +389,13 @@ print: {
     tsx
     lda STACK_BASE+OFFSET_STACK_P_Y,x
     sta.z p_y
-    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [6] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z p_x
     ldy.z idx
     sta SCREEN,y
     // [7] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z p_y
     ldy.z idx
     sta SCREEN,y
@@ -499,11 +499,11 @@ Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i
 Statement [5] (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:2::print:27 [ main::i#2 idx print::p_x#0 print::p_y#0 ] { }  ) always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ print::p_x#0 ]
 Removing always clobbered register reg byte x as potential for zp[1]:4 [ print::p_x#0 ]
-Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:27 [ main::i#2 idx print::p_y#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:27 [ main::i#2 idx print::p_y#0 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ print::p_y#0 ]
 Removing always clobbered register reg byte y as potential for zp[1]:5 [ print::p_y#0 ]
-Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:27 [ main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:27 [ main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
 Statement [11] (byte) get::return_x#0 ← stackidx(byte,(const byte) get::OFFSET_STACK_I) [ get::return_x#0 ] ( main:2::get:22 [ idx main::i#2 get::return_x#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [12] (byte) get::return_y#0 ← (byte) get::return_x#0 >> (byte) 1 [ get::return_x#0 get::return_y#0 ] ( main:2::get:22 [ idx main::i#2 get::return_x#0 get::return_y#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ get::return_x#0 ]
@@ -523,8 +523,8 @@ Statement sideeffect stackpullbytes((number) 2) always clobbers reg byte a
 Statement [0] (byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
 Statement [4] (byte) print::p_x#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_X) [ idx print::p_x#0 ] ( main:2::print:27 [ main::i#2 idx print::p_x#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [5] (byte) print::p_y#0 ← stackidx(byte,(const byte) print::OFFSET_STACK_P_Y) [ idx print::p_x#0 print::p_y#0 ] ( main:2::print:27 [ main::i#2 idx print::p_x#0 print::p_y#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:27 [ main::i#2 idx print::p_y#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:27 [ main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 [ idx print::p_y#0 ] ( main:2::print:27 [ main::i#2 idx print::p_y#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 [ idx ] ( main:2::print:27 [ main::i#2 idx ] { }  ) always clobbers reg byte a reg byte y 
 Statement [11] (byte) get::return_x#0 ← stackidx(byte,(const byte) get::OFFSET_STACK_I) [ get::return_x#0 ] ( main:2::get:22 [ idx main::i#2 get::return_x#0 ] { }  ) always clobbers reg byte a reg byte x 
 Statement [12] (byte) get::return_y#0 ← (byte) get::return_x#0 >> (byte) 1 [ get::return_x#0 get::return_y#0 ] ( main:2::get:22 [ idx main::i#2 get::return_x#0 get::return_y#0 ] { }  ) always clobbers reg byte a 
 Statement [13] stackidx(byte,(byte) 0) ← (byte) get::return_x#0 [ get::return_y#0 ] ( main:2::get:22 [ idx main::i#2 get::return_y#0 ] { }  ) always clobbers reg byte a reg byte x 
@@ -605,13 +605,13 @@ print: {
     tsx
     lda STACK_BASE+OFFSET_STACK_P_Y,x
     tax
-    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // [6] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuyy 
     tya
     ldy.z idx
     sta SCREEN,y
     // [7] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    // [8] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuxx 
     ldy.z idx
     txa
     sta SCREEN,y
@@ -732,7 +732,7 @@ FINAL SYMBOL TABLE
 (const byte) OFFSET_STRUCT_POINT_Y = (byte) 1
 (byte) Point::x
 (byte) Point::y
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (const word) STACK_BASE = (word) $103
 __stackcall (struct Point()) get((byte) get::i)
 (label) get::@return
@@ -819,7 +819,7 @@ print: {
     lda STACK_BASE+OFFSET_STACK_P_Y,x
     tax
     // SCREEN[idx++] = p.x
-    // [6] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuyy 
+    // [6] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_x#0 -- pbuc1_derefidx_vbuz1=vbuyy 
     tya
     ldy.z idx
     sta SCREEN,y
@@ -827,7 +827,7 @@ print: {
     // [7] (byte) idx ← ++ (byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // SCREEN[idx++] = p.y
-    // [8] *((const byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuxx 
+    // [8] *((const nomodify byte*) SCREEN + (byte) idx) ← (byte) print::p_y#0 -- pbuc1_derefidx_vbuz1=vbuxx 
     ldy.z idx
     txa
     sta SCREEN,y

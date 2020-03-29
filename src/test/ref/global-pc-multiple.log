@@ -18,7 +18,7 @@ main::@1: scope:[main]  from main main::@11 main::@8
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (bool~) main::$0 ← *((const byte*) RASTER) < (number) $1e
+  (bool~) main::$0 ← *((const nomodify byte*) RASTER) < (number) $1e
   if((bool~) main::$0) goto main::@4
   to:main::@8
 main::@4: scope:[main]  from main::@2
@@ -27,7 +27,7 @@ main::@4: scope:[main]  from main::@2
 main::@11: scope:[main]  from main::@4
   to:main::@1
 main::@8: scope:[main]  from main::@2
-  *((const byte*) BGCOL) ← (number) 0
+  *((const nomodify byte*) BGCOL) ← (number) 0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -35,7 +35,7 @@ main::@return: scope:[main]  from main::@1
 
 (void()) incScreen()
 incScreen: scope:[incScreen]  from main::@4
-  *((const byte*) BGCOL) ← *((const byte*) RASTER)
+  *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) RASTER)
   to:incScreen::@return
 incScreen::@return: scope:[incScreen]  from incScreen
   return 
@@ -52,8 +52,8 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d021
-(const byte*) RASTER = (byte*)(number) $d012
+(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte*) RASTER = (byte*)(number) $d012
 (void()) incScreen()
 (label) incScreen::@return
 (void()) main()
@@ -65,10 +65,10 @@ SYMBOL TABLE SSA
 (label) main::@8
 (label) main::@return
 
-Adding number conversion cast (unumber) $1e in (bool~) main::$0 ← *((const byte*) RASTER) < (number) $1e
-Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) $1e in (bool~) main::$0 ← *((const nomodify byte*) RASTER) < (number) $1e
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) BGCOL) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) BGCOL) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53266
@@ -78,7 +78,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $1e
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [3] if(*((const byte*) RASTER)<(byte) $1e) goto main::@4
+Simple Condition (bool~) main::$0 [3] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -125,10 +125,10 @@ main: scope:[main]  from @1
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@3
-  [5] if(*((const byte*) RASTER)<(byte) $1e) goto main::@2
+  [5] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [6] *((const byte*) BGCOL) ← (byte) 0
+  [6] *((const nomodify byte*) BGCOL) ← (byte) 0
   to:main::@1
 main::@2: scope:[main]  from main::@1
   [7] phi()
@@ -137,7 +137,7 @@ main::@2: scope:[main]  from main::@1
 
 (void()) incScreen()
 incScreen: scope:[incScreen]  from main::@2
-  [9] *((const byte*) BGCOL) ← *((const byte*) RASTER)
+  [9] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) RASTER)
   to:incScreen::@return
 incScreen::@return: scope:[incScreen]  from incScreen
   [10] return 
@@ -183,14 +183,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] if(*((const byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [5] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$1e
     bcc __b2_from___b1
     jmp __b3
     // main::@3
   __b3:
-    // [6] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
     jmp __b1
@@ -205,7 +205,7 @@ main: {
 }
   // incScreen
 incScreen: {
-    // [9] *((const byte*) BGCOL) ← *((const byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    // [9] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
     lda RASTER
     sta BGCOL
     jmp __breturn
@@ -217,9 +217,9 @@ incScreen: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] if(*((const byte*) RASTER)<(byte) $1e) goto main::@2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) BGCOL) ← *((const byte*) RASTER) [ ] ( main:2::incScreen:8 [ ] { }  ) always clobbers reg byte a 
+Statement [5] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) RASTER) [ ] ( main:2::incScreen:8 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -261,14 +261,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] if(*((const byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [5] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$1e
     bcc __b2_from___b1
     jmp __b3
     // main::@3
   __b3:
-    // [6] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
     jmp __b1
@@ -283,7 +283,7 @@ main: {
 }
   // incScreen
 incScreen: {
-    // [9] *((const byte*) BGCOL) ← *((const byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    // [9] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
     lda RASTER
     sta BGCOL
     jmp __breturn
@@ -322,8 +322,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53281
-(const byte*) RASTER = (byte*) 53266
+(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte*) RASTER = (byte*) 53266
 (void()) incScreen()
 (label) incScreen::@return
 (void()) main()
@@ -359,13 +359,13 @@ main: {
     // main::@1
   __b1:
     // if(*RASTER<30)
-    // [5] if(*((const byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [5] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$1e
     bcc __b2
     // main::@3
     // *BGCOL = 0
-    // [6] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BGCOL
     jmp __b1
@@ -380,7 +380,7 @@ main: {
   // incScreen
 incScreen: {
     // *BGCOL = *RASTER
-    // [9] *((const byte*) BGCOL) ← *((const byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    // [9] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
     lda RASTER
     sta BGCOL
     // incScreen::@return

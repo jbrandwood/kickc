@@ -12,7 +12,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@2/(byte) main::b#1 )
-  (bool~) main::$1 ← *((const byte*) str + (byte) main::b#2) != (number) 0
+  (bool~) main::$1 ← *((const to_nomodify byte*) str + (byte) main::b#2) != (number) 0
   if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
@@ -22,7 +22,7 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@1
   (byte) main::b#4 ← phi( main::@1/(byte) main::b#2 )
   (byte~) main::$0 ← (byte) '0' + (byte) main::b#4
-  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -39,7 +39,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (byte~) main::$0
 (bool~) main::$1
@@ -53,10 +53,10 @@ SYMBOL TABLE SSA
 (byte) main::b#2
 (byte) main::b#3
 (byte) main::b#4
-(const byte*) str[]  = (byte*) "Hello!"
+(const to_nomodify byte*) str[]  = (byte*) "Hello!"
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← *((const byte*) str + (byte) main::b#2) != (number) 0
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← *((const to_nomodify byte*) str + (byte) main::b#2) != (number) 0
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -67,11 +67,11 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::b#2 = main::b#3 main::b#4 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [3] if(*((const byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2
+Simple Condition (bool~) main::$1 [3] if(*((const to_nomodify byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::b#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [6] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$0
+Simplifying expression containing zero SCREEN in [6] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) main::b#0
 Constant inlined main::b#0 = (byte) 0
@@ -110,11 +110,11 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   [5] (byte) main::b#2 ← phi( main/(byte) 0 main::@2/(byte) main::b#1 )
-  [6] if(*((const byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2
+  [6] if(*((const to_nomodify byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
   [7] (byte~) main::$0 ← (byte) '0' + (byte) main::b#2
-  [8] *((const byte*) SCREEN) ← (byte~) main::$0
+  [8] *((const nomodify byte*) SCREEN) ← (byte~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [9] return 
@@ -178,7 +178,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if(*((const byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
+    // [6] if(*((const to_nomodify byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
     ldy.z b
     lda str,y
     cmp #0
@@ -190,7 +190,7 @@ main: {
     lax.z b
     axs #-['0']
     stx.z __0
-    // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    // [8] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
     // Empty body
     lda.z __0
     sta SCREEN
@@ -213,10 +213,10 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if(*((const byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 [ main::b#2 ] ( main:2 [ main::b#2 ] { }  ) always clobbers reg byte a 
+Statement [6] if(*((const to_nomodify byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 [ main::b#2 ] ( main:2 [ main::b#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::b#2 main::b#1 ]
 Statement [7] (byte~) main::$0 ← (byte) '0' + (byte) main::b#2 [ main::$0 ] ( main:2 [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [6] if(*((const byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 [ main::b#2 ] ( main:2 [ main::b#2 ] { }  ) always clobbers reg byte a 
+Statement [6] if(*((const to_nomodify byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 [ main::b#2 ] ( main:2 [ main::b#2 ] { }  ) always clobbers reg byte a 
 Statement [7] (byte~) main::$0 ← (byte) '0' + (byte) main::b#2 [ main::$0 ] ( main:2 [ main::$0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::b#2 main::b#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
@@ -262,7 +262,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if(*((const byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
+    // [6] if(*((const to_nomodify byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
     lda str,x
     cmp #0
     bne __b2
@@ -272,7 +272,7 @@ main: {
     // [7] (byte~) main::$0 ← (byte) '0' + (byte) main::b#2 -- vbuxx=vbuc1_plus_vbuxx 
     txa
     axs #-['0']
-    // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuxx 
+    // [8] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuxx 
     // Empty body
     stx SCREEN
     jmp __breturn
@@ -321,7 +321,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (byte~) main::$0 reg byte x 22.0
 (label) main::@1
@@ -331,7 +331,7 @@ FINAL SYMBOL TABLE
 (byte) main::b
 (byte) main::b#1 reg byte x 202.0
 (byte) main::b#2 reg byte x 157.0
-(const byte*) str[]  = (byte*) "Hello!"
+(const to_nomodify byte*) str[]  = (byte*) "Hello!"
 
 reg byte x [ main::b#2 main::b#1 ]
 reg byte x [ main::$0 ]
@@ -363,7 +363,7 @@ main: {
     // main::@1
   __b1:
     // for (; str[b] != 0; ++b)
-    // [6] if(*((const byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
+    // [6] if(*((const to_nomodify byte*) str + (byte) main::b#2)!=(byte) 0) goto main::@2 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
     lda str,x
     cmp #0
     bne __b2
@@ -373,7 +373,7 @@ main: {
     txa
     axs #-['0']
     // SCREEN[0] = '0'+b
-    // [8] *((const byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuxx 
+    // [8] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuxx 
     // Empty body
     stx SCREEN
     // main::@return

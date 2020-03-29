@@ -28,8 +28,8 @@ main::@2: scope:[main]  from main::@1
   (byte*) main::buf2#0 ← ((byte*)) (void*~) main::$1
   *((byte*) main::buf1#1) ← (byte) 'a'
   *((byte*) main::buf2#0) ← (byte) 'b'
-  *((const byte*) SCREEN + (number) 0) ← *((byte*) main::buf1#1)
-  *((const byte*) SCREEN + (number) 1) ← *((byte*) main::buf2#0)
+  *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*) main::buf1#1)
+  *((const nomodify byte*) SCREEN + (number) 1) ← *((byte*) main::buf2#0)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   (byte*) heap_head#9 ← phi( main::@2/(byte*) heap_head#1 )
@@ -69,7 +69,7 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (byte*) heap_head
 (byte*) heap_head#0
 (byte*) heap_head#1
@@ -108,8 +108,8 @@ SYMBOL TABLE SSA
 (void*) malloc::return#5
 (void*) malloc::return#6
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((byte*) main::buf1#1)
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← *((byte*) main::buf2#0)
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*) main::buf1#1)
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← *((byte*) main::buf2#0)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) main::buf1#0 ← (byte*)(void*~) main::$0
 Inlining cast (byte*) main::buf2#0 ← (byte*)(void*~) main::$1
@@ -140,7 +140,7 @@ Identical Phi Values (byte*) heap_head#12 (byte*) heap_head#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant (const byte*) heap_head#14 = (byte*) 49152
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [13] *((const byte*) SCREEN + (byte) 0) ← *((byte*) main::buf1#0)
+Simplifying expression containing zero SCREEN in [13] *((const nomodify byte*) SCREEN + (byte) 0) ← *((byte*) main::buf1#0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining Noop Cast [3] (byte*) main::buf1#0 ← (byte*)(void*~) main::$0 keeping main::buf1#0
 Inlining Noop Cast [7] (byte*) main::buf2#0 ← (byte*)(void*~) main::$1 keeping main::buf2#0
@@ -197,8 +197,8 @@ main::@2: scope:[main]  from main::@1
   [10] (void*) main::buf2#0 ← (void*) malloc::return#1
   [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a'
   [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b'
-  [13] *((const byte*) SCREEN) ← *((byte*)(void*) main::buf1#0)
-  [14] *((const byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0)
+  [13] *((const nomodify byte*) SCREEN) ← *((byte*)(void*) main::buf1#0)
+  [14] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0)
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [15] return 
@@ -330,11 +330,11 @@ main: {
     lda #'b'
     ldy #0
     sta (buf2),y
-    // [13] *((const byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [13] *((const nomodify byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta SCREEN
-    // [14] *((const byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [14] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf2),y
     sta SCREEN+1
@@ -374,8 +374,8 @@ Statement [9] (void*) malloc::return#1 ← (void*) malloc::return#2 [ main::buf1
 Statement [10] (void*) main::buf2#0 ← (void*) malloc::return#1 [ main::buf1#0 main::buf2#0 ] ( main:2 [ main::buf1#0 main::buf2#0 ] { }  ) always clobbers reg byte a 
 Statement [11] *((byte*)(void*) main::buf1#0) ← (byte) 'a' [ main::buf1#0 main::buf2#0 ] ( main:2 [ main::buf1#0 main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [12] *((byte*)(void*) main::buf2#0) ← (byte) 'b' [ main::buf1#0 main::buf2#0 ] ( main:2 [ main::buf1#0 main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [13] *((const byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) [ main::buf2#0 ] ( main:2 [ main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [14] *((const byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [13] *((const nomodify byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) [ main::buf2#0 ] ( main:2 [ main::buf2#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [18] (void*) malloc::return#2 ← (void*)(byte*) heap_head#11 [ malloc::return#2 heap_head#11 ] ( main:2::malloc:5 [ malloc::return#2 heap_head#11 ] { { malloc::return#0 = malloc::return#2 } }  main:2::malloc:8 [ main::buf1#0 malloc::return#2 heap_head#11 ] { { heap_head#10 = heap_head#11 } { malloc::return#1 = malloc::return#2 } }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ heap_head#10 heap_head#11 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ malloc::return#0 ] : zp[2]:4 , 
@@ -463,11 +463,11 @@ main: {
     lda #'b'
     ldy #0
     sta (buf2),y
-    // [13] *((const byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [13] *((const nomodify byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf1),y
     sta SCREEN
-    // [14] *((const byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [14] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (buf2),y
     sta SCREEN+1
@@ -534,7 +534,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (byte*) heap_head
 (byte*) heap_head#10 heap_head zp[2]:2 112.0
 (byte*) heap_head#11 heap_head zp[2]:2 18.666666666666664
@@ -616,11 +616,11 @@ main: {
     lda #'b'
     sta (buf2),y
     // SCREEN[0] = *buf1
-    // [13] *((const byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [13] *((const nomodify byte*) SCREEN) ← *((byte*)(void*) main::buf1#0) -- _deref_pbuc1=_deref_pbuz1 
     lda (buf1),y
     sta SCREEN
     // SCREEN[1] = *buf2
-    // [14] *((const byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [14] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)(void*) main::buf2#0) -- _deref_pbuc1=_deref_pbuz1 
     lda (buf2),y
     sta SCREEN+1
     // main::@return

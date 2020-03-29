@@ -3,13 +3,13 @@ Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  (byte) col1 ← (byte) 0
-  (byte) col2 ← (byte) 8
+  (volatile byte) col1 ← (byte) 0
+  (volatile byte) col2 ← (byte) 8
   to:@2
 
 (void()) main()
 main: scope:[main]  from @2
-  *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -17,10 +17,10 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  *((const byte*) SCREEN + (number) $28) ← (byte) col1
-  (byte) col1 ← ++ (byte) col1
-  *((const byte*) SCREEN + (number) $29) ← (byte) col2
-  (byte) col2 ← ++ (byte) col2
+  *((const nomodify byte*) SCREEN + (number) $28) ← (volatile byte) col1
+  (volatile byte) col1 ← ++ (volatile byte) col1
+  *((const nomodify byte*) SCREEN + (number) $29) ← (volatile byte) col2
+  (volatile byte) col2 ← ++ (volatile byte) col2
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -37,17 +37,17 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const void()**) KERNEL_IRQ = (void()**)(number) $314
-(const byte*) SCREEN = (byte*)(number) $400
-(byte) col1 loadstore
-(byte) col2 loadstore
+(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(volatile byte) col1 loadstore
+(volatile byte) col2 loadstore
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) $28 in *((const byte*) SCREEN + (number) $28) ← (byte) col1
-Adding number conversion cast (unumber) $29 in *((const byte*) SCREEN + (number) $29) ← (byte) col2
+Adding number conversion cast (unumber) $28 in *((const nomodify byte*) SCREEN + (number) $28) ← (volatile byte) col1
+Adding number conversion cast (unumber) $29 in *((const nomodify byte*) SCREEN + (number) $29) ← (volatile byte) col2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 1024
@@ -75,8 +75,8 @@ Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
 @begin: scope:[]  from
-  [0] (byte) col1 ← (byte) 0
-  [1] (byte) col2 ← (byte) 8
+  [0] (volatile byte) col1 ← (byte) 0
+  [1] (volatile byte) col2 ← (byte) 8
   to:@1
 @1: scope:[]  from @begin
   [2] phi()
@@ -87,7 +87,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -95,10 +95,10 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  [7] *((const byte*) SCREEN+(byte) $28) ← (byte) col1
-  [8] (byte) col1 ← ++ (byte) col1
-  [9] *((const byte*) SCREEN+(byte) $29) ← (byte) col2
-  [10] (byte) col2 ← ++ (byte) col2
+  [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1
+  [8] (volatile byte) col1 ← ++ (volatile byte) col1
+  [9] *((const nomodify byte*) SCREEN+(byte) $29) ← (volatile byte) col2
+  [10] (volatile byte) col2 ← ++ (volatile byte) col2
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [11] return 
@@ -106,8 +106,8 @@ irq::@return: scope:[irq]  from irq
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) col1 loadstore 8.0
-(byte) col2 loadstore 2.6666666666666665
+(volatile byte) col1 loadstore 8.0
+(volatile byte) col2 loadstore 2.6666666666666665
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
@@ -135,10 +135,10 @@ Target platform is c64basic / MOS6502X
   .label col2 = 3
   // @begin
 __bbegin:
-  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
-  // [1] (byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
+  // [1] (volatile byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
   lda #8
   sta.z col2
   // [2] phi from @begin to @1 [phi:@begin->@1]
@@ -155,7 +155,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -169,15 +169,15 @@ main: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [7] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
-    // [8] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
-    // [9] *((const byte*) SCREEN+(byte) $29) ← (byte) col2 -- _deref_pbuc1=vbuz1 
+    // [9] *((const nomodify byte*) SCREEN+(byte) $29) ← (volatile byte) col2 -- _deref_pbuc1=vbuz1 
     lda.z col2
     sta SCREEN+$29
-    // [10] (byte) col2 ← ++ (byte) col2 -- vbuz1=_inc_vbuz1 
+    // [10] (volatile byte) col2 ← ++ (volatile byte) col2 -- vbuz1=_inc_vbuz1 
     inc.z col2
     jmp __breturn
     // irq::@return
@@ -188,11 +188,11 @@ irq: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] (byte) col2 ← (byte) 8 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 [ col1 col2 ] (  [ col1 col2 ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN+(byte) $29) ← (byte) col2 [ col2 ] (  [ col2 ] { }  ) always clobbers reg byte a 
+Statement [0] (volatile byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile byte) col2 ← (byte) 8 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 [ col1 col2 ] (  [ col1 col2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) SCREEN+(byte) $29) ← (volatile byte) col2 [ col2 ] (  [ col2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ col1 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ col2 ] : zp[1]:3 , 
 
@@ -223,10 +223,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label col2 = 3
   // @begin
 __bbegin:
-  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
-  // [1] (byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
+  // [1] (volatile byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
   lda #8
   sta.z col2
   // [2] phi from @begin to @1 [phi:@begin->@1]
@@ -243,7 +243,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -257,15 +257,15 @@ main: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [7] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
-    // [8] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
-    // [9] *((const byte*) SCREEN+(byte) $29) ← (byte) col2 -- _deref_pbuc1=vbuz1 
+    // [9] *((const nomodify byte*) SCREEN+(byte) $29) ← (volatile byte) col2 -- _deref_pbuc1=vbuz1 
     lda.z col2
     sta SCREEN+$29
-    // [10] (byte) col2 ← ++ (byte) col2 -- vbuz1=_inc_vbuz1 
+    // [10] (volatile byte) col2 ← ++ (volatile byte) col2 -- vbuz1=_inc_vbuz1 
     inc.z col2
     jmp __breturn
     // irq::@return
@@ -296,10 +296,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const void()**) KERNEL_IRQ = (void()**) 788
-(const byte*) SCREEN = (byte*) 1024
-(byte) col1 loadstore zp[1]:2 8.0
-(byte) col2 loadstore zp[1]:3 2.6666666666666665
+(const nomodify void()**) KERNEL_IRQ = (void()**) 788
+(const nomodify byte*) SCREEN = (byte*) 1024
+(volatile byte) col1 loadstore zp[1]:2 8.0
+(volatile byte) col2 loadstore zp[1]:3 2.6666666666666665
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -326,11 +326,11 @@ Score: 67
   // @begin
 __bbegin:
   // col1 = 0
-  // [0] (byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+  // [0] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
   lda #0
   sta.z col1
   // col2 = 8
-  // [1] (byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
+  // [1] (volatile byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
   lda #8
   sta.z col2
   // [2] phi from @begin to @1 [phi:@begin->@1]
@@ -343,7 +343,7 @@ __bbegin:
   // main
 main: {
     // *KERNEL_IRQ = &irq
-    // [5] *((const void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -357,18 +357,18 @@ main: {
 irq: {
     // entry interrupt(KERNEL_MIN)
     // SCREEN[40] = col1++
-    // [7] *((const byte*) SCREEN+(byte) $28) ← (byte) col1 -- _deref_pbuc1=vbuz1 
+    // [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
     // SCREEN[40] = col1++;
-    // [8] (byte) col1 ← ++ (byte) col1 -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     // SCREEN[41] = col2++
-    // [9] *((const byte*) SCREEN+(byte) $29) ← (byte) col2 -- _deref_pbuc1=vbuz1 
+    // [9] *((const nomodify byte*) SCREEN+(byte) $29) ← (volatile byte) col2 -- _deref_pbuc1=vbuz1 
     lda.z col2
     sta SCREEN+$29
     // SCREEN[41] = col2++;
-    // [10] (byte) col2 ← ++ (byte) col2 -- vbuz1=_inc_vbuz1 
+    // [10] (volatile byte) col2 ← ++ (volatile byte) col2 -- vbuz1=_inc_vbuz1 
     inc.z col2
     // irq::@return
     // }

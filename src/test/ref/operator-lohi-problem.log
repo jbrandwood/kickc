@@ -12,13 +12,13 @@ main: scope:[main]  from @1
   (number~) main::$2 ← < (number~) main::$1
   (word) main::w2#0 ← (number~) main::$2
   (byte~) main::$3 ← < (word) main::w1#0
-  *((const byte*) SCREEN + (number) 0) ← (byte~) main::$3
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$3
   (byte~) main::$4 ← > (word) main::w1#0
-  *((const byte*) SCREEN + (number) 1) ← (byte~) main::$4
+  *((const nomodify byte*) SCREEN + (number) 1) ← (byte~) main::$4
   (byte~) main::$5 ← < (word) main::w2#0
-  *((const byte*) SCREEN + (number) 3) ← (byte~) main::$5
+  *((const nomodify byte*) SCREEN + (number) 3) ← (byte~) main::$5
   (byte~) main::$6 ← > (word) main::w2#0
-  *((const byte*) SCREEN + (number) 4) ← (byte~) main::$6
+  *((const nomodify byte*) SCREEN + (number) 4) ← (byte~) main::$6
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -35,7 +35,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (word~) main::$0
 (number~) main::$1
@@ -54,10 +54,10 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (const dword) main::dw + (number) 1
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (const dword) main::dw + (unumber)(number) 1
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← < (unumber~) main::$1
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte~) main::$3
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte~) main::$4
-Adding number conversion cast (unumber) 3 in *((const byte*) SCREEN + (number) 3) ← (byte~) main::$5
-Adding number conversion cast (unumber) 4 in *((const byte*) SCREEN + (number) 4) ← (byte~) main::$6
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$3
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (byte~) main::$4
+Adding number conversion cast (unumber) 3 in *((const nomodify byte*) SCREEN + (number) 3) ← (byte~) main::$5
+Adding number conversion cast (unumber) 4 in *((const nomodify byte*) SCREEN + (number) 4) ← (byte~) main::$6
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -83,7 +83,7 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::w1#0 = <main::dw
 Constant (const dword) main::$1 = main::dw+1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [4] *((const byte*) SCREEN + (byte) 0) ← (byte~) main::$3
+Simplifying expression containing zero SCREEN in [4] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte~) main::$3
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Constant right-side identified [0] (word) main::w2#0 ← < (const dword) main::$1
 Constant right-side identified [1] (byte~) main::$3 ← < (const word) main::w1#0
@@ -138,10 +138,10 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) SCREEN) ← (byte) 0
-  [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0
-  [6] *((const byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0
-  [7] *((const byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0
+  [4] *((const nomodify byte*) SCREEN) ← (byte) 0
+  [5] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0
+  [6] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0
+  [7] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -189,16 +189,16 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
-    // [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #<w2
     sta SCREEN+3
-    // [7] *((const byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #>w2
     sta SCREEN+4
     jmp __breturn
@@ -210,10 +210,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) SCREEN) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -254,16 +254,16 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
-    // [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
     sta SCREEN+1
-    // [6] *((const byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #<w2
     sta SCREEN+3
-    // [7] *((const byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #>w2
     sta SCREEN+4
     jmp __breturn
@@ -296,7 +296,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
 (const dword) main::dw = (dword) $2000
@@ -334,19 +334,19 @@ main: {
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
     // SCREEN[0] = <w1
-    // [4] *((const byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
     // SCREEN[1] = >w1
-    // [5] *((const byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
     sta SCREEN+1
     // SCREEN[3] = <w2
-    // [6] *((const byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #<w2
     sta SCREEN+3
     // SCREEN[4] = >w2
-    // [7] *((const byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #>w2
     sta SCREEN+4
     // main::@return

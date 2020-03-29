@@ -53,9 +53,9 @@ print_person: scope:[print_person]  from main main::@1
   (byte*) print_person::person_name#4 ← phi( main/(byte*) print_person::person_name#0 main::@1/(byte*) print_person::person_name#1 )
   (byte) idx#13 ← phi( main/(byte) idx#18 main::@1/(byte) idx#0 )
   (byte) print_person::person_id#2 ← phi( main/(byte) print_person::person_id#0 main::@1/(byte) print_person::person_id#1 )
-  *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2)
+  *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2)
   (byte) idx#4 ← ++ (byte) idx#13
-  *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
+  *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   (byte) idx#5 ← ++ (byte) idx#4
   (byte) print_person::i#0 ← (byte) 0
   to:print_person::@1
@@ -70,13 +70,13 @@ print_person::@2: scope:[print_person]  from print_person::@1
   (byte) idx#14 ← phi( print_person::@1/(byte) idx#19 )
   (byte) print_person::i#3 ← phi( print_person::@1/(byte) print_person::i#2 )
   (byte*) print_person::person_name#3 ← phi( print_person::@1/(byte*) print_person::person_name#2 )
-  *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#3 + (byte) print_person::i#3)
+  *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#3 + (byte) print_person::i#3)
   (byte) idx#6 ← ++ (byte) idx#14
   (byte) print_person::i#1 ← ++ (byte) print_person::i#3
   to:print_person::@1
 print_person::@3: scope:[print_person]  from print_person::@1
   (byte) idx#15 ← phi( print_person::@1/(byte) idx#19 )
-  *((const byte*) SCREEN + (byte) idx#15) ← (byte) ' '
+  *((const nomodify byte*) SCREEN + (byte) idx#15) ← (byte) ' '
   (byte) idx#7 ← ++ (byte) idx#15
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
@@ -105,7 +105,7 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
 (byte) Person::id
 (const byte*) Person::name[(number) $40]  = { fill( $40, 0) }
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (struct Person) henriette loadstore = { id: (byte) 7, name: (byte*) "henriette" }
 (byte) idx
 (byte) idx#0
@@ -255,9 +255,9 @@ print_person: scope:[print_person]  from main main::@1
   [9] (byte*) print_person::person_name#4 ← phi( main/(byte*)&(struct Person) jesper+(const byte) OFFSET_STRUCT_PERSON_NAME main::@1/(byte*)&(struct Person) henriette+(const byte) OFFSET_STRUCT_PERSON_NAME )
   [9] (byte) idx#13 ← phi( main/(byte) 0 main::@1/(byte) idx#16 )
   [9] (byte) print_person::person_id#2 ← phi( main/(byte) print_person::person_id#0 main::@1/(byte) print_person::person_id#1 )
-  [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2)
+  [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2)
   [11] (byte) idx#4 ← ++ (byte) idx#13
-  [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' '
+  [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' '
   [13] (byte) idx#5 ← ++ (byte) idx#4
   to:print_person::@1
 print_person::@1: scope:[print_person]  from print_person print_person::@2
@@ -266,14 +266,14 @@ print_person::@1: scope:[print_person]  from print_person print_person::@2
   [15] if((byte) 0!=*((byte*) print_person::person_name#4 + (byte) print_person::i#2)) goto print_person::@2
   to:print_person::@3
 print_person::@3: scope:[print_person]  from print_person::@1
-  [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' '
+  [16] *((const nomodify byte*) SCREEN + (byte) idx#14) ← (byte) ' '
   [17] (byte) idx#16 ← ++ (byte) idx#14
   to:print_person::@return
 print_person::@return: scope:[print_person]  from print_person::@3
   [18] return 
   to:@return
 print_person::@2: scope:[print_person]  from print_person::@1
-  [19] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2)
+  [19] *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2)
   [20] (byte) idx#6 ← ++ (byte) idx#14
   [21] (byte) print_person::i#1 ← ++ (byte) print_person::i#2
   to:print_person::@1
@@ -405,7 +405,7 @@ print_person: {
     .label person_id = 2
     .label i = 6
     .label person_name = 4
-    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z person_id
     lda DIGIT,y
     ldy.z idx_2
@@ -414,7 +414,7 @@ print_person: {
     ldy.z idx_2
     iny
     sty.z idx
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx
     sta SCREEN,y
@@ -439,7 +439,7 @@ print_person: {
     jmp __b3
     // print_person::@3
   __b3:
-    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [16] *((const nomodify byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx_1
     sta SCREEN,y
@@ -454,7 +454,7 @@ print_person: {
     rts
     // print_person::@2
   __b2:
-    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz3 
+    // [19] *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz3 
     ldx.z idx_1
     ldy.z i
     lda (person_name),y
@@ -482,20 +482,20 @@ print_person: {
   .fill $36, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ henriette idx#13 print_person::person_name#4 ] ( main:2::print_person:5 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ henriette idx#13 print_person::person_name#4 ] ( main:2::print_person:5 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ idx#13 idx#16 ]
-Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ henriette print_person::person_name#4 idx#4 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ henriette print_person::person_name#4 idx#4 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ idx#4 ]
 Statement [15] if((byte) 0!=*((byte*) print_person::person_name#4 + (byte) print_person::i#2)) goto print_person::@2 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ print_person::i#2 print_person::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ idx#14 idx#5 idx#6 ]
-Statement [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ henriette idx#14 ] ( main:2::print_person:5 [ henriette idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
-Statement [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ henriette idx#13 print_person::person_name#4 ] ( main:2::print_person:5 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
-Statement [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ henriette print_person::person_name#4 idx#4 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ henriette idx#14 ] ( main:2::print_person:5 [ henriette idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) [ henriette idx#13 print_person::person_name#4 ] ( main:2::print_person:5 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#13 print_person::person_name#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' ' [ henriette print_person::person_name#4 idx#4 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 idx#4 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
 Statement [15] if((byte) 0!=*((byte*) print_person::person_name#4 + (byte) print_person::i#2)) goto print_person::@2 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
-Statement [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ henriette idx#14 ] ( main:2::print_person:5 [ henriette idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
-Statement [19] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) SCREEN + (byte) idx#14) ← (byte) ' ' [ henriette idx#14 ] ( main:2::print_person:5 [ henriette idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] ( main:2::print_person:5 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#0 = print_person::person_id#2 } }  main:2::print_person:7 [ henriette print_person::person_name#4 print_person::i#2 idx#14 ] { { print_person::person_id#1 = print_person::person_id#2 } { idx#13 = idx#16 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ print_person::person_id#2 print_person::person_id#0 print_person::person_id#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ idx#13 idx#16 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[2]:4 [ print_person::person_name#4 ] : zp[2]:4 , 
@@ -583,14 +583,14 @@ main: {
 // print_person(byte register(X) person_id, byte* zp(2) person_name)
 print_person: {
     .label person_name = 2
-    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda DIGIT,x
     sta SCREEN,y
     // [11] (byte) idx#4 ← ++ (byte) idx#13 -- vbuxx=_inc_vbuyy 
     tya
     tax
     inx
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // [13] (byte) idx#5 ← ++ (byte) idx#4 -- vbuxx=_inc_vbuxx 
@@ -610,7 +610,7 @@ print_person: {
     jmp __b3
     // print_person::@3
   __b3:
-    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [16] *((const nomodify byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // [17] (byte) idx#16 ← ++ (byte) idx#14 -- vbuyy=_inc_vbuxx 
@@ -624,7 +624,7 @@ print_person: {
     rts
     // print_person::@2
   __b2:
-    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuyy 
+    // [19] *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuyy 
     lda (person_name),y
     sta SCREEN,x
     // [20] (byte) idx#6 ← ++ (byte) idx#14 -- vbuxx=_inc_vbuxx 
@@ -686,7 +686,7 @@ FINAL SYMBOL TABLE
 (const byte) OFFSET_STRUCT_PERSON_NAME = (byte) 1
 (byte) Person::id
 (const byte*) Person::name[(number) $40]  = { fill( $40, 0) }
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (struct Person) henriette loadstore mem[65] = { id: (byte) 7, name: (byte*) "henriette" }
 (byte) idx
 (byte) idx#13 reg byte y 106.5
@@ -783,7 +783,7 @@ main: {
 print_person: {
     .label person_name = 2
     // SCREEN[idx++] = DIGIT[person.id]
-    // [10] *((const byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
+    // [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + (byte) print_person::person_id#2) -- pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuxx 
     lda DIGIT,x
     sta SCREEN,y
     // SCREEN[idx++] = DIGIT[person.id];
@@ -792,7 +792,7 @@ print_person: {
     tax
     inx
     // SCREEN[idx++] = ' '
-    // [12] *((const byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [12] *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
@@ -811,7 +811,7 @@ print_person: {
     bne __b2
     // print_person::@3
     // SCREEN[idx++] = ' '
-    // [16] *((const byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [16] *((const nomodify byte*) SCREEN + (byte) idx#14) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
@@ -826,7 +826,7 @@ print_person: {
     // print_person::@2
   __b2:
     // SCREEN[idx++] = person.name[i]
-    // [19] *((const byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuyy 
+    // [19] *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*) print_person::person_name#4 + (byte) print_person::i#2) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuyy 
     lda (person_name),y
     sta SCREEN,x
     // SCREEN[idx++] = person.name[i];

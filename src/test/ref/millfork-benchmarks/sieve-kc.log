@@ -138,7 +138,7 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   (byte*) print_char_cursor#35 ← phi( print_word/(byte*) print_char_cursor#34 print_word::@1/(byte*) print_char_cursor#3 )
   (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
-  (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
@@ -146,7 +146,7 @@ print_byte::@1: scope:[print_byte]  from print_byte
   (byte*) print_char_cursor#22 ← phi( print_byte/(byte*) print_char_cursor#10 )
   (byte*) print_char_cursor#6 ← (byte*) print_char_cursor#22
   (number~) print_byte::$2 ← (byte) print_byte::b#3 & (number) $f
-  (byte) print_char::ch#1 ← *((const byte*) print_hextab + (number~) print_byte::$2)
+  (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (number~) print_byte::$2)
   call print_char 
   to:print_byte::@2
 print_byte::@2: scope:[print_byte]  from print_byte::@1
@@ -174,7 +174,7 @@ print_char::@return: scope:[print_char]  from print_char
 @43: scope:[]  from @13
   (byte*) print_line_cursor#22 ← phi( @13/(byte*) print_line_cursor#0 )
   (byte*) print_char_cursor#41 ← phi( @13/(byte*) print_char_cursor#0 )
-  (word) last_time ← (word) 0
+  (volatile word) last_time ← (word) 0
   (word) Ticks#0 ← (word) 0
   to:@48
 
@@ -190,15 +190,15 @@ start::@return: scope:[start]  from start
 end: scope:[end]  from main::@12
   (byte*) print_line_cursor#23 ← phi( main::@12/(byte*) print_line_cursor#18 )
   (byte*) print_char_cursor#39 ← phi( main::@12/(byte*) print_char_cursor#37 )
-  (word) Ticks#1 ← (word) last_time
+  (word) Ticks#1 ← (volatile word) last_time
   call start 
   to:end::@1
 end::@1: scope:[end]  from end
   (byte*) print_line_cursor#20 ← phi( end/(byte*) print_line_cursor#23 )
   (byte*) print_char_cursor#36 ← phi( end/(byte*) print_char_cursor#39 )
   (word) Ticks#7 ← phi( end/(word) Ticks#1 )
-  (word) last_time ← (word) last_time - (word) Ticks#7
-  (word) Ticks#2 ← (word) last_time
+  (volatile word) last_time ← (volatile word) last_time - (word) Ticks#7
+  (word) Ticks#2 ← (volatile word) last_time
   (word) print_word::w#0 ← (word) Ticks#2
   call print_word 
   to:end::@2
@@ -234,7 +234,7 @@ round: scope:[round]  from main::@10 main::@11 main::@2 main::@3 main::@4 main::
   to:round::@1
 round::@1: scope:[round]  from round round::@2
   (byte*) round::p#2 ← phi( round/(byte*) round::p#0 round::@2/(byte*) round::p#1 )
-  (bool~) round::$0 ← (byte*) round::p#2 < (const byte*) Sieve+(const word) COUNT
+  (bool~) round::$0 ← (byte*) round::p#2 < (const byte*) Sieve+(const nomodify word) COUNT
   if((bool~) round::$0) goto round::@2
   to:round::@3
 round::@2: scope:[round]  from round::@1
@@ -247,7 +247,7 @@ round::@3: scope:[round]  from round::@1
   to:round::@7
 round::@7: scope:[round]  from round::@10 round::@3
   (byte) round::I#3 ← phi( round::@10/(byte) round::I#2 round::@3/(byte) round::I#1 )
-  (bool~) round::$1 ← (byte) round::I#3 < (const byte) SQRT_COUNT
+  (bool~) round::$1 ← (byte) round::I#3 < (const nomodify byte) SQRT_COUNT
   if((bool~) round::$1) goto round::@8
   to:round::@return
 round::@8: scope:[round]  from round::@7
@@ -269,7 +269,7 @@ round::@19: scope:[round]  from round::@8
 round::@11: scope:[round]  from round::@12 round::@19
   (byte) round::I#8 ← phi( round::@12/(byte) round::I#7 round::@19/(byte) round::I#6 )
   (byte*) round::S#3 ← phi( round::@12/(byte*) round::S#2 round::@19/(byte*) round::S#1 )
-  (bool~) round::$6 ← (byte*) round::S#3 < (const byte*) Sieve+(const word) COUNT
+  (bool~) round::$6 ← (byte*) round::S#3 < (const byte*) Sieve+(const nomodify word) COUNT
   if((bool~) round::$6) goto round::@12
   to:round::@10
 round::@12: scope:[round]  from round::@11
@@ -399,13 +399,13 @@ SYMBOL TABLE SSA
 (label) @49
 (label) @begin
 (label) @end
-(const word) COUNT = (word) $4000
+(const nomodify word) COUNT = (word) $4000
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const byte) SQRT_COUNT = (byte) $80
-(const byte*) Sieve[(const word) COUNT]  = { fill( COUNT, 0) }
+(const nomodify byte) SQRT_COUNT = (byte) $80
+(const byte*) Sieve[(const nomodify word) COUNT]  = { fill( COUNT, 0) }
 (word) Ticks
 (word) Ticks#0
 (word) Ticks#1
@@ -439,7 +439,7 @@ SYMBOL TABLE SSA
 (label) end::@2
 (label) end::@3
 (label) end::@return
-(word) last_time loadstore
+(volatile word) last_time loadstore
 (signed word()) main()
 (label) main::@10
 (label) main::@11
@@ -529,7 +529,7 @@ SYMBOL TABLE SSA
 (byte*) print_char_cursor#7
 (byte*) print_char_cursor#8
 (byte*) print_char_cursor#9
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#0
 (byte*) print_line_cursor#1
@@ -624,7 +624,7 @@ SYMBOL TABLE SSA
 (byte*) round::p#3
 (void()) start()
 (label) start::@return
-(const word*) start::LAST_TIME = &(word) last_time
+(const nomodify word*) start::LAST_TIME = &(volatile word) last_time
 
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#8 + (number) $28
 Adding number conversion cast (unumber) 4 in (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (number) 4
@@ -729,10 +729,10 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) round::I#5 (byte) round::I#3
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print_ln::$1 [5] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1
-Simple Condition (bool~) round::$0 [49] if((byte*) round::p#2<(const byte*) Sieve+(const word) COUNT) goto round::@2
-Simple Condition (bool~) round::$1 [55] if((byte) round::I#3<(const byte) SQRT_COUNT) goto round::@8
+Simple Condition (bool~) round::$0 [49] if((byte*) round::p#2<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@2
+Simple Condition (bool~) round::$1 [55] if((byte) round::I#3<(const nomodify byte) SQRT_COUNT) goto round::@8
 Simple Condition (bool~) round::$3 [57] if(*((const byte*) Sieve + (byte) round::I#3)!=(byte) 0) goto round::@10
-Simple Condition (bool~) round::$6 [64] if((byte*) round::S#3<(const byte*) Sieve+(const word) COUNT) goto round::@12
+Simple Condition (bool~) round::$6 [64] if((byte*) round::S#3<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@12
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
 Constant (const word) Ticks#0 = 0
@@ -858,7 +858,7 @@ FINAL CONTROL FLOW GRAPH
   [0] phi()
   to:@1
 @1: scope:[]  from @begin
-  [1] (word) last_time ← (word) 0
+  [1] (volatile word) last_time ← (word) 0
   to:@2
 @2: scope:[]  from @1
   [2] phi()
@@ -922,12 +922,12 @@ main::@return: scope:[main]  from main::@11
 
 (void()) end()
 end: scope:[end]  from main::@11
-  [30] (word) Ticks#1 ← (word) last_time
+  [30] (word) Ticks#1 ← (volatile word) last_time
   [31] call start 
   to:end::@1
 end::@1: scope:[end]  from end
-  [32] (word) last_time ← (word) last_time - (word) Ticks#1
-  [33] (word) Ticks#12 ← (word) last_time
+  [32] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1
+  [33] (word) Ticks#12 ← (volatile word) last_time
   [34] (word) print_word::w#0 ← (word) Ticks#12
   [35] call print_word 
   to:end::@2
@@ -970,12 +970,12 @@ print_byte: scope:[print_byte]  from print_word print_word::@1
   [49] (byte*) print_char_cursor#35 ← phi( print_word/(byte*) 1024 print_word::@1/(byte*) print_char_cursor#10 )
   [49] (byte) print_byte::b#2 ← phi( print_word/(byte) print_byte::b#0 print_word::@1/(byte) print_byte::b#1 )
   [50] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4
-  [51] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0)
+  [51] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0)
   [52] call print_char 
   to:print_byte::@1
 print_byte::@1: scope:[print_byte]  from print_byte
   [53] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f
-  [54] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2)
+  [54] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2)
   [55] call print_char 
   to:print_byte::@return
 print_byte::@return: scope:[print_byte]  from print_byte::@1
@@ -1007,11 +1007,11 @@ round: scope:[round]  from main::@1 main::@10 main::@2 main::@3 main::@4 main::@
   to:round::@1
 round::@1: scope:[round]  from round round::@2
   [64] (byte*) round::p#2 ← phi( round/(const byte*) Sieve round::@2/(byte*) round::p#1 )
-  [65] if((byte*) round::p#2<(const byte*) Sieve+(const word) COUNT) goto round::@2
+  [65] if((byte*) round::p#2<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@2
   to:round::@3
 round::@3: scope:[round]  from round::@1 round::@5
   [66] (byte) round::I#3 ← phi( round::@5/(byte) round::I#2 round::@1/(byte) 2 )
-  [67] if((byte) round::I#3<(const byte) SQRT_COUNT) goto round::@4
+  [67] if((byte) round::I#3<(const nomodify byte) SQRT_COUNT) goto round::@4
   to:round::@return
 round::@return: scope:[round]  from round::@3
   [68] return 
@@ -1025,7 +1025,7 @@ round::@8: scope:[round]  from round::@4
   to:round::@6
 round::@6: scope:[round]  from round::@7 round::@8
   [72] (byte*) round::S#3 ← phi( round::@7/(byte*) round::S#2 round::@8/(byte*) round::S#1 )
-  [73] if((byte*) round::S#3<(const byte*) Sieve+(const word) COUNT) goto round::@7
+  [73] if((byte*) round::S#3<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@7
   to:round::@5
 round::@5: scope:[round]  from round::@4 round::@6
   [74] (byte) round::I#2 ← ++ (byte) round::I#3
@@ -1045,7 +1045,7 @@ VARIABLE REGISTER WEIGHTS
 (word) Ticks#1 101.0
 (word) Ticks#12 202.0
 (void()) end()
-(word) last_time loadstore 14.500000000000002
+(volatile word) last_time loadstore 14.500000000000002
 (signed word()) main()
 (signed word) main::return
 (void()) print_byte((byte) print_byte::b)
@@ -1151,7 +1151,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   lda #>0
@@ -1279,7 +1279,7 @@ main: {
 }
   // end
 end: {
-    // [30] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [30] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -1289,7 +1289,7 @@ end: {
     jmp __b1
     // end::@1
   __b1:
-    // [32] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [32] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -1297,7 +1297,7 @@ end: {
     lda.z last_time+1
     sbc.z Ticks+1
     sta.z last_time+1
-    // [33] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [33] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -1414,7 +1414,7 @@ print_byte: {
     lsr
     lsr
     sta.z __0
-    // [51] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [51] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char.ch
@@ -1432,7 +1432,7 @@ print_byte: {
     lda #$f
     and.z b
     sta.z __2
-    // [54] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [54] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char.ch
@@ -1497,7 +1497,7 @@ round: {
     jmp __b1
     // round::@1
   __b1:
-    // [65] if((byte*) round::p#2<(const byte*) Sieve+(const word) COUNT) goto round::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [65] if((byte*) round::p#2<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z p+1
     cmp #>Sieve+COUNT
     bcc __b2
@@ -1514,7 +1514,7 @@ round: {
     jmp __b3
     // round::@3
   __b3:
-    // [67] if((byte) round::I#3<(const byte) SQRT_COUNT) goto round::@4 -- vbuz1_lt_vbuc1_then_la1 
+    // [67] if((byte) round::I#3<(const nomodify byte) SQRT_COUNT) goto round::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda.z I
     cmp #SQRT_COUNT
     bcc __b4
@@ -1552,7 +1552,7 @@ round: {
     jmp __b6
     // round::@6
   __b6:
-    // [73] if((byte*) round::S#3<(const byte*) Sieve+(const word) COUNT) goto round::@7 -- pbuz1_lt_pbuc1_then_la1 
+    // [73] if((byte*) round::S#3<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@7 -- pbuz1_lt_pbuc1_then_la1 
     lda.z S+1
     cmp #>Sieve+COUNT
     bcc __b7
@@ -1607,10 +1607,10 @@ round: {
   Sieve: .fill COUNT, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
-Statement [30] (word) Ticks#1 ← (word) last_time [ last_time Ticks#1 ] ( main:3::end:28 [ last_time Ticks#1 ] { }  ) always clobbers reg byte a 
-Statement [32] (word) last_time ← (word) last_time - (word) Ticks#1 [ last_time ] ( main:3::end:28 [ last_time ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
-Statement [33] (word) Ticks#12 ← (word) last_time [ Ticks#12 ] ( main:3::end:28 [ Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [1] (volatile word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
+Statement [30] (word) Ticks#1 ← (volatile word) last_time [ last_time Ticks#1 ] ( main:3::end:28 [ last_time Ticks#1 ] { }  ) always clobbers reg byte a 
+Statement [32] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 [ last_time ] ( main:3::end:28 [ last_time ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [33] (word) Ticks#12 ← (volatile word) last_time [ Ticks#12 ] ( main:3::end:28 [ Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [34] (word) print_word::w#0 ← (word) Ticks#12 [ print_word::w#0 ] ( main:3::end:28 [ print_word::w#0 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#8 + (byte) $28 [ print_line_cursor#1 print_char_cursor#10 ] ( main:3::end:28::print_ln:37 [ print_line_cursor#1 print_char_cursor#10 ] { }  ) always clobbers reg byte a 
 Statement [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#10 ] ( main:3::end:28::print_ln:37 [ print_line_cursor#1 print_char_cursor#10 ] { }  ) always clobbers reg byte a 
@@ -1620,20 +1620,20 @@ Statement [53] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ p
 Statement [58] *((byte*) print_char_cursor#25) ← (byte) print_char::ch#2 [ print_char_cursor#25 ] ( main:3::end:28::print_word:35::print_byte:45::print_char:52 [ print_word::w#0 print_byte::b#2 print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char::ch#0 = print_char::ch#2 } { print_char_cursor#25 = print_char_cursor#35 } }  main:3::end:28::print_word:35::print_byte:47::print_char:52 [ print_byte::b#2 print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#10 = print_char_cursor#35 print_char_cursor#25 } { print_char::ch#0 = print_char::ch#2 } }  main:3::end:28::print_word:35::print_byte:45::print_char:55 [ print_word::w#0 print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char::ch#1 = print_char::ch#2 } { print_char_cursor#10 = print_char_cursor#25 } }  main:3::end:28::print_word:35::print_byte:47::print_char:55 [ print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#10 = print_char_cursor#35 print_char_cursor#25 } { print_char::ch#1 = print_char::ch#2 } }  ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
 Statement asm { jsr$FFDE staLAST_TIME stxLAST_TIME+1  } always clobbers reg byte a reg byte x reg byte y 
-Statement [65] if((byte*) round::p#2<(const byte*) Sieve+(const word) COUNT) goto round::@2 [ round::p#2 ] ( main:3::round:8 [ last_time round::p#2 ] { }  main:3::round:10 [ last_time round::p#2 ] { }  main:3::round:12 [ last_time round::p#2 ] { }  main:3::round:14 [ last_time round::p#2 ] { }  main:3::round:16 [ last_time round::p#2 ] { }  main:3::round:18 [ last_time round::p#2 ] { }  main:3::round:20 [ last_time round::p#2 ] { }  main:3::round:22 [ last_time round::p#2 ] { }  main:3::round:24 [ last_time round::p#2 ] { }  main:3::round:26 [ last_time round::p#2 ] { }  ) always clobbers reg byte a 
+Statement [65] if((byte*) round::p#2<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@2 [ round::p#2 ] ( main:3::round:8 [ last_time round::p#2 ] { }  main:3::round:10 [ last_time round::p#2 ] { }  main:3::round:12 [ last_time round::p#2 ] { }  main:3::round:14 [ last_time round::p#2 ] { }  main:3::round:16 [ last_time round::p#2 ] { }  main:3::round:18 [ last_time round::p#2 ] { }  main:3::round:20 [ last_time round::p#2 ] { }  main:3::round:22 [ last_time round::p#2 ] { }  main:3::round:24 [ last_time round::p#2 ] { }  main:3::round:26 [ last_time round::p#2 ] { }  ) always clobbers reg byte a 
 Statement [69] if(*((const byte*) Sieve + (byte) round::I#3)!=(byte) 0) goto round::@5 [ round::I#3 ] ( main:3::round:8 [ last_time round::I#3 ] { }  main:3::round:10 [ last_time round::I#3 ] { }  main:3::round:12 [ last_time round::I#3 ] { }  main:3::round:14 [ last_time round::I#3 ] { }  main:3::round:16 [ last_time round::I#3 ] { }  main:3::round:18 [ last_time round::I#3 ] { }  main:3::round:20 [ last_time round::I#3 ] { }  main:3::round:22 [ last_time round::I#3 ] { }  main:3::round:24 [ last_time round::I#3 ] { }  main:3::round:26 [ last_time round::I#3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ round::I#3 round::I#2 ]
 Statement [70] (byte~) round::$4 ← (byte) round::I#3 << (byte) 1 [ round::I#3 round::$4 ] ( main:3::round:8 [ last_time round::I#3 round::$4 ] { }  main:3::round:10 [ last_time round::I#3 round::$4 ] { }  main:3::round:12 [ last_time round::I#3 round::$4 ] { }  main:3::round:14 [ last_time round::I#3 round::$4 ] { }  main:3::round:16 [ last_time round::I#3 round::$4 ] { }  main:3::round:18 [ last_time round::I#3 round::$4 ] { }  main:3::round:20 [ last_time round::I#3 round::$4 ] { }  main:3::round:22 [ last_time round::I#3 round::$4 ] { }  main:3::round:24 [ last_time round::I#3 round::$4 ] { }  main:3::round:26 [ last_time round::I#3 round::$4 ] { }  ) always clobbers reg byte a 
 Statement [71] (byte*) round::S#1 ← (const byte*) Sieve + (byte~) round::$4 [ round::I#3 round::S#1 ] ( main:3::round:8 [ last_time round::I#3 round::S#1 ] { }  main:3::round:10 [ last_time round::I#3 round::S#1 ] { }  main:3::round:12 [ last_time round::I#3 round::S#1 ] { }  main:3::round:14 [ last_time round::I#3 round::S#1 ] { }  main:3::round:16 [ last_time round::I#3 round::S#1 ] { }  main:3::round:18 [ last_time round::I#3 round::S#1 ] { }  main:3::round:20 [ last_time round::I#3 round::S#1 ] { }  main:3::round:22 [ last_time round::I#3 round::S#1 ] { }  main:3::round:24 [ last_time round::I#3 round::S#1 ] { }  main:3::round:26 [ last_time round::I#3 round::S#1 ] { }  ) always clobbers reg byte a 
-Statement [73] if((byte*) round::S#3<(const byte*) Sieve+(const word) COUNT) goto round::@7 [ round::I#3 round::S#3 ] ( main:3::round:8 [ last_time round::I#3 round::S#3 ] { }  main:3::round:10 [ last_time round::I#3 round::S#3 ] { }  main:3::round:12 [ last_time round::I#3 round::S#3 ] { }  main:3::round:14 [ last_time round::I#3 round::S#3 ] { }  main:3::round:16 [ last_time round::I#3 round::S#3 ] { }  main:3::round:18 [ last_time round::I#3 round::S#3 ] { }  main:3::round:20 [ last_time round::I#3 round::S#3 ] { }  main:3::round:22 [ last_time round::I#3 round::S#3 ] { }  main:3::round:24 [ last_time round::I#3 round::S#3 ] { }  main:3::round:26 [ last_time round::I#3 round::S#3 ] { }  ) always clobbers reg byte a 
+Statement [73] if((byte*) round::S#3<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@7 [ round::I#3 round::S#3 ] ( main:3::round:8 [ last_time round::I#3 round::S#3 ] { }  main:3::round:10 [ last_time round::I#3 round::S#3 ] { }  main:3::round:12 [ last_time round::I#3 round::S#3 ] { }  main:3::round:14 [ last_time round::I#3 round::S#3 ] { }  main:3::round:16 [ last_time round::I#3 round::S#3 ] { }  main:3::round:18 [ last_time round::I#3 round::S#3 ] { }  main:3::round:20 [ last_time round::I#3 round::S#3 ] { }  main:3::round:22 [ last_time round::I#3 round::S#3 ] { }  main:3::round:24 [ last_time round::I#3 round::S#3 ] { }  main:3::round:26 [ last_time round::I#3 round::S#3 ] { }  ) always clobbers reg byte a 
 Statement [75] *((byte*) round::S#3) ← (byte) 1 [ round::I#3 round::S#3 ] ( main:3::round:8 [ last_time round::I#3 round::S#3 ] { }  main:3::round:10 [ last_time round::I#3 round::S#3 ] { }  main:3::round:12 [ last_time round::I#3 round::S#3 ] { }  main:3::round:14 [ last_time round::I#3 round::S#3 ] { }  main:3::round:16 [ last_time round::I#3 round::S#3 ] { }  main:3::round:18 [ last_time round::I#3 round::S#3 ] { }  main:3::round:20 [ last_time round::I#3 round::S#3 ] { }  main:3::round:22 [ last_time round::I#3 round::S#3 ] { }  main:3::round:24 [ last_time round::I#3 round::S#3 ] { }  main:3::round:26 [ last_time round::I#3 round::S#3 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:10 [ round::I#3 round::I#2 ]
 Statement [76] (byte*) round::S#2 ← (byte*) round::S#3 + (byte) round::I#3 [ round::I#3 round::S#2 ] ( main:3::round:8 [ last_time round::I#3 round::S#2 ] { }  main:3::round:10 [ last_time round::I#3 round::S#2 ] { }  main:3::round:12 [ last_time round::I#3 round::S#2 ] { }  main:3::round:14 [ last_time round::I#3 round::S#2 ] { }  main:3::round:16 [ last_time round::I#3 round::S#2 ] { }  main:3::round:18 [ last_time round::I#3 round::S#2 ] { }  main:3::round:20 [ last_time round::I#3 round::S#2 ] { }  main:3::round:22 [ last_time round::I#3 round::S#2 ] { }  main:3::round:24 [ last_time round::I#3 round::S#2 ] { }  main:3::round:26 [ last_time round::I#3 round::S#2 ] { }  ) always clobbers reg byte a 
 Statement [77] *((byte*) round::p#2) ← (byte) 0 [ round::p#2 ] ( main:3::round:8 [ last_time round::p#2 ] { }  main:3::round:10 [ last_time round::p#2 ] { }  main:3::round:12 [ last_time round::p#2 ] { }  main:3::round:14 [ last_time round::p#2 ] { }  main:3::round:16 [ last_time round::p#2 ] { }  main:3::round:18 [ last_time round::p#2 ] { }  main:3::round:20 [ last_time round::p#2 ] { }  main:3::round:22 [ last_time round::p#2 ] { }  main:3::round:24 [ last_time round::p#2 ] { }  main:3::round:26 [ last_time round::p#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [1] (word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
-Statement [30] (word) Ticks#1 ← (word) last_time [ last_time Ticks#1 ] ( main:3::end:28 [ last_time Ticks#1 ] { }  ) always clobbers reg byte a 
-Statement [32] (word) last_time ← (word) last_time - (word) Ticks#1 [ last_time ] ( main:3::end:28 [ last_time ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
-Statement [33] (word) Ticks#12 ← (word) last_time [ Ticks#12 ] ( main:3::end:28 [ Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [1] (volatile word) last_time ← (word) 0 [ last_time ] (  [ last_time ] { }  ) always clobbers reg byte a 
+Statement [30] (word) Ticks#1 ← (volatile word) last_time [ last_time Ticks#1 ] ( main:3::end:28 [ last_time Ticks#1 ] { }  ) always clobbers reg byte a 
+Statement [32] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 [ last_time ] ( main:3::end:28 [ last_time ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
+Statement [33] (word) Ticks#12 ← (volatile word) last_time [ Ticks#12 ] ( main:3::end:28 [ Ticks#12 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [34] (word) print_word::w#0 ← (word) Ticks#12 [ print_word::w#0 ] ( main:3::end:28 [ print_word::w#0 ] { { Ticks#12 = print_word::w#0 } }  ) always clobbers reg byte a 
 Statement [41] (byte*) print_line_cursor#1 ← (byte*) print_line_cursor#8 + (byte) $28 [ print_line_cursor#1 print_char_cursor#10 ] ( main:3::end:28::print_ln:37 [ print_line_cursor#1 print_char_cursor#10 ] { }  ) always clobbers reg byte a 
 Statement [42] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1 [ print_line_cursor#1 print_char_cursor#10 ] ( main:3::end:28::print_ln:37 [ print_line_cursor#1 print_char_cursor#10 ] { }  ) always clobbers reg byte a 
@@ -1641,11 +1641,11 @@ Statement [50] (byte~) print_byte::$0 ← (byte) print_byte::b#2 >> (byte) 4 [ p
 Statement [53] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f [ print_char_cursor#10 print_byte::$2 ] ( main:3::end:28::print_word:35::print_byte:45 [ print_word::w#0 print_char_cursor#10 print_byte::$2 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char::ch#1 = print_char::ch#2 } { print_char_cursor#10 = print_char_cursor#25 } }  main:3::end:28::print_word:35::print_byte:47 [ print_char_cursor#10 print_byte::$2 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#10 = print_char_cursor#35 print_char_cursor#25 } { print_char::ch#1 = print_char::ch#2 } }  ) always clobbers reg byte a 
 Statement [58] *((byte*) print_char_cursor#25) ← (byte) print_char::ch#2 [ print_char_cursor#25 ] ( main:3::end:28::print_word:35::print_byte:45::print_char:52 [ print_word::w#0 print_byte::b#2 print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char::ch#0 = print_char::ch#2 } { print_char_cursor#25 = print_char_cursor#35 } }  main:3::end:28::print_word:35::print_byte:47::print_char:52 [ print_byte::b#2 print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#10 = print_char_cursor#35 print_char_cursor#25 } { print_char::ch#0 = print_char::ch#2 } }  main:3::end:28::print_word:35::print_byte:45::print_char:55 [ print_word::w#0 print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#0 = print_byte::b#2 } { print_char::ch#1 = print_char::ch#2 } { print_char_cursor#10 = print_char_cursor#25 } }  main:3::end:28::print_word:35::print_byte:47::print_char:55 [ print_char_cursor#25 ] { { Ticks#12 = print_word::w#0 } { print_byte::b#1 = print_byte::b#2 } { print_char_cursor#10 = print_char_cursor#35 print_char_cursor#25 } { print_char::ch#1 = print_char::ch#2 } }  ) always clobbers reg byte y 
 Statement asm { jsr$FFDE staLAST_TIME stxLAST_TIME+1  } always clobbers reg byte a reg byte x reg byte y 
-Statement [65] if((byte*) round::p#2<(const byte*) Sieve+(const word) COUNT) goto round::@2 [ round::p#2 ] ( main:3::round:8 [ last_time round::p#2 ] { }  main:3::round:10 [ last_time round::p#2 ] { }  main:3::round:12 [ last_time round::p#2 ] { }  main:3::round:14 [ last_time round::p#2 ] { }  main:3::round:16 [ last_time round::p#2 ] { }  main:3::round:18 [ last_time round::p#2 ] { }  main:3::round:20 [ last_time round::p#2 ] { }  main:3::round:22 [ last_time round::p#2 ] { }  main:3::round:24 [ last_time round::p#2 ] { }  main:3::round:26 [ last_time round::p#2 ] { }  ) always clobbers reg byte a 
+Statement [65] if((byte*) round::p#2<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@2 [ round::p#2 ] ( main:3::round:8 [ last_time round::p#2 ] { }  main:3::round:10 [ last_time round::p#2 ] { }  main:3::round:12 [ last_time round::p#2 ] { }  main:3::round:14 [ last_time round::p#2 ] { }  main:3::round:16 [ last_time round::p#2 ] { }  main:3::round:18 [ last_time round::p#2 ] { }  main:3::round:20 [ last_time round::p#2 ] { }  main:3::round:22 [ last_time round::p#2 ] { }  main:3::round:24 [ last_time round::p#2 ] { }  main:3::round:26 [ last_time round::p#2 ] { }  ) always clobbers reg byte a 
 Statement [69] if(*((const byte*) Sieve + (byte) round::I#3)!=(byte) 0) goto round::@5 [ round::I#3 ] ( main:3::round:8 [ last_time round::I#3 ] { }  main:3::round:10 [ last_time round::I#3 ] { }  main:3::round:12 [ last_time round::I#3 ] { }  main:3::round:14 [ last_time round::I#3 ] { }  main:3::round:16 [ last_time round::I#3 ] { }  main:3::round:18 [ last_time round::I#3 ] { }  main:3::round:20 [ last_time round::I#3 ] { }  main:3::round:22 [ last_time round::I#3 ] { }  main:3::round:24 [ last_time round::I#3 ] { }  main:3::round:26 [ last_time round::I#3 ] { }  ) always clobbers reg byte a 
 Statement [70] (byte~) round::$4 ← (byte) round::I#3 << (byte) 1 [ round::I#3 round::$4 ] ( main:3::round:8 [ last_time round::I#3 round::$4 ] { }  main:3::round:10 [ last_time round::I#3 round::$4 ] { }  main:3::round:12 [ last_time round::I#3 round::$4 ] { }  main:3::round:14 [ last_time round::I#3 round::$4 ] { }  main:3::round:16 [ last_time round::I#3 round::$4 ] { }  main:3::round:18 [ last_time round::I#3 round::$4 ] { }  main:3::round:20 [ last_time round::I#3 round::$4 ] { }  main:3::round:22 [ last_time round::I#3 round::$4 ] { }  main:3::round:24 [ last_time round::I#3 round::$4 ] { }  main:3::round:26 [ last_time round::I#3 round::$4 ] { }  ) always clobbers reg byte a 
 Statement [71] (byte*) round::S#1 ← (const byte*) Sieve + (byte~) round::$4 [ round::I#3 round::S#1 ] ( main:3::round:8 [ last_time round::I#3 round::S#1 ] { }  main:3::round:10 [ last_time round::I#3 round::S#1 ] { }  main:3::round:12 [ last_time round::I#3 round::S#1 ] { }  main:3::round:14 [ last_time round::I#3 round::S#1 ] { }  main:3::round:16 [ last_time round::I#3 round::S#1 ] { }  main:3::round:18 [ last_time round::I#3 round::S#1 ] { }  main:3::round:20 [ last_time round::I#3 round::S#1 ] { }  main:3::round:22 [ last_time round::I#3 round::S#1 ] { }  main:3::round:24 [ last_time round::I#3 round::S#1 ] { }  main:3::round:26 [ last_time round::I#3 round::S#1 ] { }  ) always clobbers reg byte a 
-Statement [73] if((byte*) round::S#3<(const byte*) Sieve+(const word) COUNT) goto round::@7 [ round::I#3 round::S#3 ] ( main:3::round:8 [ last_time round::I#3 round::S#3 ] { }  main:3::round:10 [ last_time round::I#3 round::S#3 ] { }  main:3::round:12 [ last_time round::I#3 round::S#3 ] { }  main:3::round:14 [ last_time round::I#3 round::S#3 ] { }  main:3::round:16 [ last_time round::I#3 round::S#3 ] { }  main:3::round:18 [ last_time round::I#3 round::S#3 ] { }  main:3::round:20 [ last_time round::I#3 round::S#3 ] { }  main:3::round:22 [ last_time round::I#3 round::S#3 ] { }  main:3::round:24 [ last_time round::I#3 round::S#3 ] { }  main:3::round:26 [ last_time round::I#3 round::S#3 ] { }  ) always clobbers reg byte a 
+Statement [73] if((byte*) round::S#3<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@7 [ round::I#3 round::S#3 ] ( main:3::round:8 [ last_time round::I#3 round::S#3 ] { }  main:3::round:10 [ last_time round::I#3 round::S#3 ] { }  main:3::round:12 [ last_time round::I#3 round::S#3 ] { }  main:3::round:14 [ last_time round::I#3 round::S#3 ] { }  main:3::round:16 [ last_time round::I#3 round::S#3 ] { }  main:3::round:18 [ last_time round::I#3 round::S#3 ] { }  main:3::round:20 [ last_time round::I#3 round::S#3 ] { }  main:3::round:22 [ last_time round::I#3 round::S#3 ] { }  main:3::round:24 [ last_time round::I#3 round::S#3 ] { }  main:3::round:26 [ last_time round::I#3 round::S#3 ] { }  ) always clobbers reg byte a 
 Statement [75] *((byte*) round::S#3) ← (byte) 1 [ round::I#3 round::S#3 ] ( main:3::round:8 [ last_time round::I#3 round::S#3 ] { }  main:3::round:10 [ last_time round::I#3 round::S#3 ] { }  main:3::round:12 [ last_time round::I#3 round::S#3 ] { }  main:3::round:14 [ last_time round::I#3 round::S#3 ] { }  main:3::round:16 [ last_time round::I#3 round::S#3 ] { }  main:3::round:18 [ last_time round::I#3 round::S#3 ] { }  main:3::round:20 [ last_time round::I#3 round::S#3 ] { }  main:3::round:22 [ last_time round::I#3 round::S#3 ] { }  main:3::round:24 [ last_time round::I#3 round::S#3 ] { }  main:3::round:26 [ last_time round::I#3 round::S#3 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [76] (byte*) round::S#2 ← (byte*) round::S#3 + (byte) round::I#3 [ round::I#3 round::S#2 ] ( main:3::round:8 [ last_time round::I#3 round::S#2 ] { }  main:3::round:10 [ last_time round::I#3 round::S#2 ] { }  main:3::round:12 [ last_time round::I#3 round::S#2 ] { }  main:3::round:14 [ last_time round::I#3 round::S#2 ] { }  main:3::round:16 [ last_time round::I#3 round::S#2 ] { }  main:3::round:18 [ last_time round::I#3 round::S#2 ] { }  main:3::round:20 [ last_time round::I#3 round::S#2 ] { }  main:3::round:22 [ last_time round::I#3 round::S#2 ] { }  main:3::round:24 [ last_time round::I#3 round::S#2 ] { }  main:3::round:26 [ last_time round::I#3 round::S#2 ] { }  ) always clobbers reg byte a 
 Statement [77] *((byte*) round::p#2) ← (byte) 0 [ round::p#2 ] ( main:3::round:8 [ last_time round::p#2 ] { }  main:3::round:10 [ last_time round::p#2 ] { }  main:3::round:12 [ last_time round::p#2 ] { }  main:3::round:14 [ last_time round::p#2 ] { }  main:3::round:16 [ last_time round::p#2 ] { }  main:3::round:18 [ last_time round::p#2 ] { }  main:3::round:20 [ last_time round::p#2 ] { }  main:3::round:22 [ last_time round::p#2 ] { }  main:3::round:24 [ last_time round::p#2 ] { }  main:3::round:26 [ last_time round::p#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -1713,7 +1713,7 @@ __bbegin:
   jmp __b1
   // @1
 __b1:
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   lda #>0
@@ -1841,7 +1841,7 @@ main: {
 }
   // end
 end: {
-    // [30] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [30] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -1851,7 +1851,7 @@ end: {
     jmp __b1
     // end::@1
   __b1:
-    // [32] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [32] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -1859,7 +1859,7 @@ end: {
     lda.z last_time+1
     sbc.z Ticks+1
     sta.z last_time+1
-    // [33] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [33] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -1966,7 +1966,7 @@ print_byte: {
     lsr
     lsr
     lsr
-    // [51] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [51] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [52] call print_char 
@@ -1982,7 +1982,7 @@ print_byte: {
     // [53] (byte~) print_byte::$2 ← (byte) print_byte::b#2 & (byte) $f -- vbuxx=vbuxx_band_vbuc1 
     lda #$f
     axs #0
-    // [54] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [54] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [55] call print_char 
     // [57] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -2041,7 +2041,7 @@ round: {
     jmp __b1
     // round::@1
   __b1:
-    // [65] if((byte*) round::p#2<(const byte*) Sieve+(const word) COUNT) goto round::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [65] if((byte*) round::p#2<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z p+1
     cmp #>Sieve+COUNT
     bcc __b2
@@ -2057,7 +2057,7 @@ round: {
     jmp __b3
     // round::@3
   __b3:
-    // [67] if((byte) round::I#3<(const byte) SQRT_COUNT) goto round::@4 -- vbuxx_lt_vbuc1_then_la1 
+    // [67] if((byte) round::I#3<(const nomodify byte) SQRT_COUNT) goto round::@4 -- vbuxx_lt_vbuc1_then_la1 
     cpx #SQRT_COUNT
     bcc __b4
     jmp __breturn
@@ -2091,7 +2091,7 @@ round: {
     jmp __b6
     // round::@6
   __b6:
-    // [73] if((byte*) round::S#3<(const byte*) Sieve+(const word) COUNT) goto round::@7 -- pbuz1_lt_pbuc1_then_la1 
+    // [73] if((byte*) round::S#3<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@7 -- pbuz1_lt_pbuc1_then_la1 
     lda.z S+1
     cmp #>Sieve+COUNT
     bcc __b7
@@ -2262,13 +2262,13 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const word) COUNT = (word) $4000
+(const nomodify word) COUNT = (word) $4000
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const byte) SQRT_COUNT = (byte) $80
-(const byte*) Sieve[(const word) COUNT]  = { fill( COUNT, 0) }
+(const nomodify byte) SQRT_COUNT = (byte) $80
+(const byte*) Sieve[(const nomodify word) COUNT]  = { fill( COUNT, 0) }
 (word) Ticks
 (word) Ticks#1 Ticks zp[2]:8 101.0
 (word) Ticks#12 Ticks_1 zp[2]:10 202.0
@@ -2276,7 +2276,7 @@ FINAL SYMBOL TABLE
 (label) end::@1
 (label) end::@2
 (label) end::@return
-(word) last_time loadstore zp[2]:6 14.500000000000002
+(volatile word) last_time loadstore zp[2]:6 14.500000000000002
 (signed word()) main()
 (label) main::@1
 (label) main::@10
@@ -2310,7 +2310,7 @@ FINAL SYMBOL TABLE
 (byte*) print_char_cursor#10 print_char_cursor zp[2]:4 7117.882352941177
 (byte*) print_char_cursor#25 print_char_cursor zp[2]:4 110002.0
 (byte*) print_char_cursor#35 print_char_cursor zp[2]:4 3667.333333333333
-(const byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
+(const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (byte*) print_line_cursor
 (byte*) print_line_cursor#1 print_line_cursor zp[2]:2 15001.5
 (byte*) print_line_cursor#8 print_line_cursor zp[2]:2 20002.0
@@ -2346,7 +2346,7 @@ FINAL SYMBOL TABLE
 (byte*) round::p#2 p zp[2]:8 1334.6666666666667
 (void()) start()
 (label) start::@return
-(const word*) start::LAST_TIME = &(word) last_time
+(const nomodify word*) start::LAST_TIME = &(volatile word) last_time
 
 zp[2]:2 [ print_line_cursor#8 print_line_cursor#1 ]
 reg byte x [ print_byte::b#2 print_byte::b#0 print_byte::b#1 ]
@@ -2381,7 +2381,7 @@ Score: 6485
 __bbegin:
   // @1
   // last_time
-  // [1] (word) last_time ← (word) 0 -- vwuz1=vwuc1 
+  // [1] (volatile word) last_time ← (word) 0 -- vwuz1=vwuc1 
   lda #<0
   sta.z last_time
   sta.z last_time+1
@@ -2471,7 +2471,7 @@ main: {
   // end
 end: {
     // Ticks = last_time
-    // [30] (word) Ticks#1 ← (word) last_time -- vwuz1=vwuz2 
+    // [30] (word) Ticks#1 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks
     lda.z last_time+1
@@ -2481,7 +2481,7 @@ end: {
     jsr start
     // end::@1
     // last_time -= Ticks
-    // [32] (word) last_time ← (word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
+    // [32] (volatile word) last_time ← (volatile word) last_time - (word) Ticks#1 -- vwuz1=vwuz1_minus_vwuz2 
     lda.z last_time
     sec
     sbc.z Ticks
@@ -2490,7 +2490,7 @@ end: {
     sbc.z Ticks+1
     sta.z last_time+1
     // Ticks = last_time
-    // [33] (word) Ticks#12 ← (word) last_time -- vwuz1=vwuz2 
+    // [33] (word) Ticks#12 ← (volatile word) last_time -- vwuz1=vwuz2 
     lda.z last_time
     sta.z Ticks_1
     lda.z last_time+1
@@ -2590,7 +2590,7 @@ print_byte: {
     lsr
     lsr
     // print_char(print_hextab[b>>4])
-    // [51] (byte) print_char::ch#0 ← *((const byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [51] (byte) print_char::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$0) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda print_hextab,y
     // [52] call print_char 
@@ -2605,7 +2605,7 @@ print_byte: {
     lda #$f
     axs #0
     // print_char(print_hextab[b&$f])
-    // [54] (byte) print_char::ch#1 ← *((const byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [54] (byte) print_char::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_byte::$2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda print_hextab,x
     // [55] call print_char 
     // [57] phi from print_byte::@1 to print_char [phi:print_byte::@1->print_char]
@@ -2662,7 +2662,7 @@ round: {
     // round::@1
   __b1:
     // for(char* p=Sieve;p<Sieve+COUNT;++p)
-    // [65] if((byte*) round::p#2<(const byte*) Sieve+(const word) COUNT) goto round::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [65] if((byte*) round::p#2<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z p+1
     cmp #>Sieve+COUNT
     bcc __b2
@@ -2677,7 +2677,7 @@ round: {
     // round::@3
   __b3:
     // while (I < SQRT_COUNT)
-    // [67] if((byte) round::I#3<(const byte) SQRT_COUNT) goto round::@4 -- vbuxx_lt_vbuc1_then_la1 
+    // [67] if((byte) round::I#3<(const nomodify byte) SQRT_COUNT) goto round::@4 -- vbuxx_lt_vbuc1_then_la1 
     cpx #SQRT_COUNT
     bcc __b4
     // round::@return
@@ -2709,7 +2709,7 @@ round: {
     // round::@6
   __b6:
     // while (S < Sieve + COUNT)
-    // [73] if((byte*) round::S#3<(const byte*) Sieve+(const word) COUNT) goto round::@7 -- pbuz1_lt_pbuc1_then_la1 
+    // [73] if((byte*) round::S#3<(const byte*) Sieve+(const nomodify word) COUNT) goto round::@7 -- pbuz1_lt_pbuc1_then_la1 
     lda.z S+1
     cmp #>Sieve+COUNT
     bcc __b7

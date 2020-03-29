@@ -1,4 +1,4 @@
-Fixing pointer array-indexing *((const signed word*) main::screen + (byte) main::i)
+Fixing pointer array-indexing *((const nomodify signed word*) main::screen + (byte) main::i)
 Culled Empty Block (label) main::@2
 
 CONTROL FLOW GRAPH SSA
@@ -16,7 +16,7 @@ main::@1: scope:[main]  from main main::@1
   (signed byte~) main::$0 ← ((signed byte)) (byte) main::i#2
   (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte~) main::$0
   (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_SIGNED_WORD
-  *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
+  *((const nomodify signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$a)
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$1) goto main::@1
@@ -47,7 +47,7 @@ SYMBOL TABLE SSA
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
-(const signed word*) main::screen = (signed word*)(number) $400
+(const nomodify signed word*) main::screen = (signed word*)(number) $400
 (signed word) main::sw
 (signed word) main::sw#0
 (signed word) main::sw#1
@@ -121,7 +121,7 @@ main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
   [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2
   [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1
-  [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
+  [8] *((const nomodify signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1
   [9] (byte) main::i#1 ← ++ (byte) main::i#2
   [10] if((byte) main::i#1!=(byte) $b) goto main::@1
   to:main::@return
@@ -220,7 +220,7 @@ main: {
     lda.z i
     asl
     sta.z __2
-    // [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuz1=vwsz2 
+    // [8] *((const nomodify signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuz1=vwsz2 
     ldy.z __2
     lda.z sw
     sta screen,y
@@ -244,10 +244,10 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::sw#1 main::$2 ] ( main:2 [ main::i#2 main::sw#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
 Statement [6] (signed word) main::sw#1 ← (signed word) main::sw#2 + (signed byte)(byte) main::i#2 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
 Statement [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::sw#1 main::$2 ] ( main:2 [ main::i#2 main::sw#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 [ main::i#2 main::sw#1 ] ( main:2 [ main::i#2 main::sw#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::sw#2 main::sw#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -323,7 +323,7 @@ main: {
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
+    // [8] *((const nomodify signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
     lda.z sw
     sta screen,y
@@ -378,7 +378,7 @@ FINAL SYMBOL TABLE
 (byte) main::i
 (byte) main::i#1 reg byte x 151.5
 (byte) main::i#2 reg byte x 75.75
-(const signed word*) main::screen = (signed word*) 1024
+(const nomodify signed word*) main::screen = (signed word*) 1024
 (signed word) main::sw
 (signed word) main::sw#1 sw zp[2]:2 60.599999999999994
 (signed word) main::sw#2 sw zp[2]:2 202.0
@@ -442,7 +442,7 @@ main: {
     // [7] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [8] *((const signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
+    // [8] *((const nomodify signed word*) main::screen + (byte~) main::$2) ← (signed word) main::sw#1 -- pwsc1_derefidx_vbuaa=vwsz1 
     tay
     lda.z sw
     sta screen,y

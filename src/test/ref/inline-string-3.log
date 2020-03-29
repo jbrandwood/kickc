@@ -5,11 +5,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) main::PTR) ← <(const byte*) main::STRING
-  *((const byte*) main::PTR+(number) 1) ← >(const byte*) main::STRING
-  (byte*~) main::$0 ← ((byte*)) { *((const byte*) main::PTR+(number) 1), *((const byte*) main::PTR) }
+  *((const nomodify byte*) main::PTR) ← <(const to_nomodify byte*) main::STRING
+  *((const nomodify byte*) main::PTR+(number) 1) ← >(const to_nomodify byte*) main::STRING
+  (byte*~) main::$0 ← ((byte*)) { *((const nomodify byte*) main::PTR+(number) 1), *((const nomodify byte*) main::PTR) }
   (byte*) main::ptr#0 ← (byte*~) main::$0
-  *((const byte*) main::SCREEN) ← *((byte*) main::ptr#0)
+  *((const nomodify byte*) main::SCREEN) ← *((byte*) main::ptr#0)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -29,23 +29,23 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte*~) main::$0
 (label) main::@return
-(const byte*) main::PTR = (byte*)(number) $9ffe
-(const byte*) main::SCREEN = (byte*)(number) $400
-(const byte*) main::STRING[]  = (byte*) "camelot"z
+(const nomodify byte*) main::PTR = (byte*)(number) $9ffe
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
+(const to_nomodify byte*) main::STRING[]  = (byte*) "camelot"z
 (byte*) main::ptr
 (byte*) main::ptr#0
 
 Fixing inline constructor with main::$1 ← (byte)*(main::PTR+1) w= (byte)*(main::PTR)
 Successful SSA optimization Pass2FixInlineConstructors
-Adding number conversion cast (unumber) 1 in *((const byte*) main::PTR+(number) 1) ← >(const byte*) main::STRING
-Adding number conversion cast (unumber) 1 in (var~) main::$1 ← (byte)*((const byte*) main::PTR+(number) 1) w= (byte)*((const byte*) main::PTR)
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::PTR+(number) 1) ← >(const to_nomodify byte*) main::STRING
+Adding number conversion cast (unumber) 1 in (var~) main::$1 ← (byte)*((const nomodify byte*) main::PTR+(number) 1) w= (byte)*((const nomodify byte*) main::PTR)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 40958
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
-Simplifying constant integer cast *((const byte*) main::PTR+(unumber)(number) 1)
+Simplifying constant integer cast *((const nomodify byte*) main::PTR+(unumber)(number) 1)
 Simplifying constant integer cast 1
-Simplifying constant integer cast *((const byte*) main::PTR)
+Simplifying constant integer cast *((const nomodify byte*) main::PTR)
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
@@ -85,10 +85,10 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) main::PTR) ← <(const byte*) main::STRING
-  [5] *((const byte*) main::PTR+(byte) 1) ← >(const byte*) main::STRING
-  [6] (word) main::ptr#0 ← *((const byte*) main::PTR+(byte) 1) w= *((const byte*) main::PTR)
-  [7] *((const byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0)
+  [4] *((const nomodify byte*) main::PTR) ← <(const to_nomodify byte*) main::STRING
+  [5] *((const nomodify byte*) main::PTR+(byte) 1) ← >(const to_nomodify byte*) main::STRING
+  [6] (word) main::ptr#0 ← *((const nomodify byte*) main::PTR+(byte) 1) w= *((const nomodify byte*) main::PTR)
+  [7] *((const nomodify byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0)
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -136,18 +136,18 @@ main: {
     .label PTR = $9ffe
     .label SCREEN = $400
     .label ptr = 2
-    // [4] *((const byte*) main::PTR) ← <(const byte*) main::STRING -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::PTR) ← <(const to_nomodify byte*) main::STRING -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
-    // [5] *((const byte*) main::PTR+(byte) 1) ← >(const byte*) main::STRING -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::PTR+(byte) 1) ← >(const to_nomodify byte*) main::STRING -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
-    // [6] (word) main::ptr#0 ← *((const byte*) main::PTR+(byte) 1) w= *((const byte*) main::PTR) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [6] (word) main::ptr#0 ← *((const nomodify byte*) main::PTR+(byte) 1) w= *((const nomodify byte*) main::PTR) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda PTR
     sta.z ptr
     lda PTR+1
     sta.z ptr+1
-    // [7] *((const byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [7] *((const nomodify byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN
@@ -161,10 +161,10 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::PTR) ← <(const byte*) main::STRING [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::PTR+(byte) 1) ← >(const byte*) main::STRING [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] (word) main::ptr#0 ← *((const byte*) main::PTR+(byte) 1) w= *((const byte*) main::PTR) [ main::ptr#0 ] ( main:2 [ main::ptr#0 ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] *((const nomodify byte*) main::PTR) ← <(const to_nomodify byte*) main::STRING [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) main::PTR+(byte) 1) ← >(const to_nomodify byte*) main::STRING [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] (word) main::ptr#0 ← *((const nomodify byte*) main::PTR+(byte) 1) w= *((const nomodify byte*) main::PTR) [ main::ptr#0 ] ( main:2 [ main::ptr#0 ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::ptr#0 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -203,18 +203,18 @@ main: {
     .label PTR = $9ffe
     .label SCREEN = $400
     .label ptr = 2
-    // [4] *((const byte*) main::PTR) ← <(const byte*) main::STRING -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::PTR) ← <(const to_nomodify byte*) main::STRING -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
-    // [5] *((const byte*) main::PTR+(byte) 1) ← >(const byte*) main::STRING -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::PTR+(byte) 1) ← >(const to_nomodify byte*) main::STRING -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
-    // [6] (word) main::ptr#0 ← *((const byte*) main::PTR+(byte) 1) w= *((const byte*) main::PTR) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [6] (word) main::ptr#0 ← *((const nomodify byte*) main::PTR+(byte) 1) w= *((const nomodify byte*) main::PTR) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda PTR
     sta.z ptr
     lda PTR+1
     sta.z ptr+1
-    // [7] *((const byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [7] *((const nomodify byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN
@@ -251,9 +251,9 @@ FINAL SYMBOL TABLE
 (label) @end
 (void()) main()
 (label) main::@return
-(const byte*) main::PTR = (byte*) 40958
-(const byte*) main::SCREEN = (byte*) 1024
-(const byte*) main::STRING[]  = (byte*) "camelot"z
+(const nomodify byte*) main::PTR = (byte*) 40958
+(const nomodify byte*) main::SCREEN = (byte*) 1024
+(const to_nomodify byte*) main::STRING[]  = (byte*) "camelot"z
 (byte*) main::ptr
 (word) main::ptr#0 ptr zp[2]:2 11.0
 
@@ -284,21 +284,21 @@ main: {
     .label SCREEN = $400
     .label ptr = 2
     // *PTR = <STRING
-    // [4] *((const byte*) main::PTR) ← <(const byte*) main::STRING -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) main::PTR) ← <(const to_nomodify byte*) main::STRING -- _deref_pbuc1=vbuc2 
     lda #<STRING
     sta PTR
     // *(PTR+1)= >STRING
-    // [5] *((const byte*) main::PTR+(byte) 1) ← >(const byte*) main::STRING -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::PTR+(byte) 1) ← >(const to_nomodify byte*) main::STRING -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
     // (byte*) { *(PTR+1), *PTR }
-    // [6] (word) main::ptr#0 ← *((const byte*) main::PTR+(byte) 1) w= *((const byte*) main::PTR) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
+    // [6] (word) main::ptr#0 ← *((const nomodify byte*) main::PTR+(byte) 1) w= *((const nomodify byte*) main::PTR) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda PTR
     sta.z ptr
     lda PTR+1
     sta.z ptr+1
     // *SCREEN = *ptr
-    // [7] *((const byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
+    // [7] *((const nomodify byte*) main::SCREEN) ← *((byte*)(word) main::ptr#0) -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN

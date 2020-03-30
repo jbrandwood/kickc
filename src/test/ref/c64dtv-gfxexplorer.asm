@@ -229,10 +229,10 @@ gfx_mode: {
     // if(*form_ctrl_line!=0)
     lda form_ctrl_line
     cmp #0
-    beq b1
+    beq __b10
     ldx #DTV_LINEAR
     jmp __b1
-  b1:
+  __b10:
     ldx #0
   __b1:
     // if(*form_ctrl_borof!=0)
@@ -285,10 +285,10 @@ gfx_mode: {
     // if(*form_ctrl_ecm!=0)
     lda form_ctrl_ecm
     cmp #0
-    beq b2
+    beq __b11
     ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
     jmp __b7
-  b2:
+  __b11:
     ldx #VIC_DEN|VIC_RSEL|3
   __b7:
     // if(*form_ctrl_bmm!=0)
@@ -305,10 +305,10 @@ gfx_mode: {
     // if(*form_ctrl_mcm!=0)
     lda form_ctrl_mcm
     cmp #0
-    beq b3
+    beq __b12
     lda #VIC_CSEL|VIC_MCM
     jmp __b9
-  b3:
+  __b12:
     lda #VIC_CSEL
   __b9:
     // *VIC_CONTROL2 = vic_control2
@@ -590,7 +590,7 @@ gfx_mode: {
     // DTV Palette
     lda form_dtv_palet
     cmp #0
-    beq b4
+    beq __b13
     ldx #0
   // DTV Palette - Grey Tones
   __b23:
@@ -619,7 +619,7 @@ gfx_mode: {
     // }
     rts
   // DTV Palette - default
-  b4:
+  __b13:
     ldx #0
   __b24:
     // DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i]
@@ -638,13 +638,13 @@ keyboard_event_get: {
     // if(keyboard_events_size==0)
     lda.z keyboard_events_size
     cmp #0
-    beq b1
+    beq __b1
     // return keyboard_events[--keyboard_events_size];
     dec.z keyboard_events_size
     ldy.z keyboard_events_size
     lda keyboard_events,y
     rts
-  b1:
+  __b1:
     lda #$ff
     // }
     rts
@@ -669,7 +669,7 @@ keyboard_event_scan: {
     // if(row_scan!=keyboard_scan_values[row])
     ldy.z row
     cmp keyboard_scan_values,y
-    bne b3
+    bne __b6
     // keycode = keycode + 8
     lax.z keycode
     axs #-[8]
@@ -687,10 +687,10 @@ keyboard_event_scan: {
     // keyboard_event_pressed(KEY_LSHIFT)
     // if(keyboard_event_pressed(KEY_LSHIFT)!= 0)
     cmp #0
-    beq b1
+    beq __b4
     ldx #KEY_MODIFIER_LSHIFT
     jmp __b1
-  b1:
+  __b4:
     ldx #0
   __b1:
     // keyboard_event_pressed(KEY_RSHIFT)
@@ -735,7 +735,7 @@ keyboard_event_scan: {
     // }
     rts
   // Something has changed on the keyboard row - check each column
-  b3:
+  __b6:
     ldx #0
   __b9:
     // row_scan^keyboard_scan_values[row]
@@ -839,13 +839,13 @@ get_vic_screen: {
     beq __b1
     // if(idx==1)
     cmp #1
-    beq b1
+    beq __b2
     // if(idx==2)
     cmp #2
-    beq b2
+    beq __b3
     // if(idx==3)
     cmp #3
-    beq b3
+    beq __b4
     // if(idx==4)
     cmp #4
     bne __b1
@@ -860,19 +860,19 @@ get_vic_screen: {
     lda #>VIC_SCREEN0
     sta.z return+1
     rts
-  b1:
+  __b2:
     lda #<VIC_SCREEN1
     sta.z return
     lda #>VIC_SCREEN1
     sta.z return+1
     rts
-  b2:
+  __b3:
     lda #<VIC_SCREEN2
     sta.z return
     lda #>VIC_SCREEN2
     sta.z return+1
     rts
-  b3:
+  __b4:
     lda #<VIC_SCREEN3
     sta.z return
     lda #>VIC_SCREEN3
@@ -909,59 +909,59 @@ get_plane: {
     .label return = 9
     // if(idx==0)
     cmp #0
-    beq b1
+    beq __b2
     // if(idx==1)
     cmp #1
-    bne !b6+
-    jmp b6
-  !b6:
+    bne !__b7+
+    jmp __b7
+  !__b7:
     // if(idx==2)
     cmp #2
-    bne !b7+
-    jmp b7
-  !b7:
+    bne !__b8+
+    jmp __b8
+  !__b8:
     // if(idx==3)
     cmp #3
-    bne !b8+
-    jmp b8
-  !b8:
+    bne !__b9+
+    jmp __b9
+  !__b9:
     // if(idx==4)
     cmp #4
-    bne !b9+
-    jmp b9
-  !b9:
+    bne !__b10+
+    jmp __b10
+  !__b10:
     // if(idx==5)
     cmp #5
-    bne !b10+
-    jmp b10
-  !b10:
+    bne !__b11+
+    jmp __b11
+  !__b11:
     // if(idx==6)
     cmp #6
-    bne !b11+
-    jmp b11
-  !b11:
+    bne !__b12+
+    jmp __b12
+  !__b12:
     // if(idx==7)
     cmp #7
-    bne !b12+
-    jmp b12
-  !b12:
+    bne !__b13+
+    jmp __b13
+  !__b13:
     // if(idx==8)
     cmp #8
-    bne !b13+
-    jmp b13
-  !b13:
+    bne !__b14+
+    jmp __b14
+  !__b14:
     // if(idx==9)
     cmp #9
-    beq b2
+    beq __b3
     // if(idx==10)
     cmp #$a
-    beq b3
+    beq __b4
     // if(idx==11)
     cmp #$b
-    beq b4
+    beq __b5
     // if(idx==12)
     cmp #$c
-    beq b5
+    beq __b6
     // if(idx==13)
     cmp #$d
     bne __b1
@@ -984,7 +984,7 @@ get_plane: {
     lda #>VIC_SCREEN0>>$10
     sta.z return+3
     rts
-  b1:
+  __b2:
     lda #<VIC_SCREEN0
     sta.z return
     lda #>VIC_SCREEN0
@@ -994,7 +994,7 @@ get_plane: {
     lda #>VIC_SCREEN0>>$10
     sta.z return+3
     rts
-  b2:
+  __b3:
     lda #<PLANE_HORISONTAL2
     sta.z return
     lda #>PLANE_HORISONTAL2
@@ -1004,7 +1004,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL2>>$10
     sta.z return+3
     rts
-  b3:
+  __b4:
     lda #<PLANE_VERTICAL2
     sta.z return
     lda #>PLANE_VERTICAL2
@@ -1014,7 +1014,7 @@ get_plane: {
     lda #>PLANE_VERTICAL2>>$10
     sta.z return+3
     rts
-  b4:
+  __b5:
     lda #<PLANE_CHARSET8
     sta.z return
     lda #>PLANE_CHARSET8
@@ -1024,7 +1024,7 @@ get_plane: {
     lda #>PLANE_CHARSET8>>$10
     sta.z return+3
     rts
-  b5:
+  __b6:
     lda #<PLANE_BLANK
     sta.z return
     lda #>PLANE_BLANK
@@ -1034,7 +1034,7 @@ get_plane: {
     lda #>PLANE_BLANK>>$10
     sta.z return+3
     rts
-  b6:
+  __b7:
     lda #<VIC_SCREEN1
     sta.z return
     lda #>VIC_SCREEN1
@@ -1044,7 +1044,7 @@ get_plane: {
     lda #>VIC_SCREEN1>>$10
     sta.z return+3
     rts
-  b7:
+  __b8:
     lda #<VIC_SCREEN2
     sta.z return
     lda #>VIC_SCREEN2
@@ -1054,7 +1054,7 @@ get_plane: {
     lda #>VIC_SCREEN2>>$10
     sta.z return+3
     rts
-  b8:
+  __b9:
     lda #<VIC_SCREEN3
     sta.z return
     lda #>VIC_SCREEN3
@@ -1064,7 +1064,7 @@ get_plane: {
     lda #>VIC_SCREEN3>>$10
     sta.z return+3
     rts
-  b9:
+  __b10:
     lda #<VIC_BITMAP
     sta.z return
     lda #>VIC_BITMAP
@@ -1074,7 +1074,7 @@ get_plane: {
     lda #>VIC_BITMAP>>$10
     sta.z return+3
     rts
-  b10:
+  __b11:
     lda #<VIC_CHARSET_ROM
     sta.z return
     lda #>VIC_CHARSET_ROM
@@ -1084,7 +1084,7 @@ get_plane: {
     lda #>VIC_CHARSET_ROM>>$10
     sta.z return+3
     rts
-  b11:
+  __b12:
     lda #<PLANE_8BPP_CHUNKY
     sta.z return
     lda #>PLANE_8BPP_CHUNKY
@@ -1094,7 +1094,7 @@ get_plane: {
     lda #>PLANE_8BPP_CHUNKY>>$10
     sta.z return+3
     rts
-  b12:
+  __b13:
     lda #<PLANE_HORISONTAL
     sta.z return
     lda #>PLANE_HORISONTAL
@@ -1104,7 +1104,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL>>$10
     sta.z return+3
     rts
-  b13:
+  __b14:
     lda #<PLANE_VERTICAL
     sta.z return
     lda #>PLANE_VERTICAL
@@ -1220,7 +1220,7 @@ form_mode: {
     // preset_current = *form_preset
     lda form_fields_val
     sta.z preset_current
-  b1:
+  __b2:
   // Let the user change values in the form
   __b4:
     // while(*RASTER!=$ff)
@@ -1239,7 +1239,7 @@ form_mode: {
     // if(preset_current!=*form_preset)
     lda form_fields_val
     cmp.z preset_current
-    beq b1
+    beq __b2
     // apply_preset(*form_preset)
     // Preset changed - update field values and render
     jsr apply_preset
@@ -1251,7 +1251,7 @@ form_mode: {
     // render_preset_name(*form_preset)
     lda form_fields_val
     jsr render_preset_name
-    jmp b1
+    jmp __b2
 }
 // Render form preset name in the form
 // idx is the ID of the preset
@@ -1260,38 +1260,38 @@ render_preset_name: {
     .label name = $10
     // if(idx==0)
     cmp #0
-    beq b1
+    beq __b3
     // if(idx==1)
     cmp #1
-    beq b4
+    beq __b6
     // if(idx==2)
     cmp #2
-    beq b5
+    beq __b7
     // if(idx==3)
     cmp #3
-    beq b6
+    beq __b8
     // if(idx==4)
     cmp #4
-    beq b7
+    beq __b9
     // if(idx==5)
     cmp #5
-    beq b8
+    beq __b10
     // if(idx==6)
     cmp #6
-    beq b9
+    beq __b11
     // if(idx==7)
     cmp #7
-    beq b10
+    beq __b12
     // if(idx==8)
     cmp #8
-    beq b2
+    beq __b4
     // if(idx==9)
     cmp #9
-    beq b3
+    beq __b5
     // if(idx==10)
     cmp #$a
     beq __b1
-  b1:
+  __b3:
     lda #<name_1
     sta.z name
     lda #>name_1
@@ -1303,55 +1303,55 @@ render_preset_name: {
     lda #>name_11
     sta.z name+1
     jmp __b2
-  b2:
+  __b4:
     lda #<name_9
     sta.z name
     lda #>name_9
     sta.z name+1
     jmp __b2
-  b3:
+  __b5:
     lda #<name_10
     sta.z name
     lda #>name_10
     sta.z name+1
     jmp __b2
-  b4:
+  __b6:
     lda #<name_2
     sta.z name
     lda #>name_2
     sta.z name+1
     jmp __b2
-  b5:
+  __b7:
     lda #<name_3
     sta.z name
     lda #>name_3
     sta.z name+1
     jmp __b2
-  b6:
+  __b8:
     lda #<name_4
     sta.z name
     lda #>name_4
     sta.z name+1
     jmp __b2
-  b7:
+  __b9:
     lda #<name_5
     sta.z name
     lda #>name_5
     sta.z name+1
     jmp __b2
-  b8:
+  __b10:
     lda #<name_6
     sta.z name
     lda #>name_6
     sta.z name+1
     jmp __b2
-  b9:
+  __b11:
     lda #<name_7
     sta.z name
     lda #>name_7
     sta.z name+1
     jmp __b2
-  b10:
+  __b12:
     lda #<name_8
     sta.z name
     lda #>name_8
@@ -1473,38 +1473,38 @@ apply_preset: {
     .label preset = 7
     // if(idx==0)
     cmp #0
-    beq b1
+    beq __b3
     // if(idx==1)
     cmp #1
-    beq b4
+    beq __b6
     // if(idx==2)
     cmp #2
-    beq b5
+    beq __b7
     // if(idx==3)
     cmp #3
-    beq b6
+    beq __b8
     // if(idx==4)
     cmp #4
-    beq b7
+    beq __b9
     // if(idx==5)
     cmp #5
-    beq b8
+    beq __b10
     // if(idx==6)
     cmp #6
-    beq b9
+    beq __b11
     // if(idx==7)
     cmp #7
-    beq b10
+    beq __b12
     // if(idx==8)
     cmp #8
-    beq b2
+    beq __b4
     // if(idx==9)
     cmp #9
-    beq b3
+    beq __b5
     // if(idx==10)
     cmp #$a
     beq __b1
-  b1:
+  __b3:
     lda #<preset_stdchar
     sta.z preset
     lda #>preset_stdchar
@@ -1516,55 +1516,55 @@ apply_preset: {
     lda #>preset_8bpppixelcell
     sta.z preset+1
     jmp __b2
-  b2:
+  __b4:
     lda #<preset_sixsfred
     sta.z preset
     lda #>preset_sixsfred
     sta.z preset+1
     jmp __b2
-  b3:
+  __b5:
     lda #<preset_sixsfred2
     sta.z preset
     lda #>preset_sixsfred2
     sta.z preset+1
     jmp __b2
-  b4:
+  __b6:
     lda #<preset_ecmchar
     sta.z preset
     lda #>preset_ecmchar
     sta.z preset+1
     jmp __b2
-  b5:
+  __b7:
     lda #<preset_stdbm
     sta.z preset
     lda #>preset_stdbm
     sta.z preset+1
     jmp __b2
-  b6:
+  __b8:
     lda #<preset_mcbm
     sta.z preset
     lda #>preset_mcbm
     sta.z preset+1
     jmp __b2
-  b7:
+  __b9:
     lda #<preset_hi_stdchar
     sta.z preset
     lda #>preset_hi_stdchar
     sta.z preset+1
     jmp __b2
-  b8:
+  __b10:
     lda #<preset_hi_ecmchar
     sta.z preset
     lda #>preset_hi_ecmchar
     sta.z preset+1
     jmp __b2
-  b9:
+  __b11:
     lda #<preset_twoplane
     sta.z preset
     lda #>preset_twoplane
     sta.z preset+1
     jmp __b2
-  b10:
+  __b12:
     lda #<preset_chunky
     sta.z preset
     lda #>preset_chunky
@@ -1692,7 +1692,7 @@ form_control: {
     lda print_hextab,y
     ldy #0
     sta (field),y
-  b1:
+  __b7:
     ldx #0
     rts
   __b15:
@@ -1710,7 +1710,7 @@ form_control: {
   __b5:
     // if(key_event==KEY_SPACE)
     cmp #KEY_SPACE
-    bne b1
+    bne __b7
     ldx #$ff
     rts
   __b2:
@@ -2268,10 +2268,10 @@ gfx_init_plane_charset8: {
     and.z bits
     // if((bits & $80) != 0)
     cmp #0
-    beq b1
+    beq __b5
     lda.z col
     jmp __b4
-  b1:
+  __b5:
     lda #0
   __b4:
     // *gfxa++ = c

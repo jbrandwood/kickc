@@ -255,15 +255,15 @@ main: {
     sta.z r+1
     // if((idx_x==0) && (r_add!=1))
     lda.z idx_x
-    bne b1
+    bne __b5
     lda.z idx_x+1
-    bne b1
+    bne __b5
     lda #1
     cmp.z r_add
-    beq b1
+    beq __b5
     // r_add /= 2
     lsr.z r_add
-  b1:
+  __b5:
     // if(r>=512*12+256)
     lda.z r
     cmp #<$200*$c+$100
@@ -745,19 +745,19 @@ sin16s: {
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x+2
     cmp #<PI_u4f28>>$10
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x+1
     cmp #>PI_u4f28
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x
     cmp #<PI_u4f28
-    bcc b1
+    bcc __b4
   !:
     // x = x - PI_u4f28
     lda.z x
@@ -775,7 +775,7 @@ sin16s: {
     sta.z x+3
     ldy #1
     jmp __b1
-  b1:
+  __b4:
     ldy #0
   __b1:
     // if(x >= PI_HALF_u4f28 )

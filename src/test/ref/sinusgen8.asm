@@ -262,11 +262,11 @@ sin8s: {
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
-    bcc b1
+    bcc __b5
     bne !+
     lda.z x
     cmp #<PI_u4f12
-    bcc b1
+    bcc __b5
   !:
     // x = x - PI_u4f12
     lda.z x
@@ -279,7 +279,7 @@ sin8s: {
     lda #1
     sta.z isUpper
     jmp __b1
-  b1:
+  __b5:
     lda #0
     sta.z isUpper
   __b1:

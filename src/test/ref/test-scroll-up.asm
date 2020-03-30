@@ -135,15 +135,15 @@ scrollup1: {
     // for (word line = 0; line < 40*24; line += 40)
     lda.z line+1
     cmp #>$28*$18
-    bcc b1
+    bcc __b4
     bne !+
     lda.z line
     cmp #<$28*$18
-    bcc b1
+    bcc __b4
   !:
     // }
     rts
-  b1:
+  __b4:
     ldx #0
   __b2:
     // for (byte c=0; c<40; ++c)

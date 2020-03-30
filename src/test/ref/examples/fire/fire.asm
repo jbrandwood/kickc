@@ -257,10 +257,10 @@ makecharset: {
     // for (unsigned char c = 0; c < 0x40; ++c)
     lda.z c
     cmp #$40
-    bcc b1
+    bcc __b7
     // }
     rts
-  b1:
+  __b7:
     ldx #0
     txa
     sta.z i
@@ -268,11 +268,11 @@ makecharset: {
     // for (unsigned char bc = 0, i = 0; i < 8; i++)
     lda.z i
     cmp #8
-    bcc b2
+    bcc __b10
     // for (unsigned char c = 0; c < 0x40; ++c)
     inc.z c
     jmp __b5
-  b2:
+  __b10:
     ldy #0
     tya
     sta.z ii

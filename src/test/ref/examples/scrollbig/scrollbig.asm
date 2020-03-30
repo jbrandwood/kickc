@@ -115,10 +115,10 @@ scroll_bit: {
     and.z current_bit
     // if((bits & current_bit) != 0)
     cmp #0
-    beq b1
+    beq __b2
     lda #$80+' '
     jmp __b4
-  b1:
+  __b2:
     lda #' '
   __b4:
     // *sc = b

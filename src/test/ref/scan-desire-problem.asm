@@ -37,10 +37,10 @@ main: {
     // for (byte x = 0; x < 16; x++ )
     lda.z x
     cmp #$10
-    bcc b1
+    bcc __b4
   __b5:
     jmp __b5
-  b1:
+  __b4:
     lda #0
     sta.z y
   __b2:

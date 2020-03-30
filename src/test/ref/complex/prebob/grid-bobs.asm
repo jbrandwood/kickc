@@ -553,10 +553,10 @@ prepareBobs: {
     // for(char shift_y=0;shift_y<BOB_SHIFTS_Y;shift_y++)
     lda.z shift_y
     cmp #BOB_SHIFTS_Y
-    bcc b1
+    bcc __b4
     // }
     rts
-  b1:
+  __b4:
     lda #0
     sta.z shift_x
   __b2:
@@ -677,7 +677,7 @@ charsetFindOrAddGlyph: {
   __b1:
     // while(glyph_id!=bob_charset_next_id)
     cpx.z bob_charset_next_id
-    bne b1
+    bne __b9
     ldy #0
   // Not found - add it
   __b7:
@@ -695,7 +695,7 @@ charsetFindOrAddGlyph: {
     // for(char i=0;i<8;i++)
     iny
     jmp __b7
-  b1:
+  __b9:
     ldy #0
   __b2:
     // for(char i=0;i<8;i++)

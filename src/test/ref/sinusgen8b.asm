@@ -335,19 +335,19 @@ sin16s: {
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x+2
     cmp #<PI_u4f28>>$10
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x+1
     cmp #>PI_u4f28
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x
     cmp #<PI_u4f28
-    bcc b1
+    bcc __b4
   !:
     // x = x - PI_u4f28
     lda.z x
@@ -365,7 +365,7 @@ sin16s: {
     sta.z x+3
     ldy #1
     jmp __b1
-  b1:
+  __b4:
     ldy #0
   __b1:
     // if(x >= PI_HALF_u4f28 )
@@ -816,11 +816,11 @@ sin8s: {
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
-    bcc b1
+    bcc __b5
     bne !+
     lda.z x
     cmp #<PI_u4f12
-    bcc b1
+    bcc __b5
   !:
     // x = x - PI_u4f12
     lda.z x
@@ -833,7 +833,7 @@ sin8s: {
     lda #1
     sta.z isUpper
     jmp __b1
-  b1:
+  __b5:
     lda #0
     sta.z isUpper
   __b1:

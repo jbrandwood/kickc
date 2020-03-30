@@ -37,7 +37,7 @@ mul8s_compare: {
     // for(signed byte a = -128; a!=-128; a++)
     lda #-$80
     cmp.z a
-    bne b1
+    bne __b2
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -52,7 +52,7 @@ mul8s_compare: {
     jsr print_ln
     // }
     rts
-  b1:
+  __b2:
     lda #-$80
     sta.z b
   __b3:
@@ -84,11 +84,11 @@ mul8s_compare: {
     bne !+
     lda.z ms+1
     cmp.z mf+1
-    beq b2
+    beq __b5
   !:
     ldx #0
     jmp __b6
-  b2:
+  __b5:
     ldx #1
   __b6:
     // if(ms!=mn)
@@ -523,10 +523,10 @@ muls8s: {
     .label a = $d
     // if(a<0)
     lda.z a
-    bmi b3
+    bmi __b8
     // if (a>0)
     cmp #1
-    bmi b2
+    bmi __b7
     lda #<0
     sta.z m
     sta.z m+1
@@ -536,7 +536,7 @@ muls8s: {
     cpy.z a
     bne __b4
     rts
-  b2:
+  __b7:
     lda #<0
     sta.z return
     sta.z return+1
@@ -561,7 +561,7 @@ muls8s: {
     // for(signed byte j = 0; j!=a; j++)
     iny
     jmp __b3
-  b3:
+  __b8:
     lda #<0
     sta.z m
     sta.z m+1
@@ -625,11 +625,11 @@ mul8u_compare: {
     bne !+
     lda.z ms+1
     cmp.z mf+1
-    beq b1
+    beq __b6
   !:
     ldx #0
     jmp __b3
-  b1:
+  __b6:
     ldx #1
   __b3:
     // if(ms!=mn)
@@ -761,7 +761,7 @@ muls8u: {
     // if(a!=0)
     lda.z a
     cmp #0
-    beq b1
+    beq __b4
     lda #<0
     sta.z m
     sta.z m+1
@@ -771,7 +771,7 @@ muls8u: {
     cpy.z a
     bne __b3
     rts
-  b1:
+  __b4:
     lda #<0
     sta.z return
     sta.z return+1

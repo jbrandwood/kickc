@@ -65,9 +65,9 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
                   }
                   // Find new short unused label
                   int labelIdx = 1;
-                  String newLabel = "b" + labelIdx;
+                  String newLabel = "__b" + labelIdx;
                   while(scopeLabels.contains(newLabel) || scopeRelabels.containsValue(newLabel)) {
-                     newLabel = "b" + labelIdx++;
+                     newLabel = "__b" + labelIdx++;
                   }
                   getLog().append("Relabelling long label " + asmLabel.getLabel() + " to " + newLabel);
                   scopeRelabels.put(asmLabel.getLabel(), newLabel);

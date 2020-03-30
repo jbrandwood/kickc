@@ -59,10 +59,10 @@ main: {
     lda bits_count,y
     // if(bits>=2)
     cmp #2
-    bcc b1
+    bcc __b6
     lda #1
     jmp __b2
-  b1:
+  __b6:
     lda #0
   __b2:
     // bits_gen = bits_gen*2

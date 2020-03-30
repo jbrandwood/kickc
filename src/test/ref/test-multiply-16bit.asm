@@ -88,11 +88,11 @@ mul16s_compare: {
     bne !+
     lda.z ms+3
     cmp.z mf+3
-    beq b1
+    beq __b6
   !:
     ldx #0
     jmp __b3
-  b1:
+  __b6:
     ldx #1
   __b3:
     // if(ms!=mn)
@@ -752,12 +752,12 @@ muls16s: {
     .label b = $18
     // if(a<0)
     lda.z a+1
-    bmi b3
+    bmi __b8
     // if (a>0)
-    bmi b2
+    bmi __b7
     bne !+
     lda.z a
-    beq b2
+    beq __b7
   !:
     lda #<0
     sta.z m
@@ -778,7 +778,7 @@ muls16s: {
     cmp.z a
     bne __b4
     rts
-  b2:
+  __b7:
     lda #<0
     sta.z return
     sta.z return+1
@@ -815,7 +815,7 @@ muls16s: {
     inc.z j+1
   !:
     jmp __b3
-  b3:
+  __b8:
     lda #<0
     sta.z m
     sta.z m+1
@@ -934,11 +934,11 @@ mul16u_compare: {
     bne !+
     lda.z ms+3
     cmp.z mf+3
-    beq b1
+    beq __b6
   !:
     ldx #0
     jmp __b3
-  b1:
+  __b6:
     ldx #1
   __b3:
     // if(ms!=mn)
@@ -1096,7 +1096,7 @@ muls16u: {
     lda.z a
     bne !+
     lda.z a+1
-    beq b1
+    beq __b4
   !:
     lda #<0
     sta.z m
@@ -1117,7 +1117,7 @@ muls16u: {
     cmp.z a
     bne __b3
     rts
-  b1:
+  __b4:
     lda #<0
     sta.z return
     sta.z return+1

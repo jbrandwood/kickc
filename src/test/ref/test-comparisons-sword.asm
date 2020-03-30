@@ -93,9 +93,9 @@ main: {
     inc.z i
     cmp.z i
     bne __b1
-  b1:
+  __b5:
   // loop forever
-    jmp b1
+    jmp __b5
 }
 // Print a newline
 print_ln: {
@@ -150,19 +150,19 @@ compare: {
     beq __b5
     // if(op==NE)
     cmp #NE
-    bne b2
+    bne __b8
     // if(w1!=w2)
     lda.z w1
     cmp.z w2
     bne !+
     lda.z w1+1
     cmp.z w2+1
-    beq b1
+    beq __b7
   !:
     lda #TT
     sta.z r
     jmp __b19
-  b1:
+  __b7:
     lda #FF
     sta.z r
   __b19:
@@ -171,7 +171,7 @@ compare: {
     lda #>ops_1
     sta.z ops+1
     jmp __b6
-  b2:
+  __b8:
     lda #FF
     sta.z r
     lda #<0
@@ -197,14 +197,14 @@ compare: {
     // if(w1==w2)
     lda.z w1+1
     cmp.z w2+1
-    bne b3
+    bne __b9
     lda.z w1
     cmp.z w2
-    bne b3
+    bne __b9
     lda #TT
     sta.z r
     jmp __b20
-  b3:
+  __b9:
     lda #FF
     sta.z r
   __b20:
@@ -222,12 +222,12 @@ compare: {
     bvc !+
     eor #$80
   !:
-    bmi b4
+    bmi __b10
   !e:
     lda #TT
     sta.z r
     jmp __b21
-  b4:
+  __b10:
     lda #FF
     sta.z r
   __b21:
@@ -245,11 +245,11 @@ compare: {
     bvc !+
     eor #$80
   !:
-    bpl b5
+    bpl __b11
     lda #TT
     sta.z r
     jmp __b22
-  b5:
+  __b11:
     lda #FF
     sta.z r
   __b22:
@@ -267,12 +267,12 @@ compare: {
     bvc !+
     eor #$80
   !:
-    bmi b6
+    bmi __b12
   !e:
     lda #TT
     sta.z r
     jmp __b23
-  b6:
+  __b12:
     lda #FF
     sta.z r
   __b23:
@@ -290,11 +290,11 @@ compare: {
     bvc !+
     eor #$80
   !:
-    bpl b7
+    bpl __b13
     lda #TT
     sta.z r
     jmp __b24
-  b7:
+  __b13:
     lda #FF
     sta.z r
   __b24:

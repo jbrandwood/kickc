@@ -146,10 +146,10 @@ doplasma: {
   __b7:
     // for (char ii = 0; ii < 25; ++ii)
     cpx #$19
-    bcc b1
+    bcc __b3
     // }
     rts
-  b1:
+  __b3:
     ldy #0
   __b8:
     // for (char i = 0; i < 40; ++i)
@@ -265,7 +265,7 @@ makecharset: {
     // for ( char i = 0; i < 8; ++i)
     lda.z i
     cmp #8
-    bcc b1
+    bcc __b4
     // c & 0x07
     lda #7
     and.z c
@@ -281,7 +281,7 @@ makecharset: {
     inc.z c+1
   !:
     jmp __b1
-  b1:
+  __b4:
     ldy #0
     ldx #0
   __b5:

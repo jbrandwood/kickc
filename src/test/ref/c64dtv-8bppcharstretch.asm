@@ -303,10 +303,10 @@ gfx_init_plane_charset8: {
     and.z bits
     // if((bits & $80) != 0)
     cmp #0
-    beq b1
+    beq __b5
     lda.z col
     jmp __b4
-  b1:
+  __b5:
     lda #0
   __b4:
     // *gfxa++ = c

@@ -214,14 +214,14 @@ main: {
     // key = keyboard_get_keycode(ch)
     // if(key!=$3f)
     cmp #$3f
-    beq b1
+    beq __b3
     // keyboard_key_pressed(key)
     tax
     jsr keyboard_key_pressed
     // keyboard_key_pressed(key)
     // pressed = keyboard_key_pressed(key)
     jmp __b13
-  b1:
+  __b3:
     lda #0
   __b13:
     // if(pressed!=0)
@@ -333,10 +333,10 @@ plot_chargen: {
     and.z bits
     // if((bits & $80) != 0)
     cmp #0
-    beq b1
+    beq __b2
     lda #'*'
     jmp __b5
-  b1:
+  __b2:
     lda #'.'
   __b5:
     // *sc = c

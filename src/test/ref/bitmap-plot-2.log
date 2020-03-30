@@ -8281,8 +8281,8 @@ Skipping double jump to __b5 in bne __b5_from___b6
 Skipping double jump to __b3 in beq __b12
 Replacing jump to rts with rts in jmp __b3
 Succesful ASM optimization Pass5DoubleJumpElimination
-Relabelling long label __b5_from___b6 to b1
-Relabelling long label __b1_from_sin16s to b1
+Relabelling long label __b5_from___b6 to __b1
+Relabelling long label __b1_from_sin16s to __b4
 Succesful ASM optimization Pass5RelabelLongLabels
 Adding RTS to root block 
 Succesful ASM optimization Pass5AddMainRts
@@ -8296,10 +8296,7 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #<0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label __b5 with b1
-Replacing label __b5 with b1
-Replacing label __b5 with b1
-Removing instruction __b5:
+Removing instruction __b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b12:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -9075,23 +9072,23 @@ main: {
     // if((idx_x==0) && (r_add!=1))
     // [51] if((word) main::idx_x#10!=(byte) 0) goto main::@5 -- vwuz1_neq_0_then_la1 
     lda.z idx_x
-    bne b1
+    bne __b5
     lda.z idx_x+1
-    bne b1
+    bne __b5
     // main::@15
     // [52] if((byte) main::r_add#10==(byte) 1) goto main::@5 -- vbuz1_eq_vbuc1_then_la1 
     lda #1
     cmp.z r_add
-    beq b1
+    beq __b5
     // main::@6
     // r_add /= 2
     // [53] (byte) main::r_add#1 ← (byte) main::r_add#10 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr.z r_add
     // [54] phi from main::@4 main::@6 to main::@5 [phi:main::@4/main::@6->main::@5]
-  b1:
     // [54] phi (byte) main::r_add#12 = (byte) main::r_add#10 [phi:main::@4/main::@6->main::@5#0] -- register_copy 
     // [54] phi from main::@15 to main::@5 [phi:main::@15->main::@5]
     // main::@5
+  __b5:
     // if(r>=512*12+256)
     // [55] if((signed word) main::r#1>=(signed word)(number) $200*(number) $c+(number) $100) goto main::@7 -- vwsz1_ge_vwsc1_then_la1 
     lda.z r
@@ -9764,19 +9761,19 @@ sin16s: {
     // [157] if((dword) sin16s::x#0<(const nomodify dword) PI_u4f28) goto sin16s::@1 -- vduz1_lt_vduc1_then_la1 
     lda.z x+3
     cmp #>PI_u4f28>>$10
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x+2
     cmp #<PI_u4f28>>$10
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x+1
     cmp #>PI_u4f28
-    bcc b1
+    bcc __b4
     bne !+
     lda.z x
     cmp #<PI_u4f28
-    bcc b1
+    bcc __b4
   !:
     // sin16s::@4
     // x = x - PI_u4f28
@@ -9800,7 +9797,7 @@ sin16s: {
     // [159] phi (dword) sin16s::x#4 = (dword) sin16s::x#1 [phi:sin16s::@4->sin16s::@1#1] -- register_copy 
     jmp __b1
     // [159] phi from sin16s to sin16s::@1 [phi:sin16s->sin16s::@1]
-  b1:
+  __b4:
     // [159] phi (byte) sin16s::isUpper#2 = (byte) 0 [phi:sin16s->sin16s::@1#0] -- vbuyy=vbuc1 
     ldy #0
     // [159] phi (dword) sin16s::x#4 = (dword) sin16s::x#0 [phi:sin16s->sin16s::@1#1] -- register_copy 

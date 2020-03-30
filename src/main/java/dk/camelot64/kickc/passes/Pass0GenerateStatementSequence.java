@@ -547,7 +547,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       public VariableDeclaration() {
          this.declType = new VariableDeclType();
-      }
+      }                                                                                
 
       /**
        * Exits the type layer (clears everything except struct information)

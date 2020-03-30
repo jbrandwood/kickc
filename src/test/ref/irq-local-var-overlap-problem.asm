@@ -42,7 +42,7 @@ main: {
     sta KERNEL_IRQ+1
     // asm
     cli
-  b1:
+  __b4:
     lda #0
     sta.z i
   __b1:
@@ -76,7 +76,7 @@ main: {
     inc.z i
     cmp.z i
     bne __b1
-    jmp b1
+    jmp __b4
 }
 sub_main: {
     .label i = 5

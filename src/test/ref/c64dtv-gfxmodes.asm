@@ -805,10 +805,10 @@ mode_8bpppixelcell: {
     and.z bits
     // if((bits & $80) != 0)
     cmp #0
-    beq b1
+    beq __b4
     lda.z col
     jmp __b9
-  b1:
+  __b4:
     lda #0
   __b9:
     // *gfxb++ = c

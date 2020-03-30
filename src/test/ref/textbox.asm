@@ -358,7 +358,7 @@ draw_window: {
     // x = x1+1
     ldx.z x1
     inx
-  b1:
+  __b1:
   // draw horizontal lines
     // for (byte x = x1+1; x < x2; x++)
     cpx.z x2
@@ -407,7 +407,7 @@ draw_window: {
     // y = y1+1
     ldx.z y1
     inx
-  b2:
+  __b3:
   // draw vertical lines
     // for (byte y = y1+1; y < y2; y++)
     cpx.z y2
@@ -475,7 +475,7 @@ draw_window: {
     ldy.z y1
     iny
     sty.z y3
-  b3:
+  __b4:
   // blank inside
     // for(byte y = y1+1; y < y2; y++)
     lda.z y3
@@ -507,7 +507,7 @@ draw_window: {
     bcc __b11
     // for(byte y = y1+1; y < y2; y++)
     inc.z y3
-    jmp b3
+    jmp __b4
   __b11:
     // z+x
     txa
@@ -588,7 +588,7 @@ draw_window: {
     sta (__32),y
     // for (byte y = y1+1; y < y2; y++)
     inx
-    jmp b2
+    jmp __b3
   __b2:
     // z+x
     txa
@@ -629,7 +629,7 @@ draw_window: {
     sta (__28),y
     // for (byte x = x1+1; x < x2; x++)
     inx
-    jmp b1
+    jmp __b1
 }
   text: .text "this is a small test with word wrap, if a word is too long it moves it to the next line. isn't that supercalifragilisticexpialidocious? i think it's cool!"
   .byte 0

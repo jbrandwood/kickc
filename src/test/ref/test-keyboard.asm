@@ -179,7 +179,7 @@ main: {
     lda #$40
     cmp.z ch
     bne __b12
-  b1:
+  __b3:
   // Add some spaces
     // screen[i++] = ' '
     lda #' '
@@ -190,7 +190,7 @@ main: {
     // while (i<5)
     lda.z i
     cmp #5
-    bcc b1
+    bcc __b3
     jmp __b4
   __b7:
     // screen[col] = '1'

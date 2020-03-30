@@ -55,14 +55,14 @@ main: {
 }
 // Exit the program
 exit: {
-  b1:
+  __b1:
   // Wait for space release
     // keyboard_key_pressed(KEY_SPACE)
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_SPACE)
     // while(keyboard_key_pressed(KEY_SPACE))
     cmp #0
-    bne b1
+    bne __b1
     // }
     rts
 }

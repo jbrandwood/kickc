@@ -159,7 +159,7 @@ main: {
     // setupRasterIrq(RASTER_IRQ_TOP, &irqTop)
     // Set-up raster interrupts
     jsr setupRasterIrq
-  b1:
+  __b4:
   // Main loop
     // getCharToProcess()
     jsr getCharToProcess
@@ -182,7 +182,7 @@ main: {
     // startProcessing(center)
     sty.z startProcessing.center_x
     jsr startProcessing
-    jmp b1
+    jmp __b4
   __b2:
     // *dst = *src
     ldy #0

@@ -370,7 +370,7 @@ myprintf: {
     beq __b31
     cpx #'X'
     beq __b31
-  b1:
+  __b3:
     lda #0
     sta.z bFormat
     jmp __b32
@@ -426,7 +426,7 @@ myprintf: {
     // dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
     iny
     sty.z bLen
-    jmp b1
+    jmp __b3
   __b9:
     // utoa(w, buf6)
     lda.z w
@@ -445,16 +445,16 @@ myprintf: {
     // if (bTrailing == 0 && bDigits > b)
     lda.z bTrailing
     cmp #0
-    bne b2
+    bne __b17
     tya
     cmp.z bDigits
-    bcs b2
+    bcs __b17
   __b18:
     // for (; bDigits > b; --bDigits)
     lda.z b
     cmp.z bDigits
     bcc __b19
-  b2:
+  __b17:
     ldx #0
   __b22:
     // for (digit = 0; digit < b; ++digit)
@@ -463,18 +463,18 @@ myprintf: {
     // if (bTrailing != 0 && bDigits > b)
     lda.z bTrailing
     cmp #0
-    beq b1
+    beq __b3
     lda.z b
     cmp.z bDigits
-    bcc !b1+
-    jmp b1
-  !b1:
+    bcc !__b3+
+    jmp __b3
+  !__b3:
   __b25:
     // for (; bDigits > b; --bDigits)
     lda.z b
     cmp.z bDigits
     bcc __b26
-    jmp b1
+    jmp __b3
   __b26:
     // dst[bLen++] = ' '
     lda #' '
@@ -527,7 +527,7 @@ myprintf: {
     sta strTemp,y
     // dst[bLen++] = (byte)w;
     inc.z bLen
-    jmp b1
+    jmp __b3
   __b28:
     // bDigits = b - '0'
     txa
@@ -579,13 +579,13 @@ myprintf: {
   __b33:
     // if (b >= 0x41 && b <= 0x5A)
     cpx #$41
-    bcc b4
+    bcc __b37
     cpx #$5a+1
-    bcs b4
+    bcs __b37
     // b += 0x20
     txa
     axs #-[$20]
-  b4:
+  __b37:
     // dst[bLen++] = b
     // swap 0x41 / 0x61 when in lower case mode
     ldy.z bLen

@@ -709,7 +709,7 @@ play_move_rotate: {
     // if(key_event==KEY_X)
     cmp #KEY_X
     beq __b2
-  b1:
+  __b4:
     lda #0
     // }
     rts
@@ -736,7 +736,7 @@ play_move_rotate: {
     // play_collision(current_xpos, current_ypos, orientation)
     // if(play_collision(current_xpos, current_ypos, orientation) == COLLISION_NONE)
     cmp #COLLISION_NONE
-    bne b1
+    bne __b4
     // current_orientation = orientation
     lda.z orientation
     sta.z current_orientation
@@ -870,7 +870,7 @@ play_move_leftright: {
     beq __b1
     // if(key_event==KEY_DOT)
     cmp #KEY_DOT
-    bne b2
+    bne __b3
     // play_collision(current_xpos+1,current_ypos,current_orientation)
     ldy.z current_xpos
     iny
@@ -887,13 +887,13 @@ play_move_leftright: {
     // play_collision(current_xpos+1,current_ypos,current_orientation)
     // if(play_collision(current_xpos+1,current_ypos,current_orientation)==COLLISION_NONE)
     cmp #COLLISION_NONE
-    bne b2
+    bne __b3
     // current_xpos++;
     inc.z current_xpos
-  b1:
+  __b2:
     lda #1
     rts
-  b2:
+  __b3:
     lda #0
     // }
     rts
@@ -914,10 +914,10 @@ play_move_leftright: {
     // play_collision(current_xpos-1,current_ypos,current_orientation)
     // if(play_collision(current_xpos-1,current_ypos,current_orientation)==COLLISION_NONE)
     cmp #COLLISION_NONE
-    bne b2
+    bne __b3
     // current_xpos--;
     dec.z current_xpos
-    jmp b1
+    jmp __b2
 }
 // Move down the current piece
 // Return non-zero if a render is needed
@@ -928,11 +928,11 @@ play_move_down: {
     inc.z current_movedown_counter
     // if(key_event==KEY_SPACE)
     cmp #KEY_SPACE
-    bne b1
+    bne __b4
     lda #1
     sta.z movedown
     jmp __b1
-  b1:
+  __b4:
     lda #0
     sta.z movedown
   __b1:
@@ -960,7 +960,7 @@ play_move_down: {
     // if(movedown!=0)
     lda.z movedown
     cmp #0
-    beq b2
+    beq __b5
     // play_collision(current_xpos,current_ypos+1,current_orientation)
     ldy.z current_ypos
     iny
@@ -1009,7 +1009,7 @@ play_move_down: {
     sta.z current_movedown_counter
     ldx #1
     rts
-  b2:
+  __b5:
     ldx #0
     // }
     rts
@@ -1151,13 +1151,13 @@ play_increase_level: {
     // Update speed of moving tetrominos down
     lda.z level
     cmp #$1d+1
-    bcs b1
+    bcs __b3
     // current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level]
     tay
     lda MOVEDOWN_SLOW_SPEEDS,y
     sta.z current_movedown_slow
     jmp __b1
-  b1:
+  __b3:
     lda #1
     sta.z current_movedown_slow
   __b1:
@@ -1264,7 +1264,7 @@ play_remove_lines: {
     lda #PLAYFIELD_LINES-1+1
     cmp.z y
     bne __b1
-  b1:
+  __b4:
   // Write zeros in the rest of the lines
     // while(w!=0xff)
     cpx #$ff
@@ -1277,7 +1277,7 @@ play_remove_lines: {
     sta playfield,x
     // playfield[w--] = 0;
     dex
-    jmp b1
+    jmp __b4
 }
 // Lock the current piece onto the playfield
 play_lock_current: {
@@ -1371,13 +1371,13 @@ keyboard_event_get: {
     // if(keyboard_events_size==0)
     lda.z keyboard_events_size
     cmp #0
-    beq b1
+    beq __b1
     // return keyboard_events[--keyboard_events_size];
     dec.z keyboard_events_size
     ldy.z keyboard_events_size
     lda keyboard_events,y
     rts
-  b1:
+  __b1:
     lda #$ff
     // }
     rts
@@ -1402,7 +1402,7 @@ keyboard_event_scan: {
     // if(row_scan!=keyboard_scan_values[row])
     ldy.z row
     cmp keyboard_scan_values,y
-    bne b2
+    bne __b5
     // keycode = keycode + 8
     lax.z keycode
     axs #-[8]
@@ -1440,7 +1440,7 @@ keyboard_event_scan: {
     // }
     rts
   // Something has changed on the keyboard row - check each column
-  b2:
+  __b5:
     ldx #0
   __b9:
     // row_scan^keyboard_scan_values[row]

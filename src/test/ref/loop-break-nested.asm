@@ -22,11 +22,11 @@ main: {
     ldy #0
     lda (line),y
     cmp #'a'
-    bne b1
+    bne __b2
   __breturn:
     // }
     rts
-  b1:
+  __b2:
     ldy #0
   __b3:
     // if(line[i]=='a')

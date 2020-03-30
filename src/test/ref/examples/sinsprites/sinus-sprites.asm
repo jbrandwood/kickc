@@ -669,11 +669,11 @@ gen_chargen_sprite: {
     and.z bits
     // if((bits & $80) != 0)
     cmp #0
-    beq b1
+    beq __b6
     lda #1
     sta.z c
     jmp __b3
-  b1:
+  __b6:
     lda #0
     sta.z c
   __b3:

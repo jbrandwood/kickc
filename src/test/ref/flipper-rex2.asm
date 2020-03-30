@@ -6,7 +6,7 @@
 main: {
     // prepare()
     jsr prepare
-  b1:
+  __b3:
     ldx #$19
   __b1:
     // while(*RASTER!=254)
@@ -26,7 +26,7 @@ main: {
     jsr flip
     // plot()
     jsr plot
-    jmp b1
+    jmp __b3
 }
 // Plot buffer on screen
 plot: {

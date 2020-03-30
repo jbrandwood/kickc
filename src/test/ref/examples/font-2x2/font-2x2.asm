@@ -279,11 +279,11 @@ font_find: {
   __b1:
     // for(char i=0;i<font_size;i++)
     cpx.z font_size
-    bcc b1
+    bcc __b6
     ldx #$ff
     // }
     rts
-  b1:
+  __b6:
     ldy #0
   __b2:
     // if(glyph[l]!=font[l])

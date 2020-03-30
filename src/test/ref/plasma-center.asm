@@ -293,7 +293,7 @@ make_plasma_charset: {
     // for ( char i = 0; i < 8; ++i)
     lda.z i
     cmp #8
-    bcc b1
+    bcc __b4
     // c & 0x07
     lda #7
     and.z c
@@ -309,7 +309,7 @@ make_plasma_charset: {
     inc.z c+1
   !:
     jmp __b1
-  b1:
+  __b4:
     ldy #0
     ldx #0
   __b5:

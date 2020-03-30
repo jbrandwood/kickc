@@ -19,7 +19,7 @@ main: {
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
-  b1:
+  __b4:
     ldx #0
   __b1:
     lda #0
@@ -46,7 +46,7 @@ main: {
     inx
     cpx #$b
     bne __b1
-    jmp b1
+    jmp __b4
 }
 irq: {
     // *IRQ_STATUS = 1

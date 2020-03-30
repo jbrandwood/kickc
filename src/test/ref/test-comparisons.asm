@@ -31,10 +31,10 @@ main: {
     // if(a<b)
     lda.z a
     cmp.z b
-    bcs b1
+    bcs __b22
     ldy #'+'
     jmp __b2
-  b1:
+  __b22:
     ldy #'-'
   __b2:
     // printu(a, "< ", b, r)
@@ -50,10 +50,10 @@ main: {
     // if(a<$37)
     lda.z a
     cmp #$37
-    bcs b2
+    bcs __b23
     lda #'+'
     jmp __b3
-  b2:
+  __b23:
     lda #'-'
   __b3:
     // printu(a, "< ", $37, r)
@@ -70,11 +70,11 @@ main: {
     lda.z a
     ldy.z i
     cmp cs,y
-    bcs b3
+    bcs __b24
     lda #'+'
     sta.z r
     jmp __b4
-  b3:
+  __b24:
     lda #'-'
     sta.z r
   __b4:
@@ -91,10 +91,10 @@ main: {
     // if(a<a)
     lda.z a
     cmp.z a
-    bcs b4
+    bcs __b25
     ldy #'+'
     jmp __b5
-  b4:
+  __b25:
     ldy #'-'
   __b5:
     // printu(a, "< ", a, r)
@@ -112,10 +112,10 @@ main: {
     // if(a>b)
     lda.z b
     cmp.z a
-    bcs b5
+    bcs __b26
     ldy #'+'
     jmp __b6
-  b5:
+  __b26:
     ldy #'-'
   __b6:
     // printu(a, "> ", b, r)
@@ -136,10 +136,10 @@ main: {
     // if(a>$37)
     lda.z a
     cmp #$37+1
-    bcc b6
+    bcc __b27
     lda #'+'
     jmp __b7
-  b6:
+  __b27:
     lda #'-'
   __b7:
     // printu(a, "> ", $37, r)
@@ -156,11 +156,11 @@ main: {
     ldy.z i
     lda cs,y
     cmp.z a
-    bcs b7
+    bcs __b28
     lda #'+'
     sta.z r
     jmp __b8
-  b7:
+  __b28:
     lda #'-'
     sta.z r
   __b8:
@@ -177,10 +177,10 @@ main: {
     // if(a>a)
     lda.z a
     cmp.z a
-    bcs b8
+    bcs __b29
     ldy #'+'
     jmp __b9
-  b8:
+  __b29:
     ldy #'-'
   __b9:
     // printu(a, "> ", a, r)
@@ -198,10 +198,10 @@ main: {
     // if(a<=b)
     lda.z b
     cmp.z a
-    bcc b9
+    bcc __b30
     ldy #'+'
     jmp __b10
-  b9:
+  __b30:
     ldy #'-'
   __b10:
     // printu(a, "<=", b, r)
@@ -222,10 +222,10 @@ main: {
     // if(a<=$37)
     lda.z a
     cmp #$37+1
-    bcs b10
+    bcs __b31
     lda #'+'
     jmp __b11
-  b10:
+  __b31:
     lda #'-'
   __b11:
     // printu(a, "<=", $37, r)
@@ -242,11 +242,11 @@ main: {
     ldy.z i
     lda cs,y
     cmp.z a
-    bcc b11
+    bcc __b32
     lda #'+'
     sta.z r
     jmp __b12
-  b11:
+  __b32:
     lda #'-'
     sta.z r
   __b12:
@@ -263,10 +263,10 @@ main: {
     // if(a<=a)
     lda.z a
     cmp.z a
-    bcc b12
+    bcc __b33
     ldy #'+'
     jmp __b13
-  b12:
+  __b33:
     ldy #'-'
   __b13:
     // printu(a, "<=", a, r)
@@ -284,10 +284,10 @@ main: {
     // if(a>=b)
     lda.z a
     cmp.z b
-    bcc b13
+    bcc __b34
     ldy #'+'
     jmp __b14
-  b13:
+  __b34:
     ldy #'-'
   __b14:
     // printu(a, ">=", b, r)
@@ -308,10 +308,10 @@ main: {
     // if(a>=$37)
     lda.z a
     cmp #$37
-    bcc b14
+    bcc __b35
     lda #'+'
     jmp __b15
-  b14:
+  __b35:
     lda #'-'
   __b15:
     // printu(a, ">=", $37, r)
@@ -328,11 +328,11 @@ main: {
     lda.z a
     ldy.z i
     cmp cs,y
-    bcc b15
+    bcc __b36
     lda #'+'
     sta.z r
     jmp __b16
-  b15:
+  __b36:
     lda #'-'
     sta.z r
   __b16:
@@ -349,10 +349,10 @@ main: {
     // if(a>=a)
     lda.z a
     cmp.z a
-    bcc b16
+    bcc __b37
     ldy #'+'
     jmp __b17
-  b16:
+  __b37:
     ldy #'-'
   __b17:
     // printu(a, ">=", a, r)
@@ -370,10 +370,10 @@ main: {
     // if(a==b)
     lda.z a
     cmp.z b
-    bne b17
+    bne __b38
     ldy #'+'
     jmp __b18
-  b17:
+  __b38:
     ldy #'-'
   __b18:
     // printu(a, "==", b, r)
@@ -394,10 +394,10 @@ main: {
     // if(a==$37)
     lda #$37
     cmp.z a
-    bne b18
+    bne __b39
     lda #'+'
     jmp __b19
-  b18:
+  __b39:
     lda #'-'
   __b19:
     // printu(a, "==", $37, r)
@@ -414,11 +414,11 @@ main: {
     lda.z a
     ldy.z i
     cmp cs,y
-    bne b19
+    bne __b40
     lda #'+'
     sta.z r
     jmp __b20
-  b19:
+  __b40:
     lda #'-'
     sta.z r
   __b20:
@@ -435,10 +435,10 @@ main: {
     // if(a==a)
     lda.z a
     cmp.z a
-    bne b20
+    bne __b41
     ldy #'+'
     jmp __b21
-  b20:
+  __b41:
     ldy #'-'
   __b21:
     // printu(a, "==", a, r)

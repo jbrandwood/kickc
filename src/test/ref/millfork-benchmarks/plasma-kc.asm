@@ -137,10 +137,10 @@ doplasma: {
   __b5:
     // for (jj = 0; jj < 25; ++jj)
     cpx #$19
-    bcc b1
+    bcc __b8
     // }
     rts
-  b1:
+  __b8:
     ldy #0
   __b6:
     // for (j = 0; j < 40; ++j)
@@ -370,14 +370,14 @@ makechar: {
     // for (i = 0; i < 8; ++i)
     lda.z i
     cmp #8
-    bcc b1
+    bcc __b4
     // for (c = 0; c < 0x100; ++c)
     inc.z c
     bne !+
     inc.z c+1
   !:
     jmp __b1
-  b1:
+  __b4:
     lda #0
     sta.z b
     tay

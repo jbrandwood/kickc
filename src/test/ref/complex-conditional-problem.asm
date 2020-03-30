@@ -10,10 +10,10 @@ main: {
     lda RASTER
     // if (key > $20 || key < $40)
     cmp #$20+1
-    bcs b1
+    bcs __b3
     cmp #$40
     bcs __b2
-  b1:
+  __b3:
     lda #0
   __b2:
     // *SCREEN = key

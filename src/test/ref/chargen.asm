@@ -32,10 +32,10 @@ main: {
     and.z bits
     // if((bits & $80) != 0)
     cmp #0
-    beq b1
+    beq __b4
     lda #'*'
     jmp __b3
-  b1:
+  __b4:
     lda #'.'
   __b3:
     // *sc = c

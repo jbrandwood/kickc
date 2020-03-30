@@ -1812,7 +1812,6 @@ public class TestPrograms {
       assertError("pointer-const-deep", "Deep const/volatile not supported");
    }
 
-
    @Test
    public void testPointerConst() throws IOException, URISyntaxException {
       compileAndCompare("pointer-const");
@@ -2975,6 +2974,11 @@ public class TestPrograms {
    @Test
    public void testBoolConst() throws IOException, URISyntaxException {
       compileAndCompare("bool-const");
+   }
+
+   @Test
+   public void testBoolIfs() throws IOException, URISyntaxException {
+      compileAndCompare("bool-ifs");
    }
 
    @Test

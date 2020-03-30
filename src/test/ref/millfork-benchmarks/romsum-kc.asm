@@ -266,10 +266,10 @@ sum: {
   __b1:
     // for (page = 0; page < 0x20; page++)
     cpx #$20
-    bcc b1
+    bcc __b3
     // }
     rts
-  b1:
+  __b3:
     ldy #0
   __b2:
     // tmp = p[i]

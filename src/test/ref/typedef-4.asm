@@ -15,9 +15,9 @@ main: {
     // SCREEN[0] = c
     lda #c
     sta SCREEN
-    // SCREEN[0] = v
+    // SCREEN[1] = v
     lda.z v
-    sta SCREEN
+    sta SCREEN+1
     // }
     rts
 }

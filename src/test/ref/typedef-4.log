@@ -7,7 +7,7 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   *((const nomodify byte*) SCREEN + (number) 0) ← (const nomodify byte) c
-  *((const nomodify byte*) SCREEN + (number) 0) ← (volatile byte) v
+  *((const nomodify byte*) SCREEN + (number) 1) ← (volatile byte) v
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -31,18 +31,19 @@ SYMBOL TABLE SSA
 (volatile byte) v loadstore
 
 Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (const nomodify byte) c
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (volatile byte) v
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (volatile byte) v
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast 0
+Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero SCREEN in [1] *((const nomodify byte*) SCREEN + (byte) 0) ← (const nomodify byte) c
-Simplifying expression containing zero SCREEN in [2] *((const nomodify byte*) SCREEN + (byte) 0) ← (volatile byte) v
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
@@ -69,7 +70,7 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c
-  [5] *((const nomodify byte*) SCREEN) ← (volatile byte) v
+  [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -120,9 +121,9 @@ main: {
     // [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
-    // [5] *((const nomodify byte*) SCREEN) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
     lda.z v
-    sta SCREEN
+    sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
@@ -134,7 +135,7 @@ main: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (volatile byte) v ← (byte) 'v' [ v ] (  [ v ] { }  ) always clobbers reg byte a 
 Statement [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c [ v ] ( main:2 [ v ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) SCREEN) ← (volatile byte) v [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ v ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -179,9 +180,9 @@ main: {
     // [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
-    // [5] *((const nomodify byte*) SCREEN) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
     lda.z v
-    sta SCREEN
+    sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
@@ -250,10 +251,10 @@ main: {
     // [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
-    // SCREEN[0] = v
-    // [5] *((const nomodify byte*) SCREEN) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
+    // SCREEN[1] = v
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
     lda.z v
-    sta SCREEN
+    sta SCREEN+1
     // main::@return
     // }
     // [6] return 

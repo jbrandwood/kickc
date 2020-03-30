@@ -2,7 +2,10 @@ package dk.camelot64.kickc.model.operators;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
-import dk.camelot64.kickc.model.types.*;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
+import dk.camelot64.kickc.model.types.SymbolTypeInteger;
+import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.values.*;
 
 /** Binary plus Operator ( x + y ) */
@@ -14,18 +17,11 @@ public class OperatorPlus extends OperatorBinary {
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
-      if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantInteger) left).getInteger() + ((ConstantInteger) right).getInteger());
-      } else if(left instanceof ConstantInteger && right instanceof ConstantChar) {
-         return new ConstantInteger(((ConstantInteger) left).getInteger() + ((ConstantChar) right).getChar());
-      } else if(left instanceof ConstantChar && right instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantChar) left).getChar() + ((ConstantInteger) right).getInteger());
-      } else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
-         long location = ((ConstantPointer) left).getLocation() + ((ConstantInteger) right).getInteger();
+      if(left instanceof ConstantPointer && right instanceof ConstantEnumerable) {
+         long location = ((ConstantPointer) left).getLocation() + ((ConstantEnumerable) right).getInteger();
          return new ConstantPointer(location, ((ConstantPointer) left).getElementType());
-      } else if(left instanceof ConstantInteger && right instanceof ConstantPointer) {
-         long location = ((ConstantPointer) right).getLocation() + ((ConstantInteger) left).getInteger();
-         return new ConstantPointer(location, ((ConstantPointer) right).getElementType());
+      } else if(left instanceof ConstantEnumerable && right instanceof ConstantEnumerable) {
+         return new ConstantInteger(((ConstantEnumerable) left).getInteger() + ((ConstantEnumerable) right).getInteger());
       } else if(left instanceof ConstantString && right instanceof ConstantInteger) {
          throw new ConstantNotLiteral("String pointer not literal");
       }
@@ -42,7 +38,7 @@ public class OperatorPlus extends OperatorBinary {
       }
       // Handle numeric types through proper promotion
       if(SymbolType.isInteger(type1) && SymbolType.isInteger(type2)) {
-         return SymbolTypeConversion.convertedMathType( (SymbolTypeInteger) type1, (SymbolTypeInteger)type2);
+         return SymbolTypeConversion.convertedMathType((SymbolTypeInteger) type1, (SymbolTypeInteger) type2);
       }
 
       throw new CompileError("Type inference case not handled " + type1 + " " + getOperator() + " " + type2);

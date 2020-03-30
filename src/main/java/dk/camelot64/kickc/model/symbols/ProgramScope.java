@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeProgram;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 /** The program scope containing the symbols of a program */
 public class ProgramScope extends Scope {
@@ -40,7 +41,8 @@ public class ProgramScope extends Scope {
       return "program";
    }
 
-   private TypeDefsScope typeDefsScope = new TypeDefsScope("typedefs", this);
+   /** The scope holding typedefs. */
+   private TypeDefsScope typeDefsScope = new TypeDefsScope(ScopeRef.TYPEDEFS.getFullName(), this);
 
    public Scope getTypeDefScope() {
       return typeDefsScope;

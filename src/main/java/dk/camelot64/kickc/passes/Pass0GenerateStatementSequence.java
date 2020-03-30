@@ -1769,17 +1769,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
-
       Scope typeDefScope = program.getScope().getTypeDefScope();
-      Variable typeDefVariable = typeDefScope.getVariable(ctx.getText());
+      Variable typeDefVariable = typeDefScope.getVar(ctx.getText());
       if(typeDefVariable != null) {
+         varDecl.setDeclType(typeDefVariable.getType());
          if(typeDefVariable.getArraySpec() != null)
-            // TODO: Handle typedef array of array correctly
-            throw new InternalError("Typedef with arrays not supported!");
+            varDecl.getDeclType().setArraySpec(typeDefVariable.getArraySpec());
          if(typeDefVariable.isNoModify() || typeDefVariable.isVolatile() || typeDefVariable.isToNoModify() || typeDefVariable.isToVolatile())
             // TODO: Handle type directives correctly
             throw new InternalError("Typedef with type directives not supported!");
-         varDecl.setDeclType(typeDefVariable.getType());
          return null;
       }
       throw new CompileError("Unknown type " + ctx.getText(), new StatementSource(ctx));
@@ -1851,9 +1849,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          this.visit(declArrayContext);
       }
       String typedefName = ctx.NAME().getText();
-      final Variable typeDefVar = Variable.createPhiMaster(typedefName, varDecl.getEffectiveType(), typedefScope, defaultMemoryArea, currentDataSegment);
-      typeDefVar.setArraySpec(varDecl.getEffectiveArraySpec());
-      typedefScope.add(typeDefVar);
+      VariableBuilder varBuilder = new VariableBuilder(typedefName, getCurrentScope(), false, varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec(), varDecl.getEffectiveDirectives(), currentDataSegment, variableBuilderConfig);
+      final Variable typeDefVar = varBuilder.build();
       scopeStack.pop();
       varDecl.exitType();
       return null;

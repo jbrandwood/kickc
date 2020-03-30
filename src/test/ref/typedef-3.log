@@ -10,7 +10,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2)
+  *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2)
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,6)
   (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,6)
   if((bool~) main::$0) goto main::@1
@@ -30,7 +30,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*)(number) $400
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (const byte*) a[(number) 7]  = (byte*) "cml"
 (void()) main()
 (bool~) main::$0
@@ -94,7 +94,7 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2)
+  [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2)
   [7] (byte) main::i#1 ← ++ (byte) main::i#2
   [8] if((byte) main::i#1!=(byte) 7) goto main::@1
   to:main::@return
@@ -156,7 +156,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda a,y
     sta SCREEN,y
@@ -178,9 +178,9 @@ main: {
   .fill 3, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -228,7 +228,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda a,x
     sta SCREEN,x
     // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
@@ -276,7 +276,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) SCREEN = (byte*) 1024
+(const nomodify byte*) SCREEN = (byte*) 1024
 (const byte*) a[(number) 7]  = (byte*) "cml"
 (void()) main()
 (label) main::@1
@@ -316,7 +316,7 @@ main: {
     // main::@1
   __b1:
     // SCREEN[i] = a[i]
-    // [6] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [6] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) a + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda a,x
     sta SCREEN,x
     // for(char i:0..6)

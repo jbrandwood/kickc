@@ -107,7 +107,7 @@ public class VariableBuilder {
     * @return true if the variable is in the global scope
     */
    public boolean isScopeGlobal() {
-      return ScopeRef.ROOT.equals(scope.getRef());
+      return ScopeRef.ROOT.equals(scope.getRef()) || ScopeRef.TYPEDEFS.equals(scope.getRef());
    }
 
    /**

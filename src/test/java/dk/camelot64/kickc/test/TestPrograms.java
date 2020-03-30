@@ -942,9 +942,24 @@ public class TestPrograms {
    }
 
    //@Test
-   //public void testTypedef3() throws IOException, URISyntaxException {
-   //   compileAndCompare("typedef-3");
+   //public void testPointerConstTypedef() throws IOException, URISyntaxException {
+   //   compileAndCompare("pointer-const-typedef");
    //}
+
+   //@Test
+   //public void testTypedef5() throws IOException, URISyntaxException {
+   //   compileAndCompare("typedef-5");
+   //}
+
+   //@Test
+   //public void testTypedef4() throws IOException, URISyntaxException {
+   //   compileAndCompare("typedef-4");
+   //}
+
+   @Test
+   public void testTypedef3() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-3");
+   }
 
    @Test
    public void testTypedef2() throws IOException, URISyntaxException {
@@ -1781,10 +1796,6 @@ public class TestPrograms {
       assertError("pointer-const-deep", "Deep const/volatile not supported");
    }
 
-   @Test
-   public void testPointerConstTypedef() throws IOException, URISyntaxException {
-      compileAndCompare("pointer-const-typedef");
-   }
 
    @Test
    public void testPointerConst() throws IOException, URISyntaxException {

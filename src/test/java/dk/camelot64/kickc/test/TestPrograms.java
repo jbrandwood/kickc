@@ -1263,6 +1263,12 @@ public class TestPrograms {
       assertError("struct-err-0", "Unknown struct type");
    }
 
+
+   @Test
+   public void testStructDirectives() throws IOException, URISyntaxException {
+      compileAndCompare("struct-directives");
+   }
+
    @Test
    public void testStruct42() throws IOException, URISyntaxException {
       compileAndCompare("struct-42");

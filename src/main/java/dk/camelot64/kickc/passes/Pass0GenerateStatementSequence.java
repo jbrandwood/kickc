@@ -640,10 +640,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          for(Directive directive : directives) {
             if(directive instanceof Directive.Const || directive instanceof Directive.Volatile) {
                // Type directive
-               this.declType.getTypeDirectives().add(directive);
+               if(!this.declType.getTypeDirectives().contains(directive))
+                  this.declType.getTypeDirectives().add(directive);
             } else {
                // general directive
-               this.declDirectives.add(directive);
+               if(!this.declDirectives.contains(directive))
+                  this.declDirectives.add(directive);
             }
          }
       }
@@ -1773,11 +1775,33 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Variable typeDefVariable = typeDefScope.getVar(ctx.getText());
       if(typeDefVariable != null) {
          varDecl.setDeclType(typeDefVariable.getType());
+
+         // Handle pointer types by creating sub-decltypes
+         VariableDeclaration.VariableDeclType declType = varDecl.getDeclType();
+         SymbolType type = typeDefVariable.getType();
+         while(type instanceof SymbolTypePointer) {
+            VariableDeclaration.VariableDeclType elementDeclType = new VariableDeclaration.VariableDeclType();
+            SymbolType elementType = ((SymbolTypePointer) type).getElementType();
+            elementDeclType.setType(elementType);
+            declType.setElementDeclType(elementDeclType);
+            type = elementType;
+            declType = elementDeclType;
+         }
+
          if(typeDefVariable.getArraySpec() != null)
             varDecl.getDeclType().setArraySpec(typeDefVariable.getArraySpec());
-         if(typeDefVariable.isNoModify() || typeDefVariable.isVolatile() || typeDefVariable.isToNoModify() || typeDefVariable.isToVolatile())
-            // TODO: Handle type directives correctly
-            throw new InternalError("Typedef with type directives not supported!");
+         if(typeDefVariable.isNoModify())
+            varDecl.getDeclType().getTypeDirectives().add(new Directive.Const());
+         if(typeDefVariable.isVolatile())
+            varDecl.getDeclType().getTypeDirectives().add(new Directive.Volatile());
+         if(typeDefVariable.isToNoModify()) {
+            // Find sub-type and add const
+            varDecl.getDeclType().getElementDeclType().getTypeDirectives().add(new Directive.Const());
+         }
+         if(typeDefVariable.isToVolatile()) {
+            // Find sub-type and add volatile
+            varDecl.getDeclType().getElementDeclType().getTypeDirectives().add(new Directive.Volatile());
+         }
          return null;
       }
       throw new CompileError("Unknown type " + ctx.getText(), new StatementSource(ctx));

@@ -4,6 +4,7 @@
 .pc = $80d "Program"
   // Const pointer
   .label cp0 = $400
+  .label cp1 = $400
   .label cp2 = $400
   // Const pointer to const
   .label cpc0 = $400
@@ -13,7 +14,6 @@
   .label pc0 = $400
   .label pc1 = $400
   .label pc2 = $400
-  .label cp1 = $400
   .label SCREEN = $400
 main: {
     // SCREEN[idx++] = *pc0

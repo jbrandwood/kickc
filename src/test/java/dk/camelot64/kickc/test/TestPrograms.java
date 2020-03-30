@@ -941,20 +941,30 @@ public class TestPrograms {
       compileAndCompare("enum-0");
    }
 
-   //@Test
-   //public void testPointerConstTypedef() throws IOException, URISyntaxException {
-   //   compileAndCompare("pointer-const-typedef");
-   //}
+   @Test
+   public void testPointerConstTypedef() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-const-typedef");
+   }
 
-   //@Test
-   //public void testTypedef5() throws IOException, URISyntaxException {
-   //   compileAndCompare("typedef-5");
-   //}
+   @Test
+   public void testTypedef7() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-7");
+   }
 
-   //@Test
-   //public void testTypedef4() throws IOException, URISyntaxException {
-   //   compileAndCompare("typedef-4");
-   //}
+   @Test
+   public void testTypedef6() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-6");
+   }
+
+   @Test
+   public void testTypedef5() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-5");
+   }
+
+   @Test
+   public void testTypedef4() throws IOException, URISyntaxException {
+      compileAndCompare("typedef-4");
+   }
 
    @Test
    public void testTypedef3() throws IOException, URISyntaxException {

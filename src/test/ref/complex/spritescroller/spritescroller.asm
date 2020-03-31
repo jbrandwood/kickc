@@ -34,18 +34,22 @@
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
   .label CHARSET_DEFAULT = $1000
-  .label FONT = $2000
   .label SPRITES = $3000
   .label SCREEN = $400
+  // The high-value table
+  .label XMOVEMENT_HI = XMOVEMENT+$100
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
-  .label plex_show_idx = $11
-  .label plex_sprite_idx = $12
-  .label plex_sprite_msb = $13
-  .label plex_free_next = $14
-  .label framedone = $15
+  .const toSpritePtr1_return = SPRITES/$40
+  .label plex_show_idx = $f
+  .label plex_sprite_idx = $10
+  .label plex_sprite_msb = $11
+  .label plex_free_next = $12
+  .label frame_done = $13
+  // The next char to use from the scroll text
+  .label scroll_text_next = 3
   // Y-sine index
-  .label sin_idx = 4
+  .label sin_idx = 2
 __bbegin:
   // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
@@ -62,16 +66,15 @@ __bbegin:
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   lda #0
   sta.z plex_free_next
-  // framedone = false
-  sta.z framedone
+  // frame_done = false
+  // Signal used between IRQ and main loop. Set to true when the IRQ is done showing the sprites.
+  sta.z frame_done
   jsr main
   rts
 main: {
-    .const toSpritePtr1_return = SPRITES/$40
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET_DEFAULT)/4&$f
-    .label sprite = 4
-    // Set the x-positions & pointers
-    .label xp = 2
+    .label s = 2
+    .label __13 = $14
     // asm
     // Create 2x2 font from CHARGEN
     sei
@@ -95,57 +98,37 @@ main: {
     // Show screen
     lda #toD0181_return
     sta D018
-    lda #<$18
-    sta.z xp
-    lda #>$18
-    sta.z xp+1
     ldx #0
-    lda #toSpritePtr1_return
-    sta.z sprite
-  __b1:
-    // PLEX_PTR[s] = sprite++
-    lda.z sprite
-    sta PLEX_PTR,x
-    // PLEX_PTR[s] = sprite++;
-    inc.z sprite
-    // PLEX_XPOS[s] = xp
     txa
-    asl
-    tay
-    lda.z xp
-    sta PLEX_XPOS,y
-    lda.z xp+1
-    sta PLEX_XPOS+1,y
-    // xp += 10
-    lda #$a
-    clc
-    adc.z xp
-    sta.z xp
-    bcc !+
-    inc.z xp+1
-  !:
-    // for(char s: 0..PLEX_COUNT-1)
-    inx
-    cpx #PLEX_COUNT-1+1
-    bne __b1
+    sta.z s
+  // Set the x-positions & pointers
+  __b1:
+    // for(char s=0, x=0;s<PLEX_COUNT;s++,x+=8)
+    lda.z s
+    cmp #PLEX_COUNT
+    bcc __b2
     // *SPRITES_ENABLE = 0xff
     // Enable & initialize sprites
     lda #$ff
     sta SPRITES_ENABLE
     ldx #0
-  __b3:
+  __b4:
     // SPRITES_COLS[s] = WHITE
     lda #WHITE
     sta SPRITES_COLS,x
     // for(char s: 0..7)
     inx
     cpx #8
-    bne __b3
-    // plexSine()
+    bne __b4
+    // plex_move()
   // Move the sprites
+    lda #<SCROLL_TEXT
+    sta.z scroll_text_next
+    lda #>SCROLL_TEXT
+    sta.z scroll_text_next+1
     lda #0
     sta.z sin_idx
-    jsr plexSine
+    jsr plex_move
     // plexSort()
   // Sort the sprites by y-position
     jsr plexSort
@@ -179,25 +162,49 @@ main: {
     sta KERNEL_IRQ+1
     // asm
     cli
-  __b5:
-    // while(!framedone)
-    lda.z framedone
-    cmp #0
-    bne __b6
-    jmp __b5
   __b6:
-    // plexSine()
+    // while(!frame_done)
+    lda.z frame_done
+    cmp #0
+    bne __b7
+    jmp __b6
+  __b7:
+    // frame_done = false
+    lda #0
+    sta.z frame_done
+    // plex_move()
   //*BORDERCOL = RED;
   // Move the sprites
-    jsr plexSine
+    jsr plex_move
     // plexSort()
   // Sort the sprites by y-position
     jsr plexSort
-    // framedone = false
-    //*BORDERCOL = GREEN;
-    lda #0
-    sta.z framedone
-    jmp __b5
+    jmp __b6
+  __b2:
+    // SPRITE_0+s
+    lda #toSpritePtr1_return
+    clc
+    adc.z s
+    // PLEX_PTR[s] = SPRITE_0+s
+    ldy.z s
+    sta PLEX_PTR,y
+    // PLEX_XPOS[s] = { XMOVEMENT_HI[x], XMOVEMENT[x] }
+    tya
+    asl
+    tay
+    lda XMOVEMENT_HI,x
+    sta.z __13+1
+    lda XMOVEMENT,x
+    sta.z __13
+    sta PLEX_XPOS,y
+    lda.z __13+1
+    sta PLEX_XPOS+1,y
+    // x+=8
+    txa
+    axs #-[8]
+    // for(char s=0, x=0;s<PLEX_COUNT;s++,x+=8)
+    inc.z s
+    jmp __b1
 }
 // Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
 // Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
@@ -209,9 +216,9 @@ main: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $16
-    .label nxt_y = $17
-    .label m = 5
+    .label nxt_idx = $17
+    .label nxt_y = $16
+    .label m = 9
     lda #0
     sta.z m
   __b1:
@@ -276,22 +283,69 @@ plexSort: {
     // }
     rts
 }
-// Move the plex sprites in an Y-sine
-plexSine: {
+// Move the plex sprites in an Y-sine and scroll them to the left.
+plex_move: {
+    .label s = 9
     // y_idx = sin_idx
-    // Assign sinus positions
     ldx.z sin_idx
-    ldy #0
+    lda #0
+    sta.z s
   __b1:
-    // PLEX_YPOS[sy] = YSIN[y_idx]
+    // PLEX_YPOS[s] = YSIN[y_idx]
+    // Assign sine value
     lda YSIN,x
+    ldy.z s
     sta PLEX_YPOS,y
     // y_idx += 8
     txa
     axs #-[8]
-    // for(char sy: 0..PLEX_COUNT-1)
-    iny
-    cpy #PLEX_COUNT-1+1
+    // PLEX_XPOS[s]==0
+    tya
+    asl
+    // if(PLEX_XPOS[s]==0)
+    tay
+    lda PLEX_XPOS+1,y
+    bne __b2
+    lda PLEX_XPOS,y
+    bne __b2
+    // PLEX_XPOS[s] = 11*32
+    lda.z s
+    asl
+    // Move sprite to far right
+    tay
+    lda #<$b*$20
+    sta PLEX_XPOS,y
+    lda #>$b*$20
+    sta PLEX_XPOS+1,y
+    // if(*scroll_text_next==0)
+    ldy #0
+    lda (scroll_text_next),y
+    cmp #0
+    bne __b3
+    lda #<SCROLL_TEXT
+    sta.z scroll_text_next
+    lda #>SCROLL_TEXT
+    sta.z scroll_text_next+1
+  __b3:
+    // SPRITE_0+*scroll_text_next++
+    lda #toSpritePtr1_return
+    clc
+    ldy #0
+    adc (scroll_text_next),y
+    // PLEX_PTR[s] = SPRITE_0+*scroll_text_next++
+    // Read next char from the scroll text
+    ldy.z s
+    sta PLEX_PTR,y
+    // PLEX_PTR[s] = SPRITE_0+*scroll_text_next++;
+    inc.z scroll_text_next
+    bne !+
+    inc.z scroll_text_next+1
+  !:
+  __b2:
+    // for(char s: 0..PLEX_COUNT-1)
+    inc.z s
+    lda #PLEX_COUNT-1+1
+    cmp.z s
     bne __b1
     // sin_idx +=1
     inc.z sin_idx
@@ -318,13 +372,13 @@ plexInit: {
 // - num_chars The number of chars to convert
 font_2x2_to_sprites: {
     .const num_chars = $40
-    .label __3 = $18
+    .label __3 = $17
     .label char_right = $d
     .label sprite_idx = $a
     .label char_left = $b
-    .label char_current = 6
-    .label sprite = 8
-    .label c = 5
+    .label char_current = 5
+    .label sprite = 7
+    .label c = 9
     lda #<SPRITES
     sta.z sprite
     lda #>SPRITES
@@ -446,18 +500,18 @@ font_2x2_to_sprites: {
 // - 0x80 - 0xbf Lower left glyphs
 // - 0xc0 - 0xff Lower right glyphs
 font_2x2: {
-    .label __5 = $f
-    .label __7 = $f
-    .label next_2x2_left = 6
+    .label __5 = $14
+    .label __7 = $14
+    .label next_2x2_left = 5
     .label next_2x2_right = $d
-    .label glyph_bits = $18
-    .label glyph_bits_2x2 = $f
+    .label glyph_bits = $16
+    .label glyph_bits_2x2 = $14
     .label l2 = $17
-    .label l = $16
+    .label l = $a
     .label next_2x2_left_1 = $b
-    .label next_2x2 = 6
-    .label next_original = 8
-    .label c = $a
+    .label next_2x2 = 5
+    .label next_original = 7
+    .label c = 9
     lda #0
     sta.z c
     lda #<CHARGEN
@@ -606,7 +660,7 @@ font_2x2: {
 }
 // Show sprites from the multiplexer, rescheduling the IRQ as many times as needed
 plex_irq: {
-    .label __4 = $19
+    .label __4 = $18
     // asm
     sei
   __b3:
@@ -635,9 +689,10 @@ plex_irq: {
     // Reset the raster IRQ to the top of the screen
     lda #$28
     sta RASTER
-    // framedone = true
+    // frame_done = true
+    // Signal that the IRQ is done showing sprites
     lda #1
-    sta.z framedone
+    sta.z frame_done
   __b2:
     // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
@@ -657,7 +712,7 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $1a
+    .label plex_sprite_idx2 = $19
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -749,10 +804,18 @@ plexShowSprite: {
   PLEX_SORTED_IDX: .fill PLEX_COUNT, 0
   // Contains the Y-position where each sprite is free again. PLEX_FREE_YPOS[s] holds the Y-position where sprite s is free to use again.
   PLEX_FREE_YPOS: .fill 8, 0
-  //kickasm(pc FONT, resource "elefont.bin") {{
+  //char FONT[0x0800] = kickasm(resource "elefont.bin") {{
   //	.import binary "elefont.bin"
-  //}}
+  //}};
+  FONT: .fill $800, 0
   .align $100
 YSIN:
 .fill $100, round(142+89.5*sin(toRadians(360*i/256)))
 
+  .align $100
+XMOVEMENT:
+.lohifill $100, round(344-i*344/$100-86*sin(toRadians(360*i/$100)))
+
+  // The scroll text
+  SCROLL_TEXT: .text "camelot presents a spanking new contribution to the always hungry c64 scene. in this time of the corona virus we have chosen to direct our efforts towards the safe haven of coding, pixeling and composing for our beloved old breadbin.      "
+  .byte 0

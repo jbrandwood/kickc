@@ -3,21 +3,31 @@ import "c64"
 import "multiplexer"
 
 char * const CHARSET_DEFAULT = 0x1000;
-char * const FONT = 0x2000;
 char * const SPRITES = 0x3000;
 char * const SCREEN =  0x0400;
+
+// Address of sprite pointers on screen
 char * const SCREEN_SPRITES = SCREEN + SPRITE_PTRS;
 
-// Show raster time used
-const char DEBUG = 0;
+// Sprite pointer for sprite 0
+char SPRITE_0 = toSpritePtr(SPRITES);
 
-//kickasm(pc FONT, resource "elefont.bin") {{
+//char FONT[0x0800] = kickasm(resource "elefont.bin") {{
 //	.import binary "elefont.bin"
-//}}
+//}};
+
+char FONT[0x0800];
 
 char align(0x100) YSIN[0x100] = kickasm {{
     .fill $100, round(142+89.5*sin(toRadians(360*i/256)))
 }};
+
+char align(0x100) XMOVEMENT[0x200] = kickasm {{
+    .lohifill $100, round(344-i*344/$100-86*sin(toRadians(360*i/$100)))
+}};
+
+// The high-value table
+char * const XMOVEMENT_HI = XMOVEMENT+0x100;
 
 void main() {
 
@@ -38,12 +48,9 @@ void main() {
     *D018 = toD018(SCREEN, CHARSET_DEFAULT);
 
     // Set the x-positions & pointers
-    unsigned int xp = 24;
-    char sprite = toSpritePtr(SPRITES);
-    for(char s: 0..PLEX_COUNT-1) {
-        PLEX_PTR[s] = sprite++;
-        PLEX_XPOS[s] = xp;
-        xp += 10;
+    for(char s=0, x=0;s<PLEX_COUNT;s++,x+=8) {
+        PLEX_PTR[s] = SPRITE_0+s;
+        PLEX_XPOS[s] = { XMOVEMENT_HI[x], XMOVEMENT[x] };
     }
     // Enable & initialize sprites
     *SPRITES_ENABLE = 0xff;
@@ -52,7 +59,7 @@ void main() {
     }
 
     // Move the sprites
-    plexSine();
+    plex_move();
     // Sort the sprites by y-position
     plexSort();
 
@@ -73,33 +80,53 @@ void main() {
 
     // Move & Sort - when needed!
     while(true) {
-        while(!framedone) {
+        while(!frame_done) {
         }
+        frame_done = false;
         //*BORDERCOL = RED;
         // Move the sprites
-        plexSine();
+        plex_move();
         // Sort the sprites by y-position
         plexSort();
-        //*BORDERCOL = GREEN;
-        framedone = false;
+        //*BORDERCOL = BLACK;
     }
 }
+
+
+// The scroll text
+char SCROLL_TEXT[] = "camelot presents a spanking new contribution to the always hungry c64 scene. "
+                     "in this time of the corona virus we have chosen to direct our efforts towards the safe haven of coding, pixeling and composing for our beloved old breadbin. "
+                     "     ";
+
+// The next char to use from the scroll text
+char* scroll_text_next = SCROLL_TEXT;
 
 // Y-sine index
 char sin_idx = 0;
 
-// Move the plex sprites in an Y-sine
-void plexSine() {
-        // Assign sinus positions
+// Move the plex sprites in an Y-sine and scroll them to the left.
+void plex_move() {
         char y_idx = sin_idx;
-        for(char sy: 0..PLEX_COUNT-1) {
-            PLEX_YPOS[sy] = YSIN[y_idx];
+        for(char s: 0..PLEX_COUNT-1) {
+            // Assign sine value
+            PLEX_YPOS[s] = YSIN[y_idx];
             y_idx += 8;
+            if(PLEX_XPOS[s]==0) {
+                // Move sprite to far right
+                PLEX_XPOS[s] = 11*32;
+                // Restart scroll text of needed
+                if(*scroll_text_next==0)
+                    scroll_text_next = SCROLL_TEXT;
+                // Read next char from the scroll text
+                PLEX_PTR[s] = SPRITE_0+*scroll_text_next++;
+             }
+            //PLEX_XPOS[s]--;
         }
         sin_idx +=1;
 }
 
-volatile bool framedone = false;
+// Signal used between IRQ and main loop. Set to true when the IRQ is done showing the sprites.
+volatile bool frame_done = false;
 
 // Show sprites from the multiplexer, rescheduling the IRQ as many times as needed
 interrupt(kernel_min) void plex_irq() {
@@ -118,7 +145,8 @@ interrupt(kernel_min) void plex_irq() {
     } else {
         // Reset the raster IRQ to the top of the screen
         *RASTER = 0x28;
-        framedone = true;
+        // Signal that the IRQ is done showing sprites
+        frame_done = true;
     }
     // Acknowledge the IRQ
     *IRQ_STATUS = IRQ_RASTER;

@@ -398,7 +398,7 @@ public class KickC implements Callable<Void> {
          if(execute) {
             System.out.println("Executing " + prgPath);
             Path viceSymbolsPath = outputDir.resolve(fileBaseName + ".vs");
-            String executeCommand = "x64 " + "-moncommands " + viceSymbolsPath + " " + prgPath.toString();
+            String executeCommand = "x64sc " + "-moncommands " + viceSymbolsPath + " " + prgPath.toString();
             if(verbose) {
                System.out.println("Executing command:  " + executeCommand);
             }

@@ -49,7 +49,7 @@ void main() {
 
     // Set the x-positions & pointers
     for(char s=0, x=0;s<PLEX_COUNT;s++,x+=8) {
-        PLEX_PTR[s] = SPRITE_0+s;
+        PLEX_PTR[s] = SPRITE_0+' ';
         PLEX_XPOS[s] = { XMOVEMENT_HI[x], XMOVEMENT[x] };
     }
     // Enable & initialize sprites
@@ -102,27 +102,31 @@ char SCROLL_TEXT[] = "camelot presents a spanking new contribution to the always
 char* scroll_text_next = SCROLL_TEXT;
 
 // Y-sine index
-char sin_idx = 0;
+char y_sin_idx = 0;
+// X-movement index
+char x_movement_idx = 0;
 
 // Move the plex sprites in an Y-sine and scroll them to the left.
 void plex_move() {
-        char y_idx = sin_idx;
+        char y_idx = y_sin_idx;
+        char x_idx = x_movement_idx;
         for(char s: 0..PLEX_COUNT-1) {
             // Assign sine value
             PLEX_YPOS[s] = YSIN[y_idx];
             y_idx += 8;
-            if(PLEX_XPOS[s]==0) {
-                // Move sprite to far right
-                PLEX_XPOS[s] = 11*32;
+            PLEX_XPOS[s] = { XMOVEMENT_HI[x_idx], XMOVEMENT[x_idx] };
+            if(x_idx==0) {
+                // Page boundary crossed - new scroll char! Detection is a bit flaky!
                 // Restart scroll text of needed
                 if(*scroll_text_next==0)
                     scroll_text_next = SCROLL_TEXT;
                 // Read next char from the scroll text
                 PLEX_PTR[s] = SPRITE_0+*scroll_text_next++;
              }
-            //PLEX_XPOS[s]--;
+            x_idx +=8;
         }
-        sin_idx +=1;
+        y_sin_idx += 3;
+        x_movement_idx++;
 }
 
 // Signal used between IRQ and main loop. Set to true when the IRQ is done showing the sprites.

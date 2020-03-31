@@ -1,6 +1,6 @@
 // A simple usage of the flexible sprite multiplexer routine
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -21,18 +21,31 @@
   // Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000
-  // The address of the sprite pointers on the current screen (screen+$3f8).
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  // The MSB bit of the next sprite to use for showing
-  .label plex_sprite_msb = 6
-  // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  .label plex_free_next = 3
-  // The index the next sprite to use for showing (sprites are used round-robin)
-  .label plex_sprite_idx = 4
+  .label plex_show_idx = 6
+  .label plex_sprite_idx = 7
+  .label plex_sprite_msb = 8
+  .label plex_free_next = 9
+__bbegin:
+  // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
-  // Prepare for showing the sprites
-  .label plex_show_idx = 5
+  lda #0
+  sta.z plex_show_idx
+  // plex_sprite_idx=0
+  // The index the next sprite to use for showing (sprites are used round-robin)
+  sta.z plex_sprite_idx
+  // plex_sprite_msb=1
+  // The MSB bit of the next sprite to use for showing
+  lda #1
+  sta.z plex_sprite_msb
+  // plex_free_next = 0
+  // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
+  lda #0
+  sta.z plex_free_next
   // kickasm
+  jsr main
+  rts
 main: {
     // asm
     sei
@@ -48,7 +61,7 @@ loop: {
     // The current index into the y-sinus
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = $a
-    .label ss = 7
+    .label ss = 3
     lda #0
     sta.z sin_idx
   __b2:
@@ -89,12 +102,6 @@ loop: {
     bne __b6
     lda #0
     sta.z ss
-    lda #1
-    sta.z plex_sprite_msb
-    lda #0
-    sta.z plex_show_idx
-    sta.z plex_sprite_idx
-    sta.z plex_free_next
   // Show the sprites
   __b7:
     // *BORDERCOL = BLACK
@@ -147,9 +154,11 @@ plexShowSprite: {
     // plex_free_next+1
     ldx.z plex_free_next
     inx
+    // (plex_free_next+1)&7
+    txa
+    and #7
     // plex_free_next = (plex_free_next+1)&7
-    lda #7
-    sax.z plex_free_next
+    sta.z plex_free_next
     // PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
@@ -171,31 +180,33 @@ plexShowSprite: {
     // if(>PLEX_XPOS[xpos_idx]!=0)
     cmp #0
     bne __b1
-    // $ff^plex_sprite_msb
+    // 0xff^plex_sprite_msb
     lda #$ff
     eor.z plex_sprite_msb
-    // *SPRITES_XMSB &= ($ff^plex_sprite_msb)
+    // *SPRITES_XMSB &= (0xff^plex_sprite_msb)
     and SPRITES_XMSB
     sta SPRITES_XMSB
   __b2:
     // plex_sprite_idx+1
     ldx.z plex_sprite_idx
     inx
+    // (plex_sprite_idx+1)&7
+    txa
+    and #7
     // plex_sprite_idx = (plex_sprite_idx+1)&7
-    lda #7
-    sax.z plex_sprite_idx
+    sta.z plex_sprite_idx
     // plex_show_idx++;
     inc.z plex_show_idx
-    // plex_sprite_msb *=2
+    // plex_sprite_msb <<=1
     asl.z plex_sprite_msb
     // if(plex_sprite_msb==0)
     lda.z plex_sprite_msb
     cmp #0
-    bne __b5
+    bne __breturn
+    // plex_sprite_msb = 1
     lda #1
     sta.z plex_sprite_msb
-    rts
-  __b5:
+  __breturn:
     // }
     rts
   __b1:
@@ -240,7 +251,7 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     // s--;
     dex
-    // while((s!=$ff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
+    // while((s!=0xff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
     cpx #$ff
     beq __b4
     lda.z nxt_y
@@ -259,6 +270,15 @@ plexSort: {
     lda #PLEX_COUNT-2+1
     cmp.z m
     bne __b1
+    // plex_show_idx = 0
+    // Prepare for showing the sprites
+    lda #0
+    sta.z plex_show_idx
+    // plex_sprite_idx = 0
+    sta.z plex_sprite_idx
+    // plex_sprite_msb = 1
+    lda #1
+    sta.z plex_sprite_msb
     ldx #0
   plexFreePrepare1___b1:
     // PLEX_FREE_YPOS[s] = 0
@@ -268,13 +288,15 @@ plexSort: {
     inx
     cpx #8
     bne plexFreePrepare1___b1
+    // plex_free_next = 0
+    sta.z plex_free_next
     // }
     rts
 }
 // Initialize the program
 init: {
     // Set the x-positions & pointers
-    .label xp = 8
+    .label xp = 4
     // *D011 = VIC_DEN | VIC_RSEL | 3
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
@@ -340,7 +362,7 @@ plexInit: {
     // }
     rts
 }
-  // The x-positions of the multiplexer sprites ($000-$1ff)
+  // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0

@@ -256,7 +256,7 @@ init: {
     sta KERNEL_IRQ
     lda #>plex_irq
     sta KERNEL_IRQ+1
-    // *VIC_CONTROL &=0x7f
+    // *VIC_CONTROL &= 0x7f
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
@@ -314,7 +314,7 @@ plex_irq: {
     lda.z plex_show_idx
     cmp #PLEX_COUNT
     bcc __b1
-    // *RASTER = 0
+    // *RASTER = 0x0
     lda #0
     sta RASTER
     // framedone = true

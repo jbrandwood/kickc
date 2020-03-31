@@ -1,6 +1,6 @@
 // Same animation using a multiplexer
 .pc = $801 "Basic"
-:BasicUpstart(main)
+:BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
@@ -28,17 +28,30 @@
   // The number of BOBs to render
   .const NUM_BOBS = $10
   .label COS = SIN+$40
-  // The address of the sprite pointers on the current screen (screen+$3f8).
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  // The MSB bit of the next sprite to use for showing
-  .label plex_sprite_msb = 5
-  // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  .label plex_free_next = 2
-  // The index the next sprite to use for showing (sprites are used round-robin)
-  .label plex_sprite_idx = 3
+  .label plex_show_idx = $11
+  .label plex_sprite_idx = $12
+  .label plex_sprite_msb = $13
+  .label plex_free_next = $14
+__bbegin:
+  // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
-  // Prepare for showing the sprites
-  .label plex_show_idx = 4
+  lda #0
+  sta.z plex_show_idx
+  // plex_sprite_idx=0
+  // The index the next sprite to use for showing (sprites are used round-robin)
+  sta.z plex_sprite_idx
+  // plex_sprite_msb=1
+  // The MSB bit of the next sprite to use for showing
+  lda #1
+  sta.z plex_sprite_msb
+  // plex_free_next = 0
+  // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
+  lda #0
+  sta.z plex_free_next
+  jsr main
+  rts
 main: {
     // asm
     sei
@@ -97,19 +110,19 @@ keyboard_matrix_read: {
 }
 // The main loop
 loop: {
-    .label __1 = 7
-    .label __2 = 7
-    .label __5 = 7
-    .label __6 = 7
-    .label x = 7
-    .label y = 7
-    .label a = 3
-    .label r = 2
-    .label i = 4
+    .label __1 = 5
+    .label __2 = 5
+    .label __5 = 5
+    .label __6 = 5
+    .label x = 5
+    .label y = 5
+    .label a = $e
+    .label r = 7
+    .label i = 2
     // Render Rotated BOBs
-    .label angle = 6
-    .label plexFreeNextYpos1_return = $12
-    .label i1 = 9
+    .label angle = 4
+    .label plexFreeNextYpos1_return = $15
+    .label i1 = 3
     lda #0
     sta.z angle
   __b2:
@@ -212,12 +225,6 @@ loop: {
     bne __b6
     lda #0
     sta.z i1
-    lda #1
-    sta.z plex_sprite_msb
-    lda #0
-    sta.z plex_show_idx
-    sta.z plex_sprite_idx
-    sta.z plex_free_next
   // Show the sprites
   __b7:
     // *BORDERCOL = BLACK
@@ -258,7 +265,7 @@ loop: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $13
+    .label plex_sprite_idx2 = $16
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -277,13 +284,14 @@ plexShowSprite: {
     ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
     // plex_free_next+1
-    ldx.z plex_free_next
-    inx
+    tya
+    clc
+    adc #1
+    // (plex_free_next+1)&7
+    and #7
     // plex_free_next = (plex_free_next+1)&7
-    lda #7
-    sax.z plex_free_next
+    sta.z plex_free_next
     // PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
-    ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
     ldx.z plex_sprite_idx
@@ -303,31 +311,33 @@ plexShowSprite: {
     // if(>PLEX_XPOS[xpos_idx]!=0)
     cmp #0
     bne __b1
-    // $ff^plex_sprite_msb
+    // 0xff^plex_sprite_msb
     lda #$ff
     eor.z plex_sprite_msb
-    // *SPRITES_XMSB &= ($ff^plex_sprite_msb)
+    // *SPRITES_XMSB &= (0xff^plex_sprite_msb)
     and SPRITES_XMSB
     sta SPRITES_XMSB
   __b2:
     // plex_sprite_idx+1
     ldx.z plex_sprite_idx
     inx
+    // (plex_sprite_idx+1)&7
+    txa
+    and #7
     // plex_sprite_idx = (plex_sprite_idx+1)&7
-    lda #7
-    sax.z plex_sprite_idx
+    sta.z plex_sprite_idx
     // plex_show_idx++;
     inc.z plex_show_idx
-    // plex_sprite_msb *=2
+    // plex_sprite_msb <<=1
     asl.z plex_sprite_msb
     // if(plex_sprite_msb==0)
     lda.z plex_sprite_msb
     cmp #0
-    bne __b5
+    bne __breturn
+    // plex_sprite_msb = 1
     lda #1
     sta.z plex_sprite_msb
-    rts
-  __b5:
+  __breturn:
     // }
     rts
   __b1:
@@ -347,9 +357,9 @@ plexShowSprite: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $13
-    .label nxt_y = $14
-    .label m = $12
+    .label nxt_idx = $16
+    .label nxt_y = $17
+    .label m = $15
     lda #0
     sta.z m
   __b1:
@@ -372,7 +382,7 @@ plexSort: {
     sta PLEX_SORTED_IDX+1,x
     // s--;
     dex
-    // while((s!=$ff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
+    // while((s!=0xff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
     cpx #$ff
     beq __b4
     lda.z nxt_y
@@ -391,6 +401,15 @@ plexSort: {
     lda #PLEX_COUNT-2+1
     cmp.z m
     bne __b1
+    // plex_show_idx = 0
+    // Prepare for showing the sprites
+    lda #0
+    sta.z plex_show_idx
+    // plex_sprite_idx = 0
+    sta.z plex_sprite_idx
+    // plex_sprite_msb = 1
+    lda #1
+    sta.z plex_sprite_msb
     ldx #0
   plexFreePrepare1___b1:
     // PLEX_FREE_YPOS[s] = 0
@@ -400,13 +419,15 @@ plexSort: {
     inx
     cpx #8
     bne plexFreePrepare1___b1
+    // plex_free_next = 0
+    sta.z plex_free_next
     // }
     rts
 }
 // Fast multiply two signed bytes to a word result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
-    .label return = 7
+    .label return = 5
     // mulf8u_prepare((byte)a)
     jsr mulf8u_prepare
     // mulf8s_prepared(b)
@@ -417,11 +438,11 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned byte to a word result
 // The prepared number is set by calling mulf8s_prepare(byte a)
-// mulf8s_prepared(signed byte zp($14) b)
+// mulf8s_prepared(signed byte zp($17) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = 7
-    .label b = $14
+    .label m = 5
+    .label b = $17
     // mulf8u_prepared((byte) b)
     lda.z b
     jsr mulf8u_prepared
@@ -457,7 +478,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = 7
+    .label return = 5
     // *memB = b
     sta memB
     // asm
@@ -498,7 +519,7 @@ mulf8u_prepare: {
 }
 // Initialize the program
 init: {
-    .label i = 6
+    .label i = 4
     // *D011 = VIC_DEN | VIC_RSEL | 3
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
@@ -571,7 +592,7 @@ memset: {
     .const c = ' '
     .const num = $3e8
     .label end = str+num
-    .label dst = 7
+    .label dst = 5
     lda #<str
     sta.z dst
     lda #>str
@@ -601,17 +622,17 @@ memset: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 9
+    .label c = 7
     // Counter used for determining x%2==0
-    .label sqr1_hi = $a
+    .label sqr1_hi = 8
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $10
-    .label sqr1_lo = 7
+    .label sqr = $f
+    .label sqr1_lo = 5
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $e
-    .label sqr2_lo = $c
+    .label sqr2_hi = $c
+    .label sqr2_lo = $a
     //Start with g(0)=f(255)
-    .label dir = $12
+    .label dir = $e
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -751,7 +772,7 @@ plexInit: {
     // }
     rts
 }
-  // The x-positions of the multiplexer sprites ($000-$1ff)
+  // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
   PLEX_YPOS: .fill PLEX_COUNT, 0

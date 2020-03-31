@@ -1,6 +1,6 @@
 // A simple usage of the flexible sprite multiplexer routine
 import "c64"
-import "multiplexer-irq"
+import "multiplexer"
 // Location of screen & sprites
 char* SCREEN = 0x0400;
 
@@ -44,7 +44,7 @@ void init() {
     *IRQ_ENABLE = IRQ_RASTER;
     *IRQ_STATUS = IRQ_RASTER;
     *KERNEL_IRQ = &plex_irq;
-    *VIC_CONTROL &=0x7f;
+    *VIC_CONTROL &= 0x7f;
     *RASTER = 0x0;
     asm { cli }
 }
@@ -63,7 +63,7 @@ interrupt(kernel_min) void plex_irq() {
     if (plex_show_idx<PLEX_COUNT) {
         *RASTER = rasterY;
     } else {
-        *RASTER = 0;
+        *RASTER = 0x0;
         framedone = true;
     }
     *BORDERCOL = 0; 

@@ -109,13 +109,6 @@ loop: {
     // framedone = false
     lda #0
     sta.z framedone
-    // *VIC_CONTROL &=0x7f
-    lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = 0x0
-    lda #0
-    sta RASTER
     jmp __b2
 }
 // Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
@@ -263,6 +256,13 @@ init: {
     sta KERNEL_IRQ
     lda #>plex_irq
     sta KERNEL_IRQ+1
+    // *VIC_CONTROL &=0x7f
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+    // *RASTER = 0x0
+    lda #0
+    sta RASTER
     // asm
     cli
     // }
@@ -284,6 +284,8 @@ plexInit: {
 }
 plex_irq: {
     .label __4 = $d
+    // asm
+    sei
     // *BORDERCOL = WHITE
     lda #WHITE
     sta BORDERCOL
@@ -312,6 +314,9 @@ plex_irq: {
     lda.z plex_show_idx
     cmp #PLEX_COUNT
     bcc __b1
+    // *RASTER = 0
+    lda #0
+    sta RASTER
     // framedone = true
     lda #1
     sta.z framedone
@@ -319,6 +324,8 @@ plex_irq: {
     // *BORDERCOL = 0
     lda #0
     sta BORDERCOL
+    // asm
+    cli
     // }
     jmp $ea81
   __b1:

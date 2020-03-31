@@ -198,10 +198,10 @@ public class TestPrograms {
       assertError("constant-prepost", "Constant value contains a pre/post-modifier");
    }
 
-   //@Test
-   //public void testElefont() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/elefont/elefont-sprites", log());
-   //}
+   @Test
+   public void testSpriteScroller() throws IOException, URISyntaxException {
+      compileAndCompare("complex/spritescroller/spritescroller");
+   }
 
    @Test
    public void testGridBobs() throws IOException, URISyntaxException {

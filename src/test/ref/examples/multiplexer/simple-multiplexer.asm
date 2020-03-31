@@ -254,7 +254,7 @@ plexSort: {
     lda.z nxt_idx
     sta PLEX_SORTED_IDX,x
   __b2:
-    // for(byte m: 0..PLEX_COUNT-2)
+    // for(char m: 0..PLEX_COUNT-2)
     inc.z m
     lda #PLEX_COUNT-2+1
     cmp.z m
@@ -264,7 +264,7 @@ plexSort: {
     // PLEX_FREE_YPOS[s] = 0
     lda #0
     sta PLEX_FREE_YPOS,x
-    // for( byte s: 0..7)
+    // for( char s: 0..7)
     inx
     cpx #8
     bne plexFreePrepare1___b1
@@ -333,7 +333,7 @@ plexInit: {
     // PLEX_SORTED_IDX[i] = i
     txa
     sta PLEX_SORTED_IDX,x
-    // for(byte i: 0..PLEX_COUNT-1)
+    // for(char i: 0..PLEX_COUNT-1)
     inx
     cpx #PLEX_COUNT-1+1
     bne __b1

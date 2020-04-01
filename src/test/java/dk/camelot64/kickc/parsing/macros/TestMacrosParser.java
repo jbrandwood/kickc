@@ -28,6 +28,10 @@ public class TestMacrosParser {
       assertEquals("+(name:a,*(name:b,name:c));", parse("a+b*c;"));
       // Addition and a cast
       assertEquals("+(cast(char,name:b),num:1);", parse("(char)b+1;"));
+      // Two statements
+      assertEquals("+(name:a,name:c);*(name:d,num:2);", parse("a+c;d*2;"));
+      // Some whitespace
+      assertEquals("+(name:a,name:c);", parse(" \ta + \nc ;"));
    }
 
    /**
@@ -40,7 +44,9 @@ public class TestMacrosParser {
       // A simple used define
       assertEquals("+(*(name:axe,num:2),name:axe);", parse("#define A axe\nA*2+A;"));
       // A define using a special token class
-      assertEquals("+(name:axe,num:1);", parse("#define A axe\n#define B +\nA B 1;"));
+      assertEquals("+(name:a,num:1);", parse("#define A a\n#define B +\n\n#define C 1\nA B C;"));
+      // A define with two tokens
+      assertEquals("+(name:a,num:1);", parse("#define A a+\nA 1;"));
    }
 
    /**
@@ -66,14 +72,15 @@ public class TestMacrosParser {
          }
       });
 
-      /*
       Map<String, List<Token>> macros = new LinkedHashMap<>();
       final ArrayList<Token> finalTokens = new ArrayList<>();
       Token token = lexer.nextToken();
       while(token.getType() != Token.EOF) {
          if(token.getType() == MacrosLexer.DEFINE) {
-            // Define a new macro
-            final Token name = lexer.nextToken();
+            // Define a new macro - find name
+            Token name = lexer.nextToken();
+            while(name.getType()==MacrosLexer.WHITESPACE)
+               name = lexer.nextToken();
             // Find value by gobbling tokens until the line ends
             final ArrayList<Token> macroValue = new ArrayList<>();
             boolean macroRead = true;
@@ -102,11 +109,10 @@ public class TestMacrosParser {
          }
          token = lexer.nextToken();
       }
-      MacrosParser parser = new MacrosParser(new BufferedTokenStream(new ListTokenSource(finalTokens)));
-       */
+      MacrosParser parser = new MacrosParser(new CommonTokenStream(new ListTokenSource(finalTokens)));
 
-      CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-      MacrosParser parser = new MacrosParser(tokenStream);
+      //CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+      //MacrosParser parser = new MacrosParser(tokenStream);
 
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {

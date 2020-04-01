@@ -829,7 +829,10 @@ YSIN:
 
   .align $100
 XMOVEMENT:
-.lohifill $100, round(344-i*344/$100-86*sin(toRadians(360*i/$100)))
+//.lohifill $100, round(344-i*344/$100-86*sin(toRadians(360*i/$100)))
+    //.lohifill $100, round(344-i*344/$100-129*sin(toRadians(360*i/$100)))
+    .lohifill $100, round(344-i*344/$100 -86*sin(toRadians(360*i/$100)) -43*sin(toRadians(360*i/$80)))
+    //.lohifill $100, round(344-i*344/$100-86*sin(toRadians(360*i/$80)))
 
   // The scroll text
   SCROLL_TEXT: .text "camelot presents a spanking new contribution to the always hungry c64 scene. in this time of the corona virus we have chosen to direct our efforts towards the safe haven of coding, pixeling and composing for our beloved old breadbin.      "

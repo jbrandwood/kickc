@@ -132,8 +132,8 @@ public class MacrosLexer extends Lexer {
 		"\24\3\2\2\29;\t\3\2\2:9\3\2\2\2;<\3\2\2\2<:\3\2\2\2<=\3\2\2\2=\26\3\2"+
 		"\2\2>?\7%\2\2?@\7f\2\2@A\7g\2\2AB\7h\2\2BC\7k\2\2CD\7p\2\2DE\7g\2\2E\30"+
 		"\3\2\2\2FG\7^\2\2GH\7\f\2\2H\32\3\2\2\2IK\t\4\2\2JI\3\2\2\2KL\3\2\2\2"+
-		"LJ\3\2\2\2LM\3\2\2\2MN\3\2\2\2NO\b\16\2\2O\34\3\2\2\2\7\2\62\67<L\3\b"+
-		"\2\2";
+		"LJ\3\2\2\2LM\3\2\2\2MN\3\2\2\2NO\b\16\2\2O\34\3\2\2\2\7\2\62\67<L\3\2"+
+		"\3\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

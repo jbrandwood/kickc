@@ -7,12 +7,15 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
 
 public class TestMacrosParser {
+
+   public static final int CHANNEL_WHITESPACE = 1;
 
    /**
     * Test some parsing without macros
@@ -63,32 +66,48 @@ public class TestMacrosParser {
          }
       });
 
-      Map<String, Token> macros = new LinkedHashMap<>();
+      /*
+      Map<String, List<Token>> macros = new LinkedHashMap<>();
       final ArrayList<Token> finalTokens = new ArrayList<>();
       Token token = lexer.nextToken();
       while(token.getType() != Token.EOF) {
          if(token.getType() == MacrosLexer.DEFINE) {
             // Define a new macro
             final Token name = lexer.nextToken();
-            // TODO: Gobble tokens until newline
-            final Token value = lexer.nextToken();
-            //System.out.println("Defining " + name.getText() + " to " + value.getText());
-            macros.put(name.getText(), value);
+            // Find value by gobbling tokens until the line ends
+            final ArrayList<Token> macroValue = new ArrayList<>();
+            boolean macroRead = true;
+            while(macroRead) {
+               final Token value = lexer.nextToken();
+               final String text = value.getText();
+               if(value.getChannel()== CHANNEL_WHITESPACE && value.getText().contains("\n")) {
+                  macroRead = false;
+               } else {
+                  macroValue.add(value);
+               }
+            }
+            macros.put(name.getText(), macroValue);
          } else if(token.getType()==MacrosLexer.IDENTIFIER && macros.containsKey(token.getText())){
             // Unfold a macro
-            final CommonToken newToken = new CommonToken(token);
-            final Token unfold = macros.get(token.getText());
-            newToken.setText(unfold.getText());
-            newToken.setType(unfold.getType());
-            newToken.setChannel(unfold.getChannel());
-            finalTokens.add(newToken);
+            final List<Token> macroValue = macros.get(token.getText());
+            for(Token macroToken : macroValue) {
+               final CommonToken newToken = new CommonToken(token);
+               newToken.setText(macroToken.getText());
+               newToken.setType(macroToken.getType());
+               newToken.setChannel(macroToken.getChannel());
+               finalTokens.add(newToken);
+            }
          } else {
             finalTokens.add(token);
          }
          token = lexer.nextToken();
       }
-
       MacrosParser parser = new MacrosParser(new BufferedTokenStream(new ListTokenSource(finalTokens)));
+       */
+
+      CommonTokenStream tokenStream = new CommonTokenStream(lexer);
+      MacrosParser parser = new MacrosParser(tokenStream);
+
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {
          @Override

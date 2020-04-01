@@ -39,4 +39,4 @@ IDENTIFIER: [a-zA-Z_]+ ;
 NUMBER: [0-9]+ ;
 DEFINE: '#define' ;
 DEFINE_CONTINUE: '\\\n' ;
-WHITESPACE: [ \t\r\n]+ -> skip ;
+WHITESPACE: [ \t\r\n]+ -> channel(1) ; // skip; //

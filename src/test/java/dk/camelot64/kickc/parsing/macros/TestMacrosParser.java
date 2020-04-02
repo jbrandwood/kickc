@@ -1,21 +1,16 @@
 package dk.camelot64.kickc.parsing.macros;
 
+import dk.camelot64.kickc.macros.CMacroExpander;
 import dk.camelot64.kickc.model.CompileError;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.Pair;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
 
 public class TestMacrosParser {
 
-   public static final int CHANNEL_WHITESPACE = 1;
+   private int CHANNEL_WHITESPACE = 1;
 
    /**
     * Test some parsing without macros
@@ -72,48 +67,9 @@ public class TestMacrosParser {
          }
       });
 
-      Map<String, List<Token>> macros = new LinkedHashMap<>();
-      final ArrayList<Token> finalTokens = new ArrayList<>();
-      Token token = lexer.nextToken();
-      while(token.getType() != Token.EOF) {
-         if(token.getType() == MacrosLexer.DEFINE) {
-            // Define a new macro - find name
-            Token name = lexer.nextToken();
-            while(name.getType()==MacrosLexer.WHITESPACE)
-               name = lexer.nextToken();
-            // Find value by gobbling tokens until the line ends
-            final ArrayList<Token> macroValue = new ArrayList<>();
-            boolean macroRead = true;
-            while(macroRead) {
-               final Token value = lexer.nextToken();
-               final String text = value.getText();
-               if(value.getChannel()== CHANNEL_WHITESPACE && value.getText().contains("\n")) {
-                  macroRead = false;
-               } else {
-                  macroValue.add(value);
-               }
-            }
-            macros.put(name.getText(), macroValue);
-         } else if(token.getType()==MacrosLexer.IDENTIFIER && macros.containsKey(token.getText())){
-            // Unfold a macro
-            final List<Token> macroValue = macros.get(token.getText());
-            for(Token macroToken : macroValue) {
-               final CommonToken newToken = new CommonToken(token);
-               newToken.setText(macroToken.getText());
-               newToken.setType(macroToken.getType());
-               newToken.setChannel(macroToken.getChannel());
-               finalTokens.add(newToken);
-            }
-         } else {
-            finalTokens.add(token);
-         }
-         token = lexer.nextToken();
-      }
-      MacrosParser parser = new MacrosParser(new CommonTokenStream(new ListTokenSource(finalTokens)));
-
-      //CommonTokenStream tokenStream = new CommonTokenStream(lexer);
-      //MacrosParser parser = new MacrosParser(tokenStream);
-
+      final CMacroExpander cMacroExpander = new CMacroExpander(CHANNEL_WHITESPACE, MacrosLexer.WHITESPACE, MacrosLexer.DEFINE, MacrosLexer.IDENTIFIER);
+      final TokenSource expandedTokenSource = cMacroExpander.expandMacros(lexer);
+      MacrosParser parser = new MacrosParser(new CommonTokenStream(expandedTokenSource));
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {
          @Override

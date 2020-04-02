@@ -90,7 +90,6 @@ public class MacrosParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-	    CMacroExpander macros = new CMacroExpander();
 
 	public MacrosParser(TokenStream input) {
 		super(input);

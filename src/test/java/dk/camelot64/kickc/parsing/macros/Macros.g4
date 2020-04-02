@@ -8,11 +8,9 @@ grammar Macros;
 }
 
 @parser::members {
-    CMacroExpander macros = new CMacroExpander();
 }
 
 @lexer::members {
-    CMacroExpander macros = new CMacroExpander();
 }
 
 stmtSeq

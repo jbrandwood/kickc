@@ -85,7 +85,6 @@ public class MacrosLexer extends Lexer {
 	}
 
 
-	    CMacroExpander macros = new CMacroExpander();
 
 
 	public MacrosLexer(CharStream input) {

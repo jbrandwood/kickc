@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.macros;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.ListTokenSource;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenSource;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * C Macro expander.
@@ -31,20 +31,22 @@ public class CMacroExpander {
    }
 
    public TokenSource expandMacros(TokenSource inputTokenSource) {
+      List<Token> inputTokens = getTokenList(inputTokenSource);
+      final TokenIterator tokenIterator = new TokenIterator(inputTokens);
       Map<String, List<Token>> macros = new LinkedHashMap<>();
       final ArrayList<Token> expandedTokens = new ArrayList<>();
-      Token inputToken = inputTokenSource.nextToken();
-      while(inputToken.getType() != Token.EOF) {
+      while(tokenIterator.hasNext()) {
+         Token inputToken = tokenIterator.next();
          if(inputToken.getType() == tokenDefine) {
             // #define a new macro - find the name
-            Token macroName = inputTokenSource.nextToken();
+            Token macroName = tokenIterator.next();
             while(macroName.getType() == tokenWhitespace)
-               macroName = inputTokenSource.nextToken();
+               macroName = tokenIterator.next();
             // Find body by gobbling tokens until the line ends
             final ArrayList<Token> macroBody = new ArrayList<>();
             boolean macroRead = true;
             while(macroRead) {
-               final Token bodyToken = inputTokenSource.nextToken();
+               final Token bodyToken = tokenIterator.next();
                if(bodyToken.getChannel() == channelWhitespace && bodyToken.getText().contains("\n")) {
                   macroRead = false;
                } else {
@@ -67,9 +69,58 @@ public class CMacroExpander {
                expandedTokens.add(inputToken);
             }
          }
-         inputToken = inputTokenSource.nextToken();
       }
       return new ListTokenSource(expandedTokens);
    }
+
+   private List<Token> getTokenList(TokenSource inputTokenSource) {
+      List<Token> inputTokens = new ArrayList<>();
+      Token inputToken;
+      do {
+         inputToken = inputTokenSource.nextToken();
+         inputTokens.add(inputToken);
+      } while(inputToken.getType() != Token.EOF);
+
+      return inputTokens;
+   }
+
+   interface PeekingIterator<T> extends Iterator<T> {
+
+      /**
+       * Return the next element without progressing the cursot
+       * @return The current element. Null if after the end
+       */
+      T peek();
+
+   }
+
+   /** A token iterator. */
+   static class TokenIterator implements PeekingIterator<Token> {
+
+      ArrayList<Token> tokens;
+      int idx = 0;
+
+      public TokenIterator(Collection<Token> tokens) {
+         this.tokens = new ArrayList<>(tokens);
+      }
+
+      @Override
+      public Token peek() {
+         return tokens.get(idx);
+      }
+
+      @Override
+      public boolean hasNext() {
+         return idx<tokens.size();
+      }
+
+      @Override
+      public Token next() {
+         final Token token = tokens.get(idx);
+         idx++;
+         return token;
+      }
+   }
+
 
 }

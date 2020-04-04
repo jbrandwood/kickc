@@ -7,7 +7,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-
 public class TestMacrosParser {
 
    private int CHANNEL_WHITESPACE = 1;
@@ -16,7 +15,7 @@ public class TestMacrosParser {
     * Test some parsing without macros
     */
    @Test
-   public void testParserSimple() {
+   public void testParser() {
       // Simple addition
       assertEquals("+(name:a,num:7);", parse("a+7;"));
       // Addition & multiplication
@@ -30,10 +29,10 @@ public class TestMacrosParser {
    }
 
    /**
-    * Test parsing with simple defines
+    * Test some simple defines
     */
    @Test
-   public void testParserDefine() {
+   public void testSimpleDefine() {
       // A simple unused define
       assertEquals("+(name:b,num:1);*(name:c,num:2);", parse("#define A a\nb+1;\nc*2;\n"));
       // A simple used define
@@ -43,6 +42,46 @@ public class TestMacrosParser {
       // A define with two tokens
       assertEquals("+(name:a,num:1);", parse("#define A a+\nA 1;"));
    }
+
+   /**
+    * Test define where the body uses another define
+    */
+   @Test
+   public void testDefineSub() {
+      // A uses B
+      assertEquals("+(*(name:c,num:2),num:1);", parse("#define A B+1\n#define B c*2\nA;"));
+      // A uses B uses C
+      assertEquals("+(*(name:c,num:2),name:c);", parse("#define A B+C\n#define B C*2\n#define C c\nA;"));
+   }
+
+   /**
+    * Test define with recursion
+    */
+   @Test
+   public void testDefineRecursion() {
+      // A uses A
+      assertEquals("+(name:A,num:1);", parse("#define A A+1\nA;"));
+      // A uses B uses A
+      assertEquals("+(*(name:A,num:2),num:1);+(name:B,*(num:1,num:2));", parse("#define A B+1\n#define B A*2\nA;B;"));
+   }
+
+   /**
+    * Test define with multi-line body
+    */
+   @Test
+   public void testDefineMultiline() {
+      // A simple unused define
+      assertEquals("name:a;+(name:b,num:1);", parse("#define A a;\\\nb\nA+1;"));
+   }
+
+   /**
+    * Test define with parameters
+    */
+   //@Test
+   //public void testDefineParams() {
+   //   // A simple unused define
+   //   assertEquals("+(name:b,num:1);*(name:c,num:2);", parse("#define A(a) a+1\nA(b)"));
+   //}
 
    /**
     * Parse a program with macros and return the resulting syntax tree
@@ -67,7 +106,7 @@ public class TestMacrosParser {
          }
       });
 
-      final CMacroExpander cMacroExpander = new CMacroExpander(CHANNEL_WHITESPACE, MacrosLexer.WHITESPACE, MacrosLexer.DEFINE, MacrosLexer.IDENTIFIER);
+      final CMacroExpander cMacroExpander = new CMacroExpander(CHANNEL_WHITESPACE, MacrosLexer.WHITESPACE, MacrosLexer.DEFINE, MacrosLexer.IDENTIFIER, MacrosLexer.PAR_BEGIN, MacrosLexer.PAR_END, MacrosLexer.COMMA, MacrosLexer.DEFINE_CONTINUE);
       final TokenSource expandedTokenSource = cMacroExpander.expandMacros(lexer);
       MacrosParser parser = new MacrosParser(new CommonTokenStream(expandedTokenSource));
       parser.setBuildParseTree(true);

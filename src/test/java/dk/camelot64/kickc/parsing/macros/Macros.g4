@@ -22,16 +22,20 @@ stmt
     ;
 
 expr
-    :   '(' SIMPLETYPE ')' expr #exprCast
+    :   PAR_BEGIN SIMPLETYPE PAR_END expr #exprCast
     |   IDENTIFIER #exprName
     |   NUMBER #exprNumber
-    |   '(' expr ')' #exprPar
+    |   PAR_BEGIN expr PAR_END #exprPar
     |   expr '*' expr #exprBinary
     |   expr '/' expr #exprBinary
     |   expr '+' expr #exprBinary
     |   expr '-' expr #exprBinary
+    |   expr COMMA expr #exprBinary
     ;
 
+PAR_BEGIN: '(' ;
+PAR_END: ')' ;
+COMMA : ',' ;
 SIMPLETYPE: 'char' | 'int' ;
 IDENTIFIER: [a-zA-Z_]+ ;
 NUMBER: [0-9]+ ;

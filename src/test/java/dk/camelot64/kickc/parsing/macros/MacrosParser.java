@@ -19,8 +19,9 @@ public class MacrosParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, SIMPLETYPE=8, 
-		IDENTIFIER=9, NUMBER=10, DEFINE=11, DEFINE_CONTINUE=12, WHITESPACE=13;
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, PAR_BEGIN=6, PAR_END=7, COMMA=8, 
+		SIMPLETYPE=9, IDENTIFIER=10, NUMBER=11, DEFINE=12, DEFINE_CONTINUE=13, 
+		WHITESPACE=14;
 	public static final int
 		RULE_stmtSeq = 0, RULE_stmt = 1, RULE_expr = 2;
 	private static String[] makeRuleNames() {
@@ -32,15 +33,15 @@ public class MacrosParser extends Parser {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "';'", "'('", "')'", "'*'", "'/'", "'+'", "'-'", null, null, null, 
-			"'#define'", "'\\\n'"
+			null, "';'", "'*'", "'/'", "'+'", "'-'", "'('", "')'", "','", null, null, 
+			null, "'#define'", "'\\\n'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, null, null, null, null, null, null, null, "SIMPLETYPE", "IDENTIFIER", 
-			"NUMBER", "DEFINE", "DEFINE_CONTINUE", "WHITESPACE"
+			null, null, null, null, null, null, "PAR_BEGIN", "PAR_END", "COMMA", 
+			"SIMPLETYPE", "IDENTIFIER", "NUMBER", "DEFINE", "DEFINE_CONTINUE", "WHITESPACE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -132,7 +133,7 @@ public class MacrosParser extends Parser {
 			setState(9);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__1) | (1L << IDENTIFIER) | (1L << NUMBER))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PAR_BEGIN) | (1L << IDENTIFIER) | (1L << NUMBER))) != 0)) {
 				{
 				{
 				setState(6);
@@ -223,7 +224,9 @@ public class MacrosParser extends Parser {
 		}
 	}
 	public static class ExprCastContext extends ExprContext {
+		public TerminalNode PAR_BEGIN() { return getToken(MacrosParser.PAR_BEGIN, 0); }
 		public TerminalNode SIMPLETYPE() { return getToken(MacrosParser.SIMPLETYPE, 0); }
+		public TerminalNode PAR_END() { return getToken(MacrosParser.PAR_END, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -249,6 +252,7 @@ public class MacrosParser extends Parser {
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
 		}
+		public TerminalNode COMMA() { return getToken(MacrosParser.COMMA, 0); }
 		public ExprBinaryContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -265,9 +269,11 @@ public class MacrosParser extends Parser {
 		}
 	}
 	public static class ExprParContext extends ExprContext {
+		public TerminalNode PAR_BEGIN() { return getToken(MacrosParser.PAR_BEGIN, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
+		public TerminalNode PAR_END() { return getToken(MacrosParser.PAR_END, 0); }
 		public ExprParContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -343,13 +349,13 @@ public class MacrosParser extends Parser {
 				_prevctx = _localctx;
 
 				setState(16);
-				match(T__1);
+				match(PAR_BEGIN);
 				setState(17);
 				match(SIMPLETYPE);
 				setState(18);
-				match(T__2);
+				match(PAR_END);
 				setState(19);
-				expr(8);
+				expr(9);
 				}
 				break;
 			case 2:
@@ -376,16 +382,16 @@ public class MacrosParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(22);
-				match(T__1);
+				match(PAR_BEGIN);
 				setState(23);
 				expr(0);
 				setState(24);
-				match(T__2);
+				match(PAR_END);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(42);
+			setState(45);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -393,7 +399,7 @@ public class MacrosParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(40);
+					setState(43);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 					case 1:
@@ -401,11 +407,11 @@ public class MacrosParser extends Parser {
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(28);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(29);
-						match(T__3);
+						match(T__1);
 						setState(30);
-						expr(5);
+						expr(6);
 						}
 						break;
 					case 2:
@@ -413,11 +419,11 @@ public class MacrosParser extends Parser {
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(31);
-						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(32);
-						match(T__4);
+						match(T__2);
 						setState(33);
-						expr(4);
+						expr(5);
 						}
 						break;
 					case 3:
@@ -425,11 +431,11 @@ public class MacrosParser extends Parser {
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(34);
-						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(35);
-						match(T__5);
+						match(T__3);
 						setState(36);
-						expr(3);
+						expr(4);
 						}
 						break;
 					case 4:
@@ -437,17 +443,29 @@ public class MacrosParser extends Parser {
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(37);
-						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 						setState(38);
-						match(T__6);
+						match(T__4);
 						setState(39);
+						expr(3);
+						}
+						break;
+					case 5:
+						{
+						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expr);
+						setState(40);
+						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+						setState(41);
+						match(COMMA);
+						setState(42);
 						expr(2);
 						}
 						break;
 					}
 					} 
 				}
-				setState(44);
+				setState(47);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			}
@@ -474,31 +492,34 @@ public class MacrosParser extends Parser {
 	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 4);
+			return precpred(_ctx, 5);
 		case 1:
-			return precpred(_ctx, 3);
+			return precpred(_ctx, 4);
 		case 2:
-			return precpred(_ctx, 2);
+			return precpred(_ctx, 3);
 		case 3:
+			return precpred(_ctx, 2);
+		case 4:
 			return precpred(_ctx, 1);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\17\60\4\2\t\2\4\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20\63\4\2\t\2\4\3"+
 		"\t\3\4\4\t\4\3\2\7\2\n\n\2\f\2\16\2\r\13\2\3\3\3\3\3\3\3\4\3\4\3\4\3\4"+
 		"\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\35\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\4\3\4\7\4+\n\4\f\4\16\4.\13\4\3\4\2\3\6\5\2\4\6\2\2\2\64"+
-		"\2\13\3\2\2\2\4\16\3\2\2\2\6\34\3\2\2\2\b\n\5\4\3\2\t\b\3\2\2\2\n\r\3"+
-		"\2\2\2\13\t\3\2\2\2\13\f\3\2\2\2\f\3\3\2\2\2\r\13\3\2\2\2\16\17\5\6\4"+
-		"\2\17\20\7\3\2\2\20\5\3\2\2\2\21\22\b\4\1\2\22\23\7\4\2\2\23\24\7\n\2"+
-		"\2\24\25\7\5\2\2\25\35\5\6\4\n\26\35\7\13\2\2\27\35\7\f\2\2\30\31\7\4"+
-		"\2\2\31\32\5\6\4\2\32\33\7\5\2\2\33\35\3\2\2\2\34\21\3\2\2\2\34\26\3\2"+
-		"\2\2\34\27\3\2\2\2\34\30\3\2\2\2\35,\3\2\2\2\36\37\f\6\2\2\37 \7\6\2\2"+
-		" +\5\6\4\7!\"\f\5\2\2\"#\7\7\2\2#+\5\6\4\6$%\f\4\2\2%&\7\b\2\2&+\5\6\4"+
-		"\5\'(\f\3\2\2()\7\t\2\2)+\5\6\4\4*\36\3\2\2\2*!\3\2\2\2*$\3\2\2\2*\'\3"+
-		"\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\7\3\2\2\2.,\3\2\2\2\6\13\34*,";
+		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4.\n\4\f\4\16\4\61\13\4\3\4\2\3\6\5\2"+
+		"\4\6\2\2\28\2\13\3\2\2\2\4\16\3\2\2\2\6\34\3\2\2\2\b\n\5\4\3\2\t\b\3\2"+
+		"\2\2\n\r\3\2\2\2\13\t\3\2\2\2\13\f\3\2\2\2\f\3\3\2\2\2\r\13\3\2\2\2\16"+
+		"\17\5\6\4\2\17\20\7\3\2\2\20\5\3\2\2\2\21\22\b\4\1\2\22\23\7\b\2\2\23"+
+		"\24\7\13\2\2\24\25\7\t\2\2\25\35\5\6\4\13\26\35\7\f\2\2\27\35\7\r\2\2"+
+		"\30\31\7\b\2\2\31\32\5\6\4\2\32\33\7\t\2\2\33\35\3\2\2\2\34\21\3\2\2\2"+
+		"\34\26\3\2\2\2\34\27\3\2\2\2\34\30\3\2\2\2\35/\3\2\2\2\36\37\f\7\2\2\37"+
+		" \7\4\2\2 .\5\6\4\b!\"\f\6\2\2\"#\7\5\2\2#.\5\6\4\7$%\f\5\2\2%&\7\6\2"+
+		"\2&.\5\6\4\6\'(\f\4\2\2()\7\7\2\2).\5\6\4\5*+\f\3\2\2+,\7\n\2\2,.\5\6"+
+		"\4\4-\36\3\2\2\2-!\3\2\2\2-$\3\2\2\2-\'\3\2\2\2-*\3\2\2\2.\61\3\2\2\2"+
+		"/-\3\2\2\2/\60\3\2\2\2\60\7\3\2\2\2\61/\3\2\2\2\6\13\34-/";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

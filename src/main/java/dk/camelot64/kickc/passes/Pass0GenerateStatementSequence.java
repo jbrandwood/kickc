@@ -2359,11 +2359,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       throw new CompileError("Error! Unhandled symbol " + symbol.toString(program));
    }
 
-   /** The hidden lexer channel containing whitespace. */
-   private static final int CHANNEL_WHITESPACE = 1;
-   /** The hidden lexer channel containing comments. */
-   private static final int CHANNEL_COMMENTS = 2;
-
    /**
     * Find all comments preceding the passed context.
     * Group the comments into blocks each time an empty line (double newline) is encountered
@@ -2378,7 +2373,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<Token> hiddenTokens = tokenStream.getHiddenTokensToLeft(ctx.start.getTokenIndex());
       if(hiddenTokens != null) {
          for(Token hiddenToken : hiddenTokens) {
-            if(hiddenToken.getChannel() == CHANNEL_WHITESPACE) {
+            if(hiddenToken.getChannel() == CParser.CHANNEL_WHITESPACE) {
                String text = hiddenToken.getText();
                long newlineCount = text.chars().filter(ch -> ch == '\n').count();
                if(newlineCount > 1 && comments.size() > 0) {
@@ -2386,7 +2381,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                   commentBlocks.add(comments);
                   comments = new ArrayList<>();
                }
-            } else if(hiddenToken.getChannel() == CHANNEL_COMMENTS) {
+            } else if(hiddenToken.getChannel() == CParser.CHANNEL_COMMENTS) {
                boolean isBlock = false;
                String text = hiddenToken.getText();
                if(text.startsWith("//")) {

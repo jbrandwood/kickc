@@ -23,6 +23,11 @@ import java.util.Map;
 
 public class CParser {
 
+   /** The hidden lexer channel containing whitespace. */
+   public static final int CHANNEL_WHITESPACE = 1;
+   /** The hidden lexer channel containing comments. */
+   public static final int CHANNEL_COMMENTS = 2;
+
    /** The Program. */
    private Program program;
 

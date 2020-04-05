@@ -118,10 +118,13 @@ SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'lon
 BOOLEAN : 'true' | 'false';
 KICKASM_BODY: '{{' .*? '}}';
 
-
 // Strings and chars - with special handling of imports
 STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(importEnter) { importEnter=false; cParser.loadCFile(getText()); } } ;
 CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
+
+// Macros
+DEFINE: '#define' ;
+DEFINE_CONTINUE: '\\\n' ;
 
 // Numbers
 NUMBER : NUMFLOAT | NUMINT ;

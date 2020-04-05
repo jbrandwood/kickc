@@ -20,8 +20,8 @@ public class MacrosParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, PAR_BEGIN=6, PAR_END=7, COMMA=8, 
-		SIMPLETYPE=9, IDENTIFIER=10, NUMBER=11, DEFINE=12, DEFINE_CONTINUE=13, 
-		WHITESPACE=14;
+		SIMPLETYPE=9, IDENTIFIER=10, NUMBER=11, DEFINE=12, UNDEF=13, DEFINE_CONTINUE=14, 
+		WHITESPACE=15;
 	public static final int
 		RULE_stmtSeq = 0, RULE_stmt = 1, RULE_expr = 2;
 	private static String[] makeRuleNames() {
@@ -34,14 +34,15 @@ public class MacrosParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "';'", "'*'", "'/'", "'+'", "'-'", "'('", "')'", "','", null, null, 
-			null, "'#define'", "'\\\n'"
+			null, "'#define'", "'#undef'", "'\\\n'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, null, null, null, null, null, "PAR_BEGIN", "PAR_END", "COMMA", 
-			"SIMPLETYPE", "IDENTIFIER", "NUMBER", "DEFINE", "DEFINE_CONTINUE", "WHITESPACE"
+			"SIMPLETYPE", "IDENTIFIER", "NUMBER", "DEFINE", "UNDEF", "DEFINE_CONTINUE", 
+			"WHITESPACE"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -506,7 +507,7 @@ public class MacrosParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\20\63\4\2\t\2\4\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\21\63\4\2\t\2\4\3"+
 		"\t\3\4\4\t\4\3\2\7\2\n\n\2\f\2\16\2\r\13\2\3\3\3\3\3\3\3\4\3\4\3\4\3\4"+
 		"\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\35\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
 		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\7\4.\n\4\f\4\16\4\61\13\4\3\4\2\3\6\5\2"+

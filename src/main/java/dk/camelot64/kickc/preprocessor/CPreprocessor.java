@@ -11,7 +11,7 @@ import java.util.*;
  * <p>
  * The preprocessor takes a token source as input and produces macro expanded tokens as output
  */
-public class CTokenSourcePreprocessor implements TokenSource {
+public class CPreprocessor implements TokenSource {
 
    /** The token source containing the input */
    private CTokenSource input;
@@ -22,24 +22,10 @@ public class CTokenSourcePreprocessor implements TokenSource {
     */
    private Map<String, List<Token>> defines;
 
-   /** The channel containing whitespace. */
-   private final int channelWhitespace;
-   /** The token type for tokens containing whitespace. */
-   private final int tokenWhitespace;
-   /** The token type for #define. */
-   private final int tokenDefine;
-   /** The token type for identifiers. */
-   private final int tokenIdentifier;
-   /** The token type for define multi-line. */
-   private final int tokenDefineMultiline;
-   /** The token type for parenthesis begin. */
-   private final int tokenParBegin;
-   /** The token type for parenthesis end. */
-   private final int tokenParEnd;
-   /** The token type for comma. */
-   private final int tokenComma;
+   /** The token types. */
+   private CPreprocessorTokens tokenTypes;
 
-   public CTokenSourcePreprocessor(TokenSource input, int channelWhitespace, int tokenWhitespace, int tokenDefine, int tokenIdentifier, int tokenParBegin, int tokenParEnd, int tokenComma, int tokenDefineMultiline) {
+   public CPreprocessor(TokenSource input, CPreprocessorTokens tokenTypes) {
       if(input instanceof CTokenSource) {
          // If possible use the input directly instead of wrapping it
          this.input = (CTokenSource) input;
@@ -47,14 +33,7 @@ public class CTokenSourcePreprocessor implements TokenSource {
          this.input = new CTokenSource(input);
       }
       this.defines = new LinkedHashMap<>();
-      this.channelWhitespace = channelWhitespace;
-      this.tokenWhitespace = tokenWhitespace;
-      this.tokenDefine = tokenDefine;
-      this.tokenIdentifier = tokenIdentifier;
-      this.tokenParBegin = tokenParBegin;
-      this.tokenParEnd = tokenParEnd;
-      this.tokenComma = tokenComma;
-      this.tokenDefineMultiline = tokenDefineMultiline;
+      this.tokenTypes = tokenTypes;
    }
 
    @Override
@@ -99,7 +78,7 @@ public class CTokenSourcePreprocessor implements TokenSource {
 
    /**
     * Perform any preprocessing needed on a token. If preprocessing is not needed nothing is done.
-    *
+    * <p>
     * This method may gobble more tokens from the source (for instance if a macro is being defined) and it may push tokens at the front of the source (if a macro is being expanded).
     *
     * @param inputToken The token to process
@@ -107,74 +86,105 @@ public class CTokenSourcePreprocessor implements TokenSource {
     * @return true if the input token was preprocessed (and should not be added to the output). False if the token was not a preprocessor token
     */
    private boolean preprocess(Token inputToken, CTokenSource cTokenSource) {
-      boolean wasPreprocessed;
-      if(inputToken.getType() == tokenDefine) {
-         // #define a new macro - find the name
-         skipWhitespace(cTokenSource);
-         String macroName = nextToken(cTokenSource, tokenIdentifier).getText();
-         // Examine whether the macro has parameters
-         skipWhitespace(cTokenSource);
-         if(cTokenSource.peekToken().getType() == tokenParBegin) {
-            // Macro has parameters - find parameter name list
-            throw new CompileError("Macros with parameters not supported!");
-         }
-         // Find body by gobbling tokens until the line ends
-         final ArrayList<Token> macroBody = new ArrayList<>();
-         boolean macroRead = true;
-         while(macroRead) {
-            final Token bodyToken = cTokenSource.nextToken();
-            if(bodyToken.getType() == tokenDefineMultiline) {
-               // Skip the multi-line token, add a newline token and continue reading body on the next line
-               final CommonToken newlineToken = new CommonToken(bodyToken);
-               newlineToken.setType(tokenWhitespace);
-               newlineToken.setChannel(channelWhitespace);
-               newlineToken.setText("\n");
-               macroBody.add(newlineToken);
-               continue;
-            }
-            if(bodyToken.getChannel() == channelWhitespace && bodyToken.getText().contains("\n")) {
-               macroRead = false;
-            } else {
-               macroBody.add(bodyToken);
-            }
-         }
-         defines.put(macroName, macroBody);
+      if(inputToken.getType() == tokenTypes.define) {
+         defineMacro(cTokenSource);
          return true;
-      } else {
-         if(inputToken.getType() == tokenIdentifier) {
-            final String macroName = inputToken.getText();
-            List<Token> macroBody = defines.get(macroName);
-            if(macroBody != null) {
-               // Check for macro recursion
-               if(inputToken instanceof ExpansionToken) {
-                  if(((ExpansionToken) inputToken).getMacroNames().contains(macroName)) {
-                     // Detected macro recursion in the expansion - add directly to output and do not perform expansion!
-                     macroBody = null;
-                  }
-               }
-            }
-            if(macroBody != null) {
-               // Macro expansion is needed
-               List<Token> expandedBody = new ArrayList<>();
-               for(Token bodyToken : macroBody) {
-                  final CommonToken expandedToken = new CommonToken(inputToken);
-                  expandedToken.setText(bodyToken.getText());
-                  expandedToken.setType(bodyToken.getType());
-                  expandedToken.setChannel(bodyToken.getChannel());
-                  Set<String> macroNames = new HashSet<>();
-                  if(inputToken instanceof ExpansionToken) {
-                     // Transfer macro names to the new expansion
-                     macroNames = ((ExpansionToken) inputToken).getMacroNames();
-                  }
-                  macroNames.add(macroName);
-                  expandedBody.add(new ExpansionToken(expandedToken, macroNames));
-               }
-               cTokenSource.addSource(new ListTokenSource(expandedBody));
-               return true;
+      } else if(inputToken.getType() == tokenTypes.undef) {
+         undefMacro(cTokenSource);
+         return true;
+      } else if(inputToken.getType() == tokenTypes.identifier) {
+         final boolean expanded = expandMacro(inputToken, cTokenSource);
+         if(expanded) return true;
+      }
+      return false;
+   }
+
+   /**
+    * Encountered an IDENTIFIER. Attempt to expand as a macro.
+    * @param inputToken The IDENTIFIER token
+    * @param cTokenSource The token source usable for getting more tokens (eg. parameter values) - and for pushing the expanded body to the front for further processing.
+    * @return true if a macro was expanded. False if not.
+    */
+   private boolean expandMacro(Token inputToken, CTokenSource cTokenSource) {
+      final String macroName = inputToken.getText();
+      List<Token> macroBody = defines.get(macroName);
+      if(macroBody != null) {
+         // Check for macro recursion
+         if(inputToken instanceof ExpansionToken) {
+            if(((ExpansionToken) inputToken).getMacroNames().contains(macroName)) {
+               // Detected macro recursion in the expansion - add directly to output and do not perform expansion!
+               macroBody = null;
             }
          }
       }
+      if(macroBody != null) {
+         // Macro expansion is needed
+         List<Token> expandedBody = new ArrayList<>();
+         for(Token bodyToken : macroBody) {
+            final CommonToken expandedToken = new CommonToken(inputToken);
+            expandedToken.setText(bodyToken.getText());
+            expandedToken.setType(bodyToken.getType());
+            expandedToken.setChannel(bodyToken.getChannel());
+            Set<String> macroNames = new HashSet<>();
+            if(inputToken instanceof ExpansionToken) {
+               // Transfer macro names to the new expansion
+               macroNames = ((ExpansionToken) inputToken).getMacroNames();
+            }
+            macroNames.add(macroName);
+            expandedBody.add(new ExpansionToken(expandedToken, macroNames));
+         }
+         cTokenSource.addSource(new ListTokenSource(expandedBody));
+         return true;
+      }
       return false;
+   }
+
+   /**
+    * Undefine a macro.
+    * @param cTokenSource The token source used to get the name
+    */
+   private void undefMacro(CTokenSource cTokenSource) {
+      // #define a new macro - find the name
+      skipWhitespace(cTokenSource);
+      String macroName = nextToken(cTokenSource, tokenTypes.identifier).getText();
+      this.defines.remove(macroName);
+   }
+
+   /**
+    * Define a macro.
+    * @param cTokenSource The token source used to get the macro name and body.
+    */
+   private void defineMacro(CTokenSource cTokenSource) {
+      // #define a new macro - find the name
+      skipWhitespace(cTokenSource);
+      String macroName = nextToken(cTokenSource, tokenTypes.identifier).getText();
+      // Examine whether the macro has parameters
+      skipWhitespace(cTokenSource);
+      if(cTokenSource.peekToken().getType() == tokenTypes.parBegin) {
+         // Macro has parameters - find parameter name list
+         throw new CompileError("Macros with parameters not supported!");
+      }
+      // Find body by gobbling tokens until the line ends
+      final ArrayList<Token> macroBody = new ArrayList<>();
+      boolean macroRead = true;
+      while(macroRead) {
+         final Token bodyToken = cTokenSource.nextToken();
+         if(bodyToken.getType() == tokenTypes.defineMultiline) {
+            // Skip the multi-line token, add a newline token and continue reading body on the next line
+            final CommonToken newlineToken = new CommonToken(bodyToken);
+            newlineToken.setType(tokenTypes.whitespace);
+            newlineToken.setChannel(tokenTypes.channelWhitespace);
+            newlineToken.setText("\n");
+            macroBody.add(newlineToken);
+            continue;
+         }
+         if(bodyToken.getChannel() == tokenTypes.channelWhitespace && bodyToken.getText().contains("\n")) {
+            macroRead = false;
+         } else {
+            macroBody.add(bodyToken);
+         }
+      }
+      defines.put(macroName, macroBody);
    }
 
 
@@ -198,7 +208,7 @@ public class CTokenSourcePreprocessor implements TokenSource {
     * @param cTokenSource The token iterator
     */
    private void skipWhitespace(CTokenSource cTokenSource) {
-      while(cTokenSource.peekToken().getChannel() == channelWhitespace)
+      while(cTokenSource.peekToken().getChannel() == tokenTypes.channelWhitespace)
          cTokenSource.nextToken();
    }
 

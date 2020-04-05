@@ -1,9 +1,10 @@
 package dk.camelot64.kickc.parser;
 
 import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.kickc.preprocessor.CTokenSourcePreprocessor;
+import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.preprocessor.CPreprocessorTokens;
 import org.antlr.v4.runtime.*;
 
 import java.io.File;
@@ -64,7 +65,8 @@ public class CParser {
       this.program = program;
       this.cFiles = new LinkedHashMap<>();
       this.cTokenSource = new CTokenSource();
-      final CTokenSourcePreprocessor preprocessor = new CTokenSourcePreprocessor(cTokenSource, CHANNEL_WHITESPACE, KickCLexer.WS, KickCLexer.DEFINE, KickCLexer.NAME, KickCLexer.PAR_BEGIN, KickCLexer.PAR_END, KickCLexer.COMMA, KickCLexer.DEFINE_CONTINUE);
+      final CPreprocessorTokens preprocessorTokens = new CPreprocessorTokens(CHANNEL_WHITESPACE, KickCLexer.WS, KickCLexer.DEFINE, KickCLexer.NAME, KickCLexer.DEFINE_CONTINUE, KickCLexer.UNDEF, KickCLexer.PAR_BEGIN, KickCLexer.PAR_END, KickCLexer.COMMA);
+      final CPreprocessor preprocessor = new CPreprocessor(cTokenSource, preprocessorTokens);
       this.tokenStream = new CommonTokenStream(preprocessor);
       this.parser = new KickCParser(tokenStream, this);
       this.typedefs = new ArrayList<>();

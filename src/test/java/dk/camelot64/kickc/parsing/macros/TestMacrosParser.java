@@ -1,7 +1,8 @@
 package dk.camelot64.kickc.parsing.macros;
 
-import dk.camelot64.kickc.preprocessor.CTokenSourcePreprocessor;
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.preprocessor.CPreprocessor;
+import dk.camelot64.kickc.preprocessor.CPreprocessorTokens;
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
 
@@ -74,6 +75,16 @@ public class TestMacrosParser {
       assertEquals("name:a;+(name:b,num:1);", parse("#define A a;\\\nb\nA+1;"));
    }
 
+
+   /**
+    * Test define and undef
+    */
+   @Test
+   public void testUndef() {
+      // A simple unused define
+      assertEquals("name:a;name:A;", parse("#define A a\nA;\n#undef A\nA;"));
+   }
+
    /**
     * Test define with parameters
     */
@@ -106,7 +117,8 @@ public class TestMacrosParser {
          }
       });
 
-      final CTokenSourcePreprocessor expandedTokenSource = new CTokenSourcePreprocessor(lexer, CHANNEL_WHITESPACE, MacrosLexer.WHITESPACE, MacrosLexer.DEFINE, MacrosLexer.IDENTIFIER, MacrosLexer.PAR_BEGIN, MacrosLexer.PAR_END, MacrosLexer.COMMA, MacrosLexer.DEFINE_CONTINUE);
+      final CPreprocessorTokens preprocessorTokens = new CPreprocessorTokens(CHANNEL_WHITESPACE, MacrosLexer.WHITESPACE, MacrosLexer.DEFINE, MacrosLexer.IDENTIFIER, MacrosLexer.DEFINE_CONTINUE, MacrosLexer.UNDEF, MacrosLexer.PAR_BEGIN, MacrosLexer.PAR_END, MacrosLexer.COMMA);
+      final CPreprocessor expandedTokenSource = new CPreprocessor(lexer, preprocessorTokens);
       MacrosParser parser = new MacrosParser(new CommonTokenStream(expandedTokenSource));
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {

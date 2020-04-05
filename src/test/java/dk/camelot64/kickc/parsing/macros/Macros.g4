@@ -40,5 +40,6 @@ SIMPLETYPE: 'char' | 'int' ;
 IDENTIFIER: [a-zA-Z_]+ ;
 NUMBER: [0-9]+ ;
 DEFINE: '#define' ;
+UNDEF: '#undef' ;
 DEFINE_CONTINUE: '\\\n' ;
 WHITESPACE: [ \t\r\n]+ -> channel(1) ; // Send whitespace to the hidden WS channel

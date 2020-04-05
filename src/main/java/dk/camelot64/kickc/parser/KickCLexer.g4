@@ -125,6 +125,7 @@ CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 // Macros
 DEFINE: '#define' ;
 DEFINE_CONTINUE: '\\\n' ;
+UNDEF: '#undef' ;
 
 // Numbers
 NUMBER : NUMFLOAT | NUMINT ;

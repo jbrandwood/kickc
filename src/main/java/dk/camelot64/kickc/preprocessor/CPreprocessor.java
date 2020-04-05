@@ -87,10 +87,23 @@ public class CPreprocessor implements TokenSource {
     */
    private boolean preprocess(Token inputToken, CTokenSource cTokenSource) {
       if(inputToken.getType() == tokenTypes.define) {
-         defineMacro(cTokenSource);
+         define(cTokenSource);
          return true;
       } else if(inputToken.getType() == tokenTypes.undef) {
-         undefMacro(cTokenSource);
+         undef(cTokenSource);
+         return true;
+      } else if(inputToken.getType() == tokenTypes.ifndef) {
+         ifndef(cTokenSource);
+         return true;
+      } else if(inputToken.getType() == tokenTypes.ifdef) {
+         ifdef(cTokenSource);
+         return true;
+      } else if(inputToken.getType() == tokenTypes.ifelse) {
+         // #else means we must skip until #endif
+         ifelse(cTokenSource);
+         return true;
+      } else if(inputToken.getType() == tokenTypes.endif) {
+         // Skip #endif - they have already been handled by #if / #else
          return true;
       } else if(inputToken.getType() == tokenTypes.identifier) {
          final boolean expanded = expandMacro(inputToken, cTokenSource);
@@ -101,6 +114,7 @@ public class CPreprocessor implements TokenSource {
 
    /**
     * Encountered an IDENTIFIER. Attempt to expand as a macro.
+    *
     * @param inputToken The IDENTIFIER token
     * @param cTokenSource The token source usable for getting more tokens (eg. parameter values) - and for pushing the expanded body to the front for further processing.
     * @return true if a macro was expanded. False if not.
@@ -141,20 +155,98 @@ public class CPreprocessor implements TokenSource {
 
    /**
     * Undefine a macro.
+    *
     * @param cTokenSource The token source used to get the name
     */
-   private void undefMacro(CTokenSource cTokenSource) {
-      // #define a new macro - find the name
+   private void undef(CTokenSource cTokenSource) {
+      // #undef a new macro - find the name
       skipWhitespace(cTokenSource);
       String macroName = nextToken(cTokenSource, tokenTypes.identifier).getText();
       this.defines.remove(macroName);
    }
 
    /**
+    * #ifdef checks if a macro is defined.
+    *
+    * @param cTokenSource The token source used to get the macro name
+    */
+   private void ifdef(CTokenSource cTokenSource) {
+      skipWhitespace(cTokenSource);
+      String macroName = nextToken(cTokenSource, tokenTypes.identifier).getText();
+      final boolean defined = this.defines.containsKey(macroName);
+      if(!defined) {
+         iffalse(cTokenSource);
+      }
+   }
+
+   /**
+    * #ifdef checks if a macro is _NOT_ defined.
+    *
+    * @param cTokenSource The token source used to get the macro name
+    */
+   private void ifndef(CTokenSource cTokenSource) {
+      skipWhitespace(cTokenSource);
+      String macroName = nextToken(cTokenSource, tokenTypes.identifier).getText();
+      final boolean defined = this.defines.containsKey(macroName);
+      if(defined) {
+         iffalse(cTokenSource);
+      }
+   }
+
+
+   /**
+    * Skip tokens based in an #if that is false
+    * @param cTokenSource The token source
+    */
+   private void iffalse(CTokenSource cTokenSource) {
+      // Skip tokens until finding a matching #endif - respect nesting
+      int nesting = 1;
+      while(true) {
+         final Token token = cTokenSource.nextToken();
+         final int tokenType = token.getType();
+         if(tokenType == tokenTypes.ifdef || tokenType == tokenTypes.ifndef) {
+            ++nesting;
+         } else if(tokenType == tokenTypes.ifelse) {
+            if(nesting == 1) {
+               // We are at the outer #if - #else means we must generate output from here!
+               return;
+            }
+         } else if(tokenType == tokenTypes.endif) {
+            if(--nesting == 0) {
+               // We have passed the matching #endif - restart the output!
+               return;
+            }
+         }
+      }
+   }
+
+   /**
+    * #else skips until a matching #endif
+    *
+    * @param cTokenSource The token source
+    */
+   private void ifelse(CTokenSource cTokenSource) {
+      int nesting = 1;
+      while(true) {
+         final Token token = cTokenSource.nextToken();
+         final int tokenType = token.getType();
+         if(tokenType == tokenTypes.ifdef || tokenType == tokenTypes.ifndef) {
+            ++nesting;
+         } else if(tokenType == tokenTypes.endif) {
+            if(--nesting == 0) {
+               // We have passed the matching #endif
+               return;
+            }
+         }
+      }
+   }
+
+   /**
     * Define a macro.
+    *
     * @param cTokenSource The token source used to get the macro name and body.
     */
-   private void defineMacro(CTokenSource cTokenSource) {
+   private void define(CTokenSource cTokenSource) {
       // #define a new macro - find the name
       skipWhitespace(cTokenSource);
       String macroName = nextToken(cTokenSource, tokenTypes.identifier).getText();
@@ -166,8 +258,7 @@ public class CPreprocessor implements TokenSource {
       }
       // Find body by gobbling tokens until the line ends
       final ArrayList<Token> macroBody = new ArrayList<>();
-      boolean macroRead = true;
-      while(macroRead) {
+      while(true) {
          final Token bodyToken = cTokenSource.nextToken();
          if(bodyToken.getType() == tokenTypes.defineMultiline) {
             // Skip the multi-line token, add a newline token and continue reading body on the next line
@@ -179,14 +270,14 @@ public class CPreprocessor implements TokenSource {
             continue;
          }
          if(bodyToken.getChannel() == tokenTypes.channelWhitespace && bodyToken.getText().contains("\n")) {
-            macroRead = false;
+            // Done reading the body
+            break;
          } else {
             macroBody.add(bodyToken);
          }
       }
       defines.put(macroName, macroBody);
    }
-
 
    /**
     * Pull first token from a source and check that it matches the expected type. Any other type will produce an error.
@@ -203,13 +294,19 @@ public class CPreprocessor implements TokenSource {
    }
 
    /**
-    * Skip whitespace tokens, positioning iterator at the next non-whitespace
+    * Skip whitespace tokens (except newlines), positioning iterator at the next non-whitespace
     *
     * @param cTokenSource The token iterator
     */
    private void skipWhitespace(CTokenSource cTokenSource) {
-      while(cTokenSource.peekToken().getChannel() == tokenTypes.channelWhitespace)
+      while(true) {
+         final Token token = cTokenSource.peekToken();
+         if(token.getChannel() != tokenTypes.channelWhitespace)
+            break;
+         if(token.getText().contains("\n"))
+            break;
          cTokenSource.nextToken();
+      }
    }
 
    /**

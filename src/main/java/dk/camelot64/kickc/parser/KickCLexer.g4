@@ -126,6 +126,10 @@ CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 DEFINE: '#define' ;
 DEFINE_CONTINUE: '\\\n' ;
 UNDEF: '#undef' ;
+IFDEF: '#ifdef' ;
+IFNDEF: '#ifndef' ;
+IFELSE: '#else' ;
+ENDIF: '#endif' ;
 
 // Numbers
 NUMBER : NUMFLOAT | NUMINT ;

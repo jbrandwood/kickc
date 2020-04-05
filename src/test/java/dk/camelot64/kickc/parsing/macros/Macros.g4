@@ -37,9 +37,13 @@ PAR_BEGIN: '(' ;
 PAR_END: ')' ;
 COMMA : ',' ;
 SIMPLETYPE: 'char' | 'int' ;
-IDENTIFIER: [a-zA-Z_]+ ;
+IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]* ;
 NUMBER: [0-9]+ ;
 DEFINE: '#define' ;
 UNDEF: '#undef' ;
+IFDEF: '#ifdef' ;
+IFNDEF: '#ifndef' ;
+IFELSE: '#else' ;
+ENDIF: '#endif' ;
 DEFINE_CONTINUE: '\\\n' ;
 WHITESPACE: [ \t\r\n]+ -> channel(1) ; // Send whitespace to the hidden WS channel

@@ -65,7 +65,7 @@ public class CParser {
       this.program = program;
       this.cFiles = new LinkedHashMap<>();
       this.cTokenSource = new CTokenSource();
-      final CPreprocessorTokens preprocessorTokens = new CPreprocessorTokens(CHANNEL_WHITESPACE, KickCLexer.WS, KickCLexer.DEFINE, KickCLexer.NAME, KickCLexer.DEFINE_CONTINUE, KickCLexer.UNDEF, KickCLexer.PAR_BEGIN, KickCLexer.PAR_END, KickCLexer.COMMA);
+      final CPreprocessorTokens preprocessorTokens = new CPreprocessorTokens(CHANNEL_WHITESPACE, KickCLexer.WS, KickCLexer.DEFINE, KickCLexer.NAME, KickCLexer.DEFINE_CONTINUE, KickCLexer.UNDEF, KickCLexer.IFDEF, KickCLexer.IFNDEF, KickCLexer.IFELSE, KickCLexer.ENDIF, KickCLexer.PAR_BEGIN, KickCLexer.PAR_END, KickCLexer.COMMA);
       final CPreprocessor preprocessor = new CPreprocessor(cTokenSource, preprocessorTokens);
       this.tokenStream = new CommonTokenStream(preprocessor);
       this.parser = new KickCParser(tokenStream, this);

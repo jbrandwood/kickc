@@ -38,8 +38,13 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPreprocessor6() throws IOException, URISyntaxException {
+      compileAndCompare("preprocessor-6");
+   }
+
+   @Test
    public void testPreprocessor5() throws IOException, URISyntaxException {
-      compileAndCompare("preprocessor-5", log());
+      compileAndCompare("preprocessor-5");
    }
 
    @Test

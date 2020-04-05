@@ -37,10 +37,14 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testPreprocessor5() throws IOException, URISyntaxException {
+      compileAndCompare("preprocessor-5", log());
+   }
 
    @Test
    public void testPreprocessor4() throws IOException, URISyntaxException {
-      compileAndCompare("preprocessor-4", log());
+      compileAndCompare("preprocessor-4");
    }
 
    @Test

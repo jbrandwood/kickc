@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.parser;
 
 import dk.camelot64.kickc.SourceLoader;
+import dk.camelot64.kickc.preprocessor.CTokenSourcePreprocessor;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import org.antlr.v4.runtime.*;
@@ -38,7 +39,7 @@ public class CParser {
    private final CommonTokenStream tokenStream;
 
    /** The token source stack handling import files. */
-   private CTokenSourceStack cFileTokenStack;
+   private CTokenSource cTokenSource;
 
    /** The input files that have been parsed. Maps file name to the lexer. */
    private Map<String, CFile> cFiles;
@@ -62,8 +63,9 @@ public class CParser {
    public CParser(Program program) {
       this.program = program;
       this.cFiles = new LinkedHashMap<>();
-      this.cFileTokenStack = new CTokenSourceStack();
-      this.tokenStream = new CommonTokenStream(cFileTokenStack);
+      this.cTokenSource = new CTokenSource();
+      final CTokenSourcePreprocessor preprocessor = new CTokenSourcePreprocessor(cTokenSource, CHANNEL_WHITESPACE, KickCLexer.WS, KickCLexer.DEFINE, KickCLexer.NAME, KickCLexer.PAR_BEGIN, KickCLexer.PAR_END, KickCLexer.COMMA, KickCLexer.DEFINE_CONTINUE);
+      this.tokenStream = new CommonTokenStream(preprocessor);
       this.parser = new KickCParser(tokenStream, this);
       this.typedefs = new ArrayList<>();
       parser.setBuildParseTree(true);
@@ -131,7 +133,7 @@ public class CParser {
     * @return The path of the folder containing the source file currently being tokenized
     */
    private Path getCurrentSourceFolderPath() {
-      TokenSource currentSource = cFileTokenStack.getCurrentSource();
+      TokenSource currentSource = cTokenSource.getCurrentSource();
       String sourceName = currentSource.getSourceName();
       CFile cFile = cFiles.get(sourceName);
       File file = cFile.file;
@@ -190,7 +192,7 @@ public class CParser {
          });
          CFile cFile = new CFile(file, lexer);
          cFiles.put(file.getAbsolutePath(), cFile);
-         cFileTokenStack.pushSource(lexer);
+         cTokenSource.addSource(lexer);
       } catch(IOException e) {
          throw new CompileError("Error parsing file " + fileName, e);
       }

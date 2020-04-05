@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPreprocessor0() throws IOException, URISyntaxException {
+      compileAndCompare("preprocessor-0");
+   }
+
+   @Test
    public void testMaCoalesceProblem() throws IOException, URISyntaxException {
       compileAndCompare("ma_coalesce_problem");
    }

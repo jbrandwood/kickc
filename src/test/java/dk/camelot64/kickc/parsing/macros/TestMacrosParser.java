@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.parsing.macros;
 
-import dk.camelot64.kickc.macros.CMacroExpander;
+import dk.camelot64.kickc.preprocessor.CTokenSourcePreprocessor;
 import dk.camelot64.kickc.model.CompileError;
 import org.antlr.v4.runtime.*;
 import org.junit.Test;
@@ -106,8 +106,7 @@ public class TestMacrosParser {
          }
       });
 
-      final CMacroExpander cMacroExpander = new CMacroExpander(CHANNEL_WHITESPACE, MacrosLexer.WHITESPACE, MacrosLexer.DEFINE, MacrosLexer.IDENTIFIER, MacrosLexer.PAR_BEGIN, MacrosLexer.PAR_END, MacrosLexer.COMMA, MacrosLexer.DEFINE_CONTINUE);
-      final TokenSource expandedTokenSource = cMacroExpander.expandMacros(lexer);
+      final CTokenSourcePreprocessor expandedTokenSource = new CTokenSourcePreprocessor(lexer, CHANNEL_WHITESPACE, MacrosLexer.WHITESPACE, MacrosLexer.DEFINE, MacrosLexer.IDENTIFIER, MacrosLexer.PAR_BEGIN, MacrosLexer.PAR_END, MacrosLexer.COMMA, MacrosLexer.DEFINE_CONTINUE);
       MacrosParser parser = new MacrosParser(new CommonTokenStream(expandedTokenSource));
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {

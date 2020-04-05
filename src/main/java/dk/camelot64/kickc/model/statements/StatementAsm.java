@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.model.statements;
 
-import dk.camelot64.kickc.parser.AsmParser;
 import dk.camelot64.kickc.asm.AsmClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
@@ -13,11 +12,8 @@ import java.util.Map;
 /** Inline ASM code */
 public class StatementAsm extends StatementBase {
 
-   /** ASM code. */
-   private String asmBody;
-
    /** Cached parsed ASM code. */
-   private transient KickCParser.AsmLinesContext asmLines;
+   private KickCParser.AsmLinesContext asmLines;
 
    /** All variables/constants referenced in the inline assembler. */
    private Map<String, SymbolRef> referenced;
@@ -25,9 +21,9 @@ public class StatementAsm extends StatementBase {
    /** Declared clobber for the inline ASM. */
    private AsmClobber declaredClobber;
 
-   public StatementAsm(String asmBody, Map<String, SymbolRef> referenced, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
+   public StatementAsm(KickCParser.AsmLinesContext asmBody, Map<String, SymbolRef> referenced, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
       super(source, comments);
-      this.asmBody = asmBody;
+      this.asmLines = asmBody;
       this.referenced = referenced;
       this.declaredClobber = declaredClobber;
    }
@@ -43,14 +39,7 @@ public class StatementAsm extends StatementBase {
       return txt.toString();
    }
 
-   public String getAsmBody() {
-      return asmBody;
-   }
-
    public KickCParser.AsmLinesContext getAsmLines() {
-      if(asmLines==null) {
-         this.asmLines = AsmParser.parseAsm(asmBody, getSource());
-      }
       return asmLines;
    }
 

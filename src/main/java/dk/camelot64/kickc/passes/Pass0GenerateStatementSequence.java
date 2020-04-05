@@ -1531,27 +1531,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             }
          }
       }
-      StatementAsm statementAsm = new StatementAsm(getSourceBody(ctx.asmLines()), referenced, declaredClobber, StatementSource.asm(ctx), comments);
+      StatementAsm statementAsm = new StatementAsm(ctx.asmLines(), referenced, declaredClobber, StatementSource.asm(ctx), comments);
       sequence.addStatement(statementAsm);
       return null;
-   }
-
-   /**
-    * Extract the string source body representing a part of the parse tree
-    *
-    * @param sourceContext The parse tree context
-    * @return The string source code.
-    */
-   private static String getSourceBody(ParserRuleContext sourceContext) {
-      Token tokenStart = StatementSource.getToken(sourceContext, true);
-      Token tokenStop = StatementSource.getToken(sourceContext, false);
-      CharStream stream = tokenStart.getInputStream();
-      int startIndex = tokenStart.getStartIndex();
-      int stopIndex = tokenStop.getStopIndex();
-      if(stopIndex < startIndex)
-         return "";
-      Interval interval = new Interval(startIndex, stopIndex);
-      return stream.getText(interval);
    }
 
    /**

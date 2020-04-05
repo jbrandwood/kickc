@@ -106,8 +106,9 @@ public class CPreprocessor implements TokenSource {
          // Skip #endif - they have already been handled by #if / #else
          return true;
       } else if(inputToken.getType() == tokenTypes.identifier) {
-         final boolean expanded = expandMacro(inputToken, cTokenSource);
-         if(expanded) return true;
+         final boolean expanded = expand(inputToken, cTokenSource);
+         if(expanded)
+            return true;
       }
       return false;
    }
@@ -119,7 +120,7 @@ public class CPreprocessor implements TokenSource {
     * @param cTokenSource The token source usable for getting more tokens (eg. parameter values) - and for pushing the expanded body to the front for further processing.
     * @return true if a macro was expanded. False if not.
     */
-   private boolean expandMacro(Token inputToken, CTokenSource cTokenSource) {
+   private boolean expand(Token inputToken, CTokenSource cTokenSource) {
       final String macroName = inputToken.getText();
       List<Token> macroBody = defines.get(macroName);
       if(macroBody != null) {

@@ -2370,7 +2370,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<List<Comment>> commentBlocks = new ArrayList<>();
       List<Comment> comments = new ArrayList<>();
       BufferedTokenStream tokenStream = cParser.getTokenStream();
-      List<Token> hiddenTokens = tokenStream.getHiddenTokensToLeft(ctx.start.getTokenIndex());
+      final int startTokenIndex = ctx.start.getTokenIndex();
+      if(startTokenIndex<0)
+         return commentBlocks;
+      List<Token> hiddenTokens = tokenStream.getHiddenTokensToLeft(startTokenIndex);
       if(hiddenTokens != null) {
          for(Token hiddenToken : hiddenTokens) {
             if(hiddenToken.getChannel() == CParser.CHANNEL_WHITESPACE) {

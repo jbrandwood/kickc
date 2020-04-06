@@ -106,6 +106,7 @@ STRUCT : 'struct' ;
 ENUM : 'enum' ;
 SIZEOF : 'sizeof' ;
 TYPEID : 'typeid' ;
+DEFINED : 'defined' ;
 KICKASM : 'kickasm' ;
 RESOURCE : 'resource' ;
 USES : 'uses' ;
@@ -124,10 +125,12 @@ CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 
 // Macros
 DEFINE: '#define' ;
-DEFINE_CONTINUE: '\\\n' ;
+DEFINE_CONTINUE: '\\\n' | '\\\r\n';
 UNDEF: '#undef' ;
 IFDEF: '#ifdef' ;
 IFNDEF: '#ifndef' ;
+IFIF: '#if' ;
+ELIF: '#elif' ;
 IFELSE: '#else' ;
 ENDIF: '#endif' ;
 

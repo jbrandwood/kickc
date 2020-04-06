@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantBool;
+import dk.camelot64.kickc.model.values.ConstantEnumerable;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 
 /** Unary Logic Not operator (!b) */
@@ -15,6 +16,9 @@ public class OperatorLogicNot extends OperatorUnary {
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ProgramScope scope) {
+      if(left instanceof ConstantEnumerable) {
+         left = new ConstantBool(((ConstantEnumerable) left).getInteger()!=0);
+      }
       if(left instanceof ConstantBool) {
          return new ConstantBool(!((ConstantBool) left).getBool() );
       }

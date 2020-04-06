@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7.2
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickCParser.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -1221,6 +1221,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExprId(KickCParser.ExprIdContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code exprDefined}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExprDefined(KickCParser.ExprDefinedContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code exprDefined}
+	 * labeled alternative in {@link KickCParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExprDefined(KickCParser.ExprDefinedContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code exprTernary}
 	 * labeled alternative in {@link KickCParser#expr}.

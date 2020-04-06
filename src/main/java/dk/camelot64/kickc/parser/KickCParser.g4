@@ -220,6 +220,7 @@ expr
     | expr PAR_BEGIN parameterList? PAR_END #exprCall
     | SIZEOF PAR_BEGIN ( expr | typeSpecifier ) PAR_END #exprSizeOf
     | TYPEID PAR_BEGIN ( expr | typeSpecifier ) PAR_END #exprTypeId
+    | DEFINED PAR_BEGIN? NAME PAR_END? #exprDefined
     | expr BRACKET_BEGIN commaExpr BRACKET_END #exprArray
     | PAR_BEGIN typeSpecifier PAR_END expr #exprCast
     | ('--' | '++' ) expr #exprPreMod

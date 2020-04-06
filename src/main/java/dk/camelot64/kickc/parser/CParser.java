@@ -4,16 +4,12 @@ import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.preprocessor.CPreprocessorTokens;
 import org.antlr.v4.runtime.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Parser for C-language files.
@@ -65,8 +61,7 @@ public class CParser {
       this.program = program;
       this.cFiles = new LinkedHashMap<>();
       this.cTokenSource = new CTokenSource();
-      final CPreprocessorTokens preprocessorTokens = new CPreprocessorTokens(CHANNEL_WHITESPACE, KickCLexer.WS, KickCLexer.DEFINE, KickCLexer.NAME, KickCLexer.DEFINE_CONTINUE, KickCLexer.UNDEF, KickCLexer.IFDEF, KickCLexer.IFNDEF, KickCLexer.IFELSE, KickCLexer.ENDIF, KickCLexer.PAR_BEGIN, KickCLexer.PAR_END, KickCLexer.COMMA);
-      final CPreprocessor preprocessor = new CPreprocessor(cTokenSource, preprocessorTokens);
+      final CPreprocessor preprocessor = new CPreprocessor(cTokenSource, new HashMap<>());
       this.tokenStream = new CommonTokenStream(preprocessor);
       this.parser = new KickCParser(tokenStream, this);
       this.typedefs = new ArrayList<>();
@@ -113,6 +108,14 @@ public class CParser {
    public KickCParser.FileContext loadAndParseCFile(String fileName, Path currentPath) {
       loadCFile(fileName, currentPath);
       return this.parser.file();
+   }
+
+   /**
+    * Get the C parser
+    * @return The C parser
+    */
+   public KickCParser getParser() {
+      return parser;
    }
 
    /**
@@ -179,25 +182,35 @@ public class CParser {
             program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
             program.getLog().append(fileStream.toString());
          }
-         KickCLexer lexer = new KickCLexer(fileStream, this);
-         lexer.addErrorListener(new BaseErrorListener() {
-            @Override
-            public void syntaxError(
-                  Recognizer<?, ?> recognizer,
-                  Object offendingSymbol,
-                  int line,
-                  int charPositionInLine,
-                  String msg,
-                  RecognitionException e) {
-               throw new CompileError("Error parsing file " + fileStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
-            }
-         });
+         KickCLexer lexer = addSource(fileStream);
          CFile cFile = new CFile(file, lexer);
          cFiles.put(file.getAbsolutePath(), cFile);
-         cTokenSource.addSource(lexer);
       } catch(IOException e) {
          throw new CompileError("Error parsing file " + fileName, e);
       }
+   }
+
+   /**
+    * Add source code at the start of the token stream being parsed.
+    * @param charStream The char stream containing the source code to add
+    * @return The lexer for reading the source tokens of the added source
+    */
+   public KickCLexer addSource(CharStream charStream) {
+      KickCLexer lexer = new KickCLexer(charStream, this);
+      lexer.addErrorListener(new BaseErrorListener() {
+         @Override
+         public void syntaxError(
+               Recognizer<?, ?> recognizer,
+               Object offendingSymbol,
+               int line,
+               int charPositionInLine,
+               String msg,
+               RecognitionException e) {
+            throw new CompileError("Error parsing file " + charStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+         }
+      });
+      cTokenSource.addSource(lexer);
+      return lexer;
    }
 
 }

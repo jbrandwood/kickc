@@ -14,6 +14,9 @@ import java.nio.file.Paths;
 
 public class TestKickAssRun {
 
+   /**
+    * Test running KickAsm assembler to compile an ASM file
+    */
    @Test
    public void testKickAssRun() throws IOException, URISyntaxException {
       ReferenceHelper asmHelper = new ReferenceHelperFolder("src/test/java/dk/camelot64/kickc/test/");

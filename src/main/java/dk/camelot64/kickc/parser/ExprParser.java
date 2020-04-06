@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.*;
  * <p>
  * Used by #if in the preprocessor
  */
-public class ExpressionParser {
+public class ExprParser {
 
    /**
     * Parse an expression

@@ -7,10 +7,7 @@ import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-public class TestExpressionParser {
+public class TestExprParser {
 
    /**
     * Test the ExpressionParser
@@ -28,12 +25,11 @@ public class TestExpressionParser {
       CodePointCharStream fragmentCharStream = CharStreams.fromString(expr);
       CParser cParser = new CParser(null);
       KickCLexer kickCLexer = new KickCLexer(fragmentCharStream, cParser);
-      KickCParser.ExprContext exprContext = ExpressionParser.parseExpression(kickCLexer);
+      KickCParser.ExprContext exprContext = ExprParser.parseExpression(kickCLexer);
       final KickCParserBaseVisitor<String> exprVisitor = new ExprPrinter();
       final String exprOut = exprVisitor.visit(exprContext);
       TestCase.assertEquals("Expression output does not match ", expected, exprOut);
    }
-
 
    /** Prints the expression. */
    private static class ExprPrinter extends KickCParserBaseVisitor<String> {

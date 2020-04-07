@@ -108,7 +108,11 @@ public class CPreprocessor implements TokenSource {
          return true;
       } else if(inputToken.getType() == KickCLexer.IFELSE) {
          // #else means we must skip until #endif
-         ifelse(cTokenSource);
+         skipToEndIf(cTokenSource);
+         return true;
+      } else if(inputToken.getType() == KickCLexer.ELIF) {
+         // #elif means we must skip until #endif
+         skipToEndIf(cTokenSource);
          return true;
       } else if(inputToken.getType() == KickCLexer.ENDIF) {
          // Skip #endif - they have already been handled by #if / #else
@@ -117,6 +121,25 @@ public class CPreprocessor implements TokenSource {
          return expand(inputToken, cTokenSource);
       }
       return false;
+   }
+
+   /**
+    * Define a macro.
+    *
+    * @param cTokenSource The token source used to get the macro name and body.
+    */
+   private void define(CTokenSource cTokenSource) {
+      // #define a new macro - find the name
+      skipWhitespace(cTokenSource);
+      String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
+      // Examine whether the macro has parameters
+      skipWhitespace(cTokenSource);
+      if(cTokenSource.peekToken().getType() == KickCLexer.PAR_BEGIN) {
+         // Macro has parameters - find parameter name list
+         throw new CompileError("Macros with parameters not supported!");
+      }
+      final ArrayList<Token> macroBody = readBody(cTokenSource);
+      defines.put(macroName, macroBody);
    }
 
    /**
@@ -182,7 +205,21 @@ public class CPreprocessor implements TokenSource {
       String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
       final boolean defined = this.defines.containsKey(macroName);
       if(!defined) {
-         iffalse(cTokenSource);
+         skipIfBody(cTokenSource);
+      }
+   }
+
+   /**
+    * #ifdef checks if a macro is _NOT_ defined.
+    *
+    * @param cTokenSource The token source used to get the macro name
+    */
+   private void ifndef(CTokenSource cTokenSource) {
+      skipWhitespace(cTokenSource);
+      String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
+      final boolean defined = this.defines.containsKey(macroName);
+      if(defined) {
+         skipIfBody(cTokenSource);
       }
    }
 
@@ -192,6 +229,19 @@ public class CPreprocessor implements TokenSource {
     * @param cTokenSource The token source used to get the condition
     */
    private void ifif(CTokenSource cTokenSource) {
+      Long conditionValue = readAndEvaluateCondition(cTokenSource);
+      if(conditionValue == null || conditionValue == 0L) {
+         skipIfBody(cTokenSource);
+      }
+   }
+
+   /**
+    * Read a condition expression ( for #if / #elif ) from a token source and evaluate it. Return the result.
+    *
+    * @param cTokenSource The token source to read from
+    * @return The value of the evaluation of the constant condition expression
+    */
+   private Long readAndEvaluateCondition(CTokenSource cTokenSource) {
       // Read the condition body
       ArrayList<Token> conditionTokens = readBody(cTokenSource);
       // Evaluate any uses of the defined operator (to prevent expansion of the named macro)
@@ -201,10 +251,7 @@ public class CPreprocessor implements TokenSource {
       // Parse the expression
       KickCParser.ExprContext conditionExpr = ExprParser.parseExpression(subPreprocessor);
       // Evaluate the expression
-      Long conditionValue = evaluateExpression(conditionExpr);
-      if(conditionValue == null || conditionValue == 0L) {
-         iffalse(cTokenSource);
-      }
+      return evaluateExpression(conditionExpr);
    }
 
    /**
@@ -240,7 +287,7 @@ public class CPreprocessor implements TokenSource {
             if(result instanceof ConstantInteger) {
                return ((ConstantInteger) result).getInteger();
             } else if(result instanceof ConstantBool) {
-               return ((ConstantBool) result).getBool()?1L:0L;
+               return ((ConstantBool) result).getBool() ? 1L : 0L;
             } else
                return 0L;
          }
@@ -254,7 +301,7 @@ public class CPreprocessor implements TokenSource {
             if(result instanceof ConstantInteger) {
                return ((ConstantInteger) result).getInteger();
             } else if(result instanceof ConstantBool) {
-               return ((ConstantBool) result).getBool()?1L:0L;
+               return ((ConstantBool) result).getBool() ? 1L : 0L;
             } else
                return 0L;
          }
@@ -269,8 +316,9 @@ public class CPreprocessor implements TokenSource {
    }
 
    /**
-    * Find and evaluate the special defined X operator which evaluates to 1 if a named macro if defined and 0 if it is undefined.
-    * Works by replacing the defined X tokens with the resulting 0/1 value in the passed token list.
+    * Find and evaluate the special "defined X" operator which evaluates to 1 if a named macro if defined and 0 if it is undefined.
+    * Works by replacing the "defined X" tokens with the resulting 0/1 value in the passed token list.
+    *
     * @param conditionTokens The token list
     */
    private void evaluateDefinedOperator(ArrayList<Token> conditionTokens) {
@@ -278,18 +326,18 @@ public class CPreprocessor implements TokenSource {
       ListIterator<Token> tokenIt = conditionTokens.listIterator();
       while(tokenIt.hasNext()) {
          Token token = tokenIt.next();
-         if(token.getType()== KickCLexer.DEFINED) {
+         if(token.getType() == KickCLexer.DEFINED) {
             // Remove the token
             tokenIt.remove();
             // Read the macro name to examine - and skip any parenthesis
             token = getNextSkipWhitespace(tokenIt);
             boolean hasPar = false;
-            if(token.getType()==KickCLexer.PAR_BEGIN) {
+            if(token.getType() == KickCLexer.PAR_BEGIN) {
                tokenIt.remove();
                token = getNextSkipWhitespace(tokenIt);
                hasPar = true;
             }
-            if(token.getType()!=KickCLexer.NAME) {
+            if(token.getType() != KickCLexer.NAME) {
                throw new CompileError("Unexpected token. Was expecting NAME!");
             }
             tokenIt.remove();
@@ -298,7 +346,7 @@ public class CPreprocessor implements TokenSource {
             if(hasPar) {
                // Skip closing parenthesis
                token = getNextSkipWhitespace(tokenIt);
-               if(token.getType()!=KickCLexer.PAR_END) {
+               if(token.getType() != KickCLexer.PAR_END) {
                   throw new CompileError("Unexpected token. Was expecting ')'!");
                }
                tokenIt.remove();
@@ -306,7 +354,7 @@ public class CPreprocessor implements TokenSource {
             final boolean defined = defines.containsKey(macroName);
             CommonToken definedToken = new CommonToken(macroNameToken);
             definedToken.setType(KickCLexer.NUMBER);
-            definedToken.setText(defined?"1":"0");
+            definedToken.setText(defined ? "1" : "0");
             tokenIt.add(definedToken);
          }
       }
@@ -314,43 +362,38 @@ public class CPreprocessor implements TokenSource {
 
    /**
     * Get the next token from an iterator skipping whitespace (unless it has a newline)
+    *
     * @param tokenIt The iterator
     * @return The next non-whitespace token
     */
    private Token getNextSkipWhitespace(ListIterator<Token> tokenIt) {
       Token token = tokenIt.next();
-      while(token.getChannel()==CParser.CHANNEL_WHITESPACE && !token.getText().contains("\n"))
+      while(token.getChannel() == CParser.CHANNEL_WHITESPACE && !token.getText().contains("\n"))
          token = tokenIt.next();
       return token;
    }
 
    /**
-    * #ifdef checks if a macro is _NOT_ defined.
-    *
-    * @param cTokenSource The token source used to get the macro name
-    */
-   private void ifndef(CTokenSource cTokenSource) {
-      skipWhitespace(cTokenSource);
-      String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
-      final boolean defined = this.defines.containsKey(macroName);
-      if(defined) {
-         iffalse(cTokenSource);
-      }
-   }
-
-   /**
-    * Skip tokens based in an #if that is false
+    * Skip tokens based in an #if that is false - look for a matching #elif, #else or the #endif
     *
     * @param cTokenSource The token source
     */
-   private void iffalse(CTokenSource cTokenSource) {
-      // Skip tokens until finding a matching #endif - respect nesting
+   private void skipIfBody(CTokenSource cTokenSource) {
+      // Skip tokens until finding a matching #endif or a matching #else - respect nesting
       int nesting = 1;
       while(true) {
          final Token token = cTokenSource.nextToken();
          final int tokenType = token.getType();
          if(tokenType == KickCLexer.IFDEF || tokenType == KickCLexer.IFNDEF || tokenType == KickCLexer.IFIF) {
             ++nesting;
+         } else if(tokenType == KickCLexer.ELIF) {
+            if(nesting == 1) {
+               // We are at the outer #if - #elif means we must evaluate the condition and maybe generate output from here!
+               final Long conditionValue = readAndEvaluateCondition(cTokenSource);
+               if(conditionValue != null && conditionValue != 0L)
+                  // #elif condition !=0 - generate output from here!
+                  return;
+            }
          } else if(tokenType == KickCLexer.IFELSE) {
             if(nesting == 1) {
                // We are at the outer #if - #else means we must generate output from here!
@@ -366,11 +409,11 @@ public class CPreprocessor implements TokenSource {
    }
 
    /**
-    * #else skips until a matching #endif
+    * Skip until a matching #endif
     *
     * @param cTokenSource The token source
     */
-   private void ifelse(CTokenSource cTokenSource) {
+   private void skipToEndIf(CTokenSource cTokenSource) {
       int nesting = 1;
       while(true) {
          final Token token = cTokenSource.nextToken();
@@ -386,24 +429,6 @@ public class CPreprocessor implements TokenSource {
       }
    }
 
-   /**
-    * Define a macro.
-    *
-    * @param cTokenSource The token source used to get the macro name and body.
-    */
-   private void define(CTokenSource cTokenSource) {
-      // #define a new macro - find the name
-      skipWhitespace(cTokenSource);
-      String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
-      // Examine whether the macro has parameters
-      skipWhitespace(cTokenSource);
-      if(cTokenSource.peekToken().getType() == KickCLexer.PAR_BEGIN) {
-         // Macro has parameters - find parameter name list
-         throw new CompileError("Macros with parameters not supported!");
-      }
-      final ArrayList<Token> macroBody = readBody(cTokenSource);
-      defines.put(macroName, macroBody);
-   }
 
    /**
     * Read a preprocessor body (eg. a macro body) until encountering a newline

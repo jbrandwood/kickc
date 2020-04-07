@@ -93,11 +93,21 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitImportDecl(KickCParser.ImportDeclContext ctx) {
+   public Object visitImportFile(KickCParser.ImportFileContext ctx) {
       String importName = ctx.STRING().getText();
       String importFileName = importName.substring(1, importName.length() - 1);
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Importing " + importFileName);
+      }
+      return null;
+   }
+
+   @Override
+   public Object visitIncludeFile(KickCParser.IncludeFileContext ctx) {
+      String includeName = ctx.STRING().getText();
+      String includeFileName = includeName.substring(1, includeName.length() - 1);
+      if(program.getLog().isVerboseParse()) {
+         program.getLog().append("Including " + includeFileName);
       }
       return null;
    }

@@ -1,4 +1,4 @@
-// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickCParser.g4 by ANTLR 4.7.2
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -50,15 +50,29 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDeclOrImport(KickCParser.DeclOrImportContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#importDecl}.
+	 * Enter a parse tree produced by the {@code importFile}
+	 * labeled alternative in {@link KickCParser#importDecl}.
 	 * @param ctx the parse tree
 	 */
-	void enterImportDecl(KickCParser.ImportDeclContext ctx);
+	void enterImportFile(KickCParser.ImportFileContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#importDecl}.
+	 * Exit a parse tree produced by the {@code importFile}
+	 * labeled alternative in {@link KickCParser#importDecl}.
 	 * @param ctx the parse tree
 	 */
-	void exitImportDecl(KickCParser.ImportDeclContext ctx);
+	void exitImportFile(KickCParser.ImportFileContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code includeFile}
+	 * labeled alternative in {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncludeFile(KickCParser.IncludeFileContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code includeFile}
+	 * labeled alternative in {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncludeFile(KickCParser.IncludeFileContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#decl}.
 	 * @param ctx the parse tree

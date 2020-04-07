@@ -35,7 +35,8 @@ declOrImport
     ;
 
 importDecl
-    : IMPORT STRING
+    : IMPORT STRING #importFile
+    | INCLUDE STRING #includeFile
     ;
 
 decl

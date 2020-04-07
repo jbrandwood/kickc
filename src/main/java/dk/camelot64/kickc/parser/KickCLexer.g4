@@ -62,9 +62,7 @@ ASSIGN: '=' ;
 ASSIGN_COMPOUND : '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|=' | '^=' ;
 
 // Keywords
-IMPORT: 'import' { importEnter=true; } ;
 TYPEDEF: 'typedef' ;
-PRAGMA: '#pragma' ;
 RESERVE:'reserve' ;
 PC:'pc';
 TARGET:'target';
@@ -123,7 +121,10 @@ KICKASM_BODY: '{{' .*? '}}';
 STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(importEnter) { importEnter=false; cParser.loadCFile(getText()); } } ;
 CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 
-// Macros
+// Preprocessor
+IMPORT: '#import' { importEnter=true; } ;
+INCLUDE: '#include' { importEnter=true; } ;
+PRAGMA: '#pragma' ;
 DEFINE: '#define' ;
 DEFINE_CONTINUE: '\\\n' | '\\\r\n';
 UNDEF: '#undef' ;

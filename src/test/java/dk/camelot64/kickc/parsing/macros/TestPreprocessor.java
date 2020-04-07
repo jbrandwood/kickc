@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.parsing.macros;
 
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
@@ -7,7 +8,12 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test the C preprocessor
@@ -164,13 +170,52 @@ public class TestPreprocessor {
    }
 
    /**
+    * Test #define with wrong syntax
+    */
+   @Test
+   public void testErrors() {
+      // Declared parameters are not names
+      assertError("#define f(x,1) x", "Error! #define declared parameter not a NAME.", true);
+      // Declared parameter list ends with comma
+      assertError("#define f(x,y,) x", "#define declared parameter list ends with COMMA.", true);
+      // Number of parameters not matching
+      assertError("#define f(x,y) x+y\nf(7);", "Error! Wrong number of macro parameters. Expected 2 was 1", true);
+   }
+
+   /**
     * Test define with parameters
     */
-   //@Test
-   //public void testDefineParams() {
-   //   // A simple unused define
-   //   assertEquals("+(name:b,num:1);*(name:c,num:2);", parse("#define A(a) a+1\nA(b)"));
-   //}
+   @Test
+   public void testDefineParams() {
+      // A simple define with one parameter
+      assertEquals("+(name:b,num:1);", parse("#define A(a) a+1\nA(b);"));
+      // A simple define with one parameter used twice
+      assertEquals("+(name:b,num:1);+(name:c,num:1);", parse("#define A(a) a+1\nA(b);A(c);"));
+      // A simple define with two parameters
+      assertEquals("+(num:1,name:x);", parse("#define A(a,b) a+b\nA(1,x);"));
+      // A nested call
+      assertEquals("+(+(name:x,num:1),num:1);", parse("#define A(a) a+1\nA(A(x));"));
+      // A double nested call
+      assertEquals("+(+(+(name:x,num:1),num:1),num:1);", parse("#define A(a) a+1\nA(A(A(x)));"));
+      // A nested call for a 2-parameter macro
+      assertEquals("+(+(+(name:x,name:y),name:z),name:w);", parse("#define A(a,b) a+b\nA(A(x,y),A(z,w));"));
+   }
+
+   private void assertError(String program, String expectError, boolean expectLineNumber) {
+      try {
+         parse(program);
+      } catch(CompileError e) {
+         System.out.println("Got error: " + e.getMessage());
+         // expecting error!
+         assertTrue("Error message expected  '" + expectError + "' - was:" + e.getMessage(), e.getMessage().contains(expectError));
+         if(expectLineNumber) {
+            // expecting line number!
+            assertTrue("Error message expected line number - was:" + e.getMessage(), e.getMessage().contains("Line"));
+         }
+         return;
+      }
+      fail("Expected compile error.");
+   }
 
    /**
     * Parse a program with macros and return the resulting syntax tree

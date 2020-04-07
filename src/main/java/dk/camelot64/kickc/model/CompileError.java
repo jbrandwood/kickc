@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementSource;
+import org.antlr.v4.runtime.Token;
 
 /** Signals some error in the code (or compilation) */
 public class CompileError extends RuntimeException {
@@ -17,6 +18,10 @@ public class CompileError extends RuntimeException {
       this.source = source.toString();
    }
 
+   public CompileError(String message, Token token) {
+      this(message, new StatementSource(token, token));
+   }
+
    public CompileError(String message, Statement statement) {
       this(message, statement.getSource());
    }
@@ -28,4 +33,5 @@ public class CompileError extends RuntimeException {
    public String getSource() {
       return source;
    }
+
 }

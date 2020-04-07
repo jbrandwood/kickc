@@ -29,9 +29,25 @@ public class CPreprocessor implements TokenSource {
     * The #defined macros.
     * Maps macro name to the tokens of the expansion
     */
-   private Map<String, List<Token>> defines;
+   private Map<String, Macro> defines;
 
-   public CPreprocessor(TokenSource input, Map<String, List<Token>> defines) {
+   /** A defined macro. */
+   static class Macro {
+      /** The name of the define. */
+      final String name;
+      /** The parameters. Empty if there are no parameters. */
+      final List<String> parameters;
+      /** The body. */
+      final List<Token> body;
+
+      Macro(String name, List<String> parameters, List<Token> body) {
+         this.name = name;
+         this.parameters = parameters;
+         this.body = body;
+      }
+   }
+
+   public CPreprocessor(TokenSource input, Map<String, Macro> defines) {
       if(input instanceof CTokenSource) {
          // If possible use the input directly instead of wrapping it
          this.input = (CTokenSource) input;
@@ -134,53 +150,150 @@ public class CPreprocessor implements TokenSource {
       String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
       // Examine whether the macro has parameters
       skipWhitespace(cTokenSource);
+      List<String> macroParameters = new ArrayList<>();
       if(cTokenSource.peekToken().getType() == KickCLexer.PAR_BEGIN) {
+         // Read past the '('
+         cTokenSource.nextToken();
          // Macro has parameters - find parameter name list
-         throw new CompileError("Macros with parameters not supported!");
+         boolean commaNext = false;
+         while(true) {
+            skipWhitespace(cTokenSource);
+            final Token paramToken = cTokenSource.nextToken();
+            if(paramToken.getType() == KickCLexer.PAR_END) {
+               if(!commaNext && macroParameters.size() > 0)
+                  throw new CompileError("Error! #define declared parameter list ends with COMMA.", paramToken);
+               // We reached the end of the parameters
+               break;
+            } else if(!commaNext && paramToken.getType() == KickCLexer.NAME) {
+               macroParameters.add(paramToken.getText());
+               // Now expect a comma
+               commaNext = true;
+            } else if(commaNext && paramToken.getType() == KickCLexer.COMMA)
+               // Got the comma we needed - expect a name
+               commaNext = false;
+            else
+               // Unexpected token
+               throw new CompileError("Error! #define declared parameter not a NAME.", paramToken);
+         }
       }
       final ArrayList<Token> macroBody = readBody(cTokenSource);
-      defines.put(macroName, macroBody);
+      defines.put(macroName, new Macro(macroName, macroParameters, macroBody));
    }
 
    /**
-    * Encountered an IDENTIFIER. Attempt to expand as a macro.
+    * Encountered a NAME. Attempt to expand as a macro.
     *
-    * @param inputToken The IDENTIFIER token
+    * @param macroNameToken The NAME token
     * @param cTokenSource The token source usable for getting more tokens (eg. parameter values) - and for pushing the expanded body to the front for further processing.
     * @return true if a macro was expanded. False if not.
     */
-   private boolean expand(Token inputToken, CTokenSource cTokenSource) {
-      final String macroName = inputToken.getText();
-      List<Token> macroBody = defines.get(macroName);
-      if(macroBody != null) {
+   private boolean expand(Token macroNameToken, CTokenSource cTokenSource) {
+      final String macroName = macroNameToken.getText();
+      Macro macro = defines.get(macroName);
+      if(macro != null) {
          // Check for macro recursion
-         if(inputToken instanceof ExpansionToken) {
-            if(((ExpansionToken) inputToken).getMacroNames().contains(macroName)) {
+         if(macroNameToken instanceof ExpansionToken) {
+            if(((ExpansionToken) macroNameToken).getMacroNames().contains(macroName)) {
                // Detected macro recursion in the expansion - add directly to output and do not perform expansion!
-               macroBody = null;
+               macro = null;
             }
          }
       }
-      if(macroBody != null) {
-         // Macro expansion is needed
-         List<Token> expandedBody = new ArrayList<>();
-         for(Token bodyToken : macroBody) {
-            final CommonToken expandedToken = new CommonToken(inputToken);
-            expandedToken.setText(bodyToken.getText());
-            expandedToken.setType(bodyToken.getType());
-            expandedToken.setChannel(bodyToken.getChannel());
-            Set<String> macroNames = new HashSet<>();
-            if(inputToken instanceof ExpansionToken) {
-               // Transfer macro names to the new expansion
-               macroNames = ((ExpansionToken) inputToken).getMacroNames();
+      if(macro != null) {
+         // Handle parameters
+         List<List<Token>> paramValues = new ArrayList<>();
+         if(!macro.parameters.isEmpty()) {
+            // Parse parameter value list
+            {
+               // Skip '('
+               skipWhitespace(cTokenSource);
+               nextToken(cTokenSource, KickCLexer.PAR_BEGIN);
+               // Read parameter values
+               List<Token> paramValue = new ArrayList<>();
+               int nesting = 1;
+               while(true) {
+                  skipWhitespace(cTokenSource);
+                  final Token paramToken = cTokenSource.nextToken();
+                  if(paramToken.getType() == KickCLexer.PAR_END && nesting == 1) {
+                     // We reached the end of the parameters - add the current param unless it is an empty parameter alone in the list
+                     if(!paramValues.isEmpty() || !paramValue.isEmpty())
+                        paramValues.add(paramValue);
+                     break;
+                  } else if(paramToken.getType() == KickCLexer.COMMA && nesting == 1) {
+                     // We have reached the next parameter value
+                     paramValues.add(paramValue);
+                     paramValue = new ArrayList<>();
+                  } else {
+                     // We are reading a parameter value - handle nesting and store it
+                     if(paramToken.getType() == KickCLexer.PAR_BEGIN)
+                        nesting++;
+                     if(paramToken.getType() == KickCLexer.PAR_END)
+                        nesting--;
+                     paramValue.add(paramToken);
+                  }
+               }
             }
-            macroNames.add(macroName);
-            expandedBody.add(new ExpansionToken(expandedToken, macroNames));
+            // Check parameter list length
+            if(macro.parameters.size() != paramValues.size()) {
+               throw new CompileError("Error! Wrong number of macro parameters. Expected " + macro.parameters.size() + " was " + paramValues.size(), macroNameToken);
+            }
+            // Expand parameter values
+            List<List<Token>> expandedParamValues = new ArrayList<>();
+            for(List<Token> paramTokens : paramValues) {
+               List<Token> expandedParamValue = new ArrayList<>();
+               CPreprocessor subPreprocessor = new CPreprocessor(new ListTokenSource(paramTokens), new HashMap<>(defines));
+               while(true) {
+                  final Token expandedToken = subPreprocessor.nextToken();
+                  if(expandedToken.getType() == Token.EOF)
+                     break;
+                  else
+                     expandedParamValue.add(expandedToken);
+               }
+               expandedParamValues.add(expandedParamValue);
+               paramValues = expandedParamValues;
+            }
+         }
+
+         // Perform macro expansion - by expanding the body at the start of the token source
+         List<Token> expandedBody = new ArrayList<>();
+         final List<Token> macroBody = macro.body;
+         for(Token macroBodyToken : macroBody) {
+            if(macroBodyToken.getType()==KickCLexer.NAME && macro.parameters.contains(macroBodyToken.getText())) {
+               // body token is a parameter name - replace with expanded parameter value
+               final int paramIndex = macro.parameters.indexOf(macroBodyToken.getText());
+               final List<Token> expandedParamValue = paramValues.get(paramIndex);
+               for(Token expandedParamValueToken : expandedParamValue) {
+                  addTokenToExpandedBody(expandedParamValueToken, macroNameToken, expandedBody);
+               }
+            } else {
+               // body token is a normal token 
+               addTokenToExpandedBody(macroBodyToken, macroNameToken, expandedBody);
+            }
          }
          cTokenSource.addSource(new ListTokenSource(expandedBody));
          return true;
       }
       return false;
+   }
+
+   /**
+    * Add a macro token to the exapnded macro body. Keeps track of which macros has been used to expand the token using {@link ExpansionToken}
+    * @param macroBodyToken The macro body token to add
+    * @param macroNameToken The token containing the macro name. Used to get the name and as a source for copying token properties (ensuring file name, line etc. are OK).
+    * @param expandedBody The expanded macro body to add the token to
+    */
+   private void addTokenToExpandedBody(Token macroBodyToken, Token macroNameToken, List<Token> expandedBody) {
+      final CommonToken expandedToken = new CommonToken(macroNameToken);
+      expandedToken.setText(macroBodyToken.getText());
+      expandedToken.setType(macroBodyToken.getType());
+      expandedToken.setChannel(macroBodyToken.getChannel());
+      Set<String> macroNames = new HashSet<>();
+      if(macroNameToken instanceof ExpansionToken) {
+         // Transfer macro names to the new expansion
+         macroNames = ((ExpansionToken) macroNameToken).getMacroNames();
+      }
+      macroNames.add(macroNameToken.getText());
+      expandedBody.add(new ExpansionToken(expandedToken, macroNames));
    }
 
    /**
@@ -255,7 +368,8 @@ public class CPreprocessor implements TokenSource {
    }
 
    /**
-    * Evaluate a constant condition expression from #if. The special defined operator must be evaluated before calling this.
+    * Evaluate a constant condition expression from #if / #eilf.
+    * The special defined operator must be evaluated before calling this.
     *
     * @param conditionExpr The expression
     * @return The result of the evaluation.
@@ -338,7 +452,7 @@ public class CPreprocessor implements TokenSource {
                hasPar = true;
             }
             if(token.getType() != KickCLexer.NAME) {
-               throw new CompileError("Unexpected token. Was expecting NAME!");
+               throw new CompileError("Unexpected token. Was expecting NAME!", token);
             }
             tokenIt.remove();
             Token macroNameToken = token;
@@ -347,7 +461,7 @@ public class CPreprocessor implements TokenSource {
                // Skip closing parenthesis
                token = getNextSkipWhitespace(tokenIt);
                if(token.getType() != KickCLexer.PAR_END) {
-                  throw new CompileError("Unexpected token. Was expecting ')'!");
+                  throw new CompileError("Unexpected token. Was expecting ')'!", token);
                }
                tokenIt.remove();
             }
@@ -470,7 +584,7 @@ public class CPreprocessor implements TokenSource {
    private Token nextToken(CTokenSource cTokenSource, int tokenType) {
       final Token token = cTokenSource.nextToken();
       if(token.getType() != tokenType)
-         throw new CompileError("Unexpected token. Was expecting " + tokenType);
+         throw new CompileError("Unexpected token. Was expecting " + tokenType, token);
       return token;
    }
 

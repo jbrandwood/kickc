@@ -38,6 +38,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCStyleDeclRedefinition() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-redefinition", "Error! Redefinition of function sum");
+   }
+
+   @Test
+   public void testCStyleDeclMismatch() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-mismatch", "Error! Conflicting declarations for sum");
+   }
+
+   @Test
    public void testCStyleDecl0() throws IOException, URISyntaxException {
       compileAndCompare("cstyle-decl-0");
    }

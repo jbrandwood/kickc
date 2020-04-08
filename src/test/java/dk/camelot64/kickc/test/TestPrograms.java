@@ -38,13 +38,18 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCStyleDeclMissing() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-missing", "Error! Function is never declared: sum");
+   }
+
+   @Test
    public void testCStyleDeclRedefinition() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-redefinition", "Error! Redefinition of function sum");
+      assertError("cstyle-decl-redefinition", "Error! Redefinition of function: sum");
    }
 
    @Test
    public void testCStyleDeclMismatch() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-mismatch", "Error! Conflicting declarations for sum");
+      assertError("cstyle-decl-mismatch", "Error! Conflicting declarations for: sum");
    }
 
    @Test

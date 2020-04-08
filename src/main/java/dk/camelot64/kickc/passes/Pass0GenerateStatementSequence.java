@@ -245,7 +245,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(existingSymbol!=null) {
          // Already declared  - check equality
          if(!SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
-            throw new CompileError("Error! Conflicting declarations for "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
+            throw new CompileError("Error! Conflicting declarations for: "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
       } else {
          // Not declared before - add it
          program.getScope().add(procedure);
@@ -261,7 +261,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Check that the body has not already been added
          for(Statement statement : sequence.getStatements())
             if(statement instanceof StatementProcedureBegin && ((StatementProcedureBegin) statement).getProcedure().equals(procedure.getRef()))
-               throw new CompileError("Error! Redefinition of function "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
+               throw new CompileError("Error! Redefinition of function: "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
          // Add the body
          scopeStack.push(procedure);
          sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));

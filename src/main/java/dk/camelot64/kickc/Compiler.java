@@ -164,7 +164,6 @@ public class Compiler {
          }
 
          Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, variableBuilderConfig, callingConvention);
-
          pass0GenerateStatementSequence.generate();
 
          StatementSequence sequence = program.getStatementSequence();
@@ -199,6 +198,7 @@ public class Compiler {
 
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();
+      new Pass1AssertProcedureDefined(program).execute();
       new PassNAssertStructMembers(program).execute();
       new Pass1UnwindBlockScopes(program).execute();
       new Pass1Procedures(program).execute();

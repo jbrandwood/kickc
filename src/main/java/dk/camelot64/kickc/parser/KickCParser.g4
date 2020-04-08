@@ -128,7 +128,11 @@ enumMember
     ;
 
 declFunction
-    : declType declPointer* NAME PAR_BEGIN parameterListDecl? PAR_END CURLY_BEGIN stmtSeq? CURLY_END
+    : declType declPointer* NAME PAR_BEGIN parameterListDecl? PAR_END (declFunctionBody | ';' )
+    ;
+
+declFunctionBody
+    : CURLY_BEGIN stmtSeq? CURLY_END
     ;
 
 parameterListDecl

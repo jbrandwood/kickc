@@ -3,6 +3,7 @@ package dk.camelot64.kickc.model.types;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
@@ -245,6 +246,22 @@ public class SymbolTypeConversion {
          return false;
       else
          return true;
+   }
+
+   /**
+    * Checks that two procedure declarations are a proper match
+    * @param first The first procedure declaration
+    * @param second The first procedure declaration
+    * @return true if they match types. False otherwise
+    */
+   public static boolean procedureDeclarationMatch(Procedure first, Procedure second) {
+      if(!first.getFullName().equals(second.getFullName()))
+         return false;
+      if(!first.getReturnType().equals(second.getReturnType()))
+         return false;
+      if(!first.getParameters().equals(second.getParameters()))
+         return false;
+      return true;
    }
 
 

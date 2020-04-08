@@ -38,6 +38,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCStyleDecl0() throws IOException, URISyntaxException {
+      compileAndCompare("cstyle-decl-0");
+   }
+
+   @Test
    public void testPreprocessor8() throws IOException, URISyntaxException {
       compileAndCompare("preprocessor-8");
    }

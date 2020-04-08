@@ -404,6 +404,16 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDeclFunction(KickCParser.DeclFunctionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#declFunctionBody}.
+	 * @param ctx the parse tree
+	 */
+	void enterDeclFunctionBody(KickCParser.DeclFunctionBodyContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#declFunctionBody}.
+	 * @param ctx the parse tree
+	 */
+	void exitDeclFunctionBody(KickCParser.DeclFunctionBodyContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#parameterListDecl}.
 	 * @param ctx the parse tree
 	 */

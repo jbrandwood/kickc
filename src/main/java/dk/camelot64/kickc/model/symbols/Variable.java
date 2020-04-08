@@ -629,7 +629,7 @@ public class Variable implements Symbol {
       Variable variable = (Variable) o;
       return kind == variable.kind &&
             Objects.equals(name, variable.name) &&
-            Objects.equals(scope, variable.scope) &&
+            Objects.equals(scope.getRef(), variable.scope.getRef()) &&
             Objects.equals(type, variable.type);
    }
 

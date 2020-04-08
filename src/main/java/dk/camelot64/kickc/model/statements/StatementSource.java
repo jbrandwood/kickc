@@ -137,15 +137,23 @@ public class StatementSource implements Serializable {
       return new StatementSource(nodeStart, nodeStop);
    }
 
-   public static StatementSource procedureEnd(KickCParser.DeclFunctionContext ctx) {
-      ParseTree nodeStart = ctx.getChild(ctx.getChildCount() - 1);
-      ParseTree nodeStop = ctx;
+   public static StatementSource procedureDecl(KickCParser.DeclFunctionContext ctx) {
+      ParseTree nodeStart = ctx;
+      ParseTree nodeStop = ctx.getChild(ctx.getChildCount() - 2);
       return new StatementSource(nodeStart, nodeStop);
    }
 
    public static StatementSource procedureBegin(KickCParser.DeclFunctionContext ctx) {
-      ParseTree nodeStart = ctx;
-      ParseTree nodeStop = ctx.getChild(ctx.getChildCount() - 4);
+      final KickCParser.DeclFunctionBodyContext bodyCtx = ctx.declFunctionBody();
+      ParseTree nodeStart = bodyCtx;
+      ParseTree nodeStop = bodyCtx.getChild(bodyCtx.getChildCount() - 4);
+      return new StatementSource(nodeStart, nodeStop);
+   }
+
+   public static StatementSource procedureEnd(KickCParser.DeclFunctionContext ctx) {
+      final KickCParser.DeclFunctionBodyContext bodyCtx = ctx.declFunctionBody();
+      ParseTree nodeStart = bodyCtx.getChild(bodyCtx.getChildCount() - 1);
+      ParseTree nodeStop = bodyCtx;
       return new StatementSource(nodeStart, nodeStop);
    }
 

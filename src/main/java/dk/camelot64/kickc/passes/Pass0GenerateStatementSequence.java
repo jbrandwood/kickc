@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.*;
@@ -17,10 +18,8 @@ import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 import org.antlr.v4.runtime.BufferedTokenStream;
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -224,12 +223,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       SymbolType type = varDecl.getEffectiveType();
       List<Directive> directives = varDecl.getEffectiveDirectives();
       String name = ctx.NAME().getText();
-      Procedure procedure = getCurrentScope().addProcedure(name, type, currentCodeSegment, currentDataSegment, currentCallingConvention);
-      addDirectives(procedure, directives, StatementSource.procedureBegin(ctx));
+      Procedure procedure = new Procedure(name, type, program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
+      addDirectives(procedure, directives, StatementSource.procedureDecl(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
       varDecl.exitType();
+
       scopeStack.push(procedure);
-      Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
          returnVar = procedure.add(Variable.createPhiMaster("return", type, procedure, defaultMemoryArea, procedure.getSegmentData()));
@@ -239,27 +238,57 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
       }
       procedure.setParameters(parameterList);
-      sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
-      // Add parameter assignments
-      if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-         for(Variable param : parameterList) {
-            sequence.addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-         }
-      }
-      if(ctx.stmtSeq() != null) {
-         this.visit(ctx.stmtSeq());
-      }
-      sequence.addStatement(new StatementLabel(procExit.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-      if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()) && returnVar != null) {
-         sequence.addStatement(new StatementAssignment(returnVar.getVariableRef(), returnVar.getRef(), false, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
-      }
-      SymbolVariableRef returnVarRef = null;
-      if(returnVar != null) {
-         returnVarRef = returnVar.getRef();
-      }
-      sequence.addStatement(new StatementReturn(returnVarRef, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
       scopeStack.pop();
-      sequence.addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+
+      // Check that the declaration matches any existing declaration!
+      final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
+      if(existingSymbol!=null) {
+         // Already declared  - check equality
+         if(!SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
+            throw new CompileError("Error! Conflicting declarations for "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
+      } else {
+         // Not declared before - add it
+         program.getScope().add(procedure);
+      }
+
+      if(ctx.declFunctionBody() != null) {
+         // Make sure directives and more are taken from the procedure with the body!
+         if(existingSymbol!=null) {
+            program.getScope().remove(existingSymbol);
+            program.getScope().add(procedure);
+         }
+
+         // Check that the body has not already been added
+         for(Statement statement : sequence.getStatements())
+            if(statement instanceof StatementProcedureBegin && ((StatementProcedureBegin) statement).getProcedure().equals(procedure.getRef()))
+               throw new CompileError("Error! Redefinition of function "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
+         // Add the body
+         scopeStack.push(procedure);
+         sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
+         // Add parameter assignments
+         if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+            for(Variable param : parameterList) {
+               sequence.addStatement(new StatementAssignment((LValue) param.getRef(), new ParamValue((VariableRef) param.getRef()), true, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+            }
+         }
+         Label procExit = procedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
+         if(ctx.declFunctionBody().stmtSeq() != null) {
+            this.visit(ctx.declFunctionBody().stmtSeq());
+         }
+         sequence.addStatement(new StatementLabel(procExit.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+         if(Procedure.CallingConvention.PHI_CALL.equals(procedure.getCallingConvention()) && returnVar != null) {
+            sequence.addStatement(new StatementAssignment(returnVar.getVariableRef(), returnVar.getRef(), false, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+         }
+         SymbolVariableRef returnVarRef = null;
+         if(returnVar != null) {
+            returnVarRef = returnVar.getRef();
+         }
+         sequence.addStatement(new StatementReturn(returnVarRef, StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+         scopeStack.pop();
+         sequence.addStatement(new StatementProcedureEnd(procedure.getRef(), StatementSource.procedureEnd(ctx), Comment.NO_COMMENTS));
+      }
+
+
       return null;
    }
 
@@ -557,7 +586,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       public VariableDeclaration() {
          this.declType = new VariableDeclType();
-      }                                                                                
+      }
 
       /**
        * Exits the type layer (clears everything except struct information)
@@ -2363,7 +2392,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<Comment> comments = new ArrayList<>();
       BufferedTokenStream tokenStream = cParser.getTokenStream();
       final int startTokenIndex = ctx.start.getTokenIndex();
-      if(startTokenIndex<0)
+      if(startTokenIndex < 0)
          return commentBlocks;
       List<Token> hiddenTokens = tokenStream.getHiddenTokensToLeft(startTokenIndex);
       if(hiddenTokens != null) {

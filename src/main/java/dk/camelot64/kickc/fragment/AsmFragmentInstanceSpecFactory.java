@@ -290,6 +290,8 @@ public class AsmFragmentInstanceSpecFactory {
                      integerValue = ((ConstantInteger) constantLiteral).getValue();
                   } else if(constantLiteral instanceof ConstantPointer) {
                      integerValue = ((ConstantPointer) constantLiteral).getValue();
+                  } else if(constantLiteral instanceof ConstantChar) {
+                     integerValue = ((ConstantChar) constantLiteral).getInteger();
                   } else {
                      throw new InternalError("Not implemented " + constantLiteral);
                   }

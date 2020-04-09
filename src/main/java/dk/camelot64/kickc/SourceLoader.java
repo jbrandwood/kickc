@@ -18,7 +18,8 @@ public class SourceLoader {
 
    public static File loadFile(String fileName, Path currentPath, Program program) {
       List<String> searchPaths = new ArrayList<>();
-      searchPaths.add(currentPath.toString());
+      if(currentPath != null)
+         searchPaths.add(currentPath.toString());
       searchPaths.addAll(program.getImportPaths());
       for(String importPath : searchPaths) {
          if(!importPath.endsWith("/")) {

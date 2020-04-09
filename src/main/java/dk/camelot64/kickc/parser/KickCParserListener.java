@@ -74,6 +74,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitIncludeFile(KickCParser.IncludeFileContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code includeSystem}
+	 * labeled alternative in {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncludeSystem(KickCParser.IncludeSystemContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code includeSystem}
+	 * labeled alternative in {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncludeSystem(KickCParser.IncludeSystemContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#decl}.
 	 * @param ctx the parse tree
 	 */

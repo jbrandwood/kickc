@@ -38,6 +38,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIncludes2() throws IOException, URISyntaxException {
+      compileAndCompare("complex/includes/includes-2");
+   }
+
+   @Test
+   public void testIncludes1() throws IOException, URISyntaxException {
+      compileAndCompare("complex/includes/includes-1");
+   }
+
+   @Test
    public void testCStyleDeclVarMultiple() throws IOException, URISyntaxException {
       compileAndCompare("cstyle-decl-var-multiple");
    }

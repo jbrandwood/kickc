@@ -51,6 +51,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIncludeFile(KickCParser.IncludeFileContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code includeSystem}
+	 * labeled alternative in {@link KickCParser#importDecl}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncludeSystem(KickCParser.IncludeSystemContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#decl}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

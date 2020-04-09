@@ -37,6 +37,7 @@ declOrImport
 importDecl
     : IMPORT STRING #importFile
     | INCLUDE STRING #includeFile
+    | INCLUDE SYSTEMFILE #includeSystem
     ;
 
 decl

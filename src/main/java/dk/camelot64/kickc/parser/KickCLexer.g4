@@ -117,10 +117,6 @@ SIMPLETYPE: 'byte' | 'word' | 'dword' | 'bool' | 'char' | 'short' | 'int' | 'lon
 BOOLEAN : 'true' | 'false';
 KICKASM_BODY: '{{' .*? '}}';
 
-// Strings and chars - with special handling of imports
-STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(importEnter) { importEnter=false; cParser.loadCFile(getText()); } } ;
-CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
-
 // Preprocessor
 IMPORT: '#import' { importEnter=true; } ;
 INCLUDE: '#include' { importEnter=true; } ;
@@ -153,6 +149,11 @@ fragment HEXDIGIT : [0-9a-fA-F];
 NAME : NAME_START NAME_CHAR* {if(cParser.isTypedef(getText())) setType(TYPEDEFNAME); };
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
+
+// Strings and chars - with special handling of imports
+SYSTEMFILE : '<' [a-zA-Z0-9_./\\]+ '>' { if(importEnter) { importEnter=false; cParser.loadCFile(getText(), true); } } ;
+STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(importEnter) { importEnter=false; cParser.loadCFile(getText(), false); } } ;
+CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 
 // White space on hidden channel 1
 WS : [ \t\r\n\u00a0]+ -> channel(1);

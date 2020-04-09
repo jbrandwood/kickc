@@ -1,9 +1,9 @@
 package dk.camelot64.kickc.parser;
 
 import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import org.antlr.v4.runtime.*;
 
 import java.io.File;
@@ -112,6 +112,7 @@ public class CParser {
 
    /**
     * Get the C parser
+    *
     * @return The C parser
     */
    public KickCParser getParser() {
@@ -152,8 +153,9 @@ public class CParser {
     *
     * @param fileName The file name of the file
     */
-   public void loadCFile(String fileName) {
-      loadCFile(fileName, getCurrentSourceFolderPath());
+   public void loadCFile(String fileName, boolean isSystem) {
+      final Path currentSourceFolderPath = isSystem ? null : getCurrentSourceFolderPath();
+      loadCFile(fileName, currentSourceFolderPath);
    }
 
    /**
@@ -165,10 +167,10 @@ public class CParser {
     */
    private void loadCFile(String fileName, Path currentPath) {
       try {
-         if(fileName.startsWith("\"")) {
-            fileName = fileName.substring(1, fileName.length()-1);
+         if(fileName.startsWith("\"") || fileName.startsWith("<")) {
+            fileName = fileName.substring(1, fileName.length() - 1);
          }
-         if(!fileName.endsWith(".kc")) {
+         if(!fileName.endsWith(".kc") && !fileName.contains(".")) {
             fileName += ".kc";
          }
          File file = SourceLoader.loadFile(fileName, currentPath, program);
@@ -192,6 +194,7 @@ public class CParser {
 
    /**
     * Add source code at the start of the token stream being parsed.
+    *
     * @param charStream The char stream containing the source code to add
     * @return The lexer for reading the source tokens of the added source
     */

@@ -10,8 +10,6 @@ tokens { TYPEDEFNAME }
 
     /** The C-Parser. Used for importing C-files and communicating with the Parser about typedefs. */
     CParser cParser;
-    /** True of the next string is the name of a C-file to import*/
-    boolean importEnter = false;
     /** True if the next CURLY starts ASM_MODE */
     boolean asmEnter = false;
     /** Counts the nested curlies inside ASM_MODE to determine when to exit ASM_MODE */
@@ -118,8 +116,8 @@ BOOLEAN : 'true' | 'false';
 KICKASM_BODY: '{{' .*? '}}';
 
 // Preprocessor
-IMPORT: '#import' { importEnter=true; } ;
-INCLUDE: '#include' { importEnter=true; } ;
+IMPORT: '#import' { pushMode(IMPORT_MODE);  } ;
+INCLUDE: '#include' { pushMode(IMPORT_MODE); } ;
 PRAGMA: '#pragma' ;
 DEFINE: '#define' ;
 DEFINE_CONTINUE: '\\\n' | '\\\r\n';
@@ -150,9 +148,8 @@ NAME : NAME_START NAME_CHAR* {if(cParser.isTypedef(getText())) setType(TYPEDEFNA
 fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
 
-// Strings and chars - with special handling of imports
-SYSTEMFILE : '<' [a-zA-Z0-9_./\\\-]+ '>' { if(importEnter) { importEnter=false; cParser.loadCFile(getText(), true); } } ;
-STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(importEnter) { importEnter=false; cParser.loadCFile(getText(), false); } } ;
+// Strings and chars
+STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? ;
 CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 
 // White space on hidden channel 1
@@ -221,3 +218,14 @@ ASM_WS : [ \t\r\n\u00a0]+ -> channel(1);
 // Comments on hidden channel 2
 ASM_COMMENT_LINE : '//' ~[\r\n]* -> channel(2);
 ASM_COMMENT_BLOCK : '/*' .*? '*/' -> channel(2);
+
+
+// MODE FOR INCLUDE FILES
+mode IMPORT_MODE;
+IMPORT_SYSTEMFILE : '<' [a-zA-Z0-9_./\\\-]+ '>' { popMode();cParser.loadCFile(getText(), true); } ;
+IMPORT_LOCALFILE : '"' ('\\"' | ~'"')* '"' { popMode(); cParser.loadCFile(getText(), false); }  ;
+// White space on hidden channel 1
+IMPORT_WS : [ \t\r\n\u00a0]+ -> channel(1);
+// Comments on hidden channel 2
+IMPORT_COMMENT_LINE : '//' ~[\r\n]* -> channel(2);
+IMPORT_COMMENT_BLOCK : '/*' .*? '*/' -> channel(2);

@@ -93,7 +93,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitImportFile(KickCParser.ImportFileContext ctx) {
-      String importName = ctx.STRING().getText();
+      String importName = ctx.IMPORT_LOCALFILE().getText();
       String importFileName = importName.substring(1, importName.length() - 1);
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Importing " + importFileName);
@@ -103,7 +103,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitIncludeFile(KickCParser.IncludeFileContext ctx) {
-      String includeName = ctx.STRING().getText();
+      String includeName = ctx.IMPORT_LOCALFILE().getText();
       String includeFileName = includeName.substring(1, includeName.length() - 1);
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Including " + includeFileName);
@@ -113,7 +113,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitIncludeSystem(KickCParser.IncludeSystemContext ctx) {
-      String includeName = ctx.SYSTEMFILE().getText();
+      String includeName = ctx.IMPORT_SYSTEMFILE().getText();
       String includeFileName = includeName.substring(1, includeName.length() - 1);
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Including system" + includeFileName);

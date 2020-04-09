@@ -35,9 +35,9 @@ declOrImport
     ;
 
 importDecl
-    : IMPORT STRING #importFile
-    | INCLUDE STRING #includeFile
-    | INCLUDE SYSTEMFILE #includeSystem
+    : IMPORT IMPORT_LOCALFILE #importFile
+    | INCLUDE IMPORT_LOCALFILE #includeFile
+    | INCLUDE IMPORT_SYSTEMFILE #includeSystem
     ;
 
 decl

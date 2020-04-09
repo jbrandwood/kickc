@@ -112,6 +112,9 @@ public class Variable implements Symbol {
    /** If the variable is assigned to a specific "register", this contains the register. If null the variable has no allocation (yet). Constants are never assigned to registers. [Only variables - not constants and not PHI masters] */
    private Registers.Register allocation;
 
+   /** If the variable is only declared and not defined (using the "extern" keyword). */
+   private boolean isDeclarationOnly;
+
    /**
     * Create a variable (or constant)
     *
@@ -592,6 +595,14 @@ public class Variable implements Symbol {
     */
    public boolean isStructClassic() {
       return getType() instanceof SymbolTypeStruct && isKindLoadStore();
+   }
+
+   public boolean isDeclarationOnly() {
+      return isDeclarationOnly;
+   }
+
+   public void setDeclarationOnly(boolean declarationOnly) {
+      isDeclarationOnly = declarationOnly;
    }
 
    public List<Comment> getComments() {

@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantLiteral;
 import dk.camelot64.kickc.model.values.ConstantValue;
@@ -226,8 +227,8 @@ public class SymbolTypeConversion {
          return true;
       }
       if(lValueType instanceof SymbolTypePointer && rValueType instanceof SymbolTypePointer && assignmentTypeMatch(((SymbolTypePointer) lValueType).getElementType(), ((SymbolTypePointer) rValueType).getElementType())) {
-            // Pointer types assigned from each other
-            return true;
+         // Pointer types assigned from each other
+         return true;
       }
       return false;
    }
@@ -250,6 +251,7 @@ public class SymbolTypeConversion {
 
    /**
     * Checks that two procedure declarations are a proper match
+    *
     * @param first The first procedure declaration
     * @param second The first procedure declaration
     * @return true if they match types. False otherwise
@@ -264,5 +266,30 @@ public class SymbolTypeConversion {
       return true;
    }
 
+
+   /**
+    * Checks that two variable declarations are a proper match
+    *
+    * @param first The first variable declaration
+    * @param second The first variable declaration
+    * @return true if they match types. False otherwise
+    */
+   public static boolean variableDeclarationMatch(Variable first, Variable second) {
+      if(!first.getFullName().equals(second.getFullName()))
+         return false;
+      if(!first.getType().equals(second.getType()))
+         return false;
+      if(first.isNoModify() != second.isNoModify())
+         return false;
+      if(first.isVolatile() != second.isVolatile())
+         return false;
+      if(first.isToNoModify() != second.isToNoModify())
+         return false;
+      if(first.isToVolatile() != second.isToVolatile())
+         return false;
+      if(first.isPermanent() != second.isPermanent())
+         return false;
+      return true;
+   }
 
 }

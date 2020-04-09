@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -70,7 +71,34 @@ public class VariableBuilder {
       }
       variable.setMemoryArea(this.getMemoryArea());
       variable.setMemoryAlignment(this.getAlignment());
-      scope.add(variable);
+      variable.setDeclarationOnly(this.isDeclarationOnly());
+
+
+      // Check if the symbol has already been declared
+      Symbol declaredSymbol = scope.getLocalSymbol(varName);
+      if(declaredSymbol!=null &&  !declaredSymbol.getFullName().equals(variable.getFullName()))
+         // We found another symbol!
+         declaredSymbol = null;
+
+      if(declaredSymbol!=null) {
+         if(!(declaredSymbol instanceof Variable))
+            throw new CompileError("Error! Conflicting declarations for: "+variable.getFullName());
+         Variable declaredVar = (Variable) declaredSymbol;
+         if(!declaredVar.isDeclarationOnly() && !variable.isDeclarationOnly())
+            throw new CompileError("Error! Redefinition of variable: "+variable.getFullName());
+         if(!SymbolTypeConversion.variableDeclarationMatch(declaredVar, variable))
+            throw new CompileError("Error! Conflicting declarations for: "+variable.getFullName());
+
+         // Update the variable with the definition
+         if(!variable.isDeclarationOnly()) {
+            scope.remove(declaredSymbol);
+            scope.add(variable);
+         }
+      } else {
+         // Not already declared - add it
+         scope.add(variable);
+      }
+
       return variable;
    }
 
@@ -217,6 +245,14 @@ public class VariableBuilder {
     */
    public boolean isExport() {
       return hasDirective(Directive.Export.class);
+   }
+
+   /**
+    * Declared but not defined. ( "extern" keyword)
+    * @return true if the variable is declared but not defined.
+    */
+   public boolean isDeclarationOnly() {
+      return hasDirective(Directive.Extern.class);
    }
 
    /**

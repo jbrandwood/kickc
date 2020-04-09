@@ -199,6 +199,7 @@ public class Compiler {
       new Pass1GenerateControlFlowGraph(program).execute();
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1AssertProcedureDefined(program).execute();
+      new Pass1AssertVariableDefined(program).execute();
       new PassNAssertStructMembers(program).execute();
       new Pass1UnwindBlockScopes(program).execute();
       new Pass1Procedures(program).execute();

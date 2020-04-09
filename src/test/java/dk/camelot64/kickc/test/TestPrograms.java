@@ -38,23 +38,48 @@ public class TestPrograms {
    }
 
    @Test
-   public void testCStyleDeclMissing() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-missing", "Error! Function is never declared: sum", false);
+   public void testCStyleDeclVarMultiple() throws IOException, URISyntaxException {
+      compileAndCompare("cstyle-decl-var-multiple");
    }
 
    @Test
-   public void testCStyleDeclRedefinition() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-redefinition", "Error! Redefinition of function: sum");
+   public void testCStyleDeclVarMissing() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-var-missing", "Variable is declared but never defined: SCREEN", false);
    }
 
    @Test
-   public void testCStyleDeclMismatch() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-mismatch", "Error! Conflicting declarations for: sum");
+   public void testCStyleDeclVarMismatch() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-var-mismatch", "Error! Conflicting declarations for: SCREEN");
    }
 
    @Test
-   public void testCStyleDecl0() throws IOException, URISyntaxException {
-      compileAndCompare("cstyle-decl-0");
+   public void testCStyleDeclVarRedefinition() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-var-redefinition", "Error! Redefinition of variable: SCREEN");
+   }
+
+   @Test
+   public void testCStyleDeclVar() throws IOException, URISyntaxException {
+      compileAndCompare("cstyle-decl-var");
+   }
+
+   @Test
+   public void testCStyleDeclFunctionMissing() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-function-missing", "Error! Function body is never defined: sum", false);
+   }
+
+   @Test
+   public void testCStyleDeclFunctionRedefinition() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-function-redefinition", "Error! Redefinition of function: sum");
+   }
+
+   @Test
+   public void testCStyleDeclFunctionMismatch() throws IOException, URISyntaxException {
+      assertError("cstyle-decl-function-mismatch", "Error! Conflicting declarations for: sum");
+   }
+
+   @Test
+   public void testCStyleDeclFunction() throws IOException, URISyntaxException {
+      compileAndCompare("cstyle-decl-function");
    }
 
    @Test

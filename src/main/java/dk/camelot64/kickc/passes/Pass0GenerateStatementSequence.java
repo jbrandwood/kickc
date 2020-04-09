@@ -1095,6 +1095,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitDirectiveExtern(KickCParser.DirectiveExternContext ctx) {
+      return new Directive.Extern();
+   }
+
+   @Override
    public Directive visitDirectiveExport(KickCParser.DirectiveExportContext ctx) {
       return new Directive.Export();
    }

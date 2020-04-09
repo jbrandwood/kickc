@@ -22,7 +22,7 @@ public class Pass1AssertProcedureDefined extends Pass1Base {
          final Label procedureLabel = procedure.getLabel();
          final ControlFlowBlock procedureBlock = getGraph().getBlock(procedureLabel.getRef());
          if(procedureBlock == null)
-            throw new CompileError("Error! Function is never declared: " + procedure.getFullName());
+            throw new CompileError("Error! Function body is never defined: " + procedure.getFullName());
       }
       return false;
    }

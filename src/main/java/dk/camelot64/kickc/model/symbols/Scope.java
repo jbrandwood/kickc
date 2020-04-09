@@ -1,10 +1,7 @@
 package dk.camelot64.kickc.model.symbols;
 
-import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.Registers;
-import dk.camelot64.kickc.model.VariableRegisterWeights;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
@@ -102,7 +99,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
-      return add(Variable.createIntermediate( name, this, getSegmentData()));
+      return add(Variable.createIntermediate(name, this, getSegmentData()));
    }
 
    /**
@@ -169,8 +166,8 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable getVariable(String name) {
       Variable symbol = (Variable) getSymbol(name);
-      if(symbol!=null && !symbol.isVariable())
-         throw new InternalError("Symbol is not a variable! "+symbol.toString());
+      if(symbol != null && !symbol.isVariable())
+         throw new InternalError("Symbol is not a variable! " + symbol.toString());
       return symbol;
    }
 
@@ -180,7 +177,8 @@ public abstract class Scope implements Symbol, Serializable {
 
    public Variable getConstant(String name) {
       Variable symbol = (Variable) getSymbol(name);
-      if(symbol!=null && !symbol.isKindConstant()) throw new InternalError("Symbol is not a constant! "+symbol.toString());
+      if(symbol != null && !symbol.isKindConstant())
+         throw new InternalError("Symbol is not a constant! " + symbol.toString());
       return symbol;
    }
 
@@ -190,6 +188,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    /**
     * Get all variables/constants
+    *
     * @param includeSubScopes true to include sub-scopes
     * @return all variables/constants
     */
@@ -209,6 +208,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    /**
     * Get all runtime variables (excluding constants)
+    *
     * @param includeSubScopes true to include sub-scopes
     * @return all runtime variables (excluding constants)
     */
@@ -222,6 +222,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    /**
     * Get all constants
+    *
     * @param includeSubScopes true to include sub-scopes
     * @return all constants
     */
@@ -368,7 +369,7 @@ public abstract class Scope implements Symbol, Serializable {
                res.append(symbol.toString(program));
                if(symVar.isArray()) {
                   res.append("[");
-                  if(symVar.getArraySize()!=null) {
+                  if(symVar.getArraySize() != null) {
                      res.append(symVar.getArraySize().toString(program));
                   }
                   res.append("] ");
@@ -395,7 +396,7 @@ public abstract class Scope implements Symbol, Serializable {
                      }
                   }
                }
-               if(symVar.getInitValue()!=null) {
+               if(symVar.getInitValue() != null) {
                   res.append(" = " + symVar.getInitValue().toString(program));
                }
                res.append("\n");

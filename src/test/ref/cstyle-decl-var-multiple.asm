@@ -5,9 +5,9 @@
   .label SCREEN = $400
 // And a little code using them
 main: {
-    .label c = 2
+    .label c1 = 2
     lda #0
-    sta.z c
+    sta.z c1
     tay
   __b1:
     ldx #0
@@ -21,9 +21,9 @@ main: {
     inx
     cpx #$b
     bne __b2
-    inc.z c
+    inc.z c1
     lda #$b
-    cmp.z c
+    cmp.z c1
     bne __b1
     // }
     rts

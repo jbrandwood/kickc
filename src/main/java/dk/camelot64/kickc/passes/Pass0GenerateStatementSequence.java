@@ -470,7 +470,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitAsmDirectiveUses(KickCParser.AsmDirectiveUsesContext ctx) {
       String varName = ctx.NAME().getText();
       SymbolRef variableRef;
-      Symbol symbol = getCurrentScope().getSymbol(varName);
+      Symbol symbol = getCurrentScope().findSymbol(varName);
       if(symbol != null) {
          //Found an existing variable
          variableRef = symbol.getRef();
@@ -1451,7 +1451,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          VariableBuilder varBuilder = new VariableBuilder(varName, blockScope, false, varType, null, varDecl.getEffectiveDirectives(), currentDataSegment, variableBuilderConfig);
          lValue = varBuilder.build();
       } else {
-         lValue = getCurrentScope().getVariable(varName);
+         lValue = getCurrentScope().findVariable(varName);
          if(lValue == null) {
             throw new CompileError("Error! Loop variable not declared " + varName, statementSource);
          }
@@ -1609,7 +1609,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             String label = ctxLabel.ASM_NAME().toString();
             if(!definedLabels.contains(label)) {
                // Look for the symbol
-               Symbol symbol = getCurrentScope().getSymbol(ctxLabel.ASM_NAME().getText());
+               Symbol symbol = getCurrentScope().findSymbol(ctxLabel.ASM_NAME().getText());
                if(symbol != null) {
                   referenced.put(label, symbol.getRef());
                } else {
@@ -1652,11 +1652,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(exprCtx != null) {
          PrePostModifierHandler.addPreModifiers(this, exprCtx, new StatementSource(ctx));
          rValue = (RValue) this.visit(exprCtx);
-         Variable returnVar = procedure.getVariable("return");
+         Variable returnVar = procedure.getLocalVariable("return");
          sequence.addStatement(new StatementAssignment((LValue) returnVar.getRef(), rValue, false, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
          PrePostModifierHandler.addPostModifiers(this, exprCtx, new StatementSource(ctx));
       }
-      Label returnLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
+      Label returnLabel = procedure.getLocalLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
       sequence.addStatement(new StatementJump(returnLabel.getRef(), new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx))));
       return null;
    }
@@ -1703,7 +1703,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitStructRef(KickCParser.StructRefContext ctx) {
       String structDefName = ctx.NAME().getText();
-      StructDefinition structDefinition = getCurrentScope().getStructDefinition(structDefName);
+      StructDefinition structDefinition = program.getScope().getLocalStructDefinition(structDefName);
       if(structDefinition == null) {
          throw new CompileError("Unknown struct type " + structDefName, new StatementSource(ctx));
       }
@@ -1787,7 +1787,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitEnumRef(KickCParser.EnumRefContext ctx) {
       String enumDefName = ctx.NAME().getText();
-      EnumDefinition enumDefinition = getCurrentScope().getEnumDefinition(enumDefName);
+      EnumDefinition enumDefinition = program.getScope().getLocalEnumDefinition(enumDefName);
       if(enumDefinition == null) {
          throw new CompileError("Unknown enum " + enumDefName, new StatementSource(ctx));
       }
@@ -1798,7 +1798,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitTypeNamedRef(KickCParser.TypeNamedRefContext ctx) {
       Scope typeDefScope = program.getScope().getTypeDefScope();
-      Variable typeDefVariable = typeDefScope.getVar(ctx.getText());
+      Variable typeDefVariable = typeDefScope.getLocalVar(ctx.getText());
       if(typeDefVariable != null) {
          varDecl.setDeclType(typeDefVariable.getType());
 
@@ -2371,7 +2371,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public RValue visitExprId(KickCParser.ExprIdContext ctx) {
-      Symbol symbol = getCurrentScope().getSymbol(ctx.NAME().getText());
+      Symbol symbol = getCurrentScope().findSymbol(ctx.NAME().getText());
       if(symbol instanceof Variable) {
          Variable variable = (Variable) symbol;
          return variable.getRef();

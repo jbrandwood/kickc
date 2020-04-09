@@ -113,8 +113,7 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
 
    private void setRegister(RegisterCombination combination, String varFullName, Registers.Register register) {
       LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
-      ProgramScope scope = getProgram().getScope();
-      SymbolVariableRef variableRef = scope.getVariable(varFullName).getRef();
+      SymbolVariableRef variableRef = (SymbolVariableRef) getProgram().getScope().getGlobalSymbol(varFullName).getRef();
       LiveRangeEquivalenceClass equivalenceClass = equivalenceClassSet.getEquivalenceClass((VariableRef) variableRef);
       combination.setRegister(equivalenceClass, register);
    }
@@ -122,9 +121,9 @@ public class Pass4RegisterUpliftStatic extends Pass2Base {
    private void collapseEquivalenceClasses(String varFullName1, String varFullName2) {
       LiveRangeEquivalenceClassSet equivalenceClassSet = getProgram().getLiveRangeEquivalenceClassSet();
       ProgramScope scope = getProgram().getScope();
-      SymbolVariableRef variableRef1 = scope.getVariable(varFullName1).getRef();
+      SymbolVariableRef variableRef1 = (SymbolVariableRef) scope.getGlobalSymbol(varFullName1).getRef();
       LiveRangeEquivalenceClass equivalenceClass1 = equivalenceClassSet.getEquivalenceClass((VariableRef) variableRef1);
-      SymbolVariableRef variableRef2 = scope.getVariable(varFullName2).getRef();
+      SymbolVariableRef variableRef2 = (SymbolVariableRef) scope.getGlobalSymbol(varFullName2).getRef();
       LiveRangeEquivalenceClass equivalenceClass2 = equivalenceClassSet.getEquivalenceClass((VariableRef) variableRef2);
       if(!equivalenceClass1.equals(equivalenceClass2)) {
          equivalenceClassSet.consolidate(equivalenceClass1, equivalenceClass2);

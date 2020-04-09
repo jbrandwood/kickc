@@ -117,7 +117,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       for(Variable constantVar : constantVars) {
          if(!constantVar.getRef().isIntermediate()) {
             String candidateName = constantVar.getLocalName();
-            if(getScope().getSymbol(candidateName) == null) {
+            if(getScope().getLocalSymbol(candidateName) == null) {
                if(constName == null || constName.length() > candidateName.length()) {
                   constName = candidateName;
                }
@@ -131,7 +131,7 @@ public class Pass2ConstantStringConsolidation extends Pass2SsaOptimization {
       int i = 0;
       do {
          String candidateName = "string_" + i;
-         if(getScope().getSymbol(candidateName) == null) {
+         if(getScope().getLocalSymbol(candidateName) == null) {
             return candidateName;
          }
       } while(true);

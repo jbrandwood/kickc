@@ -43,7 +43,7 @@ public class OperatorTypeId extends OperatorUnary {
     */
    public static ConstantRef getTypeIdConstantVar(ProgramScope programScope, SymbolType type) {
       String typeConstName = "TYPEID_" + getTypeIdConstantName(type);
-      Variable typeIdConstant = programScope.getConstant(typeConstName);
+      Variable typeIdConstant = programScope.getLocalConstant(typeConstName);
       if(typeIdConstant == null) {
          // Constant not found - create it
          long typeSize = getTypeId(type);

@@ -85,7 +85,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
             for(String paramName : procedure.getParameterNames()) {
-               defined.add(procedure.getVariable(paramName).getRef());
+               defined.add(procedure.getLocalVariable(paramName).getRef());
             }
             ControlFlowBlock procedureStart = getProgram().getGraph().getBlock(call.getProcedure().getLabelRef());
             assertUsedVars(procedureStart, block.getLabel(), referenceInfos, defined, visited);
@@ -93,7 +93,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
             StatementCallPrepare call = (StatementCallPrepare) statement;
             Procedure procedure = getProgram().getScope().getProcedure(call.getProcedure());
             for(String paramName : procedure.getParameterNames()) {
-               defined.add(procedure.getVariable(paramName).getRef());
+               defined.add(procedure.getLocalVariable(paramName).getRef());
             }
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;

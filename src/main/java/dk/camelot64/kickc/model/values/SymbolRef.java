@@ -3,6 +3,8 @@ package dk.camelot64.kickc.model.values;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Symbol;
 
+import java.util.Objects;
+
 /** A reference to a symbol (variable, procedure or label) */
 public class SymbolRef implements Value {
 
@@ -34,10 +36,8 @@ public class SymbolRef implements Value {
       if(o == null || getClass() != o.getClass()) {
          return false;
       }
-
       SymbolRef symbolRef = (SymbolRef) o;
-
-      return fullName != null ? fullName.equals(symbolRef.fullName) : symbolRef.fullName == null;
+      return Objects.equals(fullName, symbolRef.fullName);
    }
 
    @Override
@@ -50,15 +50,11 @@ public class SymbolRef implements Value {
       if(program == null) {
          return fullName;
       } else {
-         try {
-            Symbol symbol = program.getScope().getSymbol(fullName);
-            if(symbol==null) {
-               return fullName+"(null)";
-            }
-            return symbol.toString(program);
-         } catch(NullPointerException e) {
-            throw e;
+         Symbol symbol = program.getScope().getGlobalSymbol(fullName);
+         if(symbol == null) {
+            return fullName + "(null)";
          }
+         return symbol.toString(program);
       }
    }
 

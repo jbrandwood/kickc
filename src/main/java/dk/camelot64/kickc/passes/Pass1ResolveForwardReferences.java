@@ -23,7 +23,7 @@ public class Pass1ResolveForwardReferences extends Pass1Base {
          if(rValue instanceof ForwardVariableRef) {
             String varName = ((ForwardVariableRef) rValue).getName();
             Scope currentScope = getScope().getScope(currentBlock.getScope());
-            Symbol symbol = currentScope.getSymbol(varName);
+            Symbol symbol = currentScope.findSymbol(varName);
             if(symbol!=null) {
                getLog().append("Resolved forward reference " + varName+" to "+symbol.toString(getProgram()));
                programValue.set(symbol.getRef());

@@ -72,7 +72,7 @@ public class Pass1ExtractInlineStrings extends Pass1Base {
       } else {
          int nameHintIdx = 1;
          name = nameHint;
-         while(blockScope.getSymbol(name) != null) {
+         while(blockScope.getLocalSymbol(name) != null) {
             name = nameHint + nameHintIdx++;
          }
       }

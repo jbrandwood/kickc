@@ -3,7 +3,7 @@ package dk.camelot64.kickc.model.symbols;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.io.Serializable;
 import java.util.*;
@@ -73,6 +73,18 @@ public abstract class Scope implements Symbol, Serializable {
       setFullName();
    }
 
+   /**
+    * Get the top-level program scope.
+    *
+    * @return The top-level scope. Null if not found.
+    */
+   public ProgramScope getProgramScope() {
+      if(this instanceof ProgramScope)
+         return (ProgramScope) this;
+      else
+         return parentScope.getProgramScope();
+   }
+
    @Override
    public abstract SymbolType getType();
 
@@ -85,6 +97,11 @@ public abstract class Scope implements Symbol, Serializable {
       }
    }
 
+   public void remove(Symbol symbol) {
+      symbols.remove(symbol.getLocalName());
+   }
+
+
    public <T extends Symbol> T add(T symbol) {
       if(symbols.get(symbol.getLocalName()) != null) {
          throw new CompileError("Symbol already declared " + symbol.getLocalName());
@@ -93,13 +110,47 @@ public abstract class Scope implements Symbol, Serializable {
       return symbol;
    }
 
-   public void remove(Symbol symbol) {
-      symbols.remove(symbol.getLocalName());
-   }
-
    public Variable addVariableIntermediate() {
       String name = allocateIntermediateVariableName();
       return add(Variable.createIntermediate(name, this, getSegmentData()));
+   }
+
+   public Label addLabel(String name) {
+      return add(new Label(name, this, false));
+   }
+
+   public Label addLabelIntermediate() {
+      String name = "@" + intermediateLabelCount++;
+      return add(new Label(name, this, true));
+   }
+
+
+   public BlockScope addBlockScope() {
+      String name = ":" + blockCount++;
+      return add(new BlockScope(name, this));
+   }
+
+   /**
+    * Add a struct definition.
+    * The name can be either defined in the program or an intermediate name.
+    *
+    * @param name The name of the struct definition
+    */
+   public StructDefinition addStructDefinition(String name) {
+      return add(new StructDefinition(name, this));
+   }
+
+   public String allocateIntermediateVariableName() {
+      return "$" + intermediateVarCount++;
+   }
+
+   /**
+    * Set the value of the counter used to number intermediate labels
+    *
+    * @param intermediateLabelCount The new counter value
+    */
+   public void setIntermediateLabelCount(int intermediateLabelCount) {
+      this.intermediateLabelCount = intermediateLabelCount;
    }
 
    /**
@@ -121,73 +172,45 @@ public abstract class Scope implements Symbol, Serializable {
       return versions;
    }
 
-   public String allocateIntermediateVariableName() {
-      return "$" + intermediateVarCount++;
-   }
-
-   public Symbol getSymbol(SymbolRef symbolRef) {
-      return getSymbol(symbolRef.getFullName());
-   }
-
-   public Symbol getSymbol(String name) {
-      int pos = name.indexOf("::");
-      if(pos >= 0) {
-         String scopeName = name.substring(0, pos);
-         String rest = name.substring(pos + 2);
-         Symbol scopeSym = getSymbol(scopeName);
-         if(scopeSym instanceof Scope) {
-            return ((Scope) scopeSym).getSymbol(rest);
-         } else {
-            return null;
-            //throw new RuntimeException("Error looking up symbol " + name);
-         }
-      } else {
-         Symbol symbol = symbols.get(name);
-         if(symbol == null) {
-            if(parentScope != null) {
-               symbol = parentScope.getSymbol(name);
-            }
-         }
-         return symbol;
-      }
-   }
-
+   /**
+    * Get a local symbol by name. Does not search parent scopes.
+    *
+    * @param name The symbol name to look for
+    * @return The symbol if found. null otherwise.
+    */
    public Symbol getLocalSymbol(String name) {
       return symbols.get(name);
    }
 
-   public Variable getVar(String name) {
-      return (Variable) getSymbol(name);
+   /**
+    * Look for a symbol by it's (short) name. Looks through this scope first and then through any parent scope.
+    *
+    * @param name The symbol name
+    * @return The found symbol. Null is not found.
+    */
+   public Symbol findSymbol(String name) {
+      Symbol symbol = symbols.get(name);
+      if(symbol == null) {
+         if(parentScope != null) {
+            symbol = parentScope.findSymbol(name);
+         }
+      }
+      return symbol;
    }
 
-   public Variable getVar(SymbolVariableRef variableRef) {
-      return getVar(variableRef.getFullName());
-   }
-
-   public Variable getVariable(String name) {
-      Variable symbol = (Variable) getSymbol(name);
-      if(symbol != null && !symbol.isVariable())
+   public Variable findVariable(String name) {
+      final Symbol symbol = findSymbol(name);
+      if(symbol!=null && !(symbol instanceof Variable))
          throw new InternalError("Symbol is not a variable! " + symbol.toString());
-      return symbol;
+      return (Variable) symbol;
    }
 
-   public Variable getVariable(SymbolVariableRef variableRef) {
-      return getVariable(variableRef.getFullName());
-   }
-
-   public Variable getConstant(String name) {
-      Variable symbol = (Variable) getSymbol(name);
-      if(symbol != null && !symbol.isKindConstant())
-         throw new InternalError("Symbol is not a constant! " + symbol.toString());
-      return symbol;
-   }
-
-   public Variable getConstant(ConstantRef constantRef) {
-      return getConstant(constantRef.getFullName());
+   public Collection<Symbol> getAllSymbols() {
+      return symbols.values();
    }
 
    /**
-    * Get all variables/constants
+    * Get all variables/constants in the scope
     *
     * @param includeSubScopes true to include sub-scopes
     * @return all variables/constants
@@ -275,80 +298,60 @@ public abstract class Scope implements Symbol, Serializable {
       return allSymbols;
    }
 
-
-   public Label addLabel(String name) {
-      return add(new Label(name, this, false));
+   public Variable getLocalVar(String name) {
+      final Symbol symbol = getLocalSymbol(name);
+      if(symbol!=null && !(symbol instanceof Variable))
+         throw new InternalError("Symbol is not a variable! " + symbol.toString());
+      return (Variable) symbol;
    }
 
-   public Label addLabelIntermediate() {
-      String name = "@" + intermediateLabelCount++;
-      return add(new Label(name, this, true));
+   public Variable getLocalVariable(String name) {
+      final Variable var = getLocalVar(name);
+      if(var != null && !var.isVariable())
+         throw new InternalError("Symbol is not a variable! " + var.toString());
+      return var;
    }
 
-   public Label getLabel(String name) {
-      return (Label) getSymbol(name);
+   public Variable getLocalConstant(String name) {
+      final Variable var = getLocalVar(name);
+      if(var != null && !var.isKindConstant())
+         throw new InternalError("Symbol is not a constant! " + var.toString());
+      return var;
    }
 
-   public Label getLabel(LabelRef labelRef) {
-      return (Label) getSymbol(labelRef);
+   public Label getLocalLabel(String name) {
+      final Symbol symbol = getLocalSymbol(name);
+      if(symbol!=null && !(symbol instanceof Label))
+         throw new InternalError("Symbol is not a label! " + symbol.toString());
+      return (Label) getLocalSymbol(name);
    }
 
-   public BlockScope addBlockScope() {
-      String name = ":" + blockCount++;
-      return add(new BlockScope(name, this));
+   public BlockScope getLocalBlockScope(String name) {
+      final Symbol symbol = getLocalSymbol(name);
+      if(symbol!=null && !(symbol instanceof BlockScope))
+         throw new InternalError("Symbol is not a block scope! " + symbol.toString());
+      return (BlockScope) symbol;
    }
 
-   public BlockScope getBlockScope(String name) {
-      return (BlockScope) getSymbol(name);
+   public StructDefinition getLocalStructDefinition(String name) {
+      final Symbol symbol = getLocalSymbol(name);
+      if(symbol!=null && !(symbol instanceof StructDefinition))
+         throw new InternalError("Symbol is not a struct definition! " + symbol.toString());
+      return (StructDefinition) symbol;
    }
 
-   public Procedure addProcedure(String name, SymbolType type, String codeSegment, String dataSegment, Procedure.CallingConvention callingConvention) {
-      return add(new Procedure(name, type, this, codeSegment, dataSegment, callingConvention));
+   public EnumDefinition getLocalEnumDefinition(String name) {
+      final Symbol symbol = getLocalSymbol(name);
+      if(symbol!=null && !(symbol instanceof EnumDefinition))
+         throw new InternalError("Symbol is not an enum definition! " + symbol.toString());
+      return (EnumDefinition) symbol;
    }
 
-   public Procedure getProcedure(String name) {
-      Symbol symbol = getSymbol(name);
-      if(symbol != null && symbol instanceof Procedure) {
-         return (Procedure) symbol;
-      } else {
-         return null;
-      }
-   }
-
-   /**
-    * Add a struct definition.
-    * The name can be either defined in the program or an intermediate name.
-    *
-    * @param name
-    */
-   public StructDefinition addStructDefinition(String name) {
-      return add(new StructDefinition(name, this));
-   }
-
-   public StructDefinition getStructDefinition(String name) {
-      return (StructDefinition) getSymbol(name);
-   }
-
-   public EnumDefinition getEnumDefinition(String name) {
-      return (EnumDefinition) getSymbol(name);
-   }
-
-
-   public Scope getScope(ScopeRef scopeRef) {
-      if(scopeRef.getFullName().equals("") && this instanceof ProgramScope) {
-         // Special case for the outer program scope
-         return this;
-      }
-      Symbol symbol = getSymbol(scopeRef);
-      if(symbol instanceof Scope) {
-         return (Scope) symbol;
-      } else {
-         return null;
-      }
-   }
-
-   public Procedure getProcedure(ProcedureRef ref) {
-      return (Procedure) getSymbol(ref);
+   public Scope getLocalScope(String name) {
+      final Symbol symbol = getLocalSymbol(name);
+      if(symbol!=null && !(symbol instanceof Scope))
+         throw new InternalError("Symbol is not a scope! " + symbol.toString());
+      return (Scope) symbol;
    }
 
    public String toString(Program program, boolean onlyVars) {
@@ -408,19 +411,6 @@ public abstract class Scope implements Symbol, Serializable {
          }
       }
       return res.toString();
-   }
-
-   public Collection<Symbol> getAllSymbols() {
-      return symbols.values();
-   }
-
-   /**
-    * Set the value of the counter used to number intermediate labels
-    *
-    * @param intermediateLabelCount The new counter value
-    */
-   public void setIntermediateLabelCount(int intermediateLabelCount) {
-      this.intermediateLabelCount = intermediateLabelCount;
    }
 
    @Override

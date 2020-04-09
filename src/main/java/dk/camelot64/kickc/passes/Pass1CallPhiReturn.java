@@ -64,7 +64,7 @@ public class Pass1CallPhiReturn {
       // Generate return value assignment (call finalize)
       if(!SymbolType.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
-         Label returnBlockLabel = procedure.getLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
+         Label returnBlockLabel = procedure.getLocalLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
          ControlFlowBlock returnBlock = program.getGraph().getBlock(returnBlockLabel.getRef());
          RValue returnVarFinal = null;
          for(Statement statement : returnBlock.getStatements()) {

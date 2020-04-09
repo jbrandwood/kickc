@@ -862,7 +862,7 @@ public class Pass4CodeGeneration {
             Procedure procedure = null;
             ScopeRef scope = block.getScope();
             if(!scope.equals(ScopeRef.ROOT)) {
-               procedure = getScope().getProcedure(scope.getFullName());
+               procedure = getScope().getProcedure((ProcedureRef) scope);
             }
             if(procedure == null || procedure.getInterruptType() == null) {
                asm.addInstruction("rts", AsmAddressingMode.NON, null, false);

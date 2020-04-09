@@ -122,7 +122,7 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
 
    public static void deleteSymbols(ProgramScope programScope, Collection<? extends SymbolRef> symbols) {
       for(SymbolRef symbolRef : symbols) {
-         Symbol symbol = programScope.getSymbol(symbolRef.getFullName());
+         Symbol symbol = programScope.getSymbol(symbolRef);
          symbol.getScope().remove(symbol);
       }
    }

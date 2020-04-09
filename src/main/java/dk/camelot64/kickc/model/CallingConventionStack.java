@@ -1,6 +1,9 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.ProgramScope;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.ConstantInteger;
 import dk.camelot64.kickc.model.values.ConstantRef;
@@ -14,6 +17,22 @@ import java.util.Collections;
 public class CallingConventionStack {
 
 
+   /** Prefix of the constant holding the stack offset for parameters/return value. */
+   public static final String OFFSET_STACK = "OFFSET_STACK_";
+
+   /** Name of the constant holding the stack offset for the return value. */
+   public static final String OFFSET_STACK_RETURN = OFFSET_STACK + "RETURN";
+
+   /**
+    * Get the name of the constant variable containing the (byte) offset of a specific parameter on the stack
+    *
+    * @param parameterName The name of the struct member
+    * @return The name of the constant
+    */
+   private static String getParameterOffsetConstantName(String parameterName) {
+      return OFFSET_STACK + parameterName.toUpperCase();
+   }
+
    /**
     * Get the constant variable containing the (byte) index of the return value on the stack
     *
@@ -21,12 +40,11 @@ public class CallingConventionStack {
     * @return The return value stack offset constant
     */
    public static ConstantRef getReturnOffsetConstant(Procedure procedure) {
-      String returnOffsetConstantName = "OFFSET_STACK_RETURN";
-      Variable returnOffsetConstant = procedure.getConstant(returnOffsetConstantName);
+      Variable returnOffsetConstant = procedure.getLocalConstant(OFFSET_STACK_RETURN);
       if(returnOffsetConstant == null) {
          // Constant not found - create it
          long returnByteOffset = getReturnByteOffset(procedure);
-         returnOffsetConstant = Variable.createConstant(returnOffsetConstantName, SymbolType.BYTE, procedure, null, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
+         returnOffsetConstant = Variable.createConstant(OFFSET_STACK_RETURN, SymbolType.BYTE, procedure, null, new ConstantInteger(returnByteOffset & 0xff, SymbolType.BYTE), Scope.SEGMENT_DATA_DEFAULT);
          procedure.add(returnOffsetConstant);
       }
       return returnOffsetConstant.getConstantRef();
@@ -41,7 +59,7 @@ public class CallingConventionStack {
     */
    public static ConstantRef getParameterOffsetConstant(Procedure procedure, Variable parameter) {
       String paramOffsetConstantName = getParameterOffsetConstantName(parameter.getName());
-      Variable paramOffsetConstant = procedure.getConstant(paramOffsetConstantName);
+      Variable paramOffsetConstant = procedure.getLocalConstant(paramOffsetConstantName);
       if(paramOffsetConstant == null) {
          // Constant not found - create it
          long paramByteOffset = getParameterByteOffset(procedure, parameter);
@@ -51,15 +69,6 @@ public class CallingConventionStack {
       return paramOffsetConstant.getConstantRef();
    }
 
-   /**
-    * Get the name of the constant variable containing the (byte) offset of a specific parameter on the stack
-    *
-    * @param parameterName The name of the struct member
-    * @return The name of the constant
-    */
-   private static String getParameterOffsetConstantName(String parameterName) {
-      return "OFFSET_STACK_" + parameterName.toUpperCase();
-   }
 
    /**
     * Get the number of bytes that needed on the stack to pass parameters/return value to/from a procedure
@@ -78,6 +87,7 @@ public class CallingConventionStack {
 
    /**
     * Get the number of bytes needed on the stack to store the parameters from a procedure
+    *
     * @param procedure The procedure
     * @return The byte size of parameters
     */

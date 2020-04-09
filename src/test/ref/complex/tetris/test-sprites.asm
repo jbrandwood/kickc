@@ -89,7 +89,7 @@ __bbegin:
   jsr main
   rts
 main: {
-    .const toSpritePtr2_return = SIN_SPRITE/$40
+    .const toSpritePtr1_return = SIN_SPRITE/$40
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
     .label xpos = 3
@@ -131,7 +131,7 @@ main: {
     // SPRITES_COLS[s] = s-3
     sta SPRITES_COLS,y
     // PLAYFIELD_SPRITE_PTRS_1[s] = toSpritePtr(SIN_SPRITE)
-    lda #toSpritePtr2_return
+    lda #toSpritePtr1_return
     sta PLAYFIELD_SPRITE_PTRS_1,y
     // xpos +=  24
     lax.z xpos
@@ -271,7 +271,7 @@ sprites_init: {
 // Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
-    .const toSpritePtr2_return = PLAYFIELD_SPRITES/$40
+    .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
     .label raster_sprite_gfx_modify = $a
     sta rega+1
     stx regx+1
@@ -384,7 +384,7 @@ sprites_irq: {
     lda #SPRITES_FIRST_YPOS
     sta.z irq_sprite_ypos
     // irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES)
-    lda #toSpritePtr2_return
+    lda #toSpritePtr1_return
     sta.z irq_sprite_ptr
     jmp __b5
   __b1:

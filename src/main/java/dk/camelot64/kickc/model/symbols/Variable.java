@@ -314,7 +314,7 @@ public class Variable implements Symbol {
          throw new InternalError("Cannot get PHI-master for non-PHI-version variable " + this.toString());
       String name = getName();
       String versionOfName = name.substring(0, name.indexOf("#"));
-      return getScope().getVariable(versionOfName);
+      return getScope().getLocalVariable(versionOfName);
    }
 
    private Kind getKind() {

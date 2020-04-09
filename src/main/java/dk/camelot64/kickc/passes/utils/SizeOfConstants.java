@@ -22,7 +22,7 @@ public class SizeOfConstants {
     */
    public static ConstantRef getSizeOfConstantVar(ProgramScope programScope, SymbolType type) {
       String typeConstName = getSizeofConstantName(type);
-      Variable typeSizeConstant = programScope.getConstant(typeConstName);
+      Variable typeSizeConstant = programScope.getLocalConstant(typeConstName);
       if(typeSizeConstant == null) {
          // Constant not found - create it
          long typeSize = type.getSizeBytes();
@@ -40,7 +40,7 @@ public class SizeOfConstants {
     */
    public static void fixSizeOfConstantVar(ProgramScope programScope, SymbolType type) {
       String typeConstName = getSizeofConstantName(type);
-      Variable typeSizeConstant = programScope.getConstant(typeConstName);
+      Variable typeSizeConstant = programScope.getLocalConstant(typeConstName);
       if(typeSizeConstant != null) {
          // Constant found - update it
          long typeSize = type.getSizeBytes();
@@ -72,7 +72,7 @@ public class SizeOfConstants {
     */
    public static ConstantRef getStructMemberOffsetConstant(ProgramScope programScope, StructDefinition structDefinition, String memberName) {
       String typeConstName = getStructMemberOffsetConstantName(structDefinition, memberName);
-      Variable memberOffsetConstant = programScope.getConstant(typeConstName);
+      Variable memberOffsetConstant = programScope.getLocalConstant(typeConstName);
       if(memberOffsetConstant == null) {
          // Constant not found - create it
          Variable memberDef = structDefinition.getMember(memberName);

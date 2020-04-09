@@ -33,7 +33,7 @@ public class SymbolTypeStruct implements SymbolType {
    }
 
    public StructDefinition getStructDefinition(ProgramScope programScope) {
-      return programScope.getStructDefinition(name);
+      return programScope.getLocalStructDefinition(name);
    }
 
    @Override

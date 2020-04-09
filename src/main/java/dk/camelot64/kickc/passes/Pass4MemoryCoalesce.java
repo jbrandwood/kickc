@@ -112,7 +112,7 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
          Variable variable = program.getScope().getVariable(varRef);
          ScopeRef scopeRef = variable.getScope().getRef();
          if(scopeRef.equals(ScopeRef.ROOT)) {
-            ProcedureRef mainThreadHead = program.getScope().getProcedure(SymbolRef.MAIN_PROC_NAME).getRef();
+            ProcedureRef mainThreadHead = program.getScope().getLocalProcedure(SymbolRef.MAIN_PROC_NAME).getRef();
             if(!threads.contains(mainThreadHead)) {
                threads.add(mainThreadHead);
             }

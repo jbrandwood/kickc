@@ -81,10 +81,10 @@ public class Pass1ProcedureInline extends Pass1Base {
          Symbol procBlockLabel = getScope().getSymbol(procBlockLabelRef);
          Label inlinedBlockLabel;
          if(procedure.equals(procBlockLabel)) {
-            inlinedBlockLabel = callScope.getLabel(procedure.getLocalName() + serial);
+            inlinedBlockLabel = callScope.getLocalLabel(procedure.getLocalName() + serial);
          } else {
             String inlinedBlockLabelName = getInlineSymbolName(procedure, procBlockLabel, serial);
-            inlinedBlockLabel = callScope.getLabel(inlinedBlockLabelName);
+            inlinedBlockLabel = callScope.getLocalLabel(inlinedBlockLabelName);
          }
          ControlFlowBlock inlineBlock = new ControlFlowBlock(inlinedBlockLabel.getRef(), callScope.getRef());
          blocksIt.add(inlineBlock);
@@ -111,9 +111,9 @@ public class Pass1ProcedureInline extends Pass1Base {
       blocksIt.add(restBlock);
       // Generate return assignment
       if(!procedure.getReturnType().equals(SymbolType.VOID)) {
-         Variable procReturnVar = procedure.getVariable("return");
+         Variable procReturnVar = procedure.getLocalVariable("return");
          String inlinedReturnVarName = getInlineSymbolName(procedure, procReturnVar, serial);
-         Variable inlinedReturnVar = callScope.getVariable(inlinedReturnVarName);
+         Variable inlinedReturnVar = callScope.getLocalVariable(inlinedReturnVarName);
          restBlock.addStatement(new StatementAssignment(call.getlValue(), inlinedReturnVar.getRef(), false, call.getSource(), Comment.NO_COMMENTS));
       } else {
          // Remove the tmp var receiving the result
@@ -133,7 +133,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       restBlock.setDefaultSuccessor(block.getDefaultSuccessor());
       restBlock.setConditionalSuccessor(block.getConditionalSuccessor());
       // Set default successor to the original block to the inlined procedure block
-      Label inlinedProcLabel = callScope.getLabel(procedure.getLocalName() + serial);
+      Label inlinedProcLabel = callScope.getLocalLabel(procedure.getLocalName() + serial);
       block.setDefaultSuccessor(inlinedProcLabel.getRef());
       // Set conditional successor of original block to null (as any condition has been moved to the rest block)
       block.setConditionalSuccessor(null);
@@ -149,7 +149,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       } else {
          Label procBlockSuccessor = getScope().getLabel(procBlockSuccessorRef);
          String inlinedSuccessorName = getInlineSymbolName(procedure, procBlockSuccessor, serial);
-         Label inlinedSuccessorLabel = callScope.getLabel(inlinedSuccessorName);
+         Label inlinedSuccessorLabel = callScope.getLocalLabel(inlinedSuccessorName);
          inlinedSuccessor = inlinedSuccessorLabel.getRef();
       }
       return inlinedSuccessor;
@@ -169,7 +169,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       int serial = 1;
       while(true) {
          String localName = procedure.getLocalName() + serial;
-         if(callScope.getLabel(localName) == null) {
+         if(callScope.getLocalLabel(localName) == null) {
             return serial;
          }
          serial++;
@@ -206,7 +206,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          Label inlinedDest = procDestination;
          if(procDestination.getScope().equals(procedure)) {
             String inlineSymbolName = getInlineSymbolName(procedure, procDestination, serial);
-            inlinedDest = callScope.getLabel(inlineSymbolName);
+            inlinedDest = callScope.getLocalLabel(inlineSymbolName);
          }
          StatementConditionalJump inlinedConditionalJump = new StatementConditionalJump(procConditional.getrValue1(), procConditional.getOperator(), procConditional.getrValue2(), inlinedDest.getRef(), procConditional.getSource(), Comment.NO_COMMENTS);
          inlinedConditionalJump.setDeclaredUnroll(procConditional.isDeclaredUnroll());
@@ -250,7 +250,7 @@ public class Pass1ProcedureInline extends Pass1Base {
             Variable procVar = Pass1ProcedureInline.this.getScope().getVariable(procVarRef);
             if(procVar.getScope().equals(procedure)) {
                String inlineSymbolName = Pass1ProcedureInline.this.getInlineSymbolName(procedure, procVar, serial);
-               Variable inlineVar = callScope.getVariable(inlineSymbolName);
+               Variable inlineVar = callScope.getLocalVariable(inlineSymbolName);
                programValue.set(inlineVar.getRef());
             }
          } else if(rValue instanceof PointerDereferenceSimple) {
@@ -280,7 +280,7 @@ public class Pass1ProcedureInline extends Pass1Base {
       for(int i = 0; i < parameterDecls.size(); i++) {
          Variable parameterDecl = parameterDecls.get(i);
          String inlineParameterVarName = getInlineSymbolName(procedure, parameterDecl, serial);
-         Variable inlineParameterVar = callScope.getVariable(inlineParameterVarName);
+         Variable inlineParameterVar = callScope.getLocalVariable(inlineParameterVarName);
          RValue parameterValue = parameterValues.get(i);
          statementsIt.add(new StatementAssignment((VariableRef)inlineParameterVar.getRef(), parameterValue, true, call.getSource(), Comment.NO_COMMENTS));
       }

@@ -109,7 +109,7 @@ public class Pass1CallPhiParameters {
       call.setParameters(null);
 
       // Update call LValue (call finalize)
-      Variable procReturnVar = procedure.getVariable("return");
+      Variable procReturnVar = procedure.getLocalVariable("return");
       LValue procReturnVarRef = null;
       if(procReturnVar != null) {
          procReturnVarRef = (LValue) procReturnVar.getRef();

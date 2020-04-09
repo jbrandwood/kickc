@@ -267,7 +267,7 @@ public class Unroller {
          String unrollLabelName;
          do {
             unrollLabelName = localName + "_" + unrollSerial++;
-         } while(blockScope.getLabel(unrollLabelName) != null);
+         } while(blockScope.getLocalLabel(unrollLabelName) != null);
          // Create a label
          Label unrollLabel = blockScope.addLabel(unrollLabelName);
          blockToNewBlock.put(block.getLabel(), unrollLabel.getRef());

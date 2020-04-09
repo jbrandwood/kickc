@@ -39,7 +39,7 @@ public class TestPrograms {
 
    @Test
    public void testCStyleDeclMissing() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-missing", "Error! Function is never declared: sum");
+      assertError("cstyle-decl-missing", "Error! Function is never declared: sum", false);
    }
 
    @Test

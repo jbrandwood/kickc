@@ -151,7 +151,7 @@ fragment NAME_START : [a-zA-Z_];
 fragment NAME_CHAR : [a-zA-Z0-9_];
 
 // Strings and chars - with special handling of imports
-SYSTEMFILE : '<' [a-zA-Z0-9_./\\]+ '>' { if(importEnter) { importEnter=false; cParser.loadCFile(getText(), true); } } ;
+SYSTEMFILE : '<' [a-zA-Z0-9_./\\\-]+ '>' { if(importEnter) { importEnter=false; cParser.loadCFile(getText(), true); } } ;
 STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? { if(importEnter) { importEnter=false; cParser.loadCFile(getText(), false); } } ;
 CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
 

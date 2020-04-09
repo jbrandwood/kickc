@@ -99,6 +99,7 @@ public abstract class Scope implements Symbol, Serializable {
 
    public void remove(Symbol symbol) {
       symbols.remove(symbol.getLocalName());
+      getProgramScope().clearCache();
    }
 
 

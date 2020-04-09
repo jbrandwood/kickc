@@ -7,23 +7,27 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeProgram;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 
 /** The program scope containing the symbols of a program */
 public class ProgramScope extends Scope {
 
+   /** Caches the global symbols for fast lookup. */
+   private Map<String, Symbol> cachedGlobalSymbols;
 
    public ProgramScope() {
       super("", null, Scope.SEGMENT_DATA_DEFAULT);
+      cachedGlobalSymbols = new HashMap<>();
+   }
+
+   public void clearCache() {
+      this.cachedGlobalSymbols = new HashMap<>();
    }
 
    @Override
    public SymbolType getType() {
       return new SymbolTypeProgram();
    }
-
 
    /**
     * Get a symbol from it's full name.
@@ -32,6 +36,9 @@ public class ProgramScope extends Scope {
     * @return The symbol. Null if not found.
     */
    public Symbol getGlobalSymbol(String fullName) {
+      final Symbol cachedSymbol = cachedGlobalSymbols.get(fullName);
+      if(cachedSymbol != null)
+         return cachedSymbol;
       final Deque<String> names = new LinkedList<>(Arrays.asList(fullName.split("::")));
       Scope scope = this;
       while(names.size() > 1) {
@@ -40,7 +47,10 @@ public class ProgramScope extends Scope {
          if(scope == null)
             return null;
       }
-      return scope.getLocalSymbol(names.removeFirst());
+      final Symbol symbol = scope.getLocalSymbol(names.removeFirst());
+      if(symbol != null)
+         cachedGlobalSymbols.put(fullName, symbol);
+      return symbol;
    }
 
    public Symbol getSymbol(SymbolRef symbolRef) {

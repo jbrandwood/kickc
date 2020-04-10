@@ -150,7 +150,7 @@ fragment NAME_CHAR : [a-zA-Z0-9_];
 
 // Strings and chars
 STRING : '"' ('\\"' | ~'"')* '"' [z]?([ps][mu]?)?[z]? ;
-CHAR : '\''  ('\\'['"rfn] | ~'\'' ) '\'';
+CHAR : '\''  ('\\'(['"rfn]|'x'[0-9a-f][0-9a-f]) | ~'\'' ) '\'';
 
 // White space on hidden channel 1
 WS : [ \t\r\n\u00a0]+ -> channel(1);

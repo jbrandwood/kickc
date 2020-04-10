@@ -2,8 +2,8 @@ package dk.camelot64.kickc.asm;
 
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.values.ConstantString;
 import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.StringEncoding;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +31,7 @@ public class AsmProgram {
    private int nextLineIndex;
 
    /** The current encoding used for printing strings. */
-   private ConstantString.Encoding currentEncoding = ConstantString.Encoding.SCREENCODE_MIXED;
+   private StringEncoding currentEncoding = StringEncoding.SCREENCODE_MIXED;
 
    public AsmProgram() {
       this.chunks = new ArrayList<>();
@@ -64,17 +64,17 @@ public class AsmProgram {
     * Get the current encoding used for strings/chars
     * @return The encoding
     */
-   public ConstantString.Encoding getCurrentEncoding() {
+   public StringEncoding getCurrentEncoding() {
       return currentEncoding;
    }
 
-   public void ensureEncoding(Collection<ConstantString.Encoding> encodings) {
+   public void ensureEncoding(Collection<StringEncoding> encodings) {
       if(encodings == null || encodings.size() == 0) return;
       if(encodings.size() > 1) {
          throw new CompileError("Different character encodings in one ASM statement not supported!");
       }
       // Size is 1 - grab it!
-      ConstantString.Encoding encoding = encodings.iterator().next();
+      StringEncoding encoding = encodings.iterator().next();
       if(!getCurrentEncoding().equals(encoding)) {
          addLine(new AsmSetEncoding(encoding));
       }

@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.model.values.ConstantString;
+import dk.camelot64.kickc.model.values.StringEncoding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +21,9 @@ public class AsmDataChunk {
       /** The value of the data element. */
       String value;
       /** The string encoding used in any char/string value */
-      Set<ConstantString.Encoding> encoding;
+      Set<StringEncoding> encoding;
 
-      AsmDataNumericElement(AsmDataNumeric.Type type, String value, Set<ConstantString.Encoding> encoding) {
+      AsmDataNumericElement(AsmDataNumeric.Type type, String value, Set<StringEncoding> encoding) {
          this.type = type;
          this.value = value;
          this.encoding = encoding;
@@ -37,7 +37,7 @@ public class AsmDataChunk {
          return value;
       }
 
-      public Set<ConstantString.Encoding> getEncoding() {
+      public Set<StringEncoding> getEncoding() {
          return encoding;
       }
    }
@@ -53,9 +53,9 @@ public class AsmDataChunk {
       /** The fill value. */
       String fillValue;
       /** The string encoding used in any char/string value */
-      Set<ConstantString.Encoding> encoding;
+      Set<StringEncoding> encoding;
 
-      AsmDataFilledElement(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<ConstantString.Encoding> encoding) {
+      AsmDataFilledElement(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<StringEncoding> encoding) {
          this.type = type;
          this.totalSizeBytesAsm = totalSizeBytesAsm;
          this.numElements = numElements;
@@ -79,7 +79,7 @@ public class AsmDataChunk {
          return fillValue;
       }
 
-      public Set<ConstantString.Encoding> getEncoding() {
+      public Set<StringEncoding> getEncoding() {
          return encoding;
       }
    }
@@ -89,9 +89,9 @@ public class AsmDataChunk {
       /** The string value. */
       String value;
       /** The string encoding used in the string value */
-      Set<ConstantString.Encoding> encoding;
+      Set<StringEncoding> encoding;
 
-      AsmDataStringElement(String value, Set<ConstantString.Encoding> encoding) {
+      AsmDataStringElement(String value, Set<StringEncoding> encoding) {
          this.value = value;
          this.encoding = encoding;
       }
@@ -100,7 +100,7 @@ public class AsmDataChunk {
          return value;
       }
 
-      public Set<ConstantString.Encoding> getEncoding() {
+      public Set<StringEncoding> getEncoding() {
          return encoding;
       }
    }
@@ -113,9 +113,9 @@ public class AsmDataChunk {
       /** The kickasm code initializing the value. */
       String kickAsmCode;
       /** The string encoding used in the string value */
-      Set<ConstantString.Encoding> encoding;
+      Set<StringEncoding> encoding;
 
-      public AsmDataKickAsmElement(int byteSize, String kickAsmCode, Set<ConstantString.Encoding> encoding) {
+      public AsmDataKickAsmElement(int byteSize, String kickAsmCode, Set<StringEncoding> encoding) {
          this.byteSize = byteSize;
          this.kickAsmCode = kickAsmCode;
          this.encoding = encoding;
@@ -129,7 +129,7 @@ public class AsmDataChunk {
          return kickAsmCode;
       }
 
-      public Set<ConstantString.Encoding> getEncoding() {
+      public Set<StringEncoding> getEncoding() {
          return encoding;
       }
    }
@@ -141,19 +141,19 @@ public class AsmDataChunk {
       this.elements = new ArrayList<>();
    }
 
-   public void addDataNumeric(AsmDataNumeric.Type type, String value, Set<ConstantString.Encoding> encoding) {
+   public void addDataNumeric(AsmDataNumeric.Type type, String value, Set<StringEncoding> encoding) {
       elements.add(new AsmDataNumericElement(type, value, encoding));
    }
 
-   public void addDataFilled(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<ConstantString.Encoding> encoding) {
+   public void addDataFilled(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<StringEncoding> encoding) {
       elements.add(new AsmDataFilledElement(type, totalSizeBytesAsm, numElements, fillValue, encoding));
    }
 
-   public void addDataString(String string, Set<ConstantString.Encoding> encoding) {
+   public void addDataString(String string, Set<StringEncoding> encoding) {
       elements.add(new AsmDataStringElement(string, encoding));
    }
 
-   public void addDataKickAsm(int byteSize, String kickAsmCode, Set<ConstantString.Encoding> encoding) {
+   public void addDataKickAsm(int byteSize, String kickAsmCode, Set<StringEncoding> encoding) {
       elements.add(new AsmDataKickAsmElement(byteSize, kickAsmCode, encoding));
    }
 

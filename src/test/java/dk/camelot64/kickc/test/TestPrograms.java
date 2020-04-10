@@ -642,6 +642,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStringEscapesErr2() throws IOException, URISyntaxException {
+      assertError("string-escapes-err-2", "No character 0xff in encoding petscii_mixed");
+   }
+
+   @Test
    public void testStringEscapesErr1() throws IOException, URISyntaxException {
       assertError("string-escapes-err-1", "Illegal string escape sequence");
    }
@@ -649,6 +654,11 @@ public class TestPrograms {
    @Test
    public void testStringEscapesErr0() throws IOException, URISyntaxException {
       assertError("string-escapes-err-0", "Unfinished string escape sequence at end of string");
+   }
+
+   @Test
+   public void testStringEscapes4() throws IOException, URISyntaxException {
+      compileAndCompare("string-escapes-4");
    }
 
    @Test

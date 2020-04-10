@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.kickc.model.values.ConstantString;
+import dk.camelot64.kickc.model.values.StringEncoding;
 
 /** Set the text encoding */
 public class AsmSetEncoding implements AsmLine {
 
-   private final ConstantString.Encoding encoding;
+   private final StringEncoding encoding;
    private int index;
 
-   public AsmSetEncoding(ConstantString.Encoding encoding) {
+   public AsmSetEncoding(StringEncoding encoding) {
       this.encoding = encoding;
    }
 
@@ -37,7 +37,7 @@ public class AsmSetEncoding implements AsmLine {
       this.index = index;
    }
 
-   public ConstantString.Encoding getEncoding() {
+   public StringEncoding getEncoding() {
       return encoding;
    }
 }

@@ -1161,8 +1161,8 @@ public class Pass4CodeGeneration {
     * @param value The constant to examine
     * @return Any encoding found inside the constant
     */
-   private static Set<ConstantString.Encoding> getEncoding(Value value) {
-      LinkedHashSet<ConstantString.Encoding> encodings = new LinkedHashSet<>();
+   private static Set<StringEncoding> getEncoding(Value value) {
+      LinkedHashSet<StringEncoding> encodings = new LinkedHashSet<>();
       ProgramValue programValue = new ProgramValue.GenericValue(value);
       ProgramValueHandler handler = (ProgramValue pVal, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) -> {
          Value val = pVal.get();
@@ -1183,8 +1183,8 @@ public class Pass4CodeGeneration {
     * @param asmFragmentInstance The asm fragment instance to examine
     * @return Any encoding found inside the constant
     */
-   private static Set<ConstantString.Encoding> getEncoding(AsmFragmentInstanceSpecFactory asmFragmentInstance) {
-      LinkedHashSet<ConstantString.Encoding> encodings = new LinkedHashSet<>();
+   private static Set<StringEncoding> getEncoding(AsmFragmentInstanceSpecFactory asmFragmentInstance) {
+      LinkedHashSet<StringEncoding> encodings = new LinkedHashSet<>();
       Map<String, Value> bindings = asmFragmentInstance.getBindings();
       for(Value boundValue : bindings.values()) {
          encodings.addAll(getEncoding(boundValue));

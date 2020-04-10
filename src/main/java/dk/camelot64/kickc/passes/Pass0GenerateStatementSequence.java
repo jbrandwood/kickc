@@ -153,7 +153,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) {
       try {
-         this.currentEncoding = ConstantString.Encoding.valueOf(ctx.NAME().getText().toUpperCase(Locale.ENGLISH));
+         this.currentEncoding = StringEncoding.valueOf(ctx.NAME().getText().toUpperCase(Locale.ENGLISH));
       } catch(IllegalArgumentException e) {
          throw new CompileError("Unknown string encoding " + ctx.NAME().getText(), new StatementSource(ctx));
       }
@@ -2196,18 +2196,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /** The current string encoding used if no explicit encoding is specified. */
-   private ConstantString.Encoding currentEncoding = ConstantString.Encoding.SCREENCODE_MIXED;
+   private StringEncoding currentEncoding = StringEncoding.SCREENCODE_MIXED;
 
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {
       StringBuilder stringValue = new StringBuilder();
       String subText;
       String lastSuffix = "";
-      ConstantString.Encoding encoding = null;
+      StringEncoding encoding = null;
       for(TerminalNode stringNode : ctx.STRING()) {
          subText = stringNode.getText();
          String suffix = subText.substring(subText.lastIndexOf('"') + 1);
-         ConstantString.Encoding suffixEncoding = getEncodingFromSuffix(suffix);
+         StringEncoding suffixEncoding = getEncodingFromSuffix(suffix);
          if(suffixEncoding != null) {
             if(encoding != null && !encoding.equals(suffixEncoding)) {
                throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
@@ -2219,7 +2219,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       boolean zeroTerminated = !lastSuffix.contains("z");
       try {
-         return new ConstantString(ConstantString.stringEscapeToAscii(stringValue.toString()), encoding, zeroTerminated);
+         return new ConstantString(encoding.escapeToAscii(stringValue.toString()), encoding, zeroTerminated);
       } catch(CompileError e) {
          // Rethrow - adding statement context!
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
@@ -2232,19 +2232,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     * @param suffix The string suffix
     * @return The encoding specified by the suffix. If not the current source encoding is returned.
     */
-   private ConstantString.Encoding getEncodingFromSuffix(String suffix) {
+   private StringEncoding getEncodingFromSuffix(String suffix) {
       if(suffix.contains("pm")) {
-         return ConstantString.Encoding.PETSCII_MIXED;
+         return StringEncoding.PETSCII_MIXED;
       } else if(suffix.contains("pu")) {
-         return ConstantString.Encoding.PETSCII_UPPER;
+         return StringEncoding.PETSCII_UPPER;
       } else if(suffix.contains("p")) {
-         return ConstantString.Encoding.PETSCII_MIXED;
+         return StringEncoding.PETSCII_MIXED;
       } else if(suffix.contains("sm")) {
-         return ConstantString.Encoding.SCREENCODE_MIXED;
+         return StringEncoding.SCREENCODE_MIXED;
       } else if(suffix.contains("su")) {
-         return ConstantString.Encoding.SCREENCODE_UPPER;
+         return StringEncoding.SCREENCODE_UPPER;
       } else if(suffix.contains("s")) {
-         return ConstantString.Encoding.SCREENCODE_MIXED;
+         return StringEncoding.SCREENCODE_MIXED;
       } else {
          return currentEncoding;
       }
@@ -2261,7 +2261,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       try {
          String charText = ctx.getText();
          charText = charText.substring(1, charText.length() - 1);
-         char constChar = ConstantChar.charEscapeToAscii(charText);
+         char constChar = currentEncoding.escapeToAscii(charText).charAt(0);
          return new ConstantChar(constChar, currentEncoding);
       } catch(CompileError e) {
          // Rethrow adding source location

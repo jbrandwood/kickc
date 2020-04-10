@@ -153,7 +153,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) {
       try {
-         this.currentEncoding = StringEncoding.valueOf(ctx.NAME().getText().toUpperCase(Locale.ENGLISH));
+         this.currentEncoding = StringEncoding.fromName(ctx.NAME().getText().toUpperCase(Locale.ENGLISH));
       } catch(IllegalArgumentException e) {
          throw new CompileError("Unknown string encoding " + ctx.NAME().getText(), new StatementSource(ctx));
       }
@@ -2207,7 +2207,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       for(TerminalNode stringNode : ctx.STRING()) {
          subText = stringNode.getText();
          String suffix = subText.substring(subText.lastIndexOf('"') + 1);
-         StringEncoding suffixEncoding = getEncodingFromSuffix(suffix);
+         StringEncoding suffixEncoding = StringEncoding.fromSuffix(suffix, currentEncoding);
          if(suffixEncoding != null) {
             if(encoding != null && !encoding.equals(suffixEncoding)) {
                throw new CompileError("Cannot mix encodings in concatenated strings " + ctx.getText(), new StatementSource(ctx));
@@ -2223,30 +2223,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } catch(CompileError e) {
          // Rethrow - adding statement context!
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
-      }
-   }
-
-   /**
-    * Examine a string suffix, and find any encoding information inside it.
-    *
-    * @param suffix The string suffix
-    * @return The encoding specified by the suffix. If not the current source encoding is returned.
-    */
-   private StringEncoding getEncodingFromSuffix(String suffix) {
-      if(suffix.contains("pm")) {
-         return StringEncoding.PETSCII_MIXED;
-      } else if(suffix.contains("pu")) {
-         return StringEncoding.PETSCII_UPPER;
-      } else if(suffix.contains("p")) {
-         return StringEncoding.PETSCII_MIXED;
-      } else if(suffix.contains("sm")) {
-         return StringEncoding.SCREENCODE_MIXED;
-      } else if(suffix.contains("su")) {
-         return StringEncoding.SCREENCODE_UPPER;
-      } else if(suffix.contains("s")) {
-         return StringEncoding.SCREENCODE_MIXED;
-      } else {
-         return currentEncoding;
       }
    }
 

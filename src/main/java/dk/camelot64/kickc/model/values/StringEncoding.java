@@ -29,6 +29,41 @@ public enum StringEncoding {
       this.mapping = mapping;
    }
 
+
+   /**
+    * Get encoding by name.
+    * @param name The name
+    * @return The encoding
+    */
+   public static StringEncoding fromName(String name) {
+      return valueOf(name);
+   }
+
+   /**
+    * Examine a string suffix, and find any encoding information inside it.
+    *
+    * @param suffix The string suffix
+    * @param defaultEncoding The encoding to use if suffix does not match an encoding
+    * @return The encoding specified by the suffix. If not the current source encoding is returned.
+    */
+   public static StringEncoding fromSuffix(String suffix, StringEncoding defaultEncoding) {
+      if(suffix.contains("pm")) {
+         return PETSCII_MIXED;
+      } else if(suffix.contains("pu")) {
+         return PETSCII_UPPER;
+      } else if(suffix.contains("p")) {
+         return PETSCII_MIXED;
+      } else if(suffix.contains("sm")) {
+         return SCREENCODE_MIXED;
+      } else if(suffix.contains("su")) {
+         return SCREENCODE_UPPER;
+      } else if(suffix.contains("s")) {
+         return SCREENCODE_MIXED;
+      } else {
+         return defaultEncoding;
+      }
+   }
+
    /**
     * Get the integer value of a character using a specific encoding
     *
@@ -75,7 +110,7 @@ public enum StringEncoding {
     * Converts any escapes such as '\n', '\xnn' etc. to the right ASCII character.
     * Moves the iterator forward.
     *
-    * @param escapedString The characters of the string to parse one char from. The iterator is moved beyond any handled chars.
+    * @param escapedCharsIterator The characters of the string to parse one char from. The iterator is moved beyond any handled chars.
     * @return The first ASCII character of the list.
     */
    public char escapeToAsciiFirst(PrimitiveIterator.OfInt escapedCharsIterator) {
@@ -141,9 +176,9 @@ public enum StringEncoding {
    }
 
    /**
-    * Converts a char to an escape sequence if needed. If not needed the char itself is returned.
-    * @param aChar The char
-    * @return The char itself - or the appropriate escape sequence
+    * Escapes chars in string if needed
+    * @param string The string
+    * @return The escaped string.
     */
    public String asciiToEscape(String string) {
       StringBuilder escaped = new StringBuilder();

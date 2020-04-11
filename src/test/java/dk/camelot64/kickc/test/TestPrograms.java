@@ -21,6 +21,8 @@ import java.net.URISyntaxException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertTrue;
@@ -4022,7 +4024,10 @@ public class TestPrograms {
       if(upliftCombinations != null) {
          compiler.setUpliftCombinations(upliftCombinations);
       }
-      Program program = compiler.compile(fileName);
+      final ArrayList<Path> files = new ArrayList<>();
+      final Path filePath = Paths.get(fileName);
+      files.add(filePath);
+      Program program = compiler.compile(files);
 
       compileAsm(fileName, program);
 

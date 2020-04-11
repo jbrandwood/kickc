@@ -222,8 +222,8 @@ ASM_COMMENT_BLOCK : '/*' .*? '*/' -> channel(2);
 
 // MODE FOR INCLUDE FILES
 mode IMPORT_MODE;
-IMPORT_SYSTEMFILE : '<' [a-zA-Z0-9_./\\\-]+ '>' { popMode();cParser.loadCFile(getText(), true); } ;
-IMPORT_LOCALFILE : '"' ('\\"' | ~'"')* '"' { popMode(); cParser.loadCFile(getText(), false); }  ;
+IMPORT_SYSTEMFILE : '<' [a-zA-Z0-9_./\\\-]+ '>' { popMode();cParser.includeCFile(getText(), true); } ;
+IMPORT_LOCALFILE : '"' ('\\"' | ~'"')* '"' { popMode(); cParser.includeCFile(getText(), false); }  ;
 // White space on hidden channel 1
 IMPORT_WS : [ \t\r\n\u00a0]+ -> channel(1);
 // Comments on hidden channel 2

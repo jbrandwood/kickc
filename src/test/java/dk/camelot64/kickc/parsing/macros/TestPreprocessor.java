@@ -8,9 +8,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -226,7 +223,7 @@ public class TestPreprocessor {
    private String parse(String program) {
       CodePointCharStream charStream = CharStreams.fromString(program);
       CParser cParser = new CParser(null);
-      cParser.addSource(charStream);
+      cParser.addSourceFirst(cParser.makeLexer(charStream));
       KickCParser.StmtSeqContext stmtSeqContext = cParser.getParser().stmtSeq();
       ProgramPrinter printVisitor = new ProgramPrinter();
       printVisitor.visit(stmtSeqContext);
@@ -240,7 +237,6 @@ public class TestPreprocessor {
       StringBuilder getOut() {
          return out;
       }
-
 
       @Override
       public Object visitStmtSeq(KickCParser.StmtSeqContext ctx) {

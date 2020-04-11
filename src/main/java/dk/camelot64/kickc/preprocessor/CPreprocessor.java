@@ -270,7 +270,7 @@ public class CPreprocessor implements TokenSource {
                addTokenToExpandedBody(macroBodyToken, macroNameToken, expandedBody);
             }
          }
-         cTokenSource.addSource(new ListTokenSource(expandedBody));
+         cTokenSource.addSourceFirst(new ListTokenSource(expandedBody));
          return true;
       }
       return false;

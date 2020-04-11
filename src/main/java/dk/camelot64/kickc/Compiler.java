@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
+import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
 import org.antlr.v4.runtime.RuleContext;
@@ -137,11 +138,16 @@ public class Compiler {
       program.getImportPaths().add(path);
    }
 
-   public Program compile(String fileName) {
-      if(fileName.endsWith(".kc")) {
-         fileName = fileName.substring(0, fileName.length() - 3);
+   public Program compile(List<Path> files) {
+      if(files.size()==0)
+         throw new CompileError("Error! You must supply at least one file to compile!");
+
+      final Path primaryFile = files.get(0);
+      String primaryFileName = primaryFile.toString();
+      if(primaryFileName.endsWith(".kc")) {
+         primaryFileName = primaryFileName.substring(0, primaryFileName.length() - 3);
       }
-      program.setFileName(fileName);
+      program.setPrimaryFileName(primaryFileName);
 
       try {
          Path currentPath = new File(".").toPath();
@@ -150,7 +156,13 @@ public class Compiler {
          }
          program.setStatementSequence(new StatementSequence());
          CParser cParser = new CParser(program);
-         KickCParser.FileContext cFileContext = cParser.loadAndParseCFile(fileName, currentPath);
+         for(Path file : files) {
+            final KickCLexer fileLexer = cParser.loadCFile(file.toString(), currentPath);
+            cParser.addSourceLast(fileLexer);
+         }
+
+         // Parse the files
+         KickCParser.FileContext cFileContext = cParser.getParser().file();
 
          if(variableBuilderConfig == null) {
             VariableBuilderConfig config = new VariableBuilderConfig();
@@ -159,7 +171,7 @@ public class Compiler {
             this.variableBuilderConfig = config;
          }
 
-         if(callingConvention==null) {
+         if(callingConvention == null) {
             callingConvention = Procedure.CallingConvention.PHI_CALL;
          }
 
@@ -321,14 +333,26 @@ public class Compiler {
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
-      optimizations.add(() -> { program.clearVariableReferenceInfos(); return false; });
+      optimizations.add(() -> {
+         program.clearVariableReferenceInfos();
+         return false;
+      });
       optimizations.add(new Pass2UnaryNotSimplification(program));
       optimizations.add(new Pass2AliasElimination(program));
       optimizations.add(new Pass2IdenticalPhiElimination(program));
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
-      optimizations.add(() -> { program.clearStatementIndices(); return false;  });
-      optimizations.add(() -> { program.clearVariableReferenceInfos();return false;  });
-      optimizations.add(() -> { program.clearStatementInfos(); return false; });
+      optimizations.add(() -> {
+         program.clearStatementIndices();
+         return false;
+      });
+      optimizations.add(() -> {
+         program.clearVariableReferenceInfos();
+         return false;
+      });
+      optimizations.add(() -> {
+         program.clearStatementInfos();
+         return false;
+      });
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
@@ -352,10 +376,19 @@ public class Compiler {
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       if(enableLoopHeadConstant) {
          optimizations.add(new PassNStatementIndices(program));
-         optimizations.add(() -> { program.clearDominators(); return false; });
-         optimizations.add(() -> { program.clearLoopSet(); return false; });
+         optimizations.add(() -> {
+            program.clearDominators();
+            return false;
+         });
+         optimizations.add(() -> {
+            program.clearLoopSet();
+            return false;
+         });
          optimizations.add(new Pass2LoopHeadConstantIdentification(program));
-         optimizations.add(() -> { program.clearStatementIndices(); return false; });
+         optimizations.add(() -> {
+            program.clearStatementIndices();
+            return false;
+         });
       }
       return optimizations;
    }

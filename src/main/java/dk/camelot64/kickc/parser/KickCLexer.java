@@ -301,14 +301,14 @@ public class KickCLexer extends Lexer {
 	private void IMPORT_SYSTEMFILE_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 7:
-			 popMode();cParser.loadCFile(getText(), true); 
+			 popMode();cParser.includeCFile(getText(), true); 
 			break;
 		}
 	}
 	private void IMPORT_LOCALFILE_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 8:
-			 popMode(); cParser.loadCFile(getText(), false); 
+			 popMode(); cParser.includeCFile(getText(), false); 
 			break;
 		}
 	}

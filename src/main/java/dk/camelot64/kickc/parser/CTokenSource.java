@@ -21,17 +21,26 @@ public class CTokenSource implements TokenSource {
 
    public CTokenSource(TokenSource tokenSource) {
       this.subSources = new LinkedList<>();
-      addSource(tokenSource);
+      addSourceFirst(tokenSource);
    }
 
    /**
-    * Pushes a token source at the current location ).
+    * Pushes a token source at the current location.
     * The pushed source will immediately be used for tokens and only when it is exhausted will tokens resume from the current source
     *
     * @param source The source to push
     */
-   public void addSource(TokenSource source) {
+   public void addSourceFirst(TokenSource source) {
       subSources.addFirst(source);
+   }
+
+   /**
+    * Adds a token source at the end of the source.
+    *
+    * @param source The source to add
+    */
+   public void addSourceLast(TokenSource source) {
+      subSources.addLast(source);
    }
 
    public TokenSource getCurrentSource() {
@@ -49,7 +58,7 @@ public class CTokenSource implements TokenSource {
       // And push it back to the front of the stack
       final ArrayList<Token> tokens = new ArrayList<>();
       tokens.add(token);
-      addSource(new ListTokenSource(tokens));
+      addSourceFirst(new ListTokenSource(tokens));
       return token;
    }
 

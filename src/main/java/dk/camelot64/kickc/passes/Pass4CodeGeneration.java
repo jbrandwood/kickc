@@ -80,7 +80,6 @@ public class Pass4CodeGeneration {
       asm.startChunk(currentScope, null, "File Comments");
       generateComments(asm, program.getFileComments());
 
-      String outputPrgPath = new File(program.getFileName()).getName() + ".prg";
       asm.startChunk(currentScope, null, "Upstart");
       Number programPc = program.getProgramPc();
       if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
@@ -97,7 +96,7 @@ public class Pass4CodeGeneration {
          useSegments = true;
          String linkScriptBody = program.getLinkScriptBody();
          if(linkScriptBody != null) {
-            String outputFileName = new File(program.getFileName()).getName();
+            String outputFileName = new File(program.getPrimaryFileName()).getName();
             linkScriptBody = linkScriptBody.replace("%O", outputFileName);
             linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
             linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());

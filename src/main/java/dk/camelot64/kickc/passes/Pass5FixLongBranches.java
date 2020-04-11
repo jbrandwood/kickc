@@ -60,12 +60,12 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       }
 
       // Generate the ASM file
-      String fileName = getProgram().getFileName();
+      String outputFileName = getProgram().getPrimaryFileName();
       try {
          //getLog().append("ASM");
          //getLog().append(getProgram().getAsm().toString(false, true));
 
-         writeOutputFile(fileName, ".asm", getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false), null));
+         writeOutputFile(outputFileName, ".asm", getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false), null));
 
          // Copy Resource Files
          for(Path asmResourceFile : getProgram().getAsmResourceFiles()) {
@@ -78,8 +78,8 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       }
 
       // Compile using KickAssembler - catch the output in a String
-      File asmFile = getTmpFile(fileName, ".asm");
-      File asmPrgFile = getTmpFile(fileName, ".prg");
+      File asmFile = getTmpFile(outputFileName, ".asm");
+      File asmPrgFile = getTmpFile(outputFileName, ".prg");
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = -1;

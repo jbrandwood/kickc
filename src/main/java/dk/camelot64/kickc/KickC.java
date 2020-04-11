@@ -37,8 +37,8 @@ import java.util.stream.Collectors;
 )
 public class KickC implements Callable<Void> {
 
-   @CommandLine.Parameters(index = "0", arity = "0..1", description = "The KickC source file to compile.")
-   private Path kcFile = null;
+   @CommandLine.Parameters(index = "0", arity = "0..n", description = "The KickC source files to compile.")
+   private List<Path> kcFiles = null;
 
    @CommandLine.Option(names = {"-I", "-libdir"}, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
    private List<Path> libDir = null;
@@ -46,8 +46,8 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-F", "-fragmentdir"}, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
    private Path fragmentDir = null;
 
-   @CommandLine.Option(names = {"-o", "-output"}, description = "Name of the output assembler file. By default it is the same as the input file with extension .asm")
-   private String asmFileName = null;
+   @CommandLine.Option(names = {"-o", "-output"}, description = "Name of the output file. By default it is the same as the first input file with the proper extension.")
+   private String outputFileName = null;
 
    @CommandLine.Option(names = {"-odir"}, description = "Path to the output folder, where the compiler places all generated files. By default the folder of the output file is used.")
    private Path outputDir = null;
@@ -238,11 +238,12 @@ public class KickC implements Callable<Void> {
          }
       }
 
-      if(kcFile != null) {
+      if(kcFiles != null && !kcFiles.isEmpty()) {
 
-         String fileBaseName = getFileBaseName(kcFile);
+         final Path primaryKcFile = kcFiles.get(0);
+         String primaryFileBaseName = getFileBaseName(primaryKcFile);
 
-         Path kcFileDir = kcFile.getParent();
+         Path kcFileDir = primaryKcFile.getParent();
          if(kcFileDir == null) {
             kcFileDir = FileSystems.getDefault().getPath(".");
          }
@@ -254,8 +255,15 @@ public class KickC implements Callable<Void> {
             Files.createDirectory(outputDir);
          }
 
-         if(asmFileName == null) {
-            asmFileName = fileBaseName + ".asm";
+         String outputFileNameBase;
+         if(outputFileName == null) {
+            outputFileNameBase = primaryFileBaseName;
+         } else {
+            final int extensionIdx = outputFileName.lastIndexOf('.');
+            if(extensionIdx>0)
+               outputFileNameBase = outputFileName.substring(0, extensionIdx);
+            else
+               outputFileNameBase = outputFileName;
          }
 
          if(optimizeNoUplift) {
@@ -317,16 +325,19 @@ public class KickC implements Callable<Void> {
             compiler.setCallingConvention(callingConvention);
          }
 
-         System.out.println("Compiling " + kcFile);
+         StringBuilder kcFileNames = new StringBuilder();
+         kcFiles.stream().forEach(path -> kcFileNames.append(path.toString()).append(" "));
+         System.out.println("Compiling " + kcFileNames);
          Program program = null;
          try {
-            program = compiler.compile(kcFile.toString());
+            program = compiler.compile(kcFiles);
          } catch(CompileError e) {
             // Print the error and exit with compile error
             System.err.println(e.getMessage());
             System.exit(COMPILE_ERROR);
          }
 
+         String asmFileName = outputFileNameBase + ".asm";
          Path asmPath = outputDir.resolve(asmFileName);
          System.out.println("Writing asm file " + asmPath);
          FileOutputStream asmOutputStream = new FileOutputStream(asmPath.toFile());
@@ -352,9 +363,10 @@ public class KickC implements Callable<Void> {
          }
 
          // Assemble the asm-file if instructed
-         Path prgPath = outputDir.resolve(fileBaseName + ".prg");
+         String prgFileName = outputFileNameBase +".prg";
+         Path prgPath = outputDir.resolve(prgFileName);
          if(assemble || execute || debug) {
-            Path kasmLogPath = outputDir.resolve(fileBaseName + ".klog");
+            Path kasmLogPath = outputDir.resolve(outputFileNameBase + ".klog");
             System.out.println("Assembling to " + prgPath.toString());
             String[] assembleCommand = {asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem", "-debugdump"};
             if(verbose) {
@@ -385,7 +397,7 @@ public class KickC implements Callable<Void> {
          // Debug the prg-file if instructed
          if(debug) {
             System.out.println("Debugging " + prgPath);
-            Path viceSymbolsPath = outputDir.resolve(fileBaseName + ".vs");
+            Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
             String debugCommand = "C64Debugger " + "-symbols " + viceSymbolsPath + " -wait 2500" + " -prg " + prgPath.toString();
             if(verbose) {
                System.out.println("Debugging command: " + debugCommand);
@@ -397,7 +409,7 @@ public class KickC implements Callable<Void> {
          // Execute the prg-file if instructed
          if(execute) {
             System.out.println("Executing " + prgPath);
-            Path viceSymbolsPath = outputDir.resolve(fileBaseName + ".vs");
+            Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
             String executeCommand = "x64sc " + "-moncommands " + viceSymbolsPath + " " + prgPath.toString();
             if(verbose) {
                System.out.println("Executing command:  " + executeCommand);

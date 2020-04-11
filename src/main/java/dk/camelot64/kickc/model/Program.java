@@ -19,8 +19,8 @@ public class Program {
    /** The log containing information about the compilation process. */
    private CompileLog log;
 
-   /** The name of the file being compiled. PASS 0-5 (STATIC) */
-   private String fileName;
+   /** The name of the primary file being compiled. PASS 0-5 (STATIC) */
+   private String primaryFileName;
    /** Paths used for importing files. PASS 0 (STATIC) */
    private List<String> importPaths;
    /** Imported files. PASS 0 (STATIC) */
@@ -460,12 +460,12 @@ public class Program {
    }
 
 
-   public void setFileName(String fileName) {
-      this.fileName = fileName;
+   public void setPrimaryFileName(String primaryFileName) {
+      this.primaryFileName = primaryFileName;
    }
 
-   public String getFileName() {
-      return fileName;
+   public String getPrimaryFileName() {
+      return primaryFileName;
    }
 
    /**

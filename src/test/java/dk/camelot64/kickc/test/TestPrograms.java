@@ -41,6 +41,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPostIncrementProblem() throws IOException, URISyntaxException {
+      compileAndCompare("post-increment-problem.c");
+   }
+
+   @Test
+   public void testStrncat0() throws IOException, URISyntaxException {
+      compileAndCompare("strncat-0.c");
+   }
+
+   @Test
    public void testIncludes3() throws IOException, URISyntaxException {
       compileAndCompare("complex/includes/includes-3.c");
    }

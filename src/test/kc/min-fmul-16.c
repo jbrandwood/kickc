@@ -1,4 +1,4 @@
-#include <print.c>
+#include <print.h>
 
 byte* RASTER = $d012;
 byte* BORDERCOL = $d020;

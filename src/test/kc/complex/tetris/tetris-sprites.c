@@ -1,6 +1,6 @@
 // Tetris Game for the Commodore 64
 // A sprite multiplexer covering the playfield with a black layer to allow for 3 single-pixel colors
-#include <c64.c>
+#include <c64.h>
 #include "tetris-data.c"
 
 kickasm(pc PLAYFIELD_SPRITES, resource "playfield-sprites.png") {{

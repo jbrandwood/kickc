@@ -40,7 +40,10 @@ public class KickC implements Callable<Void> {
    @CommandLine.Parameters(index = "0", arity = "0..n", description = "The C source files to compile.")
    private List<Path> cFiles = null;
 
-   @CommandLine.Option(names = {"-I", "-libdir"}, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
+   @CommandLine.Option(names = {"-I", "-includedir"}, description = "Path to an include folder, where the compiler looks for included files. This option can be repeated to add multiple include folders.")
+   private List<Path> includeDir = null;
+
+   @CommandLine.Option(names = {"-L", "-libdir"}, description = "Path to a library folder, where the compiler looks for library files. This option can be repeated to add multiple library folders.")
    private List<Path> libDir = null;
 
    @CommandLine.Option(names = {"-F", "-fragmentdir"}, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
@@ -205,9 +208,15 @@ public class KickC implements Callable<Void> {
          compiler.setTargetCpu(targetCpu);
       }
 
+      if(includeDir != null) {
+         for(Path includePath : includeDir) {
+            compiler.addIncludePath(includePath.toString());
+         }
+      }
+
       if(libDir != null) {
          for(Path libPath : libDir) {
-            compiler.addImportPath(libPath.toString());
+            compiler.addLibraryPath(libPath.toString());
          }
       }
 

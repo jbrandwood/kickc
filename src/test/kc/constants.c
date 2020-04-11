@@ -1,4 +1,4 @@
-#include <print.c>
+#include <print.h>
 byte* const BGCOL = $d021;
 const byte GREEN = 5;
 const byte RED = 2 ;

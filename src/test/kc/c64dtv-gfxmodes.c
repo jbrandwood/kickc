@@ -1,8 +1,8 @@
 // Exploring C64DTV Screen Modes
-#include <c64dtv.c>
-#include <print.c>
-#include <keyboard.c>
-#include <bitmap-draw.c>
+#include <c64dtv.h>
+#include <print.h>
+#include <keyboard.h>
+#include <bitmap-draw.h>
 
 void main() {
     asm { sei }  // Disable normal interrupt (prevent keyboard reading glitches and allows to hide basic/kernal)

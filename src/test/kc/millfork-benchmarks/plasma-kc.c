@@ -1,5 +1,5 @@
 #include "benchcommon.c"
-#include <c64.c>
+#include <c64.h>
 
 char* const SCREEN1 = 0xE000;
 char* const SCREEN2 = 0xE400;

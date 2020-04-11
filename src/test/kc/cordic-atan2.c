@@ -2,8 +2,8 @@
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
 
 #include "font-hex.c"
-#include <c64.c>
-#include <atan2.c>
+#include <c64.h>
+#include <atan2.h>
 
 
 byte* const CHARSET = 0x2000;

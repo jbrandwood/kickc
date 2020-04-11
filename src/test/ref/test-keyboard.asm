@@ -2,15 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
-  // CIA #1 Port A data direction register.
-  .label CIA1_PORT_A_DDR = $dc02
-  // CIA #1 Port B data direction register.
-  .label CIA1_PORT_B_DDR = $dc03
   .const KEY_3 = 8
   .const KEY_W = 9
   .const KEY_A = $a
@@ -61,6 +52,15 @@
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
+  .label RASTER = $d012
+  // CIA#1 Port A: keyboard matrix columns and joystick #2
+  .label CIA1_PORT_A = $dc00
+  // CIA#1 Port B: keyboard matrix rows and joystick #1.
+  .label CIA1_PORT_B = $dc01
+  // CIA #1 Port A data direction register.
+  .label CIA1_PORT_A_DDR = $dc02
+  // CIA #1 Port B data direction register.
+  .label CIA1_PORT_B_DDR = $dc03
 main: {
     .label sc = 2
     .label screen = 5

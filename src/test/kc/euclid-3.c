@@ -4,7 +4,7 @@
  * Based on facebook post from
  */
 
-#include <print.c>
+#include <print.h>
 
 void main () {
     print_cls();

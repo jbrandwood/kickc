@@ -1,7 +1,7 @@
 // Creates a 2x2 font from the system CHARGEN font and compress it by identifying identical chars
 
-#include <c64.c>
-#include <string.c>
+#include <c64.h>
+#include <string.h>
 
 char* const SCREEN = 0x0400;
 char* const FONT_ORIGINAL = 0x2000;

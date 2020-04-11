@@ -1,6 +1,6 @@
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
 
-#include <c64dtv.c>
+#include <c64dtv.h>
 
 void main() {
     asm { sei }

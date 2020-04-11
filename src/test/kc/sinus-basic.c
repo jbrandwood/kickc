@@ -1,5 +1,5 @@
-#include <print.c>
-#include "basic-floats.c"
+#include <print.h>
+#include <basic-floats.h>
 
 void main() {
     byte f_i[] = {0, 0, 0, 0, 0};

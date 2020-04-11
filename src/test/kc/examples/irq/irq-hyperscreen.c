@@ -1,5 +1,5 @@
 // A raster IRQ that opens the top/bottom border.
-#include <c64.c>
+#include <c64.h>
 
 char* const GHOST_BYTE = $3fff;
 

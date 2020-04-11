@@ -1,8 +1,8 @@
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
 #include "font-hex.c"
-#include <atan2.c>
-#include <c64.c>
+#include <atan2.h>
+#include <c64.h>
 
 byte* const CHARSET = 0x2000;
 byte* const SCREEN = 0x2800;

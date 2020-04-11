@@ -1,6 +1,6 @@
 // Adding a missing word-fragment for Travis Fisher
 
-#include <print.c>
+#include <print.h>
 
 byte action_count = 0;
 const byte READY_FRAMES = 5;

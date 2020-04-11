@@ -1,6 +1,6 @@
 // Includes a system library - ignores the local file with the same name
 
-#include <string.c>
+#include <string.h>
 
 char* STR = "camelot!";
 

@@ -1,4 +1,4 @@
-#include <c64.c>
+#include <c64.h>
 
 byte* const SCREEN = $0400;
 byte* const SPRITES_PTR = SCREEN+$3f8;

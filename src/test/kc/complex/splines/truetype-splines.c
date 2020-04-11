@@ -1,11 +1,11 @@
 // Show a few simple splines using the splines library
 
 #include "splines.c"
-#include <bitmap2.c>
-#include <time.c>
-#include <print.c>
-#include <fastmultiply.c>
-#include <c64.c>
+#include <bitmap2.h>
+#include <time.h>
+#include <print.h>
+#include <fastmultiply.h>
+#include <c64.h>
 
 char* const PRINT_SCREEN = 0x0400;
 char* const BITMAP_SCREEN = 0x5c00;

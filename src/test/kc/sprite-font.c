@@ -1,7 +1,7 @@
 // Create a sprite font using lines
 
-#include <c64.c>
-#include <string.c>
+#include <c64.h>
+#include <string.h>
 
 char* const SCREEN = 0x0400;
 char* const SPRITE = 0x2000;

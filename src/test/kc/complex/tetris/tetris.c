@@ -2,8 +2,8 @@
 // The tetris game tries to match NES tetris gameplay pretty closely
 // Source: https://meatfighter.com/nintendotetrisai/
 
-#include <c64.c>
-#include <keyboard.c>
+#include <c64.h>
+#include <keyboard.h>
 #include "sid.c"
 #include "tetris-data.c"
 #include "tetris-render.c"

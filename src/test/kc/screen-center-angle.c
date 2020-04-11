@@ -1,11 +1,11 @@
 // Calculate the angle to the center of the screen - and show it using font-hex
 // 4.65 million cycles
-#include <stdlib.c>
-#include <c64.c>
+#include <stdlib.h>
+#include <c64.h>
 #include "font-hex.c"
-#include <atan2.c>
-#include <time.c>
-#include <print.c>
+#include <atan2.h>
+#include <time.h>
+#include <print.h>
 
 byte* const CHARSET = 0x2000;
 byte* const SCREEN = 0x2800;

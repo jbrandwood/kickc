@@ -1,6 +1,6 @@
 // Tests rolling sprite MSB by variable amount
 
-#include <c64.c>
+#include <c64.h>
 
 void main() {
     word xpos = 200;

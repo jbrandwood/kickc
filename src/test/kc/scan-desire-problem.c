@@ -1,8 +1,8 @@
 // Illustrates a problem with a missing fragment - pbuc1_derefidx_vwuz1=vbuz2
-#include <c64.c>
-#include <keyboard.c>
-#include <string.c>
-#include <multiply.c>
+#include <c64.h>
+#include <keyboard.h>
+#include <string.h>
+#include <multiply.h>
 
 byte* const screen = $400;
 byte* const charset = $2000;

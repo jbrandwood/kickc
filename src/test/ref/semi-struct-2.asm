@@ -20,6 +20,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const KEY_SPACE = $3c
   // CIA#1 Port A: keyboard matrix columns and joystick #2
   .label CIA1_PORT_A = $dc00
   // CIA#1 Port B: keyboard matrix rows and joystick #1.
@@ -28,7 +29,6 @@
   .label CIA1_PORT_A_DDR = $dc02
   // CIA #1 Port B data direction register.
   .label CIA1_PORT_B_DDR = $dc03
-  .const KEY_SPACE = $3c
   // The size of a file ENTRY
   .const SIZEOF_ENTRY = $12
   // The maximal number of files

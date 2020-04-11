@@ -1,10 +1,10 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 // Utilizes a bucket sort for identifying the minimum angle/distance
 
-#include <c64.c>
-#include <stdlib.c>
-#include <sqr.c>
-#include <atan2.c>
+#include <c64.h>
+#include <stdlib.h>
+#include <sqr.h>
+#include <atan2.h>
 
 // Screen containing distance to center
 byte* SCREEN_DIST = malloc(1000);

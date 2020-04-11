@@ -1,5 +1,5 @@
 // Test keyboard input - test the space bar
-#include <keyboard.c>
+#include <keyboard.h>
 
 void main() {
     keyboard_init();

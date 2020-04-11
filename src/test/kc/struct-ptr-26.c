@@ -1,4 +1,4 @@
-#include <print.c>
+#include <print.h>
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 struct fileentry {

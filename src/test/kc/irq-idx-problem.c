@@ -1,5 +1,5 @@
 // Test interrupt routine using a variable between calls (irq_idx)
-#include <c64.c>
+#include <c64.h>
 
 byte* const SCREEN  = $0400;
 

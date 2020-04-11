@@ -1,6 +1,6 @@
 // Tests the special "signed" / "unsigned" without a simple type name
 
-#include <print.c>
+#include <print.h>
 
 void main() {
     signed a = -1023;

@@ -32,11 +32,17 @@ import static org.junit.Assert.assertTrue;
  */
 public class TestPrograms {
 
-   final String stdlibPath = "src/main/kc/stdlib";
+   final String stdIncludePath = "src/main/kc/include";
+   final String stdLibPath = "src/main/kc/lib";
    final String testPath = "src/test/kc";
    final String refPath = "src/test/ref/";
 
    public TestPrograms() {
+   }
+
+   @Test
+   public void testIncludes3() throws IOException, URISyntaxException {
+      compileAndCompare("complex/includes/includes-3.c");
    }
 
    @Test
@@ -4023,8 +4029,9 @@ public class TestPrograms {
       if(compileLog != null) {
          compiler.setLog(compileLog);
       }
-      compiler.addImportPath(stdlibPath);
-      compiler.addImportPath(testPath);
+      compiler.addIncludePath(stdIncludePath);
+      compiler.addIncludePath(testPath);
+      compiler.addLibraryPath(stdLibPath);
       compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
       if(upliftCombinations != null) {
          compiler.setUpliftCombinations(upliftCombinations);

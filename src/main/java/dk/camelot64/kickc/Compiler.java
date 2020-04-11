@@ -8,12 +8,12 @@ import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
-import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenSource;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -140,16 +140,20 @@ public class Compiler {
       return program.getLog();
    }
 
-   public void addImportPath(String path) {
-      program.getImportPaths().add(path);
+   public void addIncludePath(String path) {
+      program.getIncludePaths().add(path);
+   }
+
+   public void addLibraryPath(String path) {
+      program.getLibraryPaths().add(path);
    }
 
    public void preprocess(List<Path> cFiles) {
       Path currentPath = new File(".").toPath();
       CParser cParser = new CParser(program);
       for(Path cFile : cFiles) {
-         final KickCLexer fileLexer = cParser.loadCFile(cFile.toString(), currentPath);
-         cParser.addSourceLast(fileLexer);
+         final TokenSource cFileTokens = cParser.loadCFile(cFile.toString(), currentPath, program.getIncludePaths(), false);
+         cParser.addSourceLast(cFileTokens);
       }
       final CPreprocessor preprocessor = cParser.getPreprocessor();
       Token token = preprocessor.nextToken();
@@ -175,9 +179,9 @@ public class Compiler {
          }
          program.setStatementSequence(new StatementSequence());
          CParser cParser = new CParser(program);
-         for(Path file : cFiles) {
-            final KickCLexer fileLexer = cParser.loadCFile(file.toString(), currentPath);
-            cParser.addSourceLast(fileLexer);
+         for(Path cFile : cFiles) {
+            final TokenSource cFileTokens = cParser.loadCFile(cFile.toString(), currentPath, program.getIncludePaths(), false);
+            cParser.addSourceLast(cFileTokens);
          }
 
          // Parse the files

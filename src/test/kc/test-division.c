@@ -1,6 +1,6 @@
 // Test the binary division library
-#include <print.c>
-#include <division.c>
+#include <print.h>
+#include <division.h>
 
 void main() {
     print_cls();

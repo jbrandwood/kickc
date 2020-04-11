@@ -1,5 +1,5 @@
-#include <sinus.c>
-#include <print.c>
+#include <sinus.h>
+#include <print.h>
 
 void main() {
     word wavelength = 192;

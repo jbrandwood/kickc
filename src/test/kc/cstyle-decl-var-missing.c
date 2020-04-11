@@ -2,7 +2,7 @@
 // Missing definition
 
 // The definition
-extern char * const SCREEN = 0x0400;
+extern char * const SCREEN;
 
 //Second definition
 char idx;

@@ -1,6 +1,6 @@
 // Show default font on screen
 
-#include <string.c>
+#include <string.h>
 
 byte* SCREEN = 0x0400;
 

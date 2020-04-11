@@ -1,6 +1,6 @@
-#include <c64.c>
-#include <sinus.c>
-#include <string.c>
+#include <c64.h>
+#include <sinus.h>
+#include <string.h>
 
 char* SCREEN = $400;
 char* LOGO = $2000;

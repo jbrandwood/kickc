@@ -1,7 +1,7 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots simple plots
-#include <c64.c>
-#include <bitmap2.c>
+#include <c64.h>
+#include <bitmap2.h>
 
 byte* BITMAP = 0x2000;
 byte* SCREEN = 0x0400;

@@ -1,5 +1,5 @@
-#include <print.c>
-#include <time.c>
+#include <print.h>
+#include <time.h>
 
 
 unsigned int last_time;

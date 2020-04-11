@@ -1,6 +1,7 @@
 // C standard library stdlib.h
 // Implementation of functions found int C stdlib.h / stdlib.c
-#include <string.c>
+#include <stdlib.h>
+#include <string.h>
 
 // Top of the heap used by malloc()
 unsigned char* HEAP_TOP = 0xa000;
@@ -52,8 +53,6 @@ unsigned int* bsearch16u(unsigned int key, unsigned int* items, char num) {
     return *items<=key?items:items-1;
 }
 
-// The different supported radix
-enum RADIX { BINARY=2, OCTAL=8, DECIMAL=10, HEXADECIMAL=16 };
 // The digits used for numbers
 char DIGITS[] = "0123456789abcdef"z;
 

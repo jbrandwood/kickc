@@ -1,6 +1,6 @@
 // Minimal test of mul8u
 
-#include <multiply.c>
+#include <multiply.h>
 
 void main() {
 

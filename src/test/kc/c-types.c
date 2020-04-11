@@ -1,6 +1,6 @@
 // Tests the different standard C types
 
-#include <print.c>
+#include <print.h>
 
 void main() {
     print_cls();

@@ -1,6 +1,6 @@
 // Tests the utoa10() function that converts unsigned int to DECIMAL string
-#include <stdlib.c>
-#include <print.c>
+#include <stdlib.h>
+#include <print.h>
 
 // buffer for number
 char buf[17];

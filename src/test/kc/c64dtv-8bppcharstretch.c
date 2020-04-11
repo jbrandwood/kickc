@@ -1,5 +1,5 @@
 // C64DTV 8bpp charmode stretcher
-#include <c64dtv.c>
+#include <c64dtv.h>
 
 // Plane with the screen
 byte* const SCREEN = $7c00;

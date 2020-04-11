@@ -1,7 +1,7 @@
 // Test memcpy - copy charset and screen using memcpy() from stdlib string
 
-#include <c64.c>
-#include <string.c>
+#include <c64.h>
+#include <string.h>
 
 byte* const CHARSET = 0x2000;
 byte* const SCREEN = 0x0400;

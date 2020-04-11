@@ -1,6 +1,6 @@
 // Experiments with malloc() - a word array
 
-#include <stdlib.c>
+#include <stdlib.h>
 
 word* WORDS = malloc(0x200);
 

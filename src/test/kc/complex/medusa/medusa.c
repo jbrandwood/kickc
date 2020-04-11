@@ -1,8 +1,8 @@
 // Display  MEDUSA PETSCII by Buzz_clik
 // https://csdb.dk/release/?id=178673
 
-#include <c64.c>
-#include <string.c>
+#include <c64.h>
+#include <string.h>
 
 char MEDUSA_SCREEN[1000] = kickasm(resource "medusas.prg" ) {{
     .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)

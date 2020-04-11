@@ -1,5 +1,7 @@
 // Simple binary multiplication implementation
 
+#include <multiply.h>
+
 // Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
 word mul8u(byte a, byte b) {
     word res = 0;

@@ -1,6 +1,6 @@
 // Put a 2x2 font into sprites and show it on screen
-#include <c64.c>
-#include <multiplexer.c>
+#include <c64.h>
+#include <multiplexer.h>
 
 char * const CHARSET_DEFAULT = 0x1000;
 char * const SPRITES = 0x3000;

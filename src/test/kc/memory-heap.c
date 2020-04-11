@@ -1,6 +1,6 @@
 // Experiments with malloc()
 
-#include <stdlib.c>
+#include <stdlib.h>
 
 void main() {
     unsigned char* buf1 = malloc(100);

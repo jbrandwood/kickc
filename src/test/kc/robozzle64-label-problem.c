@@ -1,4 +1,4 @@
-#include <multiply.c>
+#include <multiply.h>
 
 void main() {
     word* screen = 0x0400;

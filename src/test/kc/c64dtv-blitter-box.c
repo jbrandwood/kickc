@@ -1,6 +1,6 @@
 // Fill a box on the screen using the blitter
 
-#include <c64dtv.c>
+#include <c64dtv.h>
 
 byte* const SCREEN = $400;
 const byte SRCA[] = "camelot rules!";

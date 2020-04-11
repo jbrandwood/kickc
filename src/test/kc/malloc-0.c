@@ -1,6 +1,6 @@
 // Experiments with malloc() - a byte array
 
-#include <stdlib.c>
+#include <stdlib.h>
 
 byte* BYTES = malloc(0x100);
 

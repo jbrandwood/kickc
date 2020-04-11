@@ -1,7 +1,7 @@
 // Generates a 16-bit signed sinus
-#include <sinus.c>
+#include <sinus.h>
 #include "sinusb.c"
-#include <print.c>
+#include <print.h>
 
 void main() {
     word wavelength = 120;

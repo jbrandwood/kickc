@@ -2,6 +2,8 @@
 // See http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 // Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
 
+#include <fastmultiply.h>
+
 // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
 // <f(x) = <(( x * x )/4)
 byte align($100) mulf_sqr1_lo[512];

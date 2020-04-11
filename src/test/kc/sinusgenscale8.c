@@ -1,6 +1,6 @@
-#include <sinus.c>
-#include <multiply.c>
-#include <print.c>
+#include <sinus.h>
+#include <multiply.h>
+#include <print.h>
 
 void main() {
     word tabsize = 20;

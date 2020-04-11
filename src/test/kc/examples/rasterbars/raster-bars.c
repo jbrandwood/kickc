@@ -1,4 +1,4 @@
-#include <c64.c>
+#include <c64.h>
 
 void main() {
     asm {

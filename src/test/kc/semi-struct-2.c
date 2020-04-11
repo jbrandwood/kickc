@@ -18,9 +18,9 @@
 //    typedef struct fileentry ENTRY;
 //    ENTRY files[MAX_FILES];
 
-#include <multiply.c>
-#include <print.c>
-#include <keyboard.c>
+#include <multiply.h>
+#include <print.h>
+#include <keyboard.h>
 
 // The size of a file ENTRY
 const byte SIZEOF_ENTRY = 18;

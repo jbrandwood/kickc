@@ -1,5 +1,5 @@
 // A minimal working raster hardware IRQ with clobber-based register savings
-#include <c64.c>
+#include <c64.h>
 
 void main() {
     asm { sei }

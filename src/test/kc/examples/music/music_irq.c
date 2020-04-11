@@ -1,5 +1,5 @@
 // A simple SID music player using RASTER IRQ
-#include <c64.c>
+#include <c64.h>
 
 char* const MUSIC = $1000;
 

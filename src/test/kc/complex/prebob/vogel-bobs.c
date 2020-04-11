@@ -1,10 +1,10 @@
 // Pre-calculated bobs inside a charset (pre-moved to all x/y-combinations)
-#include <c64.c>
-#include <string.c>
-#include <keyboard.c>
-#include <time.c>
-#include <print.c>
-#include <fastmultiply.c>
+#include <c64.h>
+#include <string.h>
+#include <keyboard.h>
+#include <time.h>
+#include <print.h>
+#include <fastmultiply.h>
 
 // The prototype BOB (a 3x3 char image with a bob image in the upper 2x2 chars)
 // The chars are layout as follows with data in chars 0, 1, 3, 4 initially

@@ -1,6 +1,6 @@
 // Shows a font where each char contains the number of the char (00-ff)
-#include <c64.c>
-#include <string.c>
+#include <c64.h>
+#include <string.h>
 #include "font-hex.c"
 
 byte* SCREEN = 0x0400;

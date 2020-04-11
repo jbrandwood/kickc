@@ -1,5 +1,5 @@
-#include <sinus.c>
-#include <print.c>
+#include <sinus.h>
+#include <print.h>
 
 word wavelength = 192;
 signed byte sintab2[192];

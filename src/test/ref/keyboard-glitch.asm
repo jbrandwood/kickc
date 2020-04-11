@@ -8,6 +8,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const KEY_E = $e
+  .const KEY_C = $14
+  .const KEY_I = $21
+  .const KEY_SPACE = $3c
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   // CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -16,10 +20,6 @@
   .label CIA1_PORT_B = $dc01
   .const RED = 2
   .const GREEN = 5
-  .const KEY_E = $e
-  .const KEY_C = $14
-  .const KEY_I = $21
-  .const KEY_SPACE = $3c
   .label SCREEN = $400
 main: {
     // *BORDERCOL = GREEN

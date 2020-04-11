@@ -1,6 +1,6 @@
 // Adding a missing word-fragment for Travis Fisher
 
-#include <print.c>
+#include <print.h>
 
 const byte MAX_OBJECTS = 16;
 word OBJ_WORLD_X[MAX_OBJECTS];

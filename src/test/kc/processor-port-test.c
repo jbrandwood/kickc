@@ -1,8 +1,8 @@
 // Test the functionality of the C64 processor port ($00/$01)
 // Tests by setting the value of the processor port - and then printing out values of $00/$01/$a000/$d000/$e000
 
-#include <c64.c>
-#include <print.c>
+#include <c64.h>
+#include <print.h>
 
 char* const BASIC_ROM = $a000;
 char* const KERNAL_ROM = $e000;

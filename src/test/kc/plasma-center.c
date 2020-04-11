@@ -1,11 +1,11 @@
 // Plasma based on the distance/angle to the screen center
 
-#include <c64.c>
-#include <stdlib.c>
-#include <string.c>
-#include <sqr.c>
-#include <atan2.c>
-#include <print.c>
+#include <c64.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sqr.h>
+#include <atan2.h>
+#include <print.h>
 #include "sid.c"
 
 

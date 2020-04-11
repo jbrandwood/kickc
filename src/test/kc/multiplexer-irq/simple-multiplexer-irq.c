@@ -1,6 +1,6 @@
 // A simple usage of the flexible sprite multiplexer routine
-#include <c64.c>
-#include <multiplexer.c>
+#include <c64.h>
+#include <multiplexer.h>
 // Location of screen & sprites
 char* SCREEN = 0x0400;
 

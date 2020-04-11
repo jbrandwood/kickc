@@ -1,6 +1,6 @@
 // Animated lines drawn on a single color bitmap
-#include <c64.c>
-#include <division.c>
+#include <c64.h>
+#include <division.h>
 
 byte* BITMAP = $a000;
 byte* SCREEN = $8800;

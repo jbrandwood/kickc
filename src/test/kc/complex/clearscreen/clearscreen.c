@@ -1,9 +1,9 @@
 // Clears start screen throwing around the letters (by turning them into sprites)
-#include <stdlib.c>
-#include <sqr.c>
-#include <atan2.c>
-#include <multiply.c>
-#include <c64.c>
+#include <stdlib.h>
+#include <sqr.h>
+#include <atan2.h>
+#include <multiply.h>
+#include <c64.h>
 
 // Generate debug code (raster time usage etc.)
 const bool DEBUG = false;

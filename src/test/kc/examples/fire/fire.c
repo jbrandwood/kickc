@@ -4,7 +4,7 @@
 // Ported to KickC by Jesper Gravgaard.
 // Original source https://github.com/cc65/cc65/blob/master/samples/fire.c
 
-#include <c64.c>
+#include <c64.h>
 #include "sid.c"
 
 unsigned char* SCREEN1 = 0x3800;

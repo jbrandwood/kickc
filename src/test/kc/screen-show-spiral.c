@@ -1,8 +1,8 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 
-#include <stdlib.c>
-#include <sqr.c>
-#include <atan2.c>
+#include <stdlib.h>
+#include <sqr.h>
+#include <atan2.h>
 
 
 // Screen containing distance to center

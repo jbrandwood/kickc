@@ -1,6 +1,7 @@
 // Table-based implementation of integer square sqr() and square root sqrt()
 
-#include <stdlib.c>
+#include <sqr.h>
+#include <stdlib.h>
 
 // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
 byte NUM_SQUARES = 0xff;

@@ -5,8 +5,8 @@
 // Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
 // Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
 // but never when they are disabled (red border)
-#include <keyboard.c>
-#include <c64.c>
+#include <keyboard.h>
+#include <c64.h>
 
 void main() {
     *BORDERCOL = GREEN;

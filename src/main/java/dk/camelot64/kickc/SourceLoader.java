@@ -16,16 +16,23 @@ import java.util.List;
  */
 public class SourceLoader {
 
-   public static File loadFile(String fileName, Path currentPath, Program program) {
-      List<String> searchPaths = new ArrayList<>();
+   /**
+    * Locate a file and load it. Looks through the current path and a set of search folder.
+    * @param fileName The file to look for.
+    * @param currentPath The current path. May be null.
+    * @param searchPaths The search paths to look through if the file is not found in the current path.
+    * @return The file if found. null if not.
+    */
+   public static File loadFile(String fileName, Path currentPath, List<String> searchPaths) {
+      List<String> allSearchPaths = new ArrayList<>();
       if(currentPath != null)
-         searchPaths.add(currentPath.toString());
-      searchPaths.addAll(program.getImportPaths());
-      for(String importPath : searchPaths) {
-         if(!importPath.endsWith("/")) {
-            importPath += "/";
+         allSearchPaths.add(currentPath.toString());
+      allSearchPaths.addAll(searchPaths);
+      for(String searchPath : allSearchPaths) {
+         if(!searchPath.endsWith("/")) {
+            searchPath += "/";
          }
-         String filePath = importPath + fileName;
+         String filePath = searchPath + fileName;
          //System.out.println("Looking for file "+filePath);
          File file = new File(filePath);
          if(file.exists()) {
@@ -33,12 +40,15 @@ public class SourceLoader {
             return file;
          }
       }
-      throw new CompileError("File  not found " + fileName);
+      // Not found
+      return null;
    }
 
    public static void loadLinkScriptFile(String fileName, Path currentPath, Program program) {
       try {
-         File file = loadFile(fileName, currentPath, program);
+         File file = loadFile(fileName, currentPath, program.getIncludePaths());
+         if(file==null)
+            throw new CompileError("File  not found " + fileName);
          Path filePath = file.toPath();
          String linkScript = new String(Files.readAllBytes(filePath));
          program.setLinkScript(filePath, linkScript);

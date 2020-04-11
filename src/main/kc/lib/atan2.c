@@ -1,6 +1,8 @@
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
 
+#include <atan2.h>
+
 // The number of iterations performed during 16-bit CORDIC atan2 calculation
 const byte CORDIC_ITERATIONS_16 = 15;
 

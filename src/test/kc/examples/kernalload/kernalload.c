@@ -3,8 +3,8 @@
 // To execute the program succesfully you must mount the D64 disk image and execute the kernalload.PRG program
 #pragma link("kernalload.ld")
 
-#include <string.c>
-#include <c64.c>
+#include <string.h>
+#include <c64.h>
 
 // Sprite file
 #pragma data_seg(Sprite)

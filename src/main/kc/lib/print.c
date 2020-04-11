@@ -1,5 +1,5 @@
-#include <stdlib.c>
-#include <string.c>
+#include <stdlib.h>
+#include <string.h>
 
 byte* print_screen = $0400;
 byte* print_line_cursor = print_screen;

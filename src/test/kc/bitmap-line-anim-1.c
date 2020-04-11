@@ -1,8 +1,8 @@
 // Illustrates problem with bitmap-draw.kc line()
 // Reported by Janne Johansson
 
-#include <c64.c>
-#include <bitmap-draw.c>
+#include <c64.h>
+#include <bitmap-draw.h>
 
 byte* const SCREEN = $400;
 byte* const BITMAP = $2000;

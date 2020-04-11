@@ -1,6 +1,8 @@
 // Plot and line drawing routines for HIRES bitmaps
 // Currently it can only plot on the first 256 x-positions.
 
+#include <bitmap-draw.h>
+
 // Tables for the plotter - initialized by calling bitmap_draw_init();
 const byte bitmap_plot_xlo[256];
 const byte bitmap_plot_xhi[256];

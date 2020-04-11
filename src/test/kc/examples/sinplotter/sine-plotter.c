@@ -1,9 +1,9 @@
 // Generate a big sinus and plot it on a bitmap
 
-#include <c64.c>
-#include <sinus.c>
-#include <string.c>
-#include <bitmap2.c>
+#include <c64.h>
+#include <sinus.h>
+#include <string.h>
+#include <bitmap2.h>
 
 char* SCREEN = $400;
 char* BITMAP = $2000;

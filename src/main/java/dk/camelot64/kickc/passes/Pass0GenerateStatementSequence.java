@@ -255,7 +255,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(existingSymbol!=null) {
          // Already declared  - check equality
          if(!SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
-            throw new CompileError("Error! Conflicting declarations for: "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
+            throw new CompileError("Error! Conflicting declarations for: "+procedure.getFullName(), new StatementSource(ctx));
       } else {
          // Not declared before - add it
          program.getScope().add(procedure);
@@ -527,7 +527,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String resourceName = resource.getText();
       resourceName = resourceName.substring(1, resourceName.length() - 1);
       Path currentPath = cParser.getSourceFolderPath(ctx);
-      File resourceFile = SourceLoader.loadFile(resourceName, currentPath, program);
+      File resourceFile = SourceLoader.loadFile(resourceName, currentPath, new ArrayList<>());
+      if(resourceFile==null)
+         throw new CompileError("File  not found " + resourceName);
       program.addAsmResourceFile(resourceFile.toPath());
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
@@ -873,28 +875,34 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          final List<Directive> effectiveDirectives = varDecl.getEffectiveDirectives();
          final List<Comment> declComments = varDecl.getDeclComments();
          varDecl.exitVar();
-
-         if(isStructMember && (initializer != null))
-            throw new CompileError("Initializer not supported inside structs " + effectiveType.getTypeName(), statementSource);
-         if(initializer != null)
-            PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
-         RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
-         initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(effectiveType, effectiveArraySpec), program, statementSource);
          VariableBuilder varBuilder = new VariableBuilder(varName, getCurrentScope(), false, effectiveType, effectiveArraySpec, effectiveDirectives, currentDataSegment, variableBuilderConfig);
          Variable variable = varBuilder.build();
-         boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
-         if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !isStructMember && variable.getRegister() == null)) {
-            // Set initial value
-            ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
-            variable.setInitValue(constInitValue);
-            // Add comments to constant
-            variable.setComments(ensureUnusedComments(declComments));
-         } else if(!variable.isKindConstant() && !isStructMember) {
-            Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(declComments));
-            sequence.addStatement(initStmt);
+         if(isStructMember && (initializer != null))
+            throw new CompileError("Initializer not supported inside structs " + effectiveType.getTypeName(), statementSource);
+         if(variable.isDeclarationOnly()) {
+            if(initializer != null) {
+               throw new CompileError("Initializer not allowed for extern variables " + varName, statementSource);
+            }
+         } else {
+            // Create a proper initializer
+            if(initializer != null)
+               PrePostModifierHandler.addPreModifiers(this, initializer, statementSource);
+            RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
+            initValue = Initializers.constantify(initValue, new Initializers.ValueTypeSpec(effectiveType, effectiveArraySpec), program, statementSource);
+            boolean isPermanent = ScopeRef.ROOT.equals(variable.getScope().getRef()) || variable.isPermanent();
+            if(variable.isKindConstant() || (isPermanent && variable.isKindLoadStore() && Variable.MemoryArea.MAIN_MEMORY.equals(variable.getMemoryArea()) && initValue instanceof ConstantValue && !isStructMember && variable.getRegister() == null)) {
+               // Set initial value
+               ConstantValue constInitValue = getConstInitValue(initValue, initializer, statementSource);
+               variable.setInitValue(constInitValue);
+               // Add comments to constant
+               variable.setComments(ensureUnusedComments(declComments));
+            } else if(!variable.isKindConstant() && !isStructMember) {
+               Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, ensureUnusedComments(declComments));
+               sequence.addStatement(initStmt);
+            }
+            if(initializer != null)
+               PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
          }
-         if(initializer != null)
-            PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);
       } catch(CompileError e) {
          throw new CompileError(e.getMessage(), declSource);
       }

@@ -4,8 +4,9 @@
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sinustables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
 
-#include <division.c>
-#include <multiply.c>
+#include <sinus.h>
+#include <division.h>
+#include <multiply.h>
 
 // PI*2 in u[4.28] format
 const dword PI2_u4f28 = $6487ed51;

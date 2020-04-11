@@ -1,6 +1,6 @@
 // Tests subtracting bytes from signed words
 
-#include <print.c>
+#include <print.h>
 
 void main() {
     signed word w1 = 1234;

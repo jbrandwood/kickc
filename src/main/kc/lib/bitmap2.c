@@ -1,5 +1,6 @@
 // Simple single-color (320x200) bitmap routines
-#include <string.c>
+#include <bitmap2.h>
+#include <string.h>
 
 // The adddress of the bitmap screen (used for colors)
 byte* bitmap_screen;

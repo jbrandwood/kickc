@@ -1,5 +1,5 @@
 #include "benchcommon.c"
-#include <print.c>
+#include <print.h>
 
 byte* const rom = (byte*)0xe000;
 

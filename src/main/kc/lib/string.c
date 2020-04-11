@@ -1,7 +1,6 @@
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
-
-typedef word size_t ;
+#include <string.h>
 
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.

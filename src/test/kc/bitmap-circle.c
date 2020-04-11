@@ -2,7 +2,7 @@
 // Coded by Richard-William Loerakker
 // Original Source https://bcaorganizer.blogspot.com/p/c-program-for_21.html?fbclid=IwAR0iL8pYcCqhCPa6LmtQ9qej-YonYVepY2cBegYRIWO0l8RPeOnTVniMAac
 
-#include <c64.c>
+#include <c64.h>
 
 byte* const SCREEN = $400;
 byte* const BITMAP = $2000;

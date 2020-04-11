@@ -21,10 +21,12 @@ public class Program {
 
    /** The name of the primary file being compiled. PASS 0-5 (STATIC) */
    private String primaryFileName;
-   /** Paths used for importing files. PASS 0 (STATIC) */
-   private List<String> importPaths;
-   /** Imported files. PASS 0 (STATIC) */
-   private List<String> imported;
+   /** Paths used for including files. PASS 0 (STATIC) */
+   private List<String> includePaths;
+   /** Paths used for library files. PASS 0 (STATIC) */
+   private List<String> libraryPaths;
+   /** All loaded H/C-files. PASS 0 (STATIC) */
+   private List<String> loadedFiles;
 
    /** The target platform that the program is being build for. PASS 0-5 (STATIC) */
    private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
@@ -106,8 +108,9 @@ public class Program {
    public Program() {
       this.scope = new ProgramScope();
       this.log = new CompileLog();
-      this.importPaths = new ArrayList<>();
-      this.imported = new ArrayList<>();
+      this.includePaths = new ArrayList<>();
+      this.libraryPaths = new ArrayList<>();
+      this.loadedFiles = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
    }
@@ -116,8 +119,9 @@ public class Program {
     * Clears all data that is only used in PASS 1
     */
    public void endPass1() {
-      this.importPaths = null;
-      this.imported = null;
+      this.includePaths = null;
+      this.libraryPaths = null;
+      this.loadedFiles = null;
       this.statementSequence = null;
       this.procedureModifiedVars = null;
       this.structVariableMemberUnwinding = null;
@@ -249,12 +253,16 @@ public class Program {
       this.fileComments = fileComments;
    }
 
-   public List<String> getImportPaths() {
-      return importPaths;
+   public List<String> getIncludePaths() {
+      return includePaths;
    }
 
-   public List<String> getImported() {
-      return imported;
+   public List<String> getLibraryPaths() {
+      return libraryPaths;
+   }
+
+   public List<String> getLoadedFiles() {
+      return loadedFiles;
    }
 
    public List<Path> getAsmResourceFiles() {

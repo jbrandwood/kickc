@@ -1,9 +1,9 @@
 // Same animation using a multiplexer
-#include <c64.c>
-#include <multiplexer.c>
-#include <fastmultiply.c>
-#include <string.c>
-#include <keyboard.c>
+#include <c64.h>
+#include <multiplexer.h>
+#include <fastmultiply.h>
+#include <string.h>
+#include <keyboard.h>
 
 // The BOB sprite
 align(0x1000) char SPRITE[] = kickasm(resource "smiley.png") {{

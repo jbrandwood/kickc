@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const KEY_SPACE = $3c
   .label RASTER = $d012
   .label BGCOL = $d021
   // CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -14,7 +15,6 @@
   .label CIA1_PORT_B_DDR = $dc03
   .const GREEN = 5
   .const BLUE = 6
-  .const KEY_SPACE = $3c
 main: {
     // keyboard_init()
     jsr keyboard_init

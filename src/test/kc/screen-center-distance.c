@@ -1,11 +1,11 @@
 // Calculate the distance to the center of the screen - and show it using font-hex
 
-#include <stdlib.c>
-#include <sqr.c>
-#include <c64.c>
+#include <stdlib.h>
+#include <sqr.h>
+#include <c64.h>
 #include "font-hex.c"
-#include <time.c>
-#include <print.c>
+#include <time.h>
+#include <print.h>
 
 #pragma reserve(08)
 

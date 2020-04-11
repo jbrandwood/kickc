@@ -2,7 +2,7 @@
 // Each function of the kernal is a no-args function
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
 
-#include <string.c>
+#include <string.h>
 
 #pragma link("xmega65.ld")
 

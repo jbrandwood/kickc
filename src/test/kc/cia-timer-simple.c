@@ -1,8 +1,8 @@
 // Setup and run a simple CIA-timer
 
-#include <c64.c>
-#include <time.c>
-#include <print.c>
+#include <c64.h>
+#include <time.h>
+#include <print.h>
 
 byte* const SCREEN = 0x0400;
 

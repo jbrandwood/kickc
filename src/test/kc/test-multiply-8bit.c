@@ -1,7 +1,7 @@
 // Test the fast multiplication library
-#include <print.c>
-#include <multiply.c>
-#include <fastmultiply.c>
+#include <print.h>
+#include <multiply.h>
+#include <fastmultiply.h>
 
 byte* BGCOL = $d021;
 

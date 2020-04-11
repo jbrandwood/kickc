@@ -1,4 +1,4 @@
-#include <c64.c>
+#include <c64.h>
 
 byte* const SCREEN = $400;
 byte* const BITMAP = $2000;

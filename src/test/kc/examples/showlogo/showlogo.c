@@ -1,5 +1,5 @@
-#include <c64.c>
-#include <string.c>
+#include <c64.h>
+#include <string.h>
 
 char* SCREEN = $400;
 char* LOGO = $2000;

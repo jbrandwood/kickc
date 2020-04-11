@@ -1,5 +1,5 @@
-#include <c64.c>
-#include <bitmap-draw.c>
+#include <c64.h>
+#include <bitmap-draw.h>
 
 char* const SCREEN = $400;
 char* const BITMAP = $2000;

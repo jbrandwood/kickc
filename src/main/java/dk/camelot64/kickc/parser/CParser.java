@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.parser;
 
+import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -93,6 +94,7 @@ public class CParser {
 
    /**
     * Get the preprocessor (usable for getting all preprocessed tokens).
+    *
     * @return The preprocessor
     */
    public CPreprocessor getPreprocessor() {
@@ -147,15 +149,24 @@ public class CParser {
 
    /**
     * Loads a C-file (if it has not already been loaded).
-    *
+    * <p>
     * The C-file is inserted into the C token stream at the current parse-point - so the parser will parse the entire content of the file before moving on.
     *
     * @param fileName The file name of the file
     */
    public void includeCFile(String fileName, boolean isSystem) {
+      if(fileName.startsWith("\"") || fileName.startsWith("<")) {
+         fileName = fileName.substring(1, fileName.length() - 1);
+      }
       final Path currentSourceFolderPath = isSystem ? null : getCurrentSourceFolderPath();
-      final KickCLexer lexer = loadCFile(fileName, currentSourceFolderPath);
-      addSourceFirst(lexer);
+      final TokenSource fileTokens = loadCFile(fileName, currentSourceFolderPath, program.getIncludePaths(), false);
+      if(fileName.endsWith(".h")) {
+         // The included file was a H-file - attempt to find the matching library C-file
+         String libFileName = Compiler.removeFileNameExtension(fileName) + ".c";
+         final TokenSource cLibFileTokens = loadCFile(libFileName, currentSourceFolderPath, program.getLibraryPaths(), true);
+         addSourceFirst(cLibFileTokens);
+      }
+      addSourceFirst(fileTokens);
    }
 
    /**
@@ -163,20 +174,23 @@ public class CParser {
     *
     * @param fileName The file name of the file
     * @param currentPath The path of the current folder (searched before the search path).
-    * @return The lexer to be inserted into the source-list using one of the {@link #addSourceFirst(KickCLexer)} / {@link #addSourceLast(KickCLexer)}  methods.
+    * @param searchPaths The folders to look in if the files is not found in current path
+    * @return The lexer tokens to be inserted into the source-list using one of the {@link #addSourceFirst(TokenSource)} / {@link #addSourceLast(TokenSource)} methods.
     */
-   public KickCLexer loadCFile(String fileName, Path currentPath) {
+   public TokenSource loadCFile(String fileName, Path currentPath, List<String> searchPaths, boolean acceptFileNotFound) {
       try {
-         if(fileName.startsWith("\"") || fileName.startsWith("<")) {
-            fileName = fileName.substring(1, fileName.length() - 1);
-         }
-         File file = SourceLoader.loadFile(fileName, currentPath, program);
-         List<String> imported = program.getImported();
-         if(imported.contains(file.getAbsolutePath())) {
+         File file = SourceLoader.loadFile(fileName, currentPath, searchPaths);
+         if(file == null)
+            if(acceptFileNotFound)
+               return null;
+            else
+               throw new CompileError("File not found " + fileName);
+         List<String> included = program.getLoadedFiles();
+         if(included.contains(file.getAbsolutePath())) {
             return null;
          }
          final CharStream fileStream = CharStreams.fromPath(file.toPath().toAbsolutePath());
-         imported.add(file.getAbsolutePath());
+         included.add(file.getAbsolutePath());
          if(program.getLog().isVerboseParse()) {
             program.getLog().append("PARSING " + file.getPath().replace("\\", "/"));
             program.getLog().append(fileStream.toString());
@@ -217,21 +231,21 @@ public class CParser {
    /**
     * Add source code at the start of the token stream being parsed.
     *
-    * @param lexer The lexer for reading the source tokens
+    * @param tokenSource The lexer for reading the source tokens
     */
-   public void addSourceFirst(KickCLexer lexer) {
-      if(lexer != null)
-         cTokenSource.addSourceFirst(lexer);
+   public void addSourceFirst(TokenSource tokenSource) {
+      if(tokenSource != null)
+         cTokenSource.addSourceFirst(tokenSource);
    }
 
    /**
     * Add source code at the end of the token stream being parsed.
     *
-    * @param lexer The lexer for reading the source tokens
+    * @param tokenSource The lexer for reading the source tokens
     */
-   public void addSourceLast(KickCLexer lexer) {
-      if(lexer != null)
-         cTokenSource.addSourceLast(lexer);
+   public void addSourceLast(TokenSource tokenSource) {
+      if(tokenSource != null)
+         cTokenSource.addSourceLast(tokenSource);
    }
 
 

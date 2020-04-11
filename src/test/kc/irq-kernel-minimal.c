@@ -1,6 +1,6 @@
 // A minimal working IRQ
 
-#include <c64.c>
+#include <c64.h>
 
 // Setup the IRQ routine
 void main() {

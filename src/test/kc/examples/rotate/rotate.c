@@ -1,9 +1,9 @@
 // 2D rotattion of 8 sprites 
 
-#include <c64.c>
-#include <fastmultiply.c>
-#include <time.c>
-#include <print.c>
+#include <c64.h>
+#include <fastmultiply.h>
+#include <time.h>
+#include <print.h>
 
 char* SCREEN = $0400;
 

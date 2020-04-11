@@ -40,7 +40,7 @@ public class ConstantChar implements ConstantEnumerable<Character> {
     */
    @Override
    public Long getInteger() {
-      return encoding.getInteger(value);
+      return encoding.encodedFromChar(value);
    }
 
    public StringEncoding getEncoding() {

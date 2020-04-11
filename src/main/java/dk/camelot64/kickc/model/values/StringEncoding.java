@@ -29,9 +29,9 @@ public enum StringEncoding {
       this.mapping = mapping;
    }
 
-
    /**
     * Get encoding by name.
+    *
     * @param name The name
     * @return The encoding
     */
@@ -65,25 +65,25 @@ public enum StringEncoding {
    }
 
    /**
-    * Get the integer value of a character using a specific encoding
+    * Get the integer value of a character within the specific encoding
     *
-    * @param aChar The character
-    * @return The integer value of the character using the encoding
+    * @param aChar The character in UNICODE/ASCII
+    * @return The integer value of the character within the encoding
     */
-   public Long getInteger(Character aChar) {
-      Byte constCharIntValue = mapping.get(aChar);
-      return constCharIntValue.longValue();
+   public Long encodedFromChar(Character aChar) {
+      Byte encodedValue = mapping.get(aChar);
+         return encodedValue.longValue();
    }
 
    /**
-    * Get a character with a specific integer value using the specific encoding
+    * Get UNICODE/ASCII character for a specific encoded integer value using the specific encoding
     *
-    * @param intValue The integer value
+    * @param encodedValue The integer value
     * @return The character that has the integer value using the encoding
     */
-   public Character getChar(Byte intValue) {
+   public Character charFromEncoded(Byte encodedValue) {
       for(Map.Entry<Character, Byte> mapEntry : mapping.entrySet()) {
-         if(mapEntry.getValue() == intValue.byteValue())
+         if(mapEntry.getValue() == encodedValue.byteValue())
             return mapEntry.getKey();
       }
       return null;
@@ -114,12 +114,12 @@ public enum StringEncoding {
     * @return The first ASCII character of the list.
     */
    public char escapeToAsciiFirst(PrimitiveIterator.OfInt escapedCharsIterator) {
-      char stringChar = (char)escapedCharsIterator.nextInt();
+      char stringChar = (char) escapedCharsIterator.nextInt();
       if(stringChar != '\\')
          return stringChar;
       // Escape started - handle it!
       if(!escapedCharsIterator.hasNext()) throw new CompileError("Unfinished string escape sequence at end of string");
-      char escapeChar = (char)escapedCharsIterator.nextInt();
+      char escapeChar = (char) escapedCharsIterator.nextInt();
       switch(escapeChar) {
          case 'n':
             return '\n';
@@ -135,10 +135,10 @@ public enum StringEncoding {
             return '\\';
          case 'x':
             String hexNum = "";
-            hexNum += (char)escapedCharsIterator.nextInt();
-            hexNum += (char)escapedCharsIterator.nextInt();
+            hexNum += (char) escapedCharsIterator.nextInt();
+            hexNum += (char) escapedCharsIterator.nextInt();
             final int hexChar = Integer.parseInt(hexNum, 16);
-            final Character aChar = getChar((byte) hexChar);
+            final Character aChar = charFromEncoded((byte) hexChar);
             if(aChar == null)
                throw new CompileError("No character 0x" + hexNum + " in encoding " + name);
             return aChar;
@@ -149,6 +149,7 @@ public enum StringEncoding {
 
    /**
     * Converts a char to an escape sequence if needed. If not needed the char itself is returned.
+    *
     * @param aChar The char
     * @param escapeSingleQuotes Should single quotes ' be escaped. (true when encoding chars, false when encoding chars)
     * @return The char itself - or the appropriate escape sequence
@@ -177,6 +178,7 @@ public enum StringEncoding {
 
    /**
     * Escapes chars in string if needed
+    *
     * @param string The string
     * @return The escaped string.
     */

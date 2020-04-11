@@ -3,6 +3,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+.encoding "petscii_mixed"
+  .const CH = '\n'
+  .label SCREEN = $400
 main: {
     .label cursor = 6
     .label msg = 2
@@ -25,6 +28,9 @@ main: {
     lda (msg),y
     cmp #0
     bne __b2
+    // SCREEN[0x50] = CH
+    lda #CH
+    sta SCREEN+$50
     // }
     rts
   __b2:
@@ -32,11 +38,10 @@ main: {
     //                 line += 0x28;
     //                 cursor = line;
     //                 break;
-  .encoding "petscii_mixed"
     lda #'\n'
     ldy #0
     cmp (msg),y
-    beq __b3
+    beq __b4
     // *msg & 0x3f
     lda #$3f
     and (msg),y
@@ -47,14 +52,14 @@ main: {
     bne !+
     inc.z cursor+1
   !:
-  __b5:
+  __b6:
     // msg++;
     inc.z msg
     bne !+
     inc.z msg+1
   !:
     jmp __b1
-  __b3:
+  __b4:
     // line += 0x28
     lda #$28
     clc
@@ -67,7 +72,7 @@ main: {
     sta.z line
     lda.z cursor+1
     sta.z line+1
-    jmp __b5
+    jmp __b6
 }
   MESSAGE: .text @"hello\nworld"
   .byte 0

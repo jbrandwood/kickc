@@ -34,8 +34,12 @@ public class AsmFormat {
          return getAsmBool(((ConstantBool) value).getBool());
       } else if(value instanceof ConstantChar) {
          ConstantChar constantChar = (ConstantChar) value;
-         String escapedChar = constantChar.getCharEscaped();
-         return "'" + escapedChar + "'";
+         if(!constantChar.getEncoding().hasEncoding(constantChar.getChar()))
+            return getAsmNumber(constantChar.getInteger());
+         else {
+            String escapedChar = constantChar.getCharEscaped();
+            return "'" + escapedChar + "'";
+         }
       } else if(value instanceof ConstantString) {
          String stringValue = ((ConstantString) value).getValue();
          String escapedString = ((ConstantString) value).getStringEscaped();

@@ -14,6 +14,14 @@ public enum StringEncoding {
    SCREENCODE_MIXED("screencode_mixed", "sm", CharToPetsciiConverter.charToScreenCode_mixed),
    SCREENCODE_UPPER("screencode_upper", "su", CharToPetsciiConverter.charToScreenCode_upper);
 
+
+   /** Char value used to encode \xnn chars without a value within the chosen encoding. A char C is  encoded as CHAR_SPECIAL_VAL+C */
+   public static final char CHAR_SPECIAL_VAL = 64000;
+   /** The minimal value of a specially encoded char. */
+   public static final char CHAR_SPECIAL_MIN = CHAR_SPECIAL_VAL + Byte.MIN_VALUE;
+   /** The maximal value of a specially encoded char. */
+   public static final char CHAR_SPECIAL_MAX = CHAR_SPECIAL_VAL + Byte.MAX_VALUE;
+
    /** The encoding name. */
    public final String name;
 
@@ -72,8 +80,23 @@ public enum StringEncoding {
     */
    public Long encodedFromChar(Character aChar) {
       Byte encodedValue = mapping.get(aChar);
+      if(encodedValue != null)
          return encodedValue.longValue();
+      else
+         // Char is not in encoding - it must be made up!
+         return (long) aChar - CHAR_SPECIAL_VAL;
    }
+
+   /**
+    * Determine if a character has en encoding within the specific encoding
+    * @param aChar The char to examine
+    * @return true if the char has a proper encoding. False if it does not.
+    */
+   public boolean hasEncoding(Character aChar) {
+      Byte encodedValue = mapping.get(aChar);
+      return encodedValue != null;
+   }
+
 
    /**
     * Get UNICODE/ASCII character for a specific encoded integer value using the specific encoding
@@ -86,7 +109,8 @@ public enum StringEncoding {
          if(mapEntry.getValue() == encodedValue.byteValue())
             return mapEntry.getKey();
       }
-      return null;
+      // If the mapping does not handle the Char - make one up
+      return (char) (CHAR_SPECIAL_VAL + encodedValue);
    }
 
    /**
@@ -171,9 +195,12 @@ public enum StringEncoding {
                return Character.toString(aChar);
          case '\\':
             return "\\\\";
-         default:
-            return Character.toString(aChar);
       }
+      if(aChar >= CHAR_SPECIAL_MIN && aChar <= CHAR_SPECIAL_MAX) {
+         final byte charValue = (byte) (aChar - CHAR_SPECIAL_VAL);
+         return String.format("\\$%x", charValue);
+      } else
+         return Character.toString(aChar);
    }
 
    /**
@@ -187,6 +214,5 @@ public enum StringEncoding {
       string.chars().forEach(value -> escaped.append(asciiToEscape((char) value, false)));
       return escaped.toString();
    }
-
 
 }

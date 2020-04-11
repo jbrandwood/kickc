@@ -61,6 +61,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-d"}, description = "Debug the assembled prg file using C64Debugger. Implicitly assembles the output.")
    private boolean debug = false;
 
+   @CommandLine.Option(names = {"-E"}, description = "Only run the preprocessor. Output is sent to standard out.")
+   private boolean preprocess = false;
+
    @CommandLine.Option(names = {"-Ouplift"}, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
 
@@ -260,7 +263,7 @@ public class KickC implements Callable<Void> {
             outputFileNameBase = primaryFileBaseName;
          } else {
             final int extensionIdx = outputFileName.lastIndexOf('.');
-            if(extensionIdx>0)
+            if(extensionIdx > 0)
                outputFileNameBase = outputFileName.substring(0, extensionIdx);
             else
                outputFileNameBase = outputFileName;
@@ -327,10 +330,23 @@ public class KickC implements Callable<Void> {
 
          StringBuilder kcFileNames = new StringBuilder();
          kcFiles.stream().forEach(path -> kcFileNames.append(path.toString()).append(" "));
+
+         if(preprocess) {
+            System.out.println("Preprocessing " + kcFileNames);
+            try {
+               compiler.preprocess(kcFiles);
+            } catch(CompileError e) {
+               // Print the error and exit with compile error
+               System.err.println(e.getMessage());
+               System.exit(COMPILE_ERROR);
+            }
+            return null;
+         }
+
          System.out.println("Compiling " + kcFileNames);
-         Program program = null;
+         Program program = compiler.getProgram();
          try {
-            program = compiler.compile(kcFiles);
+            compiler.compile(kcFiles);
          } catch(CompileError e) {
             // Print the error and exit with compile error
             System.err.println(e.getMessage());
@@ -363,7 +379,7 @@ public class KickC implements Callable<Void> {
          }
 
          // Assemble the asm-file if instructed
-         String prgFileName = outputFileNameBase +".prg";
+         String prgFileName = outputFileNameBase + ".prg";
          Path prgPath = outputDir.resolve(prgFileName);
          if(assemble || execute || debug) {
             Path kasmLogPath = outputDir.resolve(outputFileNameBase + ".klog");

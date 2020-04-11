@@ -95,6 +95,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPreprocessor9() throws IOException, URISyntaxException {
+      compileAndCompare("preprocessor-9");
+   }
+
+   @Test
    public void testPreprocessor8() throws IOException, URISyntaxException {
       compileAndCompare("preprocessor-8");
    }
@@ -4027,10 +4032,9 @@ public class TestPrograms {
       final ArrayList<Path> files = new ArrayList<>();
       final Path filePath = Paths.get(fileName);
       files.add(filePath);
-      Program program = compiler.compile(files);
-
+      compiler.compile(files);
+      Program program = compiler.getProgram();
       compileAsm(fileName, program);
-
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);
       success &= helper.testOutput(fileName, ".asm", program.getAsm().toString(new AsmProgram.AsmPrintState(false, true, false, false), program));

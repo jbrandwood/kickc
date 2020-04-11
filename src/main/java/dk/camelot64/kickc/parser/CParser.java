@@ -32,8 +32,11 @@ public class CParser {
    /** The (single) parser. */
    private KickCParser parser;
 
+   /** The preprocessor. */
+   private CPreprocessor preprocessor;
+
    /** The token stream. */
-   private final CommonTokenStream tokenStream;
+   private final CommonTokenStream preprocessedTokenStream;
 
    /** The token source stack handling import files. */
    private CTokenSource cTokenSource;
@@ -61,9 +64,9 @@ public class CParser {
       this.program = program;
       this.cFiles = new LinkedHashMap<>();
       this.cTokenSource = new CTokenSource();
-      final CPreprocessor preprocessor = new CPreprocessor(cTokenSource, new HashMap<>());
-      this.tokenStream = new CommonTokenStream(preprocessor);
-      this.parser = new KickCParser(tokenStream, this);
+      this.preprocessor = new CPreprocessor(cTokenSource, new HashMap<>());
+      this.preprocessedTokenStream = new CommonTokenStream(preprocessor);
+      this.parser = new KickCParser(preprocessedTokenStream, this);
       this.typedefs = new ArrayList<>();
       parser.setBuildParseTree(true);
       parser.addErrorListener(new BaseErrorListener() {
@@ -89,12 +92,20 @@ public class CParser {
    }
 
    /**
-    * Get the underlying token stream.
-    *
-    * @return The token stream
+    * Get the preprocessor (usable for getting all preprocessed tokens).
+    * @return The preprocessor
     */
-   public BufferedTokenStream getTokenStream() {
-      return tokenStream;
+   public CPreprocessor getPreprocessor() {
+      return preprocessor;
+   }
+
+   /**
+    * Get the token stream containing tokens after the preprocessor.
+    *
+    * @return The preprocessed token stream
+    */
+   public BufferedTokenStream getPreprocessedTokenStream() {
+      return preprocessedTokenStream;
    }
 
    /**

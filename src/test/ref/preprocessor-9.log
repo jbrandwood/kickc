@@ -1,0 +1,290 @@
+Identified constant variable (byte*) SCREEN
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+
+(void()) main()
+main: scope:[main]  from @1
+  (byte) main::idx#0 ← (byte) 0
+  *((const byte*) SCREEN + (byte) main::idx#0) ← (byte) '0'+(number) 4
+  (byte) main::idx#1 ← ++ (byte) main::idx#0
+  *((const byte*) SCREEN + (byte) main::idx#1) ← (byte) 'b'+(byte) 'b'
+  (byte) main::idx#2 ← ++ (byte) main::idx#1
+  *((const byte*) SCREEN + (byte) main::idx#2) ← (byte) 'c'*(byte) 'c'
+  (byte) main::idx#3 ← ++ (byte) main::idx#2
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*)(number) $400
+(void()) main()
+(label) main::@return
+(byte) main::idx
+(byte) main::idx#0
+(byte) main::idx#1
+(byte) main::idx#2
+(byte) main::idx#3
+
+Adding number conversion cast (unumber) '0'+4 in *((const byte*) SCREEN + (byte) main::idx#0) ← (byte) '0'+(number) 4
+Adding number conversion cast (unumber) 4 in *((const byte*) SCREEN + (byte) main::idx#0) ← ((unumber)) (byte) '0'+(number) 4
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((const byte*) SCREEN + (byte) main::idx#0) ← (unumber)(byte) '0'+(unumber)(number) 4
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast (byte) '0'+(unumber)(number) 4
+Simplifying constant integer cast 4
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Constant (const byte) main::idx#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (const byte) main::idx#0) ← (byte) '0'+(byte) 4
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (byte) main::idx#3 and assignment [5] (byte) main::idx#3 ← ++ (byte) main::idx#2
+Successful SSA optimization PassNEliminateUnusedVars
+Constant right-side identified [1] (byte) main::idx#1 ← ++ (const byte) main::idx#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::idx#1 = ++main::idx#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [2] (byte) main::idx#2 ← ++ (const byte) main::idx#1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::idx#2 = ++main::idx#1
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings (const byte) main::idx#0
+Inlining constant with different constant siblings (const byte) main::idx#1
+Inlining constant with different constant siblings (const byte) main::idx#2
+Constant inlined main::idx#0 = (byte) 0
+Constant inlined main::idx#1 = ++(byte) 0
+Constant inlined main::idx#2 = ++++(byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(SCREEN+++0)
+Consolidated array index constant in *(SCREEN+++++0)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Simplifying constant integer increment ++0
+Simplifying constant integer increment ++0
+Successful SSA optimization Pass2ConstantSimplification
+Simplifying constant integer increment ++1
+Successful SSA optimization Pass2ConstantSimplification
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+CALL GRAPH
+Calls in [] to main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4
+  [5] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b'
+  [6] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [7] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte) main::idx
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test the preprocessor
+// Macro with parameters
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [4] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 -- _deref_pbuc1=vbuc2 
+    lda #'0'+4
+    sta SCREEN
+    // [5] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' -- _deref_pbuc1=vbuc2 
+    lda #'b'+'b'
+    sta SCREEN+1
+    // [6] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' -- _deref_pbuc1=vbuc2 
+    lda #'c'*'c'
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 39 combination 
+Uplifting [] best 39 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test the preprocessor
+// Macro with parameters
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [4] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 -- _deref_pbuc1=vbuc2 
+    lda #'0'+4
+    sta SCREEN
+    // [5] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' -- _deref_pbuc1=vbuc2 
+    lda #'b'+'b'
+    sta SCREEN+1
+    // [6] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' -- _deref_pbuc1=vbuc2 
+    lda #'c'*'c'
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from___bbegin:
+Removing instruction __b1:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __bend:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction __bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const byte*) SCREEN = (byte*) 1024
+(void()) main()
+(label) main::@return
+(byte) main::idx
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// Test the preprocessor
+// Macro with parameters
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // SCREEN[idx++] = SUM
+    // [4] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 -- _deref_pbuc1=vbuc2 
+    lda #'0'+4
+    sta SCREEN
+    // SCREEN[idx++] = DOUBLE
+    // [5] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' -- _deref_pbuc1=vbuc2 
+    lda #'b'+'b'
+    sta SCREEN+1
+    // SCREEN[idx++] = SQUARE
+    // [6] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' -- _deref_pbuc1=vbuc2 
+    lda #'c'*'c'
+    sta SCREEN+2
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // File Data
+

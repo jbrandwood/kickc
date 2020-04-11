@@ -11,7 +11,9 @@ import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
+import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.Token;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -52,6 +54,10 @@ public class Compiler {
 
    public Compiler() {
       this.program = new Program();
+   }
+
+   public Program getProgram() {
+      return program;
    }
 
    public void setDisableUplift(boolean disableUplift) {
@@ -138,8 +144,24 @@ public class Compiler {
       program.getImportPaths().add(path);
    }
 
-   public Program compile(List<Path> files) {
-      if(files.size()==0)
+   public void preprocess(List<Path> files) {
+      Path currentPath = new File(".").toPath();
+      CParser cParser = new CParser(program);
+      for(Path file : files) {
+         final KickCLexer fileLexer = cParser.loadCFile(file.toString(), currentPath);
+         cParser.addSourceLast(fileLexer);
+      }
+      final CPreprocessor preprocessor = cParser.getPreprocessor();
+      Token token = preprocessor.nextToken();
+      while(token.getType() != Token.EOF) {
+         System.out.print(token.getText());
+         token = preprocessor.nextToken();
+      }
+      System.out.println();
+   }
+
+   public void compile(List<Path> files) {
+      if(files.size() == 0)
          throw new CompileError("Error! You must supply at least one file to compile!");
 
       final Path primaryFile = files.get(0);
@@ -196,7 +218,6 @@ public class Compiler {
          pass3Analysis();
          pass4RegisterAllocation();
          pass5GenerateAndOptimizeAsm();
-         return program;
       } catch(Exception e) {
          throw e;
       }

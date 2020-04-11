@@ -4,15 +4,15 @@
 # KICKC HOME
 export KICKC_HOME="$(dirname $0)/.."
 # STANDARD INCLUDE
-export KICKC_STD_INCLUDE="$KICKC_HOME/include"
+export KICKC_STDINCLUDE="$KICKC_HOME/include"
 # STANDARD LIBRARY
-export KICKC_STD_LIB="$KICKC_HOME/lib"
+export KICKC_STDLIB="$KICKC_HOME/lib"
 # FRAGMENTS HOME
 export KICKC_FRAGMENT_HOME="$KICKC_HOME/fragment"
 # KICKASSEMBLER HOME
 # VICE HOME
 # KICKC_JAR
-export KICKC_JAR=$KICKC_HOME/lib/kickc-*.jar
+export KICKC_JAR=$KICKC_HOME/jar/kickc-*.jar
 
 # Parse parameters (overriding defaults)
 export PARAM="";
@@ -21,5 +21,5 @@ while [[ "$#" -gt 0 ]]; do case $1 in
   *) export PARAM="$PARAM $1"; shift;;
 esac; done
 
-echo java -jar $KICKC_JAR -F $KICKC_FRAGMENT_HOME $PARAM -I $KICKC_STD_INCLUDE -L $KICKC_STD_LIB
-java -jar $KICKC_JAR -F $KICKC_FRAGMENT_HOME $PARAM -I $KICKC_STD_INCLUDE -L $KICKC_STD_LIB
+echo java -jar $KICKC_JAR -F $KICKC_FRAGMENT_HOME $PARAM -I $KICKC_STDINCLUDE -L $KICKC_STDLIB
+java -jar $KICKC_JAR -F $KICKC_FRAGMENT_HOME $PARAM -I $KICKC_STDINCLUDE -L $KICKC_STDLIB

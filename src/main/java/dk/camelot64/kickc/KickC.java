@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 /** KickC Commandline */
 @CommandLine.Command(
-      description = "Compiles a KickC source file, creating a KickAssembler source file. " +
+      description = "Compiles C source files. " +
             "KickC is a C-compiler creating optimized and readable 6502 assembler code.%n%n" +
             "See https://gitlab.com/camelot/kickc for detailed information about KickC.",
       name = "kickc",
@@ -33,12 +33,12 @@ import java.util.stream.Collectors;
       descriptionHeading = "%nDescription:%n%n",
       parameterListHeading = "%nParameters:%n",
       optionListHeading = "%nOptions:%n",
-      version = "KickC 0.7.12 BETA (master)"
+      version = "KickC 0.8 BETA (master)"
 )
 public class KickC implements Callable<Void> {
 
-   @CommandLine.Parameters(index = "0", arity = "0..n", description = "The KickC source files to compile.")
-   private List<Path> kcFiles = null;
+   @CommandLine.Parameters(index = "0", arity = "0..n", description = "The C source files to compile.")
+   private List<Path> cFiles = null;
 
    @CommandLine.Option(names = {"-I", "-libdir"}, description = "Path to a library folder, where the compiler looks for included files. This option can be repeated to add multiple library folders.")
    private List<Path> libDir = null;
@@ -241,18 +241,18 @@ public class KickC implements Callable<Void> {
          }
       }
 
-      if(kcFiles != null && !kcFiles.isEmpty()) {
+      if(cFiles != null && !cFiles.isEmpty()) {
 
-         final Path primaryKcFile = kcFiles.get(0);
-         String primaryFileBaseName = getFileBaseName(primaryKcFile);
+         final Path primaryCFile = cFiles.get(0);
+         String primaryFileBaseName = getFileBaseName(primaryCFile);
 
-         Path kcFileDir = primaryKcFile.getParent();
-         if(kcFileDir == null) {
-            kcFileDir = FileSystems.getDefault().getPath(".");
+         Path CFileDir = primaryCFile.getParent();
+         if(CFileDir == null) {
+            CFileDir = FileSystems.getDefault().getPath(".");
          }
 
          if(outputDir == null) {
-            outputDir = kcFileDir;
+            outputDir = CFileDir;
          }
          if(!Files.exists(outputDir)) {
             Files.createDirectory(outputDir);
@@ -328,13 +328,13 @@ public class KickC implements Callable<Void> {
             compiler.setCallingConvention(callingConvention);
          }
 
-         StringBuilder kcFileNames = new StringBuilder();
-         kcFiles.stream().forEach(path -> kcFileNames.append(path.toString()).append(" "));
+         StringBuilder CFileNames = new StringBuilder();
+         cFiles.stream().forEach(path -> CFileNames.append(path.toString()).append(" "));
 
          if(preprocess) {
-            System.out.println("Preprocessing " + kcFileNames);
+            System.out.println("Preprocessing " + CFileNames);
             try {
-               compiler.preprocess(kcFiles);
+               compiler.preprocess(cFiles);
             } catch(CompileError e) {
                // Print the error and exit with compile error
                System.err.println(e.getMessage());
@@ -343,10 +343,10 @@ public class KickC implements Callable<Void> {
             return null;
          }
 
-         System.out.println("Compiling " + kcFileNames);
+         System.out.println("Compiling " + CFileNames);
          Program program = compiler.getProgram();
          try {
-            compiler.compile(kcFiles);
+            compiler.compile(cFiles);
          } catch(CompileError e) {
             // Print the error and exit with compile error
             System.err.println(e.getMessage());
@@ -366,7 +366,7 @@ public class KickC implements Callable<Void> {
          compiler.getAsmFragmentSynthesizer().finalize(compiler.getLog());
 
          // Copy Resource Files (if out-dir is different from in-dir)
-         if(!kcFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {
+         if(!CFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {
             for(Path resourcePath : program.getAsmResourceFiles()) {
                Path outResourcePath = outputDir.resolve(resourcePath.getFileName().toString());
                System.out.println("Copying resource " + outResourcePath);
@@ -503,7 +503,7 @@ public class KickC implements Callable<Void> {
       return new CommandLine(new KickC()).getCommandSpec().version()[0];
    }
 
-   String getFileBaseName(Path file) {
+   static String getFileBaseName(Path file) {
       String name = file.getFileName().toString();
       int i = name.lastIndexOf('.');
       return i > 0 ? name.substring(0, i) : name;

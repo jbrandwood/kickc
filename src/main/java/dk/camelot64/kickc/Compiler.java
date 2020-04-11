@@ -144,11 +144,11 @@ public class Compiler {
       program.getImportPaths().add(path);
    }
 
-   public void preprocess(List<Path> files) {
+   public void preprocess(List<Path> cFiles) {
       Path currentPath = new File(".").toPath();
       CParser cParser = new CParser(program);
-      for(Path file : files) {
-         final KickCLexer fileLexer = cParser.loadCFile(file.toString(), currentPath);
+      for(Path cFile : cFiles) {
+         final KickCLexer fileLexer = cParser.loadCFile(cFile.toString(), currentPath);
          cParser.addSourceLast(fileLexer);
       }
       final CPreprocessor preprocessor = cParser.getPreprocessor();
@@ -160,16 +160,13 @@ public class Compiler {
       System.out.println();
    }
 
-   public void compile(List<Path> files) {
-      if(files.size() == 0)
+   public void compile(List<Path> cFiles) {
+      if(cFiles.size() == 0)
          throw new CompileError("Error! You must supply at least one file to compile!");
 
-      final Path primaryFile = files.get(0);
-      String primaryFileName = primaryFile.toString();
-      if(primaryFileName.endsWith(".kc")) {
-         primaryFileName = primaryFileName.substring(0, primaryFileName.length() - 3);
-      }
-      program.setPrimaryFileName(primaryFileName);
+      final Path primaryCFile = cFiles.get(0);
+      String primaryCFileBaseName = removeFileNameExtension(primaryCFile.toString());
+      program.setPrimaryFileName(primaryCFileBaseName);
 
       try {
          Path currentPath = new File(".").toPath();
@@ -178,7 +175,7 @@ public class Compiler {
          }
          program.setStatementSequence(new StatementSequence());
          CParser cParser = new CParser(program);
-         for(Path file : files) {
+         for(Path file : cFiles) {
             final KickCLexer fileLexer = cParser.loadCFile(file.toString(), currentPath);
             cParser.addSourceLast(fileLexer);
          }
@@ -221,6 +218,21 @@ public class Compiler {
       } catch(Exception e) {
          throw e;
       }
+   }
+
+   /**
+    * Remove extension from a file name if it is present.
+    *
+    * @param fileName The file name
+    * @return file name without extension
+    */
+   public static String removeFileNameExtension(String fileName) {
+      final int lastDotIdx = fileName.lastIndexOf('.');
+      final int lastSlashIdx = Math.max(fileName.lastIndexOf('/'), fileName.lastIndexOf('\\'));
+      if(lastDotIdx > 0 && lastDotIdx > (lastSlashIdx + 1)) {
+         fileName = fileName.substring(0, lastDotIdx);
+      }
+      return fileName;
    }
 
    private void pass1GenerateSSA() {

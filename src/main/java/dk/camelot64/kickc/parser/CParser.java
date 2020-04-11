@@ -163,15 +163,12 @@ public class CParser {
     *
     * @param fileName The file name of the file
     * @param currentPath The path of the current folder (searched before the search path).
-    * @return The lexer to be inserted into the source-list using onw of the {@link #addSourceFirst(KickCLexer)} methods.
+    * @return The lexer to be inserted into the source-list using one of the {@link #addSourceFirst(KickCLexer)} / {@link #addSourceLast(KickCLexer)}  methods.
     */
    public KickCLexer loadCFile(String fileName, Path currentPath) {
       try {
          if(fileName.startsWith("\"") || fileName.startsWith("<")) {
             fileName = fileName.substring(1, fileName.length() - 1);
-         }
-         if(!fileName.endsWith(".kc") && !fileName.contains(".")) {
-            fileName += ".kc";
          }
          File file = SourceLoader.loadFile(fileName, currentPath, program);
          List<String> imported = program.getImported();

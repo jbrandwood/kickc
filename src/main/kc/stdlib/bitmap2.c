@@ -1,0 +1,110 @@
+// Simple single-color (320x200) bitmap routines
+#include <string.c>
+
+// The adddress of the bitmap screen (used for colors)
+byte* bitmap_screen;
+// The adddress of the bitmap graphics (used for pixels)
+byte* bitmap_gfx;
+
+// Tables for the plotter - initialized by calling bitmap_init();
+const byte bitmap_plot_ylo[256];
+const byte bitmap_plot_yhi[256];
+const byte bitmap_plot_bit[256];
+
+// Initialize bitmap plotting tables
+void bitmap_init(byte* gfx, byte* screen) {
+    bitmap_gfx = gfx;
+    bitmap_screen = screen;
+    byte bits = $80;
+    for(byte x : 0..255) {
+        bitmap_plot_bit[x] = bits;
+        bits >>= 1;
+        if(bits==0) {
+          bits = $80;
+        }
+    }
+    byte* yoffs = gfx;
+    for(byte y : 0..255) {
+        bitmap_plot_ylo[y] = y&$7 | <yoffs;
+        bitmap_plot_yhi[y] = >yoffs;
+        if((y&$7)==7) {
+            yoffs = yoffs + 40*8;
+        }
+    }
+}
+
+// Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
+void bitmap_clear(byte bgcol, byte fgcol) {
+    byte col = fgcol*0x10 + bgcol;
+    memset(bitmap_screen, col, 1000uw);
+    memset(bitmap_gfx, 0, 8000uw);
+}
+
+// Plot a single dot in the bitmap
+void bitmap_plot(word x, byte y) {
+    byte* plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
+    plotter += ( x & $fff8 );
+    *plotter |= bitmap_plot_bit[<x];
+}
+
+// Draw a line on the bitmap using bresenhams algorithm
+void bitmap_line(word x1, word y1, word x2, word y2) {
+    word x = x1;
+    word y = y1;
+    word dx = abs_u16(x2-x1);
+    word dy = abs_u16(y2-y1);
+    if(dx==0 && dy==0) {
+        bitmap_plot(x,(byte)y);
+        return;
+    }
+    word sx = sgn_u16(x2-x1);
+    word sy = sgn_u16(y2-y1);
+    if(dx > dy) {
+        // X is the driver
+        word e = dy/2;
+        do  {
+            bitmap_plot(x,(byte)y);
+            x += sx;
+            e += dy;
+            if(dx < e) {
+                y += sy;
+                e -= dx;
+            }
+        } while (x != x2);
+    } else {
+        // Y is the driver
+        word e = dx/2;
+        do  {
+            bitmap_plot(x,(byte)y);
+            y += sy;
+            e += dx;
+            if(dy<e) {
+                x += sx;
+                e -= dy;
+            }
+        } while (y != y2);
+    }
+    bitmap_plot(x,(byte)y);
+}
+
+// Get the absolute value of a 16-bit unsigned number treated as a signed number.
+word abs_u16(word w) {
+    if(>w&0x80) {
+        return -w;
+    } else {
+        return w;
+    }
+}
+
+// Get the sign of a 16-bit unsigned number treated as a signed number.
+// Returns unsigned -1 if the number is
+word sgn_u16(word w) {
+    if(>w&0x80) {
+        return -1;
+    } else {
+        return 1;
+    }
+}
+

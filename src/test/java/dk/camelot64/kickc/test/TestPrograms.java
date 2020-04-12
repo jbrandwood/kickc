@@ -41,6 +41,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConioNachtScreen() throws IOException, URISyntaxException {
+      compileAndCompare("examples/conio/nacht-screen.c");
+   }
+
+   @Test
    public void testPostIncrementProblem() throws IOException, URISyntaxException {
       compileAndCompare("post-increment-problem.c");
    }

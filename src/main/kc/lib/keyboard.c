@@ -45,6 +45,14 @@ void keyboard_init() {
     // Keyboard Matrix Columns Read Mode
     *CIA1_PORT_B_DDR = $00;
 }
+
+// Check if any key is currently pressed on the keyboard matrix
+// Return 0 if no key is pressed and not 0 if any key is pressed
+byte keyboard_matrix_any(void) {
+    *CIA1_PORT_A = 0;
+    return ~*CIA1_PORT_B;
+}
+
 // Read a single row of the keyboard matrix
 // The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 // Returns the keys pressed on the row as bits according to the C64 key matrix.

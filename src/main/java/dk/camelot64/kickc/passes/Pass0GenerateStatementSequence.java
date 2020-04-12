@@ -1175,15 +1175,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Void visitStmtIfElse(KickCParser.StmtIfElseContext ctx) {
       KickCParser.StmtContext ifStmt = ctx.stmt(0);
       KickCParser.StmtContext elseStmt = ctx.stmt(1);
-      PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(), StatementSource.ifThen(ctx));
-      RValue rValue = (RValue) this.visit(ctx.commaExpr());
+      RValue rValue = addCondition(ctx.commaExpr(), StatementSource.ifThen(ctx));
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
-
       if(elseStmt == null) {
          // If without else - skip the entire section if condition not met
          SymbolVariableRef notExprVar = getCurrentScope().addVariableIntermediate().getRef();
          sequence.addStatement(new StatementAssignment((LValue) notExprVar, null, Operators.LOGIC_NOT, rValue, true, StatementSource.ifThen(ctx), comments));
-         PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), StatementSource.ifThen(ctx));
          Label endJumpLabel = getCurrentScope().addLabelIntermediate();
          sequence.addStatement(new StatementConditionalJump(notExprVar, endJumpLabel.getRef(), StatementSource.ifThen(ctx), Comment.NO_COMMENTS));
          this.visit(ifStmt);
@@ -1191,7 +1188,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          sequence.addStatement(new StatementLabel(endJumpLabel.getRef(), StatementSource.ifThen(ctx), Comment.NO_COMMENTS));
       } else {
          // If with else - jump to if section if condition met - fall into else otherwise.
-         PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), StatementSource.ifThen(ctx));
          Label ifJumpLabel = getCurrentScope().addLabelIntermediate();
          sequence.addStatement(new StatementConditionalJump(rValue, ifJumpLabel.getRef(), StatementSource.ifThen(ctx), comments));
          // Add else body
@@ -1270,9 +1266,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
       StatementLabel beginJumpTarget = new StatementLabel(beginJumpLabel.getRef(), StatementSource.whileDo(ctx), comments);
       sequence.addStatement(beginJumpTarget);
-      PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(), StatementSource.whileDo(ctx));
-      RValue rValue = (RValue) this.visit(ctx.commaExpr());
-      PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), StatementSource.whileDo(ctx));
+      RValue rValue = addCondition(ctx.commaExpr(), StatementSource.whileDo(ctx));
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef(), StatementSource.whileDo(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);
       Statement endJmpStmt = new StatementJump(endJumpLabel.getRef(), StatementSource.whileDo(ctx), Comment.NO_COMMENTS);
@@ -1293,6 +1287,31 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
+   /**
+    * Add code to evaluate a comma-expr condition (used in while/for/...).
+    * @param conditionCtx The comma-expr condition to evaluate
+    * @param statementSource The statement source used for errors
+    * @return The RValue of the condition
+    */
+   private RValue addCondition(KickCParser.CommaExprContext conditionCtx, StatementSource statementSource) {
+      // Add any pre-modifiers
+      PrePostModifierHandler.addPreModifiers(this, conditionCtx, statementSource);
+      RValue rValue = (RValue) this.visit(conditionCtx);
+      // Add any post-modifiers
+      if(PrePostModifierHandler.hasPrePostModifiers(this, conditionCtx, statementSource)) {
+         // If modifiers are present the RValue must be assigned before the post-modifier is executed
+         if(!(rValue instanceof VariableRef)) {
+            // Make a new temporary variable and assign that
+            Variable tmpVar = getCurrentScope().addVariableIntermediate();
+            Statement stmtExpr = new StatementAssignment(tmpVar.getVariableRef(), rValue, true, statementSource, Comment.NO_COMMENTS);
+            sequence.addStatement(stmtExpr);
+            rValue = tmpVar.getRef();
+         }
+         PrePostModifierHandler.addPostModifiers(this, conditionCtx, statementSource);
+      }
+      return rValue;
+   }
+
    @Override
    public Void visitStmtDoWhile(KickCParser.StmtDoWhileContext ctx) {
       // Create the block scope early - to keep all statements of the loop inside it
@@ -1305,9 +1324,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       sequence.addStatement(beginJumpTarget);
       addLoopBody(ctx.stmt());
       addLoopContinueLabel(loopStack.peek(), ctx);
-      PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(), StatementSource.doWhile(ctx));
-      RValue rValue = (RValue) this.visit(ctx.commaExpr());
-      PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), StatementSource.doWhile(ctx));
+      RValue rValue = addCondition(ctx.commaExpr(), StatementSource.doWhile(ctx));
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, beginJumpLabel.getRef(), StatementSource.doWhile(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);
       addDirectives(doJmpStmt, ctx.directive());
@@ -1333,9 +1350,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
       // TODO: Add comments to next stmt
       // Evaluate the switch-expression
-      PrePostModifierHandler.addPreModifiers(this, ctx.commaExpr(), StatementSource.switchExpr(ctx));
-      RValue eValue = (RValue) this.visit(ctx.commaExpr());
-      PrePostModifierHandler.addPostModifiers(this, ctx.commaExpr(), StatementSource.switchExpr(ctx));
+      RValue eValue = addCondition(ctx.commaExpr(), StatementSource.switchExpr(ctx));
       // Add case conditional jumps
       List<SwitchCaseBody> caseBodies = new ArrayList<>();
       for(KickCParser.SwitchCaseContext caseContext : ctx.switchCases().switchCase()) {
@@ -1409,10 +1424,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       StatementLabel repeatTarget = new StatementLabel(beginJumpLabel.getRef(), StatementSource.forClassic(ctx), comments);
       sequence.addStatement(repeatTarget);
       // Add condition
-      KickCParser.CommaExprContext conditionCtx = ctx.commaExpr(0);
-      PrePostModifierHandler.addPreModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
-      RValue rValue = (RValue) this.visit(conditionCtx);
-      PrePostModifierHandler.addPostModifiers(this, conditionCtx, StatementSource.forClassic(ctx));
+      RValue rValue = addCondition(ctx.commaExpr(0), StatementSource.forClassic(ctx));
       // Add jump if condition was met
       StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
       sequence.addStatement(doJmpStmt);
@@ -1426,9 +1438,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addLoopContinueLabel(loopStack.peek(), ctx);
       KickCParser.CommaExprContext incrementCtx = ctx.commaExpr(1);
       if(incrementCtx != null) {
-         PrePostModifierHandler.addPreModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
-         this.visit(incrementCtx);
-         PrePostModifierHandler.addPostModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
+         addCondition(incrementCtx, StatementSource.forClassic(ctx));
       }
       // Jump back to beginning
       Statement beginJmpStmt = new StatementJump(beginJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);

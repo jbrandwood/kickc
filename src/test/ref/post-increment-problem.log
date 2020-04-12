@@ -1,4 +1,4 @@
-Warning! Adding boolean cast to non-boolean condition *((byte*) main::msg)
+Warning! Adding boolean cast to non-boolean condition (byte~) main::$0
 Warning! Adding boolean cast to non-boolean condition *((const byte*) MESSAGE + (byte) main::i)
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@4
@@ -19,9 +19,10 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte*) main::msg#4 ← phi( main/(byte*) main::msg#0 main::@1/(byte*) main::msg#1 )
+  (byte~) main::$0 ← *((byte*) main::msg#4)
   (byte*) main::msg#1 ← ++ (byte*) main::msg#4
-  (bool~) main::$0 ← (number) 0 != *((byte*) main::msg#1)
-  if((bool~) main::$0) goto main::@1
+  (bool~) main::$1 ← (number) 0 != (byte~) main::$0
+  if((bool~) main::$1) goto main::@1
   to:main::@3
 main::@3: scope:[main]  from main::@1
   (byte*) main::msg#5 ← phi( main::@1/(byte*) main::msg#1 )
@@ -33,8 +34,8 @@ main::@3: scope:[main]  from main::@1
   to:main::@7
 main::@7: scope:[main]  from main::@3 main::@8
   (byte) main::i#2 ← phi( main::@3/(byte) main::i#0 main::@8/(byte) main::i#1 )
-  (bool~) main::$1 ← (number) 0 != *((const byte*) MESSAGE + (byte) main::i#2)
-  if((bool~) main::$1) goto main::@8
+  (bool~) main::$2 ← (number) 0 != *((const byte*) MESSAGE + (byte) main::i#2)
+  if((bool~) main::$2) goto main::@8
   to:main::@return
 main::@8: scope:[main]  from main::@7
   (byte) main::i#3 ← phi( main::@7/(byte) main::i#2 )
@@ -59,8 +60,9 @@ SYMBOL TABLE SSA
 (const byte*) MESSAGE[(number) $14]  = (byte*) "camelot"
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
-(bool~) main::$0
+(byte~) main::$0
 (bool~) main::$1
+(bool~) main::$2
 (label) main::@1
 (label) main::@3
 (label) main::@7
@@ -79,9 +81,9 @@ SYMBOL TABLE SSA
 (byte*) main::msg#4
 (byte*) main::msg#5
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (number) 0 != *((byte*) main::msg#1)
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != (byte~) main::$0
 Adding number conversion cast (unumber) 0 in *((byte*) main::msg#3) ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != *((const byte*) MESSAGE + (byte) main::i#2)
+Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← (number) 0 != *((const byte*) MESSAGE + (byte) main::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*) main::msg#3) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
@@ -97,8 +99,8 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::msg#1 = main::msg#5 
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [4] if((byte) 0!=*((byte*) main::msg#1)) goto main::@1
-Simple Condition (bool~) main::$1 [12] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@8
+Simple Condition (bool~) main::$1 [5] if((byte) 0!=(byte~) main::$0) goto main::@1
+Simple Condition (bool~) main::$2 [13] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::msg#0 = MESSAGE
 Constant (const byte) main::i#0 = 0
@@ -118,8 +120,8 @@ CALL GRAPH
 Calls in [] to main:2 
 
 Created 2 initial phi equivalence classes
-Coalesced [18] main::i#4 ← main::i#1
-Coalesced [19] main::msg#6 ← main::msg#1
+Coalesced [19] main::i#4 ← main::i#1
+Coalesced [20] main::msg#6 ← main::msg#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@13
@@ -148,53 +150,58 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] (byte*) main::msg#4 ← phi( main/(const byte*) MESSAGE main::@1/(byte*) main::msg#1 )
-  [6] (byte*) main::msg#1 ← ++ (byte*) main::msg#4
-  [7] if((byte) 0!=*((byte*) main::msg#1)) goto main::@1
+  [6] (byte~) main::$0 ← *((byte*) main::msg#4)
+  [7] (byte*) main::msg#1 ← ++ (byte*) main::msg#4
+  [8] if((byte) 0!=(byte~) main::$0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] (byte*) main::msg#2 ← -- (byte*) main::msg#1
-  [9] *((byte*) main::msg#2) ← (byte) 'x'
-  [10] (byte*) main::msg#3 ← ++ (byte*) main::msg#2
-  [11] *((byte*) main::msg#3) ← (byte) 0
+  [9] (byte*) main::msg#2 ← -- (byte*) main::msg#1
+  [10] *((byte*) main::msg#2) ← (byte) 'x'
+  [11] (byte*) main::msg#3 ← ++ (byte*) main::msg#2
+  [12] *((byte*) main::msg#3) ← (byte) 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  [12] (byte) main::i#2 ← phi( main::@2/(byte) 0 main::@4/(byte) main::i#1 )
-  [13] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4
+  [13] (byte) main::i#2 ← phi( main::@2/(byte) 0 main::@4/(byte) main::i#1 )
+  [14] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [14] return 
+  [15] return 
   to:@return
 main::@4: scope:[main]  from main::@3
-  [15] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2)
-  [16] (byte) main::i#1 ← ++ (byte) main::i#2
+  [16] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2)
+  [17] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@3
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
+(byte~) main::$0 101.0
 (byte) main::i
 (byte) main::i#1 202.0
 (byte) main::i#2 168.33333333333331
 (byte*) main::msg
-(byte*) main::msg#1 157.0
+(byte*) main::msg#1 106.5
 (byte*) main::msg#2 16.5
 (byte*) main::msg#3 22.0
-(byte*) main::msg#4 202.0
+(byte*) main::msg#4 151.5
 
 Initial phi equivalence classes
 [ main::msg#4 main::msg#1 ]
 [ main::i#2 main::i#1 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
 Added variable main::msg#2 to live range equivalence class [ main::msg#2 ]
 Added variable main::msg#3 to live range equivalence class [ main::msg#3 ]
 Complete equivalence classes
 [ main::msg#4 main::msg#1 ]
 [ main::i#2 main::i#1 ]
+[ main::$0 ]
 [ main::msg#2 ]
 [ main::msg#3 ]
 Allocated zp[2]:2 [ main::msg#4 main::msg#1 ]
 Allocated zp[1]:4 [ main::i#2 main::i#1 ]
-Allocated zp[2]:5 [ main::msg#2 ]
-Allocated zp[2]:7 [ main::msg#3 ]
+Allocated zp[1]:5 [ main::$0 ]
+Allocated zp[2]:6 [ main::msg#2 ]
+Allocated zp[2]:8 [ main::msg#3 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -224,9 +231,10 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label __0 = 5
     .label msg = 2
-    .label msg_1 = 5
-    .label msg_2 = 7
+    .label msg_1 = 6
+    .label msg_2 = 8
     // Print the resulting message - should be "camelotx" - but the error causes it to be "camelox"
     .label i = 4
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -244,20 +252,23 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*) main::msg#1 ← ++ (byte*) main::msg#4 -- pbuz1=_inc_pbuz1 
+    // [6] (byte~) main::$0 ← *((byte*) main::msg#4) -- vbuz1=_deref_pbuz2 
+    ldy #0
+    lda (msg),y
+    sta.z __0
+    // [7] (byte*) main::msg#1 ← ++ (byte*) main::msg#4 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [7] if((byte) 0!=*((byte*) main::msg#1)) goto main::@1 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (msg),y
-    cmp #0
+    // [8] if((byte) 0!=(byte~) main::$0) goto main::@1 -- vbuc1_neq_vbuz1_then_la1 
+    lda #0
+    cmp.z __0
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] (byte*) main::msg#2 ← -- (byte*) main::msg#1 -- pbuz1=_dec_pbuz2 
+    // [9] (byte*) main::msg#2 ← -- (byte*) main::msg#1 -- pbuz1=_dec_pbuz2 
     lda.z msg
     sec
     sbc #1
@@ -265,12 +276,12 @@ main: {
     lda.z msg+1
     sbc #0
     sta.z msg_1+1
-    // [9] *((byte*) main::msg#2) ← (byte) 'x' -- _deref_pbuz1=vbuc1 
+    // [10] *((byte*) main::msg#2) ← (byte) 'x' -- _deref_pbuz1=vbuc1 
     // Now msg should point right after the zero, since the post increment was executed in the last condition that evaluated to zero.
     lda #'x'
     ldy #0
     sta (msg_1),y
-    // [10] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz2 
+    // [11] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz2 
     lda.z msg_1
     clc
     adc #1
@@ -278,19 +289,19 @@ main: {
     lda.z msg_1+1
     adc #0
     sta.z msg_2+1
-    // [11] *((byte*) main::msg#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) main::msg#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (msg_2),y
-    // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [13] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
-    // [12] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
+    // [13] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b3
     // main::@3
   __b3:
-    // [13] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [14] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp MESSAGE,y
@@ -298,19 +309,19 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [14] return 
+    // [15] return 
     rts
     // main::@4
   __b4:
-    // [15] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [16] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda MESSAGE,y
     sta SCREEN,y
-    // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [13] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   __b3_from___b4:
-    // [12] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    // [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
     jmp __b3
 }
   // File Data
@@ -319,34 +330,35 @@ main: {
   .fill $c, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] if((byte) 0!=*((byte*) main::msg#1)) goto main::@1 [ main::msg#1 ] ( main:2 [ main::msg#1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] (byte*) main::msg#2 ← -- (byte*) main::msg#1 [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*) main::msg#2) ← (byte) 'x' [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [10] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 [ main::msg#3 ] ( main:2 [ main::msg#3 ] { }  ) always clobbers reg byte a 
-Statement [11] *((byte*) main::msg#3) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [13] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte~) main::$0 ← *((byte*) main::msg#4) [ main::msg#4 main::$0 ] ( main:2 [ main::msg#4 main::$0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] (byte*) main::msg#2 ← -- (byte*) main::msg#1 [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a 
+Statement [10] *((byte*) main::msg#2) ← (byte) 'x' [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 [ main::msg#3 ] ( main:2 [ main::msg#3 ] { }  ) always clobbers reg byte a 
+Statement [12] *((byte*) main::msg#3) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::i#2 main::i#1 ]
-Statement [15] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [7] if((byte) 0!=*((byte*) main::msg#1)) goto main::@1 [ main::msg#1 ] ( main:2 [ main::msg#1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] (byte*) main::msg#2 ← -- (byte*) main::msg#1 [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*) main::msg#2) ← (byte) 'x' [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [10] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 [ main::msg#3 ] ( main:2 [ main::msg#3 ] { }  ) always clobbers reg byte a 
-Statement [11] *((byte*) main::msg#3) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [13] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte~) main::$0 ← *((byte*) main::msg#4) [ main::msg#4 main::$0 ] ( main:2 [ main::msg#4 main::$0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] (byte*) main::msg#2 ← -- (byte*) main::msg#1 [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a 
+Statement [10] *((byte*) main::msg#2) ← (byte) 'x' [ main::msg#2 ] ( main:2 [ main::msg#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 [ main::msg#3 ] ( main:2 [ main::msg#3 ] { }  ) always clobbers reg byte a 
+Statement [12] *((byte*) main::msg#3) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::msg#4 main::msg#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::i#2 main::i#1 ] : zp[1]:4 , reg byte x , reg byte y , 
-Potential registers zp[2]:5 [ main::msg#2 ] : zp[2]:5 , 
-Potential registers zp[2]:7 [ main::msg#3 ] : zp[2]:7 , 
+Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:6 [ main::msg#2 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ main::msg#3 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 370.33: zp[1]:4 [ main::i#2 main::i#1 ] 359: zp[2]:2 [ main::msg#4 main::msg#1 ] 22: zp[2]:7 [ main::msg#3 ] 16.5: zp[2]:5 [ main::msg#2 ] 
+Uplift Scope [main] 370.33: zp[1]:4 [ main::i#2 main::i#1 ] 258: zp[2]:2 [ main::msg#4 main::msg#1 ] 101: zp[1]:5 [ main::$0 ] 22: zp[2]:8 [ main::msg#3 ] 16.5: zp[2]:6 [ main::msg#2 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 824 combination reg byte x [ main::i#2 main::i#1 ] zp[2]:2 [ main::msg#4 main::msg#1 ] zp[2]:7 [ main::msg#3 ] zp[2]:5 [ main::msg#2 ] 
+Uplifting [main] best 824 combination reg byte x [ main::i#2 main::i#1 ] zp[2]:2 [ main::msg#4 main::msg#1 ] reg byte a [ main::$0 ] zp[2]:8 [ main::msg#3 ] zp[2]:6 [ main::msg#2 ] 
 Uplifting [] best 824 combination 
-Coalescing zero page register [ zp[2]:2 [ main::msg#4 main::msg#1 ] ] with [ zp[2]:5 [ main::msg#2 ] ] - score: 1
-Coalescing zero page register [ zp[2]:2 [ main::msg#4 main::msg#1 main::msg#2 ] ] with [ zp[2]:7 [ main::msg#3 ] ] - score: 1
+Coalescing zero page register [ zp[2]:2 [ main::msg#4 main::msg#1 ] ] with [ zp[2]:6 [ main::msg#2 ] ] - score: 1
+Coalescing zero page register [ zp[2]:2 [ main::msg#4 main::msg#1 main::msg#2 ] ] with [ zp[2]:8 [ main::msg#3 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -391,65 +403,66 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*) main::msg#1 ← ++ (byte*) main::msg#4 -- pbuz1=_inc_pbuz1 
+    // [6] (byte~) main::$0 ← *((byte*) main::msg#4) -- vbuaa=_deref_pbuz1 
+    ldy #0
+    lda (msg),y
+    // [7] (byte*) main::msg#1 ← ++ (byte*) main::msg#4 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [7] if((byte) 0!=*((byte*) main::msg#1)) goto main::@1 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (msg),y
+    // [8] if((byte) 0!=(byte~) main::$0) goto main::@1 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] (byte*) main::msg#2 ← -- (byte*) main::msg#1 -- pbuz1=_dec_pbuz1 
+    // [9] (byte*) main::msg#2 ← -- (byte*) main::msg#1 -- pbuz1=_dec_pbuz1 
     lda.z msg
     bne !+
     dec.z msg+1
   !:
     dec.z msg
-    // [9] *((byte*) main::msg#2) ← (byte) 'x' -- _deref_pbuz1=vbuc1 
+    // [10] *((byte*) main::msg#2) ← (byte) 'x' -- _deref_pbuz1=vbuc1 
     // Now msg should point right after the zero, since the post increment was executed in the last condition that evaluated to zero.
     lda #'x'
     ldy #0
     sta (msg),y
-    // [10] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    // [11] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [11] *((byte*) main::msg#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) main::msg#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (msg),y
-    // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [13] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
-    // [12] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+    // [13] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b3
     // main::@3
   __b3:
-    // [13] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [14] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b4
     jmp __breturn
     // main::@return
   __breturn:
-    // [14] return 
+    // [15] return 
     rts
     // main::@4
   __b4:
-    // [15] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [16] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,x
-    // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [13] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   __b3_from___b4:
-    // [12] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    // [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
     jmp __b3
 }
   // File Data
@@ -496,6 +509,7 @@ FINAL SYMBOL TABLE
 (const byte*) MESSAGE[(number) $14]  = (byte*) "camelot"
 (const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
+(byte~) main::$0 reg byte a 101.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -505,13 +519,14 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte x 202.0
 (byte) main::i#2 reg byte x 168.33333333333331
 (byte*) main::msg
-(byte*) main::msg#1 msg zp[2]:2 157.0
+(byte*) main::msg#1 msg zp[2]:2 106.5
 (byte*) main::msg#2 msg zp[2]:2 16.5
 (byte*) main::msg#3 msg zp[2]:2 22.0
-(byte*) main::msg#4 msg zp[2]:2 202.0
+(byte*) main::msg#4 msg zp[2]:2 151.5
 
 zp[2]:2 [ main::msg#4 main::msg#1 main::msg#2 main::msg#3 ]
 reg byte x [ main::i#2 main::i#1 ]
+reg byte a [ main::$0 ]
 
 
 FINAL ASSEMBLER
@@ -547,66 +562,67 @@ main: {
     // main::@1
   __b1:
     // while(*msg++)
-    // [6] (byte*) main::msg#1 ← ++ (byte*) main::msg#4 -- pbuz1=_inc_pbuz1 
+    // [6] (byte~) main::$0 ← *((byte*) main::msg#4) -- vbuaa=_deref_pbuz1 
+    ldy #0
+    lda (msg),y
+    // [7] (byte*) main::msg#1 ← ++ (byte*) main::msg#4 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [7] if((byte) 0!=*((byte*) main::msg#1)) goto main::@1 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (msg),y
+    // [8] if((byte) 0!=(byte~) main::$0) goto main::@1 -- vbuc1_neq_vbuaa_then_la1 
     cmp #0
     bne __b1
     // main::@2
     // *--msg = 'x';
-    // [8] (byte*) main::msg#2 ← -- (byte*) main::msg#1 -- pbuz1=_dec_pbuz1 
+    // [9] (byte*) main::msg#2 ← -- (byte*) main::msg#1 -- pbuz1=_dec_pbuz1 
     lda.z msg
     bne !+
     dec.z msg+1
   !:
     dec.z msg
     // *--msg = 'x'
-    // [9] *((byte*) main::msg#2) ← (byte) 'x' -- _deref_pbuz1=vbuc1 
+    // [10] *((byte*) main::msg#2) ← (byte) 'x' -- _deref_pbuz1=vbuc1 
     // Now msg should point right after the zero, since the post increment was executed in the last condition that evaluated to zero.
     lda #'x'
     ldy #0
     sta (msg),y
     // *++msg = 0;
-    // [10] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    // [11] (byte*) main::msg#3 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
     // *++msg = 0
-    // [11] *((byte*) main::msg#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) main::msg#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (msg),y
-    // [12] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-    // [12] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+    // [13] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [13] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     tax
     // main::@3
   __b3:
     // while(MESSAGE[i])
-    // [13] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [14] if((byte) 0!=*((const byte*) MESSAGE + (byte) main::i#2)) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b4
     // main::@return
     // }
-    // [14] return 
+    // [15] return 
     rts
     // main::@4
   __b4:
     // SCREEN[i] = MESSAGE[i]
-    // [15] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [16] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MESSAGE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,x
     // i++;
-    // [16] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-    // [12] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    // [13] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [13] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
     jmp __b3
 }
   // File Data

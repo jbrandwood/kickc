@@ -12,12 +12,12 @@ main: {
   // Error! The post-increment in the following loop is turned into a pre-increment by the compiler.
   __b1:
     // while(*msg++)
+    ldy #0
+    lda (msg),y
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    ldy #0
-    lda (msg),y
     cmp #0
     bne __b1
     // *--msg = 'x';

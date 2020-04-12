@@ -8,12 +8,12 @@
   .label TIMELO = $a2
   .label VICBANK = $d018
 main: {
-    .label __3 = 6
     .label __4 = 6
-    .label __5 = $11
-    .label __12 = 6
-    .label __13 = 6
-    .label __14 = $f
+    .label __5 = 6
+    .label __6 = $11
+    .label __15 = 6
+    .label __16 = 6
+    .label __17 = $f
     .label v = 4
     // test performance of 'div16u(10)'
     // test performance of 'div10'
@@ -64,26 +64,26 @@ main: {
     bcc __b10
     // (word)*TIMEHI
     lda TIMEHI
-    sta.z __12
+    sta.z __15
     lda #0
-    sta.z __12+1
+    sta.z __15+1
     // (word)*TIMEHI << 8
-    lda.z __13
-    sta.z __13+1
+    lda.z __16
+    sta.z __16+1
     lda #0
-    sta.z __13
+    sta.z __16
     // (word)*TIMELO
     lda TIMELO
-    sta.z __14
+    sta.z __17
     lda #0
-    sta.z __14+1
+    sta.z __17+1
     // myprintf(strTemp, "200 DIV10 : %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
     lda.z myprintf.w3
     clc
-    adc.z __14
+    adc.z __17
     sta.z myprintf.w3
     lda.z myprintf.w3+1
-    adc.z __14+1
+    adc.z __17+1
     sta.z myprintf.w3+1
     lda #<str1
     sta.z myprintf.str
@@ -125,26 +125,26 @@ main: {
     bcc __b5
     // (word)*TIMEHI
     lda TIMEHI
-    sta.z __3
-    lda #0
-    sta.z __3+1
-    // (word)*TIMEHI << 8
-    lda.z __4
-    sta.z __4+1
-    lda #0
     sta.z __4
+    lda #0
+    sta.z __4+1
+    // (word)*TIMEHI << 8
+    lda.z __5
+    sta.z __5+1
+    lda #0
+    sta.z __5
     // (word)*TIMELO
     lda TIMELO
-    sta.z __5
+    sta.z __6
     lda #0
-    sta.z __5+1
+    sta.z __6+1
     // myprintf(strTemp, "200 DIV16U: %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
     lda.z myprintf.w3
     clc
-    adc.z __5
+    adc.z __6
     sta.z myprintf.w3
     lda.z myprintf.w3+1
-    adc.z __5+1
+    adc.z __6+1
     sta.z myprintf.w3+1
   // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
   // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --

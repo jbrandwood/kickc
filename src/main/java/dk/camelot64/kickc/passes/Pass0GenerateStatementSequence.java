@@ -1678,6 +1678,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       KickCParser.CommaExprContext exprCtx = ctx.commaExpr();
       RValue rValue;
       if(exprCtx != null) {
+         if(SymbolType.VOID.equals(procedure.getReturnType())) {
+            throw new CompileError("Error! Return value from void function "+procedure.getFullName(), new StatementSource(ctx));
+         }
          PrePostModifierHandler.addPreModifiers(this, exprCtx, new StatementSource(ctx));
          rValue = (RValue) this.visit(exprCtx);
          Variable returnVar = procedure.getLocalVariable("return");

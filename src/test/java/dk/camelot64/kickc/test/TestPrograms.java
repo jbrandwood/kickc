@@ -3846,6 +3846,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testReturnFromVoid() throws IOException, URISyntaxException {
+      assertError("returnfromvoid.c", "Error! Return value from void function");
+   }
+
+   @Test
    public void testProcedureNotFound() throws IOException, URISyntaxException {
       assertError("procedurenotfound.c", "Called procedure not found");
    }

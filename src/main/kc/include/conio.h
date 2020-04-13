@@ -1,6 +1,9 @@
 // Provides provide console input/output
 // Implements similar functions as conio.h from CC65 for compatibility
 // See https://github.com/cc65/cc65/blob/master/include/conio.h
+//
+// Currently only the C64 platform is supported
+
 
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 void clrscr(void);
@@ -16,6 +19,12 @@ unsigned char wherey(void);
 
 // Return the current screen size.
 void screensize(unsigned char* x, unsigned char* y);
+
+// Return the current screen size X width.
+char screensizex();
+
+// Return the current screen size Y height.
+char screensizey();
 
 // Output one character at the current cursor position
 void cputc(char c);
@@ -57,7 +66,6 @@ unsigned char kbhit (void);
 // If onoff is 0, the cursor is hidden when waiting for keyboard input.
 // The function returns the old cursor setting.
 unsigned char cursor(unsigned char onoff);
-
 
 // The horizontal line character
 const char CH_HLINE = 0x40;

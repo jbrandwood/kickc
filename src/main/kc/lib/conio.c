@@ -1,6 +1,8 @@
 // Provides provide console input/output
 // Implements similar functions as conio.h from CC65 for compatibility
 // See https://github.com/cc65/cc65/blob/master/include/conio.h
+//
+// Currently only the C64 platform is supported
 #include <conio.h>
 
 // The text screen address
@@ -69,6 +71,16 @@ void gotoxy(unsigned char x, unsigned char y) {
 void screensize(unsigned char* x, unsigned char* y) {
     *x = CONIO_WIDTH;
     *y = CONIO_HEIGHT;
+}
+
+// Return the current screen size X width.
+inline char screensizex() {
+    return CONIO_WIDTH;
+}
+
+// Return the current screen size Y height.
+inline char screensizey() {
+    return CONIO_HEIGHT;
 }
 
 // Return the X position of the cursor
@@ -159,8 +171,7 @@ unsigned char bgcolor(unsigned char color) {
 }
 
 // Set the color for the border. The old color setting is returned.
-unsigned char bordercolor(unsigned char color)
-{
+unsigned char bordercolor(unsigned char color) {
     char old = *CONIO_BORDERCOLOR;
     *CONIO_BORDERCOLOR = color;
     return old;

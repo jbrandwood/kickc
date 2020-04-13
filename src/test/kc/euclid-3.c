@@ -17,11 +17,11 @@ void main () {
 }
 
 void  print_euclid(unsigned char a, unsigned char b) {
-    print_byte(a);
+    print_u8(a);
     print_char(' ');
-    print_byte(b);
+    print_u8(b);
     print_char(' ');
-    print_byte(euclid(a,b));
+    print_u8(euclid(a,b));
     print_ln();
 }
 

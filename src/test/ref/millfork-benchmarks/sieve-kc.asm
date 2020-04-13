@@ -64,8 +64,8 @@ end: {
     sta.z Ticks_1
     lda.z last_time+1
     sta.z Ticks_1+1
-    // print_word(Ticks)
-    jsr print_word
+    // print_uint(Ticks)
+    jsr print_uint
     // print_ln()
     jsr print_ln
     // }
@@ -98,26 +98,26 @@ print_ln: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp($a) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp($a) w)
+print_uint: {
     .label w = $a
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

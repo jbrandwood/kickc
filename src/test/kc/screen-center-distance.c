@@ -20,7 +20,7 @@ void main() {
     clock_t cyclecount = clock()-CLOCKS_PER_INIT;
     byte* BASE_SCREEN = 0x0400;
     byte* BASE_CHARSET = 0x1000;
-    print_dword_at(cyclecount, BASE_SCREEN);
+    print_ulong_at(cyclecount, BASE_SCREEN);
     *D018 = toD018(BASE_SCREEN, BASE_CHARSET);
 }
 

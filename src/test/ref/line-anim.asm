@@ -329,7 +329,7 @@ divr16s: {
     // if(neg==0)
     cpy #0
     beq __breturn
-    // return -(signed word)resultu;
+    // return -(signed int)resultu;
     sec
     lda #0
     sbc.z return
@@ -366,7 +366,7 @@ divr16s: {
     ldy #1
     jmp __b2
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -428,7 +428,7 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1

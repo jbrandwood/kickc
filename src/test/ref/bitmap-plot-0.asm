@@ -135,7 +135,7 @@ bitmap_plot: {
     .label __1 = $b
     .label plotter = 9
     .label x = 2
-    // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -293,7 +293,7 @@ bitmap_init: {
     bne __b2
     lda #$80
   __b2:
-    // for(byte x : 0..255)
+    // for(char x : 0..255)
     inx
     cpx #0
     bne __b1
@@ -329,7 +329,7 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
   __b4:
-    // for(byte y : 0..255)
+    // for(char y : 0..255)
     inx
     cpx #0
     bne __b3

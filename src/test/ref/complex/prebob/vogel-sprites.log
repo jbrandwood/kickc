@@ -3938,7 +3938,7 @@ plexSort: {
     rts
 }
   // mulf8s
-// Fast multiply two signed bytes to a word result
+// Fast multiply two signed chars to a unsigned int result
 // mulf8s(signed byte zp($a) a, signed byte zp($b) b)
 mulf8s: {
     .label mulf8s_prepare1_a = $a
@@ -3978,8 +3978,8 @@ mulf8s: {
     rts
 }
   // mulf8s_prepared
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8s_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8s_prepare(char a)
 // mulf8s_prepared(signed byte zp($52) b)
 mulf8s_prepared: {
     .label memA = $fd
@@ -4064,8 +4064,8 @@ mulf8s_prepared: {
     rts
 }
   // mulf8u_prepared
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8u_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8u_prepare(char a)
 // mulf8u_prepared(byte zp($55) b)
 mulf8u_prepared: {
     .label resL = $fe
@@ -4101,7 +4101,7 @@ mulf8u_prepared: {
     rts
 }
   // mulf8u_prepare
-// Prepare for fast multiply with an unsigned byte to a word result
+// Prepare for fast multiply with an unsigned char to a unsigned int result
 // mulf8u_prepare(byte zp($51) a)
 mulf8u_prepare: {
     .label memA = $fd
@@ -5791,7 +5791,7 @@ plexSort: {
     rts
 }
   // mulf8s
-// Fast multiply two signed bytes to a word result
+// Fast multiply two signed chars to a unsigned int result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
     .label return = 5
@@ -5819,8 +5819,8 @@ mulf8s: {
     rts
 }
   // mulf8s_prepared
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8s_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8s_prepare(char a)
 // mulf8s_prepared(signed byte zp($17) b)
 mulf8s_prepared: {
     .label memA = $fd
@@ -5884,8 +5884,8 @@ mulf8s_prepared: {
     rts
 }
   // mulf8u_prepared
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8u_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8u_prepare(char a)
 // mulf8u_prepared(byte register(A) b)
 mulf8u_prepared: {
     .label resL = $fe
@@ -5918,7 +5918,7 @@ mulf8u_prepared: {
     rts
 }
   // mulf8u_prepare
-// Prepare for fast multiply with an unsigned byte to a word result
+// Prepare for fast multiply with an unsigned char to a unsigned int result
 // mulf8u_prepare(byte register(A) a)
 mulf8u_prepare: {
     .label memA = $fd
@@ -7658,12 +7658,12 @@ plexSort: {
     rts
 }
   // mulf8s
-// Fast multiply two signed bytes to a word result
+// Fast multiply two signed chars to a unsigned int result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
     .label return = 5
     // mulf8s::mulf8s_prepare1
-    // mulf8u_prepare((byte)a)
+    // mulf8u_prepare((char)a)
     // [134] (byte) mulf8u_prepare::a#0 ← (byte)(signed byte) mulf8s::mulf8s_prepare1_a#0
     // [135] call mulf8u_prepare 
     jsr mulf8u_prepare
@@ -7681,21 +7681,21 @@ mulf8s: {
     rts
 }
   // mulf8s_prepared
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8s_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8s_prepare(char a)
 // mulf8s_prepared(signed byte zp($17) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 5
     .label b = $17
-    // mulf8u_prepared((byte) b)
+    // mulf8u_prepared((char) b)
     // [140] (byte) mulf8u_prepared::b#0 ← (byte)(signed byte) mulf8s_prepared::b#0 -- vbuaa=vbuz1 
     lda.z b
     // [141] call mulf8u_prepared 
     jsr mulf8u_prepared
     // [142] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::return#0
     // mulf8s_prepared::@5
-    // m = mulf8u_prepared((byte) b)
+    // m = mulf8u_prepared((char) b)
     // [143] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2
     // if(*memA<0)
     // [144] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1 -- _deref_pbsc1_ge_0_then_la1 
@@ -7706,7 +7706,7 @@ mulf8s_prepared: {
     // >m
     // [145] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0 -- vbuaa=_hi_vwuz1 
     lda.z m+1
-    // >m = (>m)-(byte)b
+    // >m = (>m)-(char)b
     // [146] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0 -- vbuaa=vbuaa_minus_vbuz1 
     sec
     sbc.z b
@@ -7725,7 +7725,7 @@ mulf8s_prepared: {
     // >m
     // [150] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5 -- vbuaa=_hi_vwuz1 
     lda.z m+1
-    // >m = (>m)-(byte)*memA
+    // >m = (>m)-(char)*memA
     // [151] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) -- vbuaa=vbuaa_minus__deref_pbuc1 
     sec
     sbc memA
@@ -7741,8 +7741,8 @@ mulf8s_prepared: {
     rts
 }
   // mulf8u_prepared
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8u_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8u_prepare(char a)
 // mulf8u_prepared(byte register(A) b)
 mulf8u_prepared: {
     .label resL = $fe
@@ -7777,7 +7777,7 @@ mulf8u_prepared: {
     rts
 }
   // mulf8u_prepare
-// Prepare for fast multiply with an unsigned byte to a word result
+// Prepare for fast multiply with an unsigned char to a unsigned int result
 // mulf8u_prepare(byte register(A) a)
 mulf8u_prepare: {
     .label memA = $fd
@@ -7986,7 +7986,7 @@ mulf_init: {
     sta.z sqr1_lo+1
     // mulf_init::@1
   __b1:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     // [194] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
@@ -8012,7 +8012,7 @@ mulf_init: {
     sta.z sqr2_lo+1
     // mulf_init::@5
   __b5:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     // [196] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
@@ -8071,7 +8071,7 @@ mulf_init: {
     // [206] phi (byte) mulf_init::dir#4 = (byte) mulf_init::dir#2 [phi:mulf_init::@9->mulf_init::@8#0] -- register_copy 
     // mulf_init::@8
   __b8:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     // [207] (byte*) mulf_init::sqr2_lo#1 ← ++ (byte*) mulf_init::sqr2_lo#2 -- pbuz1=_inc_pbuz1 
     inc.z sqr2_lo
     bne !+
@@ -8139,7 +8139,7 @@ mulf_init: {
     bcc !+
     inc.z sqr+1
   !:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     // [220] (byte*) mulf_init::sqr1_lo#1 ← ++ (byte*) mulf_init::sqr1_lo#2 -- pbuz1=_inc_pbuz1 
     inc.z sqr1_lo
     bne !+

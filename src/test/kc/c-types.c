@@ -16,11 +16,11 @@ void testChar() {
     signed char s = -14;
 
     print_str("char: ");
-    print_byte(u);
+    print_u8(u);
     print_char(' ');
-    print_byte(n);
+    print_u8(n);
     print_char(' ');
-    print_sbyte(s);
+    print_s8(s);
     print_ln();
 
 }
@@ -31,11 +31,11 @@ void testShort() {
     signed short s = -1400;
 
     print_str("short: ");
-    print_word(u);
+    print_uint(u);
     print_char(' ');
-    print_sword(n);
+    print_sint(n);
     print_char(' ');
-    print_sword(s);
+    print_sint(s);
     print_ln();
 
 }
@@ -46,11 +46,11 @@ void testInt() {
     signed int s = -1400;
 
     print_str("int: ");
-    print_word(u);
+    print_uint(u);
     print_char(' ');
-    print_sword(n);
+    print_sint(n);
     print_char(' ');
-    print_sword(s);
+    print_sint(s);
     print_ln();
 
 }
@@ -61,11 +61,11 @@ void testLong() {
     signed long s = -140000;
 
     print_str("long: ");
-    print_dword(u);
+    print_ulong(u);
     print_char(' ');
-    print_sdword(n);
+    print_slong(n);
     print_char(' ');
-    print_sdword(s);
+    print_slong(s);
     print_ln();
 
 }

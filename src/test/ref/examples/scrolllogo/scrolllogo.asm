@@ -311,7 +311,7 @@ render_logo: {
     inc.z logo_idx_1
     jmp __b8
 }
-// Generate signed word sinus table - with values in the range min-max.
+// Generate signed int sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 // sin16s_gen2(signed word* zp($18) sintab)
@@ -347,7 +347,7 @@ sin16s_gen2: {
     sta.z i+1
   // u[4.28]
   __b1:
-    // for( word i=0; i<wavelength; i++)
+    // for( unsigned int i=0; i<wavelength; i++)
     lda.z i+1
     cmp #>XSIN_SIZE
     bcc __b2
@@ -376,14 +376,14 @@ sin16s_gen2: {
     sta.z __9
     lda.z __6+3
     sta.z __9+1
-    // *sintab++ = offs + (signed word)>mul16s(sin16s(x), ampl)
+    // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl)
     ldy #0
     lda.z __9
     sta (sintab),y
     iny
     lda.z __9+1
     sta (sintab),y
-    // *sintab++ = offs + (signed word)>mul16s(sin16s(x), ampl);
+    // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl);
     lda #SIZEOF_SIGNED_WORD
     clc
     adc.z sintab
@@ -405,14 +405,14 @@ sin16s_gen2: {
     lda.z x+3
     adc.z step+3
     sta.z x+3
-    // for( word i=0; i<wavelength; i++)
+    // for( unsigned int i=0; i<wavelength; i++)
     inc.z i
     bne !+
     inc.z i+1
   !:
     jmp __b1
 }
-// Multiply of two signed words to a signed double word
+// Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp($14) a)
 mul16s: {
@@ -421,7 +421,7 @@ mul16s: {
     .label m = $a
     .label return = $a
     .label a = $14
-    // mul16u((word)a, (word) b)
+    // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
     lda.z a+1
@@ -431,8 +431,8 @@ mul16s: {
     lda #>sin16s_gen2.ampl
     sta.z mul16u.b+1
     jsr mul16u
-    // mul16u((word)a, (word) b)
-    // m = mul16u((word)a, (word) b)
+    // mul16u((unsigned int)a, (unsigned int) b)
+    // m = mul16u((unsigned int)a, (unsigned int) b)
     // if(a<0)
     lda.z a+1
     bpl __b2
@@ -441,7 +441,7 @@ mul16s: {
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(word)b
+    // >m = (>m)-(unsigned int)b
     lda.z __16
     sec
     sbc #<sin16s_gen2.ampl
@@ -454,11 +454,11 @@ mul16s: {
     lda.z __16+1
     sta.z m+3
   __b2:
-    // (signed dword)m
+    // (signed long)m
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($29) a, word zp($12) b)
 mul16u: {
     .label mb = $e
@@ -520,9 +520,9 @@ mul16u: {
     rol.z mb+3
     jmp __b1
 }
-// Calculate signed word sinus sin(x)
-// x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
-// result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+// Calculate signed int sinus sin(x)
+// x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
+// result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zp($e) x)
 sin16s: {
     .label __4 = $21
@@ -720,7 +720,7 @@ sin16s: {
     // if(isUpper!=0)
     cpy #0
     beq __b3
-    // sinx = -(signed word)usinx
+    // sinx = -(signed int)usinx
     sec
     lda #0
     sbc.z sinx
@@ -732,7 +732,7 @@ sin16s: {
     // }
     rts
 }
-// Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+// Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
 // mulu16_sel(word zp($1a) v1, word zp($12) v2, byte register(X) select)
 mulu16_sel: {
@@ -768,8 +768,8 @@ mulu16_sel: {
     // }
     rts
 }
-// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-// The 16-bit word remainder can be found in rem16u after the division
+// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
+// The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $27
     .label quotient_lo = $14
@@ -809,7 +809,7 @@ div32u16u: {
     // }
     rts
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -868,7 +868,7 @@ divr16u: {
     sbc #>XSIN_SIZE
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1

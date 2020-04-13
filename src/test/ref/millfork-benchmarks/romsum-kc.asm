@@ -47,8 +47,8 @@ main: {
     // sum()
     jsr sum
     // sum()
-    // print_word_decimal(sum())
-    jsr print_word_decimal
+    // print_uint_decimal(sum())
+    jsr print_uint_decimal
     // print_ln()
     jsr print_ln
     // for(i=0;i<6;i++)
@@ -85,9 +85,9 @@ print_ln: {
     // }
     rts
 }
-// Print a word as DECIMAL
-// print_word_decimal(word zp(5) w)
-print_word_decimal: {
+// Print a unsigned int as DECIMAL
+// print_uint_decimal(word zp(5) w)
+print_uint_decimal: {
     .label w = 5
     // utoa(w, decimal_digits, DECIMAL)
     jsr utoa
@@ -319,29 +319,29 @@ end: {
     sta.z Ticks_1
     lda.z last_time+1
     sta.z Ticks_1+1
-    // print_word(Ticks)
-    jsr print_word
+    // print_uint(Ticks)
+    jsr print_uint
     // print_ln()
     jsr print_ln
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp($f) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp($f) w)
+print_uint: {
     .label w = $f
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -389,5 +389,5 @@ start: {
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits
   RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
-  // Digits used for storing the decimal word
+  // Digits used for storing the decimal unsigned int
   decimal_digits: .fill 6, 0

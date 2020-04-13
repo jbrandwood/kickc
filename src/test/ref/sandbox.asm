@@ -178,7 +178,7 @@ main: {
     str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm"
     .byte 0
 }
-// Performs division on two 16 bit unsigned words
+// Performs division on two 16 bit unsigned ints
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -197,7 +197,7 @@ div16u: {
     // }
     rts
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -258,7 +258,7 @@ divr16u: {
     sbc #>div16u.divisor
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1

@@ -2,10 +2,10 @@
 
 #include <multiply.h>
 
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
-word mul8u(byte a, byte b) {
-    word res = 0;
-    word mb = b;
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
+unsigned int mul8u(char a, char b) {
+    unsigned int res = 0;
+    unsigned int mb = b;
     while(a!=0) {
         if( (a&1) != 0) {
             res = res + mb;
@@ -16,33 +16,33 @@ word mul8u(byte a, byte b) {
     return res;
 }
 
-// Multiply of two signed bytes to a signed word
+// Multiply of two signed chars to a signed int
 // Fixes offsets introduced by using unsigned multiplication
-signed word mul8s(signed byte a, signed byte b) {
-    word m = mul8u((byte)a, (byte) b);
+signed int mul8s(signed char a, signed char b) {
+    unsigned int m = mul8u((char)a, (char) b);
     if(a<0) {
-        >m = (>m)-(byte)b;
+        >m = (>m)-(char)b;
     }
     if(b<0) {
-        >m = (>m)-(byte)a;
+        >m = (>m)-(char)a;
     }
-    return (signed word)m;
+    return (signed int)m;
 }
 
-// Multiply a signed byte and an unsigned byte (into a signed word)
+// Multiply a signed char and an unsigned char (into a signed int)
 // Fixes offsets introduced by using unsigned multiplication
-signed word mul8su(signed byte a, byte b) {
-    word m = mul8u((byte)a, (byte) b);
+signed int mul8su(signed char a, char b) {
+    unsigned int m = mul8u((char)a, (char) b);
     if(a<0) {
-        >m = (>m)-(byte)b;
+        >m = (>m)-(char)b;
     }
-    return (signed word)m;
+    return (signed int)m;
 }
 
-// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
-dword mul16u(word a, word b) {
-    dword res = 0;
-    dword mb = b;
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
+unsigned long mul16u(unsigned int a, unsigned int b) {
+    unsigned long res = 0;
+    unsigned long mb = b;
     while(a!=0) {
         if( (a&1) != 0) {
             res = res + mb;
@@ -53,15 +53,15 @@ dword mul16u(word a, word b) {
     return res;
 }
 
-// Multiply of two signed words to a signed double word
+// Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-signed dword mul16s(signed word a, signed word b) {
-    dword m = mul16u((word)a, (word) b);
+signed long mul16s(signed int a, signed int b) {
+    unsigned long m = mul16u((unsigned int)a, (unsigned int) b);
     if(a<0) {
-        >m = (>m)-(word)b;
+        >m = (>m)-(unsigned int)b;
     }
     if(b<0) {
-        >m = (>m)-(word)a;
+        >m = (>m)-(unsigned int)a;
     }
-    return (signed dword)m;
+    return (signed long)m;
 }

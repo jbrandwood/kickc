@@ -12,6 +12,6 @@ void main() {
     clock_start();
     // Continously print cycle count since timer start
     while(true) {
-        print_dword_at(clock(), SCREEN);
+        print_ulong_at(clock(), SCREEN);
     }
 }

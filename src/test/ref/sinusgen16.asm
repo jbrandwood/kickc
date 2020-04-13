@@ -58,8 +58,8 @@ main: {
     sta.z print_str.str+1
     jsr print_str
   __b3:
-    // print_sword(sw)
-    jsr print_sword
+    // print_sint(sw)
+    jsr print_sint
     // print_str("   ")
     lda #<str
     sta.z print_str.str
@@ -109,9 +109,9 @@ print_str: {
   !:
     jmp __b1
 }
-// Print a signed word as HEX
-// print_sword(signed word zp(4) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp(4) w)
+print_sint: {
     .label w = 4
     // if(w<0)
     lda.z w+1
@@ -120,8 +120,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -152,22 +152,22 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(4) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(4) w)
+print_uint: {
     .label w = 4
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -228,7 +228,7 @@ memset: {
   !:
     jmp __b1
 }
-// Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+// Generate signed (large) unsigned int sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 // sin16s_gen(signed word* zp($e) sintab)
@@ -260,7 +260,7 @@ sin16s_gen: {
     sta.z i+1
   // u[4.28]
   __b1:
-    // for( word i=0; i<wavelength; i++)
+    // for( unsigned int i=0; i<wavelength; i++)
     lda.z i+1
     cmp #>main.wavelength
     bcc __b2
@@ -311,16 +311,16 @@ sin16s_gen: {
     lda.z x+3
     adc.z step+3
     sta.z x+3
-    // for( word i=0; i<wavelength; i++)
+    // for( unsigned int i=0; i<wavelength; i++)
     inc.z i
     bne !+
     inc.z i+1
   !:
     jmp __b1
 }
-// Calculate signed word sinus sin(x)
-// x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
-// result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+// Calculate signed int sinus sin(x)
+// x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
+// result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zp($10) x)
 sin16s: {
     .label __4 = $22
@@ -518,7 +518,7 @@ sin16s: {
     // if(isUpper!=0)
     cpy #0
     beq __b3
-    // sinx = -(signed word)usinx
+    // sinx = -(signed int)usinx
     sec
     lda #0
     sbc.z sinx
@@ -530,7 +530,7 @@ sin16s: {
     // }
     rts
 }
-// Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+// Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
 // mulu16_sel(word zp($1a) v1, word zp($1c) v2, byte register(X) select)
 mulu16_sel: {
@@ -565,7 +565,7 @@ mulu16_sel: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($26) a, word zp($1c) b)
 mul16u: {
     .label mb = $16
@@ -627,8 +627,8 @@ mul16u: {
     rol.z mb+3
     jmp __b1
 }
-// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-// The 16-bit word remainder can be found in rem16u after the division
+// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
+// The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $28
     .label quotient_lo = $26
@@ -668,7 +668,7 @@ div32u16u: {
     // }
     rts
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -727,7 +727,7 @@ divr16u: {
     sbc #>main.wavelength
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1

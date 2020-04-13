@@ -307,7 +307,7 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
   __b19:
-    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
+    // for( char i: 0..CORDIC_ITERATIONS_16-1)
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+

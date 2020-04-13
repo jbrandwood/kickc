@@ -5,30 +5,30 @@
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 void mulf_init();
 
-// Prepare for fast multiply with an unsigned byte to a word result
-void mulf8u_prepare(byte a);
+// Prepare for fast multiply with an unsigned char to a unsigned int result
+void mulf8u_prepare(char a);
 
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8u_prepare(byte a)
-word mulf8u_prepared(byte b);
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8u_prepare(char a)
+unsigned int mulf8u_prepared(char b);
 
-// Fast multiply two unsigned bytes to a word result
-word mulf8u(byte a, byte b);
+// Fast multiply two unsigned chars to a unsigned int result
+unsigned int mulf8u(char a, char b);
 
-// Prepare for fast multiply with an signed byte to a word result
-inline void mulf8s_prepare(signed byte a);
+// Prepare for fast multiply with an signed char to a unsigned int result
+inline void mulf8s_prepare(signed char a);
 
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8s_prepare(byte a)
-signed word mulf8s_prepared(signed byte b);
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8s_prepare(char a)
+signed int mulf8s_prepared(signed char b);
 
-// Fast multiply two signed bytes to a word result
-signed word mulf8s(signed byte a, signed byte b);
+// Fast multiply two signed chars to a unsigned int result
+signed int mulf8s(signed char a, signed char b);
 
-// Fast multiply two unsigned words to a double word result
+// Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
-dword mulf16u(word a, word b);
+unsigned long mulf16u(unsigned int a, unsigned int b);
 
-// Fast multiply two signed words to a signed double word result
+// Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
-signed dword mulf16s(signed word a, signed word b);
+signed long mulf16s(signed int a, signed int b);

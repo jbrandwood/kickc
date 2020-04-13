@@ -19,7 +19,7 @@ void main (void) {
     print_str("Sieve benchmark - calculating primes");
     print_ln();
     print_str("between 2 and ");
-    print_word_decimal(COUNT);
+    print_uint_decimal(COUNT);
     print_ln();
 
     // Fill sieve with zeros
@@ -48,13 +48,13 @@ void main (void) {
     unsigned int sec100s = (unsigned int)div32u16u(cyclecount, (unsigned int)(CLOCKS_PER_SEC/100));
 
     print_str("100ths seconds used: ");
-    print_word_decimal(sec100s);
+    print_uint_decimal(sec100s);
     print_str(" cycles: ");
-    print_dword_decimal(cyclecount);
+    print_ulong_decimal(cyclecount);
     print_ln();
     for (i = 2; i < 1300; ++i)
         if (!sieve[i]) {
-            print_word_decimal(i);
+            print_uint_decimal(i);
             print_char(' ');
         }
     print_str("...");

@@ -13,7 +13,7 @@ void main() {
     }
     print_cls();
     for(byte j: 0..8) {
-        print_sword(words[j]);
+        print_sint(words[j]);
         print_ln();
     }
 

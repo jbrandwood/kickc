@@ -194,7 +194,7 @@ draw_block: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a)
 mul8u: {
     .const b = $28

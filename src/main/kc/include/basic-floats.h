@@ -5,12 +5,12 @@
 // Prepare MEM pointers for operations using MEM
 inline void prepareMEM(unsigned int mem);
 
-// FAC = word
-// Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// FAC = unsigned int
+// Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
 void setFAC(unsigned int w);
 
-// word = FAC
-// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// unsigned int = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
 // Destroys the value in the FAC in the process
 unsigned int getFAC();
 
@@ -24,32 +24,32 @@ void setFACtoARG();
 
 // MEM = FAC
 // Stores the value of the FAC to memory
-// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
 void setMEMtoFAC(char* mem);
 
 // FAC = MEM
 // Set the FAC to value from MEM (float saved in memory)
-// Reads 5 bytes
+// Reads 5 chars
 void setFACtoMEM(char* mem);
 
 // FAC = PI/2
 // Set the FAC to PI/2
-// Reads 5 bytes from the BASIC ROM
+// Reads 5 chars from the BASIC ROM
 void setFACtoPIhalf();
 
 // FAC = 2*PI
 // Set the FAC to 2*PI
-// Reads 5 bytes from the BASIC ROM
+// Reads 5 chars from the BASIC ROM
 void setFACto2PI();
 
 // ARG = MEM
 // Load the ARG from memory
-// Reads 5 bytes
+// Reads 5 chars
 void setARGtoMEM(char* mem);
 
 // FAC = MEM+FAC
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 void addMEMtoFAC(char* mem);
 
 // FAC = ARG+FAC
@@ -58,7 +58,7 @@ void addARGtoFAC();
 
 // FAC = MEM-FAC
 // Set FAC to MEM (float saved in memory) minus FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 void subFACfromMEM(char* mem);
 
 // FAC = ARG-FAC
@@ -67,17 +67,17 @@ void subFACfromARG();
 
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 void divMEMbyFAC(char* mem);
 
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 void mulFACbyMEM(char* mem);
 
 // FAC = MEM^FAC
 // Set FAC to MEM (float saved in memory) raised to power of FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 void pwrMEMbyFAC(char* mem);
 
 // FAC = int(FAC)

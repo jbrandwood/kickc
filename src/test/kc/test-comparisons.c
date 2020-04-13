@@ -42,9 +42,9 @@ void main() {
 
 void printu(byte a, byte* op, byte b, byte res) {
     print_char(' ');
-    print_byte(a);
+    print_u8(a);
     print_str(op);
-    print_byte(b);
+    print_u8(b);
     print_char(' ');
     print_char(res);
 }

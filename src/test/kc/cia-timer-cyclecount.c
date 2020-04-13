@@ -15,6 +15,6 @@ void main() {
         // Calculate the cycle count - 0x12 is the base usage of start/read
         dword cyclecount = clock()-CLOCKS_PER_INIT;
         // Print cycle count
-        print_dword_at(cyclecount, SCREEN);
+        print_ulong_at(cyclecount, SCREEN);
     }
 }

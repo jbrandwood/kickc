@@ -65,9 +65,9 @@ void compare(word w1, word w2, byte op) {
         if(w1!=w2) r = TT;
         ops = "!=";
     }
-    print_word(w1);
+    print_uint(w1);
     print_str(ops);
-    print_word(w2);
+    print_uint(w2);
     print_char(r);
     print_char(' ');
 }

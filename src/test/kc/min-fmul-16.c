@@ -14,7 +14,7 @@ void main() {
 	    (*BORDERCOL)++;
 	    dword r = mulf16u(a, b);
 	    (*BORDERCOL)--;
-	    print_dword(r);
+	    print_ulong(r);
 	    print_set_screen(SCREEN);
 	}
 }

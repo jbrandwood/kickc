@@ -89,28 +89,28 @@ main: {
     sta.z dw2
     lda.z __33+1
     sta.z dw2+1
-    // print_dword(dw2)
+    // print_ulong(dw2)
     // Test set/get low word of dword
-    jsr print_dword
+    jsr print_ulong
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_word(>dw2)
+    // print_uint(>dw2)
     lda.z dw2+2
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw2+3
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_char(' ')
   // Test get high word of dword
     lda #' '
     jsr print_char
-    // print_word(<dw2)
+    // print_uint(<dw2)
     lda.z dw2
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw2+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_char(' ')
   // Test get low word of dword
     lda #' '
@@ -120,9 +120,9 @@ main: {
     sta.z __16
     lda.z dw2+3
     sta.z __16+1
-    // print_byte(> >dw2)
+    // print_u8(> >dw2)
     tax
-    jsr print_byte
+    jsr print_u8
     // print_char(' ')
   // Test get high high byte of dword
     lda #' '
@@ -132,9 +132,9 @@ main: {
     sta.z __20
     lda.z dw2+3
     sta.z __20+1
-    // print_byte(< >dw2)
+    // print_u8(< >dw2)
     ldx.z __20
-    jsr print_byte
+    jsr print_u8
     // print_char(' ')
   // Test get low high byte of dword
     lda #' '
@@ -144,9 +144,9 @@ main: {
     sta.z __24
     lda.z dw2+1
     sta.z __24+1
-    // print_byte(> <dw2)
+    // print_u8(> <dw2)
     tax
-    jsr print_byte
+    jsr print_u8
     // print_char(' ')
   // Test get high low byte of dword
     lda #' '
@@ -156,9 +156,9 @@ main: {
     sta.z __28
     lda.z dw2+1
     sta.z __28+1
-    // print_byte(< <dw2)
+    // print_u8(< <dw2)
     ldx.z __28
-    jsr print_byte
+    jsr print_u8
     // print_ln()
   // Test get low low byte of dword
     jsr print_ln
@@ -205,9 +205,9 @@ print_ln: {
     sta.z print_line_cursor_1+1
     jmp __b1
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -242,40 +242,40 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp($c) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp($c) w)
+print_uint: {
     .label w = $c
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a dword as HEX
-// print_dword(dword zp($e) dw)
-print_dword: {
+// Print a unsigned long as HEX
+// print_ulong(dword zp($e) dw)
+print_ulong: {
     .label dw = $e
-    // print_word(>dw)
+    // print_uint(>dw)
     lda.z dw+2
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+3
-    sta.z print_word.w+1
+    sta.z print_uint.w+1
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
-    // print_word(>dw)
-    jsr print_word
-    // print_word(<dw)
+    // print_uint(>dw)
+    jsr print_uint
+    // print_uint(<dw)
     lda.z dw
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // }
     rts
 }

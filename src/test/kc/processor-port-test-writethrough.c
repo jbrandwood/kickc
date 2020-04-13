@@ -44,7 +44,7 @@ void testWritethrough(char* name, char* address) {
 
     print_str(name);
     print_str(" ");
-    print_word((unsigned int)address);
+    print_uint((unsigned int)address);
     print_str("     ");
     if(ramValue==IO_VALUE)
         print_str("yes");

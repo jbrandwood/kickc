@@ -6,22 +6,22 @@
 
 // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
 // <f(x) = <(( x * x )/4)
-byte align($100) mulf_sqr1_lo[512];
+char align($100) mulf_sqr1_lo[512];
 // >f(x) = >(( x * x )/4)
-byte align($100) mulf_sqr1_hi[512];
+char align($100) mulf_sqr1_hi[512];
 // <g(x) =  <((( x - 255) * ( x - 255 ))/4)
-byte align($100) mulf_sqr2_lo[512];
+char align($100) mulf_sqr2_lo[512];
 // >g(x) = >((( x - 255) * ( x - 255 ))/4)
-byte align($100) mulf_sqr2_hi[512];
+char align($100) mulf_sqr2_hi[512];
 
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 void mulf_init() {
   // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-  word sqr = 0; // sqr = (x*x)/4
-  byte x_2 = 0; // x/2
-  byte c = 0;   // Counter used for determining x%2==0
-  byte* sqr1_hi = mulf_sqr1_hi+1;
-  for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++) {
+  unsigned int sqr = 0; // sqr = (x*x)/4
+  char x_2 = 0; // x/2
+  char c = 0;   // Counter used for determining x%2==0
+  char* sqr1_hi = mulf_sqr1_hi+1;
+  for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++) {
     if((++c&1)==0) {
         x_2++; // increase i/2 on even numbers
         sqr++; // sqr++ on even numbers because 1 = 2*1/4 (from the two previous numbers) + 1/2 (half of the previous uneven number)
@@ -32,10 +32,10 @@ void mulf_init() {
   }
   // Fill mulf_sqr2 = g(x) = f(x-255) : If x-255<0 then g(x)=f(255-x) (because x*x = -x*-x)
   // g(0) = f(255), g(1) = f(254), ..., g(254) = f(1), g(255) = f(0), g(256) = f(1), ..., g(510) = f(255), g(511) = f(256)
-  byte x_255 = (byte)-1; //Start with g(0)=f(255)
-  byte dir = $ff;  // Decrease or increase x_255 - initially we decrease
-  byte* sqr2_hi = mulf_sqr2_hi;
-  for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++) {
+  char x_255 = (char)-1; //Start with g(0)=f(255)
+  char dir = $ff;  // Decrease or increase x_255 - initially we decrease
+  char* sqr2_hi = mulf_sqr2_hi;
+  for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++) {
     *sqr2_lo = mulf_sqr1_lo[x_255];
     *sqr2_hi++ = mulf_sqr1_hi[x_255];
     x_255 = x_255 + dir;
@@ -48,9 +48,9 @@ void mulf_init() {
   *(mulf_sqr2_hi+511) = *(mulf_sqr1_hi+256);
 }
 
-// Prepare for fast multiply with an unsigned byte to a word result
-void mulf8u_prepare(byte a) {
-    byte* const memA = $fd;
+// Prepare for fast multiply with an unsigned char to a unsigned int result
+void mulf8u_prepare(char a) {
+    char* const memA = $fd;
     *memA = a;
     asm {
         lda memA
@@ -62,11 +62,11 @@ void mulf8u_prepare(byte a) {
     }
 }
 
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8u_prepare(byte a)
-word mulf8u_prepared(byte b) {
-    byte* const resL = $fe;
-    byte* const memB = $ff;
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8u_prepare(char a)
+unsigned int mulf8u_prepared(char b) {
+    char* const resL = $fe;
+    char* const memB = $ff;
     *memB = b;
     asm {
         ldx memB
@@ -85,43 +85,43 @@ word mulf8u_prepared(byte b) {
     return { *memB, *resL };
 }
 
-// Fast multiply two unsigned bytes to a word result
-word mulf8u(byte a, byte b) {
+// Fast multiply two unsigned chars to a unsigned int result
+unsigned int mulf8u(char a, char b) {
     mulf8u_prepare(a);
     return mulf8u_prepared(b);
 }
 
-// Prepare for fast multiply with an signed byte to a word result
-inline void mulf8s_prepare(signed byte a) {
-    mulf8u_prepare((byte)a);
+// Prepare for fast multiply with an signed char to a unsigned int result
+inline void mulf8s_prepare(signed char a) {
+    mulf8u_prepare((char)a);
 }
 
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8s_prepare(byte a)
-signed word mulf8s_prepared(signed byte b) {
-    signed byte* const memA = $fd;
-    word m = mulf8u_prepared((byte) b);
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8s_prepare(char a)
+signed int mulf8s_prepared(signed char b) {
+    signed char* const memA = $fd;
+    unsigned int m = mulf8u_prepared((char) b);
     if(*memA<0) {
-        >m = (>m)-(byte)b;
+        >m = (>m)-(char)b;
     }
     if(b<0) {
-        >m = (>m)-(byte)*memA;
+        >m = (>m)-(char)*memA;
     }
-    return (signed word)m;
+    return (signed int)m;
 }
 
-// Fast multiply two signed bytes to a word result
-signed word mulf8s(signed byte a, signed byte b) {
+// Fast multiply two signed chars to a unsigned int result
+signed int mulf8s(signed char a, signed char b) {
     mulf8s_prepare(a);
     return mulf8s_prepared(b);
 }
 
-// Fast multiply two unsigned words to a double word result
+// Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
-dword mulf16u(word a, word b) {
-    word* const memA = $f8;
-    word* const memB = $fa;
-    dword* const memR = $fc;
+unsigned long mulf16u(unsigned int a, unsigned int b) {
+    unsigned int* const memA = $f8;
+    unsigned int* const memB = $fa;
+    unsigned long* const memR = $fc;
     *memA = a;
     *memB = b;
     asm {
@@ -199,15 +199,15 @@ _dd:    lda #0
     return *memR;
 }
 
-// Fast multiply two signed words to a signed double word result
+// Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
-signed dword mulf16s(signed word a, signed word b) {
-    dword m = mulf16u((word)a, (word)b);
+signed long mulf16s(signed int a, signed int b) {
+    unsigned long m = mulf16u((unsigned int)a, (unsigned int)b);
     if(a<0) {
-        >m = (>m)-(word)b;
+        >m = (>m)-(unsigned int)b;
     }
     if(b<0) {
-        >m = (>m)-(word)a;
+        >m = (>m)-(unsigned int)a;
     }
-    return (signed dword)m;
+    return (signed long)m;
 }

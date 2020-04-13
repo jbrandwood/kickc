@@ -43,9 +43,9 @@ main: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*(char *)0x0000)
+    // print_u8(*(char *)0x0000)
     ldx 0
-    jsr print_byte
+    jsr print_u8
     // print_ln()
     lda #<$400
     sta.z print_line_cursor
@@ -62,9 +62,9 @@ main: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*(char *)0x4004)
+    // print_u8(*(char *)0x4004)
     ldx $4004
-    jsr print_byte
+    jsr print_u8
     // print_ln()
     jsr print_ln
     // }
@@ -97,9 +97,9 @@ print_ln: {
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

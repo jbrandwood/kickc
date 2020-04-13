@@ -147,7 +147,7 @@ bitmap_line: {
     lda #>y1
     sta.z y+1
   __b6:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda.z y
     tax
     jsr bitmap_plot
@@ -200,7 +200,7 @@ bitmap_line: {
     cmp #<y2
     bne __b6
   __b3:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda.z y
     tax
     jsr bitmap_plot
@@ -223,7 +223,7 @@ bitmap_line: {
     lda #>y1
     sta.z y+1
   __b9:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda.z y
     tax
     jsr bitmap_plot
@@ -277,7 +277,7 @@ bitmap_line: {
     bne __b9
     jmp __b3
   __b4:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda #<x1
     sta.z bitmap_plot.x
     lda #>x1
@@ -292,7 +292,7 @@ bitmap_plot: {
     .label __1 = $16
     .label plotter = $14
     .label x = $e
-    // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -462,7 +462,7 @@ bitmap_init: {
     bne __b2
     lda #$80
   __b2:
-    // for(byte x : 0..255)
+    // for(char x : 0..255)
     inx
     cpx #0
     bne __b1
@@ -498,7 +498,7 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
   __b4:
-    // for(byte y : 0..255)
+    // for(char y : 0..255)
     inx
     cpx #0
     bne __b3

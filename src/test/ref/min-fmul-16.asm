@@ -29,8 +29,8 @@ main: {
     // r = mulf16u(a, b)
     // (*BORDERCOL)--;
     dec BORDERCOL
-    // print_dword(r)
-    jsr print_dword
+    // print_ulong(r)
+    jsr print_ulong
     // print_set_screen(SCREEN)
     jsr print_set_screen
     lda #<SCREEN
@@ -44,41 +44,41 @@ print_set_screen: {
     // }
     rts
 }
-// Print a dword as HEX
-// print_dword(dword zp($10) dw)
-print_dword: {
+// Print a unsigned long as HEX
+// print_ulong(dword zp($10) dw)
+print_ulong: {
     .label dw = $10
-    // print_word(>dw)
+    // print_uint(>dw)
     lda.z dw+2
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+3
-    sta.z print_word.w+1
-    jsr print_word
-    // print_word(<dw)
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_uint(<dw)
     lda.z dw
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(4) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(4) w)
+print_uint: {
     .label w = 4
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

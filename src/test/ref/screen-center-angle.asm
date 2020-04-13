@@ -53,67 +53,67 @@ main: {
     lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
-    // print_dword_at(cyclecount, BASE_SCREEN)
-    jsr print_dword_at
+    // print_ulong_at(cyclecount, BASE_SCREEN)
+    jsr print_ulong_at
     // *D018 = toD018(BASE_SCREEN, BASE_CHARSET)
     lda #toD0182_return
     sta D018
     // }
     rts
 }
-// Print a dword as HEX at a specific position
-// print_dword_at(dword zp($12) dw)
-print_dword_at: {
+// Print a unsigned long as HEX at a specific position
+// print_ulong_at(dword zp($12) dw)
+print_ulong_at: {
     .label dw = $12
-    // print_word_at(>dw, at)
+    // print_uint_at(>dw, at)
     lda.z dw+2
-    sta.z print_word_at.w
+    sta.z print_uint_at.w
     lda.z dw+3
-    sta.z print_word_at.w+1
+    sta.z print_uint_at.w+1
     lda #<main.BASE_SCREEN
-    sta.z print_word_at.at
+    sta.z print_uint_at.at
     lda #>main.BASE_SCREEN
-    sta.z print_word_at.at+1
-    jsr print_word_at
-    // print_word_at(<dw, at+4)
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // print_uint_at(<dw, at+4)
     lda.z dw
-    sta.z print_word_at.w
+    sta.z print_uint_at.w
     lda.z dw+1
-    sta.z print_word_at.w+1
+    sta.z print_uint_at.w+1
     lda #<main.BASE_SCREEN+4
-    sta.z print_word_at.at
+    sta.z print_uint_at.at
     lda #>main.BASE_SCREEN+4
-    sta.z print_word_at.at+1
-    jsr print_word_at
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
     // }
     rts
 }
-// Print a word as HEX at a specific position
-// print_word_at(word zp(2) w, byte* zp(4) at)
-print_word_at: {
+// Print a unsigned int as HEX at a specific position
+// print_uint_at(word zp(2) w, byte* zp(4) at)
+print_uint_at: {
     .label w = 2
     .label at = 4
-    // print_byte_at(>w, at)
+    // print_u8_at(>w, at)
     lda.z w+1
-    sta.z print_byte_at.b
-    jsr print_byte_at
-    // print_byte_at(<w, at+2)
+    sta.z print_u8_at.b
+    jsr print_u8_at
+    // print_u8_at(<w, at+2)
     lda.z w
-    sta.z print_byte_at.b
+    sta.z print_u8_at.b
     lda #2
     clc
-    adc.z print_byte_at.at
-    sta.z print_byte_at.at
+    adc.z print_u8_at.at
+    sta.z print_u8_at.at
     bcc !+
-    inc.z print_byte_at.at+1
+    inc.z print_u8_at.at+1
   !:
-    jsr print_byte_at
+    jsr print_u8_at
     // }
     rts
 }
-// Print a byte as HEX at a specific position
-// print_byte_at(byte zp($1b) b, byte* zp(4) at)
-print_byte_at: {
+// Print a char as HEX at a specific position
+// print_u8_at(byte zp($1b) b, byte* zp(4) at)
+print_u8_at: {
     .label b = $1b
     .label at = 4
     // b>>4
@@ -436,7 +436,7 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
   __b19:
-    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
+    // for( char i: 0..CORDIC_ITERATIONS_16-1)
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+

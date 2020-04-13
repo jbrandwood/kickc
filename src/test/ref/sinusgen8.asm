@@ -28,9 +28,9 @@ main: {
     lda sintab2,y
     sec
     sbc sintabref,y
-    // print_sbyte(sb)
+    // print_s8(sb)
     tax
-    jsr print_sbyte
+    jsr print_s8
     // print_str("  ")
     jsr print_str
     // for(byte i: 0..191)
@@ -75,9 +75,9 @@ print_str: {
   !:
     jmp __b1
 }
-// Print a signed byte as HEX
-// print_sbyte(signed byte register(X) b)
-print_sbyte: {
+// Print a signed char as HEX
+// print_s8(signed byte register(X) b)
+print_s8: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -85,8 +85,8 @@ print_sbyte: {
     lda #' '
     jsr print_char
   __b2:
-    // print_byte((byte)b)
-    jsr print_byte
+    // print_u8((char)b)
+    jsr print_u8
     // }
     rts
   __b1:
@@ -115,9 +115,9 @@ print_char: {
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -178,7 +178,7 @@ memset: {
   !:
     jmp __b1
 }
-// Generate signed byte sinus table - on the full -$7f - $7f range
+// Generate signed char sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 // sin8s_gen(signed byte* zp(9) sintab)
@@ -204,7 +204,7 @@ sin8s_gen: {
     sta.z i+1
   // u[4.12]
   __b1:
-    // for( word i=0; i<wavelength; i++)
+    // for( unsigned int i=0; i<wavelength; i++)
     lda.z i+1
     cmp #>wavelength
     bcc __b2
@@ -238,16 +238,16 @@ sin8s_gen: {
     lda.z x+1
     adc.z step+1
     sta.z x+1
-    // for( word i=0; i<wavelength; i++)
+    // for( unsigned int i=0; i<wavelength; i++)
     inc.z i
     bne !+
     inc.z i+1
   !:
     jmp __b1
 }
-// Calculate signed byte sinus sin(x)
-// x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
-// result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+// Calculate signed char sinus sin(x)
+// x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
+// result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
 // sin8s(word zp($d) x)
 sin8s: {
     // u[2.6] x^3
@@ -376,7 +376,7 @@ sin8s: {
     lda.z isUpper
     cmp #0
     beq __b14
-    // sinx = -(signed byte)usinx
+    // sinx = -(signed char)usinx
     txa
     eor #$ff
     clc
@@ -387,7 +387,7 @@ sin8s: {
     txa
     rts
 }
-// Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
+// Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 // mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($c) select)
 mulu8_sel: {
@@ -411,7 +411,7 @@ mulu8_sel: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = $d
@@ -454,7 +454,7 @@ mul8u: {
     rol.z mb+1
     jmp __b1
 }
-// Performs division on two 16 bit unsigned words
+// Performs division on two 16 bit unsigned ints
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -466,7 +466,7 @@ div16u: {
     // }
     rts
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -532,7 +532,7 @@ divr16u: {
     sbc #>wavelength
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1

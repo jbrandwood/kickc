@@ -15,17 +15,17 @@ void main() {
 	char* at_line = $400;
 	char* at = at_line+4;
 	for(char k: 0..8) {
-		print_sbyte_at(vals[k], at);
+		print_s8_at(vals[k], at);
 		at += 4;
 	}
 	for(char i: 0..8) {
 		at_line +=40;
 		at = at_line;
-		print_sbyte_at(vals[i], at);
+		print_s8_at(vals[i], at);
 		for(char j: 0..8) {
 			at += 4;		
 			signed char r = fmul8(vals[i], vals[j]);
-			print_sbyte_at(r, at);			
+			print_s8_at(r, at);
 		}
 	}
 }

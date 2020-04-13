@@ -20,7 +20,7 @@ void end(void) {
     start();
     last_time -= Ticks;
     Ticks = last_time;
-    print_word(Ticks);
+    print_uint(Ticks);
     print_ln();
 }
 

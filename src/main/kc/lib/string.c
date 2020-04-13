@@ -15,7 +15,7 @@ void* memcpy( void* destination, void* source, size_t num ) {
 // Move block of memory
 // Copies the values of num bytes from the location pointed by source to the memory block pointed by destination. Copying takes place as if an intermediate buffer were used, allowing the destination and source to overlap.
 void* memmove( void* destination, void* source, size_t num ) {
-    if((word)destination<(word)source) {
+    if((unsigned int)destination<(unsigned int)source) {
         memcpy(destination, source, num);
     } else {
         // copy backwards
@@ -37,7 +37,7 @@ void *memset(void *str, char c, size_t num) {
 }
 
 // Copies the C string pointed by source into the array pointed by destination, including the terminating null character (and stopping at that point).
-char* strcpy( char* destination, byte* source ) {
+char* strcpy( char* destination, char* source ) {
     char* src = source;
     char* dst = destination;
     while(*src) *dst++ = *src++;

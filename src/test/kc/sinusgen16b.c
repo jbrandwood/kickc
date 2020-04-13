@@ -17,7 +17,7 @@ void main() {
         if(sw>=0) {
           print_str(" ");
         }
-        print_sword(sw);
+        print_sint(sw);
         print_str("   ");
         st1++;
         st2++;

@@ -1,16 +1,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-byte* print_screen = $0400;
-byte* print_line_cursor = print_screen;
-byte* print_char_cursor = print_line_cursor;
+char* print_screen = $0400;
+char* print_line_cursor = print_screen;
+char* print_char_cursor = print_line_cursor;
 
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-void print_str_lines(byte* str) {
+void print_str_lines(char* str) {
     while(*str) {
         do {
-            byte ch = *(str++);
+            char ch = *(str++);
             if(ch) {
                 *(print_char_cursor++) = ch;
             }
@@ -20,20 +20,20 @@ void print_str_lines(byte* str) {
 }
 
 // Print a zero-terminated string followed by a newline
-void print_str_ln(byte* str) {
+void print_str_ln(char* str) {
     print_str(str);
     print_ln();
 }
 
 // Print a zero-terminated string
-void print_str(byte* str) {
+void print_str(char* str) {
     while(*str) {
         *(print_char_cursor++) = *(str++);
     }
 }
 
 // Print a string at a specific screen position
-void print_str_at(byte* str, byte* at) {
+void print_str_at(char* str, char* at) {
     while(*str) {
         *(at++) = *(str++);
     }
@@ -47,133 +47,133 @@ void print_ln() {
     print_char_cursor = print_line_cursor;
 }
 
-// Print a signed word as HEX
-void print_sword(signed word w) {
+// Print a signed int as HEX
+void print_sint(signed int w) {
     if(w<0) {
         print_char('-');
         w = -w;
     } else {
         print_char(' ');
     }
-    print_word((word)w);
+    print_uint((unsigned int)w);
 }
 
-// Print a signed byte as HEX
-void print_sbyte(signed byte b) {
+// Print a signed char as HEX
+void print_s8(signed char b) {
     if(b<0) {
         print_char('-');
         b = -b;
     } else {
         print_char(' ');        
     }
-    print_byte((byte)b);
+    print_u8((char)b);
 }
 
-// Prints a signed byte as HEX at a specific position on the screen
+// Prints a signed char as HEX at a specific position on the screen
 // row and col are 0-based indices
-inline void print_sbyte_pos(signed byte sb, byte row, byte col) {
-    print_sbyte_at(sb, print_screen+row*40+col);
+inline void print_s8_pos(signed char sb, char row, char col) {
+    print_s8_at(sb, print_screen+row*40+col);
 }
 
-// Print a signed byte as hex at a specific screen position
-void print_sbyte_at(signed byte b, byte* at) {
+// Print a signed char as hex at a specific screen position
+void print_s8_at(signed char b, char* at) {
     if(b<0) {
         print_char_at('-', at);
         b = -b;
     } else {
         print_char_at(' ', at);        
     }
-    print_byte_at((byte)b, at+1);
+    print_u8_at((char)b, at+1);
 }
 
-// Print a word as HEX
-void print_word(word w) {
-    print_byte(>w);
-    print_byte(<w);
+// Print a unsigned int as HEX
+void print_uint(unsigned int w) {
+    print_u8(>w);
+    print_u8(<w);
 }
 
-// Digits used for storing the decimal word
+// Digits used for storing the decimal unsigned int
 char decimal_digits[6];
 
-// Print a byte as DECIMAL
-void print_byte_decimal(byte b) {
-    utoa((word)b, decimal_digits, DECIMAL);
+// Print a char as DECIMAL
+void print_u8_decimal(char b) {
+    utoa((unsigned int)b, decimal_digits, DECIMAL);
     print_str(decimal_digits);
 }
 
-// Print a word as DECIMAL
-void print_word_decimal(word w) {
+// Print a unsigned int as DECIMAL
+void print_uint_decimal(unsigned int w) {
     utoa(w, decimal_digits, DECIMAL);
     print_str(decimal_digits);
 }
 
-// Print a word as HEX at a specific position
-void print_word_at(word w, byte* at) {
-    print_byte_at(>w, at);
-    print_byte_at(<w, at+2);
+// Print a unsigned int as HEX at a specific position
+void print_uint_at(unsigned int w, char* at) {
+    print_u8_at(>w, at);
+    print_u8_at(<w, at+2);
 }
 
-// Print a dword as HEX
-void print_dword(dword dw) {
-    print_word(>dw);
-    print_word(<dw);
+// Print a unsigned long as HEX
+void print_ulong(unsigned long dw) {
+    print_uint(>dw);
+    print_uint(<dw);
 }
 
-// Digits used for storing the decimal word
+// Digits used for storing the decimal unsigned int
 char decimal_digits_long[11];
 
-// Print a dword as DECIMAL
-void print_dword_decimal(dword w) {
+// Print a unsigned long as DECIMAL
+void print_ulong_decimal(unsigned long w) {
     ultoa(w, decimal_digits_long, DECIMAL);
     print_str(decimal_digits_long);
 }
 
-// Print a dword as HEX at a specific position
-void print_dword_at(dword dw, byte* at) {
-    print_word_at(>dw, at);
-    print_word_at(<dw, at+4);
+// Print a unsigned long as HEX at a specific position
+void print_ulong_at(unsigned long dw, char* at) {
+    print_uint_at(>dw, at);
+    print_uint_at(<dw, at+4);
 }
 
-// Print a signed dword as HEX
-void print_sdword(signed dword dw) {
+// Print a signed long as HEX
+void print_slong(signed long dw) {
     if(dw<0) {
         print_char('-');
         dw = -dw;
     } else {
         print_char(' ');
     }
-    print_dword((dword)dw);
+    print_ulong((unsigned long)dw);
 }
 
-const byte print_hextab[] = "0123456789abcdef"z;
+const char print_hextab[] = "0123456789abcdef"z;
 
-// Print a byte as HEX
-void print_byte(byte b) {
+// Print a char as HEX
+void print_u8(char b) {
     // Table of hexadecimal digits
     print_char(print_hextab[b>>4]);
     print_char(print_hextab[b&$f]);
 }
 
-// Prints a byte as HEX at a specific position on the screen
+// Prints a char as HEX at a specific position on the screen
 // row and col are 0-based indices
-inline void print_byte_pos(byte b, byte row, byte col) {
-    print_byte_at(b, print_screen+row*40+col);
+inline void print_u8_pos(char b, char row, char col) {
+    print_u8_at(b, print_screen+row*40+col);
 }
 
-// Print a byte as HEX at a specific position
-void print_byte_at(byte b, byte* at) {
+// Print a char as HEX at a specific position
+void print_u8_at(char b, char* at) {
     // Table of hexadecimal digits
     print_char_at(print_hextab[b>>4], at);
     print_char_at(print_hextab[b&$f], at+1);
 }
 
 // Print a single char
-void print_char(byte ch) {
+void print_char(char ch) {
     *(print_char_cursor++) = ch;
 }
 
 // Print a single char
-void print_char_at(byte ch, byte* at) {
+void print_char_at(char ch, char* at) {
     *(at) = ch;
 }
 
@@ -185,7 +185,7 @@ void print_cls() {
 }
 
 // Set the screen to print on. Also resets current line/char cursor.
-void print_set_screen(byte* screen) {
+void print_set_screen(char* screen) {
     print_screen = screen;
     print_line_cursor = print_screen;
     print_char_cursor = print_line_cursor;

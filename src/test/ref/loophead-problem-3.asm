@@ -28,7 +28,7 @@ main: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($a) a)
 mul16u: {
     .const b = $7b

@@ -178,16 +178,16 @@ compare: {
     sta.z ops
     sta.z ops+1
   __b6:
-    // print_sword(w1)
-    jsr print_sword
+    // print_sint(w1)
+    jsr print_sint
     // print_str(ops)
     jsr print_str
-    // print_sword(w2)
+    // print_sint(w2)
     lda.z w2
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda.z w2+1
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_char(r)
     lda.z r
     jsr print_char
@@ -330,9 +330,9 @@ print_char: {
     // }
     rts
 }
-// Print a signed word as HEX
-// print_sword(signed word zp($b) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp($b) w)
+print_sint: {
     .label w = $b
     // if(w<0)
     lda.z w+1
@@ -341,8 +341,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -359,22 +359,22 @@ print_sword: {
     sta.z w+1
     jmp __b2
 }
-// Print a word as HEX
-// print_word(word zp($b) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp($b) w)
+print_uint: {
     .label w = $b
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

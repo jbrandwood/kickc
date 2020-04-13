@@ -358,12 +358,12 @@ printEntry: {
     jsr print_str
     ldy #0
     lda (entry),y
-    sta.z print_word.w
+    sta.z print_uint.w
     iny
     lda (entry),y
-    sta.z print_word.w+1
-    // print_word((word)*entryBufDisk(entry))
-    jsr print_word
+    sta.z print_uint.w+1
+    // print_uint((word)*entryBufDisk(entry))
+    jsr print_uint
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -382,12 +382,12 @@ printEntry: {
     jsr print_str
     ldy #2
     lda (entry),y
-    sta.z print_word.w
+    sta.z print_uint.w
     iny
     lda (entry),y
-    sta.z print_word.w+1
-    // print_word((word)*entryBufEdit(entry))
-    jsr print_word
+    sta.z print_uint.w+1
+    // print_uint((word)*entryBufEdit(entry))
+    jsr print_uint
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -404,14 +404,14 @@ printEntry: {
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_word(*entryTsLen(entry))
+    // print_uint(*entryTsLen(entry))
     ldy #4
     lda (entry),y
-    sta.z print_word.w
+    sta.z print_uint.w
     iny
     lda (entry),y
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -430,12 +430,12 @@ printEntry: {
     jsr print_str
     ldy #6
     lda (entry),y
-    sta.z print_word.w
+    sta.z print_uint.w
     iny
     lda (entry),y
-    sta.z print_word.w+1
-    // print_word((word)*entryTsOrder(entry))
-    jsr print_word
+    sta.z print_uint.w+1
+    // print_uint((word)*entryTsOrder(entry))
+    jsr print_uint
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -452,11 +452,11 @@ printEntry: {
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entryTLastLink(entry))
+    // print_u8(*entryTLastLink(entry))
     ldy #8
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -473,11 +473,11 @@ printEntry: {
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entrySLastLink(entry))
+    // print_u8(*entrySLastLink(entry))
     ldy #9
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -494,11 +494,11 @@ printEntry: {
     lda #>str6
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entryBFlag(entry))
+    // print_u8(*entryBFlag(entry))
     ldy #$a
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -515,11 +515,11 @@ printEntry: {
     lda #>str7
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entryBError(entry))
+    // print_u8(*entryBError(entry))
     ldy #$b
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -536,14 +536,14 @@ printEntry: {
     lda #>str8
     sta.z print_str.str+1
     jsr print_str
-    // print_word(*entryUCross(entry))
+    // print_uint(*entryUCross(entry))
     ldy #$c
     lda (entry),y
-    sta.z print_word.w
+    sta.z print_uint.w
     iny
     lda (entry),y
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -560,11 +560,11 @@ printEntry: {
     lda #>str9
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entryBAddrLo(entry))
+    // print_u8(*entryBAddrLo(entry))
     ldy #$e
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -581,11 +581,11 @@ printEntry: {
     lda #>str10
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entryBAddrHi(entry))
+    // print_u8(*entryBAddrHi(entry))
     ldy #$f
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -602,11 +602,11 @@ printEntry: {
     lda #>str11
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entryTHi(entry))
+    // print_u8(*entryTHi(entry))
     ldy #$10
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -623,11 +623,11 @@ printEntry: {
     lda #>str12
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(*entryTLo(entry))
+    // print_u8(*entryTLo(entry))
     ldy #$11
     lda (entry),y
     tax
-    jsr print_byte
+    jsr print_u8
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -663,9 +663,9 @@ printEntry: {
     str12: .text "tlo         "
     .byte 0
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -700,16 +700,16 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(8) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(8) w)
+print_uint: {
     .label w = 8
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
@@ -857,7 +857,7 @@ initEntry: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a)
 mul8u: {
     .label mb = $c

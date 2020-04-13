@@ -150,25 +150,25 @@ print_mulf8s127: {
     ldy.z b
     jsr mulf8s127
     // c = mulf8s127(a,b)
-    // print_sbyte(a)
+    // print_s8(a)
     ldx.z a
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    // print_sbyte(a)
-    jsr print_sbyte
+    // print_s8(a)
+    jsr print_s8
     // print_char('*')
     lda #'*'
     jsr print_char
-    // print_sbyte(b)
+    // print_s8(b)
     ldx.z b
-    jsr print_sbyte
+    jsr print_s8
     // print_char('=')
     lda #'='
     jsr print_char
-    // print_sword(c)
-    jsr print_sword
+    // print_sint(c)
+    jsr print_sint
     // print_ln()
     jsr print_ln
     // }
@@ -197,9 +197,9 @@ print_ln: {
     // }
     rts
 }
-// Print a signed word as HEX
-// print_sword(signed word zp(7) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp(7) w)
+print_sint: {
     .label w = 7
     // if(w<0)
     lda.z w+1
@@ -208,8 +208,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -240,22 +240,22 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(7) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(7) w)
+print_uint: {
     .label w = 7
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -276,9 +276,9 @@ print_byte: {
     // }
     rts
 }
-// Print a signed byte as HEX
-// print_sbyte(signed byte register(X) b)
-print_sbyte: {
+// Print a signed char as HEX
+// print_s8(signed byte register(X) b)
+print_s8: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -286,8 +286,8 @@ print_sbyte: {
     lda #' '
     jsr print_char
   __b2:
-    // print_byte((byte)b)
-    jsr print_byte
+    // print_u8((char)b)
+    jsr print_u8
     // }
     rts
   __b1:
@@ -460,26 +460,26 @@ print_mulf8u127: {
     jsr mulf8u127
     // mulf8u127(a,b)
     // c = mulf8u127(a,b)
-    // print_byte(a)
+    // print_u8(a)
     tya
     tax
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    // print_byte(a)
-    jsr print_byte
+    // print_u8(a)
+    jsr print_u8
     // print_char('*')
     lda #'*'
     jsr print_char
-    // print_byte(b)
+    // print_u8(b)
     ldx.z b
-    jsr print_byte
+    jsr print_u8
     // print_char('=')
     lda #'='
     jsr print_char
-    // print_word(c)
-    jsr print_word
+    // print_uint(c)
+    jsr print_uint
     // print_ln()
     jsr print_ln
     // }

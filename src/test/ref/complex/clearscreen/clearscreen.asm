@@ -1007,7 +1007,7 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
   __b19:
-    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
+    // for( char i: 0..CORDIC_ITERATIONS_16-1)
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+
@@ -1081,7 +1081,7 @@ atan2_16: {
     sta.z yi+1
     jmp __b3
 }
-// Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = $e

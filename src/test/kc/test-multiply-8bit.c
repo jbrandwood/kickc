@@ -111,9 +111,9 @@ void mulf_tables_cmp() {
         if(*kc_sqr != *asm_sqr) {
             *BGCOL = 2;
             print_str("multiply table mismatch at ");
-            print_word((word)asm_sqr);
+            print_uint((word)asm_sqr);
             print_str(" / ");
-            print_word((word)kc_sqr);
+            print_uint((word)kc_sqr);
             return;
         }
         asm_sqr++;
@@ -149,15 +149,15 @@ void mul8u_compare() {
 
 void mul8u_error(byte a, byte b, word ms, word mn, word mf) {
   print_str("multiply mismatch ");
-  print_byte(a);
+  print_u8(a);
   print_str("*");
-  print_byte(b);
+  print_u8(b);
   print_str(" slow:");
-  print_word(ms);
+  print_uint(ms);
   print_str(" / normal:");
-  print_word(mn);
+  print_uint(mn);
   print_str(" / fast:");
-  print_word(mf);
+  print_uint(mf);
   print_ln();
 }
 
@@ -188,15 +188,15 @@ void mul8s_compare() {
 
 void mul8s_error(signed byte a, signed byte b, signed word ms, signed word mn, signed word mf) {
   print_str("signed multiply mismatch ");
-  print_sbyte(a);
+  print_s8(a);
   print_str("*");
-  print_sbyte(b);
+  print_s8(b);
   print_str(" slow:");
-  print_sword(ms);
+  print_sint(ms);
   print_str(" / normal:");
-  print_sword(mn);
+  print_sint(mn);
   print_str(" / fast:");
-  print_sword(mf);
+  print_sint(mf);
   print_ln();
 }
 

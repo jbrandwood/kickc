@@ -19,7 +19,7 @@ int main(void) {
     file->bufEdit[3] = 0xAA; // writes address 0x0000 (wrong!)
     ((char *)file->bufEdit)[4] = 0xCC; // writes address 0x4004 (right!)
     print_cls();
-    print_str("$0000="); print_byte(*(char *)0x0000); print_ln();
-    print_str("$4004="); print_byte(*(char *)0x4004); print_ln();
+    print_str("$0000="); print_u8(*(char *)0x0000); print_ln();
+    print_str("$4004="); print_u8(*(char *)0x4004); print_ln();
     return 0;
 }

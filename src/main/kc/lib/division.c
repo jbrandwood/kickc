@@ -5,23 +5,23 @@
 #include <division.h>
 
 // Remainder after signed 8 bit division
-byte rem8u =0;
+char rem8u =0;
 
-// Performs division on two 8 bit unsigned bytes
+// Performs division on two 8 bit unsigned chars
 // Returns dividend/divisor.
 // The remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-byte div8u(byte dividend, byte divisor) {
+char div8u(char dividend, char divisor) {
     return divr8u(dividend, divisor, 0);
 }
 
-// Performs division on two 8 bit unsigned bytes and an initial remainder
+// Performs division on two 8 bit unsigned chars and an initial remainder
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-byte divr8u(byte dividend, byte divisor, byte rem) {
-    byte quotient = 0;
-    for( byte i : 0..7) {
+char divr8u(char dividend, char divisor, char rem) {
+    char quotient = 0;
+    for( char i : 0..7) {
         rem = rem << 1;
         if( (dividend & $80) != 0 ) {
             rem = rem | 1;
@@ -38,15 +38,15 @@ byte divr8u(byte dividend, byte divisor, byte rem) {
 }
 
 // Remainder after unsigned 16-bit division
-word rem16u = 0;
+unsigned int rem16u = 0;
 
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-word divr16u(word dividend, word divisor, word rem) {
-    word quotient = 0;
-    for( byte i : 0..15) {
+unsigned int divr16u(unsigned int dividend, unsigned int divisor, unsigned int rem) {
+    unsigned int quotient = 0;
+    for( char i : 0..15) {
         rem = rem << 1;
         if( (>dividend & $80) != 0 ) {
             rem = rem | 1;
@@ -62,25 +62,25 @@ word divr16u(word dividend, word divisor, word rem) {
     return quotient;
 }
 
-// Performs division on two 16 bit unsigned words
+// Performs division on two 16 bit unsigned ints
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-word div16u(word dividend, word divisor) {
+unsigned int div16u(unsigned int dividend, unsigned int divisor) {
     return divr16u(dividend, divisor, 0);
 }
 
-// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-// The 16-bit word remainder can be found in rem16u after the division
-dword div32u16u(dword dividend, word divisor) {
-  word quotient_hi = divr16u(>dividend, divisor, 0);
-  word quotient_lo = divr16u(<dividend, divisor, rem16u);
-  dword quotient = { quotient_hi, quotient_lo};
+// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
+// The 16-bit unsigned int remainder can be found in rem16u after the division
+unsigned long div32u16u(unsigned long dividend, unsigned int divisor) {
+  unsigned int quotient_hi = divr16u(>dividend, divisor, 0);
+  unsigned int quotient_lo = divr16u(<dividend, divisor, rem16u);
+  unsigned long quotient = { quotient_hi, quotient_lo};
   return quotient;
 }
 
 // Remainder after signed 8 bit division
-signed byte rem8s = 0;
+signed char rem8s = 0;
 
 // Perform division on two signed 8-bit numbers
 // Returns dividend/divisor.
@@ -88,66 +88,66 @@ signed byte rem8s = 0;
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-signed byte div8s(signed byte dividend, signed byte divisor) {
-    byte neg = 0;
-    byte dividendu = 0;
+signed char div8s(signed char dividend, signed char divisor) {
+    char neg = 0;
+    char dividendu = 0;
     if(dividend<0) {
-      dividendu = (byte)-dividend;
+      dividendu = (char)-dividend;
       neg = 1;
     } else {
-      dividendu = (byte)dividend;
+      dividendu = (char)dividend;
     }
-    byte divisoru = 0;
+    char divisoru = 0;
     if(divisor<0) {
-        divisoru = (byte)-divisor;
+        divisoru = (char)-divisor;
         neg = neg ^ 1;
     } else {
-        divisoru = (byte)divisor;
+        divisoru = (char)divisor;
     }
-    byte resultu = div8u(dividendu, divisoru);
+    char resultu = div8u(dividendu, divisoru);
     if(neg==0) {
-        rem8s = (signed byte)rem8u;
-        return (signed byte)resultu;
+        rem8s = (signed char)rem8u;
+        return (signed char)resultu;
     } else {
-        rem8s = -(signed byte)rem8u;
-        return -(signed byte)resultu;
+        rem8s = -(signed char)rem8u;
+        return -(signed char)resultu;
     }
 }
 
 // Remainder after signed 16 bit division
-signed word rem16s = 0;
+signed int rem16s = 0;
 
 // Perform division on two signed 16-bit numbers with an initial remainder.
 // Returns dividend/divisor. The remainder will be set into the global variable rem16s.
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-signed word divr16s(signed word dividend, signed word divisor, signed word rem) {
-    byte neg = 0;
-    word dividendu = 0;
-    word remu = 0;
+signed int divr16s(signed int dividend, signed int divisor, signed int rem) {
+    char neg = 0;
+    unsigned int dividendu = 0;
+    unsigned int remu = 0;
     if(dividend<0 || rem<0) {
-      dividendu = (word)-dividend;
-      remu = (word)-rem;
+      dividendu = (unsigned int)-dividend;
+      remu = (unsigned int)-rem;
       neg = 1;
     } else {
-      dividendu = (word)dividend;
-      remu = (word)rem;
+      dividendu = (unsigned int)dividend;
+      remu = (unsigned int)rem;
     }
-    word divisoru = 0;
+    unsigned int divisoru = 0;
     if(divisor<0) {
-        divisoru = (word)-divisor;
+        divisoru = (unsigned int)-divisor;
         neg = neg ^ 1;
     } else {
-        divisoru = (word)divisor;
+        divisoru = (unsigned int)divisor;
     }
-    word resultu = divr16u(dividendu, divisoru, remu);
+    unsigned int resultu = divr16u(dividendu, divisoru, remu);
     if(neg==0) {
-        rem16s = (signed word)rem16u;
-        return (signed word)resultu;
+        rem16s = (signed int)rem16u;
+        return (signed int)resultu;
     } else {
-        rem16s = -(signed word)rem16u;
-        return -(signed word)resultu;
+        rem16s = -(signed int)rem16u;
+        return -(signed int)resultu;
     }
 }
 
@@ -157,6 +157,6 @@ signed word divr16s(signed word dividend, signed word divisor, signed word rem) 
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-signed word div16s(signed word dividend, signed word divisor) {
+signed int div16s(signed int dividend, signed int divisor) {
     return divr16s(dividend, divisor, 0);
 }

@@ -37,15 +37,15 @@ main: {
     lda #0
     sta.z j
   __b3:
-    // print_sword(words[j])
+    // print_sint(words[j])
     lda.z j
     asl
     tay
     lda words,y
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda words+1,y
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_ln()
     jsr print_ln
     // for(byte j: 0..8)
@@ -85,9 +85,9 @@ print_ln: {
     // }
     rts
 }
-// Print a signed word as HEX
-// print_sword(signed word zp(7) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp(7) w)
+print_sint: {
     .label w = 7
     // if(w<0)
     lda.z w+1
@@ -96,8 +96,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -128,22 +128,22 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(7) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(7) w)
+print_uint: {
     .label w = 7
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

@@ -1408,7 +1408,7 @@ keyboard_event_scan: {
     axs #-[8]
     stx.z keycode
   __b8:
-    // for(byte row : 0..7)
+    // for(char row : 0..7)
     inc.z row
     lda #8
     cmp.z row
@@ -1472,7 +1472,7 @@ keyboard_event_scan: {
   __b10:
     // keycode++;
     inc.z keycode
-    // for(byte col : 0..7)
+    // for(char col : 0..7)
     inx
     cpx #8
     bne __b9

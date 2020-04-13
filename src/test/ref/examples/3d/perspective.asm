@@ -50,27 +50,27 @@ do_perspective: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_sbyte(x)
+    // print_s8(x)
     ldx #x
-    jsr print_sbyte
+    jsr print_s8
     // print_str(",")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_sbyte(y)
+    // print_s8(y)
     ldx #y
-    jsr print_sbyte
+    jsr print_s8
     // print_str(",")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_sbyte(z)
+    // print_s8(z)
     ldx #z
-    jsr print_sbyte
+    jsr print_s8
     // print_str(") -> (")
     lda #<str3
     sta.z print_str.str
@@ -80,8 +80,8 @@ do_perspective: {
     // perspective(x, y, z)
     jsr perspective
     ldx xr
-    // print_byte((byte)*xr)
-    jsr print_byte
+    // print_u8((byte)*xr)
+    jsr print_u8
     // print_str(",")
     lda #<str1
     sta.z print_str.str
@@ -89,8 +89,8 @@ do_perspective: {
     sta.z print_str.str+1
     jsr print_str
     ldx yr
-    // print_byte((byte)*yr)
-    jsr print_byte
+    // print_u8((byte)*yr)
+    jsr print_u8
     // print_str(")")
     lda #<str5
     sta.z print_str.str
@@ -165,9 +165,9 @@ print_str: {
   !:
     jmp __b1
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -236,9 +236,9 @@ perspective: {
     // }
     rts
 }
-// Print a signed byte as HEX
-// print_sbyte(signed byte register(X) b)
-print_sbyte: {
+// Print a signed char as HEX
+// print_s8(signed byte register(X) b)
+print_s8: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -246,8 +246,8 @@ print_sbyte: {
     lda #' '
     jsr print_char
   __b2:
-    // print_byte((byte)b)
-    jsr print_byte
+    // print_u8((char)b)
+    jsr print_u8
     // }
     rts
   __b1:

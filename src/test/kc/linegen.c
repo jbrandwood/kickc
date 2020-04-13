@@ -12,28 +12,28 @@ void main() {
     lin16u_gen(0, $6488, lintab3, 20);
     print_cls();
     print_str("   ");
-    print_word(557);
+    print_uint(557);
     print_str(" ");
-    print_word(31179);
+    print_uint(31179);
     print_str(" ");
-    print_word(0);
+    print_uint(0);
     print_ln();
     for(byte i=0; i<20; i++) {
-        print_byte(i);
+        print_u8(i);
         print_str(" ");
-        print_word(lintab1[i]);
+        print_uint(lintab1[i]);
         print_str(" ");
-        print_word(lintab2[i]);
+        print_uint(lintab2[i]);
         print_str(" ");
-        print_word(lintab3[i]);
+        print_uint(lintab3[i]);
         print_ln();
     }
     print_str("   ");
-    print_word(29793);
+    print_uint(29793);
     print_str(" ");
-    print_word(63361);
+    print_uint(63361);
     print_str(" ");
-    print_word($6488);
+    print_uint($6488);
     print_ln();
 }
 

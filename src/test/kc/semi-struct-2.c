@@ -143,43 +143,43 @@ void initEntry(byte* entry, byte n) {
 // Print the contents of a file entry
 void printEntry(byte* entry) {
     print_str("bufdisk   ");
-    print_word((word)*entryBufDisk(entry));
+    print_uint((word)*entryBufDisk(entry));
     print_ln();
     print_str("bufedit   ");
-    print_word((word)*entryBufEdit(entry));
+    print_uint((word)*entryBufEdit(entry));
     print_ln();
     print_str("tslen     ");
-    print_word(*entryTsLen(entry));
+    print_uint(*entryTsLen(entry));
     print_ln();
     print_str("tsorder   ");
-    print_word((word)*entryTsOrder(entry));
+    print_uint((word)*entryTsOrder(entry));
     print_ln();
     print_str("tlastlink   ");
-    print_byte(*entryTLastLink(entry));
+    print_u8(*entryTLastLink(entry));
     print_ln();
     print_str("slastlink   ");
-    print_byte(*entrySLastLink(entry));
+    print_u8(*entrySLastLink(entry));
     print_ln();
     print_str("bflag       ");
-    print_byte(*entryBFlag(entry));
+    print_u8(*entryBFlag(entry));
     print_ln();
     print_str("berror      ");
-    print_byte(*entryBError(entry));
+    print_u8(*entryBError(entry));
     print_ln();
     print_str("ucross    ");
-    print_word(*entryUCross(entry));
+    print_uint(*entryUCross(entry));
     print_ln();
     print_str("baddrlo     ");
-    print_byte(*entryBAddrLo(entry));
+    print_u8(*entryBAddrLo(entry));
     print_ln();
     print_str("baddrhi     ");
-    print_byte(*entryBAddrHi(entry));
+    print_u8(*entryBAddrHi(entry));
     print_ln();
     print_str("thi         ");
-    print_byte(*entryTHi(entry));
+    print_u8(*entryTHi(entry));
     print_ln();
     print_str("tlo         ");
-    print_byte(*entryTLo(entry));
+    print_u8(*entryTLo(entry));
     print_ln();
 }
 

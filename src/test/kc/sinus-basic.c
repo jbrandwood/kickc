@@ -17,7 +17,7 @@ void main() {
         sinFAC();
         mulFACbyMEM(f_127);
         addMEMtoFAC(f_127);
-        print_word(getFAC());
+        print_uint(getFAC());
         print_ln();
     }
 }

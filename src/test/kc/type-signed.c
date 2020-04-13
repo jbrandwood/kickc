@@ -8,9 +8,9 @@ void main() {
     for( byte i : 0..5 ) {
         a += -7;
         b += 321;
-        print_sword(a);
+        print_sint(a);
         print_char(' ');
-        print_word(b);
+        print_uint(b);
         print_ln();
     }
 

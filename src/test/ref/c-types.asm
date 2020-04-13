@@ -32,42 +32,42 @@ testLong: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_dword(u)
+    // print_ulong(u)
     lda #<u
-    sta.z print_dword.dw
+    sta.z print_ulong.dw
     lda #>u
-    sta.z print_dword.dw+1
+    sta.z print_ulong.dw+1
     lda #<u>>$10
-    sta.z print_dword.dw+2
+    sta.z print_ulong.dw+2
     lda #>u>>$10
-    sta.z print_dword.dw+3
-    jsr print_dword
+    sta.z print_ulong.dw+3
+    jsr print_ulong
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_sdword(n)
+    // print_slong(n)
     lda #<n
-    sta.z print_sdword.dw
+    sta.z print_slong.dw
     lda #>n
-    sta.z print_sdword.dw+1
+    sta.z print_slong.dw+1
     lda #<n>>$10
-    sta.z print_sdword.dw+2
+    sta.z print_slong.dw+2
     lda #>n>>$10
-    sta.z print_sdword.dw+3
-    jsr print_sdword
+    sta.z print_slong.dw+3
+    jsr print_slong
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_sdword(s)
+    // print_slong(s)
     lda #<s
-    sta.z print_sdword.dw
+    sta.z print_slong.dw
     lda #>s
-    sta.z print_sdword.dw+1
+    sta.z print_slong.dw+1
     lda #<s>>$10
-    sta.z print_sdword.dw+2
+    sta.z print_slong.dw+2
     lda #>s>>$10
-    sta.z print_sdword.dw+3
-    jsr print_sdword
+    sta.z print_slong.dw+3
+    jsr print_slong
     // print_ln()
     jsr print_ln
     // }
@@ -98,9 +98,9 @@ print_ln: {
     // }
     rts
 }
-// Print a signed dword as HEX
-// print_sdword(signed dword zp(4) dw)
-print_sdword: {
+// Print a signed long as HEX
+// print_slong(signed dword zp(4) dw)
+print_slong: {
     .label dw = 4
     // if(dw<0)
     lda.z dw+3
@@ -109,8 +109,8 @@ print_sdword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_dword((dword)dw)
-    jsr print_dword
+    // print_ulong((unsigned long)dw)
+    jsr print_ulong
     // }
     rts
   __b1:
@@ -151,41 +151,41 @@ print_char: {
     // }
     rts
 }
-// Print a dword as HEX
-// print_dword(dword zp(4) dw)
-print_dword: {
+// Print a unsigned long as HEX
+// print_ulong(dword zp(4) dw)
+print_ulong: {
     .label dw = 4
-    // print_word(>dw)
+    // print_uint(>dw)
     lda.z dw+2
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+3
-    sta.z print_word.w+1
-    jsr print_word
-    // print_word(<dw)
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_uint(<dw)
     lda.z dw
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp($a) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp($a) w)
+print_uint: {
     .label w = $a
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -248,30 +248,30 @@ testInt: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_word(u)
+    // print_uint(u)
     lda #<u
-    sta.z print_word.w
+    sta.z print_uint.w
     lda #>u
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_sword(n)
+    // print_sint(n)
     lda #<n
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda #>n
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_sword(s)
+    // print_sint(s)
     lda #<s
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda #>s
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_ln()
     jsr print_ln
     // }
@@ -279,9 +279,9 @@ testInt: {
     str: .text "int: "
     .byte 0
 }
-// Print a signed word as HEX
-// print_sword(signed word zp($a) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp($a) w)
+print_sint: {
     .label w = $a
     // if(w<0)
     lda.z w+1
@@ -290,8 +290,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -322,30 +322,30 @@ testShort: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_word(u)
+    // print_uint(u)
     lda #<u
-    sta.z print_word.w
+    sta.z print_uint.w
     lda #>u
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_sword(n)
+    // print_sint(n)
     lda #<n
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda #>n
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_sword(s)
+    // print_sint(s)
     lda #<s
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda #>s
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_ln()
     jsr print_ln
     // }
@@ -367,20 +367,20 @@ testChar: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(u)
+    // print_u8(u)
     ldx #u
-    jsr print_byte
+    jsr print_u8
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_byte(n)
+    // print_u8(n)
     ldx #n
-    jsr print_byte
+    jsr print_u8
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_sbyte(s)
-    jsr print_sbyte
+    // print_s8(s)
+    jsr print_s8
     // print_ln()
     lda #<$400
     sta.z print_line_cursor
@@ -392,15 +392,15 @@ testChar: {
     str: .text "char: "
     .byte 0
 }
-// Print a signed byte as HEX
-print_sbyte: {
+// Print a signed char as HEX
+print_s8: {
     .const b = -testChar.s
     // print_char('-')
     lda #'-'
     jsr print_char
-    // print_byte((byte)b)
+    // print_u8((char)b)
     ldx #b
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }

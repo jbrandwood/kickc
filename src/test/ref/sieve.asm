@@ -77,12 +77,12 @@ main: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word_decimal(COUNT)
+    // print_uint_decimal(COUNT)
     lda #<COUNT
-    sta.z print_word_decimal.w
+    sta.z print_uint_decimal.w
     lda #>COUNT
-    sta.z print_word_decimal.w+1
-    jsr print_word_decimal
+    sta.z print_uint_decimal.w+1
+    jsr print_uint_decimal
     // print_ln()
     jsr print_ln
     // memset(sieve, 0, COUNT)
@@ -154,16 +154,16 @@ main: {
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_word_decimal(sec100s)
-    jsr print_word_decimal
+    // print_uint_decimal(sec100s)
+    jsr print_uint_decimal
     // print_str(" cycles: ")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_dword_decimal(cyclecount)
-    jsr print_dword_decimal
+    // print_ulong_decimal(cyclecount)
+    jsr print_ulong_decimal
     // print_ln()
     jsr print_ln
     lda #<2
@@ -207,13 +207,13 @@ main: {
     lda (__34),y
     cmp #0
     bne __b11
-    // print_word_decimal(i)
+    // print_uint_decimal(i)
     lda.z print_char_cursor_1
     sta.z print_char_cursor
     lda.z print_char_cursor_1+1
     sta.z print_char_cursor+1
-    // print_word_decimal(i)
-    jsr print_word_decimal
+    // print_uint_decimal(i)
+    jsr print_uint_decimal
     // print_char(' ')
     jsr print_char
   __b11:
@@ -317,9 +317,9 @@ print_char: {
     // }
     rts
 }
-// Print a word as DECIMAL
-// print_word_decimal(word zp(4) w)
-print_word_decimal: {
+// Print a unsigned int as DECIMAL
+// print_uint_decimal(word zp(4) w)
+print_uint_decimal: {
     .label w = 4
     // utoa(w, decimal_digits, DECIMAL)
     lda.z w
@@ -509,9 +509,9 @@ print_ln: {
     // }
     rts
 }
-// Print a dword as DECIMAL
-// print_dword_decimal(dword zp($f) w)
-print_dword_decimal: {
+// Print a unsigned long as DECIMAL
+// print_ulong_decimal(dword zp($f) w)
+print_ulong_decimal: {
     .label w = $f
     // ultoa(w, decimal_digits_long, DECIMAL)
     jsr ultoa
@@ -674,8 +674,8 @@ ultoa_append: {
     sta.z value+3
     jmp __b1
 }
-// Divide unsigned 32-bit dword dividend with a 16-bit word divisor
-// The 16-bit word remainder can be found in rem16u after the division
+// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
+// The 16-bit unsigned int remainder can be found in rem16u after the division
 // div32u16u(dword zp($f) dividend)
 div32u16u: {
     .label divisor = CLOCKS_PER_SEC/$64
@@ -718,7 +718,7 @@ div32u16u: {
     // }
     rts
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -777,7 +777,7 @@ divr16u: {
     sbc #>div32u16u.divisor
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1
@@ -900,7 +900,7 @@ print_cls: {
   RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
   // Values of decimal digits
   RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
-  // Digits used for storing the decimal word
+  // Digits used for storing the decimal unsigned int
   decimal_digits: .fill 6, 0
-  // Digits used for storing the decimal word
+  // Digits used for storing the decimal unsigned int
   decimal_digits_long: .fill $b, 0

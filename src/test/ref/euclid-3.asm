@@ -82,15 +82,15 @@ main: {
 print_euclid: {
     .label b = 3
     .label a = 2
-    // print_byte(a)
+    // print_u8(a)
     ldx.z a
-    jsr print_byte
+    jsr print_u8
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_byte(b)
+    // print_u8(b)
     ldx.z b
-    jsr print_byte
+    jsr print_u8
     // print_char(' ')
     lda #' '
     jsr print_char
@@ -99,9 +99,9 @@ print_euclid: {
     jsr euclid
     // euclid(a,b)
     lda.z euclid.a
-    // print_byte(euclid(a,b))
+    // print_u8(euclid(a,b))
     tax
-    jsr print_byte
+    jsr print_u8
     // print_ln()
     jsr print_ln
     // }
@@ -130,9 +130,9 @@ print_ln: {
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

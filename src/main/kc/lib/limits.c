@@ -2,7 +2,7 @@
 
 //TODO: Convert all limits to macros
 
-// Number of bits in a char object (byte)
+// Number of bits in a char object
 const char CHAR_BIT = 8;
 // Minimum value of char type
 const char CHAR_MIN = 0;

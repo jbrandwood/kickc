@@ -18,13 +18,13 @@ void test_8u() {
         byte dividend = dividends[i];
         byte divisor = divisors[i];
         byte res = div8u(dividend, divisor);
-        print_byte(dividend);
+        print_u8(dividend);
         print_str(" / ");
-        print_byte(divisor);
+        print_u8(divisor);
         print_str(" = ");
-        print_byte(res);
+        print_u8(res);
         print_str(" ");
-        print_byte(rem8u);
+        print_u8(rem8u);
         print_ln();
     }
 }
@@ -36,13 +36,13 @@ void test_16u() {
         word dividend = dividends[i];
         word divisor = divisors[i];
         word res = div16u(dividend, divisor);
-        print_word(dividend);
+        print_uint(dividend);
         print_str(" / ");
-        print_word(divisor);
+        print_uint(divisor);
         print_str(" = ");
-        print_word(res);
+        print_uint(res);
         print_str(" ");
-        print_word(rem16u);
+        print_uint(rem16u);
         print_ln();
     }
 }
@@ -54,13 +54,13 @@ void test_8s() {
         signed byte dividend = dividends[i];
         signed byte divisor = divisors[i];
         signed byte res = div8s(dividend, divisor);
-        print_sbyte(dividend);
+        print_s8(dividend);
         print_str(" / ");
-        print_sbyte(divisor);
+        print_s8(divisor);
         print_str(" = ");
-        print_sbyte(res);
+        print_s8(res);
         print_str(" ");
-        print_sbyte(rem8s);
+        print_s8(rem8s);
         print_ln();
     }
 }
@@ -72,13 +72,13 @@ void test_16s() {
         signed word dividend = dividends[i];
         signed word divisor = divisors[i];
         signed word res = div16s(dividend, divisor);
-        print_sword(dividend);
+        print_sint(dividend);
         print_str(" / ");
-        print_sword(divisor);
+        print_sint(divisor);
         print_str(" = ");
-        print_sword(res);
+        print_sint(res);
         print_str(" ");
-        print_sword(rem16s);
+        print_sint(rem16s);
         print_ln();
     }
 }

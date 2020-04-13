@@ -21,7 +21,7 @@
 
 // Keycodes for each screen code character from $00-$3f.
 // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
-const byte keyboard_char_keycodes[] = {
+const char keyboard_char_keycodes[] = {
     /*@*/KEY_AT,    /*a*/KEY_A,   /*b*/KEY_B,        /*c*/KEY_C,         /*d*/KEY_D,     /*e*/KEY_E,      /*f*/KEY_F,        /*g*/KEY_G,
     /*h*/KEY_H,     /*i*/KEY_I,   /*j*/KEY_J,        /*k*/KEY_K,         /*l*/KEY_L,     /*m*/KEY_M,      /*n*/KEY_N,        /*o*/KEY_O,
     /*p*/KEY_P,     /*q*/KEY_Q,   /*r*/KEY_R,        /*s*/KEY_S,         /*t*/KEY_T,     /*u*/KEY_U,      /*v*/KEY_V,        /*w*/KEY_W,
@@ -33,10 +33,10 @@ const byte keyboard_char_keycodes[] = {
 };
 
 // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
-byte keyboard_matrix_row_bitmask[8] = { %11111110, %11111101, %11111011, %11110111, %11101111, %11011111, %10111111, %01111111 };
+char keyboard_matrix_row_bitmask[8] = { %11111110, %11111101, %11111011, %11110111, %11101111, %11011111, %10111111, %01111111 };
 
 // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
-byte keyboard_matrix_col_bitmask[8] = { %00000001, %00000010, %00000100, %00001000, %00010000, %00100000, %01000000, %10000000 };
+char keyboard_matrix_col_bitmask[8] = { %00000001, %00000010, %00000100, %00001000, %00010000, %00100000, %01000000, %10000000 };
 
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 void keyboard_init() {
@@ -48,7 +48,7 @@ void keyboard_init() {
 
 // Check if any key is currently pressed on the keyboard matrix
 // Return 0 if no key is pressed and not 0 if any key is pressed
-byte keyboard_matrix_any(void) {
+char keyboard_matrix_any(void) {
     *CIA1_PORT_A = 0;
     return ~*CIA1_PORT_B;
 }
@@ -58,9 +58,9 @@ byte keyboard_matrix_any(void) {
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-byte keyboard_matrix_read(byte rowid) {
+char keyboard_matrix_read(char rowid) {
     *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid];
-    byte row_pressed_bits = ~*CIA1_PORT_B;
+    char row_pressed_bits = ~*CIA1_PORT_B;
     return row_pressed_bits;
 }
 
@@ -68,9 +68,9 @@ byte keyboard_matrix_read(byte rowid) {
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-byte keyboard_key_pressed(byte key) {
-    byte colidx = key&7;
-    byte rowidx = key>>3;
+char keyboard_key_pressed(char key) {
+    char colidx = key&7;
+    char rowidx = key>>3;
     return keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx];
 }
 
@@ -78,47 +78,47 @@ byte keyboard_key_pressed(byte key) {
 // ch is the character to get the key code for ($00-$3f)
 // Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
-byte keyboard_get_keycode(byte ch) {
+char keyboard_get_keycode(char ch) {
     return keyboard_char_keycodes[ch];
 }
 
 // Keyboard event buffer. Contains keycodes for key presses/releases. Presses are represented by the keycode. Releases by keycode | $40. The buffer is filled by keyboard_scan()
-byte keyboard_events[8];
+char keyboard_events[8];
 // Keyboard event buffer size. The number of events currently in the event buffer
-byte keyboard_events_size = 0;
+char keyboard_events_size = 0;
 // Current keyboard modifiers (left shift, right shift, ctrl, commodore)
-byte keyboard_modifiers = 0;
+char keyboard_modifiers = 0;
 // Left shift is pressed
-const byte KEY_MODIFIER_LSHIFT = 1;
+const char KEY_MODIFIER_LSHIFT = 1;
 // Right shift is pressed
-const byte KEY_MODIFIER_RSHIFT = 2;
+const char KEY_MODIFIER_RSHIFT = 2;
 // CTRL is pressed
-const byte KEY_MODIFIER_CTRL = 4;
+const char KEY_MODIFIER_CTRL = 4;
 // Commodore is pressed
-const byte KEY_MODIFIER_COMMODORE = 8;
+const char KEY_MODIFIER_COMMODORE = 8;
 // Any shift is pressed
-const byte KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT;
+const char KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT;
 // The values scanned values for each row. Set by keyboard_scan() and used by keyboard_get_event()
-byte keyboard_scan_values[8];
+char keyboard_scan_values[8];
 
 // Scans the entire matrix to determine which keys have been pressed/depressed.
 // Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
 // Handles debounce and only generates events when the status of a key changes.
 // Also stores current status of modifiers in keyboard_modifiers.
 void keyboard_event_scan() {
-    byte keycode = 0;
-    for(byte row : 0..7) {
-        byte row_scan = keyboard_matrix_read(row);
+    char keycode = 0;
+    for(char row : 0..7) {
+        char row_scan = keyboard_matrix_read(row);
         if(row_scan!=keyboard_scan_values[row]) {
             // Something has changed on the keyboard row - check each column
-            for(byte col : 0..7){
+            for(char col : 0..7){
                 // XOR of row scan with the last seen row scan AND'ed with the col bitmask will be non-0 if the key status is changed
                 if(((row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col])!=0) {
                     // Key(row, col) status has changed. We have an event.
                     // Only process event if there is still room in the buffer
                     if(keyboard_events_size!=8) {
                         // AND of row scan and bit mask determines if key is pressed or released
-                        byte event_type = row_scan&keyboard_matrix_col_bitmask[col];
+                        char event_type = row_scan&keyboard_matrix_col_bitmask[col];
                         if(event_type==0) {
                             // Key released
                             keyboard_events[keyboard_events_size++] = keycode|$40;
@@ -155,15 +155,15 @@ void keyboard_event_scan() {
 
 // Determine if a specific key is currently pressed based on the last keyboard_event_scan()
 // Returns 0 is not pressed and non-0 if pressed
-byte keyboard_event_pressed(byte keycode) {
-    byte row_bits = keyboard_scan_values[keycode>>3];
+char keyboard_event_pressed(char keycode) {
+    char row_bits = keyboard_scan_values[keycode>>3];
     return row_bits & keyboard_matrix_col_bitmask[keycode&7];
 }
 
 // Get the next event from the keyboard event buffer.
 // Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
 // The buffer is filled by keyboard_event_scan()
-byte keyboard_event_get() {
+char keyboard_event_get() {
     if(keyboard_events_size==0) {
         return $ff;
     } else {

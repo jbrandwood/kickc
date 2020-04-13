@@ -182,7 +182,7 @@ atan2_8: {
     sbc CORDIC_ATAN2_ANGLES_8,y
     sta.z angle
   __b14:
-    // for( byte i: 0..CORDIC_ITERATIONS_8-1)
+    // for( char i: 0..CORDIC_ITERATIONS_8-1)
     inc.z i
     lda #CORDIC_ITERATIONS_8-1+1
     cmp.z i

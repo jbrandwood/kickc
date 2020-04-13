@@ -425,13 +425,13 @@ progress_inc: {
     // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
-// word = FAC
-// Get the value of the FAC (floating point accumulator) as an integer 16bit word
+// unsigned int = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
 // Destroys the value in the FAC in the process
 getFAC: {
     .label return = $13
     // asm
-    // Load FAC (floating point accumulator) integer part into word register Y,A
+    // Load FAC (floating point accumulator) integer part into unsigned int register Y,A
     jsr $b1aa
     sty memLo
     sta memHi
@@ -445,7 +445,7 @@ getFAC: {
 }
 // FAC = MEM+FAC
 // Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 addMEMtoFAC: {
     // *memLo = <mem
     lda #<gen_sintab.f_min
@@ -462,7 +462,7 @@ addMEMtoFAC: {
 }
 // FAC = MEM*FAC
 // Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 // mulFACbyMEM(byte* zp($13) mem)
 mulFACbyMEM: {
     .label mem = $13
@@ -492,7 +492,7 @@ sinFAC: {
 }
 // FAC = MEM/FAC
 // Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-// Reads 5 bytes from memory
+// Reads 5 chars from memory
 // divMEMbyFAC(byte* zp($13) mem)
 divMEMbyFAC: {
     .label mem = $13
@@ -511,8 +511,8 @@ divMEMbyFAC: {
     // }
     rts
 }
-// FAC = word
-// Set the FAC (floating point accumulator) to the integer value of a 16bit word
+// FAC = unsigned int
+// Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
 // setFAC(word zp($13) w)
 setFAC: {
     .label prepareMEM1_mem = $13
@@ -526,7 +526,7 @@ setFAC: {
     // *memHi = >mem
     sta memHi
     // asm
-    // Load word register Y,A into FAC (floating point accumulator)
+    // Load unsigned int register Y,A into FAC (floating point accumulator)
     ldy memLo
     jsr $b391
     // }
@@ -534,7 +534,7 @@ setFAC: {
 }
 // MEM = FAC
 // Stores the value of the FAC to memory
-// Stores 5 bytes (means it is necessary to allocate 5 bytes to avoid clobbering other data using eg. byte[] mem = {0, 0, 0, 0, 0};)
+// Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
 // setMEMtoFAC(byte* zp($13) mem)
 setMEMtoFAC: {
     .label mem = $13

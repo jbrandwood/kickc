@@ -403,7 +403,7 @@ bitmap_line: {
     ror
     sta.z e
   __b6:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda.z y
     tax
     jsr bitmap_plot
@@ -456,7 +456,7 @@ bitmap_line: {
     cmp.z y2
     bne __b6
   __b3:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda.z y
     tax
     jsr bitmap_plot
@@ -471,7 +471,7 @@ bitmap_line: {
     ror
     sta.z e1
   __b9:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda.z y
     tax
     jsr bitmap_plot
@@ -525,7 +525,7 @@ bitmap_line: {
     bne __b9
     jmp __b3
   __b4:
-    // bitmap_plot(x,(byte)y)
+    // bitmap_plot(x,(char)y)
     lda.z y
     tax
     jsr bitmap_plot
@@ -537,7 +537,7 @@ bitmap_plot: {
     .label __1 = $22
     .label plotter = $18
     .label x = $f
-    // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -1083,7 +1083,7 @@ rotate: {
     // }
     rts
 }
-// Fast multiply two signed words to a signed double word result
+// Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zp($18) a, signed word zp($1e) b)
 mulf16s: {
@@ -1095,7 +1095,7 @@ mulf16s: {
     .label return = $b
     .label a = $18
     .label b = $1e
-    // mulf16u((word)a, (word)b)
+    // mulf16u((unsigned int)a, (unsigned int)b)
     lda.z a
     sta.z mulf16u.a
     lda.z a+1
@@ -1105,7 +1105,7 @@ mulf16s: {
     lda.z b+1
     sta.z mulf16u.b+1
     jsr mulf16u
-    // m = mulf16u((word)a, (word)b)
+    // m = mulf16u((unsigned int)a, (unsigned int)b)
     // if(a<0)
     lda.z a+1
     bpl __b1
@@ -1114,7 +1114,7 @@ mulf16s: {
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(word)b
+    // >m = (>m)-(unsigned int)b
     lda.z __16
     sec
     sbc.z b
@@ -1135,7 +1135,7 @@ mulf16s: {
     sta.z __13
     lda.z m+3
     sta.z __13+1
-    // >m = (>m)-(word)a
+    // >m = (>m)-(unsigned int)a
     lda.z __17
     sec
     sbc.z a
@@ -1148,11 +1148,11 @@ mulf16s: {
     lda.z __17+1
     sta.z m+3
   __b2:
-    // (signed dword)m
+    // (signed long)m
     // }
     rts
 }
-// Fast multiply two unsigned words to a double word result
+// Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
 // mulf16u(word zp($22) a, word zp($24) b)
 mulf16u: {
@@ -1367,7 +1367,7 @@ bitmap_init: {
     bne __b2
     lda #$80
   __b2:
-    // for(byte x : 0..255)
+    // for(char x : 0..255)
     inx
     cpx #0
     bne __b1
@@ -1403,7 +1403,7 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
   __b4:
-    // for(byte y : 0..255)
+    // for(char y : 0..255)
     inx
     cpx #0
     bne __b3
@@ -1438,7 +1438,7 @@ mulf_init: {
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
   __b1:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne __b2
@@ -1457,7 +1457,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
   __b5:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne __b6
@@ -1497,7 +1497,7 @@ mulf_init: {
     lda #1
     sta.z dir
   __b8:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
@@ -1542,7 +1542,7 @@ mulf_init: {
     bcc !+
     inc.z sqr+1
   !:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     inc.z sqr1_lo
     bne !+
     inc.z sqr1_lo+1

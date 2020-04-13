@@ -12,7 +12,7 @@ void main() {
         signed byte sb = sintabb[i];
         signed word sw = *(sintabw+(word)i);
         signed byte sd = sb-(signed byte)>sw;
-        print_sbyte(sd);
+        print_s8(sd);
         print_str("  ");
     }
 }

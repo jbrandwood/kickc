@@ -14,5 +14,5 @@ void main(){
     file->bufEdit = 4;
     word* ptrw = (WORD *)(file->bufEdit + 30);
     uSize = *ptrw;
-    print_word(uSize);
+    print_uint(uSize);
 }

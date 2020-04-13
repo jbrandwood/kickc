@@ -38,16 +38,16 @@ void main() {
 
 void do_perspective(signed char x, signed char y, signed char z) {
 	print_str("(");
-	print_sbyte(x);
+	print_s8(x);
 	print_str(",");
-	print_sbyte(y);	
+	print_s8(y);
 	print_str(",");
-	print_sbyte(z);	
+	print_s8(z);
 	print_str(") -> (");
 	perspective(x, y, z);
-	print_byte((byte)*xr);	
+	print_u8((byte)*xr);
 	print_str(",");
-	print_byte((byte)*yr);	
+	print_u8((byte)*yr);
 	print_str(")");
 	print_ln();	
 }

@@ -15,7 +15,7 @@
   .const NUM_SQUARES = $30
   // Head of the heap. Moved backward each malloc()
   .label heap_head = $15
-  // Squares for each byte value SQUARES[i] = i*i
+  // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
   .label SQUARES = $17
   .label SCREEN_DIST = $19
@@ -442,7 +442,7 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
   __b19:
-    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
+    // for( char i: 0..CORDIC_ITERATIONS_16-1)
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+
@@ -643,7 +643,7 @@ init_dist_screen: {
     sbc #$18
     jmp __b4
 }
-// Find the (integer) square root of a word value
+// Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zp($20) val)
@@ -670,12 +670,12 @@ sqrt: {
     sta.z __3+1
     lsr.z __1+1
     ror.z __1
-    // (byte)(found-SQUARES)
+    // (char)(found-SQUARES)
     lda.z __1
     // }
     rts
 }
-// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
+// Searches an array of nitems unsigned ints, the initial member of which is pointed to by base, for a member that matches the value key.
 // - key - The value to look for
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
@@ -770,7 +770,7 @@ bsearch16u: {
     tax
     jmp __b3
 }
-// Find the square of a byte value
+// Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
@@ -792,13 +792,13 @@ sqr: {
 init_squares: {
     .label squares = $13
     .label sqr = $24
-    // malloc(NUM_SQUARES*sizeof(word))
+    // malloc(NUM_SQUARES*sizeof(unsigned int))
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta.z malloc.size
     lda #>NUM_SQUARES*SIZEOF_WORD
     sta.z malloc.size+1
     jsr malloc
-    // malloc(NUM_SQUARES*sizeof(word))
+    // malloc(NUM_SQUARES*sizeof(unsigned int))
     // squares = SQUARES
     lda.z SQUARES
     sta.z squares
@@ -809,7 +809,7 @@ init_squares: {
     sta.z sqr+1
     tax
   __b1:
-    // for(byte i=0;i<NUM_SQUARES;i++)
+    // for(char i=0;i<NUM_SQUARES;i++)
     cpx #NUM_SQUARES
     bcc __b2
     // }
@@ -843,11 +843,11 @@ init_squares: {
     bcc !+
     inc.z sqr+1
   !:
-    // for(byte i=0;i<NUM_SQUARES;i++)
+    // for(char i=0;i<NUM_SQUARES;i++)
     inx
     jmp __b1
 }
-// Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 // malloc(word zp($17) size)
 malloc: {

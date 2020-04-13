@@ -2327,7 +2327,7 @@ bitmap_line_ydxd: {
 bitmap_clear: {
     .label bitmap = 4
     .label y = $b
-    // (byte*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
+    // (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap
     lda bitmap_plot_xhi
@@ -2346,11 +2346,11 @@ bitmap_clear: {
     bne !+
     inc.z bitmap+1
   !:
-    // for( byte x: 0..199 )
+    // for( char x: 0..199 )
     inx
     cpx #$c8
     bne __b2
-    // for( byte y: 0..39 )
+    // for( char y: 0..39 )
     inc.z y
     lda #$28
     cmp.z y
@@ -2385,7 +2385,7 @@ bitmap_init: {
     bne __b2
     ldy #$80
   __b2:
-    // for(byte x : 0..255)
+    // for(char x : 0..255)
     inx
     cpx #0
     bne __b1
@@ -2420,7 +2420,7 @@ bitmap_init: {
     adc #>$28*8
     sta.z yoffs+1
   __b4:
-    // for(byte y : 0..255)
+    // for(char y : 0..255)
     inx
     cpx #0
     bne __b3

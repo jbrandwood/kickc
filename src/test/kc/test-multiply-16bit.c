@@ -74,15 +74,15 @@ void mul16u_compare() {
 
 void mul16u_error(word a, word b, dword ms, dword mn, dword mf) {
   print_str("multiply mismatch ");
-  print_word(a);
+  print_uint(a);
   print_str("*");
-  print_word(b);
+  print_uint(b);
   print_str(" slow:");
-  print_dword(ms);
+  print_ulong(ms);
   print_str(" / normal:");
-  print_dword(mn);
+  print_ulong(mn);
   print_str(" / fast:");
-  print_dword(mf);
+  print_ulong(mf);
   print_ln();
 }
 
@@ -119,14 +119,14 @@ void mul16s_compare() {
 
 void mul16s_error(signed word a, signed word b, signed dword ms, signed dword mn, signed dword mf) {
   print_str("signed word multiply mismatch ");
-  print_sword(a);
+  print_sint(a);
   print_str("*");
-  print_sword(b);
+  print_sint(b);
   print_str(" slow:");
-  print_sdword(ms);
+  print_slong(ms);
   print_str(" / normal:");
-  print_sdword(mn);
+  print_slong(mn);
   print_str(" / fast:");
-  print_sdword(mf);
+  print_slong(mf);
   print_ln();
 }

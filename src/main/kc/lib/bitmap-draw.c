@@ -4,16 +4,16 @@
 #include <bitmap-draw.h>
 
 // Tables for the plotter - initialized by calling bitmap_draw_init();
-const byte bitmap_plot_xlo[256];
-const byte bitmap_plot_xhi[256];
-const byte bitmap_plot_ylo[256];
-const byte bitmap_plot_yhi[256];
-const byte bitmap_plot_bit[256];
+const char bitmap_plot_xlo[256];
+const char bitmap_plot_xhi[256];
+const char bitmap_plot_ylo[256];
+const char bitmap_plot_yhi[256];
+const char bitmap_plot_bit[256];
 
 // Initialize the bitmap plotter tables for a specific bitmap
-void bitmap_init(byte* bitmap) {
-    byte bits = $80;
-    for(byte x : 0..255) {
+void bitmap_init(char* bitmap) {
+    char bits = $80;
+    for(char x : 0..255) {
         bitmap_plot_xlo[x] = x&$f8;
         bitmap_plot_xhi[x] = >bitmap;
         bitmap_plot_bit[x] = bits;
@@ -22,8 +22,8 @@ void bitmap_init(byte* bitmap) {
           bits = $80;
         }
     }
-    byte* yoffs = $0;
-    for(byte y : 0..255) {
+    char* yoffs = $0;
+    for(char y : 0..255) {
         bitmap_plot_ylo[y] = y&$7 | <yoffs;
         bitmap_plot_yhi[y] = >yoffs;
         if((y&$7)==7) {
@@ -34,27 +34,27 @@ void bitmap_init(byte* bitmap) {
 
 // Clear all graphics on the bitmap
 void bitmap_clear() {
-    byte* bitmap = (byte*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] };
-    for( byte y: 0..39 ) {
-        for( byte x: 0..199 ) {
+    char* bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] };
+    for( char y: 0..39 ) {
+        for( char x: 0..199 ) {
             *bitmap++ = 0;
         }
     }
 }
 
-void bitmap_plot(byte x, byte y) {
-    // Needs word arrays arranged as two underlying byte arrays to allow byte* plotter_x = plot_x[x]; - and eventually - byte* plotter = plot_x[x] + plot_y[y];
-    word plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] };
-    word plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
-    byte* plotter = plotter_x+plotter_y;
+void bitmap_plot(char x, char y) {
+    // Needs unsigned int arrays arranged as two underlying char arrays to allow char* plotter_x = plot_x[x]; - and eventually - char* plotter = plot_x[x] + plot_y[y];
+    unsigned int plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] };
+    unsigned int plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] };
+    char* plotter = plotter_x+plotter_y;
     *plotter = *plotter | bitmap_plot_bit[x];
 }
 
 
 // Draw a line on the bitmap
-void bitmap_line(byte x0, byte x1, byte y0, byte y1) {
-    byte xd;
-    byte yd;
+void bitmap_line(char x0, char x1, char y0, char y1) {
+    char xd;
+    char yd;
     if(x0<x1) {
         xd = x1-x0;
         if(y0<y1) {
@@ -92,8 +92,8 @@ void bitmap_line(byte x0, byte x1, byte y0, byte y1) {
     }
 }
 
-void bitmap_line_xdyi(byte x, byte y, byte x1, byte xd, byte yd) {
-  byte e = yd>>1;
+void bitmap_line_xdyi(char x, char y, char x1, char xd, char yd) {
+  char e = yd>>1;
   do  {
       bitmap_plot(x,y);
       x++;
@@ -105,8 +105,8 @@ void bitmap_line_xdyi(byte x, byte y, byte x1, byte xd, byte yd) {
   } while (x!=(x1+1));
 }
 
-void bitmap_line_xdyd(byte x, byte y, byte x1, byte xd, byte yd) {
-  byte e = yd>>1;
+void bitmap_line_xdyd(char x, char y, char x1, char xd, char yd) {
+  char e = yd>>1;
   do  {
       bitmap_plot(x,y);
       x++;
@@ -118,8 +118,8 @@ void bitmap_line_xdyd(byte x, byte y, byte x1, byte xd, byte yd) {
   } while (x!=(x1+1));
 }
 
-void bitmap_line_ydxi(byte y, byte x, byte y1, byte yd, byte xd) {
-  byte e = xd>>1;
+void bitmap_line_ydxi(char y, char x, char y1, char yd, char xd) {
+  char e = xd>>1;
   do  {
       bitmap_plot(x,y);
       y++;
@@ -131,8 +131,8 @@ void bitmap_line_ydxi(byte y, byte x, byte y1, byte yd, byte xd) {
   } while (y!=(y1+1));
 }
 
-void bitmap_line_ydxd(byte y, byte x, byte y1, byte yd, byte xd) {
-  byte e = xd>>1;
+void bitmap_line_ydxd(char y, char x, char y1, char yd, char xd) {
+  char e = xd>>1;
   do  {
       bitmap_plot(x,y);
       y = y++;

@@ -67,9 +67,9 @@ void compare(signed word w1, signed word w2, byte op) {
         if(w1!=w2) r = TT;
         ops = "!=";
     }
-    print_sword(w1);
+    print_sint(w1);
     print_str(ops);
-    print_sword(w2);
+    print_sint(w2);
     print_char(r);
 }
 

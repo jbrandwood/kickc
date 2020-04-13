@@ -34,21 +34,21 @@ void main() {
 
 void print_mulf8u127(unsigned char a, unsigned char b) {
     unsigned word c = mulf8u127(a,b);
-    print_byte(a);
+    print_u8(a);
     print_char('*');
-    print_byte(b);
+    print_u8(b);
     print_char('=');
-    print_word(c);
+    print_uint(c);
     print_ln();
 }
 
 void print_mulf8s127(signed char a, signed char b) {
     signed word c = mulf8s127(a,b);
-    print_sbyte(a);
+    print_s8(a);
     print_char('*');
-    print_sbyte(b);
+    print_s8(b);
     print_char('=');
-    print_sword(c);
+    print_sint(c);
     print_ln();
 }
 

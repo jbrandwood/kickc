@@ -58,7 +58,7 @@ main: {
 free: {
     rts
 }
-// Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .label mem = 6

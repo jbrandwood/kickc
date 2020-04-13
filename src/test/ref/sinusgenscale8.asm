@@ -54,48 +54,48 @@ sin8u_table: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_word(step)
+    // print_uint(step)
     lda.z step
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z step+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" min:")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(min)
+    // print_u8(min)
     ldx #min
-    jsr print_byte
+    jsr print_u8
     // print_str(" max:")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(max)
+    // print_u8(max)
     ldx #max
-    jsr print_byte
+    jsr print_u8
     // print_str(" ampl:")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(amplitude)
+    // print_u8(amplitude)
     ldx #amplitude
-    jsr print_byte
+    jsr print_u8
     // print_str(" mid:")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(mid)
+    // print_u8(mid)
     ldx #mid
-    jsr print_byte
+    jsr print_u8
     // print_ln()
     lda #<$400
     sta.z print_line_cursor
@@ -161,42 +161,42 @@ sin8u_table: {
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
-    // print_word(x)
+    // print_uint(x)
     lda.z x
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z x+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" sin: ")
     lda #<str6
     sta.z print_str.str
     lda #>str6
     sta.z print_str.str+1
     jsr print_str
-    // print_sbyte(sinx)
+    // print_s8(sinx)
     ldx.z sinx
-    jsr print_sbyte
+    jsr print_s8
     // print_str(" scaled: ")
     lda #<str7
     sta.z print_str.str
     lda #>str7
     sta.z print_str.str+1
     jsr print_str
-    // print_sword(sinx_sc)
+    // print_sint(sinx_sc)
     lda.z sinx_sc
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda.z sinx_sc+1
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_str(" trans: ")
     lda #<str8
     sta.z print_str.str
     lda #>str8
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(sinx_tr)
+    // print_u8(sinx_tr)
     ldx.z sinx_tr
-    jsr print_byte
+    jsr print_u8
     // print_ln()
     jsr print_ln
     // x = x + step
@@ -255,9 +255,9 @@ print_ln: {
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -320,9 +320,9 @@ print_str: {
   !:
     jmp __b1
 }
-// Print a signed word as HEX
-// print_sword(signed word zp($c) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp($c) w)
+print_sint: {
     .label w = $c
     // if(w<0)
     lda.z w+1
@@ -331,8 +331,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -349,22 +349,22 @@ print_sword: {
     sta.z w+1
     jmp __b2
 }
-// Print a word as HEX
-// print_word(word zp($c) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp($c) w)
+print_uint: {
     .label w = $c
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a signed byte as HEX
-// print_sbyte(signed byte register(X) b)
-print_sbyte: {
+// Print a signed char as HEX
+// print_s8(signed byte register(X) b)
+print_s8: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -372,8 +372,8 @@ print_sbyte: {
     lda #' '
     jsr print_char
   __b2:
-    // print_byte((byte)b)
-    jsr print_byte
+    // print_u8((char)b)
+    jsr print_u8
     // }
     rts
   __b1:
@@ -388,25 +388,25 @@ print_sbyte: {
     tax
     jmp __b2
 }
-// Multiply a signed byte and an unsigned byte (into a signed word)
+// Multiply a signed char and an unsigned char (into a signed int)
 // Fixes offsets introduced by using unsigned multiplication
 // mul8su(signed byte register(Y) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
     .label m = $a
-    // mul8u((byte)a, (byte) b)
+    // mul8u((char)a, (char) b)
     tya
     tax
     lda #b
     jsr mul8u
-    // mul8u((byte)a, (byte) b)
-    // m = mul8u((byte)a, (byte) b)
+    // mul8u((char)a, (char) b)
+    // m = mul8u((char)a, (char) b)
     // if(a<0)
     cpy #0
     bpl __b1
     // >m
     lda.z m+1
-    // >m = (>m)-(byte)b
+    // >m = (>m)-(char)b
     sec
     sbc #b
     sta.z m+1
@@ -414,7 +414,7 @@ mul8su: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = $c
@@ -457,9 +457,9 @@ mul8u: {
     rol.z mb+1
     jmp __b1
 }
-// Calculate signed byte sinus sin(x)
-// x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
-// result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+// Calculate signed char sinus sin(x)
+// x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
+// result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
 // sin8s(word zp($c) x)
 sin8s: {
     // u[2.6] x^3
@@ -588,7 +588,7 @@ sin8s: {
     lda.z isUpper
     cmp #0
     beq __b14
-    // sinx = -(signed byte)usinx
+    // sinx = -(signed char)usinx
     txa
     eor #$ff
     clc
@@ -599,7 +599,7 @@ sin8s: {
     txa
     rts
 }
-// Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
+// Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 // mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($13) select)
 mulu8_sel: {
@@ -624,7 +624,7 @@ mulu8_sel: {
     // }
     rts
 }
-// Performs division on two 16 bit unsigned words
+// Performs division on two 16 bit unsigned ints
 // Returns the quotient dividend/divisor.
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -636,7 +636,7 @@ div16u: {
     // }
     rts
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -702,7 +702,7 @@ divr16u: {
     sbc #>main.tabsize
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1

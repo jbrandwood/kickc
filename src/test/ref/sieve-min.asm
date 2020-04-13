@@ -71,8 +71,8 @@ main: {
     lda (__16),y
     cmp #0
     bne __b9
-    // print_word(i)
-    jsr print_word
+    // print_uint(i)
+    jsr print_uint
     // print_char(' ')
     lda #' '
     jsr print_char
@@ -163,22 +163,22 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(4) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(4) w)
+print_uint: {
     .label w = 4
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

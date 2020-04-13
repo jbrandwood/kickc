@@ -2,7 +2,7 @@
 // Implementation of functions found int C stdlib.h / stdlib.c
 #include <string.h>
 
-// Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 void* malloc(unsigned int size);
 
@@ -15,7 +15,7 @@ void free(void* ptr);
 // - size − This is the size of elements.
 void *calloc(size_t nitems, size_t size);
 
-// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
+// Searches an array of nitems unsigned ints, the initial member of which is pointed to by base, for a member that matches the value key.
 // - key - The value to look for
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array

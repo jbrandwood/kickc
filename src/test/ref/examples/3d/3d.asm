@@ -159,216 +159,216 @@ anim: {
     jmp __b2
 }
 debug_print: {
-    .const print_sbyte_pos1_col = $25
-    .const print_sbyte_pos2_row = 1
-    .const print_sbyte_pos2_col = $25
-    .const print_sbyte_pos3_row = 2
-    .const print_sbyte_pos3_col = $25
-    .const print_sbyte_pos4_row = 4
-    .const print_sbyte_pos4_col = $1d
-    .const print_sbyte_pos5_row = 4
-    .const print_sbyte_pos5_col = $21
-    .const print_sbyte_pos6_row = 4
-    .const print_sbyte_pos6_col = $25
-    .const print_sbyte_pos7_row = 5
-    .const print_sbyte_pos7_col = $1d
-    .const print_sbyte_pos8_row = 5
-    .const print_sbyte_pos8_col = $21
-    .const print_sbyte_pos9_row = 5
-    .const print_sbyte_pos9_col = $25
-    .const print_sbyte_pos10_row = 6
-    .const print_sbyte_pos10_col = $1d
-    .const print_sbyte_pos11_row = 6
-    .const print_sbyte_pos11_col = $21
-    .const print_sbyte_pos12_row = 6
-    .const print_sbyte_pos12_col = $25
+    .const print_s8_pos1_col = $25
+    .const print_s8_pos2_row = 1
+    .const print_s8_pos2_col = $25
+    .const print_s8_pos3_row = 2
+    .const print_s8_pos3_col = $25
+    .const print_s8_pos4_row = 4
+    .const print_s8_pos4_col = $1d
+    .const print_s8_pos5_row = 4
+    .const print_s8_pos5_col = $21
+    .const print_s8_pos6_row = 4
+    .const print_s8_pos6_col = $25
+    .const print_s8_pos7_row = 5
+    .const print_s8_pos7_col = $1d
+    .const print_s8_pos8_row = 5
+    .const print_s8_pos8_col = $21
+    .const print_s8_pos9_row = 5
+    .const print_s8_pos9_col = $25
+    .const print_s8_pos10_row = 6
+    .const print_s8_pos10_col = $1d
+    .const print_s8_pos11_row = 6
+    .const print_s8_pos11_col = $21
+    .const print_s8_pos12_row = 6
+    .const print_s8_pos12_col = $25
     .label at_line = SCREEN+$13*$28
     .label c = 5
     .label i = 6
-    // print_sbyte_pos(sx, 0, 37)
+    // print_s8_pos(sx, 0, 37)
     lda.z sx
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos1_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos1_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(sy, 1, 37)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos1_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos1_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(sy, 1, 37)
     lda.z sy
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos2_row*$28+print_sbyte_pos2_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    lda #<print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos3_row*$28+print_sbyte_pos3_col
-    sta.z print_sbyte_at.at+1
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos2_row*$28+print_s8_pos2_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos2_row*$28+print_s8_pos2_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_at(sb, print_screen+row*40+col)
+    lda #<print_screen+print_s8_pos3_row*$28+print_s8_pos3_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos3_row*$28+print_s8_pos3_col
+    sta.z print_s8_at.at+1
     lda #sz
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[0], 4, 29)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[0], 4, 29)
     lda rotation_matrix
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos4_row*$28+print_sbyte_pos4_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[1], 4, 33)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos4_row*$28+print_s8_pos4_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos4_row*$28+print_s8_pos4_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[1], 4, 33)
     lda rotation_matrix+1
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos5_row*$28+print_sbyte_pos5_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[2], 4, 37)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos5_row*$28+print_s8_pos5_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos5_row*$28+print_s8_pos5_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[2], 4, 37)
     lda rotation_matrix+2
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos6_row*$28+print_sbyte_pos6_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[3], 5, 29)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos6_row*$28+print_s8_pos6_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos6_row*$28+print_s8_pos6_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[3], 5, 29)
     lda rotation_matrix+3
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos7_row*$28+print_sbyte_pos7_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[4], 5, 33)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos7_row*$28+print_s8_pos7_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos7_row*$28+print_s8_pos7_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[4], 5, 33)
     lda rotation_matrix+4
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos8_row*$28+print_sbyte_pos8_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[5], 5, 37)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos8_row*$28+print_s8_pos8_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos8_row*$28+print_s8_pos8_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[5], 5, 37)
     lda rotation_matrix+5
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos9_row*$28+print_sbyte_pos9_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[6], 6, 29)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos9_row*$28+print_s8_pos9_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos9_row*$28+print_s8_pos9_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[6], 6, 29)
     lda rotation_matrix+6
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos10_row*$28+print_sbyte_pos10_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[7], 6, 33)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos10_row*$28+print_s8_pos10_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos10_row*$28+print_s8_pos10_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[7], 6, 33)
     lda rotation_matrix+7
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos11_row*$28+print_sbyte_pos11_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
-    // print_sbyte_pos(rotation_matrix[8], 6, 37)
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos11_row*$28+print_s8_pos11_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos11_row*$28+print_s8_pos11_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
+    // print_s8_pos(rotation_matrix[8], 6, 37)
     lda rotation_matrix+8
-    // print_sbyte_at(sb, print_screen+row*40+col)
-    sta.z print_sbyte_at.b
-    lda #<print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
-    sta.z print_sbyte_at.at
-    lda #>print_screen+print_sbyte_pos12_row*$28+print_sbyte_pos12_col
-    sta.z print_sbyte_at.at+1
-    jsr print_sbyte_at
+    // print_s8_at(sb, print_screen+row*40+col)
+    sta.z print_s8_at.b
+    lda #<print_screen+print_s8_pos12_row*$28+print_s8_pos12_col
+    sta.z print_s8_at.at
+    lda #>print_screen+print_s8_pos12_row*$28+print_s8_pos12_col
+    sta.z print_s8_at.at+1
+    jsr print_s8_at
     lda #0
     sta.z i
     lda #4
     sta.z c
   __b1:
-    // print_sbyte_at(xrs[i], at_line+40*0+c)
+    // print_s8_at(xrs[i], at_line+40*0+c)
     lda.z c
     clc
     adc #<at_line
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda xrs,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_at(yrs[i], at_line+40*1+c)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_at(yrs[i], at_line+40*1+c)
     lda.z c
     clc
     adc #<at_line+$28*1
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line+$28*1
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda yrs,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_at(zrs[i], at_line+40*2+c)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_at(zrs[i], at_line+40*2+c)
     lda.z c
     clc
     adc #<at_line+$28*2
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line+$28*2
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda zrs,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_at(pps[i], at_line+40*3+c)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_at(pps[i], at_line+40*3+c)
     lda.z c
     clc
     adc #<at_line+$28*3
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line+$28*3
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda pps,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_at(xps[i], at_line+40*4+c)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_at(xps[i], at_line+40*4+c)
     lda.z c
     clc
     adc #<at_line+$28*4
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line+$28*4
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda xps,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_at(yps[i], at_line+40*5+c)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_at(yps[i], at_line+40*5+c)
     lda.z c
     clc
     adc #<at_line+$28*5
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line+$28*5
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda yps,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
+    sta.z print_s8_at.b
+    jsr print_s8_at
     // c += 4
     lax.z c
     axs #-[4]
@@ -383,9 +383,9 @@ debug_print: {
     // }
     rts
 }
-// Print a signed byte as hex at a specific screen position
-// print_sbyte_at(signed byte zp(7) b, byte* zp($e) at)
-print_sbyte_at: {
+// Print a signed char as hex at a specific screen position
+// print_s8_at(signed byte zp(7) b, byte* zp($e) at)
+print_s8_at: {
     .label b = 7
     .label at = $e
     // if(b<0)
@@ -395,12 +395,12 @@ print_sbyte_at: {
     ldx #' '
     jsr print_char_at
   __b2:
-    // print_byte_at((byte)b, at+1)
-    inc.z print_byte_at.at
+    // print_u8_at((char)b, at+1)
+    inc.z print_u8_at.at
     bne !+
-    inc.z print_byte_at.at+1
+    inc.z print_u8_at.at+1
   !:
-    jsr print_byte_at
+    jsr print_u8_at
     // }
     rts
   __b1:
@@ -426,9 +426,9 @@ print_char_at: {
     // }
     rts
 }
-// Print a byte as HEX at a specific position
-// print_byte_at(byte zp(7) b, byte* zp($e) at)
-print_byte_at: {
+// Print a char as HEX at a specific position
+// print_u8_at(byte zp(7) b, byte* zp($e) at)
+print_u8_at: {
     .label b = 7
     .label at = $e
     // b>>4
@@ -942,42 +942,42 @@ debug_print_init: {
     lda #4
     sta.z c
   __b1:
-    // print_sbyte_at(xs[i], at_line+40*0+c)
+    // print_s8_at(xs[i], at_line+40*0+c)
     lda.z c
     clc
     adc #<at_line
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda xs,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_at(ys[i], at_line+40*1+c)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_at(ys[i], at_line+40*1+c)
     lda.z c
     clc
     adc #<at_line+$28*1
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line+$28*1
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda ys,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
-    // print_sbyte_at(zs[i], at_line+40*2+c)
+    sta.z print_s8_at.b
+    jsr print_s8_at
+    // print_s8_at(zs[i], at_line+40*2+c)
     lda.z c
     clc
     adc #<at_line+$28*2
-    sta.z print_sbyte_at.at
+    sta.z print_s8_at.at
     lda #>at_line+$28*2
     adc #0
-    sta.z print_sbyte_at.at+1
+    sta.z print_s8_at.at+1
     ldy.z i
     lda zs,y
-    sta.z print_sbyte_at.b
-    jsr print_sbyte_at
+    sta.z print_s8_at.b
+    jsr print_s8_at
     ldy #0
   __b2:
     // col = 8+i

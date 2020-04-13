@@ -43,21 +43,21 @@ main: {
     lda.z b+1
     adc #>$141
     sta.z b+1
-    // print_sword(a)
+    // print_sint(a)
     lda.z a
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda.z a+1
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_word(b)
+    // print_uint(b)
     lda.z b
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z b+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_ln()
     jsr print_ln
     // for( byte i : 0..5 )
@@ -97,22 +97,22 @@ print_ln: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(9) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(9) w)
+print_uint: {
     .label w = 9
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -147,9 +147,9 @@ print_char: {
     // }
     rts
 }
-// Print a signed word as HEX
-// print_sword(signed word zp(9) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp(9) w)
+print_sint: {
     .label w = 9
     // if(w<0)
     lda.z w+1
@@ -158,8 +158,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:

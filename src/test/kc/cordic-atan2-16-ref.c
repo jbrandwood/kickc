@@ -41,7 +41,7 @@ void main() {
             screen_ref++;
         }
     }
-    print_word(diff_sum);
+    print_uint(diff_sum);
     byte* col00 = COLS+12*40+19;
     while(true) (*col00)++;
 }

@@ -30,7 +30,7 @@ void main (void) {
     }
     for (i = 2; i < 0x04c7; ++i)
         if (!sieve[i]) {
-            print_word(i);
+            print_uint(i);
             print_char(' ');
         }
     while(true) { (*(SCREEN+999))++; }

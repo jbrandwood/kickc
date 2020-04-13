@@ -9,7 +9,7 @@ unsigned char* HEAP_TOP = 0xa000;
 // Head of the heap. Moved backward each malloc()
 unsigned char* heap_head = HEAP_TOP;
 
-// Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 void* malloc(unsigned int size) {
     unsigned char* mem = heap_head-size;
@@ -32,14 +32,14 @@ void *calloc(size_t nitems, size_t size) {
     return mem;
 }
 
-// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
+// Searches an array of nitems unsigned ints, the initial member of which is pointed to by base, for a member that matches the value key.
 // - key - The value to look for
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
 unsigned int* bsearch16u(unsigned int key, unsigned int* items, char num) {
 	while (num > 0) {
-		word* pivot = items + (num >> 1);
+		unsigned int* pivot = items + (num >> 1);
 		signed int result = (signed int)key-(signed int)*pivot;
 		if (result == 0)
 			return pivot;
@@ -93,7 +93,7 @@ void utoa(unsigned int value, char* buffer, enum RADIX radix){
         *buffer = 0;
         return;
     }
-    byte started = 0;
+    char started = 0;
     for( char digit=0; digit<max_digits-1; digit++ ) {
         unsigned int digit_value = digit_values[digit];
         if (started || value >= digit_value){
@@ -157,7 +157,7 @@ void ultoa(unsigned long value, char* buffer, enum RADIX radix){
         *buffer = 0;
         return;
     }
-    byte started = 0;
+    char started = 0;
     for( char digit=0; digit<max_digits-1; digit++ ) {
         unsigned long digit_value = digit_values[digit];
         if (started || value >= digit_value){

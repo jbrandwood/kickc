@@ -63,35 +63,35 @@ main: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_word(557)
+    // print_uint(557)
     lda #<$22d
-    sta.z print_word.w
+    sta.z print_uint.w
     lda #>$22d
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word(31179)
+    // print_uint(31179)
     lda #<$79cb
-    sta.z print_word.w
+    sta.z print_uint.w
     lda #>$79cb
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word(0)
+    // print_uint(0)
     lda #<0
-    sta.z print_word.w
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_ln()
     lda #<$400
     sta.z print_line_cursor
@@ -115,94 +115,94 @@ main: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_word(29793)
+    // print_uint(29793)
     lda #<$7461
-    sta.z print_word.w
+    sta.z print_uint.w
     lda #>$7461
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word(63361)
+    // print_uint(63361)
     lda #<$f781
-    sta.z print_word.w
+    sta.z print_uint.w
     lda #>$f781
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word($6488)
+    // print_uint($6488)
     lda #<$6488
-    sta.z print_word.w
+    sta.z print_uint.w
     lda #>$6488
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_ln()
     jsr print_ln
     // }
     rts
   __b2:
-    // print_byte(i)
+    // print_u8(i)
     ldx.z i
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    // print_byte(i)
-    jsr print_byte
+    // print_u8(i)
+    jsr print_u8
     // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word(lintab1[i])
+    // print_uint(lintab1[i])
     lda.z i
     asl
     tay
     lda lintab1,y
-    sta.z print_word.w
+    sta.z print_uint.w
     lda lintab1+1,y
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word(lintab2[i])
+    // print_uint(lintab2[i])
     lda.z i
     asl
     tay
     lda lintab2,y
-    sta.z print_word.w
+    sta.z print_uint.w
     lda lintab2+1,y
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word(lintab3[i])
+    // print_uint(lintab3[i])
     lda.z i
     asl
     tay
     lda lintab3,y
-    sta.z print_word.w
+    sta.z print_uint.w
     lda lintab3+1,y
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_ln()
     jsr print_ln
     // for(byte i=0; i<20; i++)
@@ -239,22 +239,22 @@ print_ln: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(7) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(7) w)
+print_uint: {
     .label w = 7
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -480,7 +480,7 @@ lin16u_gen: {
   !:
     jmp __b1
 }
-// Performs division on two 16 bit unsigned words and an initial remainder
+// Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
@@ -540,7 +540,7 @@ divr16u: {
     sbc.z divisor+1
     sta.z rem+1
   __b3:
-    // for( byte i : 0..15)
+    // for( char i : 0..15)
     inx
     cpx #$10
     bne __b1

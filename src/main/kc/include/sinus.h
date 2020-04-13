@@ -18,35 +18,35 @@ extern const unsigned int PI_u4f12;
 // PI/2 in u[4.12] format
 extern const unsigned int PI_HALF_u4f12;
 
-// Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+// Generate signed (large) unsigned int sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 void sin16s_gen(int* sintab, unsigned int wavelength);
 
-// Generate signed word sinus table - with values in the range min-max.
+// Generate signed int sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 void sin16s_gen2(int* sintab, unsigned int wavelength, int min, int max);
 
-// Generate signed byte sinus table - on the full -$7f - $7f range
+// Generate signed char sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 void sin8s_gen(signed char*  sintab, unsigned int wavelength);
 
-// Calculate signed word sinus sin(x)
-// x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
-// result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
+// Calculate signed int sinus sin(x)
+// x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
+// result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 int sin16s(unsigned long x);
 
-// Calculate signed byte sinus sin(x)
-// x: unsigned word input u[4.12] in the interval $0000 - PI2_u4f12
-// result: signed byte sin(x) s[0.7] - using the full range  -$7f - $7f
+// Calculate signed char sinus sin(x)
+// x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
+// result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
 signed char sin8s(unsigned int x);
 
-// Calculate val*val for two unsigned word values - the result is 16 selected bits of the 32-bit result.
+// Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
 unsigned int mulu16_sel(unsigned int v1, unsigned int v2, char select);
 
-// Calculate val*val for two unsigned byte values - the result is 8 selected bits of the 16-bit result.
+// Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 char mulu8_sel(char v1, char v2, char select);

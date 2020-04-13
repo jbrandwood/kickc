@@ -32,7 +32,7 @@ int main (void)
     unsigned int i;
     start();
     for(i=0;i<6;i++) {
-        print_word_decimal(sum());
+        print_uint_decimal(sum());
         print_ln();
     }
     end();    

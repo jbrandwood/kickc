@@ -23,7 +23,7 @@
   .label HEAP_TOP = $a000
   // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
-  // Squares for each byte value SQUARES[i] = i*i
+  // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
   .label SQUARES = malloc.return
 main: {
@@ -58,67 +58,67 @@ main: {
     lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
-    // print_dword_at(cyclecount, BASE_SCREEN)
-    jsr print_dword_at
+    // print_ulong_at(cyclecount, BASE_SCREEN)
+    jsr print_ulong_at
     // *D018 = toD018(BASE_SCREEN, BASE_CHARSET)
     lda #toD0182_return
     sta D018
     // }
     rts
 }
-// Print a dword as HEX at a specific position
-// print_dword_at(dword zp($c) dw)
-print_dword_at: {
+// Print a unsigned long as HEX at a specific position
+// print_ulong_at(dword zp($c) dw)
+print_ulong_at: {
     .label dw = $c
-    // print_word_at(>dw, at)
+    // print_uint_at(>dw, at)
     lda.z dw+2
-    sta.z print_word_at.w
+    sta.z print_uint_at.w
     lda.z dw+3
-    sta.z print_word_at.w+1
+    sta.z print_uint_at.w+1
     lda #<main.BASE_SCREEN
-    sta.z print_word_at.at
+    sta.z print_uint_at.at
     lda #>main.BASE_SCREEN
-    sta.z print_word_at.at+1
-    jsr print_word_at
-    // print_word_at(<dw, at+4)
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // print_uint_at(<dw, at+4)
     lda.z dw
-    sta.z print_word_at.w
+    sta.z print_uint_at.w
     lda.z dw+1
-    sta.z print_word_at.w+1
+    sta.z print_uint_at.w+1
     lda #<main.BASE_SCREEN+4
-    sta.z print_word_at.at
+    sta.z print_uint_at.at
     lda #>main.BASE_SCREEN+4
-    sta.z print_word_at.at+1
-    jsr print_word_at
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
     // }
     rts
 }
-// Print a word as HEX at a specific position
-// print_word_at(word zp(2) w, byte* zp(4) at)
-print_word_at: {
+// Print a unsigned int as HEX at a specific position
+// print_uint_at(word zp(2) w, byte* zp(4) at)
+print_uint_at: {
     .label w = 2
     .label at = 4
-    // print_byte_at(>w, at)
+    // print_u8_at(>w, at)
     lda.z w+1
-    sta.z print_byte_at.b
-    jsr print_byte_at
-    // print_byte_at(<w, at+2)
+    sta.z print_u8_at.b
+    jsr print_u8_at
+    // print_u8_at(<w, at+2)
     lda.z w
-    sta.z print_byte_at.b
+    sta.z print_u8_at.b
     lda #2
     clc
-    adc.z print_byte_at.at
-    sta.z print_byte_at.at
+    adc.z print_u8_at.at
+    sta.z print_u8_at.at
     bcc !+
-    inc.z print_byte_at.at+1
+    inc.z print_u8_at.at+1
   !:
-    jsr print_byte_at
+    jsr print_u8_at
     // }
     rts
 }
-// Print a byte as HEX at a specific position
-// print_byte_at(byte zp($b) b, byte* zp(4) at)
-print_byte_at: {
+// Print a char as HEX at a specific position
+// print_u8_at(byte zp($b) b, byte* zp(4) at)
+print_u8_at: {
     .label b = $b
     .label at = 4
     // b>>4
@@ -310,7 +310,7 @@ init_dist_screen: {
     sbc #$18
     jmp __b4
 }
-// Find the (integer) square root of a word value
+// Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqrt(word zp($12) val)
@@ -333,12 +333,12 @@ sqrt: {
     sta.z __3+1
     lsr.z __1+1
     ror.z __1
-    // (byte)(found-SQUARES)
+    // (char)(found-SQUARES)
     lda.z __1
     // }
     rts
 }
-// Searches an array of nitems unsigned words, the initial member of which is pointed to by base, for a member that matches the value key.
+// Searches an array of nitems unsigned ints, the initial member of which is pointed to by base, for a member that matches the value key.
 // - key - The value to look for
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
@@ -437,7 +437,7 @@ bsearch16u: {
     tax
     jmp __b3
 }
-// Find the square of a byte value
+// Find the square of a char value
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
@@ -458,7 +458,7 @@ sqr: {
 init_squares: {
     .label squares = $12
     .label sqr = 6
-    // malloc(NUM_SQUARES*sizeof(word))
+    // malloc(NUM_SQUARES*sizeof(unsigned int))
     jsr malloc
     lda #<SQUARES
     sta.z squares
@@ -469,7 +469,7 @@ init_squares: {
     sta.z sqr+1
     tax
   __b1:
-    // for(byte i=0;i<NUM_SQUARES;i++)
+    // for(char i=0;i<NUM_SQUARES;i++)
     cpx #NUM_SQUARES
     bcc __b2
     // }
@@ -503,11 +503,11 @@ init_squares: {
     bcc !+
     inc.z sqr+1
   !:
-    // for(byte i=0;i<NUM_SQUARES;i++)
+    // for(char i=0;i<NUM_SQUARES;i++)
     inx
     jmp __b1
 }
-// Allocates a block of size bytes of memory, returning a pointer to the beginning of the block.
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
     .const size = NUM_SQUARES*SIZEOF_WORD

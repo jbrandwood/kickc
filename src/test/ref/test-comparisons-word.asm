@@ -171,16 +171,16 @@ compare: {
     sta.z ops
     sta.z ops+1
   __b6:
-    // print_word(w1)
-    jsr print_word
+    // print_uint(w1)
+    jsr print_uint
     // print_str(ops)
     jsr print_str
-    // print_word(w2)
+    // print_uint(w2)
     lda.z w2
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z w2+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_char(r)
     lda.z r
     jsr print_char
@@ -324,22 +324,22 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(9) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(9) w)
+print_uint: {
     .label w = 9
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr

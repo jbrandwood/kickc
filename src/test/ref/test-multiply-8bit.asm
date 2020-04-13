@@ -134,49 +134,49 @@ mul8s_error: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_sbyte(a)
-    jsr print_sbyte
+    // print_s8(a)
+    jsr print_s8
     // print_str("*")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_sbyte(b)
+    // print_s8(b)
     ldx.z b
-    jsr print_sbyte
+    jsr print_s8
     // print_str(" slow:")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_sword(ms)
-    jsr print_sword
+    // print_sint(ms)
+    jsr print_sint
     // print_str(" / normal:")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_sword(mn)
+    // print_sint(mn)
     lda.z mn
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda.z mn+1
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_str(" / fast:")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_sword(mf)
+    // print_sint(mf)
     lda.z mf
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda.z mf+1
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_ln()
     jsr print_ln
     // }
@@ -207,9 +207,9 @@ print_ln: {
     // }
     rts
 }
-// Print a signed word as HEX
-// print_sword(signed word zp(7) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp(7) w)
+print_sint: {
     .label w = 7
     // if(w<0)
     lda.z w+1
@@ -218,8 +218,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -250,22 +250,22 @@ print_char: {
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp(7) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(7) w)
+print_uint: {
     .label w = 7
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -314,9 +314,9 @@ print_str: {
   !:
     jmp __b1
 }
-// Print a signed byte as HEX
-// print_sbyte(signed byte register(X) b)
-print_sbyte: {
+// Print a signed char as HEX
+// print_s8(signed byte register(X) b)
+print_s8: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -324,8 +324,8 @@ print_sbyte: {
     lda #' '
     jsr print_char
   __b2:
-    // print_byte((byte)b)
-    jsr print_byte
+    // print_u8((char)b)
+    jsr print_u8
     // }
     rts
   __b1:
@@ -340,25 +340,25 @@ print_sbyte: {
     tax
     jmp __b2
 }
-// Multiply of two signed bytes to a signed word
+// Multiply of two signed chars to a signed int
 // Fixes offsets introduced by using unsigned multiplication
 // mul8s(signed byte zp($d) a, signed byte register(Y) b)
 mul8s: {
     .label m = $e
     .label a = $d
-    // mul8u((byte)a, (byte) b)
+    // mul8u((char)a, (char) b)
     ldx.z a
     tya
     jsr mul8u
-    // mul8u((byte)a, (byte) b)
-    // m = mul8u((byte)a, (byte) b)
+    // mul8u((char)a, (char) b)
+    // m = mul8u((char)a, (char) b)
     // if(a<0)
     lda.z a
     cmp #0
     bpl __b1
     // >m
     lda.z m+1
-    // >m = (>m)-(byte)b
+    // >m = (>m)-(char)b
     sty.z $ff
     sec
     sbc.z $ff
@@ -369,7 +369,7 @@ mul8s: {
     bpl __b2
     // >m
     lda.z m+1
-    // >m = (>m)-(byte)a
+    // >m = (>m)-(char)a
     sec
     sbc.z a
     sta.z m+1
@@ -377,7 +377,7 @@ mul8s: {
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 8-bit bytes into a 16-bit unsigned word
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
     .label mb = $b
@@ -420,11 +420,11 @@ mul8u: {
     rol.z mb+1
     jmp __b1
 }
-// Fast multiply two signed bytes to a word result
+// Fast multiply two signed chars to a unsigned int result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
     .label return = 9
-    // mulf8u_prepare((byte)a)
+    // mulf8u_prepare((char)a)
     jsr mulf8u_prepare
     // mulf8s_prepared(b)
     stx.z mulf8s_prepared.b
@@ -432,25 +432,25 @@ mulf8s: {
     // }
     rts
 }
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8s_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8s_prepare(char a)
 // mulf8s_prepared(signed byte zp($12) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = 9
     .label b = $12
-    // mulf8u_prepared((byte) b)
+    // mulf8u_prepared((char) b)
     lda.z b
     jsr mulf8u_prepared
-    // mulf8u_prepared((byte) b)
-    // m = mulf8u_prepared((byte) b)
+    // mulf8u_prepared((char) b)
+    // m = mulf8u_prepared((char) b)
     // if(*memA<0)
     lda memA
     cmp #0
     bpl __b1
     // >m
     lda.z m+1
-    // >m = (>m)-(byte)b
+    // >m = (>m)-(char)b
     sec
     sbc.z b
     sta.z m+1
@@ -461,7 +461,7 @@ mulf8s_prepared: {
     bpl __b2
     // >m
     lda.z m+1
-    // >m = (>m)-(byte)*memA
+    // >m = (>m)-(char)*memA
     sec
     sbc memA
     sta.z m+1
@@ -469,8 +469,8 @@ mulf8s_prepared: {
     // }
     rts
 }
-// Calculate fast multiply with a prepared unsigned byte to a word result
-// The prepared number is set by calling mulf8u_prepare(byte a)
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8u_prepare(char a)
 // mulf8u_prepared(byte register(A) b)
 mulf8u_prepared: {
     .label resL = $fe
@@ -499,7 +499,7 @@ mulf8u_prepared: {
     // }
     rts
 }
-// Prepare for fast multiply with an unsigned byte to a word result
+// Prepare for fast multiply with an unsigned char to a unsigned int result
 // mulf8u_prepare(byte register(A) a)
 mulf8u_prepare: {
     .label memA = $fd
@@ -688,49 +688,49 @@ mul8u_error: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(a)
-    jsr print_byte
+    // print_u8(a)
+    jsr print_u8
     // print_str("*")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_byte(b)
+    // print_u8(b)
     ldx.z b
-    jsr print_byte
+    jsr print_u8
     // print_str(" slow:")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_word(ms)
-    jsr print_word
+    // print_uint(ms)
+    jsr print_uint
     // print_str(" / normal:")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_word(mn)
+    // print_uint(mn)
     lda.z mn
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z mn+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" / fast:")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_word(mf)
+    // print_uint(mf)
     lda.z mf
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z mf+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_ln()
     jsr print_ln
     // }
@@ -738,7 +738,7 @@ mul8u_error: {
     str: .text "multiply mismatch "
     .byte 0
 }
-// Fast multiply two unsigned bytes to a word result
+// Fast multiply two unsigned chars to a unsigned int result
 // mulf8u(byte register(A) a, byte register(X) b)
 mulf8u: {
     .label return = 9
@@ -854,20 +854,20 @@ mulf_tables_cmp: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word((word)asm_sqr)
-    jsr print_word
+    // print_uint((word)asm_sqr)
+    jsr print_uint
     // print_str(" / ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_word((word)kc_sqr)
+    // print_uint((word)kc_sqr)
     lda.z kc_sqr
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z kc_sqr+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     lda #<$400
     sta.z print_line_cursor
     lda #>$400
@@ -979,7 +979,7 @@ mulf_init: {
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
   __b1:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne __b2
@@ -998,7 +998,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
   __b5:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne __b6
@@ -1038,7 +1038,7 @@ mulf_init: {
     lda #1
     sta.z dir
   __b8:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
@@ -1083,7 +1083,7 @@ mulf_init: {
     bcc !+
     inc.z sqr+1
   !:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     inc.z sqr1_lo
     bne !+
     inc.z sqr1_lo+1

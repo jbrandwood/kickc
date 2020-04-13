@@ -215,60 +215,60 @@ mul16s_error: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_sword(a)
-    jsr print_sword
+    // print_sint(a)
+    jsr print_sint
     // print_str("*")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_sword(b)
+    // print_sint(b)
     lda.z b
-    sta.z print_sword.w
+    sta.z print_sint.w
     lda.z b+1
-    sta.z print_sword.w+1
-    jsr print_sword
+    sta.z print_sint.w+1
+    jsr print_sint
     // print_str(" slow:")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_sdword(ms)
-    jsr print_sdword
+    // print_slong(ms)
+    jsr print_slong
     // print_str(" / normal:")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_sdword(mn)
+    // print_slong(mn)
     lda.z mn
-    sta.z print_sdword.dw
+    sta.z print_slong.dw
     lda.z mn+1
-    sta.z print_sdword.dw+1
+    sta.z print_slong.dw+1
     lda.z mn+2
-    sta.z print_sdword.dw+2
+    sta.z print_slong.dw+2
     lda.z mn+3
-    sta.z print_sdword.dw+3
-    jsr print_sdword
+    sta.z print_slong.dw+3
+    jsr print_slong
     // print_str(" / fast:")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_sdword(mf)
+    // print_slong(mf)
     lda.z mf
-    sta.z print_sdword.dw
+    sta.z print_slong.dw
     lda.z mf+1
-    sta.z print_sdword.dw+1
+    sta.z print_slong.dw+1
     lda.z mf+2
-    sta.z print_sdword.dw+2
+    sta.z print_slong.dw+2
     lda.z mf+3
-    sta.z print_sdword.dw+3
-    jsr print_sdword
+    sta.z print_slong.dw+3
+    jsr print_slong
     // print_ln()
     jsr print_ln
     // }
@@ -276,9 +276,9 @@ mul16s_error: {
     str: .text "signed word multiply mismatch "
     .byte 0
 }
-// Print a signed dword as HEX
-// print_sdword(signed dword zp(4) dw)
-print_sdword: {
+// Print a signed long as HEX
+// print_slong(signed dword zp(4) dw)
+print_slong: {
     .label dw = 4
     // if(dw<0)
     lda.z dw+3
@@ -287,8 +287,8 @@ print_sdword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_dword((dword)dw)
-    jsr print_dword
+    // print_ulong((unsigned long)dw)
+    jsr print_ulong
     // }
     rts
   __b1:
@@ -329,41 +329,41 @@ print_char: {
     // }
     rts
 }
-// Print a dword as HEX
-// print_dword(dword zp(4) dw)
-print_dword: {
+// Print a unsigned long as HEX
+// print_ulong(dword zp(4) dw)
+print_ulong: {
     .label dw = 4
-    // print_word(>dw)
+    // print_uint(>dw)
     lda.z dw+2
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+3
-    sta.z print_word.w+1
-    jsr print_word
-    // print_word(<dw)
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_uint(<dw)
     lda.z dw
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z dw+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // }
     rts
 }
-// Print a word as HEX
-// print_word(word zp($16) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp($16) w)
+print_uint: {
     .label w = $16
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -384,9 +384,9 @@ print_byte: {
     // }
     rts
 }
-// Print a signed word as HEX
-// print_sword(signed word zp($16) w)
-print_sword: {
+// Print a signed int as HEX
+// print_sint(signed word zp($16) w)
+print_sint: {
     .label w = $16
     // if(w<0)
     lda.z w+1
@@ -395,8 +395,8 @@ print_sword: {
     lda #' '
     jsr print_char
   __b2:
-    // print_word((word)w)
-    jsr print_word
+    // print_uint((unsigned int)w)
+    jsr print_uint
     // }
     rts
   __b1:
@@ -413,7 +413,7 @@ print_sword: {
     sta.z w+1
     jmp __b2
 }
-// Fast multiply two signed words to a signed double word result
+// Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zp($16) a, signed word zp($18) b)
 mulf16s: {
@@ -425,7 +425,7 @@ mulf16s: {
     .label return = $a
     .label a = $16
     .label b = $18
-    // mulf16u((word)a, (word)b)
+    // mulf16u((unsigned int)a, (unsigned int)b)
     lda.z a
     sta.z mulf16u.a
     lda.z a+1
@@ -435,8 +435,8 @@ mulf16s: {
     lda.z b+1
     sta.z mulf16u.b+1
     jsr mulf16u
-    // mulf16u((word)a, (word)b)
-    // m = mulf16u((word)a, (word)b)
+    // mulf16u((unsigned int)a, (unsigned int)b)
+    // m = mulf16u((unsigned int)a, (unsigned int)b)
     // if(a<0)
     lda.z a+1
     bpl __b1
@@ -445,7 +445,7 @@ mulf16s: {
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(word)b
+    // >m = (>m)-(unsigned int)b
     lda.z __16
     sec
     sbc.z b
@@ -466,7 +466,7 @@ mulf16s: {
     sta.z __13
     lda.z m+3
     sta.z __13+1
-    // >m = (>m)-(word)a
+    // >m = (>m)-(unsigned int)a
     lda.z __17
     sec
     sbc.z a
@@ -479,11 +479,11 @@ mulf16s: {
     lda.z __17+1
     sta.z m+3
   __b2:
-    // (signed dword)m
+    // (signed long)m
     // }
     rts
 }
-// Fast multiply two unsigned words to a double word result
+// Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
 // mulf16u(word zp($1c) a, word zp($1e) b)
 mulf16u: {
@@ -608,7 +608,7 @@ mulf16u: {
     // }
     rts
 }
-// Multiply of two signed words to a signed double word
+// Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp($16) a, signed word zp($18) b)
 mul16s: {
@@ -620,7 +620,7 @@ mul16s: {
     .label return = $e
     .label a = $16
     .label b = $18
-    // mul16u((word)a, (word) b)
+    // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
     lda.z a+1
@@ -630,8 +630,8 @@ mul16s: {
     lda.z b+1
     sta.z mul16u.b+1
     jsr mul16u
-    // mul16u((word)a, (word) b)
-    // m = mul16u((word)a, (word) b)
+    // mul16u((unsigned int)a, (unsigned int) b)
+    // m = mul16u((unsigned int)a, (unsigned int) b)
     // if(a<0)
     lda.z a+1
     bpl __b1
@@ -640,7 +640,7 @@ mul16s: {
     sta.z __9
     lda.z m+3
     sta.z __9+1
-    // >m = (>m)-(word)b
+    // >m = (>m)-(unsigned int)b
     lda.z __16
     sec
     sbc.z b
@@ -661,7 +661,7 @@ mul16s: {
     sta.z __13
     lda.z m+3
     sta.z __13+1
-    // >m = (>m)-(word)a
+    // >m = (>m)-(unsigned int)a
     lda.z __17
     sec
     sbc.z a
@@ -674,11 +674,11 @@ mul16s: {
     lda.z __17+1
     sta.z m+3
   __b2:
-    // (signed dword)m
+    // (signed long)m
     // }
     rts
 }
-// Perform binary multiplication of two unsigned 16-bit words into a 32-bit unsigned double word
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
 // mul16u(word zp($22) a, word zp($1e) b)
 mul16u: {
     .label mb = $12
@@ -1018,60 +1018,60 @@ mul16u_error: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_word(a)
-    jsr print_word
+    // print_uint(a)
+    jsr print_uint
     // print_str("*")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_word(b)
+    // print_uint(b)
     lda.z b
-    sta.z print_word.w
+    sta.z print_uint.w
     lda.z b+1
-    sta.z print_word.w+1
-    jsr print_word
+    sta.z print_uint.w+1
+    jsr print_uint
     // print_str(" slow:")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_dword(ms)
-    jsr print_dword
+    // print_ulong(ms)
+    jsr print_ulong
     // print_str(" / normal:")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_dword(mn)
+    // print_ulong(mn)
     lda.z mn
-    sta.z print_dword.dw
+    sta.z print_ulong.dw
     lda.z mn+1
-    sta.z print_dword.dw+1
+    sta.z print_ulong.dw+1
     lda.z mn+2
-    sta.z print_dword.dw+2
+    sta.z print_ulong.dw+2
     lda.z mn+3
-    sta.z print_dword.dw+3
-    jsr print_dword
+    sta.z print_ulong.dw+3
+    jsr print_ulong
     // print_str(" / fast:")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_dword(mf)
+    // print_ulong(mf)
     lda.z mf
-    sta.z print_dword.dw
+    sta.z print_ulong.dw
     lda.z mf+1
-    sta.z print_dword.dw+1
+    sta.z print_ulong.dw+1
     lda.z mf+2
-    sta.z print_dword.dw+2
+    sta.z print_ulong.dw+2
     lda.z mf+3
-    sta.z print_dword.dw+3
-    jsr print_dword
+    sta.z print_ulong.dw+3
+    jsr print_ulong
     // print_ln()
     lda #<$400
     sta.z print_line_cursor
@@ -1177,7 +1177,7 @@ mulf_init: {
     lda #>mulf_sqr1_lo+1
     sta.z sqr1_lo+1
   __b1:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     lda.z sqr1_lo+1
     cmp #>mulf_sqr1_lo+$200
     bne __b2
@@ -1196,7 +1196,7 @@ mulf_init: {
     lda #>mulf_sqr2_lo
     sta.z sqr2_lo+1
   __b5:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     lda.z sqr2_lo+1
     cmp #>mulf_sqr2_lo+$1ff
     bne __b6
@@ -1236,7 +1236,7 @@ mulf_init: {
     lda #1
     sta.z dir
   __b8:
-    // for(byte* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
     inc.z sqr2_lo
     bne !+
     inc.z sqr2_lo+1
@@ -1281,7 +1281,7 @@ mulf_init: {
     bcc !+
     inc.z sqr+1
   !:
-    // for(byte* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
     inc.z sqr1_lo
     bne !+
     inc.z sqr1_lo+1

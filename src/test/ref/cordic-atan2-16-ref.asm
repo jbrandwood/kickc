@@ -107,33 +107,33 @@ main: {
     lda #$d
     cmp.z y
     bne __b1
-    // print_word(diff_sum)
-    jsr print_word
+    // print_uint(diff_sum)
+    jsr print_uint
   __b5:
     // (*col00)++;
     inc col00
     jmp __b5
 }
-// Print a word as HEX
-// print_word(word zp(4) w)
-print_word: {
+// Print a unsigned int as HEX
+// print_uint(word zp(4) w)
+print_uint: {
     .label w = 4
-    // print_byte(>w)
+    // print_u8(>w)
     ldx.z w+1
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    jsr print_byte
-    // print_byte(<w)
+    jsr print_u8
+    // print_u8(<w)
     ldx.z w
-    jsr print_byte
+    jsr print_u8
     // }
     rts
 }
-// Print a byte as HEX
-// print_byte(byte register(X) b)
-print_byte: {
+// Print a char as HEX
+// print_u8(byte register(X) b)
+print_u8: {
     // b>>4
     txa
     lsr
@@ -328,7 +328,7 @@ atan2_16: {
     sbc CORDIC_ATAN2_ANGLES_16+1,y
     sta.z angle+1
   __b19:
-    // for( byte i: 0..CORDIC_ITERATIONS_16-1)
+    // for( char i: 0..CORDIC_ITERATIONS_16-1)
     inx
     cpx #CORDIC_ITERATIONS_16-1+1
     bne !__b12+

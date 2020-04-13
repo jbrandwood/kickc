@@ -236,6 +236,12 @@ public class TestPrograms {
       compileAndCompare("register-0.c");
    }
 
+   // TODO: Fix this. Currently a volatile __address() variable can still be optimized away completely.
+   //@Test
+   //public void testAddress7() throws IOException, URISyntaxException {
+   //   compileAndCompare("address-7.c", log());
+   //}
+
    @Test
    public void testAddress6() throws IOException, URISyntaxException {
       compileAndCompare("address-6.c");

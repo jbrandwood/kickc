@@ -4,7 +4,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
-.encoding "petscii_mixed"
   .const CH = '\$ff'
 main: {
     ldx #0

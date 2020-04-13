@@ -252,27 +252,27 @@ print_ulong_at: {
 print_uint_at: {
     .label w = 3
     .label at = 5
-    // print_u8_at(>w, at)
+    // print_uchar_at(>w, at)
     lda.z w+1
-    sta.z print_u8_at.b
-    jsr print_u8_at
-    // print_u8_at(<w, at+2)
+    sta.z print_uchar_at.b
+    jsr print_uchar_at
+    // print_uchar_at(<w, at+2)
     lda.z w
-    sta.z print_u8_at.b
+    sta.z print_uchar_at.b
     lda #2
     clc
-    adc.z print_u8_at.at
-    sta.z print_u8_at.at
+    adc.z print_uchar_at.at
+    sta.z print_uchar_at.at
     bcc !+
-    inc.z print_u8_at.at+1
+    inc.z print_uchar_at.at+1
   !:
-    jsr print_u8_at
+    jsr print_uchar_at
     // }
     rts
 }
 // Print a char as HEX at a specific position
-// print_u8_at(byte zp($b) b, byte* zp(5) at)
-print_u8_at: {
+// print_uchar_at(byte zp($b) b, byte* zp(5) at)
+print_uchar_at: {
     .label b = $b
     .label at = 5
     // b>>4

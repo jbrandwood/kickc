@@ -452,11 +452,11 @@ printEntry: {
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entryTLastLink(entry))
+    // print_uchar(*entryTLastLink(entry))
     ldy #8
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -473,11 +473,11 @@ printEntry: {
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entrySLastLink(entry))
+    // print_uchar(*entrySLastLink(entry))
     ldy #9
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -494,11 +494,11 @@ printEntry: {
     lda #>str6
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entryBFlag(entry))
+    // print_uchar(*entryBFlag(entry))
     ldy #$a
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -515,11 +515,11 @@ printEntry: {
     lda #>str7
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entryBError(entry))
+    // print_uchar(*entryBError(entry))
     ldy #$b
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -560,11 +560,11 @@ printEntry: {
     lda #>str9
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entryBAddrLo(entry))
+    // print_uchar(*entryBAddrLo(entry))
     ldy #$e
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -581,11 +581,11 @@ printEntry: {
     lda #>str10
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entryBAddrHi(entry))
+    // print_uchar(*entryBAddrHi(entry))
     ldy #$f
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -602,11 +602,11 @@ printEntry: {
     lda #>str11
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entryTHi(entry))
+    // print_uchar(*entryTHi(entry))
     ldy #$10
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -623,11 +623,11 @@ printEntry: {
     lda #>str12
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*entryTLo(entry))
+    // print_uchar(*entryTLo(entry))
     ldy #$11
     lda (entry),y
     tax
-    jsr print_u8
+    jsr print_uchar
     lda.z print_line_cursor
     sta.z print_line_cursor_1
     lda.z print_line_cursor+1
@@ -664,8 +664,8 @@ printEntry: {
     .byte 0
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr
@@ -704,12 +704,12 @@ print_char: {
 // print_uint(word zp(8) w)
 print_uint: {
     .label w = 8
-    // print_u8(>w)
+    // print_uchar(>w)
     ldx.z w+1
-    jsr print_u8
-    // print_u8(<w)
+    jsr print_uchar
+    // print_uchar(<w)
     ldx.z w
-    jsr print_u8
+    jsr print_uchar
     // }
     rts
 }

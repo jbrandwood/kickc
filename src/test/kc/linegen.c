@@ -19,7 +19,7 @@ void main() {
     print_uint(0);
     print_ln();
     for(byte i=0; i<20; i++) {
-        print_u8(i);
+        print_uchar(i);
         print_str(" ");
         print_uint(lintab1[i]);
         print_str(" ");

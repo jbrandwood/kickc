@@ -14,7 +14,7 @@ void main() {
         if(sb>=0) {
           print_str(" ");
         }
-        print_s8(sb);
+        print_schar(sb);
         print_str("  ");
     }
     */
@@ -35,13 +35,13 @@ void sin8u_table(byte* sintab, word tabsize, byte min, byte max) {
     print_str("step:");
     print_uint(step);
     print_str(" min:");
-    print_u8(min);
+    print_uchar(min);
     print_str(" max:");
-    print_u8(max);
+    print_uchar(max);
     print_str(" ampl:");
-    print_u8(amplitude);
+    print_uchar(amplitude);
     print_str(" mid:");
-    print_u8(mid);
+    print_uchar(mid);
     print_ln();
     // Iterate over the table
     word x = 0; // u[4.12]
@@ -53,11 +53,11 @@ void sin8u_table(byte* sintab, word tabsize, byte min, byte max) {
         print_str("x: ");
         print_uint(x);
         print_str(" sin: ");
-        print_s8(sinx);
+        print_schar(sinx);
         print_str(" scaled: ");
         print_sint(sinx_sc);
         print_str(" trans: ");
-        print_u8(sinx_tr);
+        print_uchar(sinx_tr);
         print_ln();
         x = x + step;
     }

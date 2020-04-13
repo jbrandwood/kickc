@@ -120,9 +120,9 @@ main: {
     sta.z __16
     lda.z dw2+3
     sta.z __16+1
-    // print_u8(> >dw2)
+    // print_uchar(> >dw2)
     tax
-    jsr print_u8
+    jsr print_uchar
     // print_char(' ')
   // Test get high high byte of dword
     lda #' '
@@ -132,9 +132,9 @@ main: {
     sta.z __20
     lda.z dw2+3
     sta.z __20+1
-    // print_u8(< >dw2)
+    // print_uchar(< >dw2)
     ldx.z __20
-    jsr print_u8
+    jsr print_uchar
     // print_char(' ')
   // Test get low high byte of dword
     lda #' '
@@ -144,9 +144,9 @@ main: {
     sta.z __24
     lda.z dw2+1
     sta.z __24+1
-    // print_u8(> <dw2)
+    // print_uchar(> <dw2)
     tax
-    jsr print_u8
+    jsr print_uchar
     // print_char(' ')
   // Test get high low byte of dword
     lda #' '
@@ -156,9 +156,9 @@ main: {
     sta.z __28
     lda.z dw2+1
     sta.z __28+1
-    // print_u8(< <dw2)
+    // print_uchar(< <dw2)
     ldx.z __28
-    jsr print_u8
+    jsr print_uchar
     // print_ln()
   // Test get low low byte of dword
     jsr print_ln
@@ -206,8 +206,8 @@ print_ln: {
     jmp __b1
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr
@@ -246,12 +246,12 @@ print_char: {
 // print_uint(word zp($c) w)
 print_uint: {
     .label w = $c
-    // print_u8(>w)
+    // print_uchar(>w)
     ldx.z w+1
-    jsr print_u8
-    // print_u8(<w)
+    jsr print_uchar
+    // print_uchar(<w)
     ldx.z w
-    jsr print_u8
+    jsr print_uchar
     // }
     rts
 }

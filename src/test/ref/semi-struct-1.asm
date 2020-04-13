@@ -52,16 +52,16 @@ print_points: {
     lda #>points
     adc #0
     sta.z point+1
-    // print_u8(*pointXpos(point))
+    // print_uchar(*pointXpos(point))
     ldx points,y
-    jsr print_u8
+    jsr print_uchar
     // print_str(" ")
     jsr print_str
-    // print_u8(*pointYpos(point))
+    // print_uchar(*pointYpos(point))
     ldy #1
     lda (point),y
     tax
-    jsr print_u8
+    jsr print_uchar
     // print_ln()
     jsr print_ln
     // for(byte i: 0..NUM_POINTS-1)
@@ -104,8 +104,8 @@ print_ln: {
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr

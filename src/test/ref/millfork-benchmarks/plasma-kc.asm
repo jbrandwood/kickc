@@ -269,22 +269,22 @@ print_ln: {
 // print_uint(word zp($12) w)
 print_uint: {
     .label w = $12
-    // print_u8(>w)
+    // print_uchar(>w)
     ldx.z w+1
     lda #<$400
     sta.z print_char_cursor
     lda #>$400
     sta.z print_char_cursor+1
-    jsr print_u8
-    // print_u8(<w)
+    jsr print_uchar
+    // print_uchar(<w)
     ldx.z w
-    jsr print_u8
+    jsr print_uchar
     // }
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr

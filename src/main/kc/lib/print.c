@@ -59,44 +59,44 @@ void print_sint(signed int w) {
 }
 
 // Print a signed char as HEX
-void print_s8(signed char b) {
+void print_schar(signed char b) {
     if(b<0) {
         print_char('-');
         b = -b;
     } else {
         print_char(' ');        
     }
-    print_u8((char)b);
+    print_uchar((char)b);
 }
 
 // Prints a signed char as HEX at a specific position on the screen
 // row and col are 0-based indices
-inline void print_s8_pos(signed char sb, char row, char col) {
-    print_s8_at(sb, print_screen+row*40+col);
+inline void print_schar_pos(signed char sb, char row, char col) {
+    print_schar_at(sb, print_screen+row*40+col);
 }
 
 // Print a signed char as hex at a specific screen position
-void print_s8_at(signed char b, char* at) {
+void print_schar_at(signed char b, char* at) {
     if(b<0) {
         print_char_at('-', at);
         b = -b;
     } else {
         print_char_at(' ', at);        
     }
-    print_u8_at((char)b, at+1);
+    print_uchar_at((char)b, at+1);
 }
 
 // Print a unsigned int as HEX
 void print_uint(unsigned int w) {
-    print_u8(>w);
-    print_u8(<w);
+    print_uchar(>w);
+    print_uchar(<w);
 }
 
 // Digits used for storing the decimal unsigned int
 char decimal_digits[6];
 
 // Print a char as DECIMAL
-void print_u8_decimal(char b) {
+void print_uchar_decimal(char b) {
     utoa((unsigned int)b, decimal_digits, DECIMAL);
     print_str(decimal_digits);
 }
@@ -109,8 +109,8 @@ void print_uint_decimal(unsigned int w) {
 
 // Print a unsigned int as HEX at a specific position
 void print_uint_at(unsigned int w, char* at) {
-    print_u8_at(>w, at);
-    print_u8_at(<w, at+2);
+    print_uchar_at(>w, at);
+    print_uchar_at(<w, at+2);
 }
 
 // Print a unsigned long as HEX
@@ -148,7 +148,7 @@ void print_slong(signed long dw) {
 const char print_hextab[] = "0123456789abcdef"z;
 
 // Print a char as HEX
-void print_u8(char b) {
+void print_uchar(char b) {
     // Table of hexadecimal digits
     print_char(print_hextab[b>>4]);
     print_char(print_hextab[b&$f]);
@@ -156,12 +156,12 @@ void print_u8(char b) {
 
 // Prints a char as HEX at a specific position on the screen
 // row and col are 0-based indices
-inline void print_u8_pos(char b, char row, char col) {
-    print_u8_at(b, print_screen+row*40+col);
+inline void print_uchar_pos(char b, char row, char col) {
+    print_uchar_at(b, print_screen+row*40+col);
 }
 
 // Print a char as HEX at a specific position
-void print_u8_at(char b, char* at) {
+void print_uchar_at(char b, char* at) {
     // Table of hexadecimal digits
     print_char_at(print_hextab[b>>4], at);
     print_char_at(print_hextab[b&$f], at+1);

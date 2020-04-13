@@ -149,9 +149,9 @@ void mul8u_compare() {
 
 void mul8u_error(byte a, byte b, word ms, word mn, word mf) {
   print_str("multiply mismatch ");
-  print_u8(a);
+  print_uchar(a);
   print_str("*");
-  print_u8(b);
+  print_uchar(b);
   print_str(" slow:");
   print_uint(ms);
   print_str(" / normal:");
@@ -188,9 +188,9 @@ void mul8s_compare() {
 
 void mul8s_error(signed byte a, signed byte b, signed word ms, signed word mn, signed word mf) {
   print_str("signed multiply mismatch ");
-  print_s8(a);
+  print_schar(a);
   print_str("*");
-  print_s8(b);
+  print_schar(b);
   print_str(" slow:");
   print_sint(ms);
   print_str(" / normal:");

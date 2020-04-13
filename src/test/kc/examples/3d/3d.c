@@ -105,9 +105,9 @@ void debug_print_init() {
  	char* COLS = $d800;
  	char* at_cols = COLS+16*40;
     for( char i: 0..7) {
-    	print_s8_at(xs[i], at_line+40*0+c);
-    	print_s8_at(ys[i], at_line+40*1+c);
-    	print_s8_at(zs[i], at_line+40*2+c);
+    	print_schar_at(xs[i], at_line+40*0+c);
+    	print_schar_at(ys[i], at_line+40*1+c);
+    	print_schar_at(zs[i], at_line+40*2+c);
     	for( char j: 0..3) {
     		char col = 8+i;
     		*(at_cols+40*0+c+j) = col;
@@ -128,28 +128,28 @@ void debug_print_init() {
 
 void debug_print() {
 	// angles
-    print_s8_pos(sx, 0, 37);
-    print_s8_pos(sy, 1, 37);
-    print_s8_pos(sz, 2, 37);
+    print_schar_pos(sx, 0, 37);
+    print_schar_pos(sy, 1, 37);
+    print_schar_pos(sz, 2, 37);
     // rotation matrix
-    print_s8_pos(rotation_matrix[0], 4, 29);
-    print_s8_pos(rotation_matrix[1], 4, 33);
-    print_s8_pos(rotation_matrix[2], 4, 37);
-    print_s8_pos(rotation_matrix[3], 5, 29);
-    print_s8_pos(rotation_matrix[4], 5, 33);
-    print_s8_pos(rotation_matrix[5], 5, 37);
-    print_s8_pos(rotation_matrix[6], 6, 29);
-    print_s8_pos(rotation_matrix[7], 6, 33);
-    print_s8_pos(rotation_matrix[8], 6, 37);
+    print_schar_pos(rotation_matrix[0], 4, 29);
+    print_schar_pos(rotation_matrix[1], 4, 33);
+    print_schar_pos(rotation_matrix[2], 4, 37);
+    print_schar_pos(rotation_matrix[3], 5, 29);
+    print_schar_pos(rotation_matrix[4], 5, 33);
+    print_schar_pos(rotation_matrix[5], 5, 37);
+    print_schar_pos(rotation_matrix[6], 6, 29);
+    print_schar_pos(rotation_matrix[7], 6, 33);
+    print_schar_pos(rotation_matrix[8], 6, 37);
     char* at_line = SCREEN+19*40;
  	char c = 4;
     for( char i: 0..7) {
-    	print_s8_at(xrs[i], at_line+40*0+c);
-    	print_s8_at(yrs[i], at_line+40*1+c);
-    	print_s8_at(zrs[i], at_line+40*2+c);
-    	print_s8_at(pps[i], at_line+40*3+c);
-    	print_s8_at(xps[i], at_line+40*4+c);
-    	print_s8_at(yps[i], at_line+40*5+c);
+    	print_schar_at(xrs[i], at_line+40*0+c);
+    	print_schar_at(yrs[i], at_line+40*1+c);
+    	print_schar_at(zrs[i], at_line+40*2+c);
+    	print_schar_at(pps[i], at_line+40*3+c);
+    	print_schar_at(xps[i], at_line+40*4+c);
+    	print_schar_at(yps[i], at_line+40*5+c);
     	c += 4;
     }
 }

@@ -70,20 +70,20 @@ void testProcport(char ddr, char port, char ddr2) {
     *PROCPORT = port;
     *PROCPORT_DDR = ddr2;
     print_str(" ");
-    print_u8(ddr);
+    print_uchar(ddr);
     print_str("   ");
-    print_u8(port);
+    print_uchar(port);
     print_str("   ");
-    print_u8(ddr2);
+    print_uchar(ddr2);
     print_str("  ");
-    print_u8(*PROCPORT_DDR);
+    print_uchar(*PROCPORT_DDR);
     print_str("  ");
-    print_u8(*PROCPORT);
+    print_uchar(*PROCPORT);
     print_str("    ");
-    print_u8(*BASIC_ROM);
+    print_uchar(*BASIC_ROM);
     print_str("    ");
-    print_u8(*IO_RAM);
+    print_uchar(*IO_RAM);
     print_str("    ");
-    print_u8(*KERNAL_ROM);
+    print_uchar(*KERNAL_ROM);
     print_ln();
 }

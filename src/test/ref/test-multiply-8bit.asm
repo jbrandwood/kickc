@@ -134,17 +134,17 @@ mul8s_error: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_s8(a)
-    jsr print_s8
+    // print_schar(a)
+    jsr print_schar
     // print_str("*")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_s8(b)
+    // print_schar(b)
     ldx.z b
-    jsr print_s8
+    jsr print_schar
     // print_str(" slow:")
     lda #<str2
     sta.z print_str.str
@@ -254,18 +254,18 @@ print_char: {
 // print_uint(word zp(7) w)
 print_uint: {
     .label w = 7
-    // print_u8(>w)
+    // print_uchar(>w)
     ldx.z w+1
-    jsr print_u8
-    // print_u8(<w)
+    jsr print_uchar
+    // print_uchar(<w)
     ldx.z w
-    jsr print_u8
+    jsr print_uchar
     // }
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr
@@ -315,8 +315,8 @@ print_str: {
     jmp __b1
 }
 // Print a signed char as HEX
-// print_s8(signed byte register(X) b)
-print_s8: {
+// print_schar(signed byte register(X) b)
+print_schar: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -324,8 +324,8 @@ print_s8: {
     lda #' '
     jsr print_char
   __b2:
-    // print_u8((char)b)
-    jsr print_u8
+    // print_uchar((char)b)
+    jsr print_uchar
     // }
     rts
   __b1:
@@ -688,17 +688,17 @@ mul8u_error: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(a)
-    jsr print_u8
+    // print_uchar(a)
+    jsr print_uchar
     // print_str("*")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(b)
+    // print_uchar(b)
     ldx.z b
-    jsr print_u8
+    jsr print_uchar
     // print_str(" slow:")
     lda #<str2
     sta.z print_str.str

@@ -20,20 +20,20 @@ void print_ln();
 void print_sint(signed int w);
 
 // Print a signed char as HEX
-void print_s8(signed char b);
+void print_schar(signed char b);
 
 // Prints a signed char as HEX at a specific position on the screen
 // row and col are 0-based indices
-inline void print_s8_pos(signed char sb, char row, char col);
+inline void print_schar_pos(signed char sb, char row, char col);
 
 // Print a signed char as hex at a specific screen position
-void print_s8_at(signed char b, char*  at);
+void print_schar_at(signed char b, char*  at);
 
 // Print a unsigned int as HEX
 void print_uint(unsigned int w);
 
 // Print a char as DECIMAL
-void print_u8_decimal(char b);
+void print_uchar_decimal(char b);
 
 // Print a unsigned int as DECIMAL
 void print_uint_decimal(unsigned int w);
@@ -54,14 +54,14 @@ void print_ulong_at(unsigned long dw, char*  at);
 void print_slong(signed long dw);
 
 // Print a char as HEX
-void print_u8(char b);
+void print_uchar(char b);
 
 // Prints a char as HEX at a specific position on the screen
 // row and col are 0-based indices
-void print_u8_pos(char b, char row, char col);
+void print_uchar_pos(char b, char row, char col);
 
 // Print a char as HEX at a specific position
-void print_u8_at(char b, char*  at);
+void print_uchar_at(char b, char*  at);
 
 // Print a single char
 void print_char(char ch);

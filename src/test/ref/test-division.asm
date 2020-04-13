@@ -171,20 +171,20 @@ print_char: {
 // print_uint(word zp($11) w)
 print_uint: {
     .label w = $11
-    // print_u8(>w)
+    // print_uchar(>w)
     lda.z w+1
-    sta.z print_u8.b
-    jsr print_u8
-    // print_u8(<w)
+    sta.z print_uchar.b
+    jsr print_uchar
+    // print_uchar(<w)
     lda.z w
-    sta.z print_u8.b
-    jsr print_u8
+    sta.z print_uchar.b
+    jsr print_uchar
     // }
     rts
 }
 // Print a char as HEX
-// print_u8(byte zp(6) b)
-print_u8: {
+// print_uchar(byte zp(6) b)
+print_uchar: {
     .label b = 6
     // b>>4
     lda.z b
@@ -426,42 +426,42 @@ test_8s: {
     jsr div8s
     // res = div8s(dividend, divisor)
     sta.z res
-    // print_s8(dividend)
+    // print_schar(dividend)
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
-    // print_s8(dividend)
-    jsr print_s8
+    // print_schar(dividend)
+    jsr print_schar
     // print_str(" / ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_s8(divisor)
+    // print_schar(divisor)
     lda.z divisor
-    sta.z print_s8.b
-    jsr print_s8
+    sta.z print_schar.b
+    jsr print_schar
     // print_str(" = ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_s8(res)
+    // print_schar(res)
     lda.z res
-    sta.z print_s8.b
-    jsr print_s8
+    sta.z print_schar.b
+    jsr print_schar
     // print_str(" ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_s8(rem8s)
-    stx.z print_s8.b
-    jsr print_s8
+    // print_schar(rem8s)
+    stx.z print_schar.b
+    jsr print_schar
     // print_ln()
     jsr print_ln
     // for( byte i: 0..5 )
@@ -475,8 +475,8 @@ test_8s: {
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
 // Print a signed char as HEX
-// print_s8(signed byte zp(6) b)
-print_s8: {
+// print_schar(signed byte zp(6) b)
+print_schar: {
     .label b = 6
     // if(b<0)
     lda.z b
@@ -485,8 +485,8 @@ print_s8: {
     lda #' '
     jsr print_char
   __b2:
-    // print_u8((char)b)
-    jsr print_u8
+    // print_uchar((char)b)
+    jsr print_uchar
     // }
     rts
   __b1:
@@ -768,37 +768,37 @@ test_8u: {
     // div8u(dividend, divisor)
     // res = div8u(dividend, divisor)
     sta.z res
-    // print_u8(dividend)
-    jsr print_u8
+    // print_uchar(dividend)
+    jsr print_uchar
     // print_str(" / ")
     lda #<str
     sta.z print_str.str
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(divisor)
+    // print_uchar(divisor)
     lda.z divisor
-    sta.z print_u8.b
-    jsr print_u8
+    sta.z print_uchar.b
+    jsr print_uchar
     // print_str(" = ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(res)
+    // print_uchar(res)
     lda.z res
-    sta.z print_u8.b
-    jsr print_u8
+    sta.z print_uchar.b
+    jsr print_uchar
     // print_str(" ")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(rem8u)
-    stx.z print_u8.b
-    jsr print_u8
+    // print_uchar(rem8u)
+    stx.z print_uchar.b
+    jsr print_uchar
     // print_ln()
     jsr print_ln
     // for( byte i: 0..5 )

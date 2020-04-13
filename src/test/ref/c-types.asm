@@ -174,18 +174,18 @@ print_ulong: {
 // print_uint(word zp($a) w)
 print_uint: {
     .label w = $a
-    // print_u8(>w)
+    // print_uchar(>w)
     ldx.z w+1
-    jsr print_u8
-    // print_u8(<w)
+    jsr print_uchar
+    // print_uchar(<w)
     ldx.z w
-    jsr print_u8
+    jsr print_uchar
     // }
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr
@@ -367,20 +367,20 @@ testChar: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(u)
+    // print_uchar(u)
     ldx #u
-    jsr print_u8
+    jsr print_uchar
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_u8(n)
+    // print_uchar(n)
     ldx #n
-    jsr print_u8
+    jsr print_uchar
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_s8(s)
-    jsr print_s8
+    // print_schar(s)
+    jsr print_schar
     // print_ln()
     lda #<$400
     sta.z print_line_cursor
@@ -393,14 +393,14 @@ testChar: {
     .byte 0
 }
 // Print a signed char as HEX
-print_s8: {
+print_schar: {
     .const b = -testChar.s
     // print_char('-')
     lda #'-'
     jsr print_char
-    // print_u8((char)b)
+    // print_uchar((char)b)
     ldx #b
-    jsr print_u8
+    jsr print_uchar
     // }
     rts
 }

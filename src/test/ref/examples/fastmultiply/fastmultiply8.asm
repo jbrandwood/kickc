@@ -30,15 +30,15 @@ main: {
     lda #0
     sta.z k
   __b1:
-    // print_s8_at(vals[k], at)
+    // print_schar_at(vals[k], at)
     ldy.z k
     lda vals,y
-    sta.z print_s8_at.b
+    sta.z print_schar_at.b
     lda.z at
-    sta.z print_s8_at.at
+    sta.z print_schar_at.at
     lda.z at+1
-    sta.z print_s8_at.at+1
-    jsr print_s8_at
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
     // at += 4
     lda #4
     clc
@@ -67,15 +67,15 @@ main: {
     bcc !+
     inc.z at_1+1
   !:
-    // print_s8_at(vals[i], at)
+    // print_schar_at(vals[i], at)
     ldy.z i
     lda vals,y
-    sta.z print_s8_at.b
+    sta.z print_schar_at.b
     lda.z at_1
-    sta.z print_s8_at.at
+    sta.z print_schar_at.at
     lda.z at_1+1
-    sta.z print_s8_at.at+1
-    jsr print_s8_at
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
     lda.z at_1
     sta.z at_2
     lda.z at_1+1
@@ -98,13 +98,13 @@ main: {
     ldx vals,y
     jsr fmul8
     // r = fmul8(vals[i], vals[j])
-    // print_s8_at(r, at)
-    sta.z print_s8_at.b
+    // print_schar_at(r, at)
+    sta.z print_schar_at.b
     lda.z at_2
-    sta.z print_s8_at.at
+    sta.z print_schar_at.at
     lda.z at_2+1
-    sta.z print_s8_at.at+1
-    jsr print_s8_at
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
     // for(char j: 0..8)
     inc.z j
     lda #9
@@ -118,8 +118,8 @@ main: {
     rts
 }
 // Print a signed char as hex at a specific screen position
-// print_s8_at(signed byte zp($b) b, byte* zp($c) at)
-print_s8_at: {
+// print_schar_at(signed byte zp($b) b, byte* zp($c) at)
+print_schar_at: {
     .label b = $b
     .label at = $c
     // if(b<0)
@@ -129,12 +129,12 @@ print_s8_at: {
     ldx #' '
     jsr print_char_at
   __b2:
-    // print_u8_at((char)b, at+1)
-    inc.z print_u8_at.at
+    // print_uchar_at((char)b, at+1)
+    inc.z print_uchar_at.at
     bne !+
-    inc.z print_u8_at.at+1
+    inc.z print_uchar_at.at+1
   !:
-    jsr print_u8_at
+    jsr print_uchar_at
     // }
     rts
   __b1:
@@ -161,8 +161,8 @@ print_char_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_u8_at(byte zp($b) b, byte* zp($c) at)
-print_u8_at: {
+// print_uchar_at(byte zp($b) b, byte* zp($c) at)
+print_uchar_at: {
     .label b = $b
     .label at = $c
     // b>>4

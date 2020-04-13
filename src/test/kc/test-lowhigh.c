@@ -12,13 +12,13 @@ void main() {
         print_char(' ');
         print_uint(<dw2); // Test get low word of dword
         print_char(' ');
-        print_u8(> >dw2); // Test get high high byte of dword
+        print_uchar(> >dw2); // Test get high high byte of dword
         print_char(' ');
-        print_u8(< >dw2); // Test get low high byte of dword
+        print_uchar(< >dw2); // Test get low high byte of dword
         print_char(' ');
-        print_u8(> <dw2); // Test get high low byte of dword
+        print_uchar(> <dw2); // Test get high low byte of dword
         print_char(' ');
-        print_u8(< <dw2); // Test get low low byte of dword
+        print_uchar(< <dw2); // Test get low low byte of dword
         print_ln();
     }
 }

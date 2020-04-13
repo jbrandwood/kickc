@@ -270,71 +270,71 @@ testProcport: {
     lda #>str
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(ddr)
-    jsr print_u8
+    // print_uchar(ddr)
+    jsr print_uchar
     // print_str("   ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(port)
+    // print_uchar(port)
     ldx.z port
-    jsr print_u8
+    jsr print_uchar
     // print_str("   ")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(ddr2)
+    // print_uchar(ddr2)
     ldx.z ddr2
-    jsr print_u8
+    jsr print_uchar
     // print_str("  ")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*PROCPORT_DDR)
+    // print_uchar(*PROCPORT_DDR)
     ldx PROCPORT_DDR
-    jsr print_u8
+    jsr print_uchar
     // print_str("  ")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*PROCPORT)
+    // print_uchar(*PROCPORT)
     ldx PROCPORT
-    jsr print_u8
+    jsr print_uchar
     // print_str("    ")
     lda #<str5
     sta.z print_str.str
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*BASIC_ROM)
+    // print_uchar(*BASIC_ROM)
     ldx BASIC_ROM
-    jsr print_u8
+    jsr print_uchar
     // print_str("    ")
     lda #<str5
     sta.z print_str.str
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*IO_RAM)
+    // print_uchar(*IO_RAM)
     ldx IO_RAM
-    jsr print_u8
+    jsr print_uchar
     // print_str("    ")
     lda #<str5
     sta.z print_str.str
     lda #>str5
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(*KERNAL_ROM)
+    // print_uchar(*KERNAL_ROM)
     ldx KERNAL_ROM
-    jsr print_u8
+    jsr print_uchar
     // print_ln()
     jsr print_ln
     // }
@@ -372,8 +372,8 @@ print_ln: {
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr

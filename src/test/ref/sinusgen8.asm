@@ -28,9 +28,9 @@ main: {
     lda sintab2,y
     sec
     sbc sintabref,y
-    // print_s8(sb)
+    // print_schar(sb)
     tax
-    jsr print_s8
+    jsr print_schar
     // print_str("  ")
     jsr print_str
     // for(byte i: 0..191)
@@ -76,8 +76,8 @@ print_str: {
     jmp __b1
 }
 // Print a signed char as HEX
-// print_s8(signed byte register(X) b)
-print_s8: {
+// print_schar(signed byte register(X) b)
+print_schar: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -85,8 +85,8 @@ print_s8: {
     lda #' '
     jsr print_char
   __b2:
-    // print_u8((char)b)
-    jsr print_u8
+    // print_uchar((char)b)
+    jsr print_uchar
     // }
     rts
   __b1:
@@ -116,8 +116,8 @@ print_char: {
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr

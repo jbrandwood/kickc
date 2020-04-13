@@ -513,13 +513,13 @@ printu: {
     // print_char(' ')
     lda #' '
     jsr print_char
-    // print_u8(a)
-    jsr print_u8
+    // print_uchar(a)
+    jsr print_uchar
     // print_str(op)
     jsr print_str
-    // print_u8(b)
+    // print_uchar(b)
     ldx.z b
-    jsr print_u8
+    jsr print_uchar
     // print_char(' ')
     lda #' '
     jsr print_char
@@ -544,8 +544,8 @@ print_char: {
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr

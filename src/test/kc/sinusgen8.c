@@ -24,7 +24,7 @@ void main() {
     print_cls();
     for(byte i: 0..191) {
         signed byte sb = sintab2[i]-(signed byte)sintabref[i];
-        print_s8(sb);
+        print_schar(sb);
         print_str("  ");
     }
 }

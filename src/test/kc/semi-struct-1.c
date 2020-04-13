@@ -55,9 +55,9 @@ void print_points() {
     print_cls();
     for(byte i: 0..NUM_POINTS-1) {
         byte* point = getPoint(i);
-        print_u8(*pointXpos(point));
+        print_uchar(*pointXpos(point));
         print_str(" ");
-        print_u8(*pointYpos(point));
+        print_uchar(*pointYpos(point));
         print_ln();
     }
 }

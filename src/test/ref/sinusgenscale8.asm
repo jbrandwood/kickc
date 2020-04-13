@@ -66,36 +66,36 @@ sin8u_table: {
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(min)
+    // print_uchar(min)
     ldx #min
-    jsr print_u8
+    jsr print_uchar
     // print_str(" max:")
     lda #<str2
     sta.z print_str.str
     lda #>str2
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(max)
+    // print_uchar(max)
     ldx #max
-    jsr print_u8
+    jsr print_uchar
     // print_str(" ampl:")
     lda #<str3
     sta.z print_str.str
     lda #>str3
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(amplitude)
+    // print_uchar(amplitude)
     ldx #amplitude
-    jsr print_u8
+    jsr print_uchar
     // print_str(" mid:")
     lda #<str4
     sta.z print_str.str
     lda #>str4
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(mid)
+    // print_uchar(mid)
     ldx #mid
-    jsr print_u8
+    jsr print_uchar
     // print_ln()
     lda #<$400
     sta.z print_line_cursor
@@ -173,9 +173,9 @@ sin8u_table: {
     lda #>str6
     sta.z print_str.str+1
     jsr print_str
-    // print_s8(sinx)
+    // print_schar(sinx)
     ldx.z sinx
-    jsr print_s8
+    jsr print_schar
     // print_str(" scaled: ")
     lda #<str7
     sta.z print_str.str
@@ -194,9 +194,9 @@ sin8u_table: {
     lda #>str8
     sta.z print_str.str+1
     jsr print_str
-    // print_u8(sinx_tr)
+    // print_uchar(sinx_tr)
     ldx.z sinx_tr
-    jsr print_u8
+    jsr print_uchar
     // print_ln()
     jsr print_ln
     // x = x + step
@@ -256,8 +256,8 @@ print_ln: {
     rts
 }
 // Print a char as HEX
-// print_u8(byte register(X) b)
-print_u8: {
+// print_uchar(byte register(X) b)
+print_uchar: {
     // b>>4
     txa
     lsr
@@ -353,18 +353,18 @@ print_sint: {
 // print_uint(word zp($c) w)
 print_uint: {
     .label w = $c
-    // print_u8(>w)
+    // print_uchar(>w)
     ldx.z w+1
-    jsr print_u8
-    // print_u8(<w)
+    jsr print_uchar
+    // print_uchar(<w)
     ldx.z w
-    jsr print_u8
+    jsr print_uchar
     // }
     rts
 }
 // Print a signed char as HEX
-// print_s8(signed byte register(X) b)
-print_s8: {
+// print_schar(signed byte register(X) b)
+print_schar: {
     // if(b<0)
     cpx #0
     bmi __b1
@@ -372,8 +372,8 @@ print_s8: {
     lda #' '
     jsr print_char
   __b2:
-    // print_u8((char)b)
-    jsr print_u8
+    // print_uchar((char)b)
+    jsr print_uchar
     // }
     rts
   __b1:

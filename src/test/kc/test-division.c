@@ -18,13 +18,13 @@ void test_8u() {
         byte dividend = dividends[i];
         byte divisor = divisors[i];
         byte res = div8u(dividend, divisor);
-        print_u8(dividend);
+        print_uchar(dividend);
         print_str(" / ");
-        print_u8(divisor);
+        print_uchar(divisor);
         print_str(" = ");
-        print_u8(res);
+        print_uchar(res);
         print_str(" ");
-        print_u8(rem8u);
+        print_uchar(rem8u);
         print_ln();
     }
 }
@@ -54,13 +54,13 @@ void test_8s() {
         signed byte dividend = dividends[i];
         signed byte divisor = divisors[i];
         signed byte res = div8s(dividend, divisor);
-        print_s8(dividend);
+        print_schar(dividend);
         print_str(" / ");
-        print_s8(divisor);
+        print_schar(divisor);
         print_str(" = ");
-        print_s8(res);
+        print_schar(res);
         print_str(" ");
-        print_s8(rem8s);
+        print_schar(rem8s);
         print_ln();
     }
 }

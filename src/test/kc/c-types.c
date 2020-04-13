@@ -16,11 +16,11 @@ void testChar() {
     signed char s = -14;
 
     print_str("char: ");
-    print_u8(u);
+    print_uchar(u);
     print_char(' ');
-    print_u8(n);
+    print_uchar(n);
     print_char(' ');
-    print_s8(s);
+    print_schar(s);
     print_ln();
 
 }

@@ -27,11 +27,8 @@ void main() {
 
 }
 
-void chrout(char petscii) {
-    char* mem = 0xff;
-    *mem = petscii;
-    asm {
-        lda mem
+void chrout(char register(A) petscii) {
+    kickasm(uses petscii, clobbers "") {{
         jsr $ffd2
-    }
+    }}
 }

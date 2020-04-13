@@ -2,7 +2,6 @@ Warning! Adding boolean cast to non-boolean condition *((const byte*) MSG1 + (by
 Identified constant variable (byte) CH
 Identified constant variable (byte*) SCREEN1
 Identified constant variable (byte*) SCREEN2
-Identified constant variable (byte*) chrout::mem
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
@@ -42,8 +41,8 @@ main::@return: scope:[main]  from main::@3
 (void()) chrout((byte) chrout::petscii)
 chrout: scope:[chrout]  from main::@2
   (byte) chrout::petscii#1 ← phi( main::@2/(byte) chrout::petscii#0 )
-  *((const byte*) chrout::mem) ← (byte) chrout::petscii#1
-  asm { ldamem jsr$ffd2  }
+  kickasm( uses chrout::petscii#1) {{ jsr $ffd2
+     }}
   to:chrout::@return
 chrout::@return: scope:[chrout]  from chrout
   return 
@@ -67,10 +66,9 @@ SYMBOL TABLE SSA
 (const byte*) SCREEN2 = (byte*)(number) $428
 (void()) chrout((byte) chrout::petscii)
 (label) chrout::@return
-(const byte*) chrout::mem = (byte*)(number) $ff
-(byte) chrout::petscii
-(byte) chrout::petscii#0
-(byte) chrout::petscii#1
+(byte) chrout::petscii !reg byte a
+(byte) chrout::petscii#0 !reg byte a
+(byte) chrout::petscii#1 !reg byte a
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -91,7 +89,6 @@ Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN2 + (number) 
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*)(number) $d018) ← (unumber)(number) $17
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 255
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1064
 Simplifying constant integer cast $17
@@ -105,8 +102,6 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 main::i#4 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) chrout::petscii#1 (byte) chrout::petscii#0
-Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$1 [4] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
@@ -122,11 +117,12 @@ Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to chrout:11 
+Calls in [main] to chrout:12 
 
-Created 1 initial phi equivalence classes
-Coalesced [14] main::i#5 ← main::i#1
-Coalesced down to 1 phi equivalence classes
+Created 2 initial phi equivalence classes
+Coalesced [11] chrout::petscii#2 ← chrout::petscii#0
+Coalesced [15] main::i#5 ← main::i#1
+Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @3
 Renumbering block @2 to @1
 Renumbering block main::@7 to main::@4
@@ -170,8 +166,9 @@ main::@4: scope:[main]  from main::@2
 
 (void()) chrout((byte) chrout::petscii)
 chrout: scope:[chrout]  from main::@2
-  [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0
-  asm { ldamem jsr$ffd2  }
+  [13] (byte) chrout::petscii#1 ← phi( main::@2/(byte) chrout::petscii#0 )
+  kickasm( uses chrout::petscii#1) {{ jsr $ffd2
+     }}
   to:chrout::@return
 chrout::@return: scope:[chrout]  from chrout
   [15] return 
@@ -180,8 +177,9 @@ chrout::@return: scope:[chrout]  from chrout
 
 VARIABLE REGISTER WEIGHTS
 (void()) chrout((byte) chrout::petscii)
-(byte) chrout::petscii
-(byte) chrout::petscii#0 1102.0
+(byte) chrout::petscii !reg byte a
+(byte) chrout::petscii#0 !reg byte a 202.0
+(byte) chrout::petscii#1 !reg byte a 101.0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 202.0
@@ -189,12 +187,11 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-Added variable chrout::petscii#0 to live range equivalence class [ chrout::petscii#0 ]
+[ chrout::petscii#1 chrout::petscii#0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ chrout::petscii#0 ]
+[ chrout::petscii#1 chrout::petscii#0 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-Allocated zp[1]:3 [ chrout::petscii#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -257,11 +254,13 @@ main: {
     rts
     // main::@2
   __b2:
-    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z i
     lda MSG1,y
-    sta.z chrout.petscii
     // [10] call chrout 
+    // [13] phi from main::@2 to chrout [phi:main::@2->chrout]
+  chrout_from___b2:
+    // [13] phi (byte) chrout::petscii#1 = (byte) chrout::petscii#0 [phi:main::@2->chrout#0] -- register_copy 
     jsr chrout
     jmp __b4
     // main::@4
@@ -278,16 +277,11 @@ main: {
     jmp __b1
 }
   // chrout
-// chrout(byte zp(3) petscii)
+// chrout(byte register(A) petscii)
 chrout: {
-    .label mem = $ff
-    .label petscii = 3
-    // [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0 -- _deref_pbuc1=vbuz1 
-    lda.z petscii
-    sta mem
-    // asm { ldamem jsr$ffd2  }
-    lda mem
+    // kickasm( uses chrout::petscii#1) {{ jsr $ffd2      }}
     jsr $ffd2
+    
     jmp __breturn
     // chrout::@return
   __breturn:
@@ -307,29 +301,24 @@ Statement [4] *((byte*) 53272) ← (byte) $17 [ ] ( main:2 [ ] { }  ) always clo
 Statement [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] *((const byte*) SCREEN2) ← (const byte) CH [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) [ main::i#2 chrout::petscii#0 ] ( main:2 [ main::i#2 chrout::petscii#0 ] { { chrout::petscii#0 = chrout::petscii#1 } }  ) always clobbers reg byte a 
 Statement [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement asm { ldamem jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
-Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [4] *((byte*) 53272) ← (byte) $17 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [7] *((const byte*) SCREEN2) ← (const byte) CH [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) [ main::i#2 chrout::petscii#0 ] ( main:2 [ main::i#2 chrout::petscii#0 ] { }  ) always clobbers reg byte y 
-Statement [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement asm { ldamem jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
-Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
-Potential registers zp[1]:3 [ chrout::petscii#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Statement [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) [ main::i#2 chrout::petscii#0 ] ( main:2 [ main::i#2 chrout::petscii#0 ] { { chrout::petscii#0 = chrout::petscii#1 } }  ) always clobbers reg byte a 
+Statement [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers reg byte a [ chrout::petscii#1 chrout::petscii#0 ] : reg byte a , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [chrout] 1,102: zp[1]:3 [ chrout::petscii#0 ] 
 Uplift Scope [main] 323.2: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [chrout] 303: reg byte a [ chrout::petscii#1 chrout::petscii#0 ] 
 Uplift Scope [] 
 
-Uplifting [chrout] best 656 combination reg byte a [ chrout::petscii#0 ] 
-Uplifting [main] best 656 combination zp[1]:2 [ main::i#2 main::i#1 ] 
-Uplifting [] best 656 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 656 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 667 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [chrout] best 667 combination reg byte a [ chrout::petscii#1 chrout::petscii#0 ] 
+Uplifting [] best 667 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -360,23 +349,20 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label i = 2
     // [4] *((byte*) 53272) ← (byte) $17 -- _deref_pbuc1=vbuc2 
     // Show mixed chars on screen
     lda #$17
     sta $d018
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
-    lda #0
-    ldy.z i
-    cmp MSG1,y
+    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    lda MSG1,x
+    cmp #0
     bne __b2
     jmp __b3
     // main::@3
@@ -391,20 +377,21 @@ main: {
     rts
     // main::@2
   __b2:
-    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy.z i
-    lda MSG1,y
+    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda MSG1,x
     // [10] call chrout 
+    // [13] phi from main::@2 to chrout [phi:main::@2->chrout]
+  chrout_from___b2:
+    // [13] phi (byte) chrout::petscii#1 = (byte) chrout::petscii#0 [phi:main::@2->chrout#0] -- register_copy 
     jsr chrout
     jmp __b4
     // main::@4
   __b4:
-    // [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy.z i
-    lda MSG2,y
-    sta SCREEN1,y
-    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
+    // [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MSG2,x
+    sta SCREEN1,x
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
@@ -413,12 +400,9 @@ main: {
   // chrout
 // chrout(byte register(A) petscii)
 chrout: {
-    .label mem = $ff
-    // [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0 -- _deref_pbuc1=vbuaa 
-    sta mem
-    // asm { ldamem jsr$ffd2  }
-    lda mem
+    // kickasm( uses chrout::petscii#1) {{ jsr $ffd2      }}
     jsr $ffd2
+    
     jmp __breturn
     // chrout::@return
   __breturn:
@@ -442,8 +426,6 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b4
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda mem
-Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1_from___bbegin:
 Removing instruction __b1:
 Removing instruction __bend_from___b1:
@@ -452,6 +434,7 @@ Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __b3:
 Removing instruction __breturn:
+Removing instruction chrout_from___b2:
 Removing instruction __b4:
 Removing instruction __b1_from___b4:
 Removing instruction __breturn:
@@ -473,9 +456,9 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN2 = (byte*) 1064
 (void()) chrout((byte) chrout::petscii)
 (label) chrout::@return
-(const byte*) chrout::mem = (byte*) 255
-(byte) chrout::petscii
-(byte) chrout::petscii#0 reg byte a 1102.0
+(byte) chrout::petscii !reg byte a
+(byte) chrout::petscii#0 !reg byte a 202.0
+(byte) chrout::petscii#1 !reg byte a 101.0
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -483,15 +466,15 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 i zp[1]:2 202.0
-(byte) main::i#2 i zp[1]:2 121.2
+(byte) main::i#1 reg byte x 202.0
+(byte) main::i#2 reg byte x 121.2
 
-zp[1]:2 [ main::i#2 main::i#1 ]
-reg byte a [ chrout::petscii#0 ]
+reg byte x [ main::i#2 main::i#1 ]
+reg byte a [ chrout::petscii#1 chrout::petscii#0 ]
 
 
 FINAL ASSEMBLER
-Score: 544
+Score: 586
 
   // File Comments
 // Test using some simple supported string escape
@@ -513,23 +496,20 @@ Score: 544
   // @end
   // main
 main: {
-    .label i = 2
     // *((char*)0xd018) = 0x17
     // [4] *((byte*) 53272) ← (byte) $17 -- _deref_pbuc1=vbuc2 
     // Show mixed chars on screen
     lda #$17
     sta $d018
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
     // main::@1
   __b1:
     // while(MSG1[i])
-    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
-    lda #0
-    ldy.z i
-    cmp MSG1,y
+    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    lda MSG1,x
+    cmp #0
     bne __b2
     // main::@3
     // SCREEN2[0] = CH
@@ -543,20 +523,20 @@ main: {
     // main::@2
   __b2:
     // chrout(MSG1[i])
-    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
-    ldy.z i
-    lda MSG1,y
+    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda MSG1,x
     // [10] call chrout 
+    // [13] phi from main::@2 to chrout [phi:main::@2->chrout]
+    // [13] phi (byte) chrout::petscii#1 = (byte) chrout::petscii#0 [phi:main::@2->chrout#0] -- register_copy 
     jsr chrout
     // main::@4
     // SCREEN1[i] = MSG2[i]
-    // [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy.z i
-    lda MSG2,y
-    sta SCREEN1,y
+    // [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    lda MSG2,x
+    sta SCREEN1,x
     // i++;
-    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
@@ -564,13 +544,10 @@ main: {
   // chrout
 // chrout(byte register(A) petscii)
 chrout: {
-    .label mem = $ff
-    // *mem = petscii
-    // [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0 -- _deref_pbuc1=vbuaa 
-    sta mem
-    // asm
-    // asm { ldamem jsr$ffd2  }
+    // kickasm
+    // kickasm( uses chrout::petscii#1) {{ jsr $ffd2      }}
     jsr $ffd2
+    
     // chrout::@return
     // }
     // [15] return 

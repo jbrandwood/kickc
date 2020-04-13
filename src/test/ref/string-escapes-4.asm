@@ -8,18 +8,15 @@
   .label SCREEN1 = $400
   .label SCREEN2 = $428
 main: {
-    .label i = 2
     // *((char*)0xd018) = 0x17
     // Show mixed chars on screen
     lda #$17
     sta $d018
-    lda #0
-    sta.z i
+    ldx #0
   __b1:
     // while(MSG1[i])
-    lda #0
-    ldy.z i
-    cmp MSG1,y
+    lda MSG1,x
+    cmp #0
     bne __b2
     // SCREEN2[0] = CH
     lda #CH
@@ -28,24 +25,20 @@ main: {
     rts
   __b2:
     // chrout(MSG1[i])
-    ldy.z i
-    lda MSG1,y
+    lda MSG1,x
     jsr chrout
     // SCREEN1[i] = MSG2[i]
-    ldy.z i
-    lda MSG2,y
-    sta SCREEN1,y
+    lda MSG2,x
+    sta SCREEN1,x
     // i++;
-    inc.z i
+    inx
     jmp __b1
 }
 // chrout(byte register(A) petscii)
 chrout: {
-    .label mem = $ff
-    // *mem = petscii
-    sta mem
-    // asm
+    // kickasm
     jsr $ffd2
+    
     // }
     rts
 }

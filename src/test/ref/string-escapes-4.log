@@ -2,75 +2,97 @@ Warning! Adding boolean cast to non-boolean condition *((const byte*) MSG1 + (by
 Identified constant variable (byte) CH
 Identified constant variable (byte*) SCREEN1
 Identified constant variable (byte*) SCREEN2
-Identified constant variable (byte*) SCREEN3
+Identified constant variable (byte*) chrout::mem
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@6
+Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@1
+  to:@2
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from @2
   *((byte*)(number) $d018) ← (number) $17
   (byte) main::i#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$0 ← (number) 0 != *((const byte*) MSG1 + (byte) main::i#2)
-  if((bool~) main::$0) goto main::@2
+main::@1: scope:[main]  from main main::@7
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@7/(byte) main::i#1 )
+  (bool~) main::$1 ← (number) 0 != *((const byte*) MSG1 + (byte) main::i#2)
+  if((bool~) main::$1) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((const byte*) SCREEN1 + (byte) main::i#3) ← *((const byte*) MSG1 + (byte) main::i#3)
-  *((const byte*) SCREEN2 + (byte) main::i#3) ← *((const byte*) MSG2 + (byte) main::i#3)
-  (byte) main::i#1 ← ++ (byte) main::i#3
+  (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#3)
+  call chrout 
+  to:main::@7
+main::@7: scope:[main]  from main::@2
+  (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
+  *((const byte*) SCREEN1 + (byte) main::i#4) ← *((const byte*) MSG2 + (byte) main::i#4)
+  (byte) main::i#1 ← ++ (byte) main::i#4
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  *((const byte*) SCREEN3 + (number) 0) ← (const byte) CH
+  *((const byte*) SCREEN2 + (number) 0) ← (const byte) CH
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) chrout((byte) chrout::petscii)
+chrout: scope:[chrout]  from main::@2
+  (byte) chrout::petscii#1 ← phi( main::@2/(byte) chrout::petscii#0 )
+  *((const byte*) chrout::mem) ← (byte) chrout::petscii#1
+  asm { ldamem jsr$ffd2  }
+  to:chrout::@return
+chrout::@return: scope:[chrout]  from chrout
+  return 
+  to:@return
+@2: scope:[]  from @begin
   call main 
-  to:@2
-@2: scope:[]  from @1
+  to:@3
+@3: scope:[]  from @2
   to:@end
-@end: scope:[]  from @2
+@end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(label) @1
 (label) @2
+(label) @3
 (label) @begin
 (label) @end
-(const byte) CH = (byte) 'P'su
+(const byte) CH = (byte) ''su
 (const byte*) MSG1[]  = (byte*) "cAmElot"pm
 (const byte*) MSG2[]  = (byte*) "CAMELOT"su
 (const byte*) SCREEN1 = (byte*)(number) $400
 (const byte*) SCREEN2 = (byte*)(number) $428
-(const byte*) SCREEN3 = (byte*)(number) $428
+(void()) chrout((byte) chrout::petscii)
+(label) chrout::@return
+(const byte*) chrout::mem = (byte*)(number) $ff
+(byte) chrout::petscii
+(byte) chrout::petscii#0
+(byte) chrout::petscii#1
 (void()) main()
-(bool~) main::$0
+(bool~) main::$1
 (label) main::@1
 (label) main::@2
 (label) main::@3
+(label) main::@7
 (label) main::@return
 (byte) main::i
 (byte) main::i#0
 (byte) main::i#1
 (byte) main::i#2
 (byte) main::i#3
+(byte) main::i#4
 
 Adding number conversion cast (unumber) $17 in *((byte*)(number) $d018) ← (number) $17
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (number) 0 != *((const byte*) MSG1 + (byte) main::i#2)
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN3 + (number) 0) ← (const byte) CH
+Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != *((const byte*) MSG1 + (byte) main::i#2)
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN2 + (number) 0) ← (const byte) CH
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*)(number) $d018) ← (unumber)(number) $17
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 255
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 1064
 Simplifying constant pointer cast (byte*) 1064
 Simplifying constant integer cast $17
 Simplifying constant pointer cast (byte*) 53272
@@ -81,28 +103,33 @@ Finalized unsigned number type (byte) $17
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias main::i#2 = main::i#3 
+Alias main::i#2 = main::i#3 main::i#4 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [4] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2
+Identical Phi Values (byte) chrout::petscii#1 (byte) chrout::petscii#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$1 [4] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN3 in [8] *((const byte*) SCREEN3 + (byte) 0) ← (const byte) CH
+Simplifying expression containing zero SCREEN2 in [9] *((const byte*) SCREEN2 + (byte) 0) ← (const byte) CH
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
+Calls in [main] to chrout:11 
 
 Created 1 initial phi equivalence classes
-Coalesced [13] main::i#4 ← main::i#1
+Coalesced [14] main::i#5 ← main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Renumbering block main::@7 to main::@4
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
@@ -122,34 +149,52 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] *((byte*) 53272) ← (byte) $17
   to:main::@1
-main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+main::@1: scope:[main]  from main main::@4
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
   [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [7] *((const byte*) SCREEN3) ← (const byte) CH
+  [7] *((const byte*) SCREEN2) ← (const byte) CH
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [8] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [9] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG1 + (byte) main::i#2)
-  [10] *((const byte*) SCREEN2 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2)
-  [11] (byte) main::i#1 ← ++ (byte) main::i#2
+  [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2)
+  [10] call chrout 
+  to:main::@4
+main::@4: scope:[main]  from main::@2
+  [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2)
+  [12] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
+
+(void()) chrout((byte) chrout::petscii)
+chrout: scope:[chrout]  from main::@2
+  [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0
+  asm { ldamem jsr$ffd2  }
+  to:chrout::@return
+chrout::@return: scope:[chrout]  from chrout
+  [15] return 
+  to:@return
 
 
 VARIABLE REGISTER WEIGHTS
+(void()) chrout((byte) chrout::petscii)
+(byte) chrout::petscii
+(byte) chrout::petscii#0 1102.0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 202.0
-(byte) main::i#2 176.75
+(byte) main::i#2 121.2
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
+Added variable chrout::petscii#0 to live range equivalence class [ chrout::petscii#0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
+[ chrout::petscii#0 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ chrout::petscii#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -162,10 +207,9 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
 .encoding "screencode_upper"
-  .const CH = 'P'
+  .const CH = '\$de'
   .label SCREEN1 = $400
   .label SCREEN2 = $428
-  .label SCREEN3 = $428
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -203,9 +247,9 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [7] *((const byte*) SCREEN3) ← (const byte) CH -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) SCREEN2) ← (const byte) CH -- _deref_pbuc1=vbuc2 
     lda #CH
-    sta SCREEN3
+    sta SCREEN2
     jmp __breturn
     // main::@return
   __breturn:
@@ -213,20 +257,42 @@ main: {
     rts
     // main::@2
   __b2:
-    // [9] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG1 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda MSG1,y
-    sta SCREEN1,y
-    // [10] *((const byte*) SCREEN2 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    sta.z chrout.petscii
+    // [10] call chrout 
+    jsr chrout
+    jmp __b4
+    // main::@4
+  __b4:
+    // [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda MSG2,y
-    sta SCREEN2,y
-    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    sta SCREEN1,y
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  __b1_from___b4:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
+}
+  // chrout
+// chrout(byte zp(3) petscii)
+chrout: {
+    .label mem = $ff
+    .label petscii = 3
+    // [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0 -- _deref_pbuc1=vbuz1 
+    lda.z petscii
+    sta mem
+    // asm { ldamem jsr$ffd2  }
+    lda mem
+    jsr $ffd2
+    jmp __breturn
+    // chrout::@return
+  __breturn:
+    // [15] return 
+    rts
 }
   // File Data
 .encoding "petscii_mixed"
@@ -240,22 +306,30 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((byte*) 53272) ← (byte) $17 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [7] *((const byte*) SCREEN3) ← (const byte) CH [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG1 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const byte*) SCREEN2 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [7] *((const byte*) SCREEN2) ← (const byte) CH [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement asm { ldamem jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [4] *((byte*) 53272) ← (byte) $17 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) SCREEN3) ← (const byte) CH [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG1 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const byte*) SCREEN2 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Statement [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] *((const byte*) SCREEN2) ← (const byte) CH [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) [ main::i#2 chrout::petscii#0 ] ( main:2 [ main::i#2 chrout::petscii#0 ] { }  ) always clobbers reg byte y 
+Statement [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement asm { ldamem jsr$ffd2  } always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ chrout::petscii#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 378.75: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [chrout] 1,102: zp[1]:3 [ chrout::petscii#0 ] 
+Uplift Scope [main] 323.2: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 443 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 443 combination 
+Uplifting [chrout] best 656 combination reg byte a [ chrout::petscii#0 ] 
+Uplifting [main] best 656 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [] best 656 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
+Uplifting [main] best 656 combination zp[1]:2 [ main::i#2 main::i#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -267,10 +341,9 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
 .encoding "screencode_upper"
-  .const CH = 'P'
+  .const CH = '\$de'
   .label SCREEN1 = $400
   .label SCREEN2 = $428
-  .label SCREEN3 = $428
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -287,27 +360,30 @@ __bend_from___b1:
 __bend:
   // main
 main: {
+    .label i = 2
     // [4] *((byte*) 53272) ← (byte) $17 -- _deref_pbuc1=vbuc2 
     // Show mixed chars on screen
     lda #$17
     sta $d018
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
-    lda MSG1,x
-    cmp #0
+    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    lda #0
+    ldy.z i
+    cmp MSG1,y
     bne __b2
     jmp __b3
     // main::@3
   __b3:
-    // [7] *((const byte*) SCREEN3) ← (const byte) CH -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) SCREEN2) ← (const byte) CH -- _deref_pbuc1=vbuc2 
     lda #CH
-    sta SCREEN3
+    sta SCREEN2
     jmp __breturn
     // main::@return
   __breturn:
@@ -315,18 +391,39 @@ main: {
     rts
     // main::@2
   __b2:
-    // [9] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda MSG1,x
-    sta SCREEN1,x
-    // [10] *((const byte*) SCREEN2 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda MSG2,x
-    sta SCREEN2,x
-    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy.z i
+    lda MSG1,y
+    // [10] call chrout 
+    jsr chrout
+    jmp __b4
+    // main::@4
+  __b4:
+    // [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z i
+    lda MSG2,y
+    sta SCREEN1,y
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  __b1_from___b4:
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
+}
+  // chrout
+// chrout(byte register(A) petscii)
+chrout: {
+    .label mem = $ff
+    // [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0 -- _deref_pbuc1=vbuaa 
+    sta mem
+    // asm { ldamem jsr$ffd2  }
+    lda mem
+    jsr $ffd2
+    jmp __breturn
+    // chrout::@return
+  __breturn:
+    // [15] return 
+    rts
 }
   // File Data
 .encoding "petscii_mixed"
@@ -342,7 +439,11 @@ Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda mem
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1_from___bbegin:
 Removing instruction __b1:
 Removing instruction __bend_from___b1:
@@ -351,7 +452,9 @@ Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __b3:
 Removing instruction __breturn:
-Removing instruction __b1_from___b2:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Updating BasicUpstart to call main directly
 Removing instruction jsr main
@@ -363,26 +466,32 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte) CH = (byte) 'P'su
+(const byte) CH = (byte) ''su
 (const byte*) MSG1[]  = (byte*) "cAmElot"pm
 (const byte*) MSG2[]  = (byte*) "CAMELOT"su
 (const byte*) SCREEN1 = (byte*) 1024
 (const byte*) SCREEN2 = (byte*) 1064
-(const byte*) SCREEN3 = (byte*) 1064
+(void()) chrout((byte) chrout::petscii)
+(label) chrout::@return
+(const byte*) chrout::mem = (byte*) 255
+(byte) chrout::petscii
+(byte) chrout::petscii#0 reg byte a 1102.0
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@3
+(label) main::@4
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte x 202.0
-(byte) main::i#2 reg byte x 176.75
+(byte) main::i#1 i zp[1]:2 202.0
+(byte) main::i#2 i zp[1]:2 121.2
 
-reg byte x [ main::i#2 main::i#1 ]
+zp[1]:2 [ main::i#2 main::i#1 ]
+reg byte a [ chrout::petscii#0 ]
 
 
 FINAL ASSEMBLER
-Score: 368
+Score: 544
 
   // File Comments
 // Test using some simple supported string escape
@@ -393,10 +502,9 @@ Score: 368
 .pc = $80d "Program"
   // Global Constants & labels
 .encoding "screencode_upper"
-  .const CH = 'P'
+  .const CH = '\$de'
   .label SCREEN1 = $400
   .label SCREEN2 = $428
-  .label SCREEN3 = $428
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -405,46 +513,68 @@ Score: 368
   // @end
   // main
 main: {
+    .label i = 2
     // *((char*)0xd018) = 0x17
     // [4] *((byte*) 53272) ← (byte) $17 -- _deref_pbuc1=vbuc2 
     // Show mixed chars on screen
     lda #$17
     sta $d018
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
     // main::@1
   __b1:
     // while(MSG1[i])
-    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
-    lda MSG1,x
-    cmp #0
+    // [6] if((byte) 0!=*((const byte*) MSG1 + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    lda #0
+    ldy.z i
+    cmp MSG1,y
     bne __b2
     // main::@3
-    // SCREEN3[0] = CH
-    // [7] *((const byte*) SCREEN3) ← (const byte) CH -- _deref_pbuc1=vbuc2 
+    // SCREEN2[0] = CH
+    // [7] *((const byte*) SCREEN2) ← (const byte) CH -- _deref_pbuc1=vbuc2 
     lda #CH
-    sta SCREEN3
+    sta SCREEN2
     // main::@return
     // }
     // [8] return 
     rts
     // main::@2
   __b2:
-    // SCREEN1[i] = MSG1[i]
-    // [9] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda MSG1,x
-    sta SCREEN1,x
-    // SCREEN2[i] = MSG2[i]
-    // [10] *((const byte*) SCREEN2 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
-    lda MSG2,x
-    sta SCREEN2,x
+    // chrout(MSG1[i])
+    // [9] (byte) chrout::petscii#0 ← *((const byte*) MSG1 + (byte) main::i#2) -- vbuaa=pbuc1_derefidx_vbuz1 
+    ldy.z i
+    lda MSG1,y
+    // [10] call chrout 
+    jsr chrout
+    // main::@4
+    // SCREEN1[i] = MSG2[i]
+    // [11] *((const byte*) SCREEN1 + (byte) main::i#2) ← *((const byte*) MSG2 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    ldy.z i
+    lda MSG2,y
+    sta SCREEN1,y
     // i++;
-    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
+}
+  // chrout
+// chrout(byte register(A) petscii)
+chrout: {
+    .label mem = $ff
+    // *mem = petscii
+    // [13] *((const byte*) chrout::mem) ← (byte) chrout::petscii#0 -- _deref_pbuc1=vbuaa 
+    sta mem
+    // asm
+    // asm { ldamem jsr$ffd2  }
+    jsr $ffd2
+    // chrout::@return
+    // }
+    // [15] return 
+    rts
 }
   // File Data
 .encoding "petscii_mixed"

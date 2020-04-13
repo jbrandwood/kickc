@@ -9,8 +9,8 @@ import java.util.PrimitiveIterator;
 /** String encoding. */
 public enum StringEncoding {
 
-   PETSCII_MIXED("petscii_mixed", "pm", CharToPetsciiConverter.charToScreenCode_mixed),
-   PETSCII_UPPER("petscii_upper", "pu", CharToPetsciiConverter.charToScreenCode_upper),
+   PETSCII_MIXED("petscii_mixed", "pm", CharToPetsciiConverter.charToPetscii_mixed),
+   PETSCII_UPPER("petscii_upper", "pu", CharToPetsciiConverter.charToPetscii_mixed),
    SCREENCODE_MIXED("screencode_mixed", "sm", CharToPetsciiConverter.charToScreenCode_mixed),
    SCREENCODE_UPPER("screencode_upper", "su", CharToPetsciiConverter.charToScreenCode_upper);
 
@@ -78,17 +78,18 @@ public enum StringEncoding {
     * @param aChar The character in UNICODE/ASCII
     * @return The integer value of the character within the encoding
     */
-   public Long encodedFromChar(Character aChar) {
+   public Byte encodedFromChar(Character aChar) {
       Byte encodedValue = mapping.get(aChar);
       if(encodedValue != null)
-         return encodedValue.longValue();
+         return encodedValue;
       else
          // Char is not in encoding - it must be made up!
-         return (long) aChar - CHAR_SPECIAL_VAL;
+         return (byte) (aChar - CHAR_SPECIAL_VAL);
    }
 
    /**
     * Determine if a character has en encoding within the specific encoding
+    *
     * @param aChar The char to examine
     * @return true if the char has a proper encoding. False if it does not.
     */
@@ -161,10 +162,8 @@ public enum StringEncoding {
             String hexNum = "";
             hexNum += (char) escapedCharsIterator.nextInt();
             hexNum += (char) escapedCharsIterator.nextInt();
-            final int hexChar = Integer.parseInt(hexNum, 16);
-            final Character aChar = charFromEncoded((byte) hexChar);
-            if(aChar == null)
-               throw new CompileError("No character 0x" + hexNum + " in encoding " + name);
+            final byte hexEncoding = (byte) Integer.parseInt(hexNum, 16);
+            final Character aChar = charFromEncoded(hexEncoding);
             return aChar;
          default:
             throw new CompileError("Illegal string escape sequence \\" + escapeChar);
@@ -172,13 +171,13 @@ public enum StringEncoding {
    }
 
    /**
-    * Converts a char to an escape sequence if needed. If not needed the char itself is returned.
+    * Converts a char to an encoded escape sequence if needed. If not needed the char itself is returned.
     *
     * @param aChar The char
     * @param escapeSingleQuotes Should single quotes ' be escaped. (true when encoding chars, false when encoding chars)
-    * @return The char itself - or the appropriate escape sequence
+    * @return The char itself - or the appropriate escape sequence if needed.
     */
-   public String asciiToEscape(char aChar, boolean escapeSingleQuotes) {
+   public String asciiToEscapedEncoded(char aChar, boolean escapeSingleQuotes) {
       switch(aChar) {
          case '\n':
             return "\\n";
@@ -196,9 +195,10 @@ public enum StringEncoding {
          case '\\':
             return "\\\\";
       }
-      if(aChar >= CHAR_SPECIAL_MIN && aChar <= CHAR_SPECIAL_MAX) {
-         final byte charValue = (byte) (aChar - CHAR_SPECIAL_VAL);
-         return String.format("\\$%x", charValue);
+      if(aChar > 127) {
+         // Encode all large chars - including SPECIAL's
+         final byte encoded = encodedFromChar(aChar);
+         return String.format("\\$%x", encoded);
       } else
          return Character.toString(aChar);
    }
@@ -209,9 +209,9 @@ public enum StringEncoding {
     * @param string The string
     * @return The escaped string.
     */
-   public String asciiToEscape(String string) {
+   public String asciiToEscapedEncoded(String string) {
       StringBuilder escaped = new StringBuilder();
-      string.chars().forEach(value -> escaped.append(asciiToEscape((char) value, false)));
+      string.chars().forEach(value -> escaped.append(asciiToEscapedEncoded((char) value, false)));
       return escaped.toString();
    }
 

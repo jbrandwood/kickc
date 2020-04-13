@@ -2,16 +2,15 @@
 // Uses \xnn to add chars by hex-code
 
 #pragma encoding(petscii_mixed)
-char MSG1[] = "c\x41m\x45lot";
+char MSG1[] = "c\xc1mElot";
 
 #pragma encoding(screencode_upper)
 char MSG2[] = "C\x01M\x05LOT";
 
-char CH = '\x10';
+char CH = '\xde';
 
 char* SCREEN1 = 0x0400;
 char* SCREEN2 = 0x0428;
-char* SCREEN3 = 0x0428;
 
 void main() {
     // Show mixed chars on screen
@@ -19,11 +18,20 @@ void main() {
 
     char i=0;
     while(MSG1[i]) {
-        SCREEN1[i] = MSG1[i];
-        SCREEN2[i] = MSG2[i];
+        chrout(MSG1[i]);
+        SCREEN1[i] = MSG2[i];
         i++;
     }
 
-    SCREEN3[0] = CH;
+    SCREEN2[0] = CH;
 
+}
+
+void chrout(char petscii) {
+    char* mem = 0xff;
+    *mem = petscii;
+    asm {
+        lda mem
+        jsr $ffd2
+    }
 }

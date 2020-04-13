@@ -5,7 +5,7 @@
 .pc = $80d "Program"
   .label SCREEN = $400
 .encoding "petscii_mixed"
-  .const CH = -1
+  .const CH = '\$ff'
 main: {
     ldx #0
   __b1:
@@ -26,5 +26,5 @@ main: {
     inx
     jmp __b1
 }
-  MESSAGE: .text @"qwe\$ffasd\$ferty"
+  MESSAGE: .text @"q\$ffw\$60e\$ddr"
   .byte 0

@@ -4,36 +4,50 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 .encoding "screencode_upper"
-  .const CH = 'P'
+  .const CH = '\$de'
   .label SCREEN1 = $400
   .label SCREEN2 = $428
-  .label SCREEN3 = $428
 main: {
+    .label i = 2
     // *((char*)0xd018) = 0x17
     // Show mixed chars on screen
     lda #$17
     sta $d018
-    ldx #0
+    lda #0
+    sta.z i
   __b1:
     // while(MSG1[i])
-    lda MSG1,x
-    cmp #0
+    lda #0
+    ldy.z i
+    cmp MSG1,y
     bne __b2
-    // SCREEN3[0] = CH
+    // SCREEN2[0] = CH
     lda #CH
-    sta SCREEN3
+    sta SCREEN2
     // }
     rts
   __b2:
-    // SCREEN1[i] = MSG1[i]
-    lda MSG1,x
-    sta SCREEN1,x
-    // SCREEN2[i] = MSG2[i]
-    lda MSG2,x
-    sta SCREEN2,x
+    // chrout(MSG1[i])
+    ldy.z i
+    lda MSG1,y
+    jsr chrout
+    // SCREEN1[i] = MSG2[i]
+    ldy.z i
+    lda MSG2,y
+    sta SCREEN1,y
     // i++;
-    inx
+    inc.z i
     jmp __b1
+}
+// chrout(byte register(A) petscii)
+chrout: {
+    .label mem = $ff
+    // *mem = petscii
+    sta mem
+    // asm
+    jsr $ffd2
+    // }
+    rts
 }
 .encoding "petscii_mixed"
   MSG1: .text "cAmElot"

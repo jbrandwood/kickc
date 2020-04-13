@@ -1,8 +1,8 @@
 // Test using some simple supported string escape
 // Uses \xnn to add chars by hex-code that do not exist with the encoding.
 
-#pragma encoding(petscii_mixed)
-char MESSAGE[] = "qwe\xffasd\xferty";
+#pragma encoding(screencode_mixed)
+char MESSAGE[] = "q\xffw\x60e\xddr";
 
 char CH = '\xff';
 

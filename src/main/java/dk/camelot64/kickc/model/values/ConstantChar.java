@@ -36,11 +36,12 @@ public class ConstantChar implements ConstantEnumerable<Character> {
 
    /**
     * Get the integer value of the character
+    *
     * @return The integer value (taking encoding into account)
     */
    @Override
    public Long getInteger() {
-      return encoding.encodedFromChar(value);
+      return (long) encoding.encodedFromChar(value);
    }
 
    public StringEncoding getEncoding() {
@@ -49,10 +50,11 @@ public class ConstantChar implements ConstantEnumerable<Character> {
 
    /**
     * Get the char where any special character has been properly escaped (eg '\n' for a newline).
+    *
     * @return The character with escapes if needed.
     */
    public String getCharEscaped() {
-      return encoding.asciiToEscape(value, true);
+      return encoding.asciiToEscapedEncoded(value, true);
    }
 
    @Override

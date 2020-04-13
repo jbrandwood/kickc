@@ -50,7 +50,7 @@ public class ConstantString implements ConstantLiteral<String> {
     * @return The escaped string.
     */
    public String getStringEscaped() {
-      return encoding.asciiToEscape(value);
+      return encoding.asciiToEscapedEncoded(value);
    }
 
    public boolean isZeroTerminated() {

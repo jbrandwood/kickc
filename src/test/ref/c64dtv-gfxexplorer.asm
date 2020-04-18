@@ -165,7 +165,6 @@
   .const FORM_CURSOR_BLINK = $28
   // Number of form fields
   .const form_fields_cnt = $24
-  .label print_char_cursor = 5
   .label print_line_cursor = 7
   // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = 2
@@ -174,6 +173,7 @@
   .label form_cursor_count = 3
   // Current selected field in the form
   .label form_field_idx = 4
+  .label print_char_cursor = 5
 main: {
     // asm
     sei
@@ -1783,14 +1783,8 @@ print_str_lines: {
     // if(ch)
     cmp #0
     beq __b3
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    // print_char(ch)
+    jsr print_char
   __b3:
     // while (ch)
     cmp #0
@@ -1822,6 +1816,20 @@ print_ln: {
     lda.z print_line_cursor
     cmp.z print_char_cursor
     bcc __b1
+  !:
+    // }
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
   !:
     // }
     rts

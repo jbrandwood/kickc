@@ -12,8 +12,8 @@
   .const FF = $57
   // filled circle
   .const TT = $51
-  .label print_char_cursor = 9
   .label print_line_cursor = 6
+  .label print_char_cursor = 9
 main: {
     .label w1 = $f
     .label w2 = $11
@@ -408,15 +408,11 @@ print_str: {
     // }
     rts
   __b2:
-    // *(print_char_cursor++) = *(str++)
+    // print_char(*(str++))
     ldy #0
     lda (str),y
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = *(str++);
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr print_char
+    // print_char(*(str++));
     inc.z str
     bne !+
     inc.z str+1

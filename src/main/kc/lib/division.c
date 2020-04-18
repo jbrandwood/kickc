@@ -37,6 +37,15 @@ char divr8u(char dividend, char divisor, char rem) {
     return quotient;
 }
 
+// Divide unsigned 16-bit unsigned long dividend with a 8-bit unsigned char divisor
+// The 8-bit unsigned char remainder can be found in rem8u after the division
+unsigned int div16u8u(unsigned int dividend, unsigned char divisor) {
+  unsigned char quotient_hi = divr8u(>dividend, divisor, 0);
+  unsigned char quotient_lo = divr8u(<dividend, divisor, rem8u);
+  unsigned int quotient = { quotient_hi, quotient_lo};
+  return quotient;
+}
+
 // Remainder after unsigned 16-bit division
 unsigned int rem16u = 0;
 

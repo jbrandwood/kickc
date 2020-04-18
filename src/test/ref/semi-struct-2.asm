@@ -33,16 +33,16 @@
   .const SIZEOF_ENTRY = $12
   // The maximal number of files
   .const MAX_FILES = $90
-  .label print_char_cursor = 6
   .label print_line_cursor = $c
-  .label print_line_cursor_1 = 2
+  .label print_char_cursor = 2
+  .label print_line_cursor_1 = 4
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
-    .label fileEntry1___0 = 4
+    .label fileEntry1___0 = 6
     .label fileEntry2___0 = $a
-    .label entry1 = 4
+    .label entry1 = 6
     .label entry2 = $a
     // keyboard_init()
     jsr keyboard_init
@@ -230,7 +230,7 @@ memset: {
     .const num = $3e8
     .label str = $400
     .label end = str+num
-    .label dst = 2
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -287,9 +287,9 @@ keyboard_matrix_read: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(4) str)
 print_str: {
-    .label str = 2
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0
@@ -299,20 +299,30 @@ print_str: {
     // }
     rts
   __b2:
-    // *(print_char_cursor++) = *(str++)
+    // print_char(*(str++))
     ldy #0
     lda (str),y
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = *(str++);
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr print_char
+    // print_char(*(str++));
     inc.z str
     bne !+
     inc.z str+1
   !:
     jmp __b1
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
 }
 // Print a newline
 print_ln: {
@@ -343,9 +353,9 @@ print_ln: {
     jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zp(4) entry)
+// printEntry(byte* zp(6) entry)
 printEntry: {
-    .label entry = 4
+    .label entry = 6
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -683,20 +693,6 @@ print_uchar: {
     // print_char(print_hextab[b&$f])
     lda print_hextab,x
     jsr print_char
-    // }
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
     // }
     rts
 }

@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 4
   .label print_line_cursor = 2
+  .label print_char_cursor = 4
   // Remainder after unsigned 16-bit division
   .label rem16u = $d
   // Remainder after signed 16 bit division
@@ -220,15 +220,11 @@ print_str: {
     // }
     rts
   __b2:
-    // *(print_char_cursor++) = *(str++)
+    // print_char(*(str++))
     ldy #0
     lda (str),y
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = *(str++);
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr print_char
+    // print_char(*(str++));
     inc.z str
     bne !+
     inc.z str+1

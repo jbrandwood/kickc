@@ -12,10 +12,10 @@
   .label print_line_cursor = $400
   // Remainder after unsigned 16-bit division
   .label rem16u = $1a
-  .label print_char_cursor = 6
+  .label print_char_cursor = 4
 main: {
     .label wavelength = $78
-    .label sw = 4
+    .label sw = 6
     .label st1 = 2
     // sin16s_gen(sintab1, wavelength)
     jsr sin16s_gen
@@ -94,25 +94,35 @@ print_str: {
     // }
     rts
   __b2:
-    // *(print_char_cursor++) = *(str++)
+    // print_char(*(str++))
     ldy #0
     lda (str),y
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = *(str++);
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr print_char
+    // print_char(*(str++));
     inc.z str
     bne !+
     inc.z str+1
   !:
     jmp __b1
 }
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
 // Print a signed int as HEX
-// print_sint(signed word zp(4) w)
+// print_sint(signed word zp(6) w)
 print_sint: {
-    .label w = 4
+    .label w = 6
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -138,24 +148,10 @@ print_sint: {
     sta.z w+1
     jmp __b2
 }
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
 // Print a unsigned int as HEX
-// print_uint(word zp(4) w)
+// print_uint(word zp(6) w)
 print_uint: {
-    .label w = 4
+    .label w = 6
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar

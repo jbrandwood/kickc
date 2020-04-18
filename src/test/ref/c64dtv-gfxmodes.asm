@@ -2881,14 +2881,8 @@ print_str_lines: {
     // if(ch)
     cmp #0
     beq __b3
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    // print_char(ch)
+    jsr print_char
   __b3:
     // while (ch)
     cmp #0
@@ -2920,6 +2914,20 @@ print_ln: {
     lda.z print_line_cursor
     cmp.z print_char_cursor
     bcc __b1
+  !:
+    // }
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
   !:
     // }
     rts

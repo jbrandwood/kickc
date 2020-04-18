@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BGCOL = $d021
-  .label print_char_cursor = 4
   .label print_line_cursor = 2
+  .label print_char_cursor = 4
 main: {
     // *BGCOL = 5
     lda #5
@@ -299,15 +299,11 @@ print_str: {
     // }
     rts
   __b2:
-    // *(print_char_cursor++) = *(str++)
+    // print_char(*(str++))
     ldy #0
     lda (str),y
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = *(str++);
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr print_char
+    // print_char(*(str++));
     inc.z str
     bne !+
     inc.z str+1

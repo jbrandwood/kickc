@@ -254,7 +254,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
       if(existingSymbol!=null) {
          // Already declared  - check equality
-         if(!SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
+         if(!(existingSymbol instanceof Procedure) || !SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
             throw new CompileError("Error! Conflicting declarations for: "+procedure.getFullName(), new StatementSource(ctx));
       } else {
          // Not declared before - add it

@@ -215,6 +215,7 @@ main: {
     // print_uint_decimal(i)
     jsr print_uint_decimal
     // print_char(' ')
+    lda #' '
     jsr print_char
   __b11:
     // for (i = 2; i < 1300; ++i)
@@ -300,10 +301,9 @@ main: {
     .byte 0
 }
 // Print a single char
+// print_char(byte register(A) ch)
 print_char: {
-    .const ch = ' '
     // *(print_char_cursor++) = ch
-    lda #ch
     ldy #0
     sta (print_char_cursor),y
     // *(print_char_cursor++) = ch;
@@ -349,19 +349,19 @@ print_str: {
     // }
     rts
   __b2:
-    // *(print_char_cursor++) = *(str++)
+    // print_char(*(str++))
     ldy #0
     lda (str),y
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = *(str++);
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr print_char
+    // print_char(*(str++));
     inc.z str
     bne !+
     inc.z str+1
   !:
+    lda.z print_char_cursor_1
+    sta.z print_char_cursor
+    lda.z print_char_cursor_1+1
+    sta.z print_char_cursor+1
     jmp __b1
 }
 // Converts unsigned number value to a string representing it in RADIX format.

@@ -17,6 +17,10 @@ char div8u(char dividend, char divisor);
 // Implemented using simple binary division
 char divr8u(char dividend, char divisor, char rem);
 
+// Divide unsigned 16-bit unsigned long dividend with a 8-bit unsigned char divisor
+// The 8-bit unsigned char remainder can be found in rem8u after the division
+unsigned int div16u8u(unsigned int dividend, unsigned char divisor);
+
 // Remainder after unsigned 16-bit division
 extern unsigned int rem16u;
 

@@ -11,9 +11,8 @@ void print_str_lines(char* str) {
     while(*str) {
         do {
             char ch = *(str++);
-            if(ch) {
-                *(print_char_cursor++) = ch;
-            }
+            if(ch)
+                print_char(ch);
         } while (ch);
         print_ln();
     }
@@ -28,7 +27,7 @@ void print_str_ln(char* str) {
 // Print a zero-terminated string
 void print_str(char* str) {
     while(*str) {
-        *(print_char_cursor++) = *(str++);
+        print_char(*(str++));
     }
 }
 
@@ -104,6 +103,19 @@ void print_uchar_decimal(char b) {
 // Print a unsigned int as DECIMAL
 void print_uint_decimal(unsigned int w) {
     utoa(w, decimal_digits, DECIMAL);
+    print_str(decimal_digits);
+}
+
+
+// Print a signed int as DECIMAL
+void print_sint_decimal(signed int w) {
+    if(w<0) {
+        print_char('-');
+        w = -w;
+    } else {
+        print_char(' ');
+    }
+    utoa((unsigned int)w, decimal_digits, DECIMAL);
     print_str(decimal_digits);
 }
 

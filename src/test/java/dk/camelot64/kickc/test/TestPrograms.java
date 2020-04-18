@@ -40,6 +40,27 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+
+   @Test
+   public void testPrintf2() throws IOException, URISyntaxException {
+      compileAndCompare("printf-2.c");
+   }
+
+   @Test
+   public void testPrintf1() throws IOException, URISyntaxException {
+      compileAndCompare("printf-1.c");
+   }
+
+   @Test
+   public void testPrimes10002() throws IOException, URISyntaxException {
+      compileAndCompare("primes-1000-2.c");
+   }
+
+   @Test
+   public void testPrimes1000() throws IOException, URISyntaxException {
+      compileAndCompare("primes-1000.c");
+   }
+
    @Test
    public void testConioNachtScreen() throws IOException, URISyntaxException {
       compileAndCompare("examples/conio/nacht-screen.c");
@@ -3366,6 +3387,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMultiply16BitConst() throws IOException, URISyntaxException {
+      compileAndCompare("multiply-16bit-const.c");
+   }
+
+   @Test
    public void testArraysInitShort() throws IOException, URISyntaxException {
       compileAndCompare("arrays-init-short.c");
    }
@@ -3466,8 +3492,18 @@ public class TestPrograms {
    }
 
    @Test
-   public void testFillscreen() throws IOException, URISyntaxException {
-      compileAndCompare("fillscreen.c");
+   public void testFillscreen3() throws IOException, URISyntaxException {
+      compileAndCompare("fillscreen-3.c");
+   }
+
+   @Test
+   public void testFillscreen2() throws IOException, URISyntaxException {
+      compileAndCompare("fillscreen-2.c");
+   }
+
+   @Test
+   public void testFillscreen1() throws IOException, URISyntaxException {
+      compileAndCompare("fillscreen-1.c");
    }
 
    @Test

@@ -38,6 +38,9 @@ void print_uchar_decimal(char b);
 // Print a unsigned int as DECIMAL
 void print_uint_decimal(unsigned int w);
 
+// Print a signed int as DECIMAL
+void print_sint_decimal(int w);
+
 // Print a unsigned int as HEX at a specific position
 void print_uint_at(unsigned int w, char* at);
 

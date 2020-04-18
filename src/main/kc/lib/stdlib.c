@@ -57,6 +57,71 @@ unsigned int* bsearch16u(unsigned int key, unsigned int* items, char num) {
 char DIGITS[] = "0123456789abcdef"z;
 
 // Values of binary digits
+unsigned char RADIX_BINARY_VALUES_CHAR[] = {  0b10000000, 0b01000000, 0b00100000, 0b00010000, 0b00001000, 0b00000100, 0b00000010 };
+// Values of octal digits
+unsigned char RADIX_OCTAL_VALUES_CHAR[] = { 0x40, 0x8 };
+// Values of decimal digits
+unsigned char RADIX_DECIMAL_VALUES_CHAR[] = { 100, 10 };
+// Values of hexadecimal digits
+unsigned char RADIX_HEXADECIMAL_VALUES_CHAR[] = { 0x10 };
+
+// Converts unsigned number value to a string representing it in RADIX format.
+// If the leading digits are zero they are not included in the string.
+// - value : The number to be converted to RADIX
+// - buffer : receives the string representing the number and zero-termination.
+// - radix : The radix to convert the number to (from the enum RADIX)
+void uctoa(unsigned char value, char* buffer, enum RADIX radix) {
+    char max_digits;
+    unsigned char* digit_values;
+    if(radix==DECIMAL) {
+        max_digits = 3;
+        digit_values = RADIX_DECIMAL_VALUES_CHAR;
+    } else if(radix==HEXADECIMAL) {
+        max_digits = 2;
+        digit_values = RADIX_HEXADECIMAL_VALUES_CHAR;
+    } else if(radix==OCTAL) {
+        max_digits = 3;
+        digit_values = RADIX_OCTAL_VALUES_CHAR;
+    } else if(radix==BINARY) {
+        max_digits = 8;
+        digit_values = RADIX_BINARY_VALUES_CHAR;
+    } else {
+        // Unknown radix
+        *buffer++ = 'e';
+        *buffer++ = 'r';
+        *buffer++ = 'r';
+        *buffer = 0;
+        return;
+    }
+    char started = 0;
+    for( char digit=0; digit<max_digits-1; digit++ ) {
+        unsigned char digit_value = digit_values[digit];
+        if (started || value >= digit_value){
+            value = uctoa_append(buffer++, value, digit_value);
+            started = 1;
+        }
+    }
+    *buffer++ = DIGITS[(char)value];
+    *buffer = 0;
+}
+
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+unsigned char uctoa_append(char *buffer, unsigned char value, unsigned char sub){
+    char digit = 0;
+    while (value >= sub){ digit++; value -= sub; }
+    *buffer = DIGITS[digit];
+    return value;
+}
+
+
+// Values of binary digits
 unsigned int RADIX_BINARY_VALUES[] = { 0b1000000000000000, 0b0100000000000000, 0b0010000000000000, 0b0001000000000000, 0b0000100000000000, 0b0000010000000000, 0b0000001000000000, 0b0000000100000000, 0b0000000010000000, 0b0000000001000000, 0b0000000000100000, 0b0000000000010000, 0b0000000000001000, 0b0000000000000100, 0b0000000000000010 };
 // Values of octal digits
 unsigned int RADIX_OCTAL_VALUES[] = { 0x8000, 0x1000, 0x200, 0x40, 0x8 };
@@ -70,7 +135,7 @@ unsigned int RADIX_HEXADECIMAL_VALUES[] = { 0x1000, 0x100, 0x10 };
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-void utoa(unsigned int value, char* buffer, enum RADIX radix){
+void utoa(unsigned int value, char* buffer, enum RADIX radix) {
     char max_digits;
     unsigned int* digit_values;
     if(radix==DECIMAL) {

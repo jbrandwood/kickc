@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BGCOL = $d021
-  .label print_char_cursor = 8
   .label print_line_cursor = 2
+  .label print_char_cursor = 8
 main: {
     // *BGCOL = 5
     lda #5
@@ -187,20 +187,30 @@ print_str: {
     // }
     rts
   __b2:
-    // *(print_char_cursor++) = *(str++)
+    // print_char(*(str++))
     ldy #0
     lda (str),y
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = *(str++);
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr print_char
+    // print_char(*(str++));
     inc.z str
     bne !+
     inc.z str+1
   !:
     jmp __b1
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
 }
 // mul16s_error(signed word zp($16) a, signed word zp($18) b, signed dword zp(4) ms, signed dword zp($e) mn, signed dword zp($a) mf)
 mul16s_error: {
@@ -314,20 +324,6 @@ print_slong: {
     adc #0
     sta.z dw+3
     jmp __b2
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
 }
 // Print a unsigned long as HEX
 // print_ulong(dword zp(4) dw)

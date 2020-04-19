@@ -40,16 +40,15 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testProblemNegateConst() throws IOException, URISyntaxException {
+      compileAndCompare("problem-negate-const.c");
+   }
 
    @Test
    public void testProblemStructInlineParameter() throws IOException, URISyntaxException {
       compileAndCompare("problem-struct-inline-parameter.c");
    }
-
-   //@Test
-   //public void testProblemNegateConst() throws IOException, URISyntaxException {
-   //   compileAndCompare("problem-negate-const.c", log());
-   //}
 
    @Test
    public void testPrintf2() throws IOException, URISyntaxException {

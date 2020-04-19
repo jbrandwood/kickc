@@ -219,6 +219,10 @@ public class AsmFormat {
          }
       } else if(Operators.POS.equals(operator)) {
          return getAsmConstant(program, operand, outerPrecedence, codeScope);
+      } else if(Operators.NEG.equals(operator) && operand instanceof ConstantUnary) {
+         return operator.getOperator() + "(" +getAsmConstant(program, operand, operator.getPrecedence(), codeScope)+ ")";
+      } else if(Operators.NEG.equals(operator) && operand instanceof ConstantInteger && ((ConstantInteger) operand).getInteger()<0) {
+         return operator.getOperator() + "(" +getAsmConstant(program, operand, operator.getPrecedence(), codeScope)+ ")";
       } else {
          return operator.getOperator() +
                getAsmConstant(program, operand, operator.getPrecedence(), codeScope);

@@ -1,0 +1,324 @@
+Culled Empty Block (label) @1
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@2
+
+(void()) main()
+main: scope:[main]  from @2
+  (signed byte) printneg::c#0 ← (number) -4
+  call printneg 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+(void()) printneg((signed byte) printneg::c)
+printneg: scope:[printneg]  from main
+  (signed byte) printneg::c#2 ← phi( main/(signed byte) printneg::c#0 )
+  (signed byte~) printneg::$0 ← - (signed byte) printneg::c#2
+  (signed byte) printneg::c#1 ← (signed byte~) printneg::$0
+  *((const nomodify signed byte*) SCREEN + (number) 0) ← (signed byte) printneg::c#1
+  to:printneg::@return
+printneg::@return: scope:[printneg]  from printneg
+  return 
+  to:@return
+@2: scope:[]  from @begin
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(const nomodify signed byte*) SCREEN = (signed byte*)(number) $400
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()) printneg((signed byte) printneg::c)
+(signed byte~) printneg::$0
+(label) printneg::@return
+(signed byte) printneg::c
+(signed byte) printneg::c#0
+(signed byte) printneg::c#1
+(signed byte) printneg::c#2
+
+Adding number conversion cast (snumber) -4 in (signed byte) printneg::c#0 ← (number) -4
+Adding number conversion cast (unumber) 0 in *((const nomodify signed byte*) SCREEN + (number) 0) ← (signed byte) printneg::c#1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (signed byte) printneg::c#0 ← (snumber)(number) -4
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (signed byte*) 1024
+Simplifying constant integer cast -4
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized signed number type (signed byte) -4
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias printneg::c#1 = printneg::$0 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (signed byte) printneg::c#2 (signed byte) printneg::c#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const signed byte) printneg::c#0 = -4
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN in [5] *((const nomodify signed byte*) SCREEN + (byte) 0) ← (signed byte) printneg::c#1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Constant right-side identified [2] (signed byte) printneg::c#1 ← - (const signed byte) printneg::c#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const signed byte) printneg::c#1 = -printneg::c#0
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings (const signed byte) printneg::c#0
+Inlining constant with different constant siblings (const signed byte) printneg::c#1
+Constant inlined printneg::c#1 = -(signed byte) -4
+Constant inlined printneg::c#0 = (signed byte) -4
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to printneg:6 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@1
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] call printneg 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+
+(void()) printneg((signed byte) printneg::c)
+printneg: scope:[printneg]  from main
+  [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4
+  to:printneg::@return
+printneg::@return: scope:[printneg]  from printneg
+  [8] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(void()) printneg((signed byte) printneg::c)
+(signed byte) printneg::c
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Illustrates problem with negating a constant negative number
+// KickAsm requires parenthesis for double negation to work
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] call printneg 
+    jsr printneg
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // printneg
+printneg: {
+    // [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
+    lda #-(-4)
+    sta SCREEN
+    jmp __breturn
+    // printneg::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 [ ] ( main:2::printneg:5 [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [printneg] 
+Uplift Scope [] 
+
+Uplifting [main] best 42 combination 
+Uplifting [printneg] best 42 combination 
+Uplifting [] best 42 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Illustrates problem with negating a constant negative number
+// KickAsm requires parenthesis for double negation to work
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] call printneg 
+    jsr printneg
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // printneg
+printneg: {
+    // [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
+    lda #-(-4)
+    sta SCREEN
+    jmp __breturn
+    // printneg::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from___bbegin:
+Removing instruction __b1:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Updating BasicUpstart to call main directly
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+Removing instruction __bbegin:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(const nomodify signed byte*) SCREEN = (signed byte*) 1024
+(void()) main()
+(label) main::@return
+(void()) printneg((signed byte) printneg::c)
+(label) printneg::@return
+(signed byte) printneg::c
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// Illustrates problem with negating a constant negative number
+// KickAsm requires parenthesis for double negation to work
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // printneg(-4)
+    // [5] call printneg 
+    jsr printneg
+    // main::@return
+    // }
+    // [6] return 
+    rts
+}
+  // printneg
+printneg: {
+    // SCREEN[0] = c
+    // [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
+    lda #-(-4)
+    sta SCREEN
+    // printneg::@return
+    // }
+    // [8] return 
+    rts
+}
+  // File Data
+

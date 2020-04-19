@@ -334,9 +334,9 @@ start: {
     rts
 }
 makechar: {
-    .label __5 = $17
+    .label __4 = $17
+    .label __7 = $15
     .label __8 = $15
-    .label __9 = $15
     .label s = $14
     .label c = $10
     .label i = 8
@@ -358,9 +358,8 @@ makechar: {
     // }
     rts
   __b2:
-    // (char)c
-    lda.z c
     // s = sinustable[(char)c]
+    lda.z c
     tay
     lda sinustable,y
     sta.z s
@@ -388,21 +387,21 @@ makechar: {
     // c<<3
     lda.z c
     asl
-    sta.z __8
+    sta.z __7
     lda.z c+1
     rol
-    sta.z __8+1
-    asl.z __8
-    rol.z __8+1
-    asl.z __8
-    rol.z __8+1
+    sta.z __7+1
+    asl.z __7
+    rol.z __7+1
+    asl.z __7
+    rol.z __7+1
     // (c<<3) + i
     lda.z i
     clc
-    adc.z __9
-    sta.z __9
+    adc.z __8
+    sta.z __8
     bcc !+
-    inc.z __9+1
+    inc.z __8+1
   !:
     // ((char*)CHARSET) [(c<<3) + i] = b
     clc
@@ -423,10 +422,10 @@ makechar: {
     jsr rand
     // rand() & 0xFF
     and #$ff
-    sta.z __5
+    sta.z __4
     // if ((rand() & 0xFF) > s)
     lda.z s
-    cmp.z __5
+    cmp.z __4
     bcs __b8
     // b |= bittab[ii]
     lda bittab,y
@@ -451,7 +450,7 @@ rand: {
     dex
     bne __rand_loop
     sta RAND_SEED+0
-    // (char)rand_seed
+    // return (char)rand_seed;
     lda.z rand_seed
     // }
     rts

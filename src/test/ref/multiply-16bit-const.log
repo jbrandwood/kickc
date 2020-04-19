@@ -1,8 +1,19 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -100,9 +111,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -110,8 +121,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -210,9 +221,9 @@ ultoa::@18: scope:[ultoa]  from ultoa::@21 ultoa::@8
   (dword*) ultoa::digit_values#6 ← phi( ultoa::@21/(dword*) ultoa::digit_values#7 ultoa::@8/(dword*) ultoa::digit_values#8 )
   (byte) ultoa::digit#2 ← phi( ultoa::@21/(byte) ultoa::digit#1 ultoa::@8/(byte) ultoa::digit#0 )
   (byte) ultoa::max_digits#5 ← phi( ultoa::@21/(byte) ultoa::max_digits#6 ultoa::@8/(byte) ultoa::max_digits#7 )
-  (number~) ultoa::$5 ← (byte) ultoa::max_digits#5 - (number) 1
-  (bool~) ultoa::$6 ← (byte) ultoa::digit#2 < (number~) ultoa::$5
-  if((bool~) ultoa::$6) goto ultoa::@19
+  (number~) ultoa::$4 ← (byte) ultoa::max_digits#5 - (number) 1
+  (bool~) ultoa::$5 ← (byte) ultoa::digit#2 < (number~) ultoa::$4
+  if((bool~) ultoa::$5) goto ultoa::@19
   to:ultoa::@20
 ultoa::@19: scope:[ultoa]  from ultoa::@18
   (byte) ultoa::max_digits#8 ← phi( ultoa::@18/(byte) ultoa::max_digits#5 )
@@ -221,18 +232,18 @@ ultoa::@19: scope:[ultoa]  from ultoa::@18
   (dword) ultoa::value#2 ← phi( ultoa::@18/(dword) ultoa::value#5 )
   (dword*) ultoa::digit_values#5 ← phi( ultoa::@18/(dword*) ultoa::digit_values#6 )
   (byte) ultoa::digit#3 ← phi( ultoa::@18/(byte) ultoa::digit#2 )
-  (byte~) ultoa::$11 ← (byte) ultoa::digit#3 * (const byte) SIZEOF_DWORD
-  (dword) ultoa::digit_value#0 ← *((dword*) ultoa::digit_values#5 + (byte~) ultoa::$11)
-  (bool~) ultoa::$7 ← (dword) ultoa::value#2 >= (dword) ultoa::digit_value#0
-  (bool~) ultoa::$8 ← (byte) ultoa::started#2 || (bool~) ultoa::$7
-  (bool~) ultoa::$9 ← ! (bool~) ultoa::$8
-  if((bool~) ultoa::$9) goto ultoa::@21
+  (byte~) ultoa::$10 ← (byte) ultoa::digit#3 * (const byte) SIZEOF_DWORD
+  (dword) ultoa::digit_value#0 ← *((dword*) ultoa::digit_values#5 + (byte~) ultoa::$10)
+  (bool~) ultoa::$6 ← (dword) ultoa::value#2 >= (dword) ultoa::digit_value#0
+  (bool~) ultoa::$7 ← (byte) ultoa::started#2 || (bool~) ultoa::$6
+  (bool~) ultoa::$8 ← ! (bool~) ultoa::$7
+  if((bool~) ultoa::$8) goto ultoa::@21
   to:ultoa::@24
 ultoa::@20: scope:[ultoa]  from ultoa::@18
   (byte*) ultoa::buffer#7 ← phi( ultoa::@18/(byte*) ultoa::buffer#11 )
   (dword) ultoa::value#3 ← phi( ultoa::@18/(dword) ultoa::value#5 )
-  (byte~) ultoa::$4 ← ((byte)) (dword) ultoa::value#3
-  *((byte*) ultoa::buffer#7) ← *((const byte*) DIGITS + (byte~) ultoa::$4)
+  (byte~) ultoa::$11 ← (byte)(dword) ultoa::value#3
+  *((byte*) ultoa::buffer#7) ← *((const byte*) DIGITS + (byte~) ultoa::$11)
   (byte*) ultoa::buffer#3 ← ++ (byte*) ultoa::buffer#7
   *((byte*) ultoa::buffer#3) ← (number) 0
   to:ultoa::@return
@@ -264,8 +275,8 @@ ultoa::@26: scope:[ultoa]  from ultoa::@24
   (byte) ultoa::digit#5 ← phi( ultoa::@24/(byte) ultoa::digit#6 )
   (byte*) ultoa::buffer#9 ← phi( ultoa::@24/(byte*) ultoa::buffer#8 )
   (dword) ultoa_append::return#3 ← phi( ultoa::@24/(dword) ultoa_append::return#0 )
-  (dword~) ultoa::$10 ← (dword) ultoa_append::return#3
-  (dword) ultoa::value#0 ← (dword~) ultoa::$10
+  (dword~) ultoa::$9 ← (dword) ultoa_append::return#3
+  (dword) ultoa::value#0 ← (dword~) ultoa::$9
   (byte*) ultoa::buffer#4 ← ++ (byte*) ultoa::buffer#9
   (byte) ultoa::started#1 ← (number) 1
   to:ultoa::@21
@@ -530,8 +541,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -676,16 +687,16 @@ SYMBOL TABLE SSA
 (void()) ultoa((dword) ultoa::value , (byte*) ultoa::buffer , (byte) ultoa::radix)
 (bool~) ultoa::$0
 (bool~) ultoa::$1
-(dword~) ultoa::$10
+(byte~) ultoa::$10
 (byte~) ultoa::$11
 (bool~) ultoa::$2
 (bool~) ultoa::$3
-(byte~) ultoa::$4
-(number~) ultoa::$5
+(number~) ultoa::$4
+(bool~) ultoa::$5
 (bool~) ultoa::$6
 (bool~) ultoa::$7
 (bool~) ultoa::$8
-(bool~) ultoa::$9
+(dword~) ultoa::$9
 (label) ultoa::@1
 (label) ultoa::@10
 (label) ultoa::@11
@@ -832,8 +843,8 @@ Adding number conversion cast (unumber) 8 in (byte) ultoa::max_digits#2 ← (num
 Adding number conversion cast (unumber) $b in (byte) ultoa::max_digits#3 ← (number) $b
 Adding number conversion cast (unumber) $20 in (byte) ultoa::max_digits#4 ← (number) $20
 Adding number conversion cast (unumber) 0 in *((byte*) ultoa::buffer#2) ← (number) 0
-Adding number conversion cast (unumber) 1 in (number~) ultoa::$5 ← (byte) ultoa::max_digits#5 - (number) 1
-Adding number conversion cast (unumber) ultoa::$5 in (number~) ultoa::$5 ← (byte) ultoa::max_digits#5 - (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) ultoa::$4 ← (byte) ultoa::max_digits#5 - (number) 1
+Adding number conversion cast (unumber) ultoa::$4 in (number~) ultoa::$4 ← (byte) ultoa::max_digits#5 - (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in *((byte*) ultoa::buffer#3) ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte) ultoa::started#1 ← (number) 1
 Adding number conversion cast (unumber) 0 in (bool~) print_str::$1 ← (number) 0 != *((byte*) print_str::str#2)
@@ -844,14 +855,12 @@ Adding number conversion cast (unumber) $22b in (number~) main::$2 ← (dword) m
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (dword) main::i#3 * (unumber)(number) $22b
 Adding number conversion cast (unumber) $14d in (dword) main::i#1 ← (dword) main::i#4 + (number) $14d
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (byte) ultoa::max_digits#1 ← (unumber)(number) $a
 Inlining cast (byte) ultoa::max_digits#2 ← (unumber)(number) 8
 Inlining cast (byte) ultoa::max_digits#3 ← (unumber)(number) $b
 Inlining cast (byte) ultoa::max_digits#4 ← (unumber)(number) $20
 Inlining cast *((byte*) ultoa::buffer#2) ← (unumber)(number) 0
-Inlining cast (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#3
 Inlining cast *((byte*) ultoa::buffer#3) ← (unumber)(number) 0
 Inlining cast (byte) ultoa::started#1 ← (unumber)(number) 1
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
@@ -889,7 +898,7 @@ Finalized unsigned number type (word) $d02
 Finalized unsigned number type (word) $22b
 Finalized unsigned number type (word) $14d
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) ultoa::$5 ← (byte) ultoa::max_digits#5 - (byte) 1
+Inferred type updated to byte in (unumber~) ultoa::$4 ← (byte) ultoa::max_digits#5 - (byte) 1
 Inferred type updated to dword in (unumber~) main::$2 ← (dword) main::i#3 * (word) $22b
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -897,7 +906,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -913,7 +922,7 @@ Alias ultoa::buffer#11 = ultoa::buffer#12 ultoa::buffer#7 ultoa::buffer#8 ultoa:
 Alias ultoa::max_digits#10 = ultoa::max_digits#8 ultoa::max_digits#5 ultoa::max_digits#9 
 Alias ultoa::digit_value#0 = ultoa::digit_value#1 
 Alias ultoa_append::return#0 = ultoa_append::return#3 
-Alias ultoa::value#0 = ultoa::$10 
+Alias ultoa::value#0 = ultoa::$9 
 Alias ultoa_append::digit#2 = ultoa_append::digit#4 ultoa_append::digit#3 
 Alias ultoa_append::value#2 = ultoa_append::value#3 ultoa_append::value#4 ultoa_append::return#1 ultoa_append::return#4 ultoa_append::return#2 
 Alias ultoa_append::sub#1 = ultoa_append::sub#2 
@@ -987,19 +996,19 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) ultoa::$0 [17] if((byte) ultoa::radix#0==(const byte) DECIMAL) goto ultoa::@1
 Simple Condition (bool~) ultoa::$1 [21] if((byte) ultoa::radix#0==(const byte) HEXADECIMAL) goto ultoa::@2
 Simple Condition (bool~) ultoa::$2 [25] if((byte) ultoa::radix#0==(const byte) OCTAL) goto ultoa::@3
 Simple Condition (bool~) ultoa::$3 [29] if((byte) ultoa::radix#0==(const byte) BINARY) goto ultoa::@4
-Simple Condition (bool~) ultoa::$6 [46] if((byte) ultoa::digit#2<(byte~) ultoa::$5) goto ultoa::@19
+Simple Condition (bool~) ultoa::$5 [46] if((byte) ultoa::digit#2<(byte~) ultoa::$4) goto ultoa::@19
 Simple Condition (bool~) ultoa_append::$0 [71] if((dword) ultoa_append::value#2>=(dword) ultoa_append::sub#0) goto ultoa_append::@2
 Simple Condition (bool~) print_str::$1 [80] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [90] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#17) goto print_ln::@1
 Simple Condition (bool~) main::$1 [118] if((dword) main::i#2<(word) $d02) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [51] (bool~) ultoa::$9 ← ! (bool~) ultoa::$8
-Rewriting || if()-condition to two if()s [50] (bool~) ultoa::$8 ← (byte) ultoa::started#2 || (bool~) ultoa::$7
+Rewriting ! if()-condition to reversed if() [51] (bool~) ultoa::$8 ← ! (bool~) ultoa::$7
+Rewriting || if()-condition to two if()s [50] (bool~) ultoa::$7 ← (byte) ultoa::started#2 || (bool~) ultoa::$6
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition (byte) ultoa::started#2
 Constant (const byte) ultoa::max_digits#0 = 0
@@ -1026,7 +1035,7 @@ Constant (const dword) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1073,13 +1082,13 @@ Identical Phi Values (byte) ultoa::max_digits#7 (const byte) ultoa::max_digits#1
 Identical Phi Values (dword*) ultoa::digit_values#8 (const dword*) ultoa::digit_values#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) ultoa::$12 [15] if((byte) 0!=(byte) ultoa::started#2) goto ultoa::@24
-Simple Condition (bool~) ultoa::$7 [63] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@24
+Simple Condition (bool~) ultoa::$6 [63] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@24
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
-Constant right-side identified [9] (byte~) ultoa::$5 ← (const byte) ultoa::max_digits#1 - (byte) 1
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
+Constant right-side identified [9] (byte~) ultoa::$4 ← (const byte) ultoa::max_digits#1 - (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
-Constant (const byte) ultoa::$5 = ultoa::max_digits#1-1
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
+Constant (const byte) ultoa::$4 = ultoa::max_digits#1-1
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte) ultoa::max_digits#2
 Eliminating unused constant (const dword*) ultoa::digit_values#2
@@ -1092,7 +1101,7 @@ Eliminating unused constant (const dword*) RADIX_BINARY_VALUES_LONG
 Eliminating unused constant (const dword*) RADIX_OCTAL_VALUES_LONG
 Eliminating unused constant (const dword*) RADIX_HEXADECIMAL_VALUES_LONG
 Successful SSA optimization PassNEliminateUnusedVars
-Rewriting multiplication to use shift [8] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 * (const byte) SIZEOF_DWORD
+Rewriting multiplication to use shift [8] (byte~) ultoa::$10 ← (byte) ultoa::digit#2 * (const byte) SIZEOF_DWORD
 Rewriting multiplication to use shift and addition[52] (dword) print_ulong_decimal::w#0 ← (dword) main::i#2 * (word) $22b
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte*) memset::dst#0
@@ -1104,9 +1113,8 @@ Inlining constant with var siblings (const byte) ultoa_append::digit#0
 Inlining constant with var siblings (const byte*) print_str::str#1
 Inlining constant with var siblings (const dword) main::i#0
 Inlining constant with var siblings (const byte*) print_line_cursor#0
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined ultoa::buffer#5 = (const byte*) decimal_digits_long
-Constant inlined ultoa::$5 = (const byte) ultoa::max_digits#1-(byte) 1
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined ultoa::started#0 = (byte) 0
 Constant inlined ultoa::digit#0 = (byte) 0
 Constant inlined print_line_cursor#0 = (byte*) 1024
@@ -1115,6 +1123,7 @@ Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Constant inlined ultoa_append::digit#0 = (byte) 0
 Constant inlined ultoa::digit_values#1 = (const dword*) RADIX_DECIMAL_VALUES_LONG
 Constant inlined print_str::str#1 = (const byte*) decimal_digits_long
+Constant inlined ultoa::$4 = (const byte) ultoa::max_digits#1-(byte) 1
 Constant inlined ultoa::started#1 = (byte) 1
 Successful SSA optimization Pass2ConstantInlining
 Alias print_ulong_decimal::w#0 = main::$12 
@@ -1325,8 +1334,8 @@ ultoa::@1: scope:[ultoa]  from ultoa ultoa::@4
   [45] if((byte) ultoa::digit#2<(const byte) ultoa::max_digits#1-(byte) 1) goto ultoa::@2
   to:ultoa::@3
 ultoa::@3: scope:[ultoa]  from ultoa::@1
-  [46] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2
-  [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$4)
+  [46] (byte~) ultoa::$11 ← (byte)(dword) ultoa::value#2
+  [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$11)
   [48] (byte*) ultoa::buffer#3 ← ++ (byte*) ultoa::buffer#11
   [49] *((byte*) ultoa::buffer#3) ← (byte) 0
   to:ultoa::@return
@@ -1334,8 +1343,8 @@ ultoa::@return: scope:[ultoa]  from ultoa::@3
   [50] return 
   to:@return
 ultoa::@2: scope:[ultoa]  from ultoa::@1
-  [51] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2
-  [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$11)
+  [51] (byte~) ultoa::$10 ← (byte) ultoa::digit#2 << (byte) 2
+  [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$10)
   [53] if((byte) 0!=(byte) ultoa::started#2) goto ultoa::@5
   to:ultoa::@7
 ultoa::@7: scope:[ultoa]  from ultoa::@2
@@ -1451,8 +1460,8 @@ VARIABLE REGISTER WEIGHTS
 (dword) print_ulong_decimal::w
 (dword) print_ulong_decimal::w#0 1102.0
 (void()) ultoa((dword) ultoa::value , (byte*) ultoa::buffer , (byte) ultoa::radix)
-(byte~) ultoa::$11 2000002.0
-(byte~) ultoa::$4 20002.0
+(byte~) ultoa::$10 2000002.0
+(byte~) ultoa::$11 20002.0
 (byte*) ultoa::buffer
 (byte*) ultoa::buffer#11 287143.2857142857
 (byte*) ultoa::buffer#14 1500001.5
@@ -1511,9 +1520,9 @@ Added variable main::$10 to live range equivalence class [ main::$10 ]
 Added variable main::$11 to live range equivalence class [ main::$11 ]
 Added variable print_ulong_decimal::w#0 to live range equivalence class [ print_ulong_decimal::w#0 ]
 Added variable print_char::ch#0 to live range equivalence class [ print_char::ch#0 ]
-Added variable ultoa::$4 to live range equivalence class [ ultoa::$4 ]
-Added variable ultoa::buffer#3 to live range equivalence class [ ultoa::buffer#3 ]
 Added variable ultoa::$11 to live range equivalence class [ ultoa::$11 ]
+Added variable ultoa::buffer#3 to live range equivalence class [ ultoa::buffer#3 ]
+Added variable ultoa::$10 to live range equivalence class [ ultoa::$10 ]
 Added variable ultoa::digit_value#0 to live range equivalence class [ ultoa::digit_value#0 ]
 Added variable ultoa_append::buffer#0 to live range equivalence class [ ultoa_append::buffer#0 ]
 Added variable ultoa_append::sub#0 to live range equivalence class [ ultoa_append::sub#0 ]
@@ -1540,9 +1549,9 @@ Complete equivalence classes
 [ main::$11 ]
 [ print_ulong_decimal::w#0 ]
 [ print_char::ch#0 ]
-[ ultoa::$4 ]
-[ ultoa::buffer#3 ]
 [ ultoa::$11 ]
+[ ultoa::buffer#3 ]
+[ ultoa::$10 ]
 [ ultoa::digit_value#0 ]
 [ ultoa_append::buffer#0 ]
 [ ultoa_append::sub#0 ]
@@ -1568,9 +1577,9 @@ Allocated zp[4]:49 [ main::$10 ]
 Allocated zp[4]:53 [ main::$11 ]
 Allocated zp[4]:57 [ print_ulong_decimal::w#0 ]
 Allocated zp[1]:61 [ print_char::ch#0 ]
-Allocated zp[1]:62 [ ultoa::$4 ]
+Allocated zp[1]:62 [ ultoa::$11 ]
 Allocated zp[2]:63 [ ultoa::buffer#3 ]
-Allocated zp[1]:65 [ ultoa::$11 ]
+Allocated zp[1]:65 [ ultoa::$10 ]
 Allocated zp[4]:66 [ ultoa::digit_value#0 ]
 Allocated zp[2]:70 [ ultoa_append::buffer#0 ]
 Allocated zp[4]:72 [ ultoa_append::sub#0 ]
@@ -1988,8 +1997,8 @@ print_char: {
 // ultoa(dword zp($f) value, byte* zp($3f) buffer)
 ultoa: {
     .const max_digits = $a
-    .label __4 = $3e
-    .label __11 = $41
+    .label __10 = $41
+    .label __11 = $3e
     .label digit_value = $42
     .label buffer = $3f
     .label digit = $e
@@ -2020,11 +2029,11 @@ ultoa: {
     jmp __b3
     // ultoa::@3
   __b3:
-    // [46] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 -- vbuz1=_byte_vduz2 
+    // [46] (byte~) ultoa::$11 ← (byte)(dword) ultoa::value#2 -- vbuz1=_byte_vduz2 
     lda.z value
-    sta.z __4
-    // [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$4) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z __4
+    sta.z __11
+    // [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$11) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    ldy.z __11
     lda DIGITS,y
     ldy #0
     sta (buffer_1),y
@@ -2047,13 +2056,13 @@ ultoa: {
     rts
     // ultoa::@2
   __b2:
-    // [51] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
+    // [51] (byte~) ultoa::$10 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z digit
     asl
     asl
-    sta.z __11
-    // [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$11) -- vduz1=pduc1_derefidx_vbuz2 
-    ldy.z __11
+    sta.z __10
+    // [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$10) -- vduz1=pduc1_derefidx_vbuz2 
+    ldy.z __10
     lda RADIX_DECIMAL_VALUES_LONG,y
     sta.z digit_value
     lda RADIX_DECIMAL_VALUES_LONG+1,y
@@ -2333,14 +2342,14 @@ Statement [33] (byte*) print_char_cursor#40 ← (byte*) print_char_cursor#14 [ p
 Statement [35] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#17 print_str::str#2 ] ( main:2::print_ulong_decimal:17::print_str:31 [ main::i#2 print_line_cursor#15 print_char_cursor#17 print_str::str#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [37] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) [ print_char_cursor#17 print_str::str#2 print_char::ch#0 ] ( main:2::print_ulong_decimal:17::print_str:31 [ main::i#2 print_line_cursor#15 print_char_cursor#17 print_str::str#2 print_char::ch#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [40] *((byte*) print_char_cursor#17) ← (byte) print_char::ch#0 [ print_char_cursor#17 ] ( main:2::print_ulong_decimal:17::print_str:31::print_char:38 [ main::i#2 print_line_cursor#15 print_str::str#2 print_char_cursor#17 ] { }  ) always clobbers reg byte y 
-Statement [46] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 [ ultoa::buffer#11 ultoa::$4 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ultoa::$4 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
-Statement [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$4) [ ultoa::buffer#11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [46] (byte~) ultoa::$11 ← (byte)(dword) ultoa::value#2 [ ultoa::buffer#11 ultoa::$11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$11) [ ultoa::buffer#11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [48] (byte*) ultoa::buffer#3 ← ++ (byte*) ultoa::buffer#11 [ ultoa::buffer#3 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#3 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [49] *((byte*) ultoa::buffer#3) ← (byte) 0 [ ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
-Statement [51] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [51] (byte~) ultoa::$10 ← (byte) ultoa::digit#2 << (byte) 2 [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$10 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$10 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ ultoa::started#2 ultoa::started#4 ]
-Statement [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$11) [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$10) [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [54] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@5 [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [57] (byte*) ultoa_append::buffer#0 ← (byte*) ultoa::buffer#11 [ ultoa::digit#2 ultoa::value#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [58] (dword) ultoa_append::value#0 ← (dword) ultoa::value#2 [ ultoa::digit#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ultoa_append::value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ultoa_append::value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a 
@@ -2373,12 +2382,12 @@ Statement [33] (byte*) print_char_cursor#40 ← (byte*) print_char_cursor#14 [ p
 Statement [35] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#17 print_str::str#2 ] ( main:2::print_ulong_decimal:17::print_str:31 [ main::i#2 print_line_cursor#15 print_char_cursor#17 print_str::str#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [37] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) [ print_char_cursor#17 print_str::str#2 print_char::ch#0 ] ( main:2::print_ulong_decimal:17::print_str:31 [ main::i#2 print_line_cursor#15 print_char_cursor#17 print_str::str#2 print_char::ch#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [40] *((byte*) print_char_cursor#17) ← (byte) print_char::ch#0 [ print_char_cursor#17 ] ( main:2::print_ulong_decimal:17::print_str:31::print_char:38 [ main::i#2 print_line_cursor#15 print_str::str#2 print_char_cursor#17 ] { }  ) always clobbers reg byte y 
-Statement [46] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 [ ultoa::buffer#11 ultoa::$4 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ultoa::$4 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
-Statement [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$4) [ ultoa::buffer#11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [46] (byte~) ultoa::$11 ← (byte)(dword) ultoa::value#2 [ ultoa::buffer#11 ultoa::$11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$11) [ ultoa::buffer#11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
 Statement [48] (byte*) ultoa::buffer#3 ← ++ (byte*) ultoa::buffer#11 [ ultoa::buffer#3 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::buffer#3 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [49] *((byte*) ultoa::buffer#3) ← (byte) 0 [ ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a reg byte y 
-Statement [51] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$11 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$11 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
-Statement [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$11) [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [51] (byte~) ultoa::$10 ← (byte) ultoa::digit#2 << (byte) 2 [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$10 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::$10 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
+Statement [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$10) [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [54] if((dword) ultoa::value#2>=(dword) ultoa::digit_value#0) goto ultoa::@5 [ ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::started#2 ultoa::buffer#11 ultoa::digit_value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } }  ) always clobbers reg byte a 
 Statement [57] (byte*) ultoa_append::buffer#0 ← (byte*) ultoa::buffer#11 [ ultoa::digit#2 ultoa::value#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::value#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a 
 Statement [58] (dword) ultoa_append::value#0 ← (dword) ultoa::value#2 [ ultoa::digit#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ultoa_append::value#0 ] ( main:2::print_ulong_decimal:17::ultoa:29 [ main::i#2 print_line_cursor#15 print_char_cursor#14 ultoa::digit#2 ultoa::buffer#11 ultoa::digit_value#0 ultoa_append::buffer#0 ultoa_append::value#0 ] { { ultoa::value#1 = print_ulong_decimal::w#0 } { ultoa_append::buffer#0 = ultoa::buffer#11 } { ultoa_append::value#0 = ultoa::value#2 } { ultoa_append::sub#0 = ultoa::digit_value#0 } { ultoa_append::return#0 = ultoa_append::value#2 } }  ) always clobbers reg byte a 
@@ -2411,9 +2420,9 @@ Potential registers zp[4]:49 [ main::$10 ] : zp[4]:49 ,
 Potential registers zp[4]:53 [ main::$11 ] : zp[4]:53 , 
 Potential registers zp[4]:57 [ print_ulong_decimal::w#0 ] : zp[4]:57 , 
 Potential registers zp[1]:61 [ print_char::ch#0 ] : zp[1]:61 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:62 [ ultoa::$4 ] : zp[1]:62 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:62 [ ultoa::$11 ] : zp[1]:62 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:63 [ ultoa::buffer#3 ] : zp[2]:63 , 
-Potential registers zp[1]:65 [ ultoa::$11 ] : zp[1]:65 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:65 [ ultoa::$10 ] : zp[1]:65 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[4]:66 [ ultoa::digit_value#0 ] : zp[4]:66 , 
 Potential registers zp[2]:70 [ ultoa_append::buffer#0 ] : zp[2]:70 , 
 Potential registers zp[4]:72 [ ultoa_append::sub#0 ] : zp[4]:72 , 
@@ -2421,7 +2430,7 @@ Potential registers zp[4]:76 [ ultoa_append::return#0 ] : zp[4]:76 ,
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [ultoa_append] 25,005,500,003.5: zp[4]:22 [ ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ] 20,005,000,002.5: zp[1]:26 [ ultoa_append::digit#2 ultoa_append::digit#1 ] 3,333,500,000.5: zp[4]:72 [ ultoa_append::sub#0 ] 2,000,002: zp[4]:76 [ ultoa_append::return#0 ] 1,375,000.25: zp[2]:70 [ ultoa_append::buffer#0 ] 
-Uplift Scope [ultoa] 3,787,146.79: zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] 3,078,361.36: zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] 2,285,716.57: zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ] 2,000,002: zp[1]:65 [ ultoa::$11 ] 1,500,001.5: zp[1]:19 [ ultoa::started#2 ultoa::started#4 ] 600,000.6: zp[4]:66 [ ultoa::digit_value#0 ] 20,002: zp[1]:62 [ ultoa::$4 ] 20,002: zp[2]:63 [ ultoa::buffer#3 ] 
+Uplift Scope [ultoa] 3,787,146.79: zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] 3,078,361.36: zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] 2,285,716.57: zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ] 2,000,002: zp[1]:65 [ ultoa::$10 ] 1,500,001.5: zp[1]:19 [ ultoa::started#2 ultoa::started#4 ] 600,000.6: zp[4]:66 [ ultoa::digit_value#0 ] 20,002: zp[1]:62 [ ultoa::$11 ] 20,002: zp[2]:63 [ ultoa::buffer#3 ] 
 Uplift Scope [print_char] 11,000,002: zp[1]:61 [ print_char::ch#0 ] 
 Uplift Scope [] 4,277,860: zp[2]:12 [ print_char_cursor#17 print_char_cursor#40 print_char_cursor#23 ] 401,291.77: zp[2]:8 [ print_line_cursor#9 print_line_cursor#15 print_line_cursor#25 print_line_cursor#24 ] 50,811.24: zp[2]:6 [ print_char_cursor#14 print_line_cursor#1 ] 
 Uplift Scope [print_str] 3,000,003: zp[2]:10 [ print_str::str#2 print_str::str#0 ] 
@@ -2433,7 +2442,7 @@ Uplift Scope [print_ln]
 Uplift Scope [print_cls] 
 
 Uplifting [ultoa_append] best 137773 combination zp[4]:22 [ ultoa_append::value#2 ultoa_append::value#0 ultoa_append::value#1 ] reg byte x [ ultoa_append::digit#2 ultoa_append::digit#1 ] zp[4]:72 [ ultoa_append::sub#0 ] zp[4]:76 [ ultoa_append::return#0 ] zp[2]:70 [ ultoa_append::buffer#0 ] 
-Uplifting [ultoa] best 136469 combination zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ] reg byte a [ ultoa::$11 ] reg byte x [ ultoa::started#2 ultoa::started#4 ] zp[4]:66 [ ultoa::digit_value#0 ] reg byte a [ ultoa::$4 ] zp[2]:63 [ ultoa::buffer#3 ] 
+Uplifting [ultoa] best 136469 combination zp[2]:20 [ ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ] zp[4]:15 [ ultoa::value#2 ultoa::value#6 ultoa::value#1 ultoa::value#0 ] zp[1]:14 [ ultoa::digit#2 ultoa::digit#1 ] reg byte a [ ultoa::$10 ] reg byte x [ ultoa::started#2 ultoa::started#4 ] zp[4]:66 [ ultoa::digit_value#0 ] reg byte a [ ultoa::$11 ] zp[2]:63 [ ultoa::buffer#3 ] 
 Uplifting [print_char] best 136166 combination reg byte a [ print_char::ch#0 ] 
 Uplifting [] best 136166 combination zp[2]:12 [ print_char_cursor#17 print_char_cursor#40 print_char_cursor#23 ] zp[2]:8 [ print_line_cursor#9 print_line_cursor#15 print_line_cursor#25 print_line_cursor#24 ] zp[2]:6 [ print_char_cursor#14 print_line_cursor#1 ] 
 Uplifting [print_str] best 136166 combination zp[2]:10 [ print_str::str#2 print_str::str#0 ] 
@@ -2869,9 +2878,9 @@ ultoa: {
     jmp __b3
     // ultoa::@3
   __b3:
-    // [46] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 -- vbuaa=_byte_vduz1 
+    // [46] (byte~) ultoa::$11 ← (byte)(dword) ultoa::value#2 -- vbuaa=_byte_vduz1 
     lda.z value
-    // [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$4) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
+    // [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$11) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy #0
@@ -2892,11 +2901,11 @@ ultoa: {
     rts
     // ultoa::@2
   __b2:
-    // [51] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuaa=vbuz1_rol_2 
+    // [51] (byte~) ultoa::$10 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuaa=vbuz1_rol_2 
     lda.z digit
     asl
     asl
-    // [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$11) -- vduz1=pduc1_derefidx_vbuaa 
+    // [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$10) -- vduz1=pduc1_derefidx_vbuaa 
     tay
     lda RADIX_DECIMAL_VALUES_LONG,y
     sta.z digit_value
@@ -3280,8 +3289,8 @@ FINAL SYMBOL TABLE
 (dword) print_ulong_decimal::w
 (dword) print_ulong_decimal::w#0 w zp[4]:13 1102.0
 (void()) ultoa((dword) ultoa::value , (byte*) ultoa::buffer , (byte) ultoa::radix)
-(byte~) ultoa::$11 reg byte a 2000002.0
-(byte~) ultoa::$4 reg byte a 20002.0
+(byte~) ultoa::$10 reg byte a 2000002.0
+(byte~) ultoa::$11 reg byte a 20002.0
 (label) ultoa::@1
 (label) ultoa::@2
 (label) ultoa::@3
@@ -3341,8 +3350,8 @@ reg byte x [ ultoa::started#2 ultoa::started#4 ]
 reg byte x [ ultoa_append::digit#2 ultoa_append::digit#1 ]
 zp[2]:17 [ memset::dst#2 memset::dst#1 ultoa::buffer#11 ultoa::buffer#14 ultoa::buffer#4 ultoa::buffer#3 ultoa_append::buffer#0 print_str::str#2 print_str::str#0 ]
 reg byte a [ print_char::ch#0 ]
-reg byte a [ ultoa::$4 ]
 reg byte a [ ultoa::$11 ]
+reg byte a [ ultoa::$10 ]
 zp[4]:19 [ ultoa::digit_value#0 ultoa_append::sub#0 ]
 
 
@@ -3724,11 +3733,10 @@ ultoa: {
     cmp #max_digits-1
     bcc __b2
     // ultoa::@3
-    // (char)value
-    // [46] (byte~) ultoa::$4 ← (byte)(dword) ultoa::value#2 -- vbuaa=_byte_vduz1 
-    lda.z value
     // *buffer++ = DIGITS[(char)value]
-    // [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$4) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
+    // [46] (byte~) ultoa::$11 ← (byte)(dword) ultoa::value#2 -- vbuaa=_byte_vduz1 
+    lda.z value
+    // [47] *((byte*) ultoa::buffer#11) ← *((const byte*) DIGITS + (byte~) ultoa::$11) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy #0
@@ -3751,11 +3759,11 @@ ultoa: {
     // ultoa::@2
   __b2:
     // digit_value = digit_values[digit]
-    // [51] (byte~) ultoa::$11 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuaa=vbuz1_rol_2 
+    // [51] (byte~) ultoa::$10 ← (byte) ultoa::digit#2 << (byte) 2 -- vbuaa=vbuz1_rol_2 
     lda.z digit
     asl
     asl
-    // [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$11) -- vduz1=pduc1_derefidx_vbuaa 
+    // [52] (dword) ultoa::digit_value#0 ← *((const dword*) RADIX_DECIMAL_VALUES_LONG + (byte~) ultoa::$10) -- vduz1=pduc1_derefidx_vbuaa 
     tay
     lda RADIX_DECIMAL_VALUES_LONG,y
     sta.z digit_value

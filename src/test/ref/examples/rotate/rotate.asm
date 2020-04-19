@@ -41,13 +41,13 @@ main: {
     rts
 }
 anim: {
+    .label __4 = 3
     .label __6 = 3
-    .label __8 = 3
+    .label __9 = 3
+    .label __10 = 3
     .label __11 = 3
     .label __12 = 3
-    .label __13 = 3
-    .label __14 = 3
-    .label __29 = $13
+    .label __26 = $13
     .label x = $b
     .label y = $c
     .label xr = $d
@@ -90,10 +90,10 @@ anim: {
     jsr mulf8s_prepared
     // mulf8s_prepared(x)
     // xr = mulf8s_prepared(x)*2
-    lda.z __6
+    lda.z __4
     asl
     sta.z xr
-    lda.z __6+1
+    lda.z __4+1
     rol
     sta.z xr+1
     // mulf8s_prepared(y)
@@ -101,10 +101,10 @@ anim: {
     jsr mulf8s_prepared
     // mulf8s_prepared(y)
     // yr = mulf8s_prepared(y)*2
-    lda.z __8
+    lda.z __6
     asl
     sta.z yr
-    lda.z __8+1
+    lda.z __6+1
     rol
     sta.z yr+1
     ldy.z angle
@@ -116,31 +116,31 @@ anim: {
     jsr mulf8s_prepared
     // mulf8s_prepared(y)
     // mulf8s_prepared(y)*2
-    asl.z __12
-    rol.z __12+1
+    asl.z __10
+    rol.z __10+1
     // xr -= mulf8s_prepared(y)*2
     lda.z xr
     sec
-    sbc.z __12
+    sbc.z __10
     sta.z xr
     lda.z xr+1
-    sbc.z __12+1
+    sbc.z __10+1
     sta.z xr+1
     // mulf8s_prepared(x)
     ldy.z x
     jsr mulf8s_prepared
     // mulf8s_prepared(x)
     // mulf8s_prepared(x)*2
-    asl.z __14
-    rol.z __14+1
+    asl.z __12
+    rol.z __12+1
     // yr += mulf8s_prepared(x)*2
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z __14
+    adc.z __12
     sta.z yr
     lda.z yr+1
-    adc.z __14+1
+    adc.z __12+1
     sta.z yr+1
     // >xr
     lda.z xr+1

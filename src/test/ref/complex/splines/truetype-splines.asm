@@ -134,7 +134,7 @@ show_letter: {
     jsr rotate
     // rotate(to, angle)
     // to = rotate(to, angle)
-    // to.x + 100
+    // to = { to.x + 100, to.y + 100}
     lda.z to_x_1
     clc
     adc #<$64
@@ -142,7 +142,6 @@ show_letter: {
     lda.z to_x_1+1
     adc #>$64
     sta.z current_x_1+1
-    // to.y + 100
     lda.z to_y_1
     clc
     adc #<$64
@@ -186,7 +185,7 @@ show_letter: {
     jsr rotate
     // rotate(via, angle)
     // via = rotate(via, angle)
-    // via.x + 100
+    // via = { via.x + 100, via.y + 100}
     lda.z segment_via_x
     clc
     adc #<$64
@@ -194,7 +193,6 @@ show_letter: {
     lda.z segment_via_x+1
     adc #>$64
     sta.z segment_via_x+1
-    // via.y + 100
     lda.z segment_via_y
     clc
     adc #<$64
@@ -270,7 +268,6 @@ bitmap_plot_spline_8seg: {
     sta.z n
   __b1:
     // bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)SPLINE_8SEG[n].x, (unsigned int)SPLINE_8SEG[n].y)
-    // (unsigned int)SPLINE_8SEG[n].x
     lda.z n
     asl
     asl
@@ -405,7 +402,6 @@ bitmap_line: {
   __b6:
     // bitmap_plot(x,(char)y)
     lda.z y
-    tax
     jsr bitmap_plot
     // y += sy
     lda.z y
@@ -458,7 +454,6 @@ bitmap_line: {
   __b3:
     // bitmap_plot(x,(char)y)
     lda.z y
-    tax
     jsr bitmap_plot
     // }
     rts
@@ -473,7 +468,6 @@ bitmap_line: {
   __b9:
     // bitmap_plot(x,(char)y)
     lda.z y
-    tax
     jsr bitmap_plot
     // x += sx
     lda.z x
@@ -527,35 +521,35 @@ bitmap_line: {
   __b4:
     // bitmap_plot(x,(char)y)
     lda.z y
-    tax
     jsr bitmap_plot
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($f) x, byte register(X) y)
+// bitmap_plot(word zp($f) x, byte register(A) y)
 bitmap_plot: {
-    .label __1 = $22
+    .label __0 = $22
     .label plotter = $18
     .label x = $f
-    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    tay
+    lda bitmap_plot_yhi,y
     sta.z plotter+1
-    lda bitmap_plot_ylo,x
+    lda bitmap_plot_ylo,y
     sta.z plotter
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __1
+    sta.z __0
     lda.z x+1
     and #>$fff8
-    sta.z __1+1
+    sta.z __0+1
     // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z __1
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z __1+1
+    adc.z __0+1
     sta.z plotter+1
     // <x
     ldx.z x
@@ -950,15 +944,15 @@ spline_8segB: {
 // 2D-rotate a vector by an angle
 // rotate(signed word zp(7) vector_x, signed word zp(9) vector_y, byte register(Y) angle)
 rotate: {
-    .label __1 = $b
-    .label __2 = $1a
+    .label __0 = $b
+    .label __2 = $b
     .label __4 = $b
-    .label __5 = $1c
-    .label __8 = $b
-    .label __9 = $1e
-    .label __10 = $1e
-    .label __11 = $b
-    .label __12 = $20
+    .label __5 = $1e
+    .label __6 = $b
+    .label __7 = $20
+    .label __10 = $1a
+    .label __11 = $1c
+    .label __12 = $1e
     .label __13 = $20
     .label vector_x = 7
     .label vector_y = 9
@@ -983,11 +977,11 @@ rotate: {
     sta.z mulf16s.b+1
     jsr mulf16s
     // mulf16s(cos_a, vector.x)
-    // (signed int )mulf16s(cos_a, vector.x)
-    lda.z __1
-    sta.z __2
-    lda.z __1+1
-    sta.z __2+1
+    // (signed int )mulf16s(cos_a, vector.x)*2
+    lda.z __0
+    sta.z __10
+    lda.z __0+1
+    sta.z __10+1
     // xr = (signed int )mulf16s(cos_a, vector.x)*2
     asl.z xr
     rol.z xr+1
@@ -998,15 +992,16 @@ rotate: {
     sta.z mulf16s.b+1
     jsr mulf16s
     // mulf16s(cos_a, vector.y)
-    // (signed int )mulf16s(cos_a, vector.y)
-    lda.z __4
-    sta.z __5
-    lda.z __4+1
-    sta.z __5+1
+    // (signed int )mulf16s(cos_a, vector.y)*2
+    lda.z __2
+    sta.z __11
+    lda.z __2+1
+    sta.z __11+1
     // yr = (signed int )mulf16s(cos_a, vector.y)*2
     asl.z yr
     rol.z yr+1
     // sin_a = (signed int) SIN[angle]
+    // signed fixed[8.8]
     lda SIN,y
     sta.z sin_a
     ora #$7f
@@ -1021,22 +1016,21 @@ rotate: {
     sta.z mulf16s.b+1
     jsr mulf16s
     // mulf16s(sin_a, vector.y)
-    // (signed int)mulf16s(sin_a, vector.y)
-    lda.z __8
-    sta.z __9
-    lda.z __8+1
-    sta.z __9+1
     // (signed int)mulf16s(sin_a, vector.y)*2
-    asl.z __10
-    rol.z __10+1
+    lda.z __4
+    sta.z __12
+    lda.z __4+1
+    sta.z __12+1
+    asl.z __5
+    rol.z __5+1
     // xr -= (signed int)mulf16s(sin_a, vector.y)*2
     // signed fixed[0.7]
     lda.z xr
     sec
-    sbc.z __10
+    sbc.z __5
     sta.z xr
     lda.z xr+1
-    sbc.z __10+1
+    sbc.z __5+1
     sta.z xr+1
     // mulf16s(sin_a, vector.x)
     lda.z vector_x
@@ -1045,35 +1039,34 @@ rotate: {
     sta.z mulf16s.b+1
     jsr mulf16s
     // mulf16s(sin_a, vector.x)
-    // (signed int)mulf16s(sin_a, vector.x)
-    lda.z __11
-    sta.z __12
-    lda.z __11+1
-    sta.z __12+1
     // (signed int)mulf16s(sin_a, vector.x)*2
-    asl.z __13
-    rol.z __13+1
+    lda.z __6
+    sta.z __13
+    lda.z __6+1
+    sta.z __13+1
+    asl.z __7
+    rol.z __7+1
     // yr += (signed int)mulf16s(sin_a, vector.x)*2
     // signed fixed[8.8]
     lda.z yr
     clc
-    adc.z __13
+    adc.z __7
     sta.z yr
     lda.z yr+1
-    adc.z __13+1
+    adc.z __7+1
     sta.z yr+1
     // >xr
     lda.z xr+1
-    // (signed int)(signed char)>xr
+    // >yr
+    ldx.z yr+1
+    // rotated = { (signed int)(signed char)>xr, (signed int)(signed char)>yr }
     sta.z return_x
     ora #$7f
     bmi !+
     lda #0
   !:
     sta.z return_x+1
-    // >yr
-    lda.z yr+1
-    // (signed int)(signed char)>yr
+    txa
     sta.z return_y
     ora #$7f
     bmi !+
@@ -1087,10 +1080,10 @@ rotate: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zp($18) a, signed word zp($1e) b)
 mulf16s: {
-    .label __9 = $22
-    .label __13 = $24
-    .label __16 = $22
-    .label __17 = $24
+    .label __6 = $22
+    .label __9 = $24
+    .label __11 = $22
+    .label __12 = $24
     .label m = $b
     .label return = $b
     .label a = $18
@@ -1111,20 +1104,20 @@ mulf16s: {
     bpl __b1
     // >m
     lda.z m+2
-    sta.z __9
+    sta.z __6
     lda.z m+3
-    sta.z __9+1
+    sta.z __6+1
     // >m = (>m)-(unsigned int)b
-    lda.z __16
+    lda.z __11
     sec
     sbc.z b
-    sta.z __16
-    lda.z __16+1
+    sta.z __11
+    lda.z __11+1
     sbc.z b+1
-    sta.z __16+1
-    lda.z __16
+    sta.z __11+1
+    lda.z __11
     sta.z m+2
-    lda.z __16+1
+    lda.z __11+1
     sta.z m+3
   __b1:
     // if(b<0)
@@ -1132,23 +1125,23 @@ mulf16s: {
     bpl __b2
     // >m
     lda.z m+2
-    sta.z __13
+    sta.z __9
     lda.z m+3
-    sta.z __13+1
+    sta.z __9+1
     // >m = (>m)-(unsigned int)a
-    lda.z __17
+    lda.z __12
     sec
     sbc.z a
-    sta.z __17
-    lda.z __17+1
+    sta.z __12
+    lda.z __12+1
     sbc.z a+1
-    sta.z __17+1
-    lda.z __17
+    sta.z __12+1
+    lda.z __12
     sta.z m+2
-    lda.z __17+1
+    lda.z __12+1
     sta.z m+3
   __b2:
-    // (signed long)m
+    // return (signed long)m;
     // }
     rts
 }

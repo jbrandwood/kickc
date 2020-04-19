@@ -263,24 +263,23 @@ main: {
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
     .label __0 = $a
-    .label __1 = $a
+    .label __15 = $a
     .label chargen = $a
     .label sc = $c
     .label bits = 9
     .label y = 8
     // asm
     sei
-    // (unsigned int)ch
-    sta.z __0
-    lda #0
-    sta.z __0+1
     // (unsigned int)ch*8
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
+    sta.z __15
+    lda #0
+    sta.z __15+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
     // chargen = CHARGEN+(unsigned int)ch*8
     clc
     lda.z chargen

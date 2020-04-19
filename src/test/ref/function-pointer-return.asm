@@ -26,9 +26,8 @@ main: {
     lda #>fn1
     sta.z f+1
   __b4:
-    // (byte)f
-    lda.z f
     // SCREEN[0] = (byte)f
+    lda.z f
     sta SCREEN
     jmp __b2
 }

@@ -1,4 +1,10 @@
 Loading link script "xmega65.ld"
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) main::msg)
@@ -46,9 +52,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#4 ← phi( memset/(byte) memset::c#5 )
   (word) memset::num#3 ← phi( memset/(word) memset::num#2 )
   (void*) memset::str#3 ← phi( memset/(void*) memset::str#4 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#3
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#3
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#3
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#3
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#3
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -56,8 +62,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#5 ← phi( memset::@2/(void*) memset::str#3 memset::@5/(void*) memset::str#6 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#6 ← phi( memset::@4/(void*) memset::str#5 )
@@ -195,8 +201,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -253,7 +259,6 @@ Adding number conversion cast (unumber) $42 in (bool~) main::$3 ← *((const nom
 Adding number conversion cast (unumber) $4f in *((const nomodify byte*) SCREEN+(number) $4f) ← (byte) '>'
 Adding number conversion cast (unumber) $4e in *((const nomodify byte*) SCREEN+(number) $4e) ← (byte) '<'
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#3
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
 Inlining cast *((const nomodify byte*) VIC_MEMORY) ← (unumber)(number) $14
 Inlining cast (word) memset::num#0 ← (unumber)(number) $28*(number) $19
@@ -288,7 +293,7 @@ Alias memset::return#0 = memset::str#2 memset::return#4 memset::return#1
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
 Alias memset::c#4 = memset::c#5 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#2 = memset::c#3 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -303,7 +308,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) main::$5 [28] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting || if()-condition to two if()s [35] (bool~) main::$4 ← (bool~) main::$2 || (bool~) main::$3
@@ -330,7 +335,7 @@ Successful SSA optimization Pass2EliminateUnusedBlocks
 Simple Condition (bool~) main::$2 [20] if(*((const nomodify byte*) RASTER)==(byte) $36) goto main::@10
 Simple Condition (bool~) main::$3 [28] if(*((const nomodify byte*) RASTER)==(byte) $42) goto main::@10
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Inlining Noop Cast [2] (byte*~) memset::$2 ← (byte*)(void*) memset::str#3 keeping memset::str#3
+Inlining Noop Cast [2] (byte*~) memset::$4 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Inlining Noop Cast [4] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const void*) memset::str#0

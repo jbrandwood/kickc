@@ -281,25 +281,24 @@ makecharset: {
     lda.z ii
     cmp #8
     bcc __b9
-    // (unsigned short)c
-    lda.z c
-    sta.z __15
-    lda #0
-    sta.z __15+1
     // ((unsigned short)c) << 3
-    asl.z __16
-    rol.z __16+1
-    asl.z __16
-    rol.z __16+1
-    asl.z __16
-    rol.z __16+1
+    lda.z c
+    sta.z __17
+    lda #0
+    sta.z __17+1
+    asl.z __15
+    rol.z __15+1
+    asl.z __15
+    rol.z __15+1
+    asl.z __15
+    rol.z __15+1
     // (((unsigned short)c) << 3) + i
     lda.z i
     clc
-    adc.z __17
-    sta.z __17
+    adc.z __16
+    sta.z __16
     bcc !+
-    inc.z __17+1
+    inc.z __16+1
   !:
     // (charset + (1 * 8)) [(((unsigned short)c) << 3) + i] = b
     clc

@@ -13,7 +13,7 @@
 main: {
     .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    .label __9 = 6
+    .label __3 = 6
     .label xw = $13
     .label yw = $15
     .label angle_w = 6
@@ -35,12 +35,12 @@ main: {
     lda #-$13
     sta.z x
   __b2:
-    // (word){ (byte)x, 0 }
+    // xw = (signed word)(word){ (byte)x, 0 }
     lda.z x
     ldy #0
     sta.z xw+1
     sty.z xw
-    // (word){ (byte)y, 0 }
+    // yw = (signed word)(word){ (byte)y, 0 }
     lda.z y
     sta.z yw+1
     sty.z yw
@@ -50,13 +50,13 @@ main: {
     // angle_w+0x0080
     lda #$80
     clc
-    adc.z __9
-    sta.z __9
+    adc.z __3
+    sta.z __3
     bcc !+
-    inc.z __9+1
+    inc.z __3+1
   !:
     // ang_w = >(angle_w+0x0080)
-    lda.z __9+1
+    lda.z __3+1
     // *screen++ = ang_w
     ldy #0
     sta (screen),y

@@ -6,7 +6,7 @@
 main: {
     .label i = 2
     .label j = 4
-    .label __1 = 6
+    .label __4 = 6
     .label k = 6
     // i=0
     lda #0
@@ -36,11 +36,11 @@ main: {
     bne !+
     inc.z j+1
   !:
-    // (int)i
+    // (int)i*2
     lda.z i
-    sta.z __1
+    sta.z __4
     lda #0
-    sta.z __1+1
+    sta.z __4+1
     // k = (int)i*2
     asl.z k
     rol.z k+1

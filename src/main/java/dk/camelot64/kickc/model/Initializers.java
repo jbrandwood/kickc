@@ -84,6 +84,15 @@ public class Initializers {
          initValue = createZeroValue(typeSpec, source);
       } else if(initValue instanceof ForwardVariableRef) {
          // Do not constantify
+      } else if(initValue instanceof CastValue) {
+         final CastValue castValue = (CastValue) initValue;
+         if(castValue.getValue() instanceof ValueList && castValue.getToType() instanceof SymbolTypeStruct) {
+            final SymbolType toType = castValue.getToType();
+            final RValue constantSub = constantify(castValue.getValue(), new ValueTypeSpec(toType, null), program, source);
+            if(constantSub instanceof ConstantValue) {
+               return new ConstantCastValue(toType, (ConstantValue) constantSub);
+            }
+         }
       } else if(initValue instanceof ValueList) {
          ValueList initList = (ValueList) initValue;
          if(typeSpec.getType() instanceof SymbolTypePointer && typeSpec.getArraySpec() != null) {

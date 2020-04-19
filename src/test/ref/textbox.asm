@@ -103,9 +103,9 @@ main: {
 }
 // textbox(byte zp(2) x1, byte zp(5) y1, byte zp(6) x2, byte zp(7) y2, byte* zp(8) text)
 textbox: {
-    .label __3 = $c
-    .label __9 = $10
-    .label __18 = $12
+    .label __8 = $10
+    .label __17 = $12
+    .label __31 = $c
     .label x1 = 2
     .label y1 = 5
     .label x2 = 6
@@ -126,16 +126,16 @@ textbox: {
     ldy.z x1
     iny
     sty.z x
-    // (word)y
+    // (word)y*40
     lda.z y
-    sta.z __3
+    sta.z __31
     lda #0
-    sta.z __3+1
+    sta.z __31+1
     // z = (word)y*40
-    lda.z __3
+    lda.z __31
     asl
     sta.z __33
-    lda.z __3+1
+    lda.z __31+1
     rol
     sta.z __33+1
     asl.z __33
@@ -167,10 +167,10 @@ textbox: {
     lda.z x
     clc
     adc.z z
-    sta.z __9
+    sta.z __8
     lda #0
     adc.z z+1
-    sta.z __9+1
+    sta.z __8+1
     // screen[z+x] = text[i]
     clc
     lda.z __32
@@ -209,11 +209,11 @@ textbox: {
     lda.z x2
     sec
     sbc.z x1
-    sta.z __18
+    sta.z __17
     // if (c+x >= x2 && c < x2-x1)
     cpy.z x2
     bcc __b2
-    cpx.z __18
+    cpx.z __17
     bcc __b6
   __b2:
     // i++;

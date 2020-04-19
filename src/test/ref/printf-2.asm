@@ -114,7 +114,7 @@ printf_uint: {
 // This handles minimum length, zero-filling, and left/right justification from the format
 // printf_number_buffer(byte zp(8) buffer_sign, byte* zp(4) buffer_digits, byte register(X) format_min_length, byte zp(3) format_justify_left, byte zp(2) format_zero_padding)
 printf_number_buffer: {
-    .label __21 = $a
+    .label __18 = $a
     .label buffer_sign = 8
     .label format_zero_padding = 2
     .label padding = 9
@@ -131,7 +131,8 @@ printf_number_buffer: {
     jsr strlen
     // strlen(buffer.digits)
     // len = (signed char)strlen(buffer.digits)
-    lda.z __21
+    // There is a minimum length - work out the padding
+    lda.z __18
     tay
     // if(buffer.sign)
     lda #0
@@ -458,9 +459,8 @@ utoa: {
     lda.z digit
     cmp #max_digits-1
     bcc __b2
-    // (char)value
-    lda.z value
     // *buffer++ = DIGITS[(char)value]
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0

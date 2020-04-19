@@ -413,10 +413,10 @@ print_sint: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zp($16) a, signed word zp($18) b)
 mulf16s: {
-    .label __9 = $1c
-    .label __13 = $1e
-    .label __16 = $1c
-    .label __17 = $1e
+    .label __6 = $1c
+    .label __9 = $1e
+    .label __11 = $1c
+    .label __12 = $1e
     .label m = $a
     .label return = $a
     .label a = $16
@@ -438,20 +438,20 @@ mulf16s: {
     bpl __b1
     // >m
     lda.z m+2
-    sta.z __9
+    sta.z __6
     lda.z m+3
-    sta.z __9+1
+    sta.z __6+1
     // >m = (>m)-(unsigned int)b
-    lda.z __16
+    lda.z __11
     sec
     sbc.z b
-    sta.z __16
-    lda.z __16+1
+    sta.z __11
+    lda.z __11+1
     sbc.z b+1
-    sta.z __16+1
-    lda.z __16
+    sta.z __11+1
+    lda.z __11
     sta.z m+2
-    lda.z __16+1
+    lda.z __11+1
     sta.z m+3
   __b1:
     // if(b<0)
@@ -459,23 +459,23 @@ mulf16s: {
     bpl __b2
     // >m
     lda.z m+2
-    sta.z __13
+    sta.z __9
     lda.z m+3
-    sta.z __13+1
+    sta.z __9+1
     // >m = (>m)-(unsigned int)a
-    lda.z __17
+    lda.z __12
     sec
     sbc.z a
-    sta.z __17
-    lda.z __17+1
+    sta.z __12
+    lda.z __12+1
     sbc.z a+1
-    sta.z __17+1
-    lda.z __17
+    sta.z __12+1
+    lda.z __12
     sta.z m+2
-    lda.z __17+1
+    lda.z __12+1
     sta.z m+3
   __b2:
-    // (signed long)m
+    // return (signed long)m;
     // }
     rts
 }
@@ -608,10 +608,10 @@ mulf16u: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp($16) a, signed word zp($18) b)
 mul16s: {
-    .label __9 = $20
-    .label __13 = $22
-    .label __16 = $20
-    .label __17 = $22
+    .label __6 = $20
+    .label __9 = $22
+    .label __11 = $20
+    .label __12 = $22
     .label m = $e
     .label return = $e
     .label a = $16
@@ -633,20 +633,20 @@ mul16s: {
     bpl __b1
     // >m
     lda.z m+2
-    sta.z __9
+    sta.z __6
     lda.z m+3
-    sta.z __9+1
+    sta.z __6+1
     // >m = (>m)-(unsigned int)b
-    lda.z __16
+    lda.z __11
     sec
     sbc.z b
-    sta.z __16
-    lda.z __16+1
+    sta.z __11
+    lda.z __11+1
     sbc.z b+1
-    sta.z __16+1
-    lda.z __16
+    sta.z __11+1
+    lda.z __11
     sta.z m+2
-    lda.z __16+1
+    lda.z __11+1
     sta.z m+3
   __b1:
     // if(b<0)
@@ -654,23 +654,23 @@ mul16s: {
     bpl __b2
     // >m
     lda.z m+2
-    sta.z __13
+    sta.z __9
     lda.z m+3
-    sta.z __13+1
+    sta.z __9+1
     // >m = (>m)-(unsigned int)a
-    lda.z __17
+    lda.z __12
     sec
     sbc.z a
-    sta.z __17
-    lda.z __17+1
+    sta.z __12
+    lda.z __12+1
     sbc.z a+1
-    sta.z __17+1
-    lda.z __17
+    sta.z __12+1
+    lda.z __12
     sta.z m+2
-    lda.z __17+1
+    lda.z __12+1
     sta.z m+3
   __b2:
-    // (signed long)m
+    // return (signed long)m;
     // }
     rts
 }

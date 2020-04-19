@@ -21,8 +21,8 @@
 main: {
     .label wavelength = $c0
     .label __3 = $1d
-    .label __4 = $1d
-    .label __11 = $1d
+    .label __9 = $1d
+    .label __10 = $1d
     .label sb = $1c
     .label sw = $1d
     .label i = 2
@@ -43,21 +43,20 @@ main: {
     ldy.z i
     lda sintabb,y
     sta.z sb
-    // (word)i
-    tya
-    sta.z __3
-    lda #0
-    sta.z __3+1
     // sintabw+(word)i
-    asl.z __11
-    rol.z __11+1
+    tya
+    sta.z __10
+    lda #0
+    sta.z __10+1
+    asl.z __9
+    rol.z __9+1
     clc
-    lda.z __4
+    lda.z __3
     adc #<sintabw
-    sta.z __4
-    lda.z __4+1
+    sta.z __3
+    lda.z __3+1
     adc #>sintabw
-    sta.z __4+1
+    sta.z __3+1
     // sw = *(sintabw+(word)i)
     ldy #0
     lda (sw),y

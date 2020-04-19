@@ -19,7 +19,7 @@ main: {
     lda.z spritePtr1___0+1
     adc #>$378
     sta.z spritePtr1___0+1
-    // (byte)*(screen+$378)
+    // return (byte)*(screen+$378);
     ldy #0
     lda (spritePtr1___0),y
     // DSP[0] = spritePtr(getScreen(0))

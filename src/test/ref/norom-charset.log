@@ -1,4 +1,6 @@
 Fixing pointer array-indexing *((const word*) charset_spec_row + (byte) main::c)
+De-inlining cast (word)SCREEN
+De-inlining cast (word)CHARSET
 Identified constant variable (byte*) VIC_MEMORY
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) CHARSET
@@ -21,32 +23,31 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main main::@7
   (byte*) main::charset#4 ← phi( main/(byte*) main::charset#0 main::@7/(byte*) main::charset#1 )
   (byte) main::c#2 ← phi( main/(byte) main::c#0 main::@7/(byte) main::c#1 )
-  (bool~) main::$7 ← (byte) main::c#2 != (number) 4
-  if((bool~) main::$7) goto main::@2
+  (bool~) main::$4 ← (byte) main::c#2 != (number) 4
+  if((bool~) main::$4) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
   (byte*) main::charset#2 ← phi( main::@1/(byte*) main::charset#4 )
   (byte) main::c#3 ← phi( main::@1/(byte) main::c#2 )
-  (byte~) main::$10 ← (byte) main::c#3 * (const byte) SIZEOF_WORD
+  (byte~) main::$7 ← (byte) main::c#3 * (const byte) SIZEOF_WORD
   (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-  (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$10)
+  (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$7)
   call gen_char3 
   to:main::@7
 main::@7: scope:[main]  from main::@2
   (byte) main::c#4 ← phi( main::@2/(byte) main::c#3 )
   (byte*) main::charset#3 ← phi( main::@2/(byte*) main::charset#2 )
-  (byte*~) main::$9 ← (byte*) main::charset#3 + (number) 8
-  (byte*) main::charset#1 ← (byte*~) main::$9
+  (byte*~) main::$6 ← (byte*) main::charset#3 + (number) 8
+  (byte*) main::charset#1 ← (byte*~) main::$6
   (byte) main::c#1 ← ++ (byte) main::c#4
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  (word~) main::$1 ← ((word)) (const byte*) SCREEN
-  (number~) main::$2 ← (word~) main::$1 / (number) $40
-  (word~) main::$3 ← ((word)) (const byte*) CHARSET
-  (number~) main::$4 ← (word~) main::$3 / (number) $400
-  (number~) main::$5 ← (number~) main::$2 | (number~) main::$4
-  (byte~) main::$6 ← ((byte)) (number~) main::$5
-  *((const byte*) VIC_MEMORY) ← (byte~) main::$6
+  (word~) main::$8 ← (word)(const byte*) SCREEN
+  (number~) main::$1 ← (word~) main::$8 / (number) $40
+  (word~) main::$9 ← (word)(const byte*) CHARSET
+  (number~) main::$2 ← (word~) main::$9 / (number) $400
+  (number~) main::$3 ← (number~) main::$1 | (number~) main::$2
+  *((const byte*) VIC_MEMORY) ← (byte)(number~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
@@ -187,15 +188,14 @@ SYMBOL TABLE SSA
 (word) gen_char3::spec#7
 (void()) main()
 (byte*~) main::$0
-(word~) main::$1
-(byte~) main::$10
+(number~) main::$1
 (number~) main::$2
-(word~) main::$3
-(number~) main::$4
-(number~) main::$5
-(byte~) main::$6
-(bool~) main::$7
-(byte*~) main::$9
+(number~) main::$3
+(bool~) main::$4
+(byte*~) main::$6
+(byte~) main::$7
+(word~) main::$8
+(word~) main::$9
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -215,13 +215,13 @@ SYMBOL TABLE SSA
 (byte*) main::charset#4
 
 Adding number conversion cast (unumber) 8 in (byte*~) main::$0 ← (const byte*) CHARSET + (number) 8
-Adding number conversion cast (unumber) 4 in (bool~) main::$7 ← (byte) main::c#2 != (number) 4
-Adding number conversion cast (unumber) 8 in (byte*~) main::$9 ← (byte*) main::charset#3 + (number) 8
-Adding number conversion cast (unumber) $40 in (number~) main::$2 ← (word~) main::$1 / (number) $40
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (word~) main::$1 / (unumber)(number) $40
-Adding number conversion cast (unumber) $400 in (number~) main::$4 ← (word~) main::$3 / (number) $400
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (word~) main::$3 / (unumber)(number) $400
-Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber~) main::$2 | (unumber~) main::$4
+Adding number conversion cast (unumber) 4 in (bool~) main::$4 ← (byte) main::c#2 != (number) 4
+Adding number conversion cast (unumber) 8 in (byte*~) main::$6 ← (byte*) main::charset#3 + (number) 8
+Adding number conversion cast (unumber) $40 in (number~) main::$1 ← (word~) main::$8 / (number) $40
+Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (word~) main::$8 / (unumber)(number) $40
+Adding number conversion cast (unumber) $400 in (number~) main::$2 ← (word~) main::$9 / (number) $400
+Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (word~) main::$9 / (unumber)(number) $400
+Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (unumber~) main::$1 | (unumber~) main::$2
 Adding number conversion cast (unumber) $80 in (number~) gen_char3::$1 ← (byte~) gen_char3::$0 & (number) $80
 Adding number conversion cast (unumber) gen_char3::$1 in (number~) gen_char3::$1 ← (byte~) gen_char3::$0 & (unumber)(number) $80
 Adding number conversion cast (unumber) 0 in (bool~) gen_char3::$2 ← (unumber~) gen_char3::$1 != (number) 0
@@ -232,10 +232,6 @@ Adding number conversion cast (unumber) gen_char3::$6 in (number~) gen_char3::$6
 Adding number conversion cast (unumber) 1 in (number~) gen_char3::$4 ← (byte) gen_char3::b#4 | (number) 1
 Adding number conversion cast (unumber) gen_char3::$4 in (number~) gen_char3::$4 ← (byte) gen_char3::b#4 | (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word~) main::$1 ← (word)(const byte*) SCREEN
-Inlining cast (word~) main::$3 ← (word)(const byte*) CHARSET
-Inlining cast (byte~) main::$6 ← (byte)(unumber~) main::$5
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 12288
@@ -261,19 +257,19 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in (unumber~) main::$2 ← (word~) main::$1 / (byte) $40
-Inferred type updated to word in (unumber~) main::$4 ← (word~) main::$3 / (word) $400
-Inferred type updated to word in (unumber~) main::$5 ← (word~) main::$2 | (word~) main::$4
+Inferred type updated to word in (unumber~) main::$1 ← (word~) main::$8 / (byte) $40
+Inferred type updated to word in (unumber~) main::$2 ← (word~) main::$9 / (word) $400
+Inferred type updated to word in (unumber~) main::$3 ← (word~) main::$1 | (word~) main::$2
 Inferred type updated to byte in (unumber~) gen_char3::$1 ← (byte~) gen_char3::$0 & (byte) $80
 Inferred type updated to byte in (unumber~) gen_char3::$5 ← (byte) gen_char3::b#3 * (byte) 2
 Inferred type updated to word in (unumber~) gen_char3::$6 ← (word) gen_char3::spec#3 * (byte) 2
 Inferred type updated to byte in (unumber~) gen_char3::$4 ← (byte) gen_char3::b#4 | (byte) 1
-Inversing boolean not [32] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte) 0 from [31] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte) 0
+Inversing boolean not [31] (bool~) gen_char3::$3 ← (byte~) gen_char3::$1 == (byte) 0 from [30] (bool~) gen_char3::$2 ← (byte~) gen_char3::$1 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::charset#0 = main::$0 
 Alias main::c#2 = main::c#3 main::c#4 
 Alias main::charset#2 = main::charset#4 main::charset#3 
-Alias main::charset#1 = main::$9 
+Alias main::charset#1 = main::$6 
 Alias gen_char3::b#1 = gen_char3::$5 gen_char3::b#5 
 Alias gen_char3::spec#1 = gen_char3::$6 gen_char3::spec#7 
 Alias gen_char3::b#4 = gen_char3::b#6 
@@ -297,27 +293,27 @@ Identical Phi Values (byte) gen_char3::r#2 (byte) gen_char3::r#6
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) gen_char3::dst#5 (byte*) gen_char3::dst#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$7 [4] if((byte) main::c#2!=(byte) 4) goto main::@2
-Simple Condition (bool~) gen_char3::$3 [28] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3
-Simple Condition (bool~) gen_char3::$7 [34] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
-Simple Condition (bool~) gen_char3::$8 [39] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
+Simple Condition (bool~) main::$4 [4] if((byte) main::c#2!=(byte) 4) goto main::@2
+Simple Condition (bool~) gen_char3::$3 [27] if((byte~) gen_char3::$1==(byte) 0) goto gen_char3::@3
+Simple Condition (bool~) gen_char3::$7 [33] if((byte) gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2
+Simple Condition (bool~) gen_char3::$8 [38] if((byte) gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (byte*) main::charset#0 ← (const byte*) CHARSET + (byte) 8
-Constant right-side identified [11] (word~) main::$1 ← (word)(const byte*) SCREEN
-Constant right-side identified [13] (word~) main::$3 ← (word)(const byte*) CHARSET
+Constant right-side identified [11] (word~) main::$8 ← (word)(const byte*) SCREEN
+Constant right-side identified [13] (word~) main::$9 ← (word)(const byte*) CHARSET
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::charset#0 = CHARSET+8
 Constant (const byte) main::c#0 = 0
-Constant (const word) main::$1 = (word)SCREEN
-Constant (const word) main::$3 = (word)CHARSET
+Constant (const word) main::$8 = (word)SCREEN
+Constant (const word) main::$9 = (word)CHARSET
 Constant (const byte) gen_char3::r#0 = 0
 Constant (const byte) gen_char3::b#0 = 0
 Constant (const byte) gen_char3::c#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [32] gen_char3::c#1 ← ++ gen_char3::c#2 to ++
-Resolved ranged comparison value [34] if(gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2 to (number) 3
-Resolved ranged next value [37] gen_char3::r#1 ← ++ gen_char3::r#6 to ++
-Resolved ranged comparison value [39] if(gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1 to (number) 5
+Resolved ranged next value [31] gen_char3::c#1 ← ++ gen_char3::c#2 to ++
+Resolved ranged comparison value [33] if(gen_char3::c#1!=rangelast(0,2)) goto gen_char3::@2 to (number) 3
+Resolved ranged next value [36] gen_char3::r#1 ← ++ gen_char3::r#6 to ++
+Resolved ranged comparison value [38] if(gen_char3::r#1!=rangelast(0,4)) goto gen_char3::@1 to (number) 5
 Adding number conversion cast (unumber) 3 in if((byte) gen_char3::c#1!=(number) 3) goto gen_char3::@2
 Adding number conversion cast (unumber) 5 in if((byte) gen_char3::r#1!=(number) 5) goto gen_char3::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -327,19 +323,19 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [8] (word~) main::$2 ← (const word) main::$1 / (byte) $40
-Constant right-side identified [9] (word~) main::$4 ← (const word) main::$3 / (word) $400
+Constant right-side identified [8] (word~) main::$1 ← (const word) main::$8 / (byte) $40
+Constant right-side identified [9] (word~) main::$2 ← (const word) main::$9 / (word) $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::$2 = main::$1/$40
-Constant (const word) main::$4 = main::$3/$400
+Constant (const word) main::$1 = main::$8/$40
+Constant (const word) main::$2 = main::$9/$400
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [8] (word~) main::$5 ← (const word) main::$2 | (const word) main::$4
+Constant right-side identified [8] (word~) main::$3 ← (const word) main::$1 | (const word) main::$2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::$5 = main::$2|main::$4
+Constant (const word) main::$3 = main::$1|main::$2
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$6 = (byte)main::$5
-Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [2] (byte~) main::$10 ← (byte) main::c#2 * (const byte) SIZEOF_WORD
+Constant value identified (byte)main::$3 in [9] *((const byte*) VIC_MEMORY) ← (byte)(const word) main::$3
+Successful SSA optimization Pass2ConstantValues
+Rewriting multiplication to use shift [2] (byte~) main::$7 ← (byte) main::c#2 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [16] (byte) gen_char3::b#1 ← (byte) gen_char3::b#3 * (byte) 2
 Rewriting multiplication to use shift [17] (word) gen_char3::spec#1 ← (word) gen_char3::spec#2 * (byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -352,13 +348,12 @@ Constant inlined gen_char3::r#0 = (byte) 0
 Constant inlined gen_char3::b#0 = (byte) 0
 Constant inlined main::c#0 = (byte) 0
 Constant inlined gen_char3::c#0 = (byte) 0
-Constant inlined main::$1 = (word)(const byte*) SCREEN
-Constant inlined main::$2 = (word)(const byte*) SCREEN/(byte) $40
+Constant inlined main::$1 = (word)(const byte*) SCREEN/(byte) $40
+Constant inlined main::$2 = (word)(const byte*) CHARSET/(word) $400
 Constant inlined main::charset#0 = (const byte*) CHARSET+(byte) 8
-Constant inlined main::$5 = (word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400
-Constant inlined main::$6 = (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400
-Constant inlined main::$3 = (word)(const byte*) CHARSET
-Constant inlined main::$4 = (word)(const byte*) CHARSET/(word) $400
+Constant inlined main::$3 = (word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400
+Constant inlined main::$9 = (word)(const byte*) CHARSET
+Constant inlined main::$8 = (word)(const byte*) SCREEN
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
@@ -426,9 +421,9 @@ main::@return: scope:[main]  from main::@3
   [8] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1
+  [9] (byte~) main::$7 ← (byte) main::c#2 << (byte) 1
   [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-  [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$10)
+  [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$7)
   [12] call gen_char3 
   to:main::@4
 main::@4: scope:[main]  from main::@2
@@ -495,7 +490,7 @@ VARIABLE REGISTER WEIGHTS
 (word) gen_char3::spec#2 442857.7142857142
 (word) gen_char3::spec#4 201003.0
 (void()) main()
-(byte~) main::$10 101.0
+(byte~) main::$7 101.0
 (byte) main::c
 (byte) main::c#1 202.0
 (byte) main::c#2 57.714285714285715
@@ -510,7 +505,7 @@ Initial phi equivalence classes
 [ gen_char3::spec#2 gen_char3::spec#4 gen_char3::spec#0 gen_char3::spec#1 ]
 [ gen_char3::c#2 gen_char3::c#1 ]
 [ gen_char3::b#3 gen_char3::b#4 gen_char3::b#1 gen_char3::b#2 ]
-Added variable main::$10 to live range equivalence class [ main::$10 ]
+Added variable main::$7 to live range equivalence class [ main::$7 ]
 Added variable gen_char3::dst#0 to live range equivalence class [ gen_char3::dst#0 ]
 Added variable gen_char3::$0 to live range equivalence class [ gen_char3::$0 ]
 Added variable gen_char3::$1 to live range equivalence class [ gen_char3::$1 ]
@@ -521,7 +516,7 @@ Complete equivalence classes
 [ gen_char3::spec#2 gen_char3::spec#4 gen_char3::spec#0 gen_char3::spec#1 ]
 [ gen_char3::c#2 gen_char3::c#1 ]
 [ gen_char3::b#3 gen_char3::b#4 gen_char3::b#1 gen_char3::b#2 ]
-[ main::$10 ]
+[ main::$7 ]
 [ gen_char3::dst#0 ]
 [ gen_char3::$0 ]
 [ gen_char3::$1 ]
@@ -531,7 +526,7 @@ Allocated zp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ]
 Allocated zp[2]:6 [ gen_char3::spec#2 gen_char3::spec#4 gen_char3::spec#0 gen_char3::spec#1 ]
 Allocated zp[1]:8 [ gen_char3::c#2 gen_char3::c#1 ]
 Allocated zp[1]:9 [ gen_char3::b#3 gen_char3::b#4 gen_char3::b#1 gen_char3::b#2 ]
-Allocated zp[1]:10 [ main::$10 ]
+Allocated zp[1]:10 [ main::$7 ]
 Allocated zp[2]:11 [ gen_char3::dst#0 ]
 Allocated zp[1]:13 [ gen_char3::$0 ]
 Allocated zp[1]:14 [ gen_char3::$1 ]
@@ -566,7 +561,7 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    .label __10 = $a
+    .label __7 = $a
     .label charset = 3
     .label c = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
@@ -599,17 +594,17 @@ main: {
     rts
     // main::@2
   __b2:
-    // [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [9] (byte~) main::$7 ← (byte) main::c#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z c
     asl
-    sta.z __10
+    sta.z __7
     // [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 -- pbuz1=pbuz2 
     lda.z charset
     sta.z gen_char3.dst
     lda.z charset+1
     sta.z gen_char3.dst+1
-    // [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuz2 
-    ldy.z __10
+    // [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$7) -- vwuz1=pwuc1_derefidx_vbuz2 
+    ldy.z __7
     lda charset_spec_row,y
     sta.z gen_char3.spec
     lda charset_spec_row+1,y
@@ -743,19 +738,19 @@ gen_char3: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 [ main::c#2 main::charset#2 main::$10 ] ( main:2 [ main::c#2 main::charset#2 main::$10 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
+Statement [9] (byte~) main::$7 ← (byte) main::c#2 << (byte) 1 [ main::c#2 main::charset#2 main::$7 ] ( main:2 [ main::c#2 main::charset#2 main::$7 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::c#2 main::c#1 ]
-Statement [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] ( main:2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:10 [ main::$10 ]
-Statement [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$10) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
+Statement [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 [ main::c#2 main::charset#2 main::$7 gen_char3::dst#0 ] ( main:2 [ main::c#2 main::charset#2 main::$7 gen_char3::dst#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:10 [ main::$7 ]
+Statement [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$7) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
 Statement [13] (byte*) main::charset#1 ← (byte*) main::charset#2 + (byte) 8 [ main::c#2 main::charset#1 ] ( main:2 [ main::c#2 main::charset#1 ] { }  ) always clobbers reg byte a 
 Statement [21] (byte) gen_char3::b#2 ← (byte) gen_char3::b#4 | (byte) 1 [ gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::c#2 gen_char3::b#2 ] ( main:2::gen_char3:12 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::c#2 gen_char3::b#2 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ gen_char3::c#2 gen_char3::c#1 ]
 Statement [7] *((const byte*) VIC_MEMORY) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const byte*) CHARSET/(word) $400 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 [ main::c#2 main::charset#2 main::$10 ] ( main:2 [ main::c#2 main::charset#2 main::$10 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
-Statement [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] ( main:2 [ main::c#2 main::charset#2 main::$10 gen_char3::dst#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
-Statement [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$10) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
+Statement [9] (byte~) main::$7 ← (byte) main::c#2 << (byte) 1 [ main::c#2 main::charset#2 main::$7 ] ( main:2 [ main::c#2 main::charset#2 main::$7 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
+Statement [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2 [ main::c#2 main::charset#2 main::$7 gen_char3::dst#0 ] ( main:2 [ main::c#2 main::charset#2 main::$7 gen_char3::dst#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
+Statement [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$7) [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] ( main:2 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::spec#0 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
 Statement [13] (byte*) main::charset#1 ← (byte*) main::charset#2 + (byte) 8 [ main::c#2 main::charset#1 ] ( main:2 [ main::c#2 main::charset#1 ] { }  ) always clobbers reg byte a 
 Statement [21] (byte) gen_char3::b#2 ← (byte) gen_char3::b#4 | (byte) 1 [ gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::c#2 gen_char3::b#2 ] ( main:2::gen_char3:12 [ main::c#2 main::charset#2 gen_char3::dst#0 gen_char3::r#6 gen_char3::spec#2 gen_char3::c#2 gen_char3::b#2 ] { { gen_char3::dst#0 = main::charset#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::c#2 main::c#1 ] : zp[1]:2 , reg byte x , reg byte y , 
@@ -764,19 +759,19 @@ Potential registers zp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ] : zp[1]:5 , reg by
 Potential registers zp[2]:6 [ gen_char3::spec#2 gen_char3::spec#4 gen_char3::spec#0 gen_char3::spec#1 ] : zp[2]:6 , 
 Potential registers zp[1]:8 [ gen_char3::c#2 gen_char3::c#1 ] : zp[1]:8 , reg byte x , reg byte y , 
 Potential registers zp[1]:9 [ gen_char3::b#3 gen_char3::b#4 gen_char3::b#1 gen_char3::b#2 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:10 [ main::$10 ] : zp[1]:10 , reg byte x , reg byte y , 
+Potential registers zp[1]:10 [ main::$7 ] : zp[1]:10 , reg byte x , reg byte y , 
 Potential registers zp[2]:11 [ gen_char3::dst#0 ] : zp[2]:11 , 
 Potential registers zp[1]:13 [ gen_char3::$0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:14 [ gen_char3::$1 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [gen_char3] 6,275,006.5: zp[1]:9 [ gen_char3::b#3 gen_char3::b#4 gen_char3::b#1 gen_char3::b#2 ] 2,000,002: zp[1]:13 [ gen_char3::$0 ] 2,000,002: zp[1]:14 [ gen_char3::$1 ] 1,750,001.75: zp[1]:8 [ gen_char3::c#2 gen_char3::c#1 ] 994,412.21: zp[2]:6 [ gen_char3::spec#2 gen_char3::spec#4 gen_char3::spec#0 gen_char3::spec#1 ] 175,001.75: zp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ] 5,888.35: zp[2]:11 [ gen_char3::dst#0 ] 
-Uplift Scope [main] 259.71: zp[1]:2 [ main::c#2 main::c#1 ] 151.5: zp[2]:3 [ main::charset#2 main::charset#1 ] 101: zp[1]:10 [ main::$10 ] 
+Uplift Scope [main] 259.71: zp[1]:2 [ main::c#2 main::c#1 ] 151.5: zp[2]:3 [ main::charset#2 main::charset#1 ] 101: zp[1]:10 [ main::$7 ] 
 Uplift Scope [] 
 
 Uplifting [gen_char3] best 61712 combination reg byte y [ gen_char3::b#3 gen_char3::b#4 gen_char3::b#1 gen_char3::b#2 ] reg byte a [ gen_char3::$0 ] reg byte a [ gen_char3::$1 ] reg byte x [ gen_char3::c#2 gen_char3::c#1 ] zp[2]:6 [ gen_char3::spec#2 gen_char3::spec#4 gen_char3::spec#0 gen_char3::spec#1 ] zp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ] zp[2]:11 [ gen_char3::dst#0 ] 
 Limited combination testing to 100 combinations of 576 possible.
-Uplifting [main] best 61672 combination zp[1]:2 [ main::c#2 main::c#1 ] zp[2]:3 [ main::charset#2 main::charset#1 ] reg byte x [ main::$10 ] 
+Uplifting [main] best 61672 combination zp[1]:2 [ main::c#2 main::c#1 ] zp[2]:3 [ main::charset#2 main::charset#1 ] reg byte x [ main::$7 ] 
 Uplifting [] best 61672 combination 
 Attempting to uplift remaining variables inzp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ]
 Uplifting [gen_char3] best 61672 combination zp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ] 
@@ -845,12 +840,12 @@ main: {
     rts
     // main::@2
   __b2:
-    // [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
+    // [9] (byte~) main::$7 ← (byte) main::c#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z c
     asl
     tax
     // [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-    // [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
+    // [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$7) -- vwuz1=pwuc1_derefidx_vbuxx 
     lda charset_spec_row,x
     sta.z gen_char3.spec
     lda charset_spec_row+1,x
@@ -1057,7 +1052,7 @@ FINAL SYMBOL TABLE
 (word) gen_char3::spec#2 spec zp[2]:6 442857.7142857142
 (word) gen_char3::spec#4 spec zp[2]:6 201003.0
 (void()) main()
-(byte~) main::$10 reg byte x 101.0
+(byte~) main::$7 reg byte x 101.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -1076,7 +1071,7 @@ zp[1]:5 [ gen_char3::r#6 gen_char3::r#1 ]
 zp[2]:6 [ gen_char3::spec#2 gen_char3::spec#4 gen_char3::spec#0 gen_char3::spec#1 ]
 reg byte x [ gen_char3::c#2 gen_char3::c#1 ]
 reg byte y [ gen_char3::b#3 gen_char3::b#4 gen_char3::b#1 gen_char3::b#2 ]
-reg byte x [ main::$10 ]
+reg byte x [ main::$7 ]
 reg byte a [ gen_char3::$0 ]
 reg byte a [ gen_char3::$1 ]
 
@@ -1133,12 +1128,12 @@ main: {
     // main::@2
   __b2:
     // gen_char3(charset, charset_spec_row[c])
-    // [9] (byte~) main::$10 ← (byte) main::c#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
+    // [9] (byte~) main::$7 ← (byte) main::c#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z c
     asl
     tax
     // [10] (byte*) gen_char3::dst#0 ← (byte*) main::charset#2
-    // [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$10) -- vwuz1=pwuc1_derefidx_vbuxx 
+    // [11] (word) gen_char3::spec#0 ← *((const word*) charset_spec_row + (byte~) main::$7) -- vwuz1=pwuc1_derefidx_vbuxx 
     lda charset_spec_row,x
     sta.z gen_char3.spec
     lda charset_spec_row+1,x

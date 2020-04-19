@@ -14,8 +14,8 @@
   .label COSTAB = SINTAB+$40
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __4 = 4
-    .label __8 = $10
+    .label __13 = 4
+    .label __14 = $10
     .label a = 3
     .label i = 2
     // bitmap_init(BITMAP, SCREEN)
@@ -41,12 +41,12 @@ main: {
     inc SCREEN+$3e7
     jmp __b3
   __b2:
-    // (word)COSTAB[a]
+    // (word)COSTAB[a]+120
     ldy.z a
     lda COSTAB,y
-    sta.z __4
+    sta.z __13
     lda #0
-    sta.z __4+1
+    sta.z __13+1
     // bitmap_line( (word)COSTAB[a]+120, (word)SINTAB[a], (word)COSTAB[a+32]+120, (word)SINTAB[a+32])
     lda #$78
     clc
@@ -55,16 +55,12 @@ main: {
     bcc !+
     inc.z bitmap_line.x1+1
   !:
+    // (word)COSTAB[a+32]+120
     ldy.z a
-    lda SINTAB,y
-    sta.z bitmap_line.y1
-    lda #0
-    sta.z bitmap_line.y1+1
-    // (word)COSTAB[a+32]
     lda COSTAB+$20,y
-    sta.z __8
+    sta.z __14
     lda #0
-    sta.z __8+1
+    sta.z __14+1
     // bitmap_line( (word)COSTAB[a]+120, (word)SINTAB[a], (word)COSTAB[a+32]+120, (word)SINTAB[a+32])
     lda #$78
     clc
@@ -74,6 +70,10 @@ main: {
     inc.z bitmap_line.x2+1
   !:
     ldy.z a
+    lda SINTAB,y
+    sta.z bitmap_line.y1
+    lda #0
+    sta.z bitmap_line.y1+1
     lda SINTAB+$20,y
     sta.z bitmap_line.y2
     lda #0
@@ -186,7 +186,6 @@ bitmap_line: {
   __b6:
     // bitmap_plot(x,(char)y)
     lda.z y
-    tax
     jsr bitmap_plot
     // y += sy
     lda.z y
@@ -239,7 +238,6 @@ bitmap_line: {
   __b3:
     // bitmap_plot(x,(char)y)
     lda.z y
-    tax
     jsr bitmap_plot
     // }
     rts
@@ -254,7 +252,6 @@ bitmap_line: {
   __b9:
     // bitmap_plot(x,(char)y)
     lda.z y
-    tax
     jsr bitmap_plot
     // x += sx
     lda.z x
@@ -308,35 +305,35 @@ bitmap_line: {
   __b4:
     // bitmap_plot(x,(char)y)
     lda.z y1
-    tax
     jsr bitmap_plot
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(4) x, byte register(X) y)
+// bitmap_plot(word zp(4) x, byte register(A) y)
 bitmap_plot: {
-    .label __1 = $1a
+    .label __0 = $1a
     .label plotter = $18
     .label x = 4
-    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    tay
+    lda bitmap_plot_yhi,y
     sta.z plotter+1
-    lda bitmap_plot_ylo,x
+    lda bitmap_plot_ylo,y
     sta.z plotter
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __1
+    sta.z __0
     lda.z x+1
     and #>$fff8
-    sta.z __1+1
+    sta.z __0+1
     // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z __1
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z __1+1
+    adc.z __0+1
     sta.z plotter+1
     // <x
     ldx.z x

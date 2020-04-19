@@ -1,6 +1,6 @@
 Resolved forward reference bob_charset_next_id to (byte) bob_charset_next_id
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer increment (byte**) renderBobCleanupNext ← ++ (byte**) renderBobCleanupNext
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
@@ -9,6 +9,24 @@ Fixing pointer array-indexing *((const word*) MUL40 + (byte) renderBobInit::y)
 Fixing pointer array-indexing *((const byte**) RENDERBOB_CLEANUP + (byte) renderBobInit::i)
 Fixing pointer array-indexing *((const word*) MUL40 + (byte) renderBob::y_char_offset)
 Fixing pointer array-indexing *((const byte**) RENDERBOB_CLEANUP + (byte) renderBobCleanup::i)
+De-inlining cast (word)toD018::screen
+De-inlining cast (word)toSpritePtr::sprite
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
+De-inlining cast (byte)mulf8s_prepared::b
+De-inlining cast (byte)*(mulf8s_prepared::memA)
+De-inlining cast (word)mulf16s::b
+De-inlining cast (word)mulf16s::a
+De-inlining cast (word)renderBobInit::y
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -189,9 +207,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -199,8 +217,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -382,48 +400,46 @@ mulf8u_prepared::@return: scope:[mulf8u_prepared]  from mulf8u_prepared
 (signed word()) mulf8s_prepared((signed byte) mulf8s_prepared::b)
 mulf8s_prepared: scope:[mulf8s_prepared]  from mulf8s::@2
   (signed byte) mulf8s_prepared::b#1 ← phi( mulf8s::@2/(signed byte) mulf8s_prepared::b#0 )
-  (byte~) mulf8s_prepared::$0 ← ((byte)) (signed byte) mulf8s_prepared::b#1
-  (byte) mulf8u_prepared::b#0 ← (byte~) mulf8s_prepared::$0
+  (byte) mulf8u_prepared::b#0 ← (byte)(signed byte) mulf8s_prepared::b#1
   call mulf8u_prepared 
   (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::return#1
   to:mulf8s_prepared::@6
 mulf8s_prepared::@6: scope:[mulf8s_prepared]  from mulf8s_prepared
   (signed byte) mulf8s_prepared::b#4 ← phi( mulf8s_prepared/(signed byte) mulf8s_prepared::b#1 )
   (word) mulf8u_prepared::return#4 ← phi( mulf8s_prepared/(word) mulf8u_prepared::return#2 )
-  (word~) mulf8s_prepared::$1 ← (word) mulf8u_prepared::return#4
-  (word) mulf8s_prepared::m#0 ← (word~) mulf8s_prepared::$1
-  (bool~) mulf8s_prepared::$2 ← *((const nomodify signed byte*) mulf8s_prepared::memA) < (number) 0
-  (bool~) mulf8s_prepared::$3 ← ! (bool~) mulf8s_prepared::$2
-  if((bool~) mulf8s_prepared::$3) goto mulf8s_prepared::@1
+  (word~) mulf8s_prepared::$0 ← (word) mulf8u_prepared::return#4
+  (word) mulf8s_prepared::m#0 ← (word~) mulf8s_prepared::$0
+  (bool~) mulf8s_prepared::$1 ← *((const nomodify signed byte*) mulf8s_prepared::memA) < (number) 0
+  (bool~) mulf8s_prepared::$2 ← ! (bool~) mulf8s_prepared::$1
+  if((bool~) mulf8s_prepared::$2) goto mulf8s_prepared::@1
   to:mulf8s_prepared::@3
 mulf8s_prepared::@1: scope:[mulf8s_prepared]  from mulf8s_prepared::@3 mulf8s_prepared::@6
   (word) mulf8s_prepared::m#6 ← phi( mulf8s_prepared::@3/(word) mulf8s_prepared::m#1 mulf8s_prepared::@6/(word) mulf8s_prepared::m#0 )
   (signed byte) mulf8s_prepared::b#2 ← phi( mulf8s_prepared::@3/(signed byte) mulf8s_prepared::b#3 mulf8s_prepared::@6/(signed byte) mulf8s_prepared::b#4 )
-  (bool~) mulf8s_prepared::$4 ← (signed byte) mulf8s_prepared::b#2 < (number) 0
-  (bool~) mulf8s_prepared::$5 ← ! (bool~) mulf8s_prepared::$4
-  if((bool~) mulf8s_prepared::$5) goto mulf8s_prepared::@2
+  (bool~) mulf8s_prepared::$3 ← (signed byte) mulf8s_prepared::b#2 < (number) 0
+  (bool~) mulf8s_prepared::$4 ← ! (bool~) mulf8s_prepared::$3
+  if((bool~) mulf8s_prepared::$4) goto mulf8s_prepared::@2
   to:mulf8s_prepared::@4
 mulf8s_prepared::@3: scope:[mulf8s_prepared]  from mulf8s_prepared::@6
   (signed byte) mulf8s_prepared::b#3 ← phi( mulf8s_prepared::@6/(signed byte) mulf8s_prepared::b#4 )
   (word) mulf8s_prepared::m#3 ← phi( mulf8s_prepared::@6/(word) mulf8s_prepared::m#0 )
-  (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#3
-  (byte~) mulf8s_prepared::$9 ← ((byte)) (signed byte) mulf8s_prepared::b#3
-  (byte~) mulf8s_prepared::$10 ← (byte~) mulf8s_prepared::$8 - (byte~) mulf8s_prepared::$9
-  (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$10
-  (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#3 hi= (byte~) mulf8s_prepared::$15
+  (byte~) mulf8s_prepared::$6 ← > (word) mulf8s_prepared::m#3
+  (byte~) mulf8s_prepared::$13 ← (byte)(signed byte) mulf8s_prepared::b#3
+  (byte~) mulf8s_prepared::$7 ← (byte~) mulf8s_prepared::$6 - (byte~) mulf8s_prepared::$13
+  (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$7
+  (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#3 hi= (byte~) mulf8s_prepared::$11
   to:mulf8s_prepared::@1
 mulf8s_prepared::@2: scope:[mulf8s_prepared]  from mulf8s_prepared::@1 mulf8s_prepared::@4
   (word) mulf8s_prepared::m#4 ← phi( mulf8s_prepared::@1/(word) mulf8s_prepared::m#6 mulf8s_prepared::@4/(word) mulf8s_prepared::m#2 )
-  (signed word~) mulf8s_prepared::$6 ← ((signed word)) (word) mulf8s_prepared::m#4
-  (signed word) mulf8s_prepared::return#0 ← (signed word~) mulf8s_prepared::$6
+  (signed word) mulf8s_prepared::return#0 ← (signed word)(word) mulf8s_prepared::m#4
   to:mulf8s_prepared::@return
 mulf8s_prepared::@4: scope:[mulf8s_prepared]  from mulf8s_prepared::@1
   (word) mulf8s_prepared::m#5 ← phi( mulf8s_prepared::@1/(word) mulf8s_prepared::m#6 )
-  (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5
-  (byte~) mulf8s_prepared::$13 ← ((byte)) *((const nomodify signed byte*) mulf8s_prepared::memA)
-  (byte~) mulf8s_prepared::$14 ← (byte~) mulf8s_prepared::$12 - (byte~) mulf8s_prepared::$13
-  (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$14
-  (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16
+  (byte~) mulf8s_prepared::$9 ← > (word) mulf8s_prepared::m#5
+  (byte~) mulf8s_prepared::$14 ← (byte)*((const nomodify signed byte*) mulf8s_prepared::memA)
+  (byte~) mulf8s_prepared::$10 ← (byte~) mulf8s_prepared::$9 - (byte~) mulf8s_prepared::$14
+  (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$10
+  (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$12
   to:mulf8s_prepared::@2
 mulf8s_prepared::@return: scope:[mulf8s_prepared]  from mulf8s_prepared::@2
   (signed word) mulf8s_prepared::return#3 ← phi( mulf8s_prepared::@2/(signed word) mulf8s_prepared::return#0 )
@@ -440,8 +456,7 @@ mulf8s: scope:[mulf8s]  from main::@30 main::@6
 mulf8s::mulf8s_prepare1: scope:[mulf8s]  from mulf8s
   (signed byte) mulf8s::b#4 ← phi( mulf8s/(signed byte) mulf8s::b#5 )
   (signed byte) mulf8s::mulf8s_prepare1_a#1 ← phi( mulf8s/(signed byte) mulf8s::mulf8s_prepare1_a#0 )
-  (byte~) mulf8s::mulf8s_prepare1_$0 ← ((byte)) (signed byte) mulf8s::mulf8s_prepare1_a#1
-  (byte) mulf8u_prepare::a#0 ← (byte~) mulf8s::mulf8s_prepare1_$0
+  (byte) mulf8u_prepare::a#0 ← (byte)(signed byte) mulf8s::mulf8s_prepare1_a#1
   call mulf8u_prepare 
   to:mulf8s::@3
 mulf8s::@3: scope:[mulf8s]  from mulf8s::mulf8s_prepare1
@@ -511,11 +526,10 @@ main::vicSelectGfxBank1_toDd001: scope:[main]  from main::vicSelectGfxBank1
   (byte*) progress_cursor#66 ← phi( main::vicSelectGfxBank1/(byte*) progress_cursor#68 )
   (byte**) renderBobCleanupNext#44 ← phi( main::vicSelectGfxBank1/(byte**) renderBobCleanupNext#46 )
   (byte*) main::vicSelectGfxBank1_toDd001_gfx#1 ← phi( main::vicSelectGfxBank1/(byte*) main::vicSelectGfxBank1_toDd001_gfx#0 )
-  (word~) main::vicSelectGfxBank1_toDd001_$0 ← ((word)) (byte*) main::vicSelectGfxBank1_toDd001_gfx#1
-  (byte~) main::vicSelectGfxBank1_toDd001_$1 ← > (word~) main::vicSelectGfxBank1_toDd001_$0
-  (number~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (number) $40
-  (number~) main::vicSelectGfxBank1_toDd001_$3 ← (number) 3 ^ (number~) main::vicSelectGfxBank1_toDd001_$2
-  (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (number~) main::vicSelectGfxBank1_toDd001_$3
+  (byte~) main::vicSelectGfxBank1_toDd001_$0 ← > (word)(byte*) main::vicSelectGfxBank1_toDd001_gfx#1
+  (number~) main::vicSelectGfxBank1_toDd001_$1 ← (byte~) main::vicSelectGfxBank1_toDd001_$0 / (number) $40
+  (number~) main::vicSelectGfxBank1_toDd001_$2 ← (number) 3 ^ (number~) main::vicSelectGfxBank1_toDd001_$1
+  (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (number~) main::vicSelectGfxBank1_toDd001_$2
   to:main::vicSelectGfxBank1_toDd001_@return
 main::vicSelectGfxBank1_toDd001_@return: scope:[main]  from main::vicSelectGfxBank1_toDd001
   (byte) bob_charset_next_id#72 ← phi( main::vicSelectGfxBank1_toDd001/(byte) bob_charset_next_id#74 )
@@ -549,16 +563,15 @@ main::toD0181: scope:[main]  from main::@21
   (byte**) renderBobCleanupNext#36 ← phi( main::@21/(byte**) renderBobCleanupNext#38 )
   (byte*) main::toD0181_gfx#1 ← phi( main::@21/(byte*) main::toD0181_gfx#0 )
   (byte*) main::toD0181_screen#1 ← phi( main::@21/(byte*) main::toD0181_screen#0 )
-  (word~) main::toD0181_$0 ← ((word)) (byte*) main::toD0181_screen#1
-  (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
-  (number~) main::toD0181_$2 ← (number~) main::toD0181_$1 * (number) 4
-  (number~) main::toD0181_$3 ← > (number~) main::toD0181_$2
-  (word~) main::toD0181_$4 ← ((word)) (byte*) main::toD0181_gfx#1
-  (byte~) main::toD0181_$5 ← > (word~) main::toD0181_$4
-  (number~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (number) 4
-  (number~) main::toD0181_$7 ← (number~) main::toD0181_$6 & (number) $f
-  (number~) main::toD0181_$8 ← (number~) main::toD0181_$3 | (number~) main::toD0181_$7
-  (byte) main::toD0181_return#0 ← (number~) main::toD0181_$8
+  (word~) main::toD0181_$7 ← (word)(byte*) main::toD0181_screen#1
+  (number~) main::toD0181_$0 ← (word~) main::toD0181_$7 & (number) $3fff
+  (number~) main::toD0181_$1 ← (number~) main::toD0181_$0 * (number) 4
+  (number~) main::toD0181_$2 ← > (number~) main::toD0181_$1
+  (byte~) main::toD0181_$3 ← > (word)(byte*) main::toD0181_gfx#1
+  (number~) main::toD0181_$4 ← (byte~) main::toD0181_$3 / (number) 4
+  (number~) main::toD0181_$5 ← (number~) main::toD0181_$4 & (number) $f
+  (number~) main::toD0181_$6 ← (number~) main::toD0181_$2 | (number~) main::toD0181_$5
+  (byte) main::toD0181_return#0 ← (number~) main::toD0181_$6
   to:main::toD0181_@return
 main::toD0181_@return: scope:[main]  from main::toD0181
   (byte) bob_charset_next_id#64 ← phi( main::toD0181/(byte) bob_charset_next_id#66 )
@@ -762,11 +775,10 @@ main::vicSelectGfxBank2_toDd001: scope:[main]  from main::vicSelectGfxBank2
   (byte) progress_idx#44 ← phi( main::vicSelectGfxBank2/(byte) progress_idx#46 )
   (byte*) progress_cursor#44 ← phi( main::vicSelectGfxBank2/(byte*) progress_cursor#46 )
   (byte*) main::vicSelectGfxBank2_toDd001_gfx#1 ← phi( main::vicSelectGfxBank2/(byte*) main::vicSelectGfxBank2_toDd001_gfx#0 )
-  (word~) main::vicSelectGfxBank2_toDd001_$0 ← ((word)) (byte*) main::vicSelectGfxBank2_toDd001_gfx#1
-  (byte~) main::vicSelectGfxBank2_toDd001_$1 ← > (word~) main::vicSelectGfxBank2_toDd001_$0
-  (number~) main::vicSelectGfxBank2_toDd001_$2 ← (byte~) main::vicSelectGfxBank2_toDd001_$1 / (number) $40
-  (number~) main::vicSelectGfxBank2_toDd001_$3 ← (number) 3 ^ (number~) main::vicSelectGfxBank2_toDd001_$2
-  (byte) main::vicSelectGfxBank2_toDd001_return#0 ← (number~) main::vicSelectGfxBank2_toDd001_$3
+  (byte~) main::vicSelectGfxBank2_toDd001_$0 ← > (word)(byte*) main::vicSelectGfxBank2_toDd001_gfx#1
+  (number~) main::vicSelectGfxBank2_toDd001_$1 ← (byte~) main::vicSelectGfxBank2_toDd001_$0 / (number) $40
+  (number~) main::vicSelectGfxBank2_toDd001_$2 ← (number) 3 ^ (number~) main::vicSelectGfxBank2_toDd001_$1
+  (byte) main::vicSelectGfxBank2_toDd001_return#0 ← (number~) main::vicSelectGfxBank2_toDd001_$2
   to:main::vicSelectGfxBank2_toDd001_@return
 main::vicSelectGfxBank2_toDd001_@return: scope:[main]  from main::vicSelectGfxBank2_toDd001
   (byte**) renderBobCleanupNext#35 ← phi( main::vicSelectGfxBank2_toDd001/(byte**) renderBobCleanupNext#37 )
@@ -800,16 +812,15 @@ main::toD0182: scope:[main]  from main::@23
   (byte*) progress_cursor#33 ← phi( main::@23/(byte*) progress_cursor#36 )
   (byte*) main::toD0182_gfx#1 ← phi( main::@23/(byte*) main::toD0182_gfx#0 )
   (byte*) main::toD0182_screen#1 ← phi( main::@23/(byte*) main::toD0182_screen#0 )
-  (word~) main::toD0182_$0 ← ((word)) (byte*) main::toD0182_screen#1
-  (number~) main::toD0182_$1 ← (word~) main::toD0182_$0 & (number) $3fff
-  (number~) main::toD0182_$2 ← (number~) main::toD0182_$1 * (number) 4
-  (number~) main::toD0182_$3 ← > (number~) main::toD0182_$2
-  (word~) main::toD0182_$4 ← ((word)) (byte*) main::toD0182_gfx#1
-  (byte~) main::toD0182_$5 ← > (word~) main::toD0182_$4
-  (number~) main::toD0182_$6 ← (byte~) main::toD0182_$5 / (number) 4
-  (number~) main::toD0182_$7 ← (number~) main::toD0182_$6 & (number) $f
-  (number~) main::toD0182_$8 ← (number~) main::toD0182_$3 | (number~) main::toD0182_$7
-  (byte) main::toD0182_return#0 ← (number~) main::toD0182_$8
+  (word~) main::toD0182_$7 ← (word)(byte*) main::toD0182_screen#1
+  (number~) main::toD0182_$0 ← (word~) main::toD0182_$7 & (number) $3fff
+  (number~) main::toD0182_$1 ← (number~) main::toD0182_$0 * (number) 4
+  (number~) main::toD0182_$2 ← > (number~) main::toD0182_$1
+  (byte~) main::toD0182_$3 ← > (word)(byte*) main::toD0182_gfx#1
+  (number~) main::toD0182_$4 ← (byte~) main::toD0182_$3 / (number) 4
+  (number~) main::toD0182_$5 ← (number~) main::toD0182_$4 & (number) $f
+  (number~) main::toD0182_$6 ← (number~) main::toD0182_$2 | (number~) main::toD0182_$5
+  (byte) main::toD0182_return#0 ← (number~) main::toD0182_$6
   to:main::toD0182_@return
 main::toD0182_@return: scope:[main]  from main::toD0182
   (byte**) renderBobCleanupNext#22 ← phi( main::toD0182/(byte**) renderBobCleanupNext#26 )
@@ -849,24 +860,24 @@ renderBobInit: scope:[renderBobInit]  from main::@26
   to:renderBobInit::@1
 renderBobInit::@1: scope:[renderBobInit]  from renderBobInit renderBobInit::@1
   (byte) renderBobInit::y#2 ← phi( renderBobInit/(byte) renderBobInit::y#0 renderBobInit::@1/(byte) renderBobInit::y#1 )
-  (word~) renderBobInit::$0 ← ((word)) (byte) renderBobInit::y#2
-  (number~) renderBobInit::$1 ← (word~) renderBobInit::$0 * (number) $28
-  (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 * (const byte) SIZEOF_WORD
-  *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (number~) renderBobInit::$1
+  (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2
+  (number~) renderBobInit::$0 ← (word~) renderBobInit::$5 * (number) $28
+  (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 * (const byte) SIZEOF_WORD
+  *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (number~) renderBobInit::$0
   (byte) renderBobInit::y#1 ← (byte) renderBobInit::y#2 + rangenext(0,$1f)
-  (bool~) renderBobInit::$2 ← (byte) renderBobInit::y#1 != rangelast(0,$1f)
-  if((bool~) renderBobInit::$2) goto renderBobInit::@1
+  (bool~) renderBobInit::$1 ← (byte) renderBobInit::y#1 != rangelast(0,$1f)
+  if((bool~) renderBobInit::$1) goto renderBobInit::@1
   to:renderBobInit::@2
 renderBobInit::@2: scope:[renderBobInit]  from renderBobInit::@1
   (byte) renderBobInit::i#0 ← (byte) 0
   to:renderBobInit::@3
 renderBobInit::@3: scope:[renderBobInit]  from renderBobInit::@2 renderBobInit::@3
   (byte) renderBobInit::i#2 ← phi( renderBobInit::@2/(byte) renderBobInit::i#0 renderBobInit::@3/(byte) renderBobInit::i#1 )
-  (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 * (const byte) SIZEOF_POINTER
-  *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN
+  (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 * (const byte) SIZEOF_POINTER
+  *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN
   (byte) renderBobInit::i#1 ← (byte) renderBobInit::i#2 + rangenext(0,NUM_BOBS-1)
-  (bool~) renderBobInit::$3 ← (byte) renderBobInit::i#1 != rangelast(0,NUM_BOBS-1)
-  if((bool~) renderBobInit::$3) goto renderBobInit::@3
+  (bool~) renderBobInit::$2 ← (byte) renderBobInit::i#1 != rangelast(0,NUM_BOBS-1)
+  if((bool~) renderBobInit::$2) goto renderBobInit::@3
   to:renderBobInit::@return
 renderBobInit::@return: scope:[renderBobInit]  from renderBobInit::@3
   return 
@@ -1729,15 +1740,14 @@ SYMBOL TABLE SSA
 (signed byte) main::r#4
 (signed byte) main::r#5
 (label) main::toD0181
-(word~) main::toD0181_$0
+(number~) main::toD0181_$0
 (number~) main::toD0181_$1
 (number~) main::toD0181_$2
-(number~) main::toD0181_$3
-(word~) main::toD0181_$4
-(byte~) main::toD0181_$5
+(byte~) main::toD0181_$3
+(number~) main::toD0181_$4
+(number~) main::toD0181_$5
 (number~) main::toD0181_$6
-(number~) main::toD0181_$7
-(number~) main::toD0181_$8
+(word~) main::toD0181_$7
 (label) main::toD0181_@return
 (byte*) main::toD0181_gfx
 (byte*) main::toD0181_gfx#0
@@ -1751,15 +1761,14 @@ SYMBOL TABLE SSA
 (byte*) main::toD0181_screen#0
 (byte*) main::toD0181_screen#1
 (label) main::toD0182
-(word~) main::toD0182_$0
+(number~) main::toD0182_$0
 (number~) main::toD0182_$1
 (number~) main::toD0182_$2
-(number~) main::toD0182_$3
-(word~) main::toD0182_$4
-(byte~) main::toD0182_$5
+(byte~) main::toD0182_$3
+(number~) main::toD0182_$4
+(number~) main::toD0182_$5
 (number~) main::toD0182_$6
-(number~) main::toD0182_$7
-(number~) main::toD0182_$8
+(word~) main::toD0182_$7
 (label) main::toD0182_@return
 (byte*) main::toD0182_gfx
 (byte*) main::toD0182_gfx#0
@@ -1779,10 +1788,9 @@ SYMBOL TABLE SSA
 (byte*) main::vicSelectGfxBank1_gfx#0
 (byte*) main::vicSelectGfxBank1_gfx#1
 (label) main::vicSelectGfxBank1_toDd001
-(word~) main::vicSelectGfxBank1_toDd001_$0
-(byte~) main::vicSelectGfxBank1_toDd001_$1
+(byte~) main::vicSelectGfxBank1_toDd001_$0
+(number~) main::vicSelectGfxBank1_toDd001_$1
 (number~) main::vicSelectGfxBank1_toDd001_$2
-(number~) main::vicSelectGfxBank1_toDd001_$3
 (label) main::vicSelectGfxBank1_toDd001_@return
 (byte*) main::vicSelectGfxBank1_toDd001_gfx
 (byte*) main::vicSelectGfxBank1_toDd001_gfx#0
@@ -1799,10 +1807,9 @@ SYMBOL TABLE SSA
 (byte*) main::vicSelectGfxBank2_gfx#0
 (byte*) main::vicSelectGfxBank2_gfx#1
 (label) main::vicSelectGfxBank2_toDd001
-(word~) main::vicSelectGfxBank2_toDd001_$0
-(byte~) main::vicSelectGfxBank2_toDd001_$1
+(byte~) main::vicSelectGfxBank2_toDd001_$0
+(number~) main::vicSelectGfxBank2_toDd001_$1
 (number~) main::vicSelectGfxBank2_toDd001_$2
-(number~) main::vicSelectGfxBank2_toDd001_$3
 (label) main::vicSelectGfxBank2_toDd001_@return
 (byte*) main::vicSelectGfxBank2_toDd001_gfx
 (byte*) main::vicSelectGfxBank2_toDd001_gfx#0
@@ -1821,8 +1828,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -1877,7 +1884,6 @@ SYMBOL TABLE SSA
 (signed byte) mulf8s::b#4
 (signed byte) mulf8s::b#5
 (label) mulf8s::mulf8s_prepare1
-(byte~) mulf8s::mulf8s_prepare1_$0
 (signed byte) mulf8s::mulf8s_prepare1_a
 (signed byte) mulf8s::mulf8s_prepare1_a#0
 (signed byte) mulf8s::mulf8s_prepare1_a#1
@@ -1890,20 +1896,18 @@ SYMBOL TABLE SSA
 (signed word) mulf8s::return#5
 (signed word) mulf8s::return#6
 (signed word()) mulf8s_prepared((signed byte) mulf8s_prepared::b)
-(byte~) mulf8s_prepared::$0
-(word~) mulf8s_prepared::$1
+(word~) mulf8s_prepared::$0
+(bool~) mulf8s_prepared::$1
 (byte~) mulf8s_prepared::$10
+(byte~) mulf8s_prepared::$11
 (byte~) mulf8s_prepared::$12
 (byte~) mulf8s_prepared::$13
 (byte~) mulf8s_prepared::$14
-(byte~) mulf8s_prepared::$15
-(byte~) mulf8s_prepared::$16
 (bool~) mulf8s_prepared::$2
 (bool~) mulf8s_prepared::$3
 (bool~) mulf8s_prepared::$4
-(bool~) mulf8s_prepared::$5
-(signed word~) mulf8s_prepared::$6
-(byte~) mulf8s_prepared::$8
+(byte~) mulf8s_prepared::$6
+(byte~) mulf8s_prepared::$7
 (byte~) mulf8s_prepared::$9
 (label) mulf8s_prepared::@1
 (label) mulf8s_prepared::@2
@@ -2374,12 +2378,12 @@ SYMBOL TABLE SSA
 (byte**) renderBobCleanupNext#8
 (byte**) renderBobCleanupNext#9
 (void()) renderBobInit()
-(word~) renderBobInit::$0
-(number~) renderBobInit::$1
+(number~) renderBobInit::$0
+(bool~) renderBobInit::$1
 (bool~) renderBobInit::$2
-(bool~) renderBobInit::$3
+(byte~) renderBobInit::$3
 (byte~) renderBobInit::$4
-(byte~) renderBobInit::$5
+(word~) renderBobInit::$5
 (label) renderBobInit::@1
 (label) renderBobInit::@2
 (label) renderBobInit::@3
@@ -2479,23 +2483,23 @@ Adding number conversion cast (unumber) $1ff in *((const byte*) mulf_sqr2_lo+(nu
 Adding number conversion cast (unumber) $100 in *((const byte*) mulf_sqr2_hi+(number) $1ff) ← *((const byte*) mulf_sqr1_hi+(number) $100)
 Adding number conversion cast (unumber) $1ff in *((const byte*) mulf_sqr2_hi+(number) $1ff) ← *((const byte*) mulf_sqr1_hi+(unumber)(number) $100)
 Adding number conversion cast (unumber) 1 in (byte) mulf_init::dir#1 ← (number) 1
-Adding number conversion cast (snumber) 0 in (bool~) mulf8s_prepared::$2 ← *((const nomodify signed byte*) mulf8s_prepared::memA) < (number) 0
-Adding number conversion cast (snumber) 0 in (bool~) mulf8s_prepared::$4 ← (signed byte) mulf8s_prepared::b#2 < (number) 0
+Adding number conversion cast (snumber) 0 in (bool~) mulf8s_prepared::$1 ← *((const nomodify signed byte*) mulf8s_prepared::memA) < (number) 0
+Adding number conversion cast (snumber) 0 in (bool~) mulf8s_prepared::$3 ← (signed byte) mulf8s_prepared::b#2 < (number) 0
 Adding number conversion cast (unumber) 3 in *((const nomodify byte*) CIA2_PORT_A_DDR) ← (number) 3
-Adding number conversion cast (unumber) $40 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (number) $40
-Adding number conversion cast (unumber) main::vicSelectGfxBank1_toDd001_$2 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (unumber)(number) $40
-Adding number conversion cast (unumber) 3 in (number~) main::vicSelectGfxBank1_toDd001_$3 ← (number) 3 ^ (unumber~) main::vicSelectGfxBank1_toDd001_$2
-Adding number conversion cast (unumber) main::vicSelectGfxBank1_toDd001_$3 in (number~) main::vicSelectGfxBank1_toDd001_$3 ← (unumber)(number) 3 ^ (unumber~) main::vicSelectGfxBank1_toDd001_$2
-Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (number) $3fff
-Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$2 ← (unumber~) main::toD0181_$1 * (number) 4
-Adding number conversion cast (unumber) main::toD0181_$2 in (number~) main::toD0181_$2 ← (unumber~) main::toD0181_$1 * (unumber)(number) 4
-Adding number conversion cast (unumber) main::toD0181_$3 in (number~) main::toD0181_$3 ← > (unumber~) main::toD0181_$2
-Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (number) 4
-Adding number conversion cast (unumber) main::toD0181_$6 in (number~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (unumber)(number) 4
-Adding number conversion cast (unumber) $f in (number~) main::toD0181_$7 ← (unumber~) main::toD0181_$6 & (number) $f
-Adding number conversion cast (unumber) main::toD0181_$7 in (number~) main::toD0181_$7 ← (unumber~) main::toD0181_$6 & (unumber)(number) $f
-Adding number conversion cast (unumber) main::toD0181_$8 in (number~) main::toD0181_$8 ← (unumber~) main::toD0181_$3 | (unumber~) main::toD0181_$7
+Adding number conversion cast (unumber) $40 in (number~) main::vicSelectGfxBank1_toDd001_$1 ← (byte~) main::vicSelectGfxBank1_toDd001_$0 / (number) $40
+Adding number conversion cast (unumber) main::vicSelectGfxBank1_toDd001_$1 in (number~) main::vicSelectGfxBank1_toDd001_$1 ← (byte~) main::vicSelectGfxBank1_toDd001_$0 / (unumber)(number) $40
+Adding number conversion cast (unumber) 3 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (number) 3 ^ (unumber~) main::vicSelectGfxBank1_toDd001_$1
+Adding number conversion cast (unumber) main::vicSelectGfxBank1_toDd001_$2 in (number~) main::vicSelectGfxBank1_toDd001_$2 ← (unumber)(number) 3 ^ (unumber~) main::vicSelectGfxBank1_toDd001_$1
+Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$0 ← (word~) main::toD0181_$7 & (number) $3fff
+Adding number conversion cast (unumber) main::toD0181_$0 in (number~) main::toD0181_$0 ← (word~) main::toD0181_$7 & (unumber)(number) $3fff
+Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$1 ← (unumber~) main::toD0181_$0 * (number) 4
+Adding number conversion cast (unumber) main::toD0181_$1 in (number~) main::toD0181_$1 ← (unumber~) main::toD0181_$0 * (unumber)(number) 4
+Adding number conversion cast (unumber) main::toD0181_$2 in (number~) main::toD0181_$2 ← > (unumber~) main::toD0181_$1
+Adding number conversion cast (unumber) 4 in (number~) main::toD0181_$4 ← (byte~) main::toD0181_$3 / (number) 4
+Adding number conversion cast (unumber) main::toD0181_$4 in (number~) main::toD0181_$4 ← (byte~) main::toD0181_$3 / (unumber)(number) 4
+Adding number conversion cast (unumber) $f in (number~) main::toD0181_$5 ← (unumber~) main::toD0181_$4 & (number) $f
+Adding number conversion cast (unumber) main::toD0181_$5 in (number~) main::toD0181_$5 ← (unumber~) main::toD0181_$4 & (unumber)(number) $f
+Adding number conversion cast (unumber) main::toD0181_$6 in (number~) main::toD0181_$6 ← (unumber~) main::toD0181_$2 | (unumber~) main::toD0181_$5
 Adding number conversion cast (unumber) 0 in (byte) memset::c#0 ← (number) 0
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
 Adding number conversion cast (unumber) $f8 in (bool~) main::$8 ← *((const nomodify byte*) RASTER) < (number) $f8
@@ -2516,22 +2520,22 @@ Adding number conversion cast (unumber) 0 in *((const nomodify byte*) BORDERCOL)
 Adding number conversion cast (unumber) 0 in (bool~) main::$23 ← (number) 0 != (byte~) main::$19
 Adding number conversion cast (unumber) 0 in (bool~) main::$22 ← (number) 0 != (byte~) main::$21
 Adding number conversion cast (unumber) 3 in *((const nomodify byte*) CIA2_PORT_A_DDR) ← (number) 3
-Adding number conversion cast (unumber) $40 in (number~) main::vicSelectGfxBank2_toDd001_$2 ← (byte~) main::vicSelectGfxBank2_toDd001_$1 / (number) $40
-Adding number conversion cast (unumber) main::vicSelectGfxBank2_toDd001_$2 in (number~) main::vicSelectGfxBank2_toDd001_$2 ← (byte~) main::vicSelectGfxBank2_toDd001_$1 / (unumber)(number) $40
-Adding number conversion cast (unumber) 3 in (number~) main::vicSelectGfxBank2_toDd001_$3 ← (number) 3 ^ (unumber~) main::vicSelectGfxBank2_toDd001_$2
-Adding number conversion cast (unumber) main::vicSelectGfxBank2_toDd001_$3 in (number~) main::vicSelectGfxBank2_toDd001_$3 ← (unumber)(number) 3 ^ (unumber~) main::vicSelectGfxBank2_toDd001_$2
-Adding number conversion cast (unumber) $3fff in (number~) main::toD0182_$1 ← (word~) main::toD0182_$0 & (number) $3fff
-Adding number conversion cast (unumber) main::toD0182_$1 in (number~) main::toD0182_$1 ← (word~) main::toD0182_$0 & (unumber)(number) $3fff
-Adding number conversion cast (unumber) 4 in (number~) main::toD0182_$2 ← (unumber~) main::toD0182_$1 * (number) 4
-Adding number conversion cast (unumber) main::toD0182_$2 in (number~) main::toD0182_$2 ← (unumber~) main::toD0182_$1 * (unumber)(number) 4
-Adding number conversion cast (unumber) main::toD0182_$3 in (number~) main::toD0182_$3 ← > (unumber~) main::toD0182_$2
-Adding number conversion cast (unumber) 4 in (number~) main::toD0182_$6 ← (byte~) main::toD0182_$5 / (number) 4
-Adding number conversion cast (unumber) main::toD0182_$6 in (number~) main::toD0182_$6 ← (byte~) main::toD0182_$5 / (unumber)(number) 4
-Adding number conversion cast (unumber) $f in (number~) main::toD0182_$7 ← (unumber~) main::toD0182_$6 & (number) $f
-Adding number conversion cast (unumber) main::toD0182_$7 in (number~) main::toD0182_$7 ← (unumber~) main::toD0182_$6 & (unumber)(number) $f
-Adding number conversion cast (unumber) main::toD0182_$8 in (number~) main::toD0182_$8 ← (unumber~) main::toD0182_$3 | (unumber~) main::toD0182_$7
-Adding number conversion cast (unumber) $28 in (number~) renderBobInit::$1 ← (word~) renderBobInit::$0 * (number) $28
-Adding number conversion cast (unumber) renderBobInit::$1 in (number~) renderBobInit::$1 ← (word~) renderBobInit::$0 * (unumber)(number) $28
+Adding number conversion cast (unumber) $40 in (number~) main::vicSelectGfxBank2_toDd001_$1 ← (byte~) main::vicSelectGfxBank2_toDd001_$0 / (number) $40
+Adding number conversion cast (unumber) main::vicSelectGfxBank2_toDd001_$1 in (number~) main::vicSelectGfxBank2_toDd001_$1 ← (byte~) main::vicSelectGfxBank2_toDd001_$0 / (unumber)(number) $40
+Adding number conversion cast (unumber) 3 in (number~) main::vicSelectGfxBank2_toDd001_$2 ← (number) 3 ^ (unumber~) main::vicSelectGfxBank2_toDd001_$1
+Adding number conversion cast (unumber) main::vicSelectGfxBank2_toDd001_$2 in (number~) main::vicSelectGfxBank2_toDd001_$2 ← (unumber)(number) 3 ^ (unumber~) main::vicSelectGfxBank2_toDd001_$1
+Adding number conversion cast (unumber) $3fff in (number~) main::toD0182_$0 ← (word~) main::toD0182_$7 & (number) $3fff
+Adding number conversion cast (unumber) main::toD0182_$0 in (number~) main::toD0182_$0 ← (word~) main::toD0182_$7 & (unumber)(number) $3fff
+Adding number conversion cast (unumber) 4 in (number~) main::toD0182_$1 ← (unumber~) main::toD0182_$0 * (number) 4
+Adding number conversion cast (unumber) main::toD0182_$1 in (number~) main::toD0182_$1 ← (unumber~) main::toD0182_$0 * (unumber)(number) 4
+Adding number conversion cast (unumber) main::toD0182_$2 in (number~) main::toD0182_$2 ← > (unumber~) main::toD0182_$1
+Adding number conversion cast (unumber) 4 in (number~) main::toD0182_$4 ← (byte~) main::toD0182_$3 / (number) 4
+Adding number conversion cast (unumber) main::toD0182_$4 in (number~) main::toD0182_$4 ← (byte~) main::toD0182_$3 / (unumber)(number) 4
+Adding number conversion cast (unumber) $f in (number~) main::toD0182_$5 ← (unumber~) main::toD0182_$4 & (number) $f
+Adding number conversion cast (unumber) main::toD0182_$5 in (number~) main::toD0182_$5 ← (unumber~) main::toD0182_$4 & (unumber)(number) $f
+Adding number conversion cast (unumber) main::toD0182_$6 in (number~) main::toD0182_$6 ← (unumber~) main::toD0182_$2 | (unumber~) main::toD0182_$5
+Adding number conversion cast (unumber) $28 in (number~) renderBobInit::$0 ← (word~) renderBobInit::$5 * (number) $28
+Adding number conversion cast (unumber) renderBobInit::$0 in (number~) renderBobInit::$0 ← (word~) renderBobInit::$5 * (unumber)(number) $28
 Adding number conversion cast (unumber) 1 in (byte) renderBobInit::i#1 ← (byte) renderBobInit::i#2 + rangenext(0,NUM_BOBS-1)
 Adding number conversion cast (unumber) 7 in (number~) renderBob::$4 ← (byte) renderBob::ypos#1 & (number) 7
 Adding number conversion cast (unumber) renderBob::$4 in (number~) renderBob::$4 ← (byte) renderBob::ypos#1 & (unumber)(number) 7
@@ -2619,18 +2623,9 @@ Adding number conversion cast (unumber) 8 in (bool~) progress_inc::$0 ← (byte)
 Adding number conversion cast (unumber) 8 in *((byte*) progress_cursor#18) ← *((const to_nomodify byte*) progress_inc::progress_chars + (number) 8)
 Adding number conversion cast (unumber) 0 in (byte) progress_idx#9 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (byte) mulf_init::dir#1 ← (unumber)(number) 1
-Inlining cast (byte~) mulf8s_prepared::$0 ← (byte)(signed byte) mulf8s_prepared::b#1
-Inlining cast (byte~) mulf8s_prepared::$9 ← (byte)(signed byte) mulf8s_prepared::b#3
-Inlining cast (signed word~) mulf8s_prepared::$6 ← (signed word)(word) mulf8s_prepared::m#4
-Inlining cast (byte~) mulf8s_prepared::$13 ← (byte)*((const nomodify signed byte*) mulf8s_prepared::memA)
-Inlining cast (byte~) mulf8s::mulf8s_prepare1_$0 ← (byte)(signed byte) mulf8s::mulf8s_prepare1_a#1
 Inlining cast *((const nomodify byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
-Inlining cast (word~) main::vicSelectGfxBank1_toDd001_$0 ← (word)(byte*) main::vicSelectGfxBank1_toDd001_gfx#1
-Inlining cast (word~) main::toD0181_$0 ← (word)(byte*) main::toD0181_screen#1
-Inlining cast (word~) main::toD0181_$4 ← (word)(byte*) main::toD0181_gfx#1
 Inlining cast (byte) memset::c#0 ← (unumber)(number) 0
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast *((const nomodify byte*) BORDERCOL) ← (unumber)(number) $f
@@ -2638,10 +2633,6 @@ Inlining cast *((const nomodify byte*) BORDERCOL) ← (unumber)(number) 1
 Inlining cast *((const nomodify byte*) BORDERCOL) ← (unumber)(number) 2
 Inlining cast *((const nomodify byte*) BORDERCOL) ← (unumber)(number) 0
 Inlining cast *((const nomodify byte*) CIA2_PORT_A_DDR) ← (unumber)(number) 3
-Inlining cast (word~) main::vicSelectGfxBank2_toDd001_$0 ← (word)(byte*) main::vicSelectGfxBank2_toDd001_gfx#1
-Inlining cast (word~) main::toD0182_$0 ← (word)(byte*) main::toD0182_screen#1
-Inlining cast (word~) main::toD0182_$4 ← (word)(byte*) main::toD0182_gfx#1
-Inlining cast (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2
 Inlining cast *((byte*) renderBobCleanup::screen#0 + (unumber)(number) 0) ← (unumber)(number) 0
 Inlining cast *((byte*) renderBobCleanup::screen#0 + (unumber)(number) $28) ← (unumber)(number) 0
 Inlining cast *((byte*) renderBobCleanup::screen#0 + (unumber)(number) $50) ← (unumber)(number) 0
@@ -2927,26 +2918,26 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) keyboard_key_pressed::$0 ← (byte) keyboard_key_pressed::key#2 & (byte) 7
 Inferred type updated to byte in (unumber~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1
-Inferred type updated to byte in (unumber~) main::vicSelectGfxBank1_toDd001_$2 ← (byte~) main::vicSelectGfxBank1_toDd001_$1 / (byte) $40
-Inferred type updated to byte in (unumber~) main::vicSelectGfxBank1_toDd001_$3 ← (byte) 3 ^ (byte~) main::vicSelectGfxBank1_toDd001_$2
-Inferred type updated to word in (unumber~) main::toD0181_$1 ← (word~) main::toD0181_$0 & (word) $3fff
-Inferred type updated to word in (unumber~) main::toD0181_$2 ← (word~) main::toD0181_$1 * (byte) 4
-Inferred type updated to byte in (unumber~) main::toD0181_$3 ← > (word~) main::toD0181_$2
-Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$5 / (byte) 4
-Inferred type updated to byte in (unumber~) main::toD0181_$7 ← (byte~) main::toD0181_$6 & (byte) $f
-Inferred type updated to byte in (unumber~) main::toD0181_$8 ← (byte~) main::toD0181_$3 | (byte~) main::toD0181_$7
+Inferred type updated to byte in (unumber~) main::vicSelectGfxBank1_toDd001_$1 ← (byte~) main::vicSelectGfxBank1_toDd001_$0 / (byte) $40
+Inferred type updated to byte in (unumber~) main::vicSelectGfxBank1_toDd001_$2 ← (byte) 3 ^ (byte~) main::vicSelectGfxBank1_toDd001_$1
+Inferred type updated to word in (unumber~) main::toD0181_$0 ← (word~) main::toD0181_$7 & (word) $3fff
+Inferred type updated to word in (unumber~) main::toD0181_$1 ← (word~) main::toD0181_$0 * (byte) 4
+Inferred type updated to byte in (unumber~) main::toD0181_$2 ← > (word~) main::toD0181_$1
+Inferred type updated to byte in (unumber~) main::toD0181_$4 ← (byte~) main::toD0181_$3 / (byte) 4
+Inferred type updated to byte in (unumber~) main::toD0181_$5 ← (byte~) main::toD0181_$4 & (byte) $f
+Inferred type updated to byte in (unumber~) main::toD0181_$6 ← (byte~) main::toD0181_$2 | (byte~) main::toD0181_$5
 Inferred type updated to signed word in (snumber~) main::$11 ← (signed word~) main::$10 + (signed word)(number) $4b*(number) $100
 Inferred type updated to signed word in (snumber~) main::$13 ← (signed word~) main::$12 * (signed byte) 2
 Inferred type updated to signed word in (snumber~) main::$14 ← (signed word~) main::$13 + (signed word)(number) $5a*(number) $100
-Inferred type updated to byte in (unumber~) main::vicSelectGfxBank2_toDd001_$2 ← (byte~) main::vicSelectGfxBank2_toDd001_$1 / (byte) $40
-Inferred type updated to byte in (unumber~) main::vicSelectGfxBank2_toDd001_$3 ← (byte) 3 ^ (byte~) main::vicSelectGfxBank2_toDd001_$2
-Inferred type updated to word in (unumber~) main::toD0182_$1 ← (word~) main::toD0182_$0 & (word) $3fff
-Inferred type updated to word in (unumber~) main::toD0182_$2 ← (word~) main::toD0182_$1 * (byte) 4
-Inferred type updated to byte in (unumber~) main::toD0182_$3 ← > (word~) main::toD0182_$2
-Inferred type updated to byte in (unumber~) main::toD0182_$6 ← (byte~) main::toD0182_$5 / (byte) 4
-Inferred type updated to byte in (unumber~) main::toD0182_$7 ← (byte~) main::toD0182_$6 & (byte) $f
-Inferred type updated to byte in (unumber~) main::toD0182_$8 ← (byte~) main::toD0182_$3 | (byte~) main::toD0182_$7
-Inferred type updated to word in (unumber~) renderBobInit::$1 ← (word~) renderBobInit::$0 * (byte) $28
+Inferred type updated to byte in (unumber~) main::vicSelectGfxBank2_toDd001_$1 ← (byte~) main::vicSelectGfxBank2_toDd001_$0 / (byte) $40
+Inferred type updated to byte in (unumber~) main::vicSelectGfxBank2_toDd001_$2 ← (byte) 3 ^ (byte~) main::vicSelectGfxBank2_toDd001_$1
+Inferred type updated to word in (unumber~) main::toD0182_$0 ← (word~) main::toD0182_$7 & (word) $3fff
+Inferred type updated to word in (unumber~) main::toD0182_$1 ← (word~) main::toD0182_$0 * (byte) 4
+Inferred type updated to byte in (unumber~) main::toD0182_$2 ← > (word~) main::toD0182_$1
+Inferred type updated to byte in (unumber~) main::toD0182_$4 ← (byte~) main::toD0182_$3 / (byte) 4
+Inferred type updated to byte in (unumber~) main::toD0182_$5 ← (byte~) main::toD0182_$4 & (byte) $f
+Inferred type updated to byte in (unumber~) main::toD0182_$6 ← (byte~) main::toD0182_$2 | (byte~) main::toD0182_$5
+Inferred type updated to word in (unumber~) renderBobInit::$0 ← (word~) renderBobInit::$5 * (byte) $28
 Inferred type updated to byte in (unumber~) renderBob::$4 ← (byte) renderBob::ypos#1 & (byte) 7
 Inferred type updated to byte in (unumber~) renderBob::$5 ← (byte~) renderBob::$4 * (const nomodify byte) BOB_SHIFTS_X
 Inferred type updated to byte in (unumber~) renderBob::$6 ← (byte) renderBob::xpos#1 & (byte) 3
@@ -2955,18 +2946,18 @@ Inferred type updated to byte in (unumber~) shiftProtoBobRight::$1 ← *((const 
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
 Inversing boolean not [55] (bool~) mulf_init::$3 ← (byte~) mulf_init::$1 != (byte) 0 from [54] (bool~) mulf_init::$2 ← (byte~) mulf_init::$1 == (byte) 0
 Inversing boolean not [83] (bool~) mulf_init::$10 ← (byte) mulf_init::x_255#1 != (byte) 0 from [82] (bool~) mulf_init::$9 ← (byte) mulf_init::x_255#1 == (byte) 0
-Inversing boolean not [113] (bool~) mulf8s_prepared::$3 ← *((const nomodify signed byte*) mulf8s_prepared::memA) >= (signed byte) 0 from [112] (bool~) mulf8s_prepared::$2 ← *((const nomodify signed byte*) mulf8s_prepared::memA) < (signed byte) 0
-Inversing boolean not [117] (bool~) mulf8s_prepared::$5 ← (signed byte) mulf8s_prepared::b#2 >= (signed byte) 0 from [116] (bool~) mulf8s_prepared::$4 ← (signed byte) mulf8s_prepared::b#2 < (signed byte) 0
-Inversing boolean not [259] (bool~) main::$20 ← (byte) 0 == (byte~) main::$19 from [258] (bool~) main::$23 ← (byte) 0 != (byte~) main::$19
-Inversing boolean not [498] (bool~) bobCharsetFindOrAddGlyph::$3 ← *((byte*) bobCharsetFindOrAddGlyph::glyph_cursor#2 + (byte) bobCharsetFindOrAddGlyph::i#3) == *((byte*) bobCharsetFindOrAddGlyph::bob_glyph#2 + (byte) bobCharsetFindOrAddGlyph::i#3) from [497] (bool~) bobCharsetFindOrAddGlyph::$2 ← *((byte*) bobCharsetFindOrAddGlyph::glyph_cursor#2 + (byte) bobCharsetFindOrAddGlyph::i#3) != *((byte*) bobCharsetFindOrAddGlyph::bob_glyph#2 + (byte) bobCharsetFindOrAddGlyph::i#3)
-Inversing boolean not [506] (bool~) bobCharsetFindOrAddGlyph::$4 ← (byte) 0 == (byte) bobCharsetFindOrAddGlyph::found#2 from [505] (bool~) bobCharsetFindOrAddGlyph::$6 ← (byte) 0 != (byte) bobCharsetFindOrAddGlyph::found#2
-Inversing boolean not [539] (bool~) progress_inc::$1 ← (byte) progress_idx#8 != (byte) 8 from [538] (bool~) progress_inc::$0 ← (byte) progress_idx#8 == (byte) 8
+Inversing boolean not [112] (bool~) mulf8s_prepared::$2 ← *((const nomodify signed byte*) mulf8s_prepared::memA) >= (signed byte) 0 from [111] (bool~) mulf8s_prepared::$1 ← *((const nomodify signed byte*) mulf8s_prepared::memA) < (signed byte) 0
+Inversing boolean not [116] (bool~) mulf8s_prepared::$4 ← (signed byte) mulf8s_prepared::b#2 >= (signed byte) 0 from [115] (bool~) mulf8s_prepared::$3 ← (signed byte) mulf8s_prepared::b#2 < (signed byte) 0
+Inversing boolean not [254] (bool~) main::$20 ← (byte) 0 == (byte~) main::$19 from [253] (bool~) main::$23 ← (byte) 0 != (byte~) main::$19
+Inversing boolean not [491] (bool~) bobCharsetFindOrAddGlyph::$3 ← *((byte*) bobCharsetFindOrAddGlyph::glyph_cursor#2 + (byte) bobCharsetFindOrAddGlyph::i#3) == *((byte*) bobCharsetFindOrAddGlyph::bob_glyph#2 + (byte) bobCharsetFindOrAddGlyph::i#3) from [490] (bool~) bobCharsetFindOrAddGlyph::$2 ← *((byte*) bobCharsetFindOrAddGlyph::glyph_cursor#2 + (byte) bobCharsetFindOrAddGlyph::i#3) != *((byte*) bobCharsetFindOrAddGlyph::bob_glyph#2 + (byte) bobCharsetFindOrAddGlyph::i#3)
+Inversing boolean not [499] (bool~) bobCharsetFindOrAddGlyph::$4 ← (byte) 0 == (byte) bobCharsetFindOrAddGlyph::found#2 from [498] (bool~) bobCharsetFindOrAddGlyph::$6 ← (byte) 0 != (byte) bobCharsetFindOrAddGlyph::found#2
+Inversing boolean not [532] (bool~) progress_inc::$1 ← (byte) progress_idx#8 != (byte) 8 from [531] (bool~) progress_inc::$0 ← (byte) progress_idx#8 == (byte) 8
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -2990,17 +2981,15 @@ Alias mulf_init::dir#2 = mulf_init::dir#3
 Alias mulf_init::x_255#1 = mulf_init::$8 mulf_init::x_255#5 
 Alias mulf_init::sqr2_hi#1 = mulf_init::sqr2_hi#5 
 Alias mulf8u_prepared::return#0 = mulf8u_prepared::$0 mulf8u_prepared::return#3 mulf8u_prepared::return#1 
-Alias mulf8u_prepared::b#0 = mulf8s_prepared::$0 
 Alias mulf8u_prepared::return#2 = mulf8u_prepared::return#4 
 Alias mulf8s_prepared::b#1 = mulf8s_prepared::b#4 mulf8s_prepared::b#3 
-Alias mulf8s_prepared::m#0 = mulf8s_prepared::$1 mulf8s_prepared::m#3 
-Alias mulf8s_prepared::$15 = mulf8s_prepared::$10 
-Alias mulf8s_prepared::return#0 = mulf8s_prepared::$6 mulf8s_prepared::return#3 mulf8s_prepared::return#1 
+Alias mulf8s_prepared::m#0 = mulf8s_prepared::$0 mulf8s_prepared::m#3 
+Alias mulf8s_prepared::$11 = mulf8s_prepared::$7 
 Alias mulf8s_prepared::m#5 = mulf8s_prepared::m#6 
-Alias mulf8s_prepared::$16 = mulf8s_prepared::$14 
+Alias mulf8s_prepared::$12 = mulf8s_prepared::$10 
+Alias mulf8s_prepared::return#0 = mulf8s_prepared::return#3 mulf8s_prepared::return#1 
 Alias mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#2 mulf8s::mulf8s_prepare1_a#1 
 Alias mulf8s::b#2 = mulf8s::b#4 mulf8s::b#5 mulf8s::b#3 
-Alias mulf8u_prepare::a#0 = mulf8s::mulf8s_prepare1_$0 
 Alias mulf8s_prepared::return#2 = mulf8s_prepared::return#4 
 Alias mulf8s::return#0 = mulf8s::$1 mulf8s::return#4 mulf8s::return#1 
 Alias progress_cursor#21 = progress_cursor#28 
@@ -3011,10 +3000,10 @@ Alias progress_cursor#0 = progress_cursor#11 progress_cursor#69 progress_cursor#
 Alias progress_idx#0 = progress_idx#12 progress_idx#69 progress_idx#68 progress_idx#66 progress_idx#64 progress_idx#62 progress_idx#60 progress_idx#58 progress_idx#56 progress_idx#54 progress_idx#52 
 Alias bob_charset_next_id#0 = bob_charset_next_id#10 bob_charset_next_id#77 bob_charset_next_id#76 bob_charset_next_id#74 bob_charset_next_id#72 bob_charset_next_id#70 bob_charset_next_id#68 bob_charset_next_id#66 bob_charset_next_id#64 bob_charset_next_id#62 bob_charset_next_id#60 
 Alias main::vicSelectGfxBank1_gfx#0 = main::vicSelectGfxBank1_gfx#1 main::vicSelectGfxBank1_toDd001_gfx#0 main::vicSelectGfxBank1_toDd001_gfx#1 
-Alias main::vicSelectGfxBank1_toDd001_return#0 = main::vicSelectGfxBank1_toDd001_$3 main::vicSelectGfxBank1_toDd001_return#2 main::vicSelectGfxBank1_toDd001_return#1 main::vicSelectGfxBank1_toDd001_return#3 main::vicSelectGfxBank1_$0 
+Alias main::vicSelectGfxBank1_toDd001_return#0 = main::vicSelectGfxBank1_toDd001_$2 main::vicSelectGfxBank1_toDd001_return#2 main::vicSelectGfxBank1_toDd001_return#1 main::vicSelectGfxBank1_toDd001_return#3 main::vicSelectGfxBank1_$0 
 Alias main::toD0181_screen#0 = main::toD0181_screen#1 
 Alias main::toD0181_gfx#0 = main::toD0181_gfx#1 
-Alias main::toD0181_return#0 = main::toD0181_$8 main::toD0181_return#2 main::toD0181_return#1 main::toD0181_return#3 main::$4 
+Alias main::toD0181_return#0 = main::toD0181_$6 main::toD0181_return#2 main::toD0181_return#1 main::toD0181_return#3 main::$4 
 Alias renderBobCleanupNext#16 = renderBobCleanupNext#20 
 Alias main::angle#2 = main::angle#4 main::angle#6 main::a#0 
 Alias progress_cursor#63 = progress_cursor#65 progress_cursor#67 
@@ -3046,10 +3035,10 @@ Alias progress_idx#1 = progress_idx#48 progress_idx#49 progress_idx#47 progress_
 Alias bob_charset_next_id#1 = bob_charset_next_id#56 bob_charset_next_id#57 bob_charset_next_id#55 bob_charset_next_id#54 bob_charset_next_id#52 bob_charset_next_id#50 bob_charset_next_id#47 bob_charset_next_id#42 bob_charset_next_id#36 bob_charset_next_id#29 bob_charset_next_id#20 bob_charset_next_id#11 
 Alias renderBobCleanupNext#11 = renderBobCleanupNext#43 renderBobCleanupNext#45 renderBobCleanupNext#41 renderBobCleanupNext#39 renderBobCleanupNext#37 renderBobCleanupNext#35 renderBobCleanupNext#33 renderBobCleanupNext#30 renderBobCleanupNext#26 renderBobCleanupNext#22 renderBobCleanupNext#18 renderBobCleanupNext#2 
 Alias main::vicSelectGfxBank2_gfx#0 = main::vicSelectGfxBank2_gfx#1 main::vicSelectGfxBank2_toDd001_gfx#0 main::vicSelectGfxBank2_toDd001_gfx#1 
-Alias main::vicSelectGfxBank2_toDd001_return#0 = main::vicSelectGfxBank2_toDd001_$3 main::vicSelectGfxBank2_toDd001_return#2 main::vicSelectGfxBank2_toDd001_return#1 main::vicSelectGfxBank2_toDd001_return#3 main::vicSelectGfxBank2_$0 
+Alias main::vicSelectGfxBank2_toDd001_return#0 = main::vicSelectGfxBank2_toDd001_$2 main::vicSelectGfxBank2_toDd001_return#2 main::vicSelectGfxBank2_toDd001_return#1 main::vicSelectGfxBank2_toDd001_return#3 main::vicSelectGfxBank2_$0 
 Alias main::toD0182_screen#0 = main::toD0182_screen#1 
 Alias main::toD0182_gfx#0 = main::toD0182_gfx#1 
-Alias main::toD0182_return#0 = main::toD0182_$8 main::toD0182_return#2 main::toD0182_return#1 main::toD0182_return#3 main::$7 
+Alias main::toD0182_return#0 = main::toD0182_$6 main::toD0182_return#2 main::toD0182_return#1 main::toD0182_return#3 main::$7 
 Alias renderBob::x_char_offset#0 = renderBob::$0 
 Alias renderBob::y_char_offset#0 = renderBob::$1 
 Alias renderBob::screen#0 = renderBob::$3 
@@ -3217,35 +3206,35 @@ Identical Phi Values (byte*) bobCharsetFindOrAddGlyph::bob_glyph#6 (byte*) bobCh
 Identical Phi Values (byte) bobCharsetFindOrAddGlyph::return#3 (byte) bobCharsetFindOrAddGlyph::glyph_id#11
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) mulf_init::$0 [33] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2
 Simple Condition (bool~) mulf_init::$3 [37] if((byte~) mulf_init::$1!=(byte) 0) goto mulf_init::@4
 Simple Condition (bool~) mulf_init::$7 [54] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@10
 Simple Condition (bool~) mulf_init::$10 [60] if((byte) mulf_init::x_255#1!=(byte) 0) goto mulf_init::@12
-Simple Condition (bool~) mulf8s_prepared::$3 [82] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1
-Simple Condition (bool~) mulf8s_prepared::$5 [85] if((signed byte) mulf8s_prepared::b#0>=(signed byte) 0) goto mulf8s_prepared::@2
-Simple Condition (bool~) main::$8 [139] if(*((const nomodify byte*) RASTER)<(byte) $f8) goto main::@4
-Simple Condition (bool~) main::$18 [169] if((byte) main::i#1!=rangelast(0,NUM_BOBS-1)) goto main::@6
-Simple Condition (bool~) main::$20 [177] if((byte) 0==(byte~) main::$19) goto main::@1
-Simple Condition (bool~) main::$22 [184] if((byte) 0!=(byte~) main::$21) goto main::@15
-Simple Condition (bool~) renderBobInit::$2 [214] if((byte) renderBobInit::y#1!=rangelast(0,$1f)) goto renderBobInit::@1
-Simple Condition (bool~) renderBobInit::$3 [221] if((byte) renderBobInit::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobInit::@3
-Simple Condition (bool~) renderBobCleanup::$0 [261] if((byte) renderBobCleanup::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobCleanup::@1
-Simple Condition (bool~) prepareBobs::$2 [277] if((byte) prepareBobs::shift_y#2<(const nomodify byte) BOB_SHIFTS_Y) goto prepareBobs::@2
-Simple Condition (bool~) prepareBobs::$3 [281] if((byte) prepareBobs::shift_x#2<(const nomodify byte) BOB_SHIFTS_X) goto prepareBobs::@5
-Simple Condition (bool~) prepareBobs::$5 [289] if((byte) prepareBobs::cell#2<(byte) 9) goto prepareBobs::@8
-Simple Condition (bool~) shiftProtoBobRight::$0 [311] if((byte) shiftProtoBobRight::i#2<(byte)(number) 3*(number) 3*(number) 8) goto shiftProtoBobRight::@2
-Simple Condition (bool~) shiftProtoBobRight::$8 [314] if((byte) 0!=(byte~) shiftProtoBobRight::$1) goto shiftProtoBobRight::@4
-Simple Condition (bool~) shiftProtoBobRight::$7 [322] if((byte) shiftProtoBobRight::j#3>=(byte) $30) goto shiftProtoBobRight::@7
-Simple Condition (bool~) shiftProtoBobDown::$0 [331] if((byte) shiftProtoBobDown::i#2>(byte) 0) goto shiftProtoBobDown::@2
-Simple Condition (bool~) bobCharsetFindOrAddGlyph::$0 [346] if((byte) bobCharsetFindOrAddGlyph::glyph_id#11!=(byte) bob_charset_next_id#23) goto bobCharsetFindOrAddGlyph::@2
-Simple Condition (bool~) bobCharsetFindOrAddGlyph::$1 [352] if((byte) bobCharsetFindOrAddGlyph::i#2<(byte) 8) goto bobCharsetFindOrAddGlyph::@5
-Simple Condition (bool~) bobCharsetFindOrAddGlyph::$3 [354] if(*((byte*) bobCharsetFindOrAddGlyph::glyph_cursor#11 + (byte) bobCharsetFindOrAddGlyph::i#2)==*((byte*) bobCharsetFindOrAddGlyph::bob_glyph#10 + (byte) bobCharsetFindOrAddGlyph::i#2)) goto bobCharsetFindOrAddGlyph::@7
-Simple Condition (bool~) bobCharsetFindOrAddGlyph::$4 [359] if((byte) 0==(byte) bobCharsetFindOrAddGlyph::found#2) goto bobCharsetFindOrAddGlyph::@16
-Simple Condition (bool~) bobCharsetFindOrAddGlyph::$5 [366] if((byte) bobCharsetFindOrAddGlyph::i1#2<(byte) 8) goto bobCharsetFindOrAddGlyph::@21
-Simple Condition (bool~) progress_inc::$1 [379] if((byte) progress_idx#8!=(byte) 8) goto progress_inc::@1
+Simple Condition (bool~) mulf8s_prepared::$2 [82] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1
+Simple Condition (bool~) mulf8s_prepared::$4 [85] if((signed byte) mulf8s_prepared::b#0>=(signed byte) 0) goto mulf8s_prepared::@2
+Simple Condition (bool~) main::$8 [137] if(*((const nomodify byte*) RASTER)<(byte) $f8) goto main::@4
+Simple Condition (bool~) main::$18 [167] if((byte) main::i#1!=rangelast(0,NUM_BOBS-1)) goto main::@6
+Simple Condition (bool~) main::$20 [175] if((byte) 0==(byte~) main::$19) goto main::@1
+Simple Condition (bool~) main::$22 [182] if((byte) 0!=(byte~) main::$21) goto main::@15
+Simple Condition (bool~) renderBobInit::$1 [210] if((byte) renderBobInit::y#1!=rangelast(0,$1f)) goto renderBobInit::@1
+Simple Condition (bool~) renderBobInit::$2 [217] if((byte) renderBobInit::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobInit::@3
+Simple Condition (bool~) renderBobCleanup::$0 [257] if((byte) renderBobCleanup::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobCleanup::@1
+Simple Condition (bool~) prepareBobs::$2 [273] if((byte) prepareBobs::shift_y#2<(const nomodify byte) BOB_SHIFTS_Y) goto prepareBobs::@2
+Simple Condition (bool~) prepareBobs::$3 [277] if((byte) prepareBobs::shift_x#2<(const nomodify byte) BOB_SHIFTS_X) goto prepareBobs::@5
+Simple Condition (bool~) prepareBobs::$5 [285] if((byte) prepareBobs::cell#2<(byte) 9) goto prepareBobs::@8
+Simple Condition (bool~) shiftProtoBobRight::$0 [307] if((byte) shiftProtoBobRight::i#2<(byte)(number) 3*(number) 3*(number) 8) goto shiftProtoBobRight::@2
+Simple Condition (bool~) shiftProtoBobRight::$8 [310] if((byte) 0!=(byte~) shiftProtoBobRight::$1) goto shiftProtoBobRight::@4
+Simple Condition (bool~) shiftProtoBobRight::$7 [318] if((byte) shiftProtoBobRight::j#3>=(byte) $30) goto shiftProtoBobRight::@7
+Simple Condition (bool~) shiftProtoBobDown::$0 [327] if((byte) shiftProtoBobDown::i#2>(byte) 0) goto shiftProtoBobDown::@2
+Simple Condition (bool~) bobCharsetFindOrAddGlyph::$0 [342] if((byte) bobCharsetFindOrAddGlyph::glyph_id#11!=(byte) bob_charset_next_id#23) goto bobCharsetFindOrAddGlyph::@2
+Simple Condition (bool~) bobCharsetFindOrAddGlyph::$1 [348] if((byte) bobCharsetFindOrAddGlyph::i#2<(byte) 8) goto bobCharsetFindOrAddGlyph::@5
+Simple Condition (bool~) bobCharsetFindOrAddGlyph::$3 [350] if(*((byte*) bobCharsetFindOrAddGlyph::glyph_cursor#11 + (byte) bobCharsetFindOrAddGlyph::i#2)==*((byte*) bobCharsetFindOrAddGlyph::bob_glyph#10 + (byte) bobCharsetFindOrAddGlyph::i#2)) goto bobCharsetFindOrAddGlyph::@7
+Simple Condition (bool~) bobCharsetFindOrAddGlyph::$4 [355] if((byte) 0==(byte) bobCharsetFindOrAddGlyph::found#2) goto bobCharsetFindOrAddGlyph::@16
+Simple Condition (bool~) bobCharsetFindOrAddGlyph::$5 [362] if((byte) bobCharsetFindOrAddGlyph::i1#2<(byte) 8) goto bobCharsetFindOrAddGlyph::@21
+Simple Condition (bool~) progress_inc::$1 [375] if((byte) progress_idx#8!=(byte) 8) goto progress_inc::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [177] if((byte) 0!=(byte~) main::$19) goto main::@15
+Negating conditional jump and destination [175] if((byte) 0!=(byte~) main::$19) goto main::@15
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant (const word) mulf_init::sqr#0 = 0
 Constant (const byte) mulf_init::x_2#0 = 0
@@ -3302,35 +3291,36 @@ Constant (const byte) progress_idx#27 = 0
 Constant (const byte) progress_idx#17 = 0
 Constant (const byte) progress_idx#9 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
-Constant (const word) main::vicSelectGfxBank1_toDd001_$0 = (word)main::vicSelectGfxBank1_gfx#0
-Constant (const word) main::toD0181_$0 = (word)main::toD0181_screen#0
-Constant (const word) main::toD0181_$4 = (word)main::toD0181_gfx#0
+Constant (const word) main::toD0181_$7 = (word)main::toD0181_screen#0
 Constant (const void*) memset::return#2 = memset::str#0
-Constant (const word) main::vicSelectGfxBank2_toDd001_$0 = (word)main::vicSelectGfxBank2_gfx#0
-Constant (const word) main::toD0182_$0 = (word)main::toD0182_screen#0
-Constant (const word) main::toD0182_$4 = (word)main::toD0182_gfx#0
+Constant (const word) main::toD0182_$7 = (word)main::toD0182_screen#0
 Constant (const byte*) progress_cursor#16 = progress_init::line#0
 Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (word)main::vicSelectGfxBank1_gfx#0 in [112] (byte~) main::vicSelectGfxBank1_toDd001_$0 ← > (word)(const byte*) main::vicSelectGfxBank1_gfx#0
+Constant value identified (word)main::toD0181_gfx#0 in [122] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (word)main::vicSelectGfxBank2_gfx#0 in [185] (byte~) main::vicSelectGfxBank2_toDd001_$0 ← > (word)(const byte*) main::vicSelectGfxBank2_gfx#0
+Constant value identified (word)main::toD0182_gfx#0 in [195] (byte~) main::toD0182_$3 ← > (word)(const byte*) main::toD0182_gfx#0
+Successful SSA optimization Pass2ConstantValues
 if() condition always false - eliminating [2] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Removing PHI-reference to removed block (main::@1) in block main::@15
-if() condition always true - replacing block destination [136] if(true) goto main::@4
+if() condition always true - replacing block destination [134] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [167] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [169] if(main::i#1!=rangelast(0,NUM_BOBS-1)) goto main::@6 to (const nomodify byte) NUM_BOBS-(byte) 1+(number) 1
-Resolved ranged next value [212] renderBobInit::y#1 ← ++ renderBobInit::y#2 to ++
-Resolved ranged comparison value [214] if(renderBobInit::y#1!=rangelast(0,$1f)) goto renderBobInit::@1 to (number) $20
-Resolved ranged next value [219] renderBobInit::i#1 ← ++ renderBobInit::i#2 to ++
-Resolved ranged comparison value [221] if(renderBobInit::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobInit::@3 to (const nomodify byte) NUM_BOBS-(byte) 1+(number) 1
-Resolved ranged next value [259] renderBobCleanup::i#1 ← ++ renderBobCleanup::i#2 to ++
-Resolved ranged comparison value [261] if(renderBobCleanup::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobCleanup::@1 to (const nomodify byte) NUM_BOBS-(byte) 1+(number) 1
-Simplifying constant evaluating to zero (byte) 0*(const nomodify byte) BOB_SUBTABLE_SIZE in [236] *((byte*) renderBob::screen#0 + (byte) 0) ← *((const byte*) BOB_TABLES+(byte) 0*(const nomodify byte) BOB_SUBTABLE_SIZE + (byte) renderBob::bob_table_idx#0)
+Resolved ranged next value [165] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [167] if(main::i#1!=rangelast(0,NUM_BOBS-1)) goto main::@6 to (const nomodify byte) NUM_BOBS-(byte) 1+(number) 1
+Resolved ranged next value [208] renderBobInit::y#1 ← ++ renderBobInit::y#2 to ++
+Resolved ranged comparison value [210] if(renderBobInit::y#1!=rangelast(0,$1f)) goto renderBobInit::@1 to (number) $20
+Resolved ranged next value [215] renderBobInit::i#1 ← ++ renderBobInit::i#2 to ++
+Resolved ranged comparison value [217] if(renderBobInit::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobInit::@3 to (const nomodify byte) NUM_BOBS-(byte) 1+(number) 1
+Resolved ranged next value [255] renderBobCleanup::i#1 ← ++ renderBobCleanup::i#2 to ++
+Resolved ranged comparison value [257] if(renderBobCleanup::i#1!=rangelast(0,NUM_BOBS-1)) goto renderBobCleanup::@1 to (const nomodify byte) NUM_BOBS-(byte) 1+(number) 1
+Simplifying constant evaluating to zero (byte) 0*(const nomodify byte) BOB_SUBTABLE_SIZE in [232] *((byte*) renderBob::screen#0 + (byte) 0) ← *((const byte*) BOB_TABLES+(byte) 0*(const nomodify byte) BOB_SUBTABLE_SIZE + (byte) renderBob::bob_table_idx#0)
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero BOB_TABLES in [236] *((byte*) renderBob::screen#0 + (byte) 0) ← *((const byte*) BOB_TABLES+(byte) 0 + (byte) renderBob::bob_table_idx#0)
-Simplifying expression containing zero renderBob::screen#0 in [236] *((byte*) renderBob::screen#0 + (byte) 0) ← *((const byte*) BOB_TABLES + (byte) renderBob::bob_table_idx#0)
-Simplifying expression containing zero renderBobCleanup::screen#0 in [250] *((byte*) renderBobCleanup::screen#0 + (byte) 0) ← (byte) 0
-Simplifying expression containing zero PROTO_BOB in [336] *((const to_nomodify byte*) PROTO_BOB + (byte) 0) ← (byte) 0
+Simplifying expression containing zero BOB_TABLES in [232] *((byte*) renderBob::screen#0 + (byte) 0) ← *((const byte*) BOB_TABLES+(byte) 0 + (byte) renderBob::bob_table_idx#0)
+Simplifying expression containing zero renderBob::screen#0 in [232] *((byte*) renderBob::screen#0 + (byte) 0) ← *((const byte*) BOB_TABLES + (byte) renderBob::bob_table_idx#0)
+Simplifying expression containing zero renderBobCleanup::screen#0 in [246] *((byte*) renderBobCleanup::screen#0 + (byte) 0) ← (byte) 0
+Simplifying expression containing zero PROTO_BOB in [332] *((const to_nomodify byte*) PROTO_BOB + (byte) 0) ← (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable - keeping the phi block (byte**) renderBobCleanupNext#24
 Eliminating unused variable - keeping the phi block (byte**) renderBobCleanupNext#11
@@ -3363,81 +3353,78 @@ Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
-Constant right-side identified [82] (byte~) main::vicSelectGfxBank1_toDd001_$1 ← > (const word) main::vicSelectGfxBank1_toDd001_$0
-Constant right-side identified [86] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 & (word) $3fff
-Constant right-side identified [89] (byte~) main::toD0181_$5 ← > (const word) main::toD0181_$4
-Constant right-side identified [133] (byte~) main::vicSelectGfxBank2_toDd001_$1 ← > (const word) main::vicSelectGfxBank2_toDd001_$0
-Constant right-side identified [137] (word~) main::toD0182_$1 ← (const word) main::toD0182_$0 & (word) $3fff
-Constant right-side identified [140] (byte~) main::toD0182_$5 ← > (const word) main::toD0182_$4
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
+Constant right-side identified [82] (byte~) main::vicSelectGfxBank1_toDd001_$0 ← > (word)(const byte*) main::vicSelectGfxBank1_gfx#0
+Constant right-side identified [86] (word~) main::toD0181_$0 ← (const word) main::toD0181_$7 & (word) $3fff
+Constant right-side identified [89] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
+Constant right-side identified [133] (byte~) main::vicSelectGfxBank2_toDd001_$0 ← > (word)(const byte*) main::vicSelectGfxBank2_gfx#0
+Constant right-side identified [137] (word~) main::toD0182_$0 ← (const word) main::toD0182_$7 & (word) $3fff
+Constant right-side identified [140] (byte~) main::toD0182_$3 ← > (word)(const byte*) main::toD0182_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
-Constant (const byte) main::vicSelectGfxBank1_toDd001_$1 = >main::vicSelectGfxBank1_toDd001_$0
-Constant (const word) main::toD0181_$1 = main::toD0181_$0&$3fff
-Constant (const byte) main::toD0181_$5 = >main::toD0181_$4
-Constant (const byte) main::vicSelectGfxBank2_toDd001_$1 = >main::vicSelectGfxBank2_toDd001_$0
-Constant (const word) main::toD0182_$1 = main::toD0182_$0&$3fff
-Constant (const byte) main::toD0182_$5 = >main::toD0182_$4
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
+Constant (const byte) main::vicSelectGfxBank1_toDd001_$0 = >(word)main::vicSelectGfxBank1_gfx#0
+Constant (const word) main::toD0181_$0 = main::toD0181_$7&$3fff
+Constant (const byte) main::toD0181_$3 = >(word)main::toD0181_gfx#0
+Constant (const byte) main::vicSelectGfxBank2_toDd001_$0 = >(word)main::vicSelectGfxBank2_gfx#0
+Constant (const word) main::toD0182_$0 = main::toD0182_$7&$3fff
+Constant (const byte) main::toD0182_$3 = >(word)main::toD0182_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [81] (byte~) main::vicSelectGfxBank1_toDd001_$2 ← (const byte) main::vicSelectGfxBank1_toDd001_$1 / (byte) $40
-Constant right-side identified [84] (word~) main::toD0181_$2 ← (const word) main::toD0181_$1 * (byte) 4
-Constant right-side identified [86] (byte~) main::toD0181_$6 ← (const byte) main::toD0181_$5 / (byte) 4
-Constant right-side identified [129] (byte~) main::vicSelectGfxBank2_toDd001_$2 ← (const byte) main::vicSelectGfxBank2_toDd001_$1 / (byte) $40
-Constant right-side identified [132] (word~) main::toD0182_$2 ← (const word) main::toD0182_$1 * (byte) 4
-Constant right-side identified [134] (byte~) main::toD0182_$6 ← (const byte) main::toD0182_$5 / (byte) 4
+Constant right-side identified [81] (byte~) main::vicSelectGfxBank1_toDd001_$1 ← (const byte) main::vicSelectGfxBank1_toDd001_$0 / (byte) $40
+Constant right-side identified [84] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 * (byte) 4
+Constant right-side identified [86] (byte~) main::toD0181_$4 ← (const byte) main::toD0181_$3 / (byte) 4
+Constant right-side identified [129] (byte~) main::vicSelectGfxBank2_toDd001_$1 ← (const byte) main::vicSelectGfxBank2_toDd001_$0 / (byte) $40
+Constant right-side identified [132] (word~) main::toD0182_$1 ← (const word) main::toD0182_$0 * (byte) 4
+Constant right-side identified [134] (byte~) main::toD0182_$4 ← (const byte) main::toD0182_$3 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::vicSelectGfxBank1_toDd001_$2 = main::vicSelectGfxBank1_toDd001_$1/$40
-Constant (const word) main::toD0181_$2 = main::toD0181_$1*4
-Constant (const byte) main::toD0181_$6 = main::toD0181_$5/4
-Constant (const byte) main::vicSelectGfxBank2_toDd001_$2 = main::vicSelectGfxBank2_toDd001_$1/$40
-Constant (const word) main::toD0182_$2 = main::toD0182_$1*4
-Constant (const byte) main::toD0182_$6 = main::toD0182_$5/4
+Constant (const byte) main::vicSelectGfxBank1_toDd001_$1 = main::vicSelectGfxBank1_toDd001_$0/$40
+Constant (const word) main::toD0181_$1 = main::toD0181_$0*4
+Constant (const byte) main::toD0181_$4 = main::toD0181_$3/4
+Constant (const byte) main::vicSelectGfxBank2_toDd001_$1 = main::vicSelectGfxBank2_toDd001_$0/$40
+Constant (const word) main::toD0182_$1 = main::toD0182_$0*4
+Constant (const byte) main::toD0182_$4 = main::toD0182_$3/4
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero (const byte) main::vicSelectGfxBank1_toDd001_$1/(byte) $40 in 
-Simplifying constant evaluating to zero (const byte) main::vicSelectGfxBank2_toDd001_$1/(byte) $40 in 
+Simplifying constant evaluating to zero (const byte) main::vicSelectGfxBank1_toDd001_$0/(byte) $40 in 
+Simplifying constant evaluating to zero (const byte) main::vicSelectGfxBank2_toDd001_$0/(byte) $40 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero 3 in [82] (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank1_toDd001_$2
-Simplifying expression containing zero 3 in [130] (byte) main::vicSelectGfxBank2_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank2_toDd001_$2
+Simplifying expression containing zero 3 in [82] (byte) main::vicSelectGfxBank1_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank1_toDd001_$1
+Simplifying expression containing zero 3 in [130] (byte) main::vicSelectGfxBank2_toDd001_return#0 ← (byte) 3 ^ (const byte) main::vicSelectGfxBank2_toDd001_$1
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte) main::vicSelectGfxBank1_toDd001_$0
+Eliminating unused constant (const byte) main::vicSelectGfxBank2_toDd001_$0
 Eliminating unused constant (const byte) main::vicSelectGfxBank1_toDd001_$1
 Eliminating unused constant (const byte) main::vicSelectGfxBank2_toDd001_$1
-Eliminating unused constant (const byte) main::vicSelectGfxBank1_toDd001_$2
-Eliminating unused constant (const byte) main::vicSelectGfxBank2_toDd001_$2
-Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const word) main::vicSelectGfxBank1_toDd001_$0
-Eliminating unused constant (const word) main::vicSelectGfxBank2_toDd001_$0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const byte*) main::vicSelectGfxBank1_gfx#0
 Eliminating unused constant (const byte*) main::vicSelectGfxBank2_gfx#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [83] (byte~) main::toD0181_$3 ← > (const word) main::toD0181_$2
-Constant right-side identified [84] (byte~) main::toD0181_$7 ← (const byte) main::toD0181_$6 & (byte) $f
-Constant right-side identified [128] (byte~) main::toD0182_$3 ← > (const word) main::toD0182_$2
-Constant right-side identified [129] (byte~) main::toD0182_$7 ← (const byte) main::toD0182_$6 & (byte) $f
+Constant right-side identified [83] (byte~) main::toD0181_$2 ← > (const word) main::toD0181_$1
+Constant right-side identified [84] (byte~) main::toD0181_$5 ← (const byte) main::toD0181_$4 & (byte) $f
+Constant right-side identified [128] (byte~) main::toD0182_$2 ← > (const word) main::toD0182_$1
+Constant right-side identified [129] (byte~) main::toD0182_$5 ← (const byte) main::toD0182_$4 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::vicSelectGfxBank1_toDd001_return#0 = 3
-Constant (const byte) main::toD0181_$3 = >main::toD0181_$2
-Constant (const byte) main::toD0181_$7 = main::toD0181_$6&$f
+Constant (const byte) main::toD0181_$2 = >main::toD0181_$1
+Constant (const byte) main::toD0181_$5 = main::toD0181_$4&$f
 Constant (const byte) main::vicSelectGfxBank2_toDd001_return#0 = 3
-Constant (const byte) main::toD0182_$3 = >main::toD0182_$2
-Constant (const byte) main::toD0182_$7 = main::toD0182_$6&$f
+Constant (const byte) main::toD0182_$2 = >main::toD0182_$1
+Constant (const byte) main::toD0182_$5 = main::toD0182_$4&$f
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [82] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$3 | (const byte) main::toD0181_$7
-Constant right-side identified [124] (byte) main::toD0182_return#0 ← (const byte) main::toD0182_$3 | (const byte) main::toD0182_$7
+Constant right-side identified [82] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$2 | (const byte) main::toD0181_$5
+Constant right-side identified [124] (byte) main::toD0182_return#0 ← (const byte) main::toD0182_$2 | (const byte) main::toD0182_$5
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::toD0181_return#0 = main::toD0181_$3|main::toD0181_$7
-Constant (const byte) main::toD0182_return#0 = main::toD0182_$3|main::toD0182_$7
+Constant (const byte) main::toD0181_return#0 = main::toD0181_$2|main::toD0181_$5
+Constant (const byte) main::toD0182_return#0 = main::toD0182_$2|main::toD0182_$5
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [59] (byte~) mulf8s_prepared::$9 ← (byte)(signed byte) mulf8s_prepared::b#0 keeping mulf8s_prepared::b#0
+Inlining Noop Cast [59] (byte~) mulf8s_prepared::$13 ← (byte)(signed byte) mulf8s_prepared::b#0 keeping mulf8s_prepared::b#0
 Inlining Noop Cast [63] (signed word) mulf8s_prepared::return#0 ← (signed word)(word) mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
-Inlining Noop Cast [65] (byte~) mulf8s_prepared::$13 ← (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) keeping *(mulf8s_prepared::memA)
+Inlining Noop Cast [65] (byte~) mulf8s_prepared::$14 ← (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) keeping *(mulf8s_prepared::memA)
 Successful SSA optimization Pass2NopCastInlining
 Inlining Noop Cast [74] (signed word) mulf8s_prepared::return#2 ← (signed word)(word) mulf8s_prepared::m#4 keeping mulf8s_prepared::m#4
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [101] (signed word~) main::$13 ← (signed word~) main::$12 * (signed byte) 2
-Rewriting multiplication to use shift and addition[127] (word~) renderBobInit::$1 ← (word~) renderBobInit::$0 * (byte) $28
-Rewriting multiplication to use shift [128] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [133] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 * (const byte) SIZEOF_POINTER
+Rewriting multiplication to use shift and addition[127] (word~) renderBobInit::$0 ← (word~) renderBobInit::$5 * (byte) $28
+Rewriting multiplication to use shift [128] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [133] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 * (const byte) SIZEOF_POINTER
 Rewriting division to use shift [138] (byte) renderBob::x_char_offset#0 ← (byte) renderBob::xpos#0 / (const nomodify byte) BOB_SHIFTS_X
 Rewriting division to use shift [139] (byte) renderBob::y_char_offset#0 ← (byte) renderBob::ypos#0 / (const nomodify byte) BOB_SHIFTS_Y
 Rewriting multiplication to use shift [140] (byte~) renderBob::$8 ← (byte) renderBob::y_char_offset#0 * (const byte) SIZEOF_WORD
@@ -3488,17 +3475,16 @@ Constant inlined mulf_init::sqr2_lo#0 = (const byte*) mulf_sqr2_lo
 Constant inlined prepareBobs::bob_table_idx#0 = (byte) 0
 Constant inlined shiftProtoBobRight::i#0 = (byte) 0
 Constant inlined mulf_init::sqr2_hi#0 = (const byte*) mulf_sqr2_hi
-Constant inlined main::toD0182_$4 = (word)(const nomodify byte*) CHARSET_BASIC
-Constant inlined main::toD0182_$5 = >(word)(const nomodify byte*) CHARSET_BASIC
-Constant inlined main::toD0182_$6 = >(word)(const nomodify byte*) CHARSET_BASIC/(byte) 4
-Constant inlined main::toD0182_$7 = >(word)(const nomodify byte*) CHARSET_BASIC/(byte) 4&(byte) $f
-Constant inlined main::toD0182_$0 = (word)(const nomodify byte*) SCREEN_BASIC
-Constant inlined main::toD0182_$1 = (word)(const nomodify byte*) SCREEN_BASIC&(word) $3fff
+Constant inlined main::toD0182_$4 = >(word)(const nomodify byte*) CHARSET_BASIC/(byte) 4
+Constant inlined main::toD0182_$5 = >(word)(const nomodify byte*) CHARSET_BASIC/(byte) 4&(byte) $f
+Constant inlined main::toD0182_$7 = (word)(const nomodify byte*) SCREEN_BASIC
+Constant inlined main::toD0182_$0 = (word)(const nomodify byte*) SCREEN_BASIC&(word) $3fff
+Constant inlined main::toD0182_$1 = (word)(const nomodify byte*) SCREEN_BASIC&(word) $3fff*(byte) 4
 Constant inlined bobCharsetFindOrAddGlyph::found#1 = (byte) 0
-Constant inlined main::toD0182_$2 = (word)(const nomodify byte*) SCREEN_BASIC&(word) $3fff*(byte) 4
+Constant inlined main::toD0182_$2 = >(word)(const nomodify byte*) SCREEN_BASIC&(word) $3fff*(byte) 4
 Constant inlined bobCharsetFindOrAddGlyph::found#0 = (byte) 1
 Constant inlined bobCharsetFindOrAddGlyph::i#0 = (byte) 0
-Constant inlined main::toD0182_$3 = >(word)(const nomodify byte*) SCREEN_BASIC&(word) $3fff*(byte) 4
+Constant inlined main::toD0182_$3 = >(word)(const nomodify byte*) CHARSET_BASIC
 Constant inlined mulf_init::dir#1 = (byte) 1
 Constant inlined bobCharsetFindOrAddGlyph::glyph_id#0 = (byte) 0
 Constant inlined mulf_init::dir#0 = (byte) $ff
@@ -3508,18 +3494,17 @@ Constant inlined mulf_init::x_255#0 = (byte) -1
 Constant inlined mulf_init::x_2#0 = (byte) 0
 Constant inlined keyboard_key_pressed::key#0 = (const nomodify byte) KEY_SPACE
 Constant inlined keyboard_key_pressed::key#1 = (const nomodify byte) KEY_SPACE
-Constant inlined main::toD0181_$7 = >(word)(const nomodify byte*) BOB_CHARSET/(byte) 4&(byte) $f
+Constant inlined main::toD0181_$7 = (word)(const nomodify byte*) BOB_SCREEN
 Constant inlined main::toD0182_gfx#0 = (const nomodify byte*) CHARSET_BASIC
 Constant inlined prepareBobs::shift_x#0 = (byte) 0
 Constant inlined progress_idx#9 = (byte) 0
-Constant inlined main::toD0181_$2 = (word)(const nomodify byte*) BOB_SCREEN&(word) $3fff*(byte) 4
-Constant inlined main::toD0181_$1 = (word)(const nomodify byte*) BOB_SCREEN&(word) $3fff
-Constant inlined main::toD0181_$0 = (word)(const nomodify byte*) BOB_SCREEN
+Constant inlined main::toD0181_$2 = >(word)(const nomodify byte*) BOB_SCREEN&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$1 = (word)(const nomodify byte*) BOB_SCREEN&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$0 = (word)(const nomodify byte*) BOB_SCREEN&(word) $3fff
 Constant inlined shiftProtoBobRight::carry#0 = (byte) 0
-Constant inlined main::toD0181_$6 = >(word)(const nomodify byte*) BOB_CHARSET/(byte) 4
-Constant inlined main::toD0181_$5 = >(word)(const nomodify byte*) BOB_CHARSET
-Constant inlined main::toD0181_$4 = (word)(const nomodify byte*) BOB_CHARSET
-Constant inlined main::toD0181_$3 = >(word)(const nomodify byte*) BOB_SCREEN&(word) $3fff*(byte) 4
+Constant inlined main::toD0181_$5 = >(word)(const nomodify byte*) BOB_CHARSET/(byte) 4&(byte) $f
+Constant inlined main::toD0181_$4 = >(word)(const nomodify byte*) BOB_CHARSET/(byte) 4
+Constant inlined main::toD0181_$3 = >(word)(const nomodify byte*) BOB_CHARSET
 Constant inlined bobCharsetFindOrAddGlyph::bob_glyph#0 = (const to_nomodify byte*) PROTO_BOB+(byte) $30
 Constant inlined mulf_init::sqr1_hi#0 = (const byte*) mulf_sqr1_hi+(byte) 1
 Constant inlined prepareBobs::cell#0 = (byte) 0
@@ -3532,8 +3517,8 @@ Constant inlined main::toD0181_gfx#0 = (const nomodify byte*) BOB_CHARSET
 Constant inlined bobCharsetFindOrAddGlyph::glyph_cursor#0 = (const nomodify byte*) BOB_CHARSET
 Constant inlined shiftProtoBobRight::j#0 = (byte) 0
 Constant inlined progress_init::line#0 = (const nomodify byte*) SCREEN_BASIC
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined progress_cursor#16 = (const nomodify byte*) SCREEN_BASIC
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined prepareBobs::bob_glyph#0 = (const to_nomodify byte*) PROTO_BOB
 Constant inlined shiftProtoBobRight::$2 = (byte) 0
 Constant inlined main::i#0 = (byte) 0
@@ -3553,7 +3538,7 @@ Consolidated array index constant in *(PROTO_BOB+$18)
 Consolidated array index constant in *(PROTO_BOB+$30)
 Consolidated array index constant in *(progress_inc::progress_chars+8)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Alias renderBobInit::$1 = renderBobInit::$8 
+Alias renderBobInit::$0 = renderBobInit::$8 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) keyboard_key_pressed::key#2 (const nomodify byte) KEY_SPACE
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -4038,18 +4023,18 @@ mulf8s_prepared::@5: scope:[mulf8s_prepared]  from mulf8s_prepared
   [103] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1
   to:mulf8s_prepared::@3
 mulf8s_prepared::@3: scope:[mulf8s_prepared]  from mulf8s_prepared::@5
-  [104] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0
-  [105] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0
-  [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$15
+  [104] (byte~) mulf8s_prepared::$6 ← > (word) mulf8s_prepared::m#0
+  [105] (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$6 - (byte)(signed byte) mulf8s_prepared::b#0
+  [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$11
   to:mulf8s_prepared::@1
 mulf8s_prepared::@1: scope:[mulf8s_prepared]  from mulf8s_prepared::@3 mulf8s_prepared::@5
   [107] (word) mulf8s_prepared::m#5 ← phi( mulf8s_prepared::@3/(word) mulf8s_prepared::m#1 mulf8s_prepared::@5/(word) mulf8s_prepared::m#0 )
   [108] if((signed byte) mulf8s_prepared::b#0>=(signed byte) 0) goto mulf8s_prepared::@2
   to:mulf8s_prepared::@4
 mulf8s_prepared::@4: scope:[mulf8s_prepared]  from mulf8s_prepared::@1
-  [109] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5
-  [110] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA)
-  [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16
+  [109] (byte~) mulf8s_prepared::$9 ← > (word) mulf8s_prepared::m#5
+  [110] (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$9 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA)
+  [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$12
   to:mulf8s_prepared::@2
 mulf8s_prepared::@2: scope:[mulf8s_prepared]  from mulf8s_prepared::@1 mulf8s_prepared::@4
   [112] (word) mulf8s_prepared::m#4 ← phi( mulf8s_prepared::@1/(word) mulf8s_prepared::m#5 mulf8s_prepared::@4/(word) mulf8s_prepared::m#2 )
@@ -4123,19 +4108,19 @@ renderBobInit: scope:[renderBobInit]  from main::@10
   to:renderBobInit::@1
 renderBobInit::@1: scope:[renderBobInit]  from renderBobInit renderBobInit::@1
   [144] (byte) renderBobInit::y#2 ← phi( renderBobInit/(byte) 0 renderBobInit::@1/(byte) renderBobInit::y#1 )
-  [145] (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2
-  [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$0 << (byte) 2
-  [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$0
-  [148] (word~) renderBobInit::$1 ← (word~) renderBobInit::$7 << (byte) 3
-  [149] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 << (byte) 1
-  [150] *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (word~) renderBobInit::$1
+  [145] (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2
+  [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$5 << (byte) 2
+  [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$5
+  [148] (word~) renderBobInit::$0 ← (word~) renderBobInit::$7 << (byte) 3
+  [149] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 << (byte) 1
+  [150] *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (word~) renderBobInit::$0
   [151] (byte) renderBobInit::y#1 ← ++ (byte) renderBobInit::y#2
   [152] if((byte) renderBobInit::y#1!=(byte) $20) goto renderBobInit::@1
   to:renderBobInit::@2
 renderBobInit::@2: scope:[renderBobInit]  from renderBobInit::@1 renderBobInit::@2
   [153] (byte) renderBobInit::i#2 ← phi( renderBobInit::@1/(byte) 0 renderBobInit::@2/(byte) renderBobInit::i#1 )
-  [154] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 << (byte) 1
-  [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN
+  [154] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 << (byte) 1
+  [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN
   [156] (byte) renderBobInit::i#1 ← ++ (byte) renderBobInit::i#2
   [157] if((byte) renderBobInit::i#1!=(const nomodify byte) NUM_BOBS-(byte) 1+(byte) 1) goto renderBobInit::@2
   to:renderBobInit::@return
@@ -4513,10 +4498,10 @@ VARIABLE REGISTER WEIGHTS
 (signed word) mulf8s::return#2 2002.0
 (signed word) mulf8s::return#3 2002.0
 (signed word()) mulf8s_prepared((signed byte) mulf8s_prepared::b)
+(byte~) mulf8s_prepared::$11 200002.0
 (byte~) mulf8s_prepared::$12 200002.0
-(byte~) mulf8s_prepared::$15 200002.0
-(byte~) mulf8s_prepared::$16 200002.0
-(byte~) mulf8s_prepared::$8 200002.0
+(byte~) mulf8s_prepared::$6 200002.0
+(byte~) mulf8s_prepared::$9 200002.0
 (signed byte) mulf8s_prepared::b
 (signed byte) mulf8s_prepared::b#0 11000.2
 (word) mulf8s_prepared::m
@@ -4637,10 +4622,10 @@ VARIABLE REGISTER WEIGHTS
 (byte**) renderBobCleanupNext#13 785.8571428571429
 (byte**) renderBobCleanupNext#17 677.516129032258
 (void()) renderBobInit()
-(word~) renderBobInit::$0 1501.5
-(word~) renderBobInit::$1 1001.0
+(word~) renderBobInit::$0 1001.0
+(byte~) renderBobInit::$3 2002.0
 (byte~) renderBobInit::$4 2002.0
-(byte~) renderBobInit::$5 2002.0
+(word~) renderBobInit::$5 1501.5
 (word~) renderBobInit::$6 2002.0
 (word~) renderBobInit::$7 2002.0
 (byte) renderBobInit::i
@@ -4745,19 +4730,19 @@ Added variable mulf8s_prepared::b#0 to live range equivalence class [ mulf8s_pre
 Added variable mulf8s::return#0 to live range equivalence class [ mulf8s::return#0 ]
 Added variable mulf8u_prepared::b#0 to live range equivalence class [ mulf8u_prepared::b#0 ]
 Added variable mulf8u_prepared::return#2 to live range equivalence class [ mulf8u_prepared::return#2 ]
-Added variable mulf8s_prepared::$8 to live range equivalence class [ mulf8s_prepared::$8 ]
-Added variable mulf8s_prepared::$15 to live range equivalence class [ mulf8s_prepared::$15 ]
+Added variable mulf8s_prepared::$6 to live range equivalence class [ mulf8s_prepared::$6 ]
+Added variable mulf8s_prepared::$11 to live range equivalence class [ mulf8s_prepared::$11 ]
+Added variable mulf8s_prepared::$9 to live range equivalence class [ mulf8s_prepared::$9 ]
 Added variable mulf8s_prepared::$12 to live range equivalence class [ mulf8s_prepared::$12 ]
-Added variable mulf8s_prepared::$16 to live range equivalence class [ mulf8s_prepared::$16 ]
 Added variable mulf8u_prepared::return#0 to live range equivalence class [ mulf8u_prepared::return#0 ]
 Added variable renderBobCleanup::$1 to live range equivalence class [ renderBobCleanup::$1 ]
 Added variable renderBobCleanup::screen#0 to live range equivalence class [ renderBobCleanup::screen#0 ]
-Added variable renderBobInit::$0 to live range equivalence class [ renderBobInit::$0 ]
+Added variable renderBobInit::$5 to live range equivalence class [ renderBobInit::$5 ]
 Added variable renderBobInit::$6 to live range equivalence class [ renderBobInit::$6 ]
 Added variable renderBobInit::$7 to live range equivalence class [ renderBobInit::$7 ]
-Added variable renderBobInit::$1 to live range equivalence class [ renderBobInit::$1 ]
+Added variable renderBobInit::$0 to live range equivalence class [ renderBobInit::$0 ]
+Added variable renderBobInit::$3 to live range equivalence class [ renderBobInit::$3 ]
 Added variable renderBobInit::$4 to live range equivalence class [ renderBobInit::$4 ]
-Added variable renderBobInit::$5 to live range equivalence class [ renderBobInit::$5 ]
 Added variable bobCharsetFindOrAddGlyph::return#1 to live range equivalence class [ bobCharsetFindOrAddGlyph::return#1 ]
 Added variable prepareBobs::$6 to live range equivalence class [ prepareBobs::$6 ]
 Added variable shiftProtoBobRight::$1 to live range equivalence class [ shiftProtoBobRight::$1 ]
@@ -4840,19 +4825,19 @@ Complete equivalence classes
 [ mulf8s::return#0 ]
 [ mulf8u_prepared::b#0 ]
 [ mulf8u_prepared::return#2 ]
-[ mulf8s_prepared::$8 ]
-[ mulf8s_prepared::$15 ]
+[ mulf8s_prepared::$6 ]
+[ mulf8s_prepared::$11 ]
+[ mulf8s_prepared::$9 ]
 [ mulf8s_prepared::$12 ]
-[ mulf8s_prepared::$16 ]
 [ mulf8u_prepared::return#0 ]
 [ renderBobCleanup::$1 ]
 [ renderBobCleanup::screen#0 ]
-[ renderBobInit::$0 ]
+[ renderBobInit::$5 ]
 [ renderBobInit::$6 ]
 [ renderBobInit::$7 ]
-[ renderBobInit::$1 ]
+[ renderBobInit::$0 ]
+[ renderBobInit::$3 ]
 [ renderBobInit::$4 ]
-[ renderBobInit::$5 ]
 [ bobCharsetFindOrAddGlyph::return#1 ]
 [ prepareBobs::$6 ]
 [ shiftProtoBobRight::$1 ]
@@ -4934,19 +4919,19 @@ Allocated zp[1]:94 [ mulf8s_prepared::b#0 ]
 Allocated zp[2]:95 [ mulf8s::return#0 ]
 Allocated zp[1]:97 [ mulf8u_prepared::b#0 ]
 Allocated zp[2]:98 [ mulf8u_prepared::return#2 ]
-Allocated zp[1]:100 [ mulf8s_prepared::$8 ]
-Allocated zp[1]:101 [ mulf8s_prepared::$15 ]
-Allocated zp[1]:102 [ mulf8s_prepared::$12 ]
-Allocated zp[1]:103 [ mulf8s_prepared::$16 ]
+Allocated zp[1]:100 [ mulf8s_prepared::$6 ]
+Allocated zp[1]:101 [ mulf8s_prepared::$11 ]
+Allocated zp[1]:102 [ mulf8s_prepared::$9 ]
+Allocated zp[1]:103 [ mulf8s_prepared::$12 ]
 Allocated zp[2]:104 [ mulf8u_prepared::return#0 ]
 Allocated zp[1]:106 [ renderBobCleanup::$1 ]
 Allocated zp[2]:107 [ renderBobCleanup::screen#0 ]
-Allocated zp[2]:109 [ renderBobInit::$0 ]
+Allocated zp[2]:109 [ renderBobInit::$5 ]
 Allocated zp[2]:111 [ renderBobInit::$6 ]
 Allocated zp[2]:113 [ renderBobInit::$7 ]
-Allocated zp[2]:115 [ renderBobInit::$1 ]
-Allocated zp[1]:117 [ renderBobInit::$4 ]
-Allocated zp[1]:118 [ renderBobInit::$5 ]
+Allocated zp[2]:115 [ renderBobInit::$0 ]
+Allocated zp[1]:117 [ renderBobInit::$3 ]
+Allocated zp[1]:118 [ renderBobInit::$4 ]
 Allocated zp[1]:119 [ bobCharsetFindOrAddGlyph::return#1 ]
 Allocated zp[1]:120 [ prepareBobs::$6 ]
 Allocated zp[1]:121 [ shiftProtoBobRight::$1 ]
@@ -5595,10 +5580,10 @@ mulf8s: {
 // mulf8s_prepared(signed byte zp($5e) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label __8 = $64
-    .label __12 = $66
-    .label __15 = $65
-    .label __16 = $67
+    .label __6 = $64
+    .label __9 = $66
+    .label __11 = $65
+    .label __12 = $67
     .label m = $a
     .label b = $5e
     // [99] (byte) mulf8u_prepared::b#0 ← (byte)(signed byte) mulf8s_prepared::b#0 -- vbuz1=vbuz2 
@@ -5626,16 +5611,16 @@ mulf8s_prepared: {
     jmp __b3
     // mulf8s_prepared::@3
   __b3:
-    // [104] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0 -- vbuz1=_hi_vwuz2 
+    // [104] (byte~) mulf8s_prepared::$6 ← > (word) mulf8s_prepared::m#0 -- vbuz1=_hi_vwuz2 
     lda.z m+1
-    sta.z __8
-    // [105] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0 -- vbuz1=vbuz2_minus_vbuz3 
-    lda.z __8
+    sta.z __6
+    // [105] (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$6 - (byte)(signed byte) mulf8s_prepared::b#0 -- vbuz1=vbuz2_minus_vbuz3 
+    lda.z __6
     sec
     sbc.z b
-    sta.z __15
-    // [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$15 -- vwuz1=vwuz1_sethi_vbuz2 
-    lda.z __15
+    sta.z __11
+    // [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$11 -- vwuz1=vwuz1_sethi_vbuz2 
+    lda.z __11
     sta.z m+1
     // [107] phi from mulf8s_prepared::@3 mulf8s_prepared::@5 to mulf8s_prepared::@1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1]
   __b1_from___b3:
@@ -5651,16 +5636,16 @@ mulf8s_prepared: {
     jmp __b4
     // mulf8s_prepared::@4
   __b4:
-    // [109] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5 -- vbuz1=_hi_vwuz2 
+    // [109] (byte~) mulf8s_prepared::$9 ← > (word) mulf8s_prepared::m#5 -- vbuz1=_hi_vwuz2 
     lda.z m+1
-    sta.z __12
-    // [110] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) -- vbuz1=vbuz2_minus__deref_pbuc1 
-    lda.z __12
+    sta.z __9
+    // [110] (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$9 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) -- vbuz1=vbuz2_minus__deref_pbuc1 
+    lda.z __9
     sec
     sbc memA
-    sta.z __16
-    // [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16 -- vwuz1=vwuz1_sethi_vbuz2 
-    lda.z __16
+    sta.z __12
+    // [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$12 -- vwuz1=vwuz1_sethi_vbuz2 
+    lda.z __12
     sta.z m+1
     // [112] phi from mulf8s_prepared::@1 mulf8s_prepared::@4 to mulf8s_prepared::@2 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2]
   __b2_from___b1:
@@ -5859,10 +5844,10 @@ memset: {
   // renderBobInit
 // Initialize the tables used by renderBob()
 renderBobInit: {
-    .label __0 = $6d
-    .label __1 = $73
-    .label __4 = $75
-    .label __5 = $76
+    .label __0 = $73
+    .label __3 = $75
+    .label __4 = $76
+    .label __5 = $6d
     .label y = $f
     .label i = $10
     .label __6 = $6f
@@ -5879,48 +5864,48 @@ renderBobInit: {
     jmp __b1
     // renderBobInit::@1
   __b1:
-    // [145] (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2 -- vwuz1=_word_vbuz2 
+    // [145] (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2 -- vwuz1=_word_vbuz2 
     lda.z y
-    sta.z __0
+    sta.z __5
     lda #0
-    sta.z __0+1
-    // [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda.z __0
+    sta.z __5+1
+    // [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$5 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    lda.z __5
     asl
     sta.z __6
-    lda.z __0+1
+    lda.z __5+1
     rol
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$0 -- vwuz1=vwuz2_plus_vwuz3 
+    // [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$5 -- vwuz1=vwuz2_plus_vwuz3 
     lda.z __6
     clc
-    adc.z __0
+    adc.z __5
     sta.z __7
     lda.z __6+1
-    adc.z __0+1
+    adc.z __5+1
     sta.z __7+1
-    // [148] (word~) renderBobInit::$1 ← (word~) renderBobInit::$7 << (byte) 3 -- vwuz1=vwuz2_rol_3 
+    // [148] (word~) renderBobInit::$0 ← (word~) renderBobInit::$7 << (byte) 3 -- vwuz1=vwuz2_rol_3 
     lda.z __7
     asl
-    sta.z __1
+    sta.z __0
     lda.z __7+1
     rol
-    sta.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    // [149] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    sta.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    // [149] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z y
     asl
-    sta.z __4
-    // [150] *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (word~) renderBobInit::$1 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy.z __4
-    lda.z __1
+    sta.z __3
+    // [150] *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (word~) renderBobInit::$0 -- pwuc1_derefidx_vbuz1=vwuz2 
+    ldy.z __3
+    lda.z __0
     sta MUL40,y
-    lda.z __1+1
+    lda.z __0+1
     sta MUL40+1,y
     // [151] (byte) renderBobInit::y#1 ← ++ (byte) renderBobInit::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
@@ -5940,12 +5925,12 @@ renderBobInit: {
     jmp __b2
     // renderBobInit::@2
   __b2:
-    // [154] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [154] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z __5
-    // [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN -- pptc1_derefidx_vbuz1=pbuc2 
-    ldy.z __5
+    sta.z __4
+    // [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN -- pptc1_derefidx_vbuz1=pbuc2 
+    ldy.z __4
     lda #<BOB_SCREEN
     sta RENDERBOB_CLEANUP,y
     lda #>BOB_SCREEN
@@ -6883,8 +6868,8 @@ Statement [101] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::ret
 Removing always clobbered register reg byte a as potential for zp[1]:94 [ mulf8s_prepared::b#0 ]
 Statement [102] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
 Statement [103] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
-Statement [105] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
-Statement [110] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) [ mulf8s_prepared::m#5 mulf8s_prepared::$16 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::m#5 mulf8s_prepared::$16 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::m#5 mulf8s_prepared::$16 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
+Statement [105] (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$6 - (byte)(signed byte) mulf8s_prepared::b#0 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
+Statement [110] (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$9 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) [ mulf8s_prepared::m#5 mulf8s_prepared::$12 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
 Statement asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  } always clobbers reg byte a reg byte x 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::angle#8 main::angle#1 ]
 Removing always clobbered register reg byte x as potential for zp[1]:3 [ main::r#2 main::r#1 ]
@@ -6909,16 +6894,16 @@ Statement [132] *((byte*) renderBobCleanup::screen#0 + (byte) $2a) ← (byte) 0 
 Statement [133] *((byte*) renderBobCleanup::screen#0 + (byte) $52) ← (byte) 0 [ renderBobCleanup::i#2 ] ( main:2::renderBobCleanup:19 [ main::angle#8 renderBobCleanup::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [139] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::memset:15 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [141] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::memset:15 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [145] (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2 [ renderBobInit::y#2 renderBobInit::$0 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 ] { }  ) always clobbers reg byte a 
+Statement [145] (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2 [ renderBobInit::y#2 renderBobInit::$5 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$5 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:15 [ renderBobInit::y#2 renderBobInit::y#1 ]
-Statement [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$0 << (byte) 2 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$6 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$6 ] { }  ) always clobbers reg byte a 
-Statement [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$0 [ renderBobInit::y#2 renderBobInit::$7 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$7 ] { }  ) always clobbers reg byte a 
-Statement [148] (word~) renderBobInit::$1 ← (word~) renderBobInit::$7 << (byte) 3 [ renderBobInit::y#2 renderBobInit::$1 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$1 ] { }  ) always clobbers reg byte a 
-Statement [149] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 << (byte) 1 [ renderBobInit::y#2 renderBobInit::$1 renderBobInit::$4 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$1 renderBobInit::$4 ] { }  ) always clobbers reg byte a 
-Statement [150] *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (word~) renderBobInit::$1 [ renderBobInit::y#2 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 ] { }  ) always clobbers reg byte a 
-Statement [154] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 << (byte) 1 [ renderBobInit::i#2 renderBobInit::$5 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 renderBobInit::$5 ] { }  ) always clobbers reg byte a 
+Statement [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$5 << (byte) 2 [ renderBobInit::y#2 renderBobInit::$5 renderBobInit::$6 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$5 renderBobInit::$6 ] { }  ) always clobbers reg byte a 
+Statement [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$5 [ renderBobInit::y#2 renderBobInit::$7 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$7 ] { }  ) always clobbers reg byte a 
+Statement [148] (word~) renderBobInit::$0 ← (word~) renderBobInit::$7 << (byte) 3 [ renderBobInit::y#2 renderBobInit::$0 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 ] { }  ) always clobbers reg byte a 
+Statement [149] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 << (byte) 1 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$3 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$3 ] { }  ) always clobbers reg byte a 
+Statement [150] *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (word~) renderBobInit::$0 [ renderBobInit::y#2 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 ] { }  ) always clobbers reg byte a 
+Statement [154] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 << (byte) 1 [ renderBobInit::i#2 renderBobInit::$4 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 renderBobInit::$4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ renderBobInit::i#2 renderBobInit::i#1 ]
-Statement [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN [ renderBobInit::i#2 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 ] { }  ) always clobbers reg byte a 
+Statement [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN [ renderBobInit::i#2 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 ] { }  ) always clobbers reg byte a 
 Statement [171] (byte*) prepareBobs::bob_table#0 ← (const byte*) BOB_TABLES + (byte) prepareBobs::bob_table_idx#12 [ prepareBobs::shift_y#2 progress_cursor#31 progress_idx#31 bob_charset_next_id#30 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 prepareBobs::bob_table#0 ] ( main:2::prepareBobs:7 [ prepareBobs::shift_y#2 progress_cursor#31 progress_idx#31 bob_charset_next_id#30 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 prepareBobs::bob_table#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:17 [ prepareBobs::shift_y#2 prepareBobs::shift_y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:20 [ progress_idx#16 progress_idx#31 progress_idx#25 progress_idx#10 progress_idx#8 ]
@@ -7031,8 +7016,8 @@ Statement [97] (signed word) mulf8s::return#0 ← (signed word)(word) mulf8s_pre
 Statement [101] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::return#0 [ mulf8s_prepared::b#0 mulf8u_prepared::return#2 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8u_prepared::return#2 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8u_prepared::return#2 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
 Statement [102] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
 Statement [103] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
-Statement [105] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
-Statement [110] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) [ mulf8s_prepared::m#5 mulf8s_prepared::$16 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::m#5 mulf8s_prepared::$16 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::m#5 mulf8s_prepared::$16 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
+Statement [105] (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$6 - (byte)(signed byte) mulf8s_prepared::b#0 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
+Statement [110] (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$9 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) [ mulf8s_prepared::m#5 mulf8s_prepared::$12 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
 Statement asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  } always clobbers reg byte a reg byte x 
 Statement [116] (word) mulf8u_prepared::return#0 ← *((const nomodify byte*) mulf8u_prepared::memB) w= *((const nomodify byte*) mulf8u_prepared::resL) [ mulf8u_prepared::return#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96::mulf8u_prepared:100 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8u_prepared::return#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96::mulf8u_prepared:100 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8u_prepared::return#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
 Statement asm { ldamemA stamulf8u_prepared.sm1+1 stamulf8u_prepared.sm3+1 eor#$ff stamulf8u_prepared.sm2+1 stamulf8u_prepared.sm4+1  } always clobbers reg byte a 
@@ -7049,14 +7034,14 @@ Statement [132] *((byte*) renderBobCleanup::screen#0 + (byte) $2a) ← (byte) 0 
 Statement [133] *((byte*) renderBobCleanup::screen#0 + (byte) $52) ← (byte) 0 [ renderBobCleanup::i#2 ] ( main:2::renderBobCleanup:19 [ main::angle#8 renderBobCleanup::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [139] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::memset:15 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [141] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::memset:15 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [145] (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2 [ renderBobInit::y#2 renderBobInit::$0 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 ] { }  ) always clobbers reg byte a 
-Statement [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$0 << (byte) 2 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$6 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$6 ] { }  ) always clobbers reg byte a 
-Statement [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$0 [ renderBobInit::y#2 renderBobInit::$7 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$7 ] { }  ) always clobbers reg byte a 
-Statement [148] (word~) renderBobInit::$1 ← (word~) renderBobInit::$7 << (byte) 3 [ renderBobInit::y#2 renderBobInit::$1 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$1 ] { }  ) always clobbers reg byte a 
-Statement [149] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 << (byte) 1 [ renderBobInit::y#2 renderBobInit::$1 renderBobInit::$4 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$1 renderBobInit::$4 ] { }  ) always clobbers reg byte a 
-Statement [150] *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (word~) renderBobInit::$1 [ renderBobInit::y#2 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 ] { }  ) always clobbers reg byte a 
-Statement [154] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 << (byte) 1 [ renderBobInit::i#2 renderBobInit::$5 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 renderBobInit::$5 ] { }  ) always clobbers reg byte a 
-Statement [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN [ renderBobInit::i#2 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 ] { }  ) always clobbers reg byte a 
+Statement [145] (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2 [ renderBobInit::y#2 renderBobInit::$5 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$5 ] { }  ) always clobbers reg byte a 
+Statement [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$5 << (byte) 2 [ renderBobInit::y#2 renderBobInit::$5 renderBobInit::$6 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$5 renderBobInit::$6 ] { }  ) always clobbers reg byte a 
+Statement [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$5 [ renderBobInit::y#2 renderBobInit::$7 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$7 ] { }  ) always clobbers reg byte a 
+Statement [148] (word~) renderBobInit::$0 ← (word~) renderBobInit::$7 << (byte) 3 [ renderBobInit::y#2 renderBobInit::$0 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 ] { }  ) always clobbers reg byte a 
+Statement [149] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 << (byte) 1 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$3 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$3 ] { }  ) always clobbers reg byte a 
+Statement [150] *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (word~) renderBobInit::$0 [ renderBobInit::y#2 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 ] { }  ) always clobbers reg byte a 
+Statement [154] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 << (byte) 1 [ renderBobInit::i#2 renderBobInit::$4 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 renderBobInit::$4 ] { }  ) always clobbers reg byte a 
+Statement [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN [ renderBobInit::i#2 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 ] { }  ) always clobbers reg byte a 
 Statement [171] (byte*) prepareBobs::bob_table#0 ← (const byte*) BOB_TABLES + (byte) prepareBobs::bob_table_idx#12 [ prepareBobs::shift_y#2 progress_cursor#31 progress_idx#31 bob_charset_next_id#30 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 prepareBobs::bob_table#0 ] ( main:2::prepareBobs:7 [ prepareBobs::shift_y#2 progress_cursor#31 progress_idx#31 bob_charset_next_id#30 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 prepareBobs::bob_table#0 ] { }  ) always clobbers reg byte a 
 Statement [179] (byte*) bobCharsetFindOrAddGlyph::bob_glyph#1 ← (byte*) prepareBobs::bob_glyph#2 [ prepareBobs::shift_y#2 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 bob_charset_next_id#21 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 bobCharsetFindOrAddGlyph::bob_glyph#1 ] ( main:2::prepareBobs:7 [ prepareBobs::shift_y#2 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 bob_charset_next_id#21 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 bobCharsetFindOrAddGlyph::bob_glyph#1 ] { { bob_charset_next_id#21 = bob_charset_next_id#23 } { bobCharsetFindOrAddGlyph::bob_glyph#1 = bobCharsetFindOrAddGlyph::bob_glyph#10 prepareBobs::bob_glyph#2 } { bobCharsetFindOrAddGlyph::return#1 = bobCharsetFindOrAddGlyph::glyph_id#11 } }  ) always clobbers reg byte a 
 Statement [183] *((byte*) prepareBobs::bob_table#2) ← (byte~) prepareBobs::$6 [ prepareBobs::shift_y#2 bob_charset_next_id#16 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 ] ( main:2::prepareBobs:7 [ prepareBobs::shift_y#2 bob_charset_next_id#16 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 ] { }  ) always clobbers reg byte y 
@@ -7140,8 +7125,8 @@ Statement [97] (signed word) mulf8s::return#0 ← (signed word)(word) mulf8s_pre
 Statement [101] (word) mulf8u_prepared::return#2 ← (word) mulf8u_prepared::return#0 [ mulf8s_prepared::b#0 mulf8u_prepared::return#2 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8u_prepared::return#2 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8u_prepared::return#2 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
 Statement [102] (word) mulf8s_prepared::m#0 ← (word) mulf8u_prepared::return#2 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
 Statement [103] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
-Statement [105] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$15 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
-Statement [110] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) [ mulf8s_prepared::m#5 mulf8s_prepared::$16 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::m#5 mulf8s_prepared::$16 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::m#5 mulf8s_prepared::$16 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
+Statement [105] (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$6 - (byte)(signed byte) mulf8s_prepared::b#0 [ mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8s_prepared::m#0 mulf8s_prepared::$11 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
+Statement [110] (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$9 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) [ mulf8s_prepared::m#5 mulf8s_prepared::$12 ] ( main:2::mulf8s:25::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::m#5 mulf8s_prepared::$12 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } }  ) always clobbers reg byte a 
 Statement asm { ldxmemB sec sm1: ldamulf_sqr1_lo,x sm2: sbcmulf_sqr2_lo,x staresL sm3: ldamulf_sqr1_hi,x sm4: sbcmulf_sqr2_hi,x stamemB  } always clobbers reg byte a reg byte x 
 Statement [116] (word) mulf8u_prepared::return#0 ← *((const nomodify byte*) mulf8u_prepared::memB) w= *((const nomodify byte*) mulf8u_prepared::resL) [ mulf8u_prepared::return#0 ] ( main:2::mulf8s:25::mulf8s_prepared:96::mulf8u_prepared:100 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 mulf8s_prepared::b#0 mulf8u_prepared::return#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#0 main::r#2 } { mulf8s::b#0 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#2 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  main:2::mulf8s:31::mulf8s_prepared:96::mulf8u_prepared:100 [ main::angle#8 main::r#2 main::a#2 renderBobCleanupNext#17 main::i#2 main::x#0 mulf8s_prepared::b#0 mulf8u_prepared::return#0 ] { { mulf8s::mulf8s_prepare1_a#0 = mulf8s::a#1 main::r#2 } { mulf8s::b#1 = mulf8s::b#2 mulf8s_prepared::b#0 } { mulf8s::return#0 = mulf8s::return#3 } { mulf8u_prepared::return#0 = mulf8u_prepared::return#2 } }  ) always clobbers reg byte a 
 Statement asm { ldamemA stamulf8u_prepared.sm1+1 stamulf8u_prepared.sm3+1 eor#$ff stamulf8u_prepared.sm2+1 stamulf8u_prepared.sm4+1  } always clobbers reg byte a 
@@ -7158,14 +7143,14 @@ Statement [132] *((byte*) renderBobCleanup::screen#0 + (byte) $2a) ← (byte) 0 
 Statement [133] *((byte*) renderBobCleanup::screen#0 + (byte) $52) ← (byte) 0 [ renderBobCleanup::i#2 ] ( main:2::renderBobCleanup:19 [ main::angle#8 renderBobCleanup::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [139] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::memset:15 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [141] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::memset:15 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [145] (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2 [ renderBobInit::y#2 renderBobInit::$0 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 ] { }  ) always clobbers reg byte a 
-Statement [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$0 << (byte) 2 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$6 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$6 ] { }  ) always clobbers reg byte a 
-Statement [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$0 [ renderBobInit::y#2 renderBobInit::$7 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$7 ] { }  ) always clobbers reg byte a 
-Statement [148] (word~) renderBobInit::$1 ← (word~) renderBobInit::$7 << (byte) 3 [ renderBobInit::y#2 renderBobInit::$1 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$1 ] { }  ) always clobbers reg byte a 
-Statement [149] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 << (byte) 1 [ renderBobInit::y#2 renderBobInit::$1 renderBobInit::$4 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$1 renderBobInit::$4 ] { }  ) always clobbers reg byte a 
-Statement [150] *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (word~) renderBobInit::$1 [ renderBobInit::y#2 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 ] { }  ) always clobbers reg byte a 
-Statement [154] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 << (byte) 1 [ renderBobInit::i#2 renderBobInit::$5 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 renderBobInit::$5 ] { }  ) always clobbers reg byte a 
-Statement [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN [ renderBobInit::i#2 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 ] { }  ) always clobbers reg byte a 
+Statement [145] (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2 [ renderBobInit::y#2 renderBobInit::$5 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$5 ] { }  ) always clobbers reg byte a 
+Statement [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$5 << (byte) 2 [ renderBobInit::y#2 renderBobInit::$5 renderBobInit::$6 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$5 renderBobInit::$6 ] { }  ) always clobbers reg byte a 
+Statement [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$5 [ renderBobInit::y#2 renderBobInit::$7 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$7 ] { }  ) always clobbers reg byte a 
+Statement [148] (word~) renderBobInit::$0 ← (word~) renderBobInit::$7 << (byte) 3 [ renderBobInit::y#2 renderBobInit::$0 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 ] { }  ) always clobbers reg byte a 
+Statement [149] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 << (byte) 1 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$3 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 renderBobInit::$0 renderBobInit::$3 ] { }  ) always clobbers reg byte a 
+Statement [150] *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (word~) renderBobInit::$0 [ renderBobInit::y#2 ] ( main:2::renderBobInit:9 [ renderBobInit::y#2 ] { }  ) always clobbers reg byte a 
+Statement [154] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 << (byte) 1 [ renderBobInit::i#2 renderBobInit::$4 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 renderBobInit::$4 ] { }  ) always clobbers reg byte a 
+Statement [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN [ renderBobInit::i#2 ] ( main:2::renderBobInit:9 [ renderBobInit::i#2 ] { }  ) always clobbers reg byte a 
 Statement [171] (byte*) prepareBobs::bob_table#0 ← (const byte*) BOB_TABLES + (byte) prepareBobs::bob_table_idx#12 [ prepareBobs::shift_y#2 progress_cursor#31 progress_idx#31 bob_charset_next_id#30 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 prepareBobs::bob_table#0 ] ( main:2::prepareBobs:7 [ prepareBobs::shift_y#2 progress_cursor#31 progress_idx#31 bob_charset_next_id#30 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 prepareBobs::bob_table#0 ] { }  ) always clobbers reg byte a 
 Statement [179] (byte*) bobCharsetFindOrAddGlyph::bob_glyph#1 ← (byte*) prepareBobs::bob_glyph#2 [ prepareBobs::shift_y#2 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 bob_charset_next_id#21 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 bobCharsetFindOrAddGlyph::bob_glyph#1 ] ( main:2::prepareBobs:7 [ prepareBobs::shift_y#2 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 bob_charset_next_id#21 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 bobCharsetFindOrAddGlyph::bob_glyph#1 ] { { bob_charset_next_id#21 = bob_charset_next_id#23 } { bobCharsetFindOrAddGlyph::bob_glyph#1 = bobCharsetFindOrAddGlyph::bob_glyph#10 prepareBobs::bob_glyph#2 } { bobCharsetFindOrAddGlyph::return#1 = bobCharsetFindOrAddGlyph::glyph_id#11 } }  ) always clobbers reg byte a 
 Statement [183] *((byte*) prepareBobs::bob_table#2) ← (byte~) prepareBobs::$6 [ prepareBobs::shift_y#2 bob_charset_next_id#16 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 ] ( main:2::prepareBobs:7 [ prepareBobs::shift_y#2 bob_charset_next_id#16 prepareBobs::bob_table_idx#12 prepareBobs::shift_x#2 progress_cursor#24 progress_idx#25 prepareBobs::cell#2 prepareBobs::bob_glyph#2 prepareBobs::bob_table#2 ] { }  ) always clobbers reg byte y 
@@ -7270,19 +7255,19 @@ Potential registers zp[1]:94 [ mulf8s_prepared::b#0 ] : zp[1]:94 , reg byte y ,
 Potential registers zp[2]:95 [ mulf8s::return#0 ] : zp[2]:95 , 
 Potential registers zp[1]:97 [ mulf8u_prepared::b#0 ] : zp[1]:97 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:98 [ mulf8u_prepared::return#2 ] : zp[2]:98 , 
-Potential registers zp[1]:100 [ mulf8s_prepared::$8 ] : zp[1]:100 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:101 [ mulf8s_prepared::$15 ] : zp[1]:101 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:102 [ mulf8s_prepared::$12 ] : zp[1]:102 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:103 [ mulf8s_prepared::$16 ] : zp[1]:103 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:100 [ mulf8s_prepared::$6 ] : zp[1]:100 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:101 [ mulf8s_prepared::$11 ] : zp[1]:101 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:102 [ mulf8s_prepared::$9 ] : zp[1]:102 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:103 [ mulf8s_prepared::$12 ] : zp[1]:103 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:104 [ mulf8u_prepared::return#0 ] : zp[2]:104 , 
 Potential registers zp[1]:106 [ renderBobCleanup::$1 ] : zp[1]:106 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:107 [ renderBobCleanup::screen#0 ] : zp[2]:107 , 
-Potential registers zp[2]:109 [ renderBobInit::$0 ] : zp[2]:109 , 
+Potential registers zp[2]:109 [ renderBobInit::$5 ] : zp[2]:109 , 
 Potential registers zp[2]:111 [ renderBobInit::$6 ] : zp[2]:111 , 
 Potential registers zp[2]:113 [ renderBobInit::$7 ] : zp[2]:113 , 
-Potential registers zp[2]:115 [ renderBobInit::$1 ] : zp[2]:115 , 
-Potential registers zp[1]:117 [ renderBobInit::$4 ] : zp[1]:117 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:118 [ renderBobInit::$5 ] : zp[1]:118 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:115 [ renderBobInit::$0 ] : zp[2]:115 , 
+Potential registers zp[1]:117 [ renderBobInit::$3 ] : zp[1]:117 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:118 [ renderBobInit::$4 ] : zp[1]:118 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:119 [ bobCharsetFindOrAddGlyph::return#1 ] : zp[1]:119 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:120 [ prepareBobs::$6 ] : zp[1]:120 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:121 [ shiftProtoBobRight::$1 ] : zp[1]:121 , reg byte a , reg byte x , reg byte y , 
@@ -7298,14 +7283,14 @@ Uplift Scope [] 2,244,629,806.81: zp[1]:28 [ bob_charset_next_id#23 bob_charset_
 Uplift Scope [shiftProtoBobRight] 570,000,005.7: zp[1]:38 [ shiftProtoBobRight::j#3 shiftProtoBobRight::j#10 shiftProtoBobRight::j#2 shiftProtoBobRight::j#1 ] 228,571,430.86: zp[1]:39 [ shiftProtoBobRight::carry#2 shiftProtoBobRight::carry#10 ] 200,000,002: zp[1]:121 [ shiftProtoBobRight::$1 ] 200,000,002: zp[1]:122 [ shiftProtoBobRight::$5 ] 200,000,002: zp[1]:123 [ shiftProtoBobRight::$6 ] 123,076,924.31: zp[1]:37 [ shiftProtoBobRight::i#2 shiftProtoBobRight::i#1 ] 11,111,111.22: zp[1]:40 [ shiftProtoBobRight::carry#1 ] 
 Uplift Scope [shiftProtoBobDown] 3,600,003.6: zp[1]:41 [ shiftProtoBobDown::i#2 shiftProtoBobDown::i#1 ] 
 Uplift Scope [mulf8u_prepared] 1,100,002: zp[1]:97 [ mulf8u_prepared::b#0 ] 366,667.33: zp[2]:104 [ mulf8u_prepared::return#0 ] 200,002: zp[2]:98 [ mulf8u_prepared::return#2 ] 
-Uplift Scope [mulf8s_prepared] 691,673.58: zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 ] 200,002: zp[1]:100 [ mulf8s_prepared::$8 ] 200,002: zp[1]:101 [ mulf8s_prepared::$15 ] 200,002: zp[1]:102 [ mulf8s_prepared::$12 ] 200,002: zp[1]:103 [ mulf8s_prepared::$16 ] 11,000.2: zp[1]:94 [ mulf8s_prepared::b#0 ] 
+Uplift Scope [mulf8s_prepared] 691,673.58: zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 ] 200,002: zp[1]:100 [ mulf8s_prepared::$6 ] 200,002: zp[1]:101 [ mulf8s_prepared::$11 ] 200,002: zp[1]:102 [ mulf8s_prepared::$9 ] 200,002: zp[1]:103 [ mulf8s_prepared::$12 ] 11,000.2: zp[1]:94 [ mulf8s_prepared::b#0 ] 
 Uplift Scope [prepareBobs] 230,002.3: zp[1]:23 [ prepareBobs::cell#2 prepareBobs::cell#1 ] 200,002: zp[1]:120 [ prepareBobs::$6 ] 125,419.83: zp[2]:26 [ prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ] 92,858.07: zp[2]:24 [ prepareBobs::bob_glyph#2 prepareBobs::bob_glyph#1 ] 21,668.83: zp[1]:22 [ prepareBobs::shift_x#2 prepareBobs::shift_x#1 ] 6,884.05: zp[1]:21 [ prepareBobs::bob_table_idx#6 prepareBobs::bob_table_idx#12 prepareBobs::bob_table_idx#1 ] 2,132.57: zp[1]:17 [ prepareBobs::shift_y#2 prepareBobs::shift_y#1 ] 
 Uplift Scope [renderBobCleanup] 200,002: zp[1]:106 [ renderBobCleanup::$1 ] 175,001.75: zp[1]:12 [ renderBobCleanup::i#2 renderBobCleanup::i#1 ] 111,112.22: zp[2]:107 [ renderBobCleanup::screen#0 ] 
 Uplift Scope [renderBob] 20,002: zp[1]:81 [ renderBob::y_char_offset#0 ] 20,002: zp[1]:82 [ renderBob::$8 ] 20,002: zp[2]:83 [ renderBob::y_offset#0 ] 20,002: zp[2]:85 [ renderBob::$2 ] 20,002: zp[1]:89 [ renderBob::$4 ] 20,002: zp[1]:91 [ renderBob::$6 ] 10,001: zp[1]:90 [ renderBob::$5 ] 9,091.82: zp[1]:92 [ renderBob::bob_table_idx#0 ] 7,334.07: zp[2]:87 [ renderBob::screen#0 ] 4,000.4: zp[1]:80 [ renderBob::x_char_offset#0 ] 3,000.43: zp[1]:71 [ renderBob::ypos#0 ] 2,100.3: zp[1]:70 [ renderBob::xpos#0 ] 
 Uplift Scope [mulf8u_prepare] 110,002: zp[1]:93 [ mulf8u_prepare::a#0 ] 
 Uplift Scope [mulf_init] 4,337.67: zp[2]:54 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] 2,446.89: zp[2]:48 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] 2,288: zp[2]:42 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] 2,102.1: zp[1]:47 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] 2,002: zp[1]:124 [ mulf_init::$1 ] 2,002: zp[1]:125 [ mulf_init::$4 ] 2,002: zp[1]:126 [ mulf_init::$5 ] 1,401.4: zp[1]:50 [ mulf_init::x_255#2 mulf_init::x_255#1 ] 1,376.38: zp[1]:53 [ mulf_init::dir#2 mulf_init::dir#4 ] 1,232: zp[1]:44 [ mulf_init::c#2 mulf_init::c#1 ] 1,084.42: zp[2]:51 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] 917.58: zp[2]:45 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
 Uplift Scope [mulf8s] 8,005: zp[1]:9 [ mulf8s::b#2 mulf8s::b#1 mulf8s::b#0 ] 4,004: zp[1]:8 [ mulf8s::mulf8s_prepare1_a#0 mulf8s::a#1 mulf8s::a#0 ] 3,000.75: zp[2]:95 [ mulf8s::return#0 ] 2,002: zp[2]:56 [ mulf8s::return#2 ] 2,002: zp[2]:62 [ mulf8s::return#3 ] 
-Uplift Scope [renderBobInit] 2,502.5: zp[1]:16 [ renderBobInit::i#2 renderBobInit::i#1 ] 2,002: zp[2]:111 [ renderBobInit::$6 ] 2,002: zp[2]:113 [ renderBobInit::$7 ] 2,002: zp[1]:117 [ renderBobInit::$4 ] 2,002: zp[1]:118 [ renderBobInit::$5 ] 1,930.5: zp[1]:15 [ renderBobInit::y#2 renderBobInit::y#1 ] 1,501.5: zp[2]:109 [ renderBobInit::$0 ] 1,001: zp[2]:115 [ renderBobInit::$1 ] 
+Uplift Scope [renderBobInit] 2,502.5: zp[1]:16 [ renderBobInit::i#2 renderBobInit::i#1 ] 2,002: zp[2]:111 [ renderBobInit::$6 ] 2,002: zp[2]:113 [ renderBobInit::$7 ] 2,002: zp[1]:117 [ renderBobInit::$3 ] 2,002: zp[1]:118 [ renderBobInit::$4 ] 1,930.5: zp[1]:15 [ renderBobInit::y#2 renderBobInit::y#1 ] 1,501.5: zp[2]:109 [ renderBobInit::$5 ] 1,001: zp[2]:115 [ renderBobInit::$0 ] 
 Uplift Scope [main] 2,002: zp[2]:58 [ main::$10 ] 2,002: zp[2]:64 [ main::$12 ] 2,002: zp[2]:66 [ main::$13 ] 1,596.83: zp[1]:7 [ main::i#2 main::i#1 ] 744.56: zp[1]:4 [ main::a#2 main::a#6 main::a#1 ] 569.2: zp[1]:3 [ main::r#2 main::r#1 ] 400.4: zp[2]:68 [ main::y#0 ] 202: zp[1]:73 [ main::$19 ] 202: zp[1]:75 [ main::$21 ] 182: zp[2]:60 [ main::x#0 ] 44.49: zp[1]:2 [ main::angle#8 main::angle#1 ] 
 Uplift Scope [keyboard_matrix_read] 3,667.33: zp[1]:79 [ keyboard_matrix_read::return#0 ] 2,002: zp[1]:76 [ keyboard_matrix_read::return#2 ] 
 Uplift Scope [memset] 3,336.67: zp[2]:13 [ memset::dst#2 memset::dst#1 ] 
@@ -7321,7 +7306,7 @@ Uplifting [shiftProtoBobRight] best 3976542 combination reg byte x [ shiftProtoB
 Limited combination testing to 100 combinations of 5184 possible.
 Uplifting [shiftProtoBobDown] best 3974942 combination reg byte x [ shiftProtoBobDown::i#2 shiftProtoBobDown::i#1 ] 
 Uplifting [mulf8u_prepared] best 3974936 combination reg byte a [ mulf8u_prepared::b#0 ] zp[2]:104 [ mulf8u_prepared::return#0 ] zp[2]:98 [ mulf8u_prepared::return#2 ] 
-Uplifting [mulf8s_prepared] best 3974912 combination zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 ] reg byte a [ mulf8s_prepared::$8 ] reg byte a [ mulf8s_prepared::$15 ] reg byte a [ mulf8s_prepared::$12 ] reg byte a [ mulf8s_prepared::$16 ] zp[1]:94 [ mulf8s_prepared::b#0 ] 
+Uplifting [mulf8s_prepared] best 3974912 combination zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 ] reg byte a [ mulf8s_prepared::$6 ] reg byte a [ mulf8s_prepared::$11 ] reg byte a [ mulf8s_prepared::$9 ] reg byte a [ mulf8s_prepared::$12 ] zp[1]:94 [ mulf8s_prepared::b#0 ] 
 Limited combination testing to 100 combinations of 512 possible.
 Uplifting [prepareBobs] best 3968912 combination zp[1]:23 [ prepareBobs::cell#2 prepareBobs::cell#1 ] reg byte a [ prepareBobs::$6 ] zp[2]:26 [ prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ] zp[2]:24 [ prepareBobs::bob_glyph#2 prepareBobs::bob_glyph#1 ] zp[1]:22 [ prepareBobs::shift_x#2 prepareBobs::shift_x#1 ] zp[1]:21 [ prepareBobs::bob_table_idx#6 prepareBobs::bob_table_idx#12 prepareBobs::bob_table_idx#1 ] zp[1]:17 [ prepareBobs::shift_y#2 prepareBobs::shift_y#1 ] 
 Uplifting [renderBobCleanup] best 3967512 combination reg byte a [ renderBobCleanup::$1 ] reg byte x [ renderBobCleanup::i#2 renderBobCleanup::i#1 ] zp[2]:107 [ renderBobCleanup::screen#0 ] 
@@ -7331,7 +7316,7 @@ Uplifting [mulf8u_prepare] best 3967484 combination reg byte a [ mulf8u_prepare:
 Uplifting [mulf_init] best 3967234 combination zp[2]:54 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] zp[2]:48 [ mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] zp[2]:42 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 ] reg byte x [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ] reg byte a [ mulf_init::$1 ] reg byte a [ mulf_init::$4 ] reg byte a [ mulf_init::$5 ] zp[1]:50 [ mulf_init::x_255#2 mulf_init::x_255#1 ] zp[1]:53 [ mulf_init::dir#2 mulf_init::dir#4 ] zp[1]:44 [ mulf_init::c#2 mulf_init::c#1 ] zp[2]:51 [ mulf_init::sqr2_hi#2 mulf_init::sqr2_hi#1 ] zp[2]:45 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
 Uplifting [mulf8s] best 3966028 combination reg byte x [ mulf8s::b#2 mulf8s::b#1 mulf8s::b#0 ] reg byte a [ mulf8s::mulf8s_prepare1_a#0 mulf8s::a#1 mulf8s::a#0 ] zp[2]:95 [ mulf8s::return#0 ] zp[2]:56 [ mulf8s::return#2 ] zp[2]:62 [ mulf8s::return#3 ] 
-Uplifting [renderBobInit] best 3965738 combination reg byte x [ renderBobInit::i#2 renderBobInit::i#1 ] zp[2]:111 [ renderBobInit::$6 ] zp[2]:113 [ renderBobInit::$7 ] reg byte a [ renderBobInit::$4 ] reg byte a [ renderBobInit::$5 ] reg byte x [ renderBobInit::y#2 renderBobInit::y#1 ] zp[2]:109 [ renderBobInit::$0 ] zp[2]:115 [ renderBobInit::$1 ] 
+Uplifting [renderBobInit] best 3965738 combination reg byte x [ renderBobInit::i#2 renderBobInit::i#1 ] zp[2]:111 [ renderBobInit::$6 ] zp[2]:113 [ renderBobInit::$7 ] reg byte a [ renderBobInit::$3 ] reg byte a [ renderBobInit::$4 ] reg byte x [ renderBobInit::y#2 renderBobInit::y#1 ] zp[2]:109 [ renderBobInit::$5 ] zp[2]:115 [ renderBobInit::$0 ] 
 Limited combination testing to 100 combinations of 144 possible.
 Uplifting [main] best 3965618 combination zp[2]:58 [ main::$10 ] zp[2]:64 [ main::$12 ] zp[2]:66 [ main::$13 ] zp[1]:7 [ main::i#2 main::i#1 ] zp[1]:4 [ main::a#2 main::a#6 main::a#1 ] zp[1]:3 [ main::r#2 main::r#1 ] zp[2]:68 [ main::y#0 ] reg byte a [ main::$19 ] reg byte a [ main::$21 ] zp[2]:60 [ main::x#0 ] zp[1]:2 [ main::angle#8 main::angle#1 ] 
 Uplifting [keyboard_matrix_read] best 3965606 combination reg byte a [ keyboard_matrix_read::return#0 ] reg byte a [ keyboard_matrix_read::return#2 ] 
@@ -7394,12 +7379,12 @@ Coalescing zero page register [ zp[2]:56 [ mulf8s::return#2 ] ] with [ zp[2]:58 
 Coalescing zero page register [ zp[2]:62 [ mulf8s::return#3 ] ] with [ zp[2]:64 [ main::$12 ] ] - score: 1
 Coalescing zero page register [ zp[2]:66 [ main::$13 ] ] with [ zp[2]:68 [ main::y#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:83 [ renderBob::y_offset#0 ] ] with [ zp[2]:85 [ renderBob::$2 ] ] - score: 1
-Coalescing zero page register [ zp[2]:109 [ renderBobInit::$0 ] ] with [ zp[2]:113 [ renderBobInit::$7 ] ] - score: 1
+Coalescing zero page register [ zp[2]:109 [ renderBobInit::$5 ] ] with [ zp[2]:113 [ renderBobInit::$7 ] ] - score: 1
 Coalescing zero page register [ zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 mulf8s::return#0 mulf8u_prepared::return#2 ] ] with [ zp[2]:56 [ mulf8s::return#2 main::$10 ] ] - score: 1
 Coalescing zero page register [ zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 mulf8s::return#0 mulf8u_prepared::return#2 mulf8s::return#2 main::$10 ] ] with [ zp[2]:62 [ mulf8s::return#3 main::$12 ] ] - score: 1
 Coalescing zero page register [ zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 mulf8s::return#0 mulf8u_prepared::return#2 mulf8s::return#2 main::$10 mulf8s::return#3 main::$12 ] ] with [ zp[2]:104 [ mulf8u_prepared::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:83 [ renderBob::y_offset#0 renderBob::$2 ] ] with [ zp[2]:87 [ renderBob::screen#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:109 [ renderBobInit::$0 renderBobInit::$7 ] ] with [ zp[2]:115 [ renderBobInit::$1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:109 [ renderBobInit::$5 renderBobInit::$7 ] ] with [ zp[2]:115 [ renderBobInit::$0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 mulf8s::return#0 mulf8u_prepared::return#2 mulf8s::return#2 main::$10 mulf8s::return#3 main::$12 mulf8u_prepared::return#0 ] ] with [ zp[2]:66 [ main::$13 main::y#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:18 [ progress_cursor#15 progress_cursor#31 progress_cursor#24 progress_cursor#17 progress_cursor#8 ] ] with [ zp[2]:10 [ mulf8s_prepared::m#4 mulf8s_prepared::m#5 mulf8s_prepared::m#1 mulf8s_prepared::m#0 mulf8s_prepared::m#2 mulf8s::return#0 mulf8u_prepared::return#2 mulf8s::return#2 main::$10 mulf8s::return#3 main::$12 mulf8u_prepared::return#0 main::$13 main::y#0 ] ]
 Coalescing zero page register [ zp[1]:20 [ progress_idx#16 progress_idx#31 progress_idx#25 progress_idx#10 progress_idx#8 ] ] with [ zp[1]:2 [ main::angle#8 main::angle#1 ] ]
@@ -7417,7 +7402,7 @@ Coalescing zero page register [ zp[1]:90 [ renderBob::$5 ] ] with [ zp[1]:37 [ s
 Coalescing zero page register [ zp[1]:94 [ mulf8s_prepared::b#0 ] ] with [ zp[1]:40 [ shiftProtoBobRight::carry#1 ] ]
 Coalescing zero page register [ zp[2]:107 [ renderBobCleanup::screen#0 ] ] with [ zp[2]:54 [ mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ] ]
 Coalescing zero page register [ zp[2]:60 [ main::x#0 mulf_init::sqr2_lo#2 mulf_init::sqr2_lo#1 ] ] with [ zp[2]:24 [ prepareBobs::bob_glyph#2 prepareBobs::bob_glyph#1 bobCharsetFindOrAddGlyph::bob_glyph#10 bobCharsetFindOrAddGlyph::bob_glyph#1 memset::dst#2 memset::dst#1 ] ]
-Coalescing zero page register [ zp[2]:109 [ renderBobInit::$0 renderBobInit::$7 renderBobInit::$1 ] ] with [ zp[2]:42 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ] ]
+Coalescing zero page register [ zp[2]:109 [ renderBobInit::$5 renderBobInit::$7 renderBobInit::$0 ] ] with [ zp[2]:42 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ] ]
 Coalescing zero page register [ zp[2]:111 [ renderBobInit::$6 ] ] with [ zp[2]:45 [ mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 bobCharsetFindOrAddGlyph::glyph_cursor#11 bobCharsetFindOrAddGlyph::glyph_cursor#1 ] ]
 Allocated (was zp[1]:4) zp[1]:2 [ main::a#2 main::a#6 main::a#1 ]
 Allocated (was zp[2]:5) zp[2]:3 [ renderBobCleanupNext#17 renderBobCleanupNext#13 ]
@@ -7434,7 +7419,7 @@ Allocated (was zp[2]:83) zp[2]:16 [ renderBob::y_offset#0 renderBob::$2 renderBo
 Allocated (was zp[1]:90) zp[1]:18 [ renderBob::$5 shiftProtoBobRight::i#2 shiftProtoBobRight::i#1 ]
 Allocated (was zp[1]:94) zp[1]:19 [ mulf8s_prepared::b#0 shiftProtoBobRight::carry#1 ]
 Allocated (was zp[2]:107) zp[2]:20 [ renderBobCleanup::screen#0 mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-Allocated (was zp[2]:109) zp[2]:22 [ renderBobInit::$0 renderBobInit::$7 renderBobInit::$1 mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ]
+Allocated (was zp[2]:109) zp[2]:22 [ renderBobInit::$5 renderBobInit::$7 renderBobInit::$0 mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ]
 Allocated (was zp[2]:111) zp[2]:24 [ renderBobInit::$6 mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 bobCharsetFindOrAddGlyph::glyph_cursor#11 bobCharsetFindOrAddGlyph::glyph_cursor#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -8010,12 +7995,12 @@ mulf8s_prepared: {
     jmp __b3
     // mulf8s_prepared::@3
   __b3:
-    // [104] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0 -- vbuaa=_hi_vwuz1 
+    // [104] (byte~) mulf8s_prepared::$6 ← > (word) mulf8s_prepared::m#0 -- vbuaa=_hi_vwuz1 
     lda.z m+1
-    // [105] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0 -- vbuaa=vbuaa_minus_vbuz1 
+    // [105] (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$6 - (byte)(signed byte) mulf8s_prepared::b#0 -- vbuaa=vbuaa_minus_vbuz1 
     sec
     sbc.z b
-    // [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$15 -- vwuz1=vwuz1_sethi_vbuaa 
+    // [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$11 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [107] phi from mulf8s_prepared::@3 mulf8s_prepared::@5 to mulf8s_prepared::@1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1]
   __b1_from___b3:
@@ -8031,12 +8016,12 @@ mulf8s_prepared: {
     jmp __b4
     // mulf8s_prepared::@4
   __b4:
-    // [109] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5 -- vbuaa=_hi_vwuz1 
+    // [109] (byte~) mulf8s_prepared::$9 ← > (word) mulf8s_prepared::m#5 -- vbuaa=_hi_vwuz1 
     lda.z m+1
-    // [110] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) -- vbuaa=vbuaa_minus__deref_pbuc1 
+    // [110] (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$9 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) -- vbuaa=vbuaa_minus__deref_pbuc1 
     sec
     sbc memA
-    // [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16 -- vwuz1=vwuz1_sethi_vbuaa 
+    // [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$12 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [112] phi from mulf8s_prepared::@1 mulf8s_prepared::@4 to mulf8s_prepared::@2 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2]
   __b2_from___b1:
@@ -8226,7 +8211,7 @@ memset: {
 // Initialize the tables used by renderBob()
 renderBobInit: {
     .label __0 = $16
-    .label __1 = $16
+    .label __5 = $16
     .label __6 = $18
     .label __7 = $16
     // [144] phi from renderBobInit to renderBobInit::@1 [phi:renderBobInit->renderBobInit::@1]
@@ -8240,21 +8225,21 @@ renderBobInit: {
     jmp __b1
     // renderBobInit::@1
   __b1:
-    // [145] (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2 -- vwuz1=_word_vbuxx 
+    // [145] (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2 -- vwuz1=_word_vbuxx 
     txa
-    sta.z __0
+    sta.z __5
     lda #0
-    sta.z __0+1
-    // [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda.z __0
+    sta.z __5+1
+    // [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$5 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    lda.z __5
     asl
     sta.z __6
-    lda.z __0+1
+    lda.z __5+1
     rol
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$5 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __7
     clc
     adc.z __6
@@ -8262,21 +8247,21 @@ renderBobInit: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    // [148] (word~) renderBobInit::$1 ← (word~) renderBobInit::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    // [149] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [148] (word~) renderBobInit::$0 ← (word~) renderBobInit::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    // [149] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [150] *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (word~) renderBobInit::$1 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [150] *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (word~) renderBobInit::$0 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda.z __1
+    lda.z __0
     sta MUL40,y
-    lda.z __1+1
+    lda.z __0+1
     sta MUL40+1,y
     // [151] (byte) renderBobInit::y#1 ← ++ (byte) renderBobInit::y#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -8294,10 +8279,10 @@ renderBobInit: {
     jmp __b2
     // renderBobInit::@2
   __b2:
-    // [154] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [154] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN -- pptc1_derefidx_vbuaa=pbuc2 
+    // [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN -- pptc1_derefidx_vbuaa=pbuc2 
     tay
     lda #<BOB_SCREEN
     sta RENDERBOB_CLEANUP,y
@@ -9587,10 +9572,10 @@ FINAL SYMBOL TABLE
 (signed word) mulf8s::return#2 return zp[2]:6 2002.0
 (signed word) mulf8s::return#3 return zp[2]:6 2002.0
 (signed word()) mulf8s_prepared((signed byte) mulf8s_prepared::b)
+(byte~) mulf8s_prepared::$11 reg byte a 200002.0
 (byte~) mulf8s_prepared::$12 reg byte a 200002.0
-(byte~) mulf8s_prepared::$15 reg byte a 200002.0
-(byte~) mulf8s_prepared::$16 reg byte a 200002.0
-(byte~) mulf8s_prepared::$8 reg byte a 200002.0
+(byte~) mulf8s_prepared::$6 reg byte a 200002.0
+(byte~) mulf8s_prepared::$9 reg byte a 200002.0
 (label) mulf8s_prepared::@1
 (label) mulf8s_prepared::@2
 (label) mulf8s_prepared::@3
@@ -9759,10 +9744,10 @@ FINAL SYMBOL TABLE
 (byte**) renderBobCleanupNext#13 renderBobCleanupNext zp[2]:3 785.8571428571429
 (byte**) renderBobCleanupNext#17 renderBobCleanupNext zp[2]:3 677.516129032258
 (void()) renderBobInit()
-(word~) renderBobInit::$0 zp[2]:22 1501.5
-(word~) renderBobInit::$1 zp[2]:22 1001.0
+(word~) renderBobInit::$0 zp[2]:22 1001.0
+(byte~) renderBobInit::$3 reg byte a 2002.0
 (byte~) renderBobInit::$4 reg byte a 2002.0
-(byte~) renderBobInit::$5 reg byte a 2002.0
+(word~) renderBobInit::$5 zp[2]:22 1501.5
 (word~) renderBobInit::$6 zp[2]:24 2002.0
 (word~) renderBobInit::$7 zp[2]:22 2002.0
 (label) renderBobInit::@1
@@ -9852,16 +9837,16 @@ reg byte x [ renderBob::bob_table_idx#0 ]
 reg byte a [ mulf8u_prepare::a#0 ]
 zp[1]:19 [ mulf8s_prepared::b#0 shiftProtoBobRight::carry#1 ]
 reg byte a [ mulf8u_prepared::b#0 ]
-reg byte a [ mulf8s_prepared::$8 ]
-reg byte a [ mulf8s_prepared::$15 ]
+reg byte a [ mulf8s_prepared::$6 ]
+reg byte a [ mulf8s_prepared::$11 ]
+reg byte a [ mulf8s_prepared::$9 ]
 reg byte a [ mulf8s_prepared::$12 ]
-reg byte a [ mulf8s_prepared::$16 ]
 reg byte a [ renderBobCleanup::$1 ]
 zp[2]:20 [ renderBobCleanup::screen#0 mulf_init::sqr#3 mulf_init::sqr#4 mulf_init::sqr#1 mulf_init::sqr#2 ]
-zp[2]:22 [ renderBobInit::$0 renderBobInit::$7 renderBobInit::$1 mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ]
+zp[2]:22 [ renderBobInit::$5 renderBobInit::$7 renderBobInit::$0 mulf_init::sqr1_lo#2 mulf_init::sqr1_lo#1 prepareBobs::bob_table#2 prepareBobs::bob_table#1 prepareBobs::bob_table#0 ]
 zp[2]:24 [ renderBobInit::$6 mulf_init::sqr1_hi#2 mulf_init::sqr1_hi#1 bobCharsetFindOrAddGlyph::glyph_cursor#11 bobCharsetFindOrAddGlyph::glyph_cursor#1 ]
+reg byte a [ renderBobInit::$3 ]
 reg byte a [ renderBobInit::$4 ]
-reg byte a [ renderBobInit::$5 ]
 reg byte a [ bobCharsetFindOrAddGlyph::return#1 ]
 reg byte a [ prepareBobs::$6 ]
 reg byte a [ shiftProtoBobRight::$1 ]
@@ -10418,13 +10403,13 @@ mulf8s_prepared: {
     bpl __b1
     // mulf8s_prepared::@3
     // >m
-    // [104] (byte~) mulf8s_prepared::$8 ← > (word) mulf8s_prepared::m#0 -- vbuaa=_hi_vwuz1 
+    // [104] (byte~) mulf8s_prepared::$6 ← > (word) mulf8s_prepared::m#0 -- vbuaa=_hi_vwuz1 
     lda.z m+1
     // >m = (>m)-(char)b
-    // [105] (byte~) mulf8s_prepared::$15 ← (byte~) mulf8s_prepared::$8 - (byte)(signed byte) mulf8s_prepared::b#0 -- vbuaa=vbuaa_minus_vbuz1 
+    // [105] (byte~) mulf8s_prepared::$11 ← (byte~) mulf8s_prepared::$6 - (byte)(signed byte) mulf8s_prepared::b#0 -- vbuaa=vbuaa_minus_vbuz1 
     sec
     sbc.z b
-    // [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$15 -- vwuz1=vwuz1_sethi_vbuaa 
+    // [106] (word) mulf8s_prepared::m#1 ← (word) mulf8s_prepared::m#0 hi= (byte~) mulf8s_prepared::$11 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [107] phi from mulf8s_prepared::@3 mulf8s_prepared::@5 to mulf8s_prepared::@1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1]
     // [107] phi (word) mulf8s_prepared::m#5 = (word) mulf8s_prepared::m#1 [phi:mulf8s_prepared::@3/mulf8s_prepared::@5->mulf8s_prepared::@1#0] -- register_copy 
@@ -10437,13 +10422,13 @@ mulf8s_prepared: {
     bpl __b2
     // mulf8s_prepared::@4
     // >m
-    // [109] (byte~) mulf8s_prepared::$12 ← > (word) mulf8s_prepared::m#5 -- vbuaa=_hi_vwuz1 
+    // [109] (byte~) mulf8s_prepared::$9 ← > (word) mulf8s_prepared::m#5 -- vbuaa=_hi_vwuz1 
     lda.z m+1
     // >m = (>m)-(char)*memA
-    // [110] (byte~) mulf8s_prepared::$16 ← (byte~) mulf8s_prepared::$12 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) -- vbuaa=vbuaa_minus__deref_pbuc1 
+    // [110] (byte~) mulf8s_prepared::$12 ← (byte~) mulf8s_prepared::$9 - (byte)*((const nomodify signed byte*) mulf8s_prepared::memA) -- vbuaa=vbuaa_minus__deref_pbuc1 
     sec
     sbc memA
-    // [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$16 -- vwuz1=vwuz1_sethi_vbuaa 
+    // [111] (word) mulf8s_prepared::m#2 ← (word) mulf8s_prepared::m#5 hi= (byte~) mulf8s_prepared::$12 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [112] phi from mulf8s_prepared::@1 mulf8s_prepared::@4 to mulf8s_prepared::@2 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2]
     // [112] phi (word) mulf8s_prepared::m#4 = (word) mulf8s_prepared::m#5 [phi:mulf8s_prepared::@1/mulf8s_prepared::@4->mulf8s_prepared::@2#0] -- register_copy 
@@ -10628,7 +10613,7 @@ memset: {
 // Initialize the tables used by renderBob()
 renderBobInit: {
     .label __0 = $16
-    .label __1 = $16
+    .label __5 = $16
     .label __6 = $18
     .label __7 = $16
     // [144] phi from renderBobInit to renderBobInit::@1 [phi:renderBobInit->renderBobInit::@1]
@@ -10638,23 +10623,22 @@ renderBobInit: {
     // [144] phi (byte) renderBobInit::y#2 = (byte) renderBobInit::y#1 [phi:renderBobInit::@1->renderBobInit::@1#0] -- register_copy 
     // renderBobInit::@1
   __b1:
-    // (unsigned int)y
-    // [145] (word~) renderBobInit::$0 ← (word)(byte) renderBobInit::y#2 -- vwuz1=_word_vbuxx 
-    txa
-    sta.z __0
-    lda #0
-    sta.z __0+1
     // ((unsigned int)y)*40
-    // [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$0 << (byte) 2 -- vwuz1=vwuz2_rol_2 
-    lda.z __0
+    // [145] (word~) renderBobInit::$5 ← (word)(byte) renderBobInit::y#2 -- vwuz1=_word_vbuxx 
+    txa
+    sta.z __5
+    lda #0
+    sta.z __5+1
+    // [146] (word~) renderBobInit::$6 ← (word~) renderBobInit::$5 << (byte) 2 -- vwuz1=vwuz2_rol_2 
+    lda.z __5
     asl
     sta.z __6
-    lda.z __0+1
+    lda.z __5+1
     rol
     sta.z __6+1
     asl.z __6
     rol.z __6+1
-    // [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [147] (word~) renderBobInit::$7 ← (word~) renderBobInit::$6 + (word~) renderBobInit::$5 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __7
     clc
     adc.z __6
@@ -10662,22 +10646,22 @@ renderBobInit: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    // [148] (word~) renderBobInit::$1 ← (word~) renderBobInit::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
+    // [148] (word~) renderBobInit::$0 ← (word~) renderBobInit::$7 << (byte) 3 -- vwuz1=vwuz1_rol_3 
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
     // MUL40[y] = ((unsigned int)y)*40
-    // [149] (byte~) renderBobInit::$4 ← (byte) renderBobInit::y#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [149] (byte~) renderBobInit::$3 ← (byte) renderBobInit::y#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [150] *((const word*) MUL40 + (byte~) renderBobInit::$4) ← (word~) renderBobInit::$1 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [150] *((const word*) MUL40 + (byte~) renderBobInit::$3) ← (word~) renderBobInit::$0 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
-    lda.z __1
+    lda.z __0
     sta MUL40,y
-    lda.z __1+1
+    lda.z __0+1
     sta MUL40+1,y
     // for(char y: 0..0x1f)
     // [151] (byte) renderBobInit::y#1 ← ++ (byte) renderBobInit::y#2 -- vbuxx=_inc_vbuxx 
@@ -10693,10 +10677,10 @@ renderBobInit: {
     // renderBobInit::@2
   __b2:
     // RENDERBOB_CLEANUP[i] = BOB_SCREEN
-    // [154] (byte~) renderBobInit::$5 ← (byte) renderBobInit::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [154] (byte~) renderBobInit::$4 ← (byte) renderBobInit::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$5) ← (const nomodify byte*) BOB_SCREEN -- pptc1_derefidx_vbuaa=pbuc2 
+    // [155] *((const byte**) RENDERBOB_CLEANUP + (byte~) renderBobInit::$4) ← (const nomodify byte*) BOB_SCREEN -- pptc1_derefidx_vbuaa=pbuc2 
     tay
     lda #<BOB_SCREEN
     sta RENDERBOB_CLEANUP,y

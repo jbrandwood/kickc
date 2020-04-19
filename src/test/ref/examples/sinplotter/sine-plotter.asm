@@ -196,10 +196,10 @@ render_sine: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zp(6) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $1c
+    .label __0 = $1c
     .label plotter = $16
     .label x = 6
-    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -207,17 +207,17 @@ bitmap_plot: {
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __1
+    sta.z __0
     lda.z x+1
     and #>$fff8
-    sta.z __1+1
+    sta.z __0+1
     // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z __1
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z __1+1
+    adc.z __0+1
     sta.z plotter+1
     // <x
     ldx.z x
@@ -246,7 +246,7 @@ wrap_y: {
     // while(y<0)
     lda.z y+1
     bmi __b4
-    // (char)y
+    // return (char)y;
     lda.z y
     // }
     rts
@@ -280,7 +280,7 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .label __6 = 8
-    .label __9 = $1c
+    .label __8 = $1c
     .label step = $18
     .label sintab = 6
     // u[4.28]
@@ -333,15 +333,15 @@ sin16s_gen2: {
     jsr mul16s
     // >mul16s(sin16s(x), ampl)
     lda.z __6+2
-    sta.z __9
+    sta.z __8
     lda.z __6+3
-    sta.z __9+1
+    sta.z __8+1
     // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl)
     ldy #0
-    lda.z __9
+    lda.z __8
     sta (sintab),y
     iny
-    lda.z __9+1
+    lda.z __8+1
     sta (sintab),y
     // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl);
     lda #SIZEOF_SIGNED_WORD
@@ -376,8 +376,8 @@ sin16s_gen2: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp($16) a)
 mul16s: {
-    .label __9 = $22
-    .label __16 = $22
+    .label __6 = $22
+    .label __11 = $22
     .label m = 8
     .label return = 8
     .label a = $16
@@ -398,23 +398,23 @@ mul16s: {
     bpl __b2
     // >m
     lda.z m+2
-    sta.z __9
+    sta.z __6
     lda.z m+3
-    sta.z __9+1
+    sta.z __6+1
     // >m = (>m)-(unsigned int)b
-    lda.z __16
+    lda.z __11
     sec
     sbc #<sin16s_gen2.ampl
-    sta.z __16
-    lda.z __16+1
+    sta.z __11
+    lda.z __11+1
     sbc #>sin16s_gen2.ampl
-    sta.z __16+1
-    lda.z __16
+    sta.z __11+1
+    lda.z __11
     sta.z m+2
-    lda.z __16+1
+    lda.z __11+1
     sta.z m+3
   __b2:
-    // (signed long)m
+    // return (signed long)m;
     // }
     rts
 }

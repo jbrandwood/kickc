@@ -4,6 +4,7 @@ Setting inferred volatile on symbol affected by address-of (byte~) utoa16w::$8 �
 Setting inferred volatile on symbol affected by address-of (byte~) utoa16w::$11 ← call utoa16n (number~) utoa16w::$10 &(volatile byte*) utoa16w::dst (number) 1 
 Fixing pointer array-indexing *((const word*) UTOA10_SUB + (byte) utoa10w::i)
 Fixing pointer array-indexing *((const word*) UTOA10_SUB + (byte) utoa10w::i)
+De-inlining cast (byte)utoa10w::value
 Identified constant variable (byte*) cls::screen
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@13
@@ -98,10 +99,9 @@ main::@20: scope:[main]  from main::@19
   *((const nomodify byte*) bordercol) ← (number) 0
   (byte~) main::$14 ← (byte) main::time_end#0 - (byte) main::time_start#1
   (byte) main::time#0 ← (byte~) main::$14
-  (word~) main::$15 ← ((word)) (byte) main::time#0
-  (byte*~) main::$16 ← (byte*) main::screen#9 + (number) $50
-  (word) utoa10w::value#0 ← (word~) main::$15
-  (byte*) utoa10w::dst#0 ← (byte*~) main::$16
+  (byte*~) main::$15 ← (byte*) main::screen#9 + (number) $50
+  (word) utoa10w::value#0 ← (word)(byte) main::time#0
+  (byte*) utoa10w::dst#0 ← (byte*~) main::$15
   call utoa10w 
   to:main::@21
 main::@21: scope:[main]  from main::@20
@@ -111,15 +111,15 @@ main::@21: scope:[main]  from main::@20
 main::@6: scope:[main]  from main::@21 main::@7
   (byte*) main::screen#11 ← phi( main::@21/(byte*) main::screen#12 main::@7/(byte*) main::screen#10 )
   (byte) main::i#2 ← phi( main::@21/(byte) main::i#0 main::@7/(byte) main::i#1 )
-  (bool~) main::$18 ← *((const byte*) main::msg + (byte) main::i#2) != (number) 0
-  if((bool~) main::$18) goto main::@7
+  (bool~) main::$17 ← *((const byte*) main::msg + (byte) main::i#2) != (number) 0
+  if((bool~) main::$17) goto main::@7
   to:main::@1
 main::@7: scope:[main]  from main::@6
   (byte) main::i#3 ← phi( main::@6/(byte) main::i#2 )
   (byte*) main::screen#10 ← phi( main::@6/(byte*) main::screen#11 )
-  (byte*~) main::$19 ← (byte*) main::screen#10 + (number) $50
-  (byte*~) main::$20 ← (byte*~) main::$19 + (number) 3
-  *((byte*~) main::$20 + (byte) main::i#3) ← *((const byte*) main::msg + (byte) main::i#3)
+  (byte*~) main::$18 ← (byte*) main::screen#10 + (number) $50
+  (byte*~) main::$19 ← (byte*~) main::$18 + (number) 3
+  *((byte*~) main::$19 + (byte) main::i#3) ← *((const byte*) main::msg + (byte) main::i#3)
   (byte) main::i#1 ← ++ (byte) main::i#3
   to:main::@6
 main::@return: scope:[main]  from main::@1
@@ -156,9 +156,9 @@ utoa10w::@2: scope:[utoa10w]  from utoa10w utoa10w::@10 utoa10w::@3
   (byte) utoa10w::digit#5 ← phi( utoa10w/(byte) utoa10w::digit#0 utoa10w::@10/(byte) utoa10w::digit#7 utoa10w::@3/(byte) utoa10w::digit#1 )
   (word) utoa10w::value#2 ← phi( utoa10w/(word) utoa10w::value#5 utoa10w::@10/(word) utoa10w::value#6 utoa10w::@3/(word) utoa10w::value#1 )
   (byte) utoa10w::i#2 ← phi( utoa10w/(byte) utoa10w::i#0 utoa10w::@10/(byte) utoa10w::i#1 utoa10w::@3/(byte) utoa10w::i#3 )
-  (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 * (const byte) SIZEOF_WORD
-  (bool~) utoa10w::$1 ← (word) utoa10w::value#2 >= *((const word*) UTOA10_SUB + (byte~) utoa10w::$8)
-  if((bool~) utoa10w::$1) goto utoa10w::@3
+  (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 * (const byte) SIZEOF_WORD
+  (bool~) utoa10w::$0 ← (word) utoa10w::value#2 >= *((const word*) UTOA10_SUB + (byte~) utoa10w::$7)
+  if((bool~) utoa10w::$0) goto utoa10w::@3
   to:utoa10w::@4
 utoa10w::@3: scope:[utoa10w]  from utoa10w::@2
   (byte*) utoa10w::dst#11 ← phi( utoa10w::@2/(byte*) utoa10w::dst#9 )
@@ -166,8 +166,8 @@ utoa10w::@3: scope:[utoa10w]  from utoa10w::@2
   (byte) utoa10w::i#3 ← phi( utoa10w::@2/(byte) utoa10w::i#2 )
   (byte) utoa10w::digit#3 ← phi( utoa10w::@2/(byte) utoa10w::digit#5 )
   (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#3)
-  (byte~) utoa10w::$9 ← (byte) utoa10w::i#3 * (const byte) SIZEOF_WORD
-  (word) utoa10w::value#1 ← (word) utoa10w::value#3 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$9)
+  (byte~) utoa10w::$8 ← (byte) utoa10w::i#3 * (const byte) SIZEOF_WORD
+  (word) utoa10w::value#1 ← (word) utoa10w::value#3 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8)
   (byte) utoa10w::bStarted#1 ← (number) 1
   to:utoa10w::@2
 utoa10w::@4: scope:[utoa10w]  from utoa10w::@2
@@ -176,10 +176,10 @@ utoa10w::@4: scope:[utoa10w]  from utoa10w::@2
   (word) utoa10w::value#8 ← phi( utoa10w::@2/(word) utoa10w::value#2 )
   (byte) utoa10w::bStarted#3 ← phi( utoa10w::@2/(byte) utoa10w::bStarted#4 )
   (byte) utoa10w::i#4 ← phi( utoa10w::@2/(byte) utoa10w::i#2 )
-  (number~) utoa10w::$2 ← (byte) utoa10w::i#4 & (number) 1
-  (bool~) utoa10w::$3 ← (number~) utoa10w::$2 != (number) 0
-  (bool~) utoa10w::$4 ← ! (bool~) utoa10w::$3
-  if((bool~) utoa10w::$4) goto utoa10w::@10
+  (number~) utoa10w::$1 ← (byte) utoa10w::i#4 & (number) 1
+  (bool~) utoa10w::$2 ← (number~) utoa10w::$1 != (number) 0
+  (bool~) utoa10w::$3 ← ! (bool~) utoa10w::$2
+  if((bool~) utoa10w::$3) goto utoa10w::@10
   to:utoa10w::@8
 utoa10w::@10: scope:[utoa10w]  from utoa10w::@11 utoa10w::@4
   (byte) utoa10w::bStarted#5 ← phi( utoa10w::@11/(byte) utoa10w::bStarted#6 utoa10w::@4/(byte) utoa10w::bStarted#3 )
@@ -188,8 +188,8 @@ utoa10w::@10: scope:[utoa10w]  from utoa10w::@11 utoa10w::@4
   (word) utoa10w::value#6 ← phi( utoa10w::@11/(word) utoa10w::value#7 utoa10w::@4/(word) utoa10w::value#8 )
   (byte) utoa10w::i#5 ← phi( utoa10w::@11/(byte) utoa10w::i#6 utoa10w::@4/(byte) utoa10w::i#4 )
   (byte) utoa10w::i#1 ← (byte) utoa10w::i#5 + rangenext(0,7)
-  (bool~) utoa10w::$7 ← (byte) utoa10w::i#1 != rangelast(0,7)
-  if((bool~) utoa10w::$7) goto utoa10w::@2
+  (bool~) utoa10w::$6 ← (byte) utoa10w::i#1 != rangelast(0,7)
+  if((bool~) utoa10w::$6) goto utoa10w::@2
   to:utoa10w::@12
 utoa10w::@8: scope:[utoa10w]  from utoa10w::@4
   (word) utoa10w::value#9 ← phi( utoa10w::@4/(word) utoa10w::value#8 )
@@ -197,9 +197,9 @@ utoa10w::@8: scope:[utoa10w]  from utoa10w::@4
   (byte*) utoa10w::dst#5 ← phi( utoa10w::@4/(byte*) utoa10w::dst#8 )
   (byte) utoa10w::digit#6 ← phi( utoa10w::@4/(byte) utoa10w::digit#8 )
   (byte) utoa10w::bStarted#2 ← phi( utoa10w::@4/(byte) utoa10w::bStarted#3 )
-  (bool~) utoa10w::$5 ← (byte) utoa10w::bStarted#2 != (number) 0
-  (bool~) utoa10w::$6 ← ! (bool~) utoa10w::$5
-  if((bool~) utoa10w::$6) goto utoa10w::@11
+  (bool~) utoa10w::$4 ← (byte) utoa10w::bStarted#2 != (number) 0
+  (bool~) utoa10w::$5 ← ! (bool~) utoa10w::$4
+  if((bool~) utoa10w::$5) goto utoa10w::@11
   to:utoa10w::@9
 utoa10w::@11: scope:[utoa10w]  from utoa10w::@8 utoa10w::@9
   (byte) utoa10w::bStarted#6 ← phi( utoa10w::@8/(byte) utoa10w::bStarted#2 utoa10w::@9/(byte) utoa10w::bStarted#7 )
@@ -220,8 +220,8 @@ utoa10w::@9: scope:[utoa10w]  from utoa10w::@8
 utoa10w::@12: scope:[utoa10w]  from utoa10w::@10
   (byte*) utoa10w::dst#4 ← phi( utoa10w::@10/(byte*) utoa10w::dst#6 )
   (word) utoa10w::value#4 ← phi( utoa10w::@10/(word) utoa10w::value#6 )
-  (byte~) utoa10w::$0 ← ((byte)) (word) utoa10w::value#4
-  *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$0)
+  (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#4
+  *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9)
   (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4
   *((byte*) utoa10w::dst#2) ← (number) 0
   to:utoa10w::@return
@@ -356,12 +356,11 @@ SYMBOL TABLE SSA
 (void()) main()
 (number~) main::$1
 (byte~) main::$14
-(word~) main::$15
-(byte*~) main::$16
-(bool~) main::$18
+(byte*~) main::$15
+(bool~) main::$17
+(byte*~) main::$18
 (byte*~) main::$19
 (byte~) main::$2
-(byte*~) main::$20
 (number~) main::$3
 (bool~) main::$4
 (label) main::@1
@@ -412,14 +411,14 @@ SYMBOL TABLE SSA
 (byte) main::time_start#5
 (const nomodify byte*) raster = (byte*)(number) $d012
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
-(byte~) utoa10w::$0
-(bool~) utoa10w::$1
-(number~) utoa10w::$2
+(bool~) utoa10w::$0
+(number~) utoa10w::$1
+(bool~) utoa10w::$2
 (bool~) utoa10w::$3
 (bool~) utoa10w::$4
 (bool~) utoa10w::$5
 (bool~) utoa10w::$6
-(bool~) utoa10w::$7
+(byte~) utoa10w::$7
 (byte~) utoa10w::$8
 (byte~) utoa10w::$9
 (label) utoa10w::@10
@@ -584,16 +583,16 @@ Adding number conversion cast (unumber) $270f in (word) utoa16w::value#3 ← (nu
 Adding number conversion cast (unumber) $28 in (byte*) main::screen#4 ← (byte*) main::screen#8 + (number) $28
 Adding number conversion cast (unumber) $e608 in (word) utoa16w::value#4 ← (number) $e608
 Adding number conversion cast (unumber) 0 in *((const nomodify byte*) bordercol) ← (number) 0
-Adding number conversion cast (unumber) $50 in (byte*~) main::$16 ← (byte*) main::screen#9 + (number) $50
-Adding number conversion cast (unumber) 0 in (bool~) main::$18 ← *((const byte*) main::msg + (byte) main::i#2) != (number) 0
-Adding number conversion cast (unumber) $50 in (byte*~) main::$19 ← (byte*) main::screen#10 + (number) $50
-Adding number conversion cast (unumber) 3 in (byte*~) main::$20 ← (byte*~) main::$19 + (number) 3
+Adding number conversion cast (unumber) $50 in (byte*~) main::$15 ← (byte*) main::screen#9 + (number) $50
+Adding number conversion cast (unumber) 0 in (bool~) main::$17 ← *((const byte*) main::msg + (byte) main::i#2) != (number) 0
+Adding number conversion cast (unumber) $50 in (byte*~) main::$18 ← (byte*) main::screen#10 + (number) $50
+Adding number conversion cast (unumber) 3 in (byte*~) main::$19 ← (byte*~) main::$18 + (number) 3
 Adding number conversion cast (unumber) $3e7 in (byte*~) cls::$0 ← (const byte*) cls::screen + (number) $3e7
 Adding number conversion cast (unumber) 1 in (byte) utoa10w::bStarted#1 ← (number) 1
-Adding number conversion cast (unumber) 1 in (number~) utoa10w::$2 ← (byte) utoa10w::i#4 & (number) 1
-Adding number conversion cast (unumber) utoa10w::$2 in (number~) utoa10w::$2 ← (byte) utoa10w::i#4 & (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in (bool~) utoa10w::$3 ← (unumber~) utoa10w::$2 != (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) utoa10w::$5 ← (byte) utoa10w::bStarted#2 != (number) 0
+Adding number conversion cast (unumber) 1 in (number~) utoa10w::$1 ← (byte) utoa10w::i#4 & (number) 1
+Adding number conversion cast (unumber) utoa10w::$1 in (number~) utoa10w::$1 ← (byte) utoa10w::i#4 & (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) utoa10w::$2 ← (unumber~) utoa10w::$1 != (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) utoa10w::$4 ← (byte) utoa10w::bStarted#2 != (number) 0
 Adding number conversion cast (unumber) 0 in (byte) utoa10w::digit#2 ← (number) 0
 Adding number conversion cast (unumber) 0 in *((byte*) utoa10w::dst#2) ← (number) 0
 Adding number conversion cast (unumber) 4 in (byte~) utoa16w::$1 ← (byte~) utoa16w::$0 >> (number) 4
@@ -615,10 +614,8 @@ Inlining cast (word) utoa16w::value#2 ← (unumber)(number) $162e
 Inlining cast (word) utoa16w::value#3 ← (unumber)(number) $270f
 Inlining cast (word) utoa16w::value#4 ← (unumber)(number) $e608
 Inlining cast *((const nomodify byte*) bordercol) ← (unumber)(number) 0
-Inlining cast (word~) main::$15 ← (word)(byte) main::time#0
 Inlining cast (byte) utoa10w::bStarted#1 ← (unumber)(number) 1
 Inlining cast (byte) utoa10w::digit#2 ← (unumber)(number) 0
-Inlining cast (byte~) utoa10w::$0 ← (byte)(word) utoa10w::value#4
 Inlining cast *((byte*) utoa10w::dst#2) ← (unumber)(number) 0
 Inlining cast (byte) utoa16n::started#3 ← (unumber)(number) 1
 Inlining cast *((volatile byte*) utoa16w::dst) ← (unumber)(number) 0
@@ -701,13 +698,13 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$1 ← *((const nomodify byte*) control) & (byte) $80
 Inferred type updated to byte in (unumber~) main::$3 ← (byte~) main::$1 | (byte~) main::$2
-Inferred type updated to byte in (unumber~) utoa10w::$2 ← (byte) utoa10w::i#4 & (byte) 1
+Inferred type updated to byte in (unumber~) utoa10w::$1 ← (byte) utoa10w::i#4 & (byte) 1
 Inferred type updated to byte in (unumber~) utoa16w::$4 ← (byte~) utoa16w::$3 & (byte) $f
 Inferred type updated to byte in (unumber~) utoa16w::$10 ← (byte~) utoa16w::$9 & (byte) $f
-Inversing boolean not [84] (bool~) utoa10w::$4 ← (byte~) utoa10w::$2 == (byte) 0 from [83] (bool~) utoa10w::$3 ← (byte~) utoa10w::$2 != (byte) 0
-Inversing boolean not [92] (bool~) utoa10w::$6 ← (byte) utoa10w::bStarted#2 == (byte) 0 from [91] (bool~) utoa10w::$5 ← (byte) utoa10w::bStarted#2 != (byte) 0
-Inversing boolean not [148] (bool~) utoa16n::$1 ← (byte) utoa16n::nybble#4 == (byte) 0 from [147] (bool~) utoa16n::$0 ← (byte) utoa16n::nybble#4 != (byte) 0
-Inversing boolean not [152] (bool~) utoa16n::$3 ← (byte) utoa16n::started#5 == (byte) 0 from [151] (bool~) utoa16n::$2 ← (byte) utoa16n::started#5 != (byte) 0
+Inversing boolean not [83] (bool~) utoa10w::$3 ← (byte~) utoa10w::$1 == (byte) 0 from [82] (bool~) utoa10w::$2 ← (byte~) utoa10w::$1 != (byte) 0
+Inversing boolean not [91] (bool~) utoa10w::$5 ← (byte) utoa10w::bStarted#2 == (byte) 0 from [90] (bool~) utoa10w::$4 ← (byte) utoa10w::bStarted#2 != (byte) 0
+Inversing boolean not [147] (bool~) utoa16n::$1 ← (byte) utoa16n::nybble#4 == (byte) 0 from [146] (bool~) utoa16n::$0 ← (byte) utoa16n::nybble#4 != (byte) 0
+Inversing boolean not [151] (bool~) utoa16n::$3 ← (byte) utoa16n::started#5 == (byte) 0 from [150] (bool~) utoa16n::$2 ← (byte) utoa16n::started#5 != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::rst#0 = main::$3 
 Alias main::screen#0 = main::screen#5 
@@ -717,8 +714,7 @@ Alias main::screen#2 = main::screen#7
 Alias main::screen#3 = main::screen#8 
 Alias main::screen#12 = main::screen#9 main::screen#4 
 Alias main::time#0 = main::$14 
-Alias utoa10w::value#0 = main::$15 
-Alias utoa10w::dst#0 = main::$16 
+Alias utoa10w::dst#0 = main::$15 
 Alias main::screen#10 = main::screen#11 
 Alias main::i#2 = main::i#3 
 Alias utoa10w::digit#3 = utoa10w::digit#5 utoa10w::digit#8 utoa10w::digit#6 utoa10w::digit#4 
@@ -762,12 +758,12 @@ Identical Phi Values (word) utoa10w::value#5 (word) utoa10w::value#0
 Identical Phi Values (byte*) utoa10w::dst#10 (byte*) utoa10w::dst#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$4 [7] if((byte) main::rst#0!=(byte) $30) goto main::@4
-Simple Condition (bool~) main::$18 [43] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@7
+Simple Condition (bool~) main::$17 [43] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@7
 Simple Condition (bool~) cls::$1 [55] if((byte*) cls::sc#1!=rangelast(cls::screen,cls::$0)) goto cls::@1
-Simple Condition (bool~) utoa10w::$1 [64] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@3
-Simple Condition (bool~) utoa10w::$4 [71] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@10
-Simple Condition (bool~) utoa10w::$7 [75] if((byte) utoa10w::i#1!=rangelast(0,7)) goto utoa10w::@2
-Simple Condition (bool~) utoa10w::$6 [77] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@11
+Simple Condition (bool~) utoa10w::$0 [64] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@3
+Simple Condition (bool~) utoa10w::$3 [71] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@10
+Simple Condition (bool~) utoa10w::$6 [75] if((byte) utoa10w::i#1!=rangelast(0,7)) goto utoa10w::@2
+Simple Condition (bool~) utoa10w::$5 [77] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@11
 Simple Condition (bool~) utoa16n::$1 [120] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@1
 Simple Condition (bool~) utoa16n::$3 [123] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -836,18 +832,18 @@ Constant right-side identified [20] (byte*) main::screen#12 ← (const byte*) ma
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::screen#12 = main::screen#3+$28
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [26] (byte*) utoa10w::dst#0 ← (const byte*) main::screen#12 + (byte) $50
-Constant right-side identified [30] (byte*~) main::$19 ← (const byte*) main::screen#12 + (byte) $50
+Constant right-side identified [25] (byte*) utoa10w::dst#0 ← (const byte*) main::screen#12 + (byte) $50
+Constant right-side identified [30] (byte*~) main::$18 ← (const byte*) main::screen#12 + (byte) $50
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) utoa10w::dst#0 = main::screen#12+$50
-Constant (const byte*) main::$19 = main::screen#12+$50
+Constant (const byte*) main::$18 = main::screen#12+$50
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [29] (byte*~) main::$20 ← (const byte*) main::$19 + (byte) 3
+Constant right-side identified [29] (byte*~) main::$19 ← (const byte*) main::$18 + (byte) 3
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$20 = main::$19+3
+Constant (const byte*) main::$19 = main::$18+3
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting multiplication to use shift [37] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [40] (byte~) utoa10w::$9 ← (byte) utoa10w::i#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [40] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with different constant siblings (const byte*) main::screen#0
 Inlining constant with var siblings (const byte) main::i#0
@@ -886,7 +882,8 @@ Constant inlined utoa10w::bStarted#1 = (byte) 1
 Constant inlined utoa10w::bStarted#0 = (byte) 0
 Constant inlined main::screen#12 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28
 Constant inlined utoa16n::started#0 = (byte) 0
-Constant inlined main::$19 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50
+Constant inlined main::$18 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50
+Constant inlined main::$19 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3
 Constant inlined main::i#0 = (byte) 0
 Constant inlined utoa16n::dst#1 = &(volatile byte*) utoa16w::dst
 Constant inlined utoa16n::dst#0 = &(volatile byte*) utoa16w::dst
@@ -895,7 +892,6 @@ Constant inlined utoa16n::dst#3 = &(volatile byte*) utoa16w::dst
 Constant inlined utoa16n::started#4 = (byte) 1
 Constant inlined utoa16n::dst#2 = &(volatile byte*) utoa16w::dst
 Constant inlined cls::sc#0 = (const byte*) cls::screen
-Constant inlined main::$20 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3
 Constant inlined utoa16w::started#0 = (byte) 0
 Constant inlined cls::$0 = (const byte*) cls::screen+(word) $3e7
 Constant inlined utoa10w::i#0 = (byte) 0
@@ -1066,12 +1062,12 @@ utoa10w::@1: scope:[utoa10w]  from utoa10w utoa10w::@2 utoa10w::@6
   [36] (byte) utoa10w::digit#3 ← phi( utoa10w/(byte) 0 utoa10w::@6/(byte) utoa10w::digit#7 utoa10w::@2/(byte) utoa10w::digit#1 )
   [36] (word) utoa10w::value#10 ← phi( utoa10w/(word) utoa10w::value#0 utoa10w::@6/(word) utoa10w::value#10 utoa10w::@2/(word) utoa10w::value#1 )
   [36] (byte) utoa10w::i#2 ← phi( utoa10w/(byte) 0 utoa10w::@6/(byte) utoa10w::i#1 utoa10w::@2/(byte) utoa10w::i#2 )
-  [37] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1
-  [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@2
+  [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1
+  [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2
   to:utoa10w::@3
 utoa10w::@3: scope:[utoa10w]  from utoa10w::@1
-  [39] (byte~) utoa10w::$2 ← (byte) utoa10w::i#2 & (byte) 1
-  [40] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@6
+  [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1
+  [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6
   to:utoa10w::@4
 utoa10w::@4: scope:[utoa10w]  from utoa10w::@3
   [41] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7
@@ -1090,8 +1086,8 @@ utoa10w::@6: scope:[utoa10w]  from utoa10w::@3 utoa10w::@7
   [47] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1
   to:utoa10w::@8
 utoa10w::@8: scope:[utoa10w]  from utoa10w::@6
-  [48] (byte~) utoa10w::$0 ← (byte)(word) utoa10w::value#10
-  [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$0)
+  [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10
+  [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9)
   [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4
   [51] *((byte*) utoa10w::dst#2) ← (byte) 0
   to:utoa10w::@return
@@ -1100,8 +1096,8 @@ utoa10w::@return: scope:[utoa10w]  from utoa10w::@8
   to:@return
 utoa10w::@2: scope:[utoa10w]  from utoa10w::@1
   [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2)
-  [54] (byte~) utoa10w::$9 ← (byte) utoa10w::i#2 << (byte) 1
-  [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$9)
+  [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1
+  [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8)
   to:utoa10w::@1
 
 (void()) utoa16w((word) utoa16w::value , (volatile byte*) utoa16w::dst)
@@ -1196,10 +1192,10 @@ VARIABLE REGISTER WEIGHTS
 (byte) main::time_start
 (byte) main::time_start#0 11.882352941176471
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
-(byte~) utoa10w::$0 2002.0
-(byte~) utoa10w::$2 200002.0
+(byte~) utoa10w::$1 200002.0
+(byte~) utoa10w::$7 200002.0
 (byte~) utoa10w::$8 200002.0
-(byte~) utoa10w::$9 200002.0
+(byte~) utoa10w::$9 2002.0
 (byte) utoa10w::bStarted
 (byte) utoa10w::bStarted#2 25000.25
 (byte) utoa10w::digit
@@ -1265,11 +1261,11 @@ Added variable main::time_start#0 to live range equivalence class [ main::time_s
 Added variable utoa16w::dst to live range equivalence class [ utoa16w::dst ]
 Added variable main::time_end#0 to live range equivalence class [ main::time_end#0 ]
 Added variable main::time#0 to live range equivalence class [ main::time#0 ]
-Added variable utoa10w::$8 to live range equivalence class [ utoa10w::$8 ]
-Added variable utoa10w::$2 to live range equivalence class [ utoa10w::$2 ]
-Added variable utoa10w::$0 to live range equivalence class [ utoa10w::$0 ]
-Added variable utoa10w::dst#2 to live range equivalence class [ utoa10w::dst#2 ]
+Added variable utoa10w::$7 to live range equivalence class [ utoa10w::$7 ]
+Added variable utoa10w::$1 to live range equivalence class [ utoa10w::$1 ]
 Added variable utoa10w::$9 to live range equivalence class [ utoa10w::$9 ]
+Added variable utoa10w::dst#2 to live range equivalence class [ utoa10w::dst#2 ]
+Added variable utoa10w::$8 to live range equivalence class [ utoa10w::$8 ]
 Added variable utoa16w::$0 to live range equivalence class [ utoa16w::$0 ]
 Added variable utoa16n::return#0 to live range equivalence class [ utoa16n::return#0 ]
 Added variable utoa16w::started#1 to live range equivalence class [ utoa16w::started#1 ]
@@ -1296,11 +1292,11 @@ Complete equivalence classes
 [ utoa16w::dst ]
 [ main::time_end#0 ]
 [ main::time#0 ]
-[ utoa10w::$8 ]
-[ utoa10w::$2 ]
-[ utoa10w::$0 ]
-[ utoa10w::dst#2 ]
+[ utoa10w::$7 ]
+[ utoa10w::$1 ]
 [ utoa10w::$9 ]
+[ utoa10w::dst#2 ]
+[ utoa10w::$8 ]
 [ utoa16w::$0 ]
 [ utoa16n::return#0 ]
 [ utoa16w::started#1 ]
@@ -1326,11 +1322,11 @@ Allocated zp[1]:19 [ main::time_start#0 ]
 Allocated zp[2]:20 [ utoa16w::dst ]
 Allocated zp[1]:22 [ main::time_end#0 ]
 Allocated zp[1]:23 [ main::time#0 ]
-Allocated zp[1]:24 [ utoa10w::$8 ]
-Allocated zp[1]:25 [ utoa10w::$2 ]
-Allocated zp[1]:26 [ utoa10w::$0 ]
+Allocated zp[1]:24 [ utoa10w::$7 ]
+Allocated zp[1]:25 [ utoa10w::$1 ]
+Allocated zp[1]:26 [ utoa10w::$9 ]
 Allocated zp[2]:27 [ utoa10w::dst#2 ]
-Allocated zp[1]:29 [ utoa10w::$9 ]
+Allocated zp[1]:29 [ utoa10w::$8 ]
 Allocated zp[1]:30 [ utoa16w::$0 ]
 Allocated zp[1]:31 [ utoa16n::return#0 ]
 Allocated zp[1]:32 [ utoa16w::started#1 ]
@@ -1555,10 +1551,10 @@ main: {
 // Decimal utoa() without using multiply or divide
 // utoa10w(word zp(4) value, byte* zp(8) dst)
 utoa10w: {
-    .label __0 = $1a
-    .label __2 = $19
-    .label __8 = $18
-    .label __9 = $1d
+    .label __1 = $19
+    .label __7 = $18
+    .label __8 = $1d
+    .label __9 = $1a
     .label value = 4
     .label digit = 6
     .label i = 3
@@ -1593,12 +1589,12 @@ utoa10w: {
     jmp __b1
     // utoa10w::@1
   __b1:
-    // [37] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z __8
-    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuz2_then_la1 
-    ldy.z __8
+    sta.z __7
+    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuz2_then_la1 
+    ldy.z __7
     lda UTOA10_SUB+1,y
     cmp.z value+1
     bne !+
@@ -1610,12 +1606,12 @@ utoa10w: {
     jmp __b3
     // utoa10w::@3
   __b3:
-    // [39] (byte~) utoa10w::$2 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z i
-    sta.z __2
-    // [40] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@6 -- vbuz1_eq_0_then_la1 
-    lda.z __2
+    sta.z __1
+    // [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuz1_eq_0_then_la1 
+    lda.z __1
     cmp #0
     beq __b6_from___b3
     jmp __b4
@@ -1668,11 +1664,11 @@ utoa10w: {
     jmp __b8
     // utoa10w::@8
   __b8:
-    // [48] (byte~) utoa10w::$0 ← (byte)(word) utoa10w::value#10 -- vbuz1=_byte_vwuz2 
+    // [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuz1=_byte_vwuz2 
     lda.z value
-    sta.z __0
-    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$0) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z __0
+    sta.z __9
+    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    ldy.z __9
     lda DIGITS,y
     ldy #0
     sta (dst),y
@@ -1701,12 +1697,12 @@ utoa10w: {
     clc
     adc UTOA10_VAL,y
     sta.z digit
-    // [54] (byte~) utoa10w::$9 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z __9
-    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$9) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
-    ldy.z __9
+    sta.z __8
+    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
+    ldy.z __8
     sec
     lda.z value
     sbc UTOA10_SUB,y
@@ -1963,22 +1959,22 @@ Statement [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0 [ utoa10w::
 Statement [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [37] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$8 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$8 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ utoa10w::bStarted#2 ]
-Statement [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
-Statement [39] (byte~) utoa10w::$2 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$2 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$2 ] { }  ) always clobbers reg byte a 
+Statement [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
+Statement [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] { }  ) always clobbers reg byte a 
 Statement [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:7 [ utoa10w::bStarted#2 ]
-Statement [48] (byte~) utoa10w::$0 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$0 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 utoa10w::$0 ] { }  ) always clobbers reg byte a 
-Statement [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$0) [ utoa10w::dst#4 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$9 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 utoa10w::$9 ] { }  ) always clobbers reg byte a 
+Statement [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) [ utoa10w::dst#4 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 [ utoa10w::dst#2 ] ( main:2::utoa10w:30 [ utoa10w::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [51] *((byte*) utoa10w::dst#2) ← (byte) 0 [ ] ( main:2::utoa10w:30 [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
-Statement [54] (byte~) utoa10w::$9 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$9 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$9 ] { }  ) always clobbers reg byte a 
-Statement [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$9) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
+Statement [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] { }  ) always clobbers reg byte a 
+Statement [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
 Statement [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  ) always clobbers reg byte a 
 Statement [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:35 [ utoa16w::started#2 ]
@@ -2002,17 +1998,17 @@ Statement [28] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::ti
 Statement [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0 [ utoa10w::value#0 ] ( main:2 [ utoa10w::value#0 ] { }  ) always clobbers reg byte a 
 Statement [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [37] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$8 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$8 ] { }  ) always clobbers reg byte a 
-Statement [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
-Statement [39] (byte~) utoa10w::$2 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$2 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$2 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] { }  ) always clobbers reg byte a 
+Statement [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
+Statement [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] { }  ) always clobbers reg byte a 
 Statement [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [48] (byte~) utoa10w::$0 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$0 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 utoa10w::$0 ] { }  ) always clobbers reg byte a 
-Statement [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$0) [ utoa10w::dst#4 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$9 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 utoa10w::$9 ] { }  ) always clobbers reg byte a 
+Statement [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) [ utoa10w::dst#4 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 [ utoa10w::dst#2 ] ( main:2::utoa10w:30 [ utoa10w::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [51] *((byte*) utoa10w::dst#2) ← (byte) 0 [ ] ( main:2::utoa10w:30 [ ] { }  ) always clobbers reg byte a reg byte y 
 Statement [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
-Statement [54] (byte~) utoa10w::$9 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$9 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$9 ] { }  ) always clobbers reg byte a 
-Statement [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$9) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
+Statement [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] { }  ) always clobbers reg byte a 
+Statement [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
 Statement [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  ) always clobbers reg byte a 
 Statement [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  ) always clobbers reg byte a 
 Statement [75] *((volatile byte*) utoa16w::dst) ← (byte) 0 [ ] ( main:2::utoa16w:13 [ main::time_start#0 ] { }  main:2::utoa16w:16 [ main::time_start#0 ] { }  main:2::utoa16w:19 [ main::time_start#0 ] { }  main:2::utoa16w:22 [ main::time_start#0 ] { }  main:2::utoa16w:25 [ main::time_start#0 ] { }  ) always clobbers reg byte a reg byte y 
@@ -2036,11 +2032,11 @@ Potential registers zp[1]:19 [ main::time_start#0 ] : zp[1]:19 , reg byte x ,
 Potential registers zp[2]:20 [ utoa16w::dst ] : zp[2]:20 , 
 Potential registers zp[1]:22 [ main::time_end#0 ] : zp[1]:22 , reg byte x , reg byte y , 
 Potential registers zp[1]:23 [ main::time#0 ] : zp[1]:23 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:24 [ utoa10w::$8 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:25 [ utoa10w::$2 ] : zp[1]:25 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:26 [ utoa10w::$0 ] : zp[1]:26 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:24 [ utoa10w::$7 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:25 [ utoa10w::$1 ] : zp[1]:25 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:26 [ utoa10w::$9 ] : zp[1]:26 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:27 [ utoa10w::dst#2 ] : zp[2]:27 , 
-Potential registers zp[1]:29 [ utoa10w::$9 ] : zp[1]:29 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:29 [ utoa10w::$8 ] : zp[1]:29 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:30 [ utoa16w::$0 ] : zp[1]:30 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:31 [ utoa16n::return#0 ] : zp[1]:31 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:32 [ utoa16w::started#1 ] : zp[1]:32 , reg byte a , reg byte x , reg byte y , 
@@ -2051,14 +2047,14 @@ Potential registers zp[1]:36 [ utoa16w::$6 ] : zp[1]:36 , reg byte a , reg byte 
 Potential registers zp[1]:37 [ utoa16w::$9 ] : zp[1]:37 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [utoa10w] 630,406.7: zp[2]:8 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] 236,339.14: zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] 216,668.83: zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ] 211,540.58: zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ] 200,002: zp[1]:24 [ utoa10w::$8 ] 200,002: zp[1]:25 [ utoa10w::$2 ] 200,002: zp[1]:29 [ utoa10w::$9 ] 25,000.25: zp[1]:7 [ utoa10w::bStarted#2 ] 2,002: zp[1]:26 [ utoa10w::$0 ] 2,002: zp[2]:27 [ utoa10w::dst#2 ] 
+Uplift Scope [utoa10w] 630,406.7: zp[2]:8 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] 236,339.14: zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] 216,668.83: zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ] 211,540.58: zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ] 200,002: zp[1]:24 [ utoa10w::$7 ] 200,002: zp[1]:25 [ utoa10w::$1 ] 200,002: zp[1]:29 [ utoa10w::$8 ] 25,000.25: zp[1]:7 [ utoa10w::bStarted#2 ] 2,002: zp[1]:26 [ utoa10w::$9 ] 2,002: zp[2]:27 [ utoa10w::dst#2 ] 
 Uplift Scope [utoa16n] 11,148.43: zp[1]:13 [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ] 10,807.2: zp[1]:12 [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ] 2,002: zp[1]:31 [ utoa16n::return#0 ] 2,002: zp[1]:34 [ utoa16n::return#1 ] 
 Uplift Scope [utoa16w] 2,002: zp[1]:30 [ utoa16w::$0 ] 2,002: zp[1]:33 [ utoa16w::$3 ] 2,002: zp[1]:36 [ utoa16w::$6 ] 2,002: zp[1]:37 [ utoa16w::$9 ] 667.33: zp[1]:32 [ utoa16w::started#1 ] 667.33: zp[1]:35 [ utoa16w::started#2 ] 250.25: zp[2]:10 [ utoa16w::value#5 ] 47.06: zp[2]:20 [ utoa16w::dst ] 
 Uplift Scope [main] 3,670.33: zp[1]:2 [ main::i#2 main::i#1 ] 2,002: zp[1]:17 [ main::$2 ] 2,002: zp[1]:18 [ main::rst#0 ] 1,001: zp[1]:16 [ main::$1 ] 101: zp[1]:22 [ main::time_end#0 ] 101: zp[1]:23 [ main::time#0 ] 11.88: zp[1]:19 [ main::time_start#0 ] 
 Uplift Scope [cls] 3,003: zp[2]:14 [ cls::sc#2 cls::sc#1 ] 
 Uplift Scope [] 
 
-Uplifting [utoa10w] best 28971 combination zp[2]:8 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ] reg byte x [ utoa10w::i#2 utoa10w::i#1 ] reg byte a [ utoa10w::$8 ] reg byte a [ utoa10w::$2 ] zp[1]:29 [ utoa10w::$9 ] zp[1]:7 [ utoa10w::bStarted#2 ] zp[1]:26 [ utoa10w::$0 ] zp[2]:27 [ utoa10w::dst#2 ] 
+Uplifting [utoa10w] best 28971 combination zp[2]:8 [ utoa10w::dst#7 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ] reg byte x [ utoa10w::i#2 utoa10w::i#1 ] reg byte a [ utoa10w::$7 ] reg byte a [ utoa10w::$1 ] zp[1]:29 [ utoa10w::$8 ] zp[1]:7 [ utoa10w::bStarted#2 ] zp[1]:26 [ utoa10w::$9 ] zp[2]:27 [ utoa10w::dst#2 ] 
 Limited combination testing to 100 combinations of 3072 possible.
 Uplifting [utoa16n] best 28919 combination reg byte x [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ] reg byte a [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ] reg byte x [ utoa16n::return#0 ] reg byte x [ utoa16n::return#1 ] 
 Limited combination testing to 100 combinations of 128 possible.
@@ -2070,12 +2066,12 @@ Uplifting [cls] best 26495 combination zp[2]:14 [ cls::sc#2 cls::sc#1 ]
 Uplifting [] best 26495 combination 
 Attempting to uplift remaining variables inzp[1]:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ]
 Uplifting [utoa10w] best 26495 combination zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#7 utoa10w::digit#1 ] 
-Attempting to uplift remaining variables inzp[1]:29 [ utoa10w::$9 ]
-Uplifting [utoa10w] best 26095 combination reg byte a [ utoa10w::$9 ] 
+Attempting to uplift remaining variables inzp[1]:29 [ utoa10w::$8 ]
+Uplifting [utoa10w] best 26095 combination reg byte a [ utoa10w::$8 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ utoa10w::bStarted#2 ]
 Uplifting [utoa10w] best 26095 combination zp[1]:7 [ utoa10w::bStarted#2 ] 
-Attempting to uplift remaining variables inzp[1]:26 [ utoa10w::$0 ]
-Uplifting [utoa10w] best 26091 combination reg byte a [ utoa10w::$0 ] 
+Attempting to uplift remaining variables inzp[1]:26 [ utoa10w::$9 ]
+Uplifting [utoa10w] best 26091 combination reg byte a [ utoa10w::$9 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ main::$1 ]
 Uplifting [main] best 26091 combination zp[1]:16 [ main::$1 ] 
 Attempting to uplift remaining variables inzp[1]:32 [ utoa16w::started#1 ]
@@ -2329,10 +2325,10 @@ utoa10w: {
     jmp __b1
     // utoa10w::@1
   __b1:
-    // [37] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
+    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
     tay
     lda UTOA10_SUB+1,y
     cmp.z value+1
@@ -2345,10 +2341,10 @@ utoa10w: {
     jmp __b3
     // utoa10w::@3
   __b3:
-    // [39] (byte~) utoa10w::$2 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-    // [40] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
+    // [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b6_from___b3
     jmp __b4
@@ -2400,9 +2396,9 @@ utoa10w: {
     jmp __b8
     // utoa10w::@8
   __b8:
-    // [48] (byte~) utoa10w::$0 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
+    // [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
     lda.z value
-    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$0) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
+    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy #0
@@ -2428,10 +2424,10 @@ utoa10w: {
     clc
     adc.z digit
     sta.z digit
-    // [54] (byte~) utoa10w::$9 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$9) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z value
@@ -2778,10 +2774,10 @@ FINAL SYMBOL TABLE
 (byte) main::time_start#0 time_start zp[1]:7 11.882352941176471
 (const nomodify byte*) raster = (byte*) 53266
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
-(byte~) utoa10w::$0 reg byte a 2002.0
-(byte~) utoa10w::$2 reg byte a 200002.0
+(byte~) utoa10w::$1 reg byte a 200002.0
+(byte~) utoa10w::$7 reg byte a 200002.0
 (byte~) utoa10w::$8 reg byte a 200002.0
-(byte~) utoa10w::$9 reg byte a 200002.0
+(byte~) utoa10w::$9 reg byte a 2002.0
 (label) utoa10w::@1
 (label) utoa10w::@2
 (label) utoa10w::@3
@@ -2860,10 +2856,10 @@ zp[1]:7 [ main::time_start#0 utoa10w::bStarted#2 ]
 zp[2]:8 [ utoa16w::dst ]
 reg byte x [ main::time_end#0 ]
 reg byte a [ main::time#0 ]
-reg byte a [ utoa10w::$8 ]
-reg byte a [ utoa10w::$2 ]
-reg byte a [ utoa10w::$0 ]
+reg byte a [ utoa10w::$7 ]
+reg byte a [ utoa10w::$1 ]
 reg byte a [ utoa10w::$9 ]
+reg byte a [ utoa10w::$8 ]
 reg byte a [ utoa16w::$0 ]
 reg byte x [ utoa16n::return#0 ]
 reg byte x [ utoa16w::started#1 ]
@@ -3094,11 +3090,11 @@ utoa10w: {
     // utoa10w::@1
   __b1:
     // value>=UTOA10_SUB[i]
-    // [37] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // while(value>=UTOA10_SUB[i])
-    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$8)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
+    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
     tay
     lda UTOA10_SUB+1,y
     cmp.z value+1
@@ -3110,11 +3106,11 @@ utoa10w: {
     bcc __b2
     // utoa10w::@3
     // i&1
-    // [39] (byte~) utoa10w::$2 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
     // if((i&1)!=0)
-    // [40] if((byte~) utoa10w::$2==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
+    // [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b6
     // utoa10w::@4
@@ -3157,11 +3153,10 @@ utoa10w: {
     cpx #8
     bne __b1
     // utoa10w::@8
-    // (unsigned char) value
-    // [48] (byte~) utoa10w::$0 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
-    lda.z value
     // *dst++ = DIGITS[(unsigned char) value]
-    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$0) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
+    // [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
+    lda.z value
+    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy #0
@@ -3190,10 +3185,10 @@ utoa10w: {
     adc.z digit
     sta.z digit
     // value -= UTOA10_SUB[i]
-    // [54] (byte~) utoa10w::$9 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$9) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z value

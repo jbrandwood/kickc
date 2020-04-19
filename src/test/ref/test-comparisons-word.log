@@ -1,10 +1,23 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
 Fixing pointer array-indexing *((const word*) words + (byte) main::i)
 Fixing pointer array-indexing *((const word*) words + (byte) main::j)
+De-inlining cast (word)toD018::screen
+De-inlining cast (word)toSpritePtr::sprite
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -105,9 +118,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -115,8 +128,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -926,8 +939,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -1164,7 +1177,6 @@ Adding number conversion cast (unumber) 3 in (bool~) compare::$3 ← (byte) comp
 Adding number conversion cast (unumber) 4 in (bool~) compare::$4 ← (byte) compare::op#5 == (number) 4
 Adding number conversion cast (unumber) 5 in (bool~) compare::$5 ← (byte) compare::op#6 == (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte) main::s#2 ← (unumber)(number) 0
@@ -1215,7 +1227,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1335,7 +1347,7 @@ Identical Phi Values (word) main::w1#2 (word) main::w1#0
 Identical Phi Values (byte) main::i#10 (byte) main::i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$1 [17] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [27] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1
 Simple Condition (bool~) main::$3 [79] if((byte) main::s#1!=(byte) 3) goto main::@4
@@ -1381,7 +1393,7 @@ Constant (const byte) compare::r#6 = TT
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1410,9 +1422,9 @@ Finalized unsigned number type (byte) 6
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [37] (byte~) main::$8 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [40] (byte~) main::$9 ← (byte) main::j#2 * (const byte) SIZEOF_WORD
@@ -1446,7 +1458,7 @@ Constant inlined compare::r#3 = (const nomodify byte) TT
 Constant inlined compare::r#2 = (const nomodify byte) TT
 Constant inlined compare::r#5 = (const nomodify byte) TT
 Constant inlined compare::r#4 = (const nomodify byte) TT
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::j#0 = (byte) 0
 Constant inlined main::op#0 = (byte) 0

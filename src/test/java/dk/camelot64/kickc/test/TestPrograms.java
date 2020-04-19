@@ -42,6 +42,16 @@ public class TestPrograms {
 
 
    @Test
+   public void testProblemStructInlineParameter() throws IOException, URISyntaxException {
+      compileAndCompare("problem-struct-inline-parameter.c");
+   }
+
+   //@Test
+   //public void testProblemNegateConst() throws IOException, URISyntaxException {
+   //   compileAndCompare("problem-negate-const.c", log());
+   //}
+
+   @Test
    public void testPrintf2() throws IOException, URISyntaxException {
       compileAndCompare("printf-2.c");
    }

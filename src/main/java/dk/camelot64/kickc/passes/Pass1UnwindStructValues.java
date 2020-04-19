@@ -122,7 +122,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       if(anyParameterUnwound) {
          call.setParameters(unwoundParameters);
-         getLog().append("Converted procedure struct value parameter to member unwinding in call " + call.toString(getProgram(), false));
+         getLog().append("Converted call struct value parameter to member unwinding " + call.toString(getProgram(), false));
       }
       return (anyParameterUnwound || lvalUnwound);
    }

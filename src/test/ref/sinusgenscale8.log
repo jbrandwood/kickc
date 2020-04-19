@@ -1,10 +1,28 @@
 Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (byte)mul8s::b
+De-inlining cast (byte)mul8s::a
+De-inlining cast (byte)mul8su::b
+De-inlining cast (word)mul16s::b
+De-inlining cast (word)mul16s::a
+De-inlining cast (signed word)sin16s_gen2::$7
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
+De-inlining cast (word)sin8u_table::min
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -253,10 +271,8 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
 mul8su: scope:[mul8su]  from sin8u_table::@19
   (byte) mul8su::b#1 ← phi( sin8u_table::@19/(byte) mul8su::b#0 )
   (signed byte) mul8su::a#1 ← phi( sin8u_table::@19/(signed byte) mul8su::a#0 )
-  (byte~) mul8su::$0 ← ((byte)) (signed byte) mul8su::a#1
-  (byte~) mul8su::$1 ← ((byte)) (byte) mul8su::b#1
-  (byte) mul8u::a#1 ← (byte~) mul8su::$0
-  (byte) mul8u::b#0 ← (byte~) mul8su::$1
+  (byte) mul8u::a#1 ← (byte)(signed byte) mul8su::a#1
+  (byte) mul8u::b#0 ← (byte)(byte) mul8su::b#1
   call mul8u 
   (word) mul8u::return#2 ← (word) mul8u::return#1
   to:mul8su::@4
@@ -264,25 +280,24 @@ mul8su::@4: scope:[mul8su]  from mul8su
   (byte) mul8su::b#3 ← phi( mul8su/(byte) mul8su::b#1 )
   (signed byte) mul8su::a#2 ← phi( mul8su/(signed byte) mul8su::a#1 )
   (word) mul8u::return#5 ← phi( mul8su/(word) mul8u::return#2 )
-  (word~) mul8su::$2 ← (word) mul8u::return#5
-  (word) mul8su::m#0 ← (word~) mul8su::$2
-  (bool~) mul8su::$3 ← (signed byte) mul8su::a#2 < (number) 0
-  (bool~) mul8su::$4 ← ! (bool~) mul8su::$3
-  if((bool~) mul8su::$4) goto mul8su::@1
+  (word~) mul8su::$0 ← (word) mul8u::return#5
+  (word) mul8su::m#0 ← (word~) mul8su::$0
+  (bool~) mul8su::$1 ← (signed byte) mul8su::a#2 < (number) 0
+  (bool~) mul8su::$2 ← ! (bool~) mul8su::$1
+  if((bool~) mul8su::$2) goto mul8su::@1
   to:mul8su::@2
 mul8su::@1: scope:[mul8su]  from mul8su::@2 mul8su::@4
   (word) mul8su::m#2 ← phi( mul8su::@2/(word) mul8su::m#1 mul8su::@4/(word) mul8su::m#0 )
-  (signed word~) mul8su::$5 ← ((signed word)) (word) mul8su::m#2
-  (signed word) mul8su::return#0 ← (signed word~) mul8su::$5
+  (signed word) mul8su::return#0 ← (signed word)(word) mul8su::m#2
   to:mul8su::@return
 mul8su::@2: scope:[mul8su]  from mul8su::@4
   (byte) mul8su::b#2 ← phi( mul8su::@4/(byte) mul8su::b#3 )
   (word) mul8su::m#3 ← phi( mul8su::@4/(word) mul8su::m#0 )
-  (byte~) mul8su::$7 ← > (word) mul8su::m#3
-  (byte~) mul8su::$8 ← ((byte)) (byte) mul8su::b#2
-  (byte~) mul8su::$9 ← (byte~) mul8su::$7 - (byte~) mul8su::$8
-  (byte~) mul8su::$10 ← (byte~) mul8su::$9
-  (word) mul8su::m#1 ← (word) mul8su::m#3 hi= (byte~) mul8su::$10
+  (byte~) mul8su::$4 ← > (word) mul8su::m#3
+  (byte~) mul8su::$7 ← (byte)(byte) mul8su::b#2
+  (byte~) mul8su::$5 ← (byte~) mul8su::$4 - (byte~) mul8su::$7
+  (byte~) mul8su::$6 ← (byte~) mul8su::$5
+  (word) mul8su::m#1 ← (word) mul8su::m#3 hi= (byte~) mul8su::$6
   to:mul8su::@1
 mul8su::@return: scope:[mul8su]  from mul8su::@1
   (signed word) mul8su::return#3 ← phi( mul8su::@1/(signed word) mul8su::return#0 )
@@ -307,8 +322,8 @@ sin8s::@1: scope:[sin8s]  from sin8s sin8s::@5
   to:sin8s::@6
 sin8s::@5: scope:[sin8s]  from sin8s
   (word) sin8s::x#5 ← phi( sin8s/(word) sin8s::x#3 )
-  (word~) sin8s::$19 ← (word) sin8s::x#5 - (const nomodify word) PI_u4f12
-  (word) sin8s::x#0 ← (word~) sin8s::$19
+  (word~) sin8s::$18 ← (word) sin8s::x#5 - (const nomodify word) PI_u4f12
+  (word) sin8s::x#0 ← (word~) sin8s::$18
   (byte) sin8s::isUpper#1 ← (number) 1
   to:sin8s::@1
 sin8s::@2: scope:[sin8s]  from sin8s::@1 sin8s::@6
@@ -392,17 +407,16 @@ sin8s::@14: scope:[sin8s]  from sin8s::@13
 sin8s::@6: scope:[sin8s]  from sin8s::@1
   (byte) sin8s::isUpper#11 ← phi( sin8s::@1/(byte) sin8s::isUpper#10 )
   (word) sin8s::x#7 ← phi( sin8s::@1/(word) sin8s::x#4 )
-  (word~) sin8s::$20 ← (const nomodify word) PI_u4f12 - (word) sin8s::x#7
-  (word) sin8s::x#1 ← (word~) sin8s::$20
+  (word~) sin8s::$19 ← (const nomodify word) PI_u4f12 - (word) sin8s::x#7
+  (word) sin8s::x#1 ← (word~) sin8s::$19
   to:sin8s::@2
 sin8s::@3: scope:[sin8s]  from sin8s::@14 sin8s::@7
   (byte) sin8s::isUpper#2 ← phi( sin8s::@14/(byte) sin8s::isUpper#3 sin8s::@7/(byte) sin8s::isUpper#4 )
   (byte) sin8s::usinx#4 ← phi( sin8s::@14/(byte) sin8s::usinx#1 sin8s::@7/(byte) sin8s::usinx#2 )
-  (signed byte~) sin8s::$16 ← ((signed byte)) (byte) sin8s::usinx#4
-  (signed byte) sin8s::sinx#0 ← (signed byte~) sin8s::$16
-  (bool~) sin8s::$17 ← (byte) sin8s::isUpper#2 != (number) 0
-  (bool~) sin8s::$18 ← ! (bool~) sin8s::$17
-  if((bool~) sin8s::$18) goto sin8s::@4
+  (signed byte) sin8s::sinx#0 ← (signed byte)(byte) sin8s::usinx#4
+  (bool~) sin8s::$16 ← (byte) sin8s::isUpper#2 != (number) 0
+  (bool~) sin8s::$17 ← ! (bool~) sin8s::$16
+  if((bool~) sin8s::$17) goto sin8s::@4
   to:sin8s::@8
 sin8s::@7: scope:[sin8s]  from sin8s::@14
   (byte) sin8s::isUpper#4 ← phi( sin8s::@14/(byte) sin8s::isUpper#3 )
@@ -415,9 +429,8 @@ sin8s::@4: scope:[sin8s]  from sin8s::@3 sin8s::@8
   to:sin8s::@return
 sin8s::@8: scope:[sin8s]  from sin8s::@3
   (byte) sin8s::usinx#6 ← phi( sin8s::@3/(byte) sin8s::usinx#4 )
-  (signed byte~) sin8s::$21 ← ((signed byte)) (byte) sin8s::usinx#6
-  (signed byte~) sin8s::$22 ← - (signed byte~) sin8s::$21
-  (signed byte) sin8s::sinx#1 ← (signed byte~) sin8s::$22
+  (signed byte~) sin8s::$20 ← - (signed byte)(byte) sin8s::usinx#6
+  (signed byte) sin8s::sinx#1 ← (signed byte~) sin8s::$20
   to:sin8s::@4
 sin8s::@return: scope:[sin8s]  from sin8s::@4
   (signed byte) sin8s::return#3 ← phi( sin8s::@4/(signed byte) sin8s::return#0 )
@@ -466,9 +479,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -476,8 +489,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -569,8 +582,8 @@ print_sint::@5: scope:[print_sint]  from print_sint::@1
   (signed word) print_sint::w#3 ← phi( print_sint::@1/(signed word) print_sint::w#5 )
   (byte*) print_char_cursor#52 ← phi( print_sint::@1/(byte*) print_char_cursor#20 )
   (byte*) print_char_cursor#5 ← (byte*) print_char_cursor#52
-  (signed word~) print_sint::$5 ← - (signed word) print_sint::w#3
-  (signed word) print_sint::w#0 ← (signed word~) print_sint::$5
+  (signed word~) print_sint::$4 ← - (signed word) print_sint::w#3
+  (signed word) print_sint::w#0 ← (signed word~) print_sint::$4
   to:print_sint::@2
 print_sint::@3: scope:[print_sint]  from print_sint
   (signed word) print_sint::w#7 ← phi( print_sint/(signed word) print_sint::w#2 )
@@ -586,8 +599,7 @@ print_sint::@6: scope:[print_sint]  from print_sint::@3
 print_sint::@2: scope:[print_sint]  from print_sint::@5 print_sint::@6
   (byte*) print_char_cursor#99 ← phi( print_sint::@5/(byte*) print_char_cursor#5 print_sint::@6/(byte*) print_char_cursor#6 )
   (signed word) print_sint::w#4 ← phi( print_sint::@5/(signed word) print_sint::w#0 print_sint::@6/(signed word) print_sint::w#6 )
-  (word~) print_sint::$1 ← ((word)) (signed word) print_sint::w#4
-  (word) print_uint::w#0 ← (word~) print_sint::$1
+  (word) print_uint::w#0 ← (word)(signed word) print_sint::w#4
   call print_uint 
   to:print_sint::@7
 print_sint::@7: scope:[print_sint]  from print_sint::@2
@@ -617,8 +629,8 @@ print_schar::@5: scope:[print_schar]  from print_schar::@1
   (signed byte) print_schar::b#3 ← phi( print_schar::@1/(signed byte) print_schar::b#5 )
   (byte*) print_char_cursor#56 ← phi( print_schar::@1/(byte*) print_char_cursor#20 )
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#56
-  (signed byte~) print_schar::$5 ← - (signed byte) print_schar::b#3
-  (signed byte) print_schar::b#0 ← (signed byte~) print_schar::$5
+  (signed byte~) print_schar::$4 ← - (signed byte) print_schar::b#3
+  (signed byte) print_schar::b#0 ← (signed byte~) print_schar::$4
   to:print_schar::@2
 print_schar::@3: scope:[print_schar]  from print_schar
   (signed byte) print_schar::b#7 ← phi( print_schar/(signed byte) print_schar::b#2 )
@@ -634,8 +646,7 @@ print_schar::@6: scope:[print_schar]  from print_schar::@3
 print_schar::@2: scope:[print_schar]  from print_schar::@5 print_schar::@6
   (byte*) print_char_cursor#102 ← phi( print_schar::@5/(byte*) print_char_cursor#9 print_schar::@6/(byte*) print_char_cursor#10 )
   (signed byte) print_schar::b#4 ← phi( print_schar::@5/(signed byte) print_schar::b#0 print_schar::@6/(signed byte) print_schar::b#6 )
-  (byte~) print_schar::$1 ← ((byte)) (signed byte) print_schar::b#4
-  (byte) print_uchar::b#0 ← (byte~) print_schar::$1
+  (byte) print_uchar::b#0 ← (byte)(signed byte) print_schar::b#4
   call print_uchar 
   to:print_schar::@7
 print_schar::@7: scope:[print_schar]  from print_schar::@2
@@ -777,13 +788,12 @@ sin8u_table: scope:[sin8u_table]  from main::@1
   (byte) sin8u_table::max#1 ← phi( main::@1/(byte) sin8u_table::max#0 )
   (byte~) sin8u_table::$0 ← (byte) sin8u_table::max#1 - (byte) sin8u_table::min#1
   (byte) sin8u_table::amplitude#0 ← (byte~) sin8u_table::$0
-  (word~) sin8u_table::$1 ← ((word)) (byte) sin8u_table::min#1
-  (word~) sin8u_table::$2 ← (word~) sin8u_table::$1 + (byte) sin8u_table::max#1
-  (word) sin8u_table::sum#0 ← (word~) sin8u_table::$2
-  (number~) sin8u_table::$3 ← (word) sin8u_table::sum#0 / (number) 2
-  (number~) sin8u_table::$4 ← (number~) sin8u_table::$3 + (number) 1
-  (byte~) sin8u_table::$5 ← ((byte)) (number~) sin8u_table::$4
-  (byte) sin8u_table::mid#0 ← (byte~) sin8u_table::$5
+  (word~) sin8u_table::$32 ← (word)(byte) sin8u_table::min#1
+  (word~) sin8u_table::$1 ← (word~) sin8u_table::$32 + (byte) sin8u_table::max#1
+  (word) sin8u_table::sum#0 ← (word~) sin8u_table::$1
+  (number~) sin8u_table::$2 ← (word) sin8u_table::sum#0 / (number) 2
+  (number~) sin8u_table::$3 ← (number~) sin8u_table::$2 + (number) 1
+  (byte) sin8u_table::mid#0 ← (byte)(number~) sin8u_table::$3
   (word) div16u::dividend#0 ← (const nomodify word) PI2_u4f12
   (word) div16u::divisor#0 ← (word) sin8u_table::tabsize#1
   call div16u 
@@ -799,8 +809,8 @@ sin8u_table::@7: scope:[sin8u_table]  from sin8u_table
   (byte) sin8u_table::min#5 ← phi( sin8u_table/(byte) sin8u_table::min#1 )
   (byte*) print_char_cursor#106 ← phi( sin8u_table/(byte*) print_char_cursor#113 )
   (word) div16u::return#4 ← phi( sin8u_table/(word) div16u::return#2 )
-  (word~) sin8u_table::$6 ← (word) div16u::return#4
-  (word) sin8u_table::step#0 ← (word~) sin8u_table::$6
+  (word~) sin8u_table::$4 ← (word) div16u::return#4
+  (word) sin8u_table::step#0 ← (word~) sin8u_table::$4
   (byte*) print_str::str#1 ← (const byte*) sin8u_table::str
   call print_str 
   to:sin8u_table::@8
@@ -954,8 +964,8 @@ sin8u_table::@1: scope:[sin8u_table]  from sin8u_table::@18 sin8u_table::@29
   (word) sin8u_table::x#5 ← phi( sin8u_table::@18/(word) sin8u_table::x#0 sin8u_table::@29/(word) sin8u_table::x#1 )
   (word) sin8u_table::tabsize#2 ← phi( sin8u_table::@18/(word) sin8u_table::tabsize#3 sin8u_table::@29/(word) sin8u_table::tabsize#4 )
   (word) sin8u_table::i#2 ← phi( sin8u_table::@18/(word) sin8u_table::i#0 sin8u_table::@29/(word) sin8u_table::i#1 )
-  (bool~) sin8u_table::$18 ← (word) sin8u_table::i#2 < (word) sin8u_table::tabsize#2
-  if((bool~) sin8u_table::$18) goto sin8u_table::@2
+  (bool~) sin8u_table::$16 ← (word) sin8u_table::i#2 < (word) sin8u_table::tabsize#2
+  if((bool~) sin8u_table::$16) goto sin8u_table::@2
   to:sin8u_table::@return
 sin8u_table::@2: scope:[sin8u_table]  from sin8u_table::@1
   (word) sin8u_table::tabsize#26 ← phi( sin8u_table::@1/(word) sin8u_table::tabsize#2 )
@@ -982,11 +992,11 @@ sin8u_table::@19: scope:[sin8u_table]  from sin8u_table::@2
   (byte) sin8u_table::mid#4 ← phi( sin8u_table::@2/(byte) sin8u_table::mid#6 )
   (byte) sin8u_table::amplitude#2 ← phi( sin8u_table::@2/(byte) sin8u_table::amplitude#4 )
   (signed byte) sin8s::return#4 ← phi( sin8u_table::@2/(signed byte) sin8s::return#2 )
-  (signed byte~) sin8u_table::$19 ← (signed byte) sin8s::return#4
-  (signed byte) sin8u_table::sinx#0 ← (signed byte~) sin8u_table::$19
-  (number~) sin8u_table::$20 ← (byte) sin8u_table::amplitude#2 + (number) 1
+  (signed byte~) sin8u_table::$17 ← (signed byte) sin8s::return#4
+  (signed byte) sin8u_table::sinx#0 ← (signed byte~) sin8u_table::$17
+  (number~) sin8u_table::$18 ← (byte) sin8u_table::amplitude#2 + (number) 1
   (signed byte) mul8su::a#0 ← (signed byte) sin8u_table::sinx#0
-  (byte) mul8su::b#0 ← (number~) sin8u_table::$20
+  (byte) mul8su::b#0 ← (number~) sin8u_table::$18
   call mul8su 
   (signed word) mul8su::return#2 ← (signed word) mul8su::return#1
   to:sin8u_table::@20
@@ -1002,11 +1012,11 @@ sin8u_table::@20: scope:[sin8u_table]  from sin8u_table::@19
   (byte*) sin8u_table::sintab#2 ← phi( sin8u_table::@19/(byte*) sin8u_table::sintab#3 )
   (byte) sin8u_table::mid#2 ← phi( sin8u_table::@19/(byte) sin8u_table::mid#4 )
   (signed word) mul8su::return#4 ← phi( sin8u_table::@19/(signed word) mul8su::return#2 )
-  (signed word~) sin8u_table::$21 ← (signed word) mul8su::return#4
-  (signed word) sin8u_table::sinx_sc#0 ← (signed word~) sin8u_table::$21
-  (byte~) sin8u_table::$22 ← > (signed word) sin8u_table::sinx_sc#0
-  (byte~) sin8u_table::$23 ← (byte) sin8u_table::mid#2 + (byte~) sin8u_table::$22
-  (byte) sin8u_table::sinx_tr#0 ← (byte~) sin8u_table::$23
+  (signed word~) sin8u_table::$19 ← (signed word) mul8su::return#4
+  (signed word) sin8u_table::sinx_sc#0 ← (signed word~) sin8u_table::$19
+  (byte~) sin8u_table::$20 ← > (signed word) sin8u_table::sinx_sc#0
+  (byte~) sin8u_table::$21 ← (byte) sin8u_table::mid#2 + (byte~) sin8u_table::$20
+  (byte) sin8u_table::sinx_tr#0 ← (byte~) sin8u_table::$21
   *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0
   (byte*) sin8u_table::sintab#1 ← ++ (byte*) sin8u_table::sintab#2
   (byte*) print_str::str#6 ← (const byte*) sin8u_table::str5
@@ -1150,8 +1160,8 @@ sin8u_table::@29: scope:[sin8u_table]  from sin8u_table::@28
   (byte*) print_line_cursor#20 ← phi( sin8u_table::@28/(byte*) print_line_cursor#2 )
   (byte*) print_line_cursor#9 ← (byte*) print_line_cursor#20
   (byte*) print_char_cursor#45 ← (byte*) print_char_cursor#91
-  (word~) sin8u_table::$33 ← (word) sin8u_table::x#4 + (word) sin8u_table::step#2
-  (word) sin8u_table::x#1 ← (word~) sin8u_table::$33
+  (word~) sin8u_table::$31 ← (word) sin8u_table::x#4 + (word) sin8u_table::step#2
+  (word) sin8u_table::x#1 ← (word~) sin8u_table::$31
   (word) sin8u_table::i#1 ← ++ (word) sin8u_table::i#3
   to:sin8u_table::@1
 sin8u_table::@return: scope:[sin8u_table]  from sin8u_table::@1
@@ -1286,8 +1296,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -1325,16 +1335,13 @@ SYMBOL TABLE SSA
 (void*) memset::str#4
 (void*) memset::str#5
 (signed word()) mul8su((signed byte) mul8su::a , (byte) mul8su::b)
-(byte~) mul8su::$0
-(byte~) mul8su::$1
-(byte~) mul8su::$10
-(word~) mul8su::$2
-(bool~) mul8su::$3
-(bool~) mul8su::$4
-(signed word~) mul8su::$5
+(word~) mul8su::$0
+(bool~) mul8su::$1
+(bool~) mul8su::$2
+(byte~) mul8su::$4
+(byte~) mul8su::$5
+(byte~) mul8su::$6
 (byte~) mul8su::$7
-(byte~) mul8su::$8
-(byte~) mul8su::$9
 (label) mul8su::@1
 (label) mul8su::@2
 (label) mul8su::@4
@@ -1642,8 +1649,7 @@ SYMBOL TABLE SSA
 (label) print_ln::@return
 (void()) print_schar((signed byte) print_schar::b)
 (bool~) print_schar::$0
-(byte~) print_schar::$1
-(signed byte~) print_schar::$5
+(signed byte~) print_schar::$4
 (label) print_schar::@1
 (label) print_schar::@2
 (label) print_schar::@3
@@ -1668,8 +1674,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#4
 (void()) print_sint((signed word) print_sint::w)
 (bool~) print_sint::$0
-(word~) print_sint::$1
-(signed word~) print_sint::$5
+(signed word~) print_sint::$4
 (label) print_sint::@1
 (label) print_sint::@2
 (label) print_sint::@3
@@ -1745,14 +1750,12 @@ SYMBOL TABLE SSA
 (byte~) sin8s::$13
 (bool~) sin8s::$14
 (bool~) sin8s::$15
-(signed byte~) sin8s::$16
+(bool~) sin8s::$16
 (bool~) sin8s::$17
-(bool~) sin8s::$18
+(word~) sin8s::$18
 (word~) sin8s::$19
 (bool~) sin8s::$2
-(word~) sin8s::$20
-(signed byte~) sin8s::$21
-(signed byte~) sin8s::$22
+(signed byte~) sin8s::$20
 (bool~) sin8s::$3
 (word~) sin8s::$4
 (byte~) sin8s::$5
@@ -1838,18 +1841,17 @@ SYMBOL TABLE SSA
 (void()) sin8u_table((byte*) sin8u_table::sintab , (word) sin8u_table::tabsize , (byte) sin8u_table::min , (byte) sin8u_table::max)
 (byte~) sin8u_table::$0
 (word~) sin8u_table::$1
-(bool~) sin8u_table::$18
-(signed byte~) sin8u_table::$19
-(word~) sin8u_table::$2
-(number~) sin8u_table::$20
-(signed word~) sin8u_table::$21
-(byte~) sin8u_table::$22
-(byte~) sin8u_table::$23
+(bool~) sin8u_table::$16
+(signed byte~) sin8u_table::$17
+(number~) sin8u_table::$18
+(signed word~) sin8u_table::$19
+(number~) sin8u_table::$2
+(byte~) sin8u_table::$20
+(byte~) sin8u_table::$21
 (number~) sin8u_table::$3
-(word~) sin8u_table::$33
-(number~) sin8u_table::$4
-(byte~) sin8u_table::$5
-(word~) sin8u_table::$6
+(word~) sin8u_table::$31
+(word~) sin8u_table::$32
+(word~) sin8u_table::$4
 (label) sin8u_table::@1
 (label) sin8u_table::@10
 (label) sin8u_table::@11
@@ -2110,7 +2112,7 @@ Adding number conversion cast (unumber) mul8u::$1 in (number~) mul8u::$1 ← (by
 Adding number conversion cast (unumber) 0 in (bool~) mul8u::$2 ← (unumber~) mul8u::$1 != (number) 0
 Adding number conversion cast (unumber) 1 in (byte~) mul8u::$5 ← (byte) mul8u::a#5 >> (number) 1
 Adding number conversion cast (unumber) 1 in (word~) mul8u::$6 ← (word) mul8u::mb#2 << (number) 1
-Adding number conversion cast (snumber) 0 in (bool~) mul8su::$3 ← (signed byte) mul8su::a#2 < (number) 0
+Adding number conversion cast (snumber) 0 in (bool~) mul8su::$1 ← (signed byte) mul8su::a#2 < (number) 0
 Adding number conversion cast (unumber) 1 in (byte) sin8s::isUpper#1 ← (number) 1
 Adding number conversion cast (unumber) 3 in (word~) sin8s::$4 ← (word) sin8s::x#6 << (number) 3
 Adding number conversion cast (unumber) 0 in (byte) mulu8_sel::select#0 ← (number) 0
@@ -2120,7 +2122,7 @@ Adding number conversion cast (unumber) 0 in (byte) mulu8_sel::select#3 ← (num
 Adding number conversion cast (unumber) 0 in (byte) mulu8_sel::select#4 ← (number) 0
 Adding number conversion cast (unumber) 4 in (byte~) sin8s::$12 ← (byte) sin8s::x5#0 >> (number) 4
 Adding number conversion cast (unumber) $80 in (bool~) sin8s::$14 ← (byte) sin8s::usinx#1 >= (number) $80
-Adding number conversion cast (unumber) 0 in (bool~) sin8s::$17 ← (byte) sin8s::isUpper#2 != (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) sin8s::$16 ← (byte) sin8s::isUpper#2 != (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print_str::$1 ← (number) 0 != *((byte*) print_str::str#10)
 Adding number conversion cast (unumber) $28 in (byte*~) print_ln::$0 ← (byte*) print_line_cursor#12 + (number) $28
@@ -2132,35 +2134,24 @@ Adding number conversion cast (unumber) print_uchar::$2 in (number~) print_uchar
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
 Adding number conversion cast (unumber) $a in (byte) sin8u_table::min#0 ← (number) $a
 Adding number conversion cast (unumber) $ff in (byte) sin8u_table::max#0 ← (number) $ff
-Adding number conversion cast (unumber) 2 in (number~) sin8u_table::$3 ← (word) sin8u_table::sum#0 / (number) 2
-Adding number conversion cast (unumber) sin8u_table::$3 in (number~) sin8u_table::$3 ← (word) sin8u_table::sum#0 / (unumber)(number) 2
-Adding number conversion cast (unumber) 1 in (number~) sin8u_table::$4 ← (unumber~) sin8u_table::$3 + (number) 1
-Adding number conversion cast (unumber) sin8u_table::$4 in (number~) sin8u_table::$4 ← (unumber~) sin8u_table::$3 + (unumber)(number) 1
-Adding number conversion cast (unumber) 1 in (number~) sin8u_table::$20 ← (byte) sin8u_table::amplitude#2 + (number) 1
-Adding number conversion cast (unumber) sin8u_table::$20 in (number~) sin8u_table::$20 ← (byte) sin8u_table::amplitude#2 + (unumber)(number) 1
+Adding number conversion cast (unumber) 2 in (number~) sin8u_table::$2 ← (word) sin8u_table::sum#0 / (number) 2
+Adding number conversion cast (unumber) sin8u_table::$2 in (number~) sin8u_table::$2 ← (word) sin8u_table::sum#0 / (unumber)(number) 2
+Adding number conversion cast (unumber) 1 in (number~) sin8u_table::$3 ← (unumber~) sin8u_table::$2 + (number) 1
+Adding number conversion cast (unumber) sin8u_table::$3 in (number~) sin8u_table::$3 ← (unumber~) sin8u_table::$2 + (unumber)(number) 1
+Adding number conversion cast (unumber) 1 in (number~) sin8u_table::$18 ← (byte) sin8u_table::amplitude#2 + (number) 1
+Adding number conversion cast (unumber) sin8u_table::$18 in (number~) sin8u_table::$18 ← (byte) sin8u_table::amplitude#2 + (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word) divr16u::rem#3 ← (unumber)(number) 0
-Inlining cast (byte~) mul8su::$0 ← (byte)(signed byte) mul8su::a#1
-Inlining cast (byte~) mul8su::$1 ← (byte)(byte) mul8su::b#1
-Inlining cast (signed word~) mul8su::$5 ← (signed word)(word) mul8su::m#2
-Inlining cast (byte~) mul8su::$8 ← (byte)(byte) mul8su::b#2
 Inlining cast (byte) sin8s::isUpper#1 ← (unumber)(number) 1
 Inlining cast (byte) mulu8_sel::select#0 ← (unumber)(number) 0
 Inlining cast (byte) mulu8_sel::select#1 ← (unumber)(number) 1
 Inlining cast (byte) mulu8_sel::select#2 ← (unumber)(number) 1
 Inlining cast (byte) mulu8_sel::select#3 ← (unumber)(number) 0
 Inlining cast (byte) mulu8_sel::select#4 ← (unumber)(number) 0
-Inlining cast (signed byte~) sin8s::$16 ← (signed byte)(byte) sin8s::usinx#4
-Inlining cast (signed byte~) sin8s::$21 ← (signed byte)(byte) sin8s::usinx#6
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (word~) print_sint::$1 ← (word)(signed word) print_sint::w#4
-Inlining cast (byte~) print_schar::$1 ← (byte)(signed byte) print_schar::b#4
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte) sin8u_table::min#0 ← (unumber)(number) $a
 Inlining cast (byte) sin8u_table::max#0 ← (unumber)(number) $ff
-Inlining cast (word~) sin8u_table::$1 ← (word)(byte) sin8u_table::min#1
-Inlining cast (byte~) sin8u_table::$5 ← (byte)(unumber~) sin8u_table::$4
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 1
 Simplifying constant integer cast $80
@@ -2243,18 +2234,18 @@ Inferred type updated to byte in (unumber~) divr16u::$2 ← (byte~) divr16u::$1 
 Inferred type updated to word in (unumber~) divr16u::$5 ← (word) divr16u::rem#6 | (byte) 1
 Inferred type updated to byte in (unumber~) mul8u::$1 ← (byte) mul8u::a#4 & (byte) 1
 Inferred type updated to byte in (unumber~) print_uchar::$2 ← (byte) print_uchar::b#9 & (byte) $f
-Inferred type updated to word in (unumber~) sin8u_table::$3 ← (word) sin8u_table::sum#0 / (byte) 2
-Inferred type updated to word in (unumber~) sin8u_table::$4 ← (word~) sin8u_table::$3 + (byte) 1
-Inferred type updated to byte in (unumber~) sin8u_table::$20 ← (byte) sin8u_table::amplitude#2 + (byte) 1
+Inferred type updated to word in (unumber~) sin8u_table::$2 ← (word) sin8u_table::sum#0 / (byte) 2
+Inferred type updated to word in (unumber~) sin8u_table::$3 ← (word~) sin8u_table::$2 + (byte) 1
+Inferred type updated to byte in (unumber~) sin8u_table::$18 ← (byte) sin8u_table::amplitude#2 + (byte) 1
 Inversing boolean not [9] (bool~) divr16u::$4 ← (byte~) divr16u::$2 == (byte) 0 from [8] (bool~) divr16u::$3 ← (byte~) divr16u::$2 != (byte) 0
 Inversing boolean not [17] (bool~) divr16u::$9 ← (word) divr16u::rem#5 < (word) divr16u::divisor#1 from [16] (bool~) divr16u::$8 ← (word) divr16u::rem#5 >= (word) divr16u::divisor#1
 Inversing boolean not [56] (bool~) mul8u::$3 ← (byte~) mul8u::$1 == (byte) 0 from [55] (bool~) mul8u::$2 ← (byte~) mul8u::$1 != (byte) 0
-Inversing boolean not [82] (bool~) mul8su::$4 ← (signed byte) mul8su::a#2 >= (signed byte) 0 from [81] (bool~) mul8su::$3 ← (signed byte) mul8su::a#2 < (signed byte) 0
-Inversing boolean not [99] (bool~) sin8s::$1 ← (word) sin8s::x#3 < (const nomodify word) PI_u4f12 from [98] (bool~) sin8s::$0 ← (word) sin8s::x#3 >= (const nomodify word) PI_u4f12
-Inversing boolean not [103] (bool~) sin8s::$3 ← (word) sin8s::x#4 < (const nomodify word) PI_HALF_u4f12 from [102] (bool~) sin8s::$2 ← (word) sin8s::x#4 >= (const nomodify word) PI_HALF_u4f12
-Inversing boolean not [160] (bool~) sin8s::$15 ← (byte) sin8s::usinx#1 < (byte) $80 from [159] (bool~) sin8s::$14 ← (byte) sin8s::usinx#1 >= (byte) $80
-Inversing boolean not [169] (bool~) sin8s::$18 ← (byte) sin8s::isUpper#2 == (byte) 0 from [168] (bool~) sin8s::$17 ← (byte) sin8s::isUpper#2 != (byte) 0
-Inversing boolean not [197] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [196] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
+Inversing boolean not [80] (bool~) mul8su::$2 ← (signed byte) mul8su::a#2 >= (signed byte) 0 from [79] (bool~) mul8su::$1 ← (signed byte) mul8su::a#2 < (signed byte) 0
+Inversing boolean not [96] (bool~) sin8s::$1 ← (word) sin8s::x#3 < (const nomodify word) PI_u4f12 from [95] (bool~) sin8s::$0 ← (word) sin8s::x#3 >= (const nomodify word) PI_u4f12
+Inversing boolean not [100] (bool~) sin8s::$3 ← (word) sin8s::x#4 < (const nomodify word) PI_HALF_u4f12 from [99] (bool~) sin8s::$2 ← (word) sin8s::x#4 >= (const nomodify word) PI_HALF_u4f12
+Inversing boolean not [157] (bool~) sin8s::$15 ← (byte) sin8s::usinx#1 < (byte) $80 from [156] (bool~) sin8s::$14 ← (byte) sin8s::usinx#1 >= (byte) $80
+Inversing boolean not [165] (bool~) sin8s::$17 ← (byte) sin8s::isUpper#2 == (byte) 0 from [164] (bool~) sin8s::$16 ← (byte) sin8s::isUpper#2 != (byte) 0
+Inversing boolean not [192] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [191] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias divr16u::rem#0 = divr16u::$0 divr16u::rem#6 
 Alias divr16u::dividend#0 = divr16u::$6 divr16u::dividend#7 
@@ -2277,15 +2268,14 @@ Alias mul8u::res#2 = mul8u::res#5 mul8u::res#4 mul8u::return#0 mul8u::res#3 mul8
 Alias mul8u::a#0 = mul8u::$5 
 Alias mul8u::mb#1 = mul8u::$6 
 Alias mul8u::res#1 = mul8u::$4 
-Alias mul8su::b#1 = mul8su::$1 mul8u::b#0 mul8su::b#3 mul8su::b#2 mul8su::$8 
-Alias mul8u::a#1 = mul8su::$0 
 Alias mul8u::return#2 = mul8u::return#5 
 Alias mul8su::a#1 = mul8su::a#2 
-Alias mul8su::m#0 = mul8su::$2 mul8su::m#3 
-Alias mul8su::return#0 = mul8su::$5 mul8su::return#3 mul8su::return#1 
-Alias mul8su::$10 = mul8su::$9 
+Alias mul8su::b#1 = mul8su::b#3 mul8su::b#2 mul8su::$7 
+Alias mul8su::m#0 = mul8su::$0 mul8su::m#3 
+Alias mul8su::$6 = mul8su::$5 
+Alias mul8su::return#0 = mul8su::return#3 mul8su::return#1 
 Alias sin8s::x#3 = sin8s::x#5 
-Alias sin8s::x#0 = sin8s::$19 
+Alias sin8s::x#0 = sin8s::$18 
 Alias sin8s::x1#0 = sin8s::$5 sin8s::x1#1 sin8s::x1#4 sin8s::x1#2 sin8s::x1#3 
 Alias mulu8_sel::return#0 = mulu8_sel::return#7 
 Alias sin8s::isUpper#3 = sin8s::isUpper#8 sin8s::isUpper#9 sin8s::isUpper#7 sin8s::isUpper#6 sin8s::isUpper#5 sin8s::isUpper#4 
@@ -2303,11 +2293,10 @@ Alias sin8s::x5_128#0 = sin8s::$12
 Alias sin8s::usinx#1 = sin8s::$13 sin8s::usinx#5 
 Alias sin8s::x#4 = sin8s::x#7 
 Alias sin8s::isUpper#10 = sin8s::isUpper#11 
-Alias sin8s::x#1 = sin8s::$20 
-Alias sin8s::sinx#0 = sin8s::$16 
+Alias sin8s::x#1 = sin8s::$19 
 Alias sin8s::return#0 = sin8s::sinx#2 sin8s::return#3 sin8s::return#1 
 Alias sin8s::usinx#4 = sin8s::usinx#6 
-Alias sin8s::sinx#1 = sin8s::$22 
+Alias sin8s::sinx#1 = sin8s::$20 
 Alias mul8u::return#3 = mul8u::return#6 
 Alias mulu8_sel::select#5 = mulu8_sel::select#6 
 Alias mulu8_sel::return#12 = mulu8_sel::return#5 mulu8_sel::$2 mulu8_sel::return#6 
@@ -2315,7 +2304,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -2328,16 +2317,14 @@ Alias print_line_cursor#1 = print_ln::$0 print_line_cursor#13 print_char_cursor#
 Alias print_char_cursor#111 = print_char_cursor#97 print_char_cursor#98 
 Alias print_sint::w#2 = print_sint::w#5 print_sint::w#3 print_sint::w#7 print_sint::w#6 
 Alias print_char_cursor#5 = print_char_cursor#52 
-Alias print_sint::w#0 = print_sint::$5 
+Alias print_sint::w#0 = print_sint::$4 
 Alias print_char_cursor#53 = print_char_cursor#6 
-Alias print_uint::w#0 = print_sint::$1 
 Alias print_char_cursor#54 = print_char_cursor#7 print_char_cursor#55 print_char_cursor#8 
 Alias print_char_cursor#100 = print_char_cursor#112 print_char_cursor#101 
 Alias print_schar::b#2 = print_schar::b#5 print_schar::b#3 print_schar::b#7 print_schar::b#6 
 Alias print_char_cursor#56 = print_char_cursor#9 
-Alias print_schar::b#0 = print_schar::$5 
+Alias print_schar::b#0 = print_schar::$4 
 Alias print_char_cursor#10 = print_char_cursor#57 
-Alias print_uchar::b#0 = print_schar::$1 
 Alias print_char_cursor#11 = print_char_cursor#58 print_char_cursor#59 print_char_cursor#12 
 Alias print_uchar::b#1 = print_uint::$0 
 Alias print_uint::w#3 = print_uint::w#4 
@@ -2354,16 +2341,16 @@ Alias print_char_cursor#23 = print_char_cursor#69
 Alias print_char_cursor#24 = print_char_cursor#70 print_char_cursor#71 print_char_cursor#25 
 Alias print_line_cursor#17 = print_line_cursor#6 print_line_cursor#18 print_line_cursor#7 
 Alias sin8u_table::amplitude#0 = sin8u_table::$0 sin8u_table::amplitude#19 sin8u_table::amplitude#16 sin8u_table::amplitude#13 sin8u_table::amplitude#10 sin8u_table::amplitude#7 sin8u_table::amplitude#5 sin8u_table::amplitude#3 sin8u_table::amplitude#1 sin8u_table::amplitude#17 sin8u_table::amplitude#14 sin8u_table::amplitude#11 sin8u_table::amplitude#8 
-Alias sin8u_table::sum#0 = sin8u_table::$2 
-Alias sin8u_table::mid#0 = sin8u_table::$5 sin8u_table::mid#21 sin8u_table::mid#19 sin8u_table::mid#17 sin8u_table::mid#15 sin8u_table::mid#12 sin8u_table::mid#9 sin8u_table::mid#7 sin8u_table::mid#5 sin8u_table::mid#3 sin8u_table::mid#1 sin8u_table::mid#13 sin8u_table::mid#10 
+Alias sin8u_table::sum#0 = sin8u_table::$1 
 Alias div16u::return#2 = div16u::return#4 
 Alias print_char_cursor#106 = print_char_cursor#113 
 Alias sin8u_table::min#1 = sin8u_table::min#5 sin8u_table::min#4 sin8u_table::min#3 sin8u_table::min#2 
 Alias sin8u_table::max#1 = sin8u_table::max#7 sin8u_table::max#6 sin8u_table::max#5 sin8u_table::max#4 sin8u_table::max#3 sin8u_table::max#2 
+Alias sin8u_table::mid#0 = sin8u_table::mid#21 sin8u_table::mid#19 sin8u_table::mid#17 sin8u_table::mid#15 sin8u_table::mid#12 sin8u_table::mid#9 sin8u_table::mid#7 sin8u_table::mid#5 sin8u_table::mid#3 sin8u_table::mid#1 sin8u_table::mid#13 sin8u_table::mid#10 
 Alias print_line_cursor#25 = print_line_cursor#47 print_line_cursor#49 print_line_cursor#45 print_line_cursor#43 print_line_cursor#41 print_line_cursor#39 print_line_cursor#37 print_line_cursor#35 print_line_cursor#33 print_line_cursor#31 print_line_cursor#29 
 Alias sin8u_table::tabsize#1 = sin8u_table::tabsize#25 sin8u_table::tabsize#23 sin8u_table::tabsize#21 sin8u_table::tabsize#19 sin8u_table::tabsize#17 sin8u_table::tabsize#15 sin8u_table::tabsize#13 sin8u_table::tabsize#11 sin8u_table::tabsize#9 sin8u_table::tabsize#7 sin8u_table::tabsize#5 sin8u_table::tabsize#3 
 Alias sin8u_table::sintab#10 = sin8u_table::sintab#26 sin8u_table::sintab#27 sin8u_table::sintab#25 sin8u_table::sintab#24 sin8u_table::sintab#22 sin8u_table::sintab#20 sin8u_table::sintab#18 sin8u_table::sintab#16 sin8u_table::sintab#14 sin8u_table::sintab#12 sin8u_table::sintab#8 sin8u_table::sintab#6 
-Alias sin8u_table::step#0 = sin8u_table::$6 sin8u_table::step#1 sin8u_table::step#24 sin8u_table::step#23 sin8u_table::step#22 sin8u_table::step#21 sin8u_table::step#20 sin8u_table::step#19 sin8u_table::step#18 sin8u_table::step#17 sin8u_table::step#16 sin8u_table::step#15 
+Alias sin8u_table::step#0 = sin8u_table::$4 sin8u_table::step#1 sin8u_table::step#24 sin8u_table::step#23 sin8u_table::step#22 sin8u_table::step#21 sin8u_table::step#20 sin8u_table::step#19 sin8u_table::step#18 sin8u_table::step#17 sin8u_table::step#16 sin8u_table::step#15 
 Alias print_char_cursor#26 = print_char_cursor#72 
 Alias print_char_cursor#27 = print_char_cursor#73 
 Alias print_char_cursor#28 = print_char_cursor#74 
@@ -2386,11 +2373,11 @@ Alias sin8u_table::step#10 = sin8u_table::step#13 sin8u_table::step#14 sin8u_tab
 Alias sin8u_table::i#10 = sin8u_table::i#14 sin8u_table::i#2 sin8u_table::i#13 sin8u_table::i#12 sin8u_table::i#11 sin8u_table::i#9 sin8u_table::i#8 sin8u_table::i#7 sin8u_table::i#6 sin8u_table::i#5 sin8u_table::i#4 sin8u_table::i#3 
 Alias sin8u_table::tabsize#10 = sin8u_table::tabsize#26 sin8u_table::tabsize#2 sin8u_table::tabsize#24 sin8u_table::tabsize#22 sin8u_table::tabsize#20 sin8u_table::tabsize#18 sin8u_table::tabsize#16 sin8u_table::tabsize#14 sin8u_table::tabsize#12 sin8u_table::tabsize#8 sin8u_table::tabsize#6 sin8u_table::tabsize#4 
 Alias sin8s::return#2 = sin8s::return#4 
-Alias sin8u_table::sinx#0 = sin8u_table::$19 sin8u_table::sinx#4 sin8u_table::sinx#3 sin8u_table::sinx#2 sin8u_table::sinx#1 
-Alias mul8su::b#0 = sin8u_table::$20 
+Alias sin8u_table::sinx#0 = sin8u_table::$17 sin8u_table::sinx#4 sin8u_table::sinx#3 sin8u_table::sinx#2 sin8u_table::sinx#1 
+Alias mul8su::b#0 = sin8u_table::$18 
 Alias mul8su::return#2 = mul8su::return#4 
-Alias sin8u_table::sinx_sc#0 = sin8u_table::$21 sin8u_table::sinx_sc#5 sin8u_table::sinx_sc#4 sin8u_table::sinx_sc#3 sin8u_table::sinx_sc#2 sin8u_table::sinx_sc#1 
-Alias sin8u_table::sinx_tr#0 = sin8u_table::$23 sin8u_table::sinx_tr#7 sin8u_table::sinx_tr#6 sin8u_table::sinx_tr#5 sin8u_table::sinx_tr#4 sin8u_table::sinx_tr#3 sin8u_table::sinx_tr#2 sin8u_table::sinx_tr#1 
+Alias sin8u_table::sinx_sc#0 = sin8u_table::$19 sin8u_table::sinx_sc#5 sin8u_table::sinx_sc#4 sin8u_table::sinx_sc#3 sin8u_table::sinx_sc#2 sin8u_table::sinx_sc#1 
+Alias sin8u_table::sinx_tr#0 = sin8u_table::$21 sin8u_table::sinx_tr#7 sin8u_table::sinx_tr#6 sin8u_table::sinx_tr#5 sin8u_table::sinx_tr#4 sin8u_table::sinx_tr#3 sin8u_table::sinx_tr#2 sin8u_table::sinx_tr#1 
 Alias sin8u_table::sintab#1 = sin8u_table::sintab#23 sin8u_table::sintab#21 sin8u_table::sintab#19 sin8u_table::sintab#17 sin8u_table::sintab#15 sin8u_table::sintab#13 sin8u_table::sintab#11 sin8u_table::sintab#9 sin8u_table::sintab#7 
 Alias print_char_cursor#37 = print_char_cursor#83 
 Alias print_char_cursor#38 = print_char_cursor#84 
@@ -2402,7 +2389,7 @@ Alias print_char_cursor#43 = print_char_cursor#89
 Alias print_char_cursor#44 = print_char_cursor#90 
 Alias print_line_cursor#20 = print_line_cursor#9 
 Alias print_char_cursor#45 = print_char_cursor#91 
-Alias sin8u_table::x#1 = sin8u_table::$33 
+Alias sin8u_table::x#1 = sin8u_table::$31 
 Alias print_line_cursor#11 = print_line_cursor#22 
 Alias print_char_cursor#47 = print_char_cursor#93 
 Successful SSA optimization Pass2AliasElimination
@@ -2501,18 +2488,18 @@ Simple Condition (bool~) divr16u::$9 [13] if((word) divr16u::rem#5<(word) divr16
 Simple Condition (bool~) divr16u::$11 [18] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
 Simple Condition (bool~) mul8u::$0 [35] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2
 Simple Condition (bool~) mul8u::$3 [38] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@4
-Simple Condition (bool~) mul8su::$4 [50] if((signed byte) mul8su::a#0>=(signed byte) 0) goto mul8su::@1
-Simple Condition (bool~) sin8s::$1 [60] if((word) sin8s::x#2<(const nomodify word) PI_u4f12) goto sin8s::@1
-Simple Condition (bool~) sin8s::$3 [63] if((word) sin8s::x#4<(const nomodify word) PI_HALF_u4f12) goto sin8s::@2
-Simple Condition (bool~) sin8s::$15 [103] if((byte) sin8s::usinx#1<(byte) $80) goto sin8s::@3
-Simple Condition (bool~) sin8s::$18 [108] if((byte) sin8s::isUpper#10==(byte) 0) goto sin8s::@4
+Simple Condition (bool~) mul8su::$2 [51] if((signed byte) mul8su::a#0>=(signed byte) 0) goto mul8su::@1
+Simple Condition (bool~) sin8s::$1 [61] if((word) sin8s::x#2<(const nomodify word) PI_u4f12) goto sin8s::@1
+Simple Condition (bool~) sin8s::$3 [64] if((word) sin8s::x#4<(const nomodify word) PI_HALF_u4f12) goto sin8s::@2
+Simple Condition (bool~) sin8s::$15 [104] if((byte) sin8s::usinx#1<(byte) $80) goto sin8s::@3
+Simple Condition (bool~) sin8s::$17 [109] if((byte) sin8s::isUpper#10==(byte) 0) goto sin8s::@4
 Simple Condition (bool~) memset::$1 [125] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [132] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [132] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$1 [140] if((byte) 0!=*((byte*) print_str::str#10)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [150] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#19) goto print_ln::@1
 Simple Condition (bool~) print_sint::$0 [154] if((signed word) print_sint::w#1<(signed byte) 0) goto print_sint::@1
 Simple Condition (bool~) print_schar::$0 [169] if((signed byte) print_schar::b#1<(signed byte) 0) goto print_schar::@1
-Simple Condition (bool~) sin8u_table::$18 [269] if((word) sin8u_table::i#10<(word) sin8u_table::tabsize#0) goto sin8u_table::@2
+Simple Condition (bool~) sin8u_table::$16 [269] if((word) sin8u_table::i#10<(word) sin8u_table::tabsize#0) goto sin8u_table::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const word) divr16u::quotient#0 = 0
 Constant (const byte) divr16u::i#0 = 0
@@ -2552,13 +2539,13 @@ Constant (const byte*) print_str::str#9 = sin8u_table::str8
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::dividend#1 = div16u::dividend#0
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
-Constant (const word) sin8u_table::$1 = (word)sin8u_table::min#0
+Constant (const word) sin8u_table::$32 = (word)sin8u_table::min#0
 Constant (const word) div16u::divisor#0 = sin8u_table::tabsize#0
 Constant (const byte) print_uchar::b#3 = sin8u_table::min#0
 Constant (const byte) print_uchar::b#4 = sin8u_table::max#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div16u::divisor#0
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -2574,41 +2561,43 @@ Simplifying constant integer cast $10
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [95] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [95] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Constant right-side identified [152] (byte) sin8u_table::amplitude#0 ← (const byte) sin8u_table::max#0 - (const byte) sin8u_table::min#0
-Constant right-side identified [153] (word) sin8u_table::sum#0 ← (const word) sin8u_table::$1 + (const byte) sin8u_table::max#0
+Constant right-side identified [153] (word) sin8u_table::sum#0 ← (const word) sin8u_table::$32 + (const byte) sin8u_table::max#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Constant (const byte) sin8u_table::amplitude#0 = sin8u_table::max#0-sin8u_table::min#0
-Constant (const word) sin8u_table::sum#0 = sin8u_table::$1+sin8u_table::max#0
+Constant (const word) sin8u_table::sum#0 = sin8u_table::$32+sin8u_table::max#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) print_uchar::b#5 = sin8u_table::amplitude#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [151] (word~) sin8u_table::$3 ← (const word) sin8u_table::sum#0 / (byte) 2
+Constant right-side identified [151] (word~) sin8u_table::$2 ← (const word) sin8u_table::sum#0 / (byte) 2
 Constant right-side identified [176] (byte) mul8su::b#0 ← (const byte) sin8u_table::amplitude#0 + (byte) 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) sin8u_table::$3 = sin8u_table::sum#0/2
+Constant (const word) sin8u_table::$2 = sin8u_table::sum#0/2
 Constant (const byte) mul8su::b#0 = sin8u_table::amplitude#0+1
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [151] (word~) sin8u_table::$4 ← (const word) sin8u_table::$3 + (byte) 1
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) sin8u_table::$4 = sin8u_table::$3+1
+Constant (const byte) mul8u::b#0 = mul8su::b#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) sin8u_table::mid#0 = (byte)sin8u_table::$4
+Constant right-side identified [150] (word~) sin8u_table::$3 ← (const word) sin8u_table::$2 + (byte) 1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word) sin8u_table::$3 = sin8u_table::$2+1
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) sin8u_table::mid#0 = (byte)sin8u_table::$3
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) print_uchar::b#6 = sin8u_table::mid#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [37] (signed word) mul8su::return#0 ← (signed word)(word) mul8su::m#2 keeping mul8su::m#2
 Inlining Noop Cast [79] (signed byte) sin8s::sinx#0 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
-Inlining Noop Cast [83] (signed byte~) sin8s::$21 ← (signed byte)(byte) sin8s::usinx#4 keeping sin8s::usinx#4
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [174] (signed word) mul8su::return#2 ← (signed word)(word) mul8su::m#2 keeping mul8su::m#2
+Inlining Noop Cast [173] (signed word) mul8su::return#2 ← (signed word)(word) mul8su::m#2 keeping mul8su::m#2
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const word) divr16u::quotient#0
 Inlining constant with var siblings (const byte) divr16u::i#0
 Inlining constant with var siblings (const word) divr16u::rem#3
 Inlining constant with var siblings (const word) divr16u::dividend#1
 Inlining constant with var siblings (const word) mul8u::res#0
+Inlining constant with var siblings (const byte) mul8u::b#0
 Inlining constant with var siblings (const byte) sin8s::isUpper#0
 Inlining constant with var siblings (const byte) sin8s::isUpper#1
 Inlining constant with var siblings (const byte) mulu8_sel::select#0
@@ -2649,12 +2638,11 @@ Constant inlined sin8u_table::i#0 = (word) 0
 Constant inlined sin8u_table::sintab#0 = (const byte*) main::sintab
 Constant inlined sin8s::isUpper#1 = (byte) 1
 Constant inlined sin8s::isUpper#0 = (byte) 0
-Constant inlined sin8u_table::$4 = (const word) sin8u_table::sum#0/(byte) 2+(byte) 1
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined divr16u::quotient#0 = (word) 0
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined div16u::divisor#0 = (const word) main::tabsize
-Constant inlined sin8u_table::$1 = (word)(const byte) sin8u_table::min#0
-Constant inlined sin8u_table::$3 = (const word) sin8u_table::sum#0/(byte) 2
+Constant inlined sin8u_table::$2 = (const word) sin8u_table::sum#0/(byte) 2
+Constant inlined sin8u_table::$3 = (const word) sin8u_table::sum#0/(byte) 2+(byte) 1
 Constant inlined mulu8_sel::select#0 = (byte) 0
 Constant inlined div16u::dividend#0 = (const nomodify word) PI2_u4f12
 Constant inlined mulu8_sel::select#2 = (byte) 1
@@ -2663,6 +2651,7 @@ Constant inlined mulu8_sel::select#1 = (byte) 1
 Constant inlined mulu8_sel::select#4 = (byte) 0
 Constant inlined mulu8_sel::select#3 = (byte) 0
 Constant inlined sin8u_table::tabsize#0 = (const word) main::tabsize
+Constant inlined sin8u_table::$32 = (word)(const byte) sin8u_table::min#0
 Constant inlined print_line_cursor#0 = (byte*) 1024
 Constant inlined divr16u::dividend#1 = (const nomodify word) PI2_u4f12
 Constant inlined print_char::ch#3 = (byte) '-'
@@ -2671,6 +2660,7 @@ Constant inlined mulu8_sel::v2#2 = (const nomodify byte) sin8s::DIV_6
 Constant inlined print_str::str#9 = (const byte*) sin8u_table::str8
 Constant inlined mul8u::res#0 = (word) 0
 Constant inlined print_char::ch#4 = (byte) ' '
+Constant inlined mul8u::b#0 = (const byte) mul8su::b#0
 Constant inlined print_char::ch#1 = (byte) '-'
 Constant inlined print_str::str#4 = (const byte*) sin8u_table::str3
 Constant inlined print_str::str#3 = (const byte*) sin8u_table::str2
@@ -3012,8 +3002,8 @@ sin8u_table::@14: scope:[sin8u_table]  from sin8u_table::@2
   to:sin8u_table::@15
 sin8u_table::@15: scope:[sin8u_table]  from sin8u_table::@14
   [43] (signed word) sin8u_table::sinx_sc#0 ← (signed word)(word) mul8su::m#2
-  [44] (byte~) sin8u_table::$22 ← > (signed word) sin8u_table::sinx_sc#0
-  [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$22
+  [44] (byte~) sin8u_table::$20 ← > (signed word) sin8u_table::sinx_sc#0
+  [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$20
   [46] *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0
   [47] (byte*) sin8u_table::sintab#1 ← ++ (byte*) sin8u_table::sintab#2
   [48] (byte*) print_char_cursor#119 ← (byte*) print_line_cursor#1
@@ -3192,9 +3182,9 @@ mul8su::@3: scope:[mul8su]  from mul8su
   [122] if((signed byte) mul8su::a#0>=(signed byte) 0) goto mul8su::@1
   to:mul8su::@2
 mul8su::@2: scope:[mul8su]  from mul8su::@3
-  [123] (byte~) mul8su::$7 ← > (word) mul8su::m#0
-  [124] (byte~) mul8su::$10 ← (byte~) mul8su::$7 - (const byte) mul8su::b#0
-  [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$10
+  [123] (byte~) mul8su::$4 ← > (word) mul8su::m#0
+  [124] (byte~) mul8su::$6 ← (byte~) mul8su::$4 - (const byte) mul8su::b#0
+  [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$6
   to:mul8su::@1
 mul8su::@1: scope:[mul8su]  from mul8su::@2 mul8su::@3
   [126] (word) mul8su::m#2 ← phi( mul8su::@2/(word) mul8su::m#1 mul8su::@3/(word) mul8su::m#0 )
@@ -3446,8 +3436,8 @@ VARIABLE REGISTER WEIGHTS
 (void*) memset::return
 (void*) memset::str
 (signed word()) mul8su((signed byte) mul8su::a , (byte) mul8su::b)
-(byte~) mul8su::$10 20002.0
-(byte~) mul8su::$7 20002.0
+(byte~) mul8su::$4 20002.0
+(byte~) mul8su::$6 20002.0
 (signed byte) mul8su::a
 (signed byte) mul8su::a#0 2200.4
 (byte) mul8su::b
@@ -3590,7 +3580,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) sin8s::x5_128
 (byte) sin8s::x5_128#0 20002.0
 (void()) sin8u_table((byte*) sin8u_table::sintab , (word) sin8u_table::tabsize , (byte) sin8u_table::min , (byte) sin8u_table::max)
-(byte~) sin8u_table::$22 2002.0
+(byte~) sin8u_table::$20 2002.0
 (byte) sin8u_table::amplitude
 (word) sin8u_table::i
 (word) sin8u_table::i#1 2002.0
@@ -3650,13 +3640,13 @@ Added variable sin8s::return#2 to live range equivalence class [ sin8s::return#2
 Added variable sin8u_table::sinx#0 to live range equivalence class [ sin8u_table::sinx#0 ]
 Added variable mul8su::a#0 to live range equivalence class [ mul8su::a#0 ]
 Added variable sin8u_table::sinx_sc#0 to live range equivalence class [ sin8u_table::sinx_sc#0 ]
-Added variable sin8u_table::$22 to live range equivalence class [ sin8u_table::$22 ]
+Added variable sin8u_table::$20 to live range equivalence class [ sin8u_table::$20 ]
 Added variable sin8u_table::sinx_tr#0 to live range equivalence class [ sin8u_table::sinx_tr#0 ]
 Added variable print_uchar::$0 to live range equivalence class [ print_uchar::$0 ]
 Added variable print_uchar::$2 to live range equivalence class [ print_uchar::$2 ]
 Added variable mul8u::return#2 to live range equivalence class [ mul8u::return#2 ]
-Added variable mul8su::$7 to live range equivalence class [ mul8su::$7 ]
-Added variable mul8su::$10 to live range equivalence class [ mul8su::$10 ]
+Added variable mul8su::$4 to live range equivalence class [ mul8su::$4 ]
+Added variable mul8su::$6 to live range equivalence class [ mul8su::$6 ]
 Added variable mul8u::$1 to live range equivalence class [ mul8u::$1 ]
 Added variable sin8s::$4 to live range equivalence class [ sin8s::$4 ]
 Added variable sin8s::x1#0 to live range equivalence class [ sin8s::x1#0 ]
@@ -3715,13 +3705,13 @@ Complete equivalence classes
 [ sin8u_table::sinx#0 ]
 [ mul8su::a#0 ]
 [ sin8u_table::sinx_sc#0 ]
-[ sin8u_table::$22 ]
+[ sin8u_table::$20 ]
 [ sin8u_table::sinx_tr#0 ]
 [ print_uchar::$0 ]
 [ print_uchar::$2 ]
 [ mul8u::return#2 ]
-[ mul8su::$7 ]
-[ mul8su::$10 ]
+[ mul8su::$4 ]
+[ mul8su::$6 ]
 [ mul8u::$1 ]
 [ sin8s::$4 ]
 [ sin8s::x1#0 ]
@@ -3779,13 +3769,13 @@ Allocated zp[1]:50 [ sin8s::return#2 ]
 Allocated zp[1]:51 [ sin8u_table::sinx#0 ]
 Allocated zp[1]:52 [ mul8su::a#0 ]
 Allocated zp[2]:53 [ sin8u_table::sinx_sc#0 ]
-Allocated zp[1]:55 [ sin8u_table::$22 ]
+Allocated zp[1]:55 [ sin8u_table::$20 ]
 Allocated zp[1]:56 [ sin8u_table::sinx_tr#0 ]
 Allocated zp[1]:57 [ print_uchar::$0 ]
 Allocated zp[1]:58 [ print_uchar::$2 ]
 Allocated zp[2]:59 [ mul8u::return#2 ]
-Allocated zp[1]:61 [ mul8su::$7 ]
-Allocated zp[1]:62 [ mul8su::$10 ]
+Allocated zp[1]:61 [ mul8su::$4 ]
+Allocated zp[1]:62 [ mul8su::$6 ]
 Allocated zp[1]:63 [ mul8u::$1 ]
 Allocated zp[2]:64 [ sin8s::$4 ]
 Allocated zp[1]:66 [ sin8s::x1#0 ]
@@ -3878,7 +3868,7 @@ sin8u_table: {
     .label amplitude = max-min
     .const sum = min+max
     .const mid = sum/2+1
-    .label __22 = $37
+    .label __20 = $37
     .label step = $30
     .label sinx = $33
     .label sinx_sc = $35
@@ -4125,11 +4115,11 @@ sin8u_table: {
     sta.z sinx_sc
     lda.z mul8su.m+1
     sta.z sinx_sc+1
-    // [44] (byte~) sin8u_table::$22 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuz1=_hi_vwsz2 
+    // [44] (byte~) sin8u_table::$20 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuz1=_hi_vwsz2 
     lda.z sinx_sc+1
-    sta.z __22
-    // [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$22 -- vbuz1=vbuc1_plus_vbuz2 
-    lax.z __22
+    sta.z __20
+    // [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$20 -- vbuz1=vbuc1_plus_vbuz2 
+    lax.z __20
     axs #-[mid]
     stx.z sinx_tr
     // [46] *((byte*) sin8u_table::sintab#2) ← (byte) sin8u_table::sinx_tr#0 -- _deref_pbuz1=vbuz2 
@@ -4616,8 +4606,8 @@ print_schar: {
 // mul8su(signed byte zp($34) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
-    .label __7 = $3d
-    .label __10 = $3e
+    .label __4 = $3d
+    .label __6 = $3e
     .label m = $15
     .label a = $34
     // [118] (byte) mul8u::a#1 ← (byte)(signed byte) mul8su::a#0 -- vbuz1=vbuz2 
@@ -4651,15 +4641,15 @@ mul8su: {
     jmp __b2
     // mul8su::@2
   __b2:
-    // [123] (byte~) mul8su::$7 ← > (word) mul8su::m#0 -- vbuz1=_hi_vwuz2 
+    // [123] (byte~) mul8su::$4 ← > (word) mul8su::m#0 -- vbuz1=_hi_vwuz2 
     lda.z m+1
-    sta.z __7
-    // [124] (byte~) mul8su::$10 ← (byte~) mul8su::$7 - (const byte) mul8su::b#0 -- vbuz1=vbuz2_minus_vbuc1 
-    lax.z __7
+    sta.z __4
+    // [124] (byte~) mul8su::$6 ← (byte~) mul8su::$4 - (const byte) mul8su::b#0 -- vbuz1=vbuz2_minus_vbuc1 
+    lax.z __4
     axs #b
-    stx.z __10
-    // [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$10 -- vwuz1=vwuz1_sethi_vbuz2 
-    lda.z __10
+    stx.z __6
+    // [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$6 -- vwuz1=vwuz1_sethi_vbuz2 
+    lda.z __6
     sta.z m+1
     // [126] phi from mul8su::@2 mul8su::@3 to mul8su::@1 [phi:mul8su::@2/mul8su::@3->mul8su::@1]
   __b1_from___b2:
@@ -5317,7 +5307,7 @@ memset: {
   print_hextab: .text "0123456789abcdef"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Equivalence Class zp[1]:55 [ sin8u_table::$22 ] has ALU potential.
+Equivalence Class zp[1]:55 [ sin8u_table::$20 ] has ALU potential.
 Statement [11] (word) div16u::return#2 ← (word) div16u::return#0 [ div16u::return#2 ] ( main:2::sin8u_table:7 [ div16u::return#2 ] { { div16u::return#0 = div16u::return#2 } }  ) always clobbers reg byte a 
 Statement [12] (word) sin8u_table::step#0 ← (word) div16u::return#2 [ sin8u_table::step#0 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 ] { }  ) always clobbers reg byte a 
 Statement [14] (word) print_uint::w#1 ← (word) sin8u_table::step#0 [ sin8u_table::step#0 print_uint::w#1 print_char_cursor#2 ] ( main:2::sin8u_table:7 [ sin8u_table::step#0 print_uint::w#1 print_char_cursor#2 ] { { print_uint::w#1 = print_uint::w#3 sin8u_table::step#0 } { print_char_cursor#103 = print_char_cursor#2 } }  ) always clobbers reg byte a 
@@ -5459,13 +5449,13 @@ Potential registers zp[1]:50 [ sin8s::return#2 ] : zp[1]:50 , reg byte a , reg b
 Potential registers zp[1]:51 [ sin8u_table::sinx#0 ] : zp[1]:51 , reg byte x , 
 Potential registers zp[1]:52 [ mul8su::a#0 ] : zp[1]:52 , reg byte x , reg byte y , 
 Potential registers zp[2]:53 [ sin8u_table::sinx_sc#0 ] : zp[2]:53 , 
-Potential registers zp[1]:55 [ sin8u_table::$22 ] : zp[1]:55 , reg byte a , reg byte x , reg byte y , reg byte alu , 
+Potential registers zp[1]:55 [ sin8u_table::$20 ] : zp[1]:55 , reg byte a , reg byte x , reg byte y , reg byte alu , 
 Potential registers zp[1]:56 [ sin8u_table::sinx_tr#0 ] : zp[1]:56 , reg byte x , 
 Potential registers zp[1]:57 [ print_uchar::$0 ] : zp[1]:57 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:58 [ print_uchar::$2 ] : zp[1]:58 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:59 [ mul8u::return#2 ] : zp[2]:59 , 
-Potential registers zp[1]:61 [ mul8su::$7 ] : zp[1]:61 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:62 [ mul8su::$10 ] : zp[1]:62 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:61 [ mul8su::$4 ] : zp[1]:61 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:62 [ mul8su::$6 ] : zp[1]:62 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:63 [ mul8u::$1 ] : zp[1]:63 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:64 [ sin8s::$4 ] : zp[2]:64 , 
 Potential registers zp[1]:66 [ sin8s::x1#0 ] : zp[1]:66 , reg byte x , reg byte y , 
@@ -5500,11 +5490,11 @@ Uplift Scope [divr16u] 875,008.75: zp[2]:37 [ divr16u::rem#4 divr16u::rem#9 divr
 Uplift Scope [mulu8_sel] 210,012: zp[1]:34 [ mulu8_sel::v1#5 mulu8_sel::v1#1 mulu8_sel::v1#2 mulu8_sel::v1#3 mulu8_sel::v1#4 mulu8_sel::v1#0 ] 200,002: zp[2]:81 [ mulu8_sel::$0 ] 200,002: zp[2]:83 [ mulu8_sel::$1 ] 150,010.5: zp[1]:35 [ mulu8_sel::v2#5 mulu8_sel::v2#1 mulu8_sel::v2#3 mulu8_sel::v2#4 mulu8_sel::v2#0 ] 21,429.43: zp[1]:85 [ mulu8_sel::return#12 ] 20,002: zp[1]:67 [ mulu8_sel::return#0 ] 20,002: zp[1]:69 [ mulu8_sel::return#1 ] 20,002: zp[1]:71 [ mulu8_sel::return#2 ] 20,002: zp[1]:74 [ mulu8_sel::return#10 ] 20,002: zp[1]:76 [ mulu8_sel::return#11 ] 16,666.83: zp[1]:36 [ mulu8_sel::select#5 ] 
 Uplift Scope [sin8s] 110,511.5: zp[2]:30 [ sin8s::x#6 sin8s::x#4 sin8s::x#2 sin8s::x#0 sin8s::x#1 ] 50,005: zp[1]:32 [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] 47,005: zp[1]:33 [ sin8s::return#0 sin8s::return#5 sin8s::sinx#1 ] 20,002: zp[2]:64 [ sin8s::$4 ] 20,002: zp[1]:68 [ sin8s::x2#0 ] 20,002: zp[1]:72 [ sin8s::x3_6#0 ] 20,002: zp[1]:75 [ sin8s::x4#0 ] 20,002: zp[1]:77 [ sin8s::x5#0 ] 20,002: zp[1]:78 [ sin8s::x5_128#0 ] 5,000.5: zp[1]:70 [ sin8s::x3#0 ] 3,182.14: zp[1]:66 [ sin8s::x1#0 ] 2,002: zp[1]:50 [ sin8s::return#2 ] 1,666.83: zp[1]:73 [ sin8s::usinx#0 ] 277.81: zp[1]:29 [ sin8s::isUpper#10 ] 
 Uplift Scope [print_uint] 92,574.33: zp[2]:18 [ print_uint::w#3 print_uint::w#0 print_uint::w#2 print_uint::w#1 ] 
-Uplift Scope [mul8su] 36,670.33: zp[2]:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 ] 20,002: zp[1]:61 [ mul8su::$7 ] 20,002: zp[1]:62 [ mul8su::$10 ] 2,200.4: zp[1]:52 [ mul8su::a#0 ] 
+Uplift Scope [mul8su] 36,670.33: zp[2]:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 ] 20,002: zp[1]:61 [ mul8su::$4 ] 20,002: zp[1]:62 [ mul8su::$6 ] 2,200.4: zp[1]:52 [ mul8su::a#0 ] 
 Uplift Scope [print_sint] 45,171.33: zp[2]:16 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 ] 
 Uplift Scope [print_schar] 45,171.33: zp[1]:20 [ print_schar::b#4 print_schar::b#0 print_schar::b#1 ] 
 Uplift Scope [memset] 33,336.67: zp[2]:44 [ memset::dst#2 memset::dst#1 ] 
-Uplift Scope [sin8u_table] 2,095.84: zp[2]:2 [ sin8u_table::i#10 sin8u_table::i#1 ] 2,002: zp[1]:55 [ sin8u_table::$22 ] 1,130.16: zp[2]:4 [ sin8u_table::x#10 sin8u_table::x#1 ] 345.58: zp[2]:6 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] 214.5: zp[1]:51 [ sin8u_table::sinx#0 ] 200.2: zp[2]:53 [ sin8u_table::sinx_sc#0 ] 176.65: zp[1]:56 [ sin8u_table::sinx_tr#0 ] 21.87: zp[2]:48 [ sin8u_table::step#0 ] 
+Uplift Scope [sin8u_table] 2,095.84: zp[2]:2 [ sin8u_table::i#10 sin8u_table::i#1 ] 2,002: zp[1]:55 [ sin8u_table::$20 ] 1,130.16: zp[2]:4 [ sin8u_table::x#10 sin8u_table::x#1 ] 345.58: zp[2]:6 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] 214.5: zp[1]:51 [ sin8u_table::sinx#0 ] 200.2: zp[2]:53 [ sin8u_table::sinx_sc#0 ] 176.65: zp[1]:56 [ sin8u_table::sinx_tr#0 ] 21.87: zp[2]:48 [ sin8u_table::step#0 ] 
 Uplift Scope [div16u] 367.33: zp[2]:88 [ div16u::return#0 ] 202: zp[2]:46 [ div16u::return#2 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_ln] 
@@ -5522,11 +5512,11 @@ Limited combination testing to 100 combinations of 196608 possible.
 Uplifting [sin8s] best 21718 combination zp[2]:30 [ sin8s::x#6 sin8s::x#4 sin8s::x#2 sin8s::x#0 sin8s::x#1 ] reg byte x [ sin8s::usinx#4 sin8s::usinx#1 sin8s::usinx#2 ] reg byte a [ sin8s::return#0 sin8s::return#5 sin8s::sinx#1 ] zp[2]:64 [ sin8s::$4 ] reg byte a [ sin8s::x2#0 ] reg byte a [ sin8s::x3_6#0 ] zp[1]:75 [ sin8s::x4#0 ] zp[1]:77 [ sin8s::x5#0 ] zp[1]:78 [ sin8s::x5_128#0 ] zp[1]:70 [ sin8s::x3#0 ] zp[1]:66 [ sin8s::x1#0 ] zp[1]:50 [ sin8s::return#2 ] zp[1]:73 [ sin8s::usinx#0 ] zp[1]:29 [ sin8s::isUpper#10 ] 
 Limited combination testing to 100 combinations of 5308416 possible.
 Uplifting [print_uint] best 21718 combination zp[2]:18 [ print_uint::w#3 print_uint::w#0 print_uint::w#2 print_uint::w#1 ] 
-Uplifting [mul8su] best 21676 combination zp[2]:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 ] reg byte a [ mul8su::$7 ] reg byte a [ mul8su::$10 ] reg byte y [ mul8su::a#0 ] 
+Uplifting [mul8su] best 21676 combination zp[2]:21 [ mul8su::m#2 mul8su::m#1 mul8su::m#0 ] reg byte a [ mul8su::$4 ] reg byte a [ mul8su::$6 ] reg byte y [ mul8su::a#0 ] 
 Uplifting [print_sint] best 21676 combination zp[2]:16 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 ] 
 Uplifting [print_schar] best 21640 combination reg byte x [ print_schar::b#4 print_schar::b#0 print_schar::b#1 ] 
 Uplifting [memset] best 21640 combination zp[2]:44 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [sin8u_table] best 21600 combination zp[2]:2 [ sin8u_table::i#10 sin8u_table::i#1 ] reg byte a [ sin8u_table::$22 ] zp[2]:4 [ sin8u_table::x#10 sin8u_table::x#1 ] zp[2]:6 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] zp[1]:51 [ sin8u_table::sinx#0 ] zp[2]:53 [ sin8u_table::sinx_sc#0 ] zp[1]:56 [ sin8u_table::sinx_tr#0 ] zp[2]:48 [ sin8u_table::step#0 ] 
+Uplifting [sin8u_table] best 21600 combination zp[2]:2 [ sin8u_table::i#10 sin8u_table::i#1 ] reg byte a [ sin8u_table::$20 ] zp[2]:4 [ sin8u_table::x#10 sin8u_table::x#1 ] zp[2]:6 [ sin8u_table::sintab#2 sin8u_table::sintab#1 ] zp[1]:51 [ sin8u_table::sinx#0 ] zp[2]:53 [ sin8u_table::sinx_sc#0 ] zp[1]:56 [ sin8u_table::sinx_tr#0 ] zp[2]:48 [ sin8u_table::step#0 ] 
 Uplifting [div16u] best 21600 combination zp[2]:88 [ div16u::return#0 ] zp[2]:46 [ div16u::return#2 ] 
 Uplifting [RADIX] best 21600 combination 
 Uplifting [print_ln] best 21600 combination 
@@ -5889,9 +5879,9 @@ sin8u_table: {
     // sin8u_table::@15
   __b15:
     // [43] (signed word) sin8u_table::sinx_sc#0 ← (signed word)(word) mul8su::m#2
-    // [44] (byte~) sin8u_table::$22 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuaa=_hi_vwsz1 
+    // [44] (byte~) sin8u_table::$20 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuaa=_hi_vwsz1 
     lda.z sinx_sc+1
-    // [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$22 -- vbuz1=vbuc1_plus_vbuaa 
+    // [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$20 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #mid
     sta.z sinx_tr
@@ -6375,12 +6365,12 @@ mul8su: {
     jmp __b2
     // mul8su::@2
   __b2:
-    // [123] (byte~) mul8su::$7 ← > (word) mul8su::m#0 -- vbuaa=_hi_vwuz1 
+    // [123] (byte~) mul8su::$4 ← > (word) mul8su::m#0 -- vbuaa=_hi_vwuz1 
     lda.z m+1
-    // [124] (byte~) mul8su::$10 ← (byte~) mul8su::$7 - (const byte) mul8su::b#0 -- vbuaa=vbuaa_minus_vbuc1 
+    // [124] (byte~) mul8su::$6 ← (byte~) mul8su::$4 - (const byte) mul8su::b#0 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #b
-    // [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$10 -- vwuz1=vwuz1_sethi_vbuaa 
+    // [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$6 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [126] phi from mul8su::@2 mul8su::@3 to mul8su::@1 [phi:mul8su::@2/mul8su::@3->mul8su::@1]
   __b1_from___b2:
@@ -7302,8 +7292,8 @@ FINAL SYMBOL TABLE
 (void*) memset::str
 (const void*) memset::str#0 str = (void*)(byte*) 1024
 (signed word()) mul8su((signed byte) mul8su::a , (byte) mul8su::b)
-(byte~) mul8su::$10 reg byte a 20002.0
-(byte~) mul8su::$7 reg byte a 20002.0
+(byte~) mul8su::$4 reg byte a 20002.0
+(byte~) mul8su::$6 reg byte a 20002.0
 (label) mul8su::@1
 (label) mul8su::@2
 (label) mul8su::@3
@@ -7497,7 +7487,7 @@ FINAL SYMBOL TABLE
 (byte) sin8s::x5_128
 (byte) sin8s::x5_128#0 reg byte a 20002.0
 (void()) sin8u_table((byte*) sin8u_table::sintab , (word) sin8u_table::tabsize , (byte) sin8u_table::min , (byte) sin8u_table::max)
-(byte~) sin8u_table::$22 reg byte a 2002.0
+(byte~) sin8u_table::$20 reg byte a 2002.0
 (label) sin8u_table::@1
 (label) sin8u_table::@10
 (label) sin8u_table::@11
@@ -7582,12 +7572,12 @@ zp[2]:16 [ memset::dst#2 memset::dst#1 sin8u_table::i#10 sin8u_table::i#1 divr16
 reg byte a [ sin8s::return#2 ]
 zp[1]:18 [ sin8u_table::sinx#0 sin8s::isUpper#10 ]
 reg byte y [ mul8su::a#0 ]
-reg byte a [ sin8u_table::$22 ]
+reg byte a [ sin8u_table::$20 ]
 zp[1]:19 [ sin8u_table::sinx_tr#0 mulu8_sel::select#5 ]
 reg byte a [ print_uchar::$0 ]
 reg byte x [ print_uchar::$2 ]
-reg byte a [ mul8su::$7 ]
-reg byte a [ mul8su::$10 ]
+reg byte a [ mul8su::$4 ]
+reg byte a [ mul8su::$6 ]
 reg byte a [ mul8u::$1 ]
 zp[1]:20 [ sin8s::x1#0 ]
 reg byte a [ mulu8_sel::return#0 ]
@@ -7856,10 +7846,10 @@ sin8u_table: {
     // sinx_sc = mul8su(sinx, amplitude+1)
     // [43] (signed word) sin8u_table::sinx_sc#0 ← (signed word)(word) mul8su::m#2
     // >sinx_sc
-    // [44] (byte~) sin8u_table::$22 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuaa=_hi_vwsz1 
+    // [44] (byte~) sin8u_table::$20 ← > (signed word) sin8u_table::sinx_sc#0 -- vbuaa=_hi_vwsz1 
     lda.z sinx_sc+1
     // sinx_tr = mid+>sinx_sc
-    // [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$22 -- vbuz1=vbuc1_plus_vbuaa 
+    // [45] (byte) sin8u_table::sinx_tr#0 ← (const byte) sin8u_table::mid#0 + (byte~) sin8u_table::$20 -- vbuz1=vbuc1_plus_vbuaa 
     clc
     adc #mid
     sta.z sinx_tr
@@ -8298,13 +8288,13 @@ mul8su: {
     bpl __b1
     // mul8su::@2
     // >m
-    // [123] (byte~) mul8su::$7 ← > (word) mul8su::m#0 -- vbuaa=_hi_vwuz1 
+    // [123] (byte~) mul8su::$4 ← > (word) mul8su::m#0 -- vbuaa=_hi_vwuz1 
     lda.z m+1
     // >m = (>m)-(char)b
-    // [124] (byte~) mul8su::$10 ← (byte~) mul8su::$7 - (const byte) mul8su::b#0 -- vbuaa=vbuaa_minus_vbuc1 
+    // [124] (byte~) mul8su::$6 ← (byte~) mul8su::$4 - (const byte) mul8su::b#0 -- vbuaa=vbuaa_minus_vbuc1 
     sec
     sbc #b
-    // [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$10 -- vwuz1=vwuz1_sethi_vbuaa 
+    // [125] (word) mul8su::m#1 ← (word) mul8su::m#0 hi= (byte~) mul8su::$6 -- vwuz1=vwuz1_sethi_vbuaa 
     sta.z m+1
     // [126] phi from mul8su::@2 mul8su::@3 to mul8su::@1 [phi:mul8su::@2/mul8su::@3->mul8su::@1]
     // [126] phi (word) mul8su::m#2 = (word) mul8su::m#1 [phi:mul8su::@2/mul8su::@3->mul8su::@1#0] -- register_copy 

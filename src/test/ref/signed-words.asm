@@ -173,13 +173,11 @@ anim: {
     lda #>$e6
     sbc.z sprite_y+1
     sta.z sprite_y+1
-    // (byte)sprite_x
-    lda.z sprite_x
     // SPRITES_XPOS[0] = (byte)sprite_x
+    lda.z sprite_x
     sta SPRITES_XPOS
-    // (byte)sprite_y
-    lda.z sprite_y
     // SPRITES_YPOS[0] = (byte)sprite_y
+    lda.z sprite_y
     sta SPRITES_YPOS
     // >sprite_x
     lda.z sprite_x+1

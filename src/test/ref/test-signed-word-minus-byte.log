@@ -1,8 +1,19 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -79,9 +90,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -89,8 +100,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -153,8 +164,8 @@ print_sint::@5: scope:[print_sint]  from print_sint::@1
   (signed word) print_sint::w#4 ← phi( print_sint::@1/(signed word) print_sint::w#6 )
   (byte*) print_char_cursor#26 ← phi( print_sint::@1/(byte*) print_char_cursor#14 )
   (byte*) print_char_cursor#3 ← (byte*) print_char_cursor#26
-  (signed word~) print_sint::$5 ← - (signed word) print_sint::w#4
-  (signed word) print_sint::w#0 ← (signed word~) print_sint::$5
+  (signed word~) print_sint::$4 ← - (signed word) print_sint::w#4
+  (signed word) print_sint::w#0 ← (signed word~) print_sint::$4
   to:print_sint::@2
 print_sint::@3: scope:[print_sint]  from print_sint
   (signed word) print_sint::w#8 ← phi( print_sint/(signed word) print_sint::w#3 )
@@ -170,8 +181,7 @@ print_sint::@6: scope:[print_sint]  from print_sint::@3
 print_sint::@2: scope:[print_sint]  from print_sint::@5 print_sint::@6
   (byte*) print_char_cursor#49 ← phi( print_sint::@5/(byte*) print_char_cursor#3 print_sint::@6/(byte*) print_char_cursor#4 )
   (signed word) print_sint::w#5 ← phi( print_sint::@5/(signed word) print_sint::w#0 print_sint::@6/(signed word) print_sint::w#7 )
-  (word~) print_sint::$1 ← ((word)) (signed word) print_sint::w#5
-  (word) print_uint::w#0 ← (word~) print_sint::$1
+  (word) print_uint::w#0 ← (word)(signed word) print_sint::w#5
   call print_uint 
   to:print_sint::@7
 print_sint::@7: scope:[print_sint]  from print_sint::@2
@@ -405,8 +415,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -552,8 +562,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#4
 (void()) print_sint((signed word) print_sint::w)
 (bool~) print_sint::$0
-(word~) print_sint::$1
-(signed word~) print_sint::$5
+(signed word~) print_sint::$4
 (label) print_sint::@1
 (label) print_sint::@2
 (label) print_sint::@3
@@ -605,9 +614,7 @@ Adding number conversion cast (snumber) main::$1 in (number~) main::$1 ← (sign
 Adding number conversion cast (snumber) $29 in (number~) main::$2 ← (signed word) main::w2#0 - (number) $29
 Adding number conversion cast (snumber) main::$2 in (number~) main::$2 ← (signed word) main::w2#0 - (snumber)(number) $29
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (word~) print_sint::$1 ← (word)(signed word) print_sint::w#5
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
@@ -638,7 +645,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -648,9 +655,8 @@ Alias print_line_cursor#1 = print_ln::$0 print_line_cursor#10 print_char_cursor#
 Alias print_char_cursor#47 = print_char_cursor#55 print_char_cursor#48 
 Alias print_sint::w#3 = print_sint::w#6 print_sint::w#4 print_sint::w#8 print_sint::w#7 
 Alias print_char_cursor#26 = print_char_cursor#3 
-Alias print_sint::w#0 = print_sint::$5 
+Alias print_sint::w#0 = print_sint::$4 
 Alias print_char_cursor#27 = print_char_cursor#4 
-Alias print_uint::w#0 = print_sint::$1 
 Alias print_char_cursor#28 = print_char_cursor#5 print_char_cursor#29 print_char_cursor#6 
 Alias print_uchar::b#0 = print_uint::$0 
 Alias print_uint::w#1 = print_uint::w#2 
@@ -715,7 +721,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) print_char_cursor#51 (byte*) print_char_cursor#13
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_ln::$1 [18] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#13) goto print_ln::@1
 Simple Condition (bool~) print_sint::$0 [22] if((signed word) print_sint::w#3<(signed byte) 0) goto print_sint::@1
 Simple Condition (bool~) main::$7 [85] if((byte) main::i#1!=rangelast(0,$a)) goto main::@1
@@ -731,7 +737,7 @@ Constant (const byte) print_char::ch#4 = ' '
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -747,9 +753,9 @@ Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte) print_char::ch#0
@@ -758,8 +764,8 @@ Inlining constant with var siblings (const byte) print_char::ch#4
 Inlining constant with var siblings (const signed word) main::w1#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte*) print_line_cursor#0
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined print_char::ch#4 = (byte) ' '
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined print_char::ch#1 = (byte) ' '
 Constant inlined print_line_cursor#0 = (byte*) 1024
 Constant inlined print_char::ch#0 = (byte) '-'

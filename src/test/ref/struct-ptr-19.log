@@ -4,10 +4,12 @@ Created struct value member variable (byte) print::p_y
 Converted struct value to member variables (struct Point) print::p
 Converted procedure struct value parameter to member unwinding (void()) print((byte) print::p_x , (byte) print::p_y)
 Adding value bulk copy *(&(struct Point) main::point) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-Converted procedure struct value parameter to member unwinding in call (void~) main::$0 ← call print *((byte*)&(struct Point) main::point+(const byte) OFFSET_STRUCT_POINT_X) *((byte*)&(struct Point) main::point+(const byte) OFFSET_STRUCT_POINT_Y) 
-Converted procedure struct value parameter to member unwinding in call (void~) main::$1 ← call print *((byte*~) main::$2) *((byte*~) main::$3) 
+Converted call struct value parameter to member unwinding (void~) main::$0 ← call print *((byte*)&(struct Point) main::point+(const byte) OFFSET_STRUCT_POINT_X) *((byte*)&(struct Point) main::point+(const byte) OFFSET_STRUCT_POINT_Y) 
+Converted call struct value parameter to member unwinding (void~) main::$1 ← call print *((byte*~) main::$2) *((byte*~) main::$3) 
 Replacing struct member reference (struct Point) print::p.x with member unwinding reference (byte) print::p_x
 Replacing struct member reference (struct Point) print::p.y with member unwinding reference (byte) print::p_y
+De-inlining cast (byte*)main::ptr
+De-inlining cast (byte*)main::ptr
 Identified constant variable (struct Point*) main::ptr
 Culled Empty Block (label) @1
 
@@ -28,8 +30,10 @@ main: scope:[main]  from @2
 main::@1: scope:[main]  from main
   (byte) idx#8 ← phi( main/(byte) idx#6 )
   (byte) idx#1 ← (byte) idx#8
-  (byte*~) main::$2 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_X
-  (byte*~) main::$3 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_Y
+  (byte*~) main::$4 ← (byte*)(const struct Point*) main::ptr
+  (byte*~) main::$2 ← (byte*~) main::$4 + (const byte) OFFSET_STRUCT_POINT_X
+  (byte*~) main::$5 ← (byte*)(const struct Point*) main::ptr
+  (byte*~) main::$3 ← (byte*~) main::$5 + (const byte) OFFSET_STRUCT_POINT_Y
   (byte) print::p_x#1 ← *((byte*~) main::$2)
   (byte) print::p_y#1 ← *((byte*~) main::$3)
   call print 
@@ -101,6 +105,8 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte*~) main::$2
 (byte*~) main::$3
+(byte*~) main::$4
+(byte*~) main::$5
 (label) main::@1
 (label) main::@2
 (label) main::@return
@@ -132,23 +138,31 @@ Identical Phi Values (byte) idx#10 (byte) idx#12
 Identical Phi Values (byte) idx#13 (byte) idx#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Removing C-classic struct-unwound assignment [3] (struct Point) main::point ← struct-unwound {*(&(struct Point) main::point)}
-Constant right-side identified [8] (byte*~) main::$2 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [9] (byte*~) main::$3 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [8] (byte*~) main::$4 ← (byte*)(const struct Point*) main::ptr
+Constant right-side identified [10] (byte*~) main::$5 ← (byte*)(const struct Point*) main::ptr
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) idx#0 = 0
-Constant (const byte*) main::$2 = (byte*)main::ptr+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$3 = (byte*)main::ptr+OFFSET_STRUCT_POINT_Y
+Constant (const byte*) main::$4 = (byte*)main::ptr
+Constant (const byte*) main::$5 = (byte*)main::ptr
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)main::ptr in 
+Converting *(pointer+n) to pointer[n] [12] (byte) print::p_x#1 ← *((byte*~) main::$2)  -- *(main::$4 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [13] (byte) print::p_y#1 ← *((byte*~) main::$3)  -- *(main::$5 + OFFSET_STRUCT_POINT_Y)
+Successful SSA optimization Pass2InlineDerefIdx
 Simplifying expression containing zero (byte*)&main::point in [4] (byte) print::p_x#0 ← *((byte*)&(struct Point) main::point+(const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero main::$4 in [9] (byte*~) main::$2 ← (const byte*) main::$4 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero main::$4 in [12] (byte) print::p_x#1 ← *((const byte*) main::$4 + (const byte) OFFSET_STRUCT_POINT_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (byte*~) main::$2 and assignment [4] (byte*~) main::$2 ← (const byte*) main::$4
+Eliminating unused variable (byte*~) main::$3 and assignment [5] (byte*~) main::$3 ← (const byte*) main::$5 + (const byte) OFFSET_STRUCT_POINT_Y
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte) idx#0
+Constant inlined main::$5 = (byte*)(const struct Point*) main::ptr
 Constant inlined idx#0 = (byte) 0
-Constant inlined main::$2 = (byte*)(const struct Point*) main::ptr
-Constant inlined main::$3 = (byte*)(const struct Point*) main::ptr+(const byte) OFFSET_STRUCT_POINT_Y
+Constant inlined main::$4 = (byte*)(const struct Point*) main::ptr
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *((byte*)main::ptr+OFFSET_STRUCT_POINT_Y)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3

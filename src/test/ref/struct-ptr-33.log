@@ -5,6 +5,8 @@ Fixing struct type SIZE_OF struct Person to 16
 Fixing pointer increment (struct Person*) main::person ← ++ (struct Person*) main::person
 Replacing struct member reference *((struct Person*) main::person).name with member unwinding reference (byte*~) main::$0
 Replacing struct member reference *((struct Person*) main::person).name with member unwinding reference (byte*~) main::$1
+De-inlining cast (byte*)main::person
+De-inlining cast (byte*)main::person
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -13,10 +15,12 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (struct Person*) main::person#0 ← (const struct Person*) persons
-  (byte*~) main::$0 ← (byte*)(struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
+  (byte*~) main::$2 ← (byte*)(struct Person*) main::person#0
+  (byte*~) main::$0 ← (byte*~) main::$2 + (const byte) OFFSET_STRUCT_PERSON_NAME
   *((const nomodify byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$0 + (number) 2)
   (struct Person*) main::person#1 ← (struct Person*) main::person#0 + (const byte) SIZEOF_STRUCT_PERSON
-  (byte*~) main::$1 ← (byte*)(struct Person*) main::person#1 + (const byte) OFFSET_STRUCT_PERSON_NAME
+  (byte*~) main::$3 ← (byte*)(struct Person*) main::person#1
+  (byte*~) main::$1 ← (byte*~) main::$3 + (const byte) OFFSET_STRUCT_PERSON_NAME
   *((const nomodify byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$1 + (number) 2)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -42,6 +46,8 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$1
+(byte*~) main::$2
+(byte*~) main::$3
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (struct Person*) main::person
@@ -67,24 +73,26 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant (const struct Person*) main::person#0 = persons
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::person#0 in [1] (byte*~) main::$0 ← (byte*)(const struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
-Successful SSA optimization Pass2ConstantValues
-Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0 + (byte) 2)
+Constant (const byte*) main::$2 = (byte*)main::person#0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [3] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0 + (byte) 2)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Constant right-side identified [0] (byte*~) main::$0 ← (byte*)(const struct Person*) main::person#0 + (const byte) OFFSET_STRUCT_PERSON_NAME
+Constant right-side identified [0] (byte*~) main::$0 ← (const byte*) main::$2 + (const byte) OFFSET_STRUCT_PERSON_NAME
 Constant right-side identified [2] (struct Person*) main::person#1 ← (const struct Person*) main::person#0 + (const byte) SIZEOF_STRUCT_PERSON
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = (byte*)main::person#0+OFFSET_STRUCT_PERSON_NAME
+Constant (const byte*) main::$0 = main::$2+OFFSET_STRUCT_PERSON_NAME
 Constant (const struct Person*) main::person#1 = main::person#0+SIZEOF_STRUCT_PERSON
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte*)main::person#1 in [3] (byte*~) main::$1 ← (byte*)(const struct Person*) main::person#1 + (const byte) OFFSET_STRUCT_PERSON_NAME
-Successful SSA optimization Pass2ConstantValues
-Constant right-side identified [1] (byte*~) main::$1 ← (byte*)(const struct Person*) main::person#1 + (const byte) OFFSET_STRUCT_PERSON_NAME
+Constant (const byte*) main::$3 = (byte*)main::person#1
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [1] (byte*~) main::$1 ← (const byte*) main::$3 + (const byte) OFFSET_STRUCT_PERSON_NAME
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$1 = (byte*)main::person#1+OFFSET_STRUCT_PERSON_NAME
+Constant (const byte*) main::$1 = main::$3+OFFSET_STRUCT_PERSON_NAME
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const struct Person*) main::person#0
+Constant inlined main::$3 = (byte*)(const struct Person*) main::person#1
 Constant inlined main::$1 = (byte*)(const struct Person*) main::person#1+(const byte) OFFSET_STRUCT_PERSON_NAME
+Constant inlined main::$2 = (byte*)(const struct Person*) persons
 Constant inlined main::person#0 = (const struct Person*) persons
 Constant inlined main::$0 = (byte*)(const struct Person*) persons+(const byte) OFFSET_STRUCT_PERSON_NAME
 Successful SSA optimization Pass2ConstantInlining

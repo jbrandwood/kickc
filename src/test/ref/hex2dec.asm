@@ -176,9 +176,8 @@ utoa10w: {
     inx
     cpx #8
     bne __b1
-    // (unsigned char) value
-    lda.z value
     // *dst++ = DIGITS[(unsigned char) value]
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0

@@ -1,8 +1,19 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -100,9 +111,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -110,8 +121,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -312,8 +323,7 @@ init_points::pointXpos1: scope:[init_points]  from init_points::@3
   (byte) init_points::pos#7 ← phi( init_points::@3/(byte) init_points::pos#9 )
   (byte*) init_points::pointXpos1_point#1 ← phi( init_points::@3/(byte*) init_points::pointXpos1_point#0 )
   (byte*~) init_points::pointXpos1_$0 ← (byte*) init_points::pointXpos1_point#1 + (number) 0
-  (byte*~) init_points::pointXpos1_$1 ← ((byte*)) (byte*~) init_points::pointXpos1_$0
-  (byte*) init_points::pointXpos1_return#0 ← (byte*~) init_points::pointXpos1_$1
+  (byte*) init_points::pointXpos1_return#0 ← (byte*)(byte*~) init_points::pointXpos1_$0
   to:init_points::pointXpos1_@return
 init_points::pointXpos1_@return: scope:[init_points]  from init_points::pointXpos1
   (byte) init_points::i#7 ← phi( init_points::pointXpos1/(byte) init_points::i#8 )
@@ -337,8 +347,7 @@ init_points::pointYpos1: scope:[init_points]  from init_points::@4
   (byte) init_points::pos#8 ← phi( init_points::@4/(byte) init_points::pos#1 )
   (byte*) init_points::pointYpos1_point#1 ← phi( init_points::@4/(byte*) init_points::pointYpos1_point#0 )
   (byte*~) init_points::pointYpos1_$0 ← (byte*) init_points::pointYpos1_point#1 + (number) 1
-  (byte*~) init_points::pointYpos1_$1 ← ((byte*)) (byte*~) init_points::pointYpos1_$0
-  (byte*) init_points::pointYpos1_return#0 ← (byte*~) init_points::pointYpos1_$1
+  (byte*) init_points::pointYpos1_return#0 ← (byte*)(byte*~) init_points::pointYpos1_$0
   to:init_points::pointYpos1_@return
 init_points::pointYpos1_@return: scope:[init_points]  from init_points::pointYpos1
   (byte) init_points::i#4 ← phi( init_points::pointYpos1/(byte) init_points::i#5 )
@@ -413,8 +422,7 @@ print_points::pointXpos1: scope:[print_points]  from print_points::@3
   (byte*) print_char_cursor#53 ← phi( print_points::@3/(byte*) print_char_cursor#55 )
   (byte*) print_points::pointXpos1_point#1 ← phi( print_points::@3/(byte*) print_points::pointXpos1_point#0 )
   (byte*~) print_points::pointXpos1_$0 ← (byte*) print_points::pointXpos1_point#1 + (number) 0
-  (byte*~) print_points::pointXpos1_$1 ← ((byte*)) (byte*~) print_points::pointXpos1_$0
-  (byte*) print_points::pointXpos1_return#0 ← (byte*~) print_points::pointXpos1_$1
+  (byte*) print_points::pointXpos1_return#0 ← (byte*)(byte*~) print_points::pointXpos1_$0
   to:print_points::pointXpos1_@return
 print_points::pointXpos1_@return: scope:[print_points]  from print_points::pointXpos1
   (byte) print_points::i#11 ← phi( print_points::pointXpos1/(byte) print_points::i#12 )
@@ -457,8 +465,7 @@ print_points::pointYpos1: scope:[print_points]  from print_points::@8
   (byte*) print_char_cursor#54 ← phi( print_points::@8/(byte*) print_char_cursor#16 )
   (byte*) print_points::pointYpos1_point#1 ← phi( print_points::@8/(byte*) print_points::pointYpos1_point#0 )
   (byte*~) print_points::pointYpos1_$0 ← (byte*) print_points::pointYpos1_point#1 + (number) 1
-  (byte*~) print_points::pointYpos1_$1 ← ((byte*)) (byte*~) print_points::pointYpos1_$0
-  (byte*) print_points::pointYpos1_return#0 ← (byte*~) print_points::pointYpos1_$1
+  (byte*) print_points::pointYpos1_return#0 ← (byte*)(byte*~) print_points::pointYpos1_$0
   to:print_points::pointYpos1_@return
 print_points::pointYpos1_@return: scope:[print_points]  from print_points::pointYpos1
   (byte) print_points::i#6 ← phi( print_points::pointYpos1/(byte) print_points::i#7 )
@@ -568,7 +575,6 @@ SYMBOL TABLE SSA
 (byte*) init_points::point#3
 (label) init_points::pointXpos1
 (byte*~) init_points::pointXpos1_$0
-(byte*~) init_points::pointXpos1_$1
 (label) init_points::pointXpos1_@return
 (byte*) init_points::pointXpos1_point
 (byte*) init_points::pointXpos1_point#0
@@ -580,7 +586,6 @@ SYMBOL TABLE SSA
 (byte*) init_points::pointXpos1_return#3
 (label) init_points::pointYpos1
 (byte*~) init_points::pointYpos1_$0
-(byte*~) init_points::pointYpos1_$1
 (label) init_points::pointYpos1_@return
 (byte*) init_points::pointYpos1_point
 (byte*) init_points::pointYpos1_point#0
@@ -612,8 +617,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -821,7 +826,6 @@ SYMBOL TABLE SSA
 (byte*) print_points::point#5
 (label) print_points::pointXpos1
 (byte*~) print_points::pointXpos1_$0
-(byte*~) print_points::pointXpos1_$1
 (label) print_points::pointXpos1_@return
 (byte*) print_points::pointXpos1_point
 (byte*) print_points::pointXpos1_point#0
@@ -833,7 +837,6 @@ SYMBOL TABLE SSA
 (byte*) print_points::pointXpos1_return#3
 (label) print_points::pointYpos1
 (byte*~) print_points::pointYpos1_$0
-(byte*~) print_points::pointYpos1_$1
 (label) print_points::pointYpos1_@return
 (byte*) print_points::pointYpos1_point
 (byte*) print_points::pointYpos1_point#0
@@ -893,13 +896,8 @@ Adding number conversion cast (unumber) 0 in (byte*~) print_points::pointXpos1_$
 Adding number conversion cast (unumber) 1 in (byte*~) print_points::pointYpos1_$0 ← (byte*) print_points::pointYpos1_point#1 + (number) 1
 Adding number conversion cast (unumber) 1 in (byte) print_points::i#1 ← (byte) print_points::i#3 + rangenext(0,NUM_POINTS-1)
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast (byte*~) init_points::pointXpos1_$1 ← (byte*)(byte*~) init_points::pointXpos1_$0
-Inlining cast (byte*~) init_points::pointYpos1_$1 ← (byte*)(byte*~) init_points::pointYpos1_$0
-Inlining cast (byte*~) print_points::pointXpos1_$1 ← (byte*)(byte*~) print_points::pointXpos1_$0
-Inlining cast (byte*~) print_points::pointYpos1_$1 ← (byte*)(byte*~) print_points::pointYpos1_$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
@@ -943,7 +941,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -966,19 +964,19 @@ Alias print_char_cursor#12 = print_char_cursor#31 print_char_cursor#32 print_cha
 Alias init_points::i#10 = init_points::getPoint1_idx#0 init_points::i#2 init_points::getPoint1_idx#1 init_points::i#11 init_points::i#9 init_points::i#8 init_points::i#7 init_points::i#6 init_points::i#5 init_points::i#4 init_points::i#3 
 Alias init_points::pos#10 = init_points::pos#11 init_points::pos#12 init_points::pos#9 init_points::pos#7 init_points::pos#5 init_points::pos#3 
 Alias init_points::getPoint1_return#0 = init_points::getPoint1_$1 init_points::getPoint1_return#2 init_points::getPoint1_return#1 init_points::getPoint1_return#3 init_points::$0 init_points::point#0 init_points::pointXpos1_point#0 init_points::pointXpos1_point#1 init_points::point#3 init_points::point#2 init_points::point#1 init_points::pointYpos1_point#0 init_points::pointYpos1_point#1 
-Alias init_points::pointXpos1_return#0 = init_points::pointXpos1_$1 init_points::pointXpos1_$0 init_points::pointXpos1_return#2 init_points::pointXpos1_return#1 init_points::pointXpos1_return#3 init_points::$1 
+Alias init_points::pointXpos1_return#0 = init_points::pointXpos1_$0 init_points::pointXpos1_return#2 init_points::pointXpos1_return#1 init_points::pointXpos1_return#3 init_points::$1 
 Alias init_points::pos#1 = init_points::pos#8 init_points::pos#6 init_points::pos#4 
-Alias init_points::pointYpos1_return#0 = init_points::pointYpos1_$1 init_points::pointYpos1_$0 init_points::pointYpos1_return#2 init_points::pointYpos1_return#1 init_points::pointYpos1_return#3 init_points::$2 
+Alias init_points::pointYpos1_return#0 = init_points::pointYpos1_$0 init_points::pointYpos1_return#2 init_points::pointYpos1_return#1 init_points::pointYpos1_return#3 init_points::$2 
 Alias print_line_cursor#17 = print_line_cursor#7 
 Alias print_char_cursor#14 = print_char_cursor#33 
 Alias print_points::i#10 = print_points::getPoint1_idx#0 print_points::i#2 print_points::getPoint1_idx#1 print_points::i#15 print_points::i#14 print_points::i#13 print_points::i#12 print_points::i#11 print_points::i#9 print_points::i#8 print_points::i#7 print_points::i#6 print_points::i#5 print_points::i#4 print_points::i#3 
 Alias print_char_cursor#46 = print_char_cursor#57 print_char_cursor#58 print_char_cursor#56 print_char_cursor#55 print_char_cursor#53 print_char_cursor#51 
 Alias print_line_cursor#24 = print_line_cursor#37 print_line_cursor#38 print_line_cursor#36 print_line_cursor#35 print_line_cursor#34 print_line_cursor#33 print_line_cursor#32 print_line_cursor#31 print_line_cursor#30 print_line_cursor#29 print_line_cursor#28 print_line_cursor#27 
 Alias print_points::point#0 = print_points::getPoint1_return#0 print_points::getPoint1_$1 print_points::getPoint1_return#2 print_points::getPoint1_return#1 print_points::getPoint1_return#3 print_points::$1 print_points::pointXpos1_point#0 print_points::pointXpos1_point#1 print_points::point#5 print_points::point#4 print_points::point#3 print_points::point#2 print_points::point#1 print_points::pointYpos1_point#0 print_points::pointYpos1_point#1 
-Alias print_points::pointXpos1_return#0 = print_points::pointXpos1_$1 print_points::pointXpos1_$0 print_points::pointXpos1_return#2 print_points::pointXpos1_return#1 print_points::pointXpos1_return#3 print_points::$2 
+Alias print_points::pointXpos1_return#0 = print_points::pointXpos1_$0 print_points::pointXpos1_return#2 print_points::pointXpos1_return#1 print_points::pointXpos1_return#3 print_points::$2 
 Alias print_char_cursor#15 = print_char_cursor#34 
 Alias print_char_cursor#16 = print_char_cursor#35 print_char_cursor#54 print_char_cursor#52 print_char_cursor#47 
-Alias print_points::pointYpos1_return#0 = print_points::pointYpos1_$1 print_points::pointYpos1_$0 print_points::pointYpos1_return#2 print_points::pointYpos1_return#1 print_points::pointYpos1_return#3 print_points::$5 
+Alias print_points::pointYpos1_return#0 = print_points::pointYpos1_$0 print_points::pointYpos1_return#2 print_points::pointYpos1_return#1 print_points::pointYpos1_return#3 print_points::$5 
 Alias print_char_cursor#17 = print_char_cursor#36 
 Alias print_line_cursor#18 = print_line_cursor#8 print_line_cursor#19 print_line_cursor#9 
 Alias print_char_cursor#18 = print_char_cursor#37 print_char_cursor#38 print_char_cursor#19 
@@ -1022,7 +1020,7 @@ Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Identical Phi Values (byte*) print_char_cursor#2 (byte*) print_char_cursor#29
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$1 [17] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [27] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#29) goto print_ln::@1
 Simple Condition (bool~) init_points::$3 [68] if((byte) init_points::i#1!=rangelast(0,NUM_POINTS-1)) goto init_points::@1
@@ -1038,7 +1036,7 @@ Constant (const byte*) print_str::str#1 = print_points::str
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1077,9 +1075,9 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
 Converting *(pointer+n) to pointer[n] [36] *((byte*) init_points::getPoint1_return#0) ← (byte) init_points::pos#10  -- *(points + init_points::getPoint1_$0)
 Converting *(pointer+n) to pointer[n] [47] (byte) print_uchar::b#0 ← *((byte*) print_points::point#0)  -- *(points + print_points::getPoint1_$0)
@@ -1094,8 +1092,8 @@ Inlining constant with var siblings (const byte) init_points::i#0
 Inlining constant with var siblings (const byte) print_points::i#0
 Inlining constant with var siblings (const byte*) print_line_cursor#0
 Constant inlined init_points::i#0 = (byte) 0
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined print_points::i#0 = (byte) 0
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined print_line_cursor#0 = (byte*) 1024
 Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Constant inlined print_str::str#1 = (const byte*) print_points::str

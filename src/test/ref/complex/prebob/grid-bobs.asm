@@ -458,21 +458,20 @@ memset: {
 // Initialize the tables used by renderBob()
 renderBobInit: {
     .label __0 = $1e
-    .label __1 = $1e
+    .label __5 = $1e
     .label __6 = $20
     .label __7 = $1e
     ldx #0
   __b1:
-    // (unsigned int)y
-    txa
-    sta.z __0
-    lda #0
-    sta.z __0+1
     // ((unsigned int)y)*40
-    lda.z __0
+    txa
+    sta.z __5
+    lda #0
+    sta.z __5+1
+    lda.z __5
     asl
     sta.z __6
-    lda.z __0+1
+    lda.z __5+1
     rol
     sta.z __6+1
     asl.z __6
@@ -484,19 +483,19 @@ renderBobInit: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
     // MUL40[y] = ((unsigned int)y)*40
     txa
     asl
     tay
-    lda.z __1
+    lda.z __0
     sta MUL40,y
-    lda.z __1+1
+    lda.z __0+1
     sta MUL40+1,y
     // for(char y: 0..0x1f)
     inx

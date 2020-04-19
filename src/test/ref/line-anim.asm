@@ -92,10 +92,10 @@ main: {
 // Plot a single dot in the bitmap
 // bitmap_plot(word zp(9) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $d
+    .label __0 = $d
     .label x = 9
     .label plotter = $b
-    // (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    // plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -103,17 +103,17 @@ bitmap_plot: {
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __1
+    sta.z __0
     lda.z x+1
     and #>$fff8
-    sta.z __1+1
+    sta.z __0+1
     // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z __1
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z __1+1
+    adc.z __0+1
     sta.z plotter+1
     // <x
     ldx.z x
@@ -128,21 +128,20 @@ bitmap_plot: {
 // Initialize the points to be animated
 // point_init(byte zp(2) point_idx)
 point_init: {
-    .label __3 = 7
-    .label __4 = $d
-    .label __9 = $f
-    .label __10 = $11
-    .label __11 = $11
+    .label __5 = $f
+    .label __6 = $11
+    .label __17 = 7
+    .label __18 = $d
+    .label __19 = $11
     .label point_idx = 2
     .label y_diff = 7
     .label abs16s1_return = 3
     .label abs16s2_return = 5
     .label x_stepf = $b
     .label x_diff = 9
-    // (signed word)x_end[point_idx]
+    // ((signed word)x_end[point_idx])-((signed word)x_start[point_idx])
     lda.z point_idx
     asl
-    // ((signed word)x_end[point_idx])-((signed word)x_start[point_idx])
     tay
     sec
     lda x_end,y
@@ -151,24 +150,23 @@ point_init: {
     lda x_end+1,y
     sbc x_start+1,y
     sta.z x_diff+1
-    // (signed word)y_end[point_idx]
+    // ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
     ldy.z point_idx
     lda y_end,y
-    sta.z __3
+    sta.z __17
     lda #0
-    sta.z __3+1
-    // (signed word)y_start[point_idx]
+    sta.z __17+1
     lda y_start,y
-    sta.z __4
+    sta.z __18
     lda #0
-    sta.z __4+1
+    sta.z __18+1
     // y_diff = ((signed word)y_end[point_idx])-((signed word)y_start[point_idx])
     lda.z y_diff
     sec
-    sbc.z __4
+    sbc.z __18
     sta.z y_diff
     lda.z y_diff+1
-    sbc.z __4+1
+    sbc.z __18+1
     sta.z y_diff+1
     // if(w<0)
     lda.z x_diff+1
@@ -205,41 +203,40 @@ point_init: {
     asl
     tax
     lda x_start,x
-    sta.z __9
+    sta.z __5
     lda x_start+1,x
-    sta.z __9+1
-    asl.z __9
-    rol.z __9+1
-    asl.z __9
-    rol.z __9+1
-    asl.z __9
-    rol.z __9+1
-    asl.z __9
-    rol.z __9+1
+    sta.z __5+1
+    asl.z __5
+    rol.z __5+1
+    asl.z __5
+    rol.z __5+1
+    asl.z __5
+    rol.z __5+1
+    asl.z __5
+    rol.z __5+1
     // x_cur[point_idx] = x_start[point_idx]*$10
-    lda.z __9
+    lda.z __5
     sta x_cur,x
-    lda.z __9+1
+    lda.z __5+1
     sta x_cur+1,x
-    // (word)y_start[point_idx]
+    // ((word)y_start[point_idx])*$10
     ldy.z point_idx
     lda y_start,y
-    sta.z __10
+    sta.z __19
     lda #0
-    sta.z __10+1
-    // ((word)y_start[point_idx])*$10
-    asl.z __11
-    rol.z __11+1
-    asl.z __11
-    rol.z __11+1
-    asl.z __11
-    rol.z __11+1
-    asl.z __11
-    rol.z __11+1
+    sta.z __19+1
+    asl.z __6
+    rol.z __6+1
+    asl.z __6
+    rol.z __6+1
+    asl.z __6
+    rol.z __6+1
+    asl.z __6
+    rol.z __6+1
     // y_cur[point_idx] = ((word)y_start[point_idx])*$10
-    lda.z __11
+    lda.z __6
     sta y_cur,x
-    lda.z __11+1
+    lda.z __6+1
     sta y_cur+1,x
     // delay[point_idx] = DELAY
     lda #DELAY
@@ -475,7 +472,7 @@ screen_fill: {
 bitmap_clear: {
     .label bitmap = 5
     .label y = $13
-    // (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
+    // bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
     lda bitmap_plot_ylo
     sta.z bitmap
     lda bitmap_plot_yhi

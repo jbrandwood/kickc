@@ -66,8 +66,8 @@ bitmap_line: {
     .label sy = 6
     .label e1 = 4
     .label e = $a
-    .label y = $c
-    .label x = $e
+    .label y = $e
+    .label x = $c
     .label x2 = 2
     // abs_u16(x2-x1)
     lda.z x2
@@ -138,14 +138,14 @@ bitmap_line: {
     lda.z dx
     ror
     sta.z e
-    lda #<x1
-    sta.z x
-    lda #>x1
-    sta.z x+1
     lda #<y1
     sta.z y
     lda #>y1
     sta.z y+1
+    lda #<x1
+    sta.z x
+    lda #>x1
+    sta.z x+1
   __b6:
     // bitmap_plot(x,(char)y)
     lda.z y
@@ -214,14 +214,14 @@ bitmap_line: {
     lda.z dy
     ror
     sta.z e1
-    lda #<x1
-    sta.z x
-    lda #>x1
-    sta.z x+1
     lda #<y1
     sta.z y
     lda #>y1
     sta.z y+1
+    lda #<x1
+    sta.z x
+    lda #>x1
+    sta.z x+1
   __b9:
     // bitmap_plot(x,(char)y)
     lda.z y
@@ -287,12 +287,12 @@ bitmap_line: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($e) x, byte register(X) y)
+// bitmap_plot(word zp($c) x, byte register(X) y)
 bitmap_plot: {
-    .label __1 = $16
+    .label __0 = $16
     .label plotter = $14
-    .label x = $e
-    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    .label x = $c
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1
     lda bitmap_plot_ylo,x
@@ -300,17 +300,17 @@ bitmap_plot: {
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __1
+    sta.z __0
     lda.z x+1
     and #>$fff8
-    sta.z __1+1
+    sta.z __0+1
     // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z __1
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z __1+1
+    adc.z __0+1
     sta.z plotter+1
     // <x
     ldx.z x

@@ -183,7 +183,7 @@ clock: {
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label __11 = $d
+    .label __7 = $d
     .label xw = $16
     .label yw = $18
     .label angle_w = $d
@@ -244,14 +244,14 @@ init_angle_screen: {
     eor #$ff
     clc
     adc #$27+1
-    // (word){ 39-x*2, 0 }
+    // xw = (signed word)(word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // (word){ y*2, 0 }
+    // yw = (signed word)(word){ y*2, 0 }
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
@@ -260,13 +260,13 @@ init_angle_screen: {
     // angle_w+0x0080
     lda #$80
     clc
-    adc.z __11
-    sta.z __11
+    adc.z __7
+    sta.z __7
     bcc !+
-    inc.z __11+1
+    inc.z __7+1
   !:
     // ang_w = >(angle_w+0x0080)
-    lda.z __11+1
+    lda.z __7+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
     ldy.z xb

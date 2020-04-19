@@ -1,5 +1,6 @@
 Setting struct to load/store in variable affected by address-of (struct A*) main::a ← &(struct A) aa
 Replacing struct member reference *((struct A*) main::a).b with member unwinding reference *((byte*~) main::$2)
+De-inlining cast (byte*)main::a
 Warning! Adding boolean cast to non-boolean sub-expression *((byte*~) main::$2)
 Identified constant variable (struct A*) main::a
 
@@ -9,9 +10,10 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*~) main::$2 ← (byte*)(const struct A*) main::a + (const byte) OFFSET_STRUCT_A_B
-  (bool~) main::$3 ← (number) 0 != *((byte*~) main::$2)
-  (bool~) main::$0 ← ! (bool~) main::$3
+  (byte*~) main::$3 ← (byte*)(const struct A*) main::a
+  (byte*~) main::$2 ← (byte*~) main::$3 + (const byte) OFFSET_STRUCT_A_B
+  (bool~) main::$4 ← (number) 0 != *((byte*~) main::$2)
+  (bool~) main::$0 ← ! (bool~) main::$4
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@1
   to:main::@2
@@ -43,34 +45,39 @@ SYMBOL TABLE SSA
 (bool~) main::$0
 (bool~) main::$1
 (byte*~) main::$2
-(bool~) main::$3
+(byte*~) main::$3
+(bool~) main::$4
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (const struct A*) main::a = &(struct A) aa
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$3 ← (number) 0 != *((byte*~) main::$2)
+Adding number conversion cast (unumber) 0 in (bool~) main::$4 ← (number) 0 != *((byte*~) main::$2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [2] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2) from [1] (bool~) main::$3 ← (byte) 0 != *((byte*~) main::$2)
-Inversing boolean not [3] (bool~) main::$1 ← (byte) 0 != *((byte*~) main::$2) from [2] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2)
+Inversing boolean not [3] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2) from [2] (bool~) main::$4 ← (byte) 0 != *((byte*~) main::$2)
+Inversing boolean not [4] (bool~) main::$1 ← (byte) 0 != *((byte*~) main::$2) from [3] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2)
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$1 [2] if((byte) 0!=*((byte*~) main::$2)) goto main::@1
+Simple Condition (bool~) main::$1 [3] if((byte) 0!=*((byte*~) main::$2)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte*~) main::$2 ← (byte*)(const struct A*) main::a + (const byte) OFFSET_STRUCT_A_B
+Constant right-side identified [0] (byte*~) main::$3 ← (byte*)(const struct A*) main::a
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$2 = (byte*)main::a+OFFSET_STRUCT_A_B
+Constant (const byte*) main::$3 = (byte*)main::a
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)main::a in 
+Converting *(pointer+n) to pointer[n] [3] if((byte) 0!=*((byte*~) main::$2)) goto main::@1  -- *(main::$3 + OFFSET_STRUCT_A_B)
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero main::$3 in [1] (byte*~) main::$2 ← (const byte*) main::$3 + (const byte) OFFSET_STRUCT_A_B
+Simplifying expression containing zero main::$3 in [3] if((byte) 0!=*((const byte*) main::$3 + (const byte) OFFSET_STRUCT_A_B)) goto main::@1
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (byte*~) main::$2 and assignment [0] (byte*~) main::$2 ← (const byte*) main::$3
 Eliminating unused constant (const byte) OFFSET_STRUCT_A_B
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::$2 = (byte*)(const struct A*) main::a
+Constant inlined main::$3 = (byte*)(const struct A*) main::a
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1

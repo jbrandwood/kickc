@@ -5,7 +5,7 @@
   .label SCREEN = $400
 main: {
     .label __0 = 3
-    .label __1 = 3
+    .label __5 = 3
     .label line = 3
     .label y = 2
     .label __6 = 5
@@ -13,16 +13,15 @@ main: {
     lda #5
     sta.z y
   __b1:
-    // (word)y
-    lda.z y
-    sta.z __0
-    lda #0
-    sta.z __0+1
     // (word)y*40
-    lda.z __0
+    lda.z y
+    sta.z __5
+    lda #0
+    sta.z __5+1
+    lda.z __5
     asl
     sta.z __6
-    lda.z __0+1
+    lda.z __5+1
     rol
     sta.z __6+1
     asl.z __6
@@ -34,12 +33,12 @@ main: {
     lda.z __7+1
     adc.z __6+1
     sta.z __7+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
     // line = SCREEN+(word)y*40
     clc
     lda.z line

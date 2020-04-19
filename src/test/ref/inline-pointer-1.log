@@ -25,8 +25,7 @@ main::@return: scope:[main]  from main::@2
 puta: scope:[puta]  from main main::@1
   (byte) puta::pl#2 ← phi( main/(byte) puta::pl#0 main::@1/(byte) puta::pl#1 )
   (byte) puta::ph#2 ← phi( main/(byte) puta::ph#0 main::@1/(byte) puta::ph#1 )
-  (byte*~) puta::$0 ← ((byte*)) { (byte) puta::ph#2, (byte) puta::pl#2 }
-  (byte*) puta::screen#0 ← (byte*~) puta::$0
+  (byte*) puta::screen#0 ← (byte*){ (byte) puta::ph#2, (byte) puta::pl#2 }
   *((byte*) puta::screen#0) ← (byte) 'a'
   to:puta::@return
 puta::@return: scope:[puta]  from puta
@@ -49,7 +48,6 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 (void()) puta((byte) puta::ph , (byte) puta::pl)
-(byte*~) puta::$0
 (label) puta::@return
 (byte) puta::ph
 (byte) puta::ph#0
@@ -62,7 +60,7 @@ SYMBOL TABLE SSA
 (byte*) puta::screen
 (byte*) puta::screen#0
 
-Fixing inline constructor with puta::$1 ← (byte)puta::ph#2 w= (byte)puta::pl#2
+Fixing inline constructor with puta::$0 ← (byte)puta::ph#2 w= (byte)puta::pl#2
 Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 4 in (byte) puta::ph#0 ← (number) 4
 Adding number conversion cast (unumber) 0 in (byte) puta::pl#0 ← (number) 0
@@ -86,7 +84,7 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) $18
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Adding pointer type conversion cast (byte*) puta::$0 in (byte*~) puta::$0 ← (word~) puta::$1
+Adding pointer type conversion cast (byte*) puta::$0 in (byte*~) puta::$0 ← (byte) puta::ph#2 w= (byte) puta::pl#2
 Successful SSA optimization PassNAddTypeConversionAssignment
 Alias puta::screen#0 = puta::$0 
 Successful SSA optimization Pass2AliasElimination
@@ -450,7 +448,7 @@ main: {
 // puta(byte register(A) ph, byte register(X) pl)
 puta: {
     .label screen = 2
-    // (byte*) { ph, pl }
+    // screen = (byte*) { ph, pl }
     // [10] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2 -- vwuz1=vbuaa_word_vbuxx 
     sta.z screen+1
     stx.z screen

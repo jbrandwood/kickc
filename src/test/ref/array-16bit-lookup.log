@@ -37,11 +37,10 @@ main::@return: scope:[main]  from main::@3
 getValue: scope:[getValue]  from main::@1
   (word) getValue::index#1 ← phi( main::@1/(word) getValue::index#0 )
   (number~) getValue::$0 ← (word) getValue::index#1 & (number) $7f
-  (number~) getValue::$4 ← (number~) getValue::$0 * (const byte) SIZEOF_WORD
-  (number~) getValue::$1 ← *((const word*) arr16 + (number~) getValue::$4) & (number) $ff
+  (number~) getValue::$3 ← (number~) getValue::$0 * (const byte) SIZEOF_WORD
+  (number~) getValue::$1 ← *((const word*) arr16 + (number~) getValue::$3) & (number) $ff
   (number~) getValue::$2 ← (number~) getValue::$1 >> (number) 1
-  (word~) getValue::$3 ← ((word)) (number~) getValue::$2
-  (word) getValue::return#1 ← (word~) getValue::$3
+  (word) getValue::return#1 ← (word)(number~) getValue::$2
   to:getValue::@return
 getValue::@return: scope:[getValue]  from getValue
   (word) getValue::return#4 ← phi( getValue/(word) getValue::return#1 )
@@ -66,8 +65,7 @@ SYMBOL TABLE SSA
 (number~) getValue::$0
 (number~) getValue::$1
 (number~) getValue::$2
-(word~) getValue::$3
-(number~) getValue::$4
+(number~) getValue::$3
 (label) getValue::@return
 (word) getValue::index
 (word) getValue::index#0
@@ -94,14 +92,12 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $7f in (number~) getValue::$0 ← (word) getValue::index#1 & (number) $7f
 Adding number conversion cast (unumber) getValue::$0 in (number~) getValue::$0 ← (word) getValue::index#1 & (unumber)(number) $7f
-Adding number conversion cast (unumber) getValue::$4 in (number~) getValue::$4 ← (unumber~) getValue::$0 * (const byte) SIZEOF_WORD
-Adding number conversion cast (unumber) $ff in (number~) getValue::$1 ← *((const word*) arr16 + (unumber~) getValue::$4) & (number) $ff
-Adding number conversion cast (unumber) getValue::$1 in (number~) getValue::$1 ← *((const word*) arr16 + (unumber~) getValue::$4) & (unumber)(number) $ff
+Adding number conversion cast (unumber) getValue::$3 in (number~) getValue::$3 ← (unumber~) getValue::$0 * (const byte) SIZEOF_WORD
+Adding number conversion cast (unumber) $ff in (number~) getValue::$1 ← *((const word*) arr16 + (unumber~) getValue::$3) & (number) $ff
+Adding number conversion cast (unumber) getValue::$1 in (number~) getValue::$1 ← *((const word*) arr16 + (unumber~) getValue::$3) & (unumber)(number) $ff
 Adding number conversion cast (unumber) 1 in (number~) getValue::$2 ← (unumber~) getValue::$1 >> (number) 1
 Adding number conversion cast (unumber) getValue::$2 in (number~) getValue::$2 ← (unumber~) getValue::$1 >> (unumber)(number) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word~) getValue::$3 ← (word)(unumber~) getValue::$2
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $ff
@@ -112,12 +108,12 @@ Finalized unsigned number type (byte) $ff
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) getValue::$0 ← (word) getValue::index#1 & (byte) $7f
-Inferred type updated to byte in (unumber~) getValue::$4 ← (byte~) getValue::$0 * (const byte) SIZEOF_WORD
-Inferred type updated to byte in (unumber~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$4) & (byte) $ff
+Inferred type updated to byte in (unumber~) getValue::$3 ← (byte~) getValue::$0 * (const byte) SIZEOF_WORD
+Inferred type updated to byte in (unumber~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$3) & (byte) $ff
 Inferred type updated to byte in (unumber~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1
 Alias getValue::return#0 = getValue::return#3 
 Alias main::idx#2 = main::idx#3 
-Alias getValue::return#1 = getValue::$3 getValue::return#4 getValue::return#2 
+Alias getValue::return#1 = getValue::return#4 getValue::return#2 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (word) getValue::index#1 (word) getValue::index#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -134,7 +130,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $81
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift [5] (byte~) main::$2 ← (byte) main::idx#2 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [11] (byte~) getValue::$4 ← (byte~) getValue::$0 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [11] (byte~) getValue::$3 ← (byte~) getValue::$0 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::idx#0
 Constant inlined main::idx#0 = (byte) 0
@@ -198,8 +194,8 @@ main::@return: scope:[main]  from main::@2
 (word()) getValue((word) getValue::index)
 getValue: scope:[getValue]  from main::@1
   [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f
-  [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1
-  [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$4) & (byte) $ff
+  [16] (byte~) getValue::$3 ← (byte~) getValue::$0 << (byte) 1
+  [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$3) & (byte) $ff
   [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1
   [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2
   to:getValue::@return
@@ -213,7 +209,7 @@ VARIABLE REGISTER WEIGHTS
 (byte~) getValue::$0 2002.0
 (byte~) getValue::$1 2002.0
 (byte~) getValue::$2 1001.0
-(byte~) getValue::$4 2002.0
+(byte~) getValue::$3 2002.0
 (word) getValue::index
 (word) getValue::index#0 1102.0
 (word) getValue::return
@@ -233,7 +229,7 @@ Added variable getValue::return#0 to live range equivalence class [ getValue::re
 Added variable main::$0 to live range equivalence class [ main::$0 ]
 Added variable main::$2 to live range equivalence class [ main::$2 ]
 Added variable getValue::$0 to live range equivalence class [ getValue::$0 ]
-Added variable getValue::$4 to live range equivalence class [ getValue::$4 ]
+Added variable getValue::$3 to live range equivalence class [ getValue::$3 ]
 Added variable getValue::$1 to live range equivalence class [ getValue::$1 ]
 Added variable getValue::$2 to live range equivalence class [ getValue::$2 ]
 Added variable getValue::return#1 to live range equivalence class [ getValue::return#1 ]
@@ -244,7 +240,7 @@ Complete equivalence classes
 [ main::$0 ]
 [ main::$2 ]
 [ getValue::$0 ]
-[ getValue::$4 ]
+[ getValue::$3 ]
 [ getValue::$1 ]
 [ getValue::$2 ]
 [ getValue::return#1 ]
@@ -254,7 +250,7 @@ Allocated zp[2]:5 [ getValue::return#0 ]
 Allocated zp[2]:7 [ main::$0 ]
 Allocated zp[1]:9 [ main::$2 ]
 Allocated zp[1]:10 [ getValue::$0 ]
-Allocated zp[1]:11 [ getValue::$4 ]
+Allocated zp[1]:11 [ getValue::$3 ]
 Allocated zp[1]:12 [ getValue::$1 ]
 Allocated zp[1]:13 [ getValue::$2 ]
 Allocated zp[2]:14 [ getValue::return#1 ]
@@ -351,7 +347,7 @@ getValue: {
     .label __0 = $a
     .label __1 = $c
     .label __2 = $d
-    .label __4 = $b
+    .label __3 = $b
     .label index = 3
     .label return = 5
     .label return_1 = $e
@@ -359,13 +355,13 @@ getValue: {
     lda #$7f
     and.z index
     sta.z __0
-    // [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [16] (byte~) getValue::$3 ← (byte~) getValue::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __0
     asl
-    sta.z __4
-    // [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$4) & (byte) $ff -- vbuz1=pwuc1_derefidx_vbuz2_band_vbuc2 
+    sta.z __3
+    // [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$3) & (byte) $ff -- vbuz1=pwuc1_derefidx_vbuz2_band_vbuc2 
     lda #$ff
-    ldy.z __4
+    ldy.z __3
     and arr16,y
     sta.z __1
     // [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
@@ -394,8 +390,8 @@ Statement [9] (word~) main::$0 ← (word) getValue::return#0 [ main::idx#2 main:
 Statement [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 [ main::idx#2 main::$0 main::$2 ] ( main:2 [ main::idx#2 main::$0 main::$2 ] { }  ) always clobbers reg byte a 
 Statement [11] *((const word*) main::SCREEN + (byte~) main::$2) ← (word~) main::$0 [ main::idx#2 ] ( main:2 [ main::idx#2 ] { }  ) always clobbers reg byte a 
 Statement [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f [ getValue::$0 ] ( main:2::getValue:7 [ main::idx#2 getValue::$0 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
-Statement [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 [ getValue::$4 ] ( main:2::getValue:7 [ main::idx#2 getValue::$4 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
-Statement [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$4) & (byte) $ff [ getValue::$1 ] ( main:2::getValue:7 [ main::idx#2 getValue::$1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
+Statement [16] (byte~) getValue::$3 ← (byte~) getValue::$0 << (byte) 1 [ getValue::$3 ] ( main:2::getValue:7 [ main::idx#2 getValue::$3 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
+Statement [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$3) & (byte) $ff [ getValue::$1 ] ( main:2::getValue:7 [ main::idx#2 getValue::$1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 [ getValue::$2 ] ( main:2::getValue:7 [ main::idx#2 getValue::$2 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 [ getValue::return#1 ] ( main:2::getValue:7 [ main::idx#2 getValue::return#1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [6] (word) getValue::index#0 ← (byte) main::idx#2 [ main::idx#2 getValue::index#0 ] ( main:2 [ main::idx#2 getValue::index#0 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
@@ -404,8 +400,8 @@ Statement [9] (word~) main::$0 ← (word) getValue::return#0 [ main::idx#2 main:
 Statement [10] (byte~) main::$2 ← (byte) main::idx#2 << (byte) 1 [ main::idx#2 main::$0 main::$2 ] ( main:2 [ main::idx#2 main::$0 main::$2 ] { }  ) always clobbers reg byte a 
 Statement [11] *((const word*) main::SCREEN + (byte~) main::$2) ← (word~) main::$0 [ main::idx#2 ] ( main:2 [ main::idx#2 ] { }  ) always clobbers reg byte a 
 Statement [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f [ getValue::$0 ] ( main:2::getValue:7 [ main::idx#2 getValue::$0 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
-Statement [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 [ getValue::$4 ] ( main:2::getValue:7 [ main::idx#2 getValue::$4 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
-Statement [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$4) & (byte) $ff [ getValue::$1 ] ( main:2::getValue:7 [ main::idx#2 getValue::$1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
+Statement [16] (byte~) getValue::$3 ← (byte~) getValue::$0 << (byte) 1 [ getValue::$3 ] ( main:2::getValue:7 [ main::idx#2 getValue::$3 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
+Statement [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$3) & (byte) $ff [ getValue::$1 ] ( main:2::getValue:7 [ main::idx#2 getValue::$1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 [ getValue::$2 ] ( main:2::getValue:7 [ main::idx#2 getValue::$2 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Statement [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 [ getValue::return#1 ] ( main:2::getValue:7 [ main::idx#2 getValue::return#1 ] { { getValue::index#0 = main::idx#2 } { getValue::return#0 = getValue::return#1 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::idx#2 main::idx#1 ] : zp[1]:2 , reg byte x , reg byte y , 
@@ -414,17 +410,17 @@ Potential registers zp[2]:5 [ getValue::return#0 ] : zp[2]:5 ,
 Potential registers zp[2]:7 [ main::$0 ] : zp[2]:7 , 
 Potential registers zp[1]:9 [ main::$2 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:10 [ getValue::$0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:11 [ getValue::$4 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ getValue::$3 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:12 [ getValue::$1 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:13 [ getValue::$2 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:14 [ getValue::return#1 ] : zp[2]:14 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [getValue] 2,002: zp[1]:10 [ getValue::$0 ] 2,002: zp[1]:11 [ getValue::$4 ] 2,002: zp[1]:12 [ getValue::$1 ] 1,102: zp[2]:3 [ getValue::index#0 ] 1,001: zp[1]:13 [ getValue::$2 ] 367.33: zp[2]:14 [ getValue::return#1 ] 202: zp[2]:5 [ getValue::return#0 ] 
+Uplift Scope [getValue] 2,002: zp[1]:10 [ getValue::$0 ] 2,002: zp[1]:11 [ getValue::$3 ] 2,002: zp[1]:12 [ getValue::$1 ] 1,102: zp[2]:3 [ getValue::index#0 ] 1,001: zp[1]:13 [ getValue::$2 ] 367.33: zp[2]:14 [ getValue::return#1 ] 202: zp[2]:5 [ getValue::return#0 ] 
 Uplift Scope [main] 209.21: zp[1]:2 [ main::idx#2 main::idx#1 ] 202: zp[1]:9 [ main::$2 ] 101: zp[2]:7 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [getValue] best 1027 combination reg byte a [ getValue::$0 ] reg byte a [ getValue::$4 ] reg byte a [ getValue::$1 ] zp[2]:3 [ getValue::index#0 ] reg byte a [ getValue::$2 ] zp[2]:14 [ getValue::return#1 ] zp[2]:5 [ getValue::return#0 ] 
+Uplifting [getValue] best 1027 combination reg byte a [ getValue::$0 ] reg byte a [ getValue::$3 ] reg byte a [ getValue::$1 ] zp[2]:3 [ getValue::index#0 ] reg byte a [ getValue::$2 ] zp[2]:14 [ getValue::return#1 ] zp[2]:5 [ getValue::return#0 ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [main] best 877 combination reg byte x [ main::idx#2 main::idx#1 ] reg byte a [ main::$2 ] zp[2]:7 [ main::$0 ] 
 Uplifting [] best 877 combination 
@@ -513,9 +509,9 @@ getValue: {
     // [15] (byte~) getValue::$0 ← (word) getValue::index#0 & (byte) $7f -- vbuaa=vwuz1_band_vbuc1 
     lda #$7f
     and.z index
-    // [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [16] (byte~) getValue::$3 ← (byte~) getValue::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$4) & (byte) $ff -- vbuaa=pwuc1_derefidx_vbuaa_band_vbuc2 
+    // [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$3) & (byte) $ff -- vbuaa=pwuc1_derefidx_vbuaa_band_vbuc2 
     tay
     lda #$ff
     and arr16,y
@@ -572,7 +568,7 @@ FINAL SYMBOL TABLE
 (byte~) getValue::$0 reg byte a 2002.0
 (byte~) getValue::$1 reg byte a 2002.0
 (byte~) getValue::$2 reg byte a 1001.0
-(byte~) getValue::$4 reg byte a 2002.0
+(byte~) getValue::$3 reg byte a 2002.0
 (label) getValue::@return
 (word) getValue::index
 (word) getValue::index#0 index zp[2]:2 1102.0
@@ -595,7 +591,7 @@ zp[2]:2 [ getValue::index#0 ]
 zp[2]:4 [ getValue::return#0 main::$0 getValue::return#1 ]
 reg byte a [ main::$2 ]
 reg byte a [ getValue::$0 ]
-reg byte a [ getValue::$4 ]
+reg byte a [ getValue::$3 ]
 reg byte a [ getValue::$1 ]
 reg byte a [ getValue::$2 ]
 
@@ -671,16 +667,16 @@ getValue: {
     lda #$7f
     and.z index
     // arr16[index & 0x7f] & 0xff
-    // [16] (byte~) getValue::$4 ← (byte~) getValue::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [16] (byte~) getValue::$3 ← (byte~) getValue::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$4) & (byte) $ff -- vbuaa=pwuc1_derefidx_vbuaa_band_vbuc2 
+    // [17] (byte~) getValue::$1 ← *((const word*) arr16 + (byte~) getValue::$3) & (byte) $ff -- vbuaa=pwuc1_derefidx_vbuaa_band_vbuc2 
     tay
     lda #$ff
     and arr16,y
     // (arr16[index & 0x7f] & 0xff) >> 1
     // [18] (byte~) getValue::$2 ← (byte~) getValue::$1 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
-    // (unsigned int)((arr16[index & 0x7f] & 0xff) >> 1)
+    // return (unsigned int)((arr16[index & 0x7f] & 0xff) >> 1);
     // [19] (word) getValue::return#1 ← (word)(byte~) getValue::$2 -- vwuz1=_word_vbuaa 
     sta.z return
     lda #0

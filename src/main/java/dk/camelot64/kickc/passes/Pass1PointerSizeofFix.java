@@ -197,6 +197,16 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                return (SymbolTypePointer) memberType;
             }
          }
+      } else if(pointer instanceof CastValue) {
+         final SymbolType toType = ((CastValue) pointer).getToType();
+         if(toType instanceof SymbolTypePointer) {
+            return (SymbolTypePointer) toType;
+         }
+      } else if(pointer instanceof ConstantCastValue) {
+         final SymbolType toType = ((ConstantCastValue) pointer).getToType();
+         if(toType instanceof SymbolTypePointer) {
+            return (SymbolTypePointer) toType;
+         }
       }
       return null;
    }

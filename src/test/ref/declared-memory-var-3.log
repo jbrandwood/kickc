@@ -1,6 +1,8 @@
 Setting struct to load/store in variable affected by address-of (struct foo*) main::barp ← &(struct foo) bar
 Replacing struct member reference *((struct foo*) main::barp).thing1 with member unwinding reference *((byte*~) main::$0)
 Replacing struct member reference *((struct foo*) main::barp).thing2 with member unwinding reference *((byte*~) main::$1)
+De-inlining cast (byte*)main::barp
+De-inlining cast (byte*)main::barp
 Identified constant variable (struct foo*) main::barp
 
 CONTROL FLOW GRAPH SSA
@@ -10,10 +12,12 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 0
-  (byte*~) main::$0 ← (byte*)(const struct foo*) main::barp + (const byte) OFFSET_STRUCT_FOO_THING1
+  (byte*~) main::$2 ← (byte*)(const struct foo*) main::barp
+  (byte*~) main::$0 ← (byte*~) main::$2 + (const byte) OFFSET_STRUCT_FOO_THING1
   *((const nomodify byte*) main::SCREEN + (byte) main::i#0) ← *((byte*~) main::$0)
   (byte) main::i#1 ← ++ (byte) main::i#0
-  (byte*~) main::$1 ← (byte*)(const struct foo*) main::barp + (const byte) OFFSET_STRUCT_FOO_THING2
+  (byte*~) main::$3 ← (byte*)(const struct foo*) main::barp
+  (byte*~) main::$1 ← (byte*~) main::$3 + (const byte) OFFSET_STRUCT_FOO_THING2
   *((const nomodify byte*) main::SCREEN + (byte) main::i#1) ← *((byte*~) main::$1)
   (byte) main::i#2 ← ++ (byte) main::i#1
   to:main::@return
@@ -40,6 +44,8 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$1
+(byte*~) main::$2
+(byte*~) main::$3
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (const struct foo*) main::barp = &(struct foo) bar
@@ -50,17 +56,23 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [1] (byte*~) main::$0 ← (byte*)(const struct foo*) main::barp + (const byte) OFFSET_STRUCT_FOO_THING1
-Constant right-side identified [4] (byte*~) main::$1 ← (byte*)(const struct foo*) main::barp + (const byte) OFFSET_STRUCT_FOO_THING2
+Constant right-side identified [1] (byte*~) main::$2 ← (byte*)(const struct foo*) main::barp
+Constant right-side identified [5] (byte*~) main::$3 ← (byte*)(const struct foo*) main::barp
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::i#0 = 0
-Constant (const byte*) main::$0 = (byte*)main::barp+OFFSET_STRUCT_FOO_THING1
-Constant (const byte*) main::$1 = (byte*)main::barp+OFFSET_STRUCT_FOO_THING2
+Constant (const byte*) main::$2 = (byte*)main::barp
+Constant (const byte*) main::$3 = (byte*)main::barp
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)main::barp in 
-Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (const byte) main::i#0) ← *((const byte*) main::$0)
+Converting *(pointer+n) to pointer[n] [3] *((const nomodify byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*~) main::$0)  -- *(main::$2 + OFFSET_STRUCT_FOO_THING1)
+Converting *(pointer+n) to pointer[n] [7] *((const nomodify byte*) main::SCREEN + (byte) main::i#1) ← *((byte*~) main::$1)  -- *(main::$3 + OFFSET_STRUCT_FOO_THING2)
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero main::$2 in [2] (byte*~) main::$0 ← (const byte*) main::$2 + (const byte) OFFSET_STRUCT_FOO_THING1
+Simplifying expression containing zero main::$2 in [3] *((const nomodify byte*) main::SCREEN + (const byte) main::i#0) ← *((const byte*) main::$2 + (const byte) OFFSET_STRUCT_FOO_THING1)
+Simplifying expression containing zero main::SCREEN in [3] *((const nomodify byte*) main::SCREEN + (const byte) main::i#0) ← *((const byte*) main::$2)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) main::i#2 and assignment [3] (byte) main::i#2 ← ++ (byte) main::i#1
+Eliminating unused variable (byte*~) main::$0 and assignment [0] (byte*~) main::$0 ← (const byte*) main::$2
+Eliminating unused variable (byte*~) main::$1 and assignment [3] (byte*~) main::$1 ← (const byte*) main::$3 + (const byte) OFFSET_STRUCT_FOO_THING2
+Eliminating unused variable (byte) main::i#2 and assignment [5] (byte) main::i#2 ← ++ (byte) main::i#1
 Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
 Successful SSA optimization PassNEliminateUnusedVars
 Constant right-side identified [1] (byte) main::i#1 ← ++ (const byte) main::i#0
@@ -70,10 +82,11 @@ Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const byte) main::i#0
 Inlining constant with different constant siblings (const byte) main::i#1
 Constant inlined main::i#0 = (byte) 0
+Constant inlined main::$3 = (byte*)(const struct foo*) main::barp
 Constant inlined main::i#1 = ++(byte) 0
-Constant inlined main::$1 = (byte*)(const struct foo*) main::barp+(const byte) OFFSET_STRUCT_FOO_THING2
-Constant inlined main::$0 = (byte*)(const struct foo*) main::barp
+Constant inlined main::$2 = (byte*)(const struct foo*) main::barp
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *((byte*)main::barp+OFFSET_STRUCT_FOO_THING2)
 Consolidated array index constant in *(main::SCREEN+++0)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Simplifying constant integer increment ++0

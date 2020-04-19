@@ -2,10 +2,23 @@ Resolved forward reference mulf_sqr1 to (const byte*) mulf_sqr1
 Resolved forward reference mulf_sqr2 to (const byte*) mulf_sqr2
 Resolved forward reference PERSP_Z to (const signed byte*) PERSP_Z
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (word)toD018::screen
+De-inlining cast (word)toSpritePtr::sprite
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -99,9 +112,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -109,8 +122,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -202,8 +215,8 @@ print_schar::@5: scope:[print_schar]  from print_schar::@1
   (signed byte) print_schar::b#5 ← phi( print_schar::@1/(signed byte) print_schar::b#7 )
   (byte*) print_char_cursor#37 ← phi( print_schar::@1/(byte*) print_char_cursor#13 )
   (byte*) print_char_cursor#5 ← (byte*) print_char_cursor#37
-  (signed byte~) print_schar::$5 ← - (signed byte) print_schar::b#5
-  (signed byte) print_schar::b#0 ← (signed byte~) print_schar::$5
+  (signed byte~) print_schar::$4 ← - (signed byte) print_schar::b#5
+  (signed byte) print_schar::b#0 ← (signed byte~) print_schar::$4
   to:print_schar::@2
 print_schar::@3: scope:[print_schar]  from print_schar
   (signed byte) print_schar::b#9 ← phi( print_schar/(signed byte) print_schar::b#4 )
@@ -219,8 +232,7 @@ print_schar::@6: scope:[print_schar]  from print_schar::@3
 print_schar::@2: scope:[print_schar]  from print_schar::@5 print_schar::@6
   (byte*) print_char_cursor#69 ← phi( print_schar::@5/(byte*) print_char_cursor#5 print_schar::@6/(byte*) print_char_cursor#6 )
   (signed byte) print_schar::b#6 ← phi( print_schar::@5/(signed byte) print_schar::b#0 print_schar::@6/(signed byte) print_schar::b#8 )
-  (byte~) print_schar::$1 ← ((byte)) (signed byte) print_schar::b#6
-  (byte) print_uchar::b#0 ← (byte~) print_schar::$1
+  (byte) print_uchar::b#0 ← (byte)(signed byte) print_schar::b#6
   call print_uchar 
   to:print_schar::@7
 print_schar::@7: scope:[print_schar]  from print_schar::@2
@@ -306,10 +318,8 @@ main::@1: scope:[main]  from main
   (byte*) print_char_cursor#71 ← phi( main/(byte*) print_char_cursor#77 )
   (byte*) print_line_cursor#22 ← phi( main/(byte*) print_line_cursor#25 )
   (byte*) print_screen#3 ← phi( main/(byte*) print_screen#4 )
-  (word~) main::$1 ← ((word)) (const byte*) mulf_sqr1
-  *((const word*) psp1) ← (word~) main::$1
-  (word~) main::$2 ← ((word)) (const byte*) mulf_sqr2
-  *((const word*) psp2) ← (word~) main::$2
+  *((const word*) psp1) ← (word)(const byte*) mulf_sqr1
+  *((const word*) psp2) ← (word)(const byte*) mulf_sqr2
   call print_cls 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -421,8 +431,7 @@ do_perspective::@7: scope:[do_perspective]  from do_perspective::@6
 do_perspective::@8: scope:[do_perspective]  from do_perspective::@7
   (byte*) print_line_cursor#29 ← phi( do_perspective::@7/(byte*) print_line_cursor#30 )
   (byte*) print_char_cursor#73 ← phi( do_perspective::@7/(byte*) print_char_cursor#25 )
-  (byte~) do_perspective::$8 ← ((byte)) *((const signed byte*) xr)
-  (byte) print_uchar::b#1 ← (byte~) do_perspective::$8
+  (byte) print_uchar::b#1 ← (byte)*((const signed byte*) xr)
   call print_uchar 
   to:do_perspective::@9
 do_perspective::@9: scope:[do_perspective]  from do_perspective::@8
@@ -436,8 +445,7 @@ do_perspective::@10: scope:[do_perspective]  from do_perspective::@9
   (byte*) print_line_cursor#27 ← phi( do_perspective::@9/(byte*) print_line_cursor#28 )
   (byte*) print_char_cursor#58 ← phi( do_perspective::@9/(byte*) print_char_cursor#2 )
   (byte*) print_char_cursor#27 ← (byte*) print_char_cursor#58
-  (byte~) do_perspective::$11 ← ((byte)) *((const signed byte*) yr)
-  (byte) print_uchar::b#2 ← (byte~) do_perspective::$11
+  (byte) print_uchar::b#2 ← (byte)*((const signed byte*) yr)
   call print_uchar 
   to:do_perspective::@11
 do_perspective::@11: scope:[do_perspective]  from do_perspective::@10
@@ -553,8 +561,6 @@ SYMBOL TABLE SSA
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (void()) do_perspective((signed byte) do_perspective::x , (signed byte) do_perspective::y , (signed byte) do_perspective::z)
-(byte~) do_perspective::$11
-(byte~) do_perspective::$8
 (label) do_perspective::@1
 (label) do_perspective::@10
 (label) do_perspective::@11
@@ -606,8 +612,6 @@ SYMBOL TABLE SSA
 (signed byte) do_perspective::z#7
 (signed byte) do_perspective::z#8
 (void()) main()
-(word~) main::$1
-(word~) main::$2
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -616,8 +620,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -831,8 +835,7 @@ SYMBOL TABLE SSA
 (label) print_ln::@return
 (void()) print_schar((signed byte) print_schar::b)
 (bool~) print_schar::$0
-(byte~) print_schar::$1
-(signed byte~) print_schar::$5
+(signed byte~) print_schar::$4
 (label) print_schar::@1
 (label) print_schar::@2
 (label) print_schar::@3
@@ -919,17 +922,11 @@ Adding number conversion cast (unumber) mulf_init::$6 in (number~) mulf_init::$6
 Adding number conversion cast (unumber) $100 in *((const byte*) mulf_sqr2+(number) $100 + (unumber~) mulf_init::$6) ← (byte) mulf_init::val#0
 Adding number conversion cast (snumber) 2 in (signed word) mulf_init::add#1 ← (signed word) mulf_init::add#2 + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (byte~) print_schar::$1 ← (byte)(signed byte) print_schar::b#6
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast (word~) main::$1 ← (word)(const byte*) mulf_sqr1
-Inlining cast (word~) main::$2 ← (word)(const byte*) mulf_sqr2
 Inlining cast (signed byte) do_perspective::x#0 ← (snumber)(number) $39
 Inlining cast (signed byte) do_perspective::y#0 ← (snumber)(number) -$47
 Inlining cast (signed byte) do_perspective::z#0 ← (snumber)(number) $36
-Inlining cast (byte~) do_perspective::$8 ← (byte)*((const signed byte*) xr)
-Inlining cast (byte~) do_perspective::$11 ← (byte)*((const signed byte*) yr)
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (signed byte*) 240
 Simplifying constant pointer cast (signed byte*) 241
@@ -988,7 +985,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1001,9 +998,8 @@ Alias print_line_cursor#1 = print_ln::$0 print_line_cursor#12 print_char_cursor#
 Alias print_char_cursor#67 = print_char_cursor#76 print_char_cursor#68 
 Alias print_schar::b#4 = print_schar::b#7 print_schar::b#5 print_schar::b#9 print_schar::b#8 
 Alias print_char_cursor#37 = print_char_cursor#5 
-Alias print_schar::b#0 = print_schar::$5 
+Alias print_schar::b#0 = print_schar::$4 
 Alias print_char_cursor#38 = print_char_cursor#6 
-Alias print_uchar::b#0 = print_schar::$1 
 Alias print_char_cursor#39 = print_char_cursor#7 print_char_cursor#40 print_char_cursor#8 
 Alias print_uchar::b#3 = print_uchar::b#4 
 Alias print_char_cursor#41 = print_char_cursor#9 
@@ -1028,10 +1024,8 @@ Alias print_char_cursor#22 = print_char_cursor#53
 Alias print_char_cursor#23 = print_char_cursor#54 
 Alias print_char_cursor#24 = print_char_cursor#55 
 Alias print_char_cursor#25 = print_char_cursor#56 print_char_cursor#73 
-Alias print_uchar::b#1 = do_perspective::$8 
 Alias print_char_cursor#26 = print_char_cursor#57 
 Alias print_char_cursor#27 = print_char_cursor#58 
-Alias print_uchar::b#2 = do_perspective::$11 
 Alias print_char_cursor#28 = print_char_cursor#59 
 Alias print_char_cursor#29 = print_char_cursor#60 
 Alias print_line_cursor#18 = print_line_cursor#8 print_line_cursor#19 print_line_cursor#9 
@@ -1091,25 +1085,23 @@ Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Identical Phi Values (byte*) print_char_cursor#67 (byte*) print_char_cursor#2
 Identical Phi Values (byte*) print_char_cursor#69 (byte*) print_char_cursor#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [204] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2
+Identified duplicate assignment right side [199] (byte~) mulf_init::$2 ← - (byte) mulf_init::i#2
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$1 [17] if((byte) 0!=*((byte*) print_str::str#7)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [27] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#2) goto print_ln::@1
 Simple Condition (bool~) print_schar::$0 [31] if((signed byte) print_schar::b#4<(signed byte) 0) goto print_schar::@1
-Simple Condition (bool~) mulf_init::$7 [150] if((byte) mulf_init::i#1!=rangelast(0,$80)) goto mulf_init::@1
+Simple Condition (bool~) mulf_init::$7 [148] if((byte) mulf_init::i#1!=rangelast(0,$80)) goto mulf_init::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [68] (word~) main::$1 ← (word)(const byte*) mulf_sqr1
-Constant right-side identified [70] (word~) main::$2 ← (word)(const byte*) mulf_sqr2
+Constant right-side identified [68] *((const word*) psp1) ← (word)(const byte*) mulf_sqr1
+Constant right-side identified [69] *((const word*) psp2) ← (word)(const byte*) mulf_sqr2
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) print_char::ch#1 = '-'
 Constant (const byte) print_char::ch#2 = ' '
 Constant (const byte) memset::c#0 = ' '
 Constant (const word) memset::num#0 = $3e8
-Constant (const word) main::$1 = (word)mulf_sqr1
-Constant (const word) main::$2 = (word)mulf_sqr2
 Constant (const signed byte) do_perspective::x#0 = $39
 Constant (const signed byte) do_perspective::y#0 = -$47
 Constant (const signed byte) do_perspective::z#0 = $36
@@ -1131,7 +1123,7 @@ Constant (const signed byte) perspective::x#0 = do_perspective::x#0
 Constant (const signed byte) perspective::y#0 = do_perspective::y#0
 Constant (const signed byte) perspective::z#0 = do_perspective::z#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1139,8 +1131,8 @@ if() condition always false - eliminating [2] if((const word) memset::num#0<=(by
 Successful SSA optimization Pass2ConstantIfs
 Consolidated constant strings into (const byte*) do_perspective::str1
 Successful SSA optimization Pass2ConstantStringConsolidation
-Resolved ranged next value [148] mulf_init::i#1 ← ++ mulf_init::i#2 to ++
-Resolved ranged comparison value [150] if(mulf_init::i#1!=rangelast(0,$80)) goto mulf_init::@1 to (number) $81
+Resolved ranged next value [146] mulf_init::i#1 ← ++ mulf_init::i#2 to ++
+Resolved ranged comparison value [148] if(mulf_init::i#1!=rangelast(0,$80)) goto mulf_init::@1 to (number) $81
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) $81 in if((byte) mulf_init::i#1!=(number) $81) goto mulf_init::@1
@@ -1151,9 +1143,9 @@ Finalized unsigned number type (byte) $81
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias mulf_init::$2 = mulf_init::$1 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [54] (byte) print_uchar::b#1 ← (byte)*((const signed byte*) xr) keeping *(xr)
 Inlining Noop Cast [57] (byte) print_uchar::b#2 ← (byte)*((const signed byte*) yr) keeping *(yr)
@@ -1182,13 +1174,11 @@ Constant inlined mulf_init::i#0 = (byte) 0
 Constant inlined print_schar::b#1 = (const signed byte) do_perspective::x#0
 Constant inlined print_char::ch#2 = (byte) ' '
 Constant inlined print_schar::b#3 = (const signed byte) do_perspective::z#0
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined mulf_init::add#0 = (signed word) 1
 Constant inlined print_schar::b#2 = (const signed byte) do_perspective::y#0
 Constant inlined perspective::z#0 = (const signed byte) do_perspective::z#0
-Constant inlined main::$1 = (word)(const byte*) mulf_sqr1
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined perspective::y#0 = (const signed byte) do_perspective::y#0
-Constant inlined main::$2 = (word)(const byte*) mulf_sqr2
 Constant inlined perspective::x#0 = (const signed byte) do_perspective::x#0
 Constant inlined print_char::ch#1 = (byte) '-'
 Constant inlined print_str::str#4 = (const byte*) do_perspective::str3

@@ -9,11 +9,11 @@
   .label VICBANK = $d018
 main: {
     .label __4 = 6
-    .label __5 = 6
-    .label __6 = $11
-    .label __15 = 6
-    .label __16 = 6
-    .label __17 = $f
+    .label __13 = 6
+    .label __18 = 6
+    .label __19 = $11
+    .label __20 = 6
+    .label __21 = $f
     .label v = 4
     // test performance of 'div16u(10)'
     // test performance of 'div10'
@@ -62,28 +62,27 @@ main: {
     lda zp2
     cmp #$c8
     bcc __b10
-    // (word)*TIMEHI
-    lda TIMEHI
-    sta.z __15
-    lda #0
-    sta.z __15+1
     // (word)*TIMEHI << 8
-    lda.z __16
-    sta.z __16+1
+    lda TIMEHI
+    sta.z __20
     lda #0
-    sta.z __16
-    // (word)*TIMELO
+    sta.z __20+1
+    lda.z __13
+    sta.z __13+1
+    lda #0
+    sta.z __13
+    // ((word)*TIMEHI << 8) + (word)*TIMELO
     lda TIMELO
-    sta.z __17
+    sta.z __21
     lda #0
-    sta.z __17+1
+    sta.z __21+1
     // myprintf(strTemp, "200 DIV10 : %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
     lda.z myprintf.w3
     clc
-    adc.z __17
+    adc.z __21
     sta.z myprintf.w3
     lda.z myprintf.w3+1
-    adc.z __17+1
+    adc.z __21+1
     sta.z myprintf.w3+1
     lda #<str1
     sta.z myprintf.str
@@ -123,28 +122,27 @@ main: {
     lda zp2
     cmp #$c8
     bcc __b5
-    // (word)*TIMEHI
-    lda TIMEHI
-    sta.z __4
-    lda #0
-    sta.z __4+1
     // (word)*TIMEHI << 8
-    lda.z __5
-    sta.z __5+1
+    lda TIMEHI
+    sta.z __18
     lda #0
-    sta.z __5
-    // (word)*TIMELO
+    sta.z __18+1
+    lda.z __4
+    sta.z __4+1
+    lda #0
+    sta.z __4
+    // ((word)*TIMEHI << 8) + (word)*TIMELO
     lda TIMELO
-    sta.z __6
+    sta.z __19
     lda #0
-    sta.z __6+1
+    sta.z __19+1
     // myprintf(strTemp, "200 DIV16U: %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
     lda.z myprintf.w3
     clc
-    adc.z __6
+    adc.z __19
     sta.z myprintf.w3
     lda.z myprintf.w3+1
-    adc.z __6+1
+    adc.z __19+1
     sta.z myprintf.w3+1
   // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
   // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --
@@ -375,9 +373,8 @@ myprintf: {
     sta.z bFormat
     jmp __b32
   __b31:
-    // (byte)w
-    lda.z w
     // (byte)w >> 4
+    lda.z w
     lsr
     lsr
     lsr
@@ -403,7 +400,7 @@ myprintf: {
     sta strTemp,y
     // dst[bLen++] = (b < 10 ? '0' : 0x57) + b;
     iny
-    // (byte)w
+    // (byte)w & 0xF
     lda.z w
     // b = (byte)w & 0xF
     ldx #$f
@@ -519,11 +516,10 @@ myprintf: {
     inc.z b
     jmp __b14
   __b8:
-    // (byte)w
-    lda.z w
     // dst[bLen++] = (byte)w
     // "switch" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/170
     ldy.z bLen
+    lda.z w
     sta strTemp,y
     // dst[bLen++] = (byte)w;
     inc.z bLen
@@ -651,9 +647,8 @@ utoa: {
     bcs __b8
   !:
   __b4:
-    // (byte)value
-    lda.z value
     // '0' + (byte)value
+    lda.z value
     clc
     adc #'0'
     // *dst++ = '0' + (byte)value

@@ -316,7 +316,7 @@ init_dist_screen: {
 // sqrt(word zp($12) val)
 sqrt: {
     .label __1 = 6
-    .label __3 = 6
+    .label __2 = 6
     .label found = 6
     .label val = $12
     // bsearch16u(val, SQUARES, NUM_SQUARES)
@@ -324,16 +324,16 @@ sqrt: {
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     // found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // found-SQUARES
-    lda.z __3
+    lda.z __2
     sec
     sbc #<SQUARES
-    sta.z __3
-    lda.z __3+1
+    sta.z __2
+    lda.z __2+1
     sbc #>SQUARES
-    sta.z __3+1
+    sta.z __2+1
     lsr.z __1+1
     ror.z __1
-    // (char)(found-SQUARES)
+    // sq = (char)(found-SQUARES)
     lda.z __1
     // }
     rts

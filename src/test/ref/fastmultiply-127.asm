@@ -304,10 +304,10 @@ print_schar: {
 }
 // mulf8s127(signed byte zp(9) a, signed byte register(Y) b)
 mulf8s127: {
-    .label __12 = $a
-    .label __13 = $a
-    .label __14 = $c
-    .label __15 = $c
+    .label __9 = $a
+    .label __10 = $c
+    .label __11 = $a
+    .label __12 = $c
     .label a = 9
     .label return = 7
     .label c = 7
@@ -320,47 +320,45 @@ mulf8s127: {
     lda.z a
     cmp #0
     bpl __b1
-    // (signed word)b
+    // (signed word)b*2
     tya
+    sta.z __11
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta.z __11+1
+    asl.z __9
+    rol.z __9+1
+    // c -= (signed word)b*2
+    lda.z c
+    sec
+    sbc.z __9
+    sta.z c
+    lda.z c+1
+    sbc.z __9+1
+    sta.z c+1
+  __b1:
+    // if(b<0)
+    cpy #0
+    bpl __b2
+    // (signed word)a*2
+    lda.z a
     sta.z __12
     ora #$7f
     bmi !+
     lda #0
   !:
     sta.z __12+1
-    // (signed word)b*2
-    asl.z __13
-    rol.z __13+1
-    // c -= (signed word)b*2
-    lda.z c
-    sec
-    sbc.z __13
-    sta.z c
-    lda.z c+1
-    sbc.z __13+1
-    sta.z c+1
-  __b1:
-    // if(b<0)
-    cpy #0
-    bpl __b2
-    // (signed word)a
-    lda.z a
-    sta.z __14
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta.z __14+1
-    // (signed word)a*2
-    asl.z __15
-    rol.z __15+1
+    asl.z __10
+    rol.z __10+1
     // c -= (signed word)a*2
     lda.z c
     sec
-    sbc.z __15
+    sbc.z __10
     sta.z c
     lda.z c+1
-    sbc.z __15+1
+    sbc.z __10+1
     sta.z c+1
   __b2:
     // if(a<0 && b<0)

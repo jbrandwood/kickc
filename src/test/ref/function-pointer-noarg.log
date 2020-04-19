@@ -11,19 +11,15 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @3
   (void()*) main::f#0 ← (void()*) 0
   (void()*) main::f#1 ← &(void()) fn1()
-  (word~) main::$0 ← ((word)) (void()*) main::f#1
-  (byte~) main::$1 ← < (word~) main::$0
-  *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$1
-  (word~) main::$2 ← ((word)) (void()*) main::f#1
-  (byte~) main::$3 ← > (word~) main::$2
-  *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$3
+  (byte~) main::$0 ← < (word)(void()*) main::f#1
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+  (byte~) main::$1 ← > (word)(void()*) main::f#1
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
   (void()*) main::f#2 ← &(void()) fn2()
-  (word~) main::$4 ← ((word)) (void()*) main::f#2
-  (byte~) main::$5 ← < (word~) main::$4
-  *((const nomodify byte*) main::SCREEN + (number) 2) ← (byte~) main::$5
-  (word~) main::$6 ← ((word)) (void()*) main::f#2
-  (byte~) main::$7 ← > (word~) main::$6
-  *((const nomodify byte*) main::SCREEN + (number) 3) ← (byte~) main::$7
+  (byte~) main::$2 ← < (word)(void()*) main::f#2
+  *((const nomodify byte*) main::SCREEN + (number) 2) ← (byte~) main::$2
+  (byte~) main::$3 ← > (word)(void()*) main::f#2
+  *((const nomodify byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -63,14 +59,10 @@ SYMBOL TABLE SSA
 (label) fn2::@return
 (const nomodify byte*) fn2::BGCOL = (byte*)(number) $d021
 (void()) main()
-(word~) main::$0
+(byte~) main::$0
 (byte~) main::$1
-(word~) main::$2
+(byte~) main::$2
 (byte~) main::$3
-(word~) main::$4
-(byte~) main::$5
-(word~) main::$6
-(byte~) main::$7
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (void()*) main::f
@@ -78,16 +70,11 @@ SYMBOL TABLE SSA
 (void()*) main::f#1
 (void()*) main::f#2
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$1
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$3
-Adding number conversion cast (unumber) 2 in *((const nomodify byte*) main::SCREEN + (number) 2) ← (byte~) main::$5
-Adding number conversion cast (unumber) 3 in *((const nomodify byte*) main::SCREEN + (number) 3) ← (byte~) main::$7
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 2 in *((const nomodify byte*) main::SCREEN + (number) 2) ← (byte~) main::$2
+Adding number conversion cast (unumber) 3 in *((const nomodify byte*) main::SCREEN + (number) 3) ← (byte~) main::$3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word~) main::$0 ← (word)(void()*) main::f#1
-Inlining cast (word~) main::$2 ← (word)(void()*) main::f#1
-Inlining cast (word~) main::$4 ← (word)(void()*) main::f#2
-Inlining cast (word~) main::$6 ← (word)(void()*) main::f#2
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
@@ -105,37 +92,33 @@ Constant (const void()*) main::f#0 = (void()*) 0
 Constant (const void()*) main::f#1 = &fn1
 Constant (const void()*) main::f#2 = &fn2
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const word) main::$0 = (word)main::f#1
-Constant (const word) main::$2 = (word)main::f#1
-Constant (const word) main::$4 = (word)main::f#2
-Constant (const word) main::$6 = (word)main::f#2
-Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [4] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (byte~) main::$1
+Constant value identified (word)main::f#1 in [2] (byte~) main::$0 ← < (word)(const void()*) main::f#1
+Constant value identified (word)main::f#1 in [4] (byte~) main::$1 ← > (word)(const void()*) main::f#1
+Constant value identified (word)main::f#2 in [7] (byte~) main::$2 ← < (word)(const void()*) main::f#2
+Constant value identified (word)main::f#2 in [9] (byte~) main::$3 ← > (word)(const void()*) main::f#2
+Successful SSA optimization Pass2ConstantValues
+Simplifying expression containing zero main::SCREEN in [3] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const void()*) main::f#0
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [0] (byte~) main::$1 ← < (const word) main::$0
-Constant right-side identified [2] (byte~) main::$3 ← > (const word) main::$2
-Constant right-side identified [4] (byte~) main::$5 ← < (const word) main::$4
-Constant right-side identified [6] (byte~) main::$7 ← > (const word) main::$6
+Constant right-side identified [0] (byte~) main::$0 ← < (word)(const void()*) main::f#1
+Constant right-side identified [2] (byte~) main::$1 ← > (word)(const void()*) main::f#1
+Constant right-side identified [4] (byte~) main::$2 ← < (word)(const void()*) main::f#2
+Constant right-side identified [6] (byte~) main::$3 ← > (word)(const void()*) main::f#2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$1 = <main::$0
-Constant (const byte) main::$3 = >main::$2
-Constant (const byte) main::$5 = <main::$4
-Constant (const byte) main::$7 = >main::$6
+Constant (const byte) main::$0 = <(word)main::f#1
+Constant (const byte) main::$1 = >(word)main::f#1
+Constant (const byte) main::$2 = <(word)main::f#2
+Constant (const byte) main::$3 = >(word)main::f#2
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const void()*) main::f#1
 Inlining constant with different constant siblings (const void()*) main::f#2
-Constant inlined main::$1 = <(word)&(void()) fn1()
-Constant inlined main::$2 = (word)&(void()) fn1()
-Constant inlined main::$0 = (word)&(void()) fn1()
-Constant inlined main::$5 = <(word)&(void()) fn2()
-Constant inlined main::$6 = (word)&(void()) fn2()
 Constant inlined main::f#2 = &(void()) fn2()
-Constant inlined main::$3 = >(word)&(void()) fn1()
-Constant inlined main::$4 = (word)&(void()) fn2()
-Constant inlined main::$7 = >(word)&(void()) fn2()
+Constant inlined main::$3 = >(word)&(void()) fn2()
+Constant inlined main::$1 = >(word)&(void()) fn1()
+Constant inlined main::$2 = <(word)&(void()) fn2()
 Constant inlined main::f#1 = &(void()) fn1()
+Constant inlined main::$0 = <(word)&(void()) fn1()
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
 Consolidated array index constant in *(main::SCREEN+2)

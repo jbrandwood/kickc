@@ -6,6 +6,9 @@ Fixing constant pointer addition (const struct Person*) persons+(number) 1
 Replacing struct member reference *((struct Person*) print_person::person).id with member unwinding reference *((byte*~) print_person::$0)
 Replacing struct member reference *((struct Person*) print_person::person).name with member unwinding reference (byte*~) print_person::$1
 Replacing struct member reference *((struct Person*) print_person::person).name with member unwinding reference (byte*~) print_person::$2
+De-inlining cast (byte*)print_person::person
+De-inlining cast (byte*)print_person::person
+De-inlining cast (byte*)print_person::person
 Warning! Adding boolean cast to non-boolean condition *((byte*~) print_person::$1 + (byte) print_person::i)
 Culled Empty Block (label) print_person::@4
 Culled Empty Block (label) print_person::@5
@@ -44,7 +47,8 @@ main::@return: scope:[main]  from main::@2
 print_person: scope:[print_person]  from main main::@1
   (byte) idx#13 ← phi( main/(byte) idx#18 main::@1/(byte) idx#0 )
   (struct Person*) print_person::person#2 ← phi( main/(struct Person*) print_person::person#0 main::@1/(struct Person*) print_person::person#1 )
-  (byte*~) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
+  (byte*~) print_person::$3 ← (byte*)(struct Person*) print_person::person#2
+  (byte*~) print_person::$0 ← (byte*~) print_person::$3 + (const byte) OFFSET_STRUCT_PERSON_ID
   *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + *((byte*~) print_person::$0))
   (byte) idx#4 ← ++ (byte) idx#13
   *((const nomodify byte*) SCREEN + (byte) idx#4) ← (byte) ' '
@@ -55,15 +59,17 @@ print_person::@1: scope:[print_person]  from print_person print_person::@2
   (byte) idx#19 ← phi( print_person/(byte) idx#5 print_person::@2/(byte) idx#6 )
   (byte) print_person::i#2 ← phi( print_person/(byte) print_person::i#0 print_person::@2/(byte) print_person::i#1 )
   (struct Person*) print_person::person#3 ← phi( print_person/(struct Person*) print_person::person#2 print_person::@2/(struct Person*) print_person::person#4 )
-  (byte*~) print_person::$1 ← (byte*)(struct Person*) print_person::person#3 + (const byte) OFFSET_STRUCT_PERSON_NAME
-  (bool~) print_person::$3 ← (number) 0 != *((byte*~) print_person::$1 + (byte) print_person::i#2)
-  if((bool~) print_person::$3) goto print_person::@2
+  (byte*~) print_person::$4 ← (byte*)(struct Person*) print_person::person#3
+  (byte*~) print_person::$1 ← (byte*~) print_person::$4 + (const byte) OFFSET_STRUCT_PERSON_NAME
+  (bool~) print_person::$6 ← (number) 0 != *((byte*~) print_person::$1 + (byte) print_person::i#2)
+  if((bool~) print_person::$6) goto print_person::@2
   to:print_person::@3
 print_person::@2: scope:[print_person]  from print_person::@1
   (byte) idx#14 ← phi( print_person::@1/(byte) idx#19 )
   (byte) print_person::i#3 ← phi( print_person::@1/(byte) print_person::i#2 )
   (struct Person*) print_person::person#4 ← phi( print_person::@1/(struct Person*) print_person::person#3 )
-  (byte*~) print_person::$2 ← (byte*)(struct Person*) print_person::person#4 + (const byte) OFFSET_STRUCT_PERSON_NAME
+  (byte*~) print_person::$5 ← (byte*)(struct Person*) print_person::person#4
+  (byte*~) print_person::$2 ← (byte*~) print_person::$5 + (const byte) OFFSET_STRUCT_PERSON_NAME
   *((const nomodify byte*) SCREEN + (byte) idx#14) ← *((byte*~) print_person::$2 + (byte) print_person::i#3)
   (byte) idx#6 ← ++ (byte) idx#14
   (byte) print_person::i#1 ← ++ (byte) print_person::i#3
@@ -132,7 +138,10 @@ SYMBOL TABLE SSA
 (byte*~) print_person::$0
 (byte*~) print_person::$1
 (byte*~) print_person::$2
-(bool~) print_person::$3
+(byte*~) print_person::$3
+(byte*~) print_person::$4
+(byte*~) print_person::$5
+(bool~) print_person::$6
 (label) print_person::@1
 (label) print_person::@2
 (label) print_person::@3
@@ -151,7 +160,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 1*SIZEOF_STRUCT_PERSON in (struct Person*) print_person::person#1 ← (const struct Person*) persons+(number) 1*(const byte) SIZEOF_STRUCT_PERSON
 Adding number conversion cast (unumber) 1 in (struct Person*) print_person::person#1 ← (const struct Person*) persons+(unumber)(number) 1*(const byte) SIZEOF_STRUCT_PERSON
-Adding number conversion cast (unumber) 0 in (bool~) print_person::$3 ← (number) 0 != *((byte*~) print_person::$1 + (byte) print_person::i#2)
+Adding number conversion cast (unumber) 0 in (bool~) print_person::$6 ← (number) 0 != *((byte*~) print_person::$1 + (byte) print_person::i#2)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast (unumber)(number) 1*(const byte) SIZEOF_STRUCT_PERSON
@@ -176,21 +185,25 @@ Identical Phi Values (byte) idx#1 (byte) idx#16
 Identical Phi Values (struct Person*) print_person::person#3 (struct Person*) print_person::person#2
 Identical Phi Values (byte) idx#17 (byte) idx#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) print_person::$3 [19] if((byte) 0!=*((byte*~) print_person::$1 + (byte) print_person::i#2)) goto print_person::@2
+Simple Condition (bool~) print_person::$6 [21] if((byte) 0!=*((byte*~) print_person::$1 + (byte) print_person::i#2)) goto print_person::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const struct Person*) print_person::person#0 = persons
 Constant (const struct Person*) print_person::person#1 = persons+1*SIZEOF_STRUCT_PERSON
 Constant (const byte) idx#20 = 0
 Constant (const byte) print_person::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [11] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + *((byte*~) print_person::$0))  -- *((byte*)print_person::person#2 + OFFSET_STRUCT_PERSON_ID)
+Converting *(pointer+n) to pointer[n] [12] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + *((byte*~) print_person::$0))  -- *(print_person::$3 + OFFSET_STRUCT_PERSON_ID)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte*)print_person::person#2 in [10] (byte*~) print_person::$0 ← (byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID
-Simplifying expression containing zero (byte*)print_person::person#2 in [11] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + *((byte*)(struct Person*) print_person::person#2 + (const byte) OFFSET_STRUCT_PERSON_ID))
+Simplifying expression containing zero print_person::$3 in [11] (byte*~) print_person::$0 ← (byte*~) print_person::$3 + (const byte) OFFSET_STRUCT_PERSON_ID
+Simplifying expression containing zero print_person::$3 in [12] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((const byte*) DIGIT + *((byte*~) print_person::$3 + (const byte) OFFSET_STRUCT_PERSON_ID))
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*~) print_person::$0 and assignment [4] (byte*~) print_person::$0 ← (byte*)(struct Person*) print_person::person#2
+Eliminating unused variable (byte*~) print_person::$0 and assignment [5] (byte*~) print_person::$0 ← (byte*~) print_person::$3
 Eliminating unused constant (const byte) OFFSET_STRUCT_PERSON_ID
 Successful SSA optimization PassNEliminateUnusedVars
+Inlining Noop Cast [4] (byte*~) print_person::$3 ← (byte*)(struct Person*) print_person::person#2 keeping print_person::person#2
+Inlining Noop Cast [10] (byte*~) print_person::$4 ← (byte*)(struct Person*) print_person::person#2 keeping print_person::person#2
+Inlining Noop Cast [13] (byte*~) print_person::$5 ← (byte*)(struct Person*) print_person::person#2 keeping print_person::person#2
+Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const struct Person*) print_person::person#0
 Inlining constant with var siblings (const struct Person*) print_person::person#1
 Inlining constant with var siblings (const byte) print_person::i#0

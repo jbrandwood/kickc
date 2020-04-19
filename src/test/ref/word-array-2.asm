@@ -6,38 +6,37 @@
 main: {
     .label SCREEN = $400
     .label __0 = 2
-    .label __1 = 4
-    .label __2 = 4
+    .label __1 = 2
     .label __3 = 4
-    .label __5 = 2
-    .label __8 = 2
+    .label __6 = 2
+    .label __7 = 4
+    .label __8 = 4
     ldx #0
   __b1:
-    // (word)i
-    txa
-    sta.z __0
-    lda #0
-    sta.z __0+1
-    txa
-    sta.z __1
-    lda #0
-    sta.z __1+1
     // ((word)i)*0x100
-    lda.z __2
-    sta.z __2+1
+    txa
+    sta.z __6
     lda #0
-    sta.z __2
+    sta.z __6+1
+    lda.z __0
+    sta.z __0+1
+    lda #0
+    sta.z __0
     // ((word)i)*0x100+i
     txa
     clc
-    adc.z __3
-    sta.z __3
+    adc.z __1
+    sta.z __1
     bcc !+
-    inc.z __3+1
+    inc.z __1+1
   !:
     // words[(word)i] = ((word)i)*0x100+i
-    asl.z __5
-    rol.z __5+1
+    txa
+    sta.z __7
+    lda #0
+    sta.z __7+1
+    asl.z __3
+    rol.z __3+1
     clc
     lda.z __8
     adc #<words
@@ -46,10 +45,10 @@ main: {
     adc #>words
     sta.z __8+1
     ldy #0
-    lda.z __3
+    lda.z __1
     sta (__8),y
     iny
-    lda.z __3+1
+    lda.z __1+1
     sta (__8),y
     // for(byte i: 0..0xff)
     inx

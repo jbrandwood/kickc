@@ -74,20 +74,19 @@ main: {
 show: {
     .label __0 = $f
     .label __1 = $f
-    .label __2 = $f
+    .label __7 = $f
     .label c = 3
     .label ptr = $f
     .label __8 = $11
     .label __9 = $f
-    // (unsigned int)y
-    sta.z __0
-    lda #0
-    sta.z __0+1
     // (unsigned int)y*80
-    lda.z __0
+    sta.z __7
+    lda #0
+    sta.z __7+1
+    lda.z __7
     asl
     sta.z __8
-    lda.z __0+1
+    lda.z __7+1
     rol
     sta.z __8+1
     asl.z __8
@@ -99,22 +98,22 @@ show: {
     lda.z __9+1
     adc.z __8+1
     sta.z __9+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
     // SCREEN + (unsigned int)y*80
     clc
-    lda.z __2
+    lda.z __1
     adc #<SCREEN
-    sta.z __2
-    lda.z __2+1
+    sta.z __1
+    lda.z __1+1
     adc #>SCREEN
-    sta.z __2+1
+    sta.z __1+1
     // x*2
     txa
     asl

@@ -17,7 +17,7 @@ main: {
 // puta(byte register(A) ph, byte register(X) pl)
 puta: {
     .label screen = 2
-    // (byte*) { ph, pl }
+    // screen = (byte*) { ph, pl }
     sta.z screen+1
     stx.z screen
     // *screen = 'a'

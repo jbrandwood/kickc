@@ -147,9 +147,8 @@ setnam: {
     // strlen(filename)
     jsr strlen
     // strlen(filename)
-    // (char)strlen(filename)
-    lda.z __0
     // *filename_len = (char)strlen(filename)
+    lda.z __0
     sta filename_len
     // *filename_ptr = filename
     lda #<main.filename

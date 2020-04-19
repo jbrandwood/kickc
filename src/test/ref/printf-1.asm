@@ -72,7 +72,7 @@ main: {
 // Handles justification and min length 
 // printf_string(byte* zp(3) str, byte zp(2) format_justify_left)
 printf_string: {
-    .label __11 = $b
+    .label __9 = $b
     .label padding = 5
     .label str = 3
     .label format_justify_left = 2
@@ -84,7 +84,7 @@ printf_string: {
     jsr strlen
     // strlen(str)
     // len = (signed char)strlen(str)
-    lda.z __11
+    lda.z __9
     // padding = (signed char)format.min_length  - len
     eor #$ff
     clc

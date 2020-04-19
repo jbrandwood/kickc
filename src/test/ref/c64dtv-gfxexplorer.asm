@@ -217,10 +217,10 @@ gfx_mode: {
     .label __40 = $1b
     .label __47 = $10
     .label __48 = $10
-    .label __49 = $10
-    .label __50 = $13
-    .label __52 = 7
-    .label __53 = 7
+    .label __50 = 7
+    .label __52 = $13
+    .label __82 = $10
+    .label __83 = 7
     .label plane_a = 9
     .label plane_b = 9
     .label vic_colors = $10
@@ -470,38 +470,37 @@ gfx_mode: {
     jsr get_vic_screen
     // get_vic_screen(*form_vic_screen)
     // (word)get_vic_screen(*form_vic_screen)&$3fff
-    lda.z __48
+    lda.z __47
     and #<$3fff
-    sta.z __48
-    lda.z __48+1
+    sta.z __47
+    lda.z __47+1
     and #>$3fff
-    sta.z __48+1
+    sta.z __47+1
     // ((word)get_vic_screen(*form_vic_screen)&$3fff)/$40
     ldy #6
   !:
-    lsr.z __49+1
-    ror.z __49
+    lsr.z __48+1
+    ror.z __48
     dey
     bne !-
-    // (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)
-    lda.z __49
-    sta.z __50
     // get_vic_charset(*form_vic_gfx)
     lda form_vic_gfx
     jsr get_vic_charset
     // (word)get_vic_charset(*form_vic_gfx)&$3fff
-    lda.z __53
+    lda.z __50
     and #<$3fff
-    sta.z __53
-    lda.z __53+1
+    sta.z __50
+    lda.z __50+1
     and #>$3fff
-    sta.z __53+1
+    sta.z __50+1
     // >((word)get_vic_charset(*form_vic_gfx)&$3fff)
     // (>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4
     lsr
     lsr
+    sta.z __52
     // (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4)
-    ora.z __50
+    lda.z __48
+    ora.z __52
     // *VIC_MEMORY = (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4)
     // Set VIC Bank
     // VIC memory
@@ -1448,7 +1447,7 @@ form_field_ptr: {
     .label return = $1d
     // y = form_fields_y[field_idx]
     ldy form_fields_y,x
-    // (byte*) { form_line_hi[y], form_line_lo[y] }
+    // line = (byte*) { form_line_hi[y], form_line_lo[y] }
     lda form_line_hi,y
     sta.z line+1
     lda form_line_lo,y
@@ -2773,7 +2772,7 @@ bitmap_line_ydxd: {
 bitmap_clear: {
     .label bitmap = $10
     .label y = $16
-    // (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
+    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap
     lda bitmap_plot_xhi

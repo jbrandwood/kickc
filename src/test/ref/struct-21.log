@@ -2,6 +2,8 @@ Setting struct to load/store in variable affected by address-of (struct Point*) 
 Adding value bulk copy *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
 Replacing struct member reference *((struct Point*) main::ptr).x with member unwinding reference *((byte*~) main::$0)
 Replacing struct member reference *((struct Point*) main::ptr).y with member unwinding reference *((byte*~) main::$1)
+De-inlining cast (byte*)main::ptr
+De-inlining cast (byte*)main::ptr
 Identified constant variable (struct Point*) main::ptr
 
 CONTROL FLOW GRAPH SSA
@@ -12,9 +14,11 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
-  (byte*~) main::$0 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_X
+  (byte*~) main::$2 ← (byte*)(const struct Point*) main::ptr
+  (byte*~) main::$0 ← (byte*~) main::$2 + (const byte) OFFSET_STRUCT_POINT_X
   *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*~) main::$0)
-  (byte*~) main::$1 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_Y
+  (byte*~) main::$3 ← (byte*)(const struct Point*) main::ptr
+  (byte*~) main::$1 ← (byte*~) main::$3 + (const byte) OFFSET_STRUCT_POINT_Y
   *((const nomodify byte*) SCREEN + (number) 1) ← *((byte*~) main::$1)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -42,6 +46,8 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$1
+(byte*~) main::$2
+(byte*~) main::$3
 (label) main::@return
 (struct Point) main::point1 loadstore
 (const struct Point*) main::ptr = &(struct Point) main::point1
@@ -57,20 +63,27 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing C-classic struct-unwound assignment [1] (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
-Constant right-side identified [2] (byte*~) main::$0 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_X
-Constant right-side identified [4] (byte*~) main::$1 ← (byte*)(const struct Point*) main::ptr + (const byte) OFFSET_STRUCT_POINT_Y
+Constant right-side identified [2] (byte*~) main::$2 ← (byte*)(const struct Point*) main::ptr
+Constant right-side identified [5] (byte*~) main::$3 ← (byte*)(const struct Point*) main::ptr
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = (byte*)main::ptr+OFFSET_STRUCT_POINT_X
-Constant (const byte*) main::$1 = (byte*)main::ptr+OFFSET_STRUCT_POINT_Y
+Constant (const byte*) main::$2 = (byte*)main::ptr
+Constant (const byte*) main::$3 = (byte*)main::ptr
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)main::ptr in 
-Simplifying expression containing zero SCREEN in [3] *((const nomodify byte*) SCREEN + (byte) 0) ← *((const byte*) main::$0)
+Converting *(pointer+n) to pointer[n] [4] *((const nomodify byte*) SCREEN + (byte) 0) ← *((byte*~) main::$0)  -- *(main::$2 + OFFSET_STRUCT_POINT_X)
+Converting *(pointer+n) to pointer[n] [7] *((const nomodify byte*) SCREEN + (byte) 1) ← *((byte*~) main::$1)  -- *(main::$3 + OFFSET_STRUCT_POINT_Y)
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero main::$2 in [3] (byte*~) main::$0 ← (const byte*) main::$2 + (const byte) OFFSET_STRUCT_POINT_X
+Simplifying expression containing zero main::$2 in [4] *((const nomodify byte*) SCREEN + (byte) 0) ← *((const byte*) main::$2 + (const byte) OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero SCREEN in [4] *((const nomodify byte*) SCREEN + (byte) 0) ← *((const byte*) main::$2)
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (byte*~) main::$0 and assignment [1] (byte*~) main::$0 ← (const byte*) main::$2
+Eliminating unused variable (byte*~) main::$1 and assignment [3] (byte*~) main::$1 ← (const byte*) main::$3 + (const byte) OFFSET_STRUCT_POINT_Y
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::$1 = (byte*)(const struct Point*) main::ptr+(const byte) OFFSET_STRUCT_POINT_Y
-Constant inlined main::$0 = (byte*)(const struct Point*) main::ptr
+Constant inlined main::$2 = (byte*)(const struct Point*) main::ptr
+Constant inlined main::$3 = (byte*)(const struct Point*) main::ptr
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *((byte*)main::ptr+OFFSET_STRUCT_POINT_Y)
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin

@@ -11,11 +11,10 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte~) main::$0 ← ((byte)) *((const signed byte*) main::sbs + (byte) main::i#2)
-  *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte~) main::$0
+  *((const byte*) main::SCREEN + (byte) main::i#2) ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2)
   (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,3)
-  (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,3)
-  if((bool~) main::$1) goto main::@1
+  (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,3)
+  if((bool~) main::$0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -33,8 +32,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte~) main::$0
-(bool~) main::$1
+(bool~) main::$0
 (label) main::@1
 (label) main::@return
 (const byte*) main::SCREEN = (byte*)(number) $400
@@ -44,24 +42,20 @@ SYMBOL TABLE SSA
 (byte) main::i#2
 (const signed byte*) main::sbs[]  = { (signed byte) -1, (signed byte) -2, (signed byte) -3, (signed byte) -4 }
 
-Inlining cast (byte~) main::$0 ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2)
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$1 [6] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
+Simple Condition (bool~) main::$0 [5] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
+Resolved ranged next value [3] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [5] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
 Adding number conversion cast (unumber) 4 in if((byte) main::i#1!=(number) 4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining Noop Cast [1] (byte~) main::$0 ← (byte)*((const signed byte*) main::sbs + (byte) main::i#2) keeping *(main::sbs + main::i#2)
-Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining

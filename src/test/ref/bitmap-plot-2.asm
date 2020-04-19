@@ -57,11 +57,11 @@ __bbegin:
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label __7 = $1c
-    .label __8 = $1c
-    .label __13 = $1e
-    .label __14 = $1e
-    .label __31 = 9
-    .label __32 = 9
+    .label __11 = $1e
+    .label __26 = 9
+    .label __27 = 9
+    .label __28 = $1c
+    .label __29 = $1e
     .label cos_x = 9
     .label xpos = $b
     .label x = $1c
@@ -72,8 +72,8 @@ main: {
     .label idx_y = 6
     .label r = 4
     .label r_add = 8
-    .label __33 = 9
-    .label __34 = 9
+    .label __30 = 9
+    .label __31 = 9
     // sin16s_gen2(SINUS, 512, -0x1001, 0x1001)
     jsr sin16s_gen2
     // bitmap_init(BITMAP, SCREEN)
@@ -103,17 +103,17 @@ main: {
     // cos_x = SINUS[idx_x]
     lda.z idx_x
     asl
-    sta.z __31
+    sta.z __26
     lda.z idx_x+1
     rol
-    sta.z __31+1
+    sta.z __26+1
     clc
-    lda.z __33
+    lda.z __30
     adc #<SINUS
-    sta.z __33
-    lda.z __33+1
+    sta.z __30
+    lda.z __30+1
     adc #>SINUS
-    sta.z __33+1
+    sta.z __30+1
     ldy #0
     lda (cos_x),y
     pha
@@ -128,18 +128,18 @@ main: {
     // xpos = mul16s(r, cos_x)
     // >xpos
     lda.z xpos+2
-    sta.z __7
+    sta.z __28
     lda.z xpos+3
-    sta.z __7+1
+    sta.z __28+1
     // ((signed word)>xpos)>>2
-    lda.z __8+1
+    lda.z __7+1
     cmp #$80
-    ror.z __8+1
-    ror.z __8
-    lda.z __8+1
+    ror.z __7+1
+    ror.z __7
+    lda.z __7+1
     cmp #$80
-    ror.z __8+1
-    ror.z __8
+    ror.z __7+1
+    ror.z __7
     // 160 + ((signed word)>xpos)>>2
     clc
     lda.z x
@@ -151,17 +151,17 @@ main: {
     // sin_y = SINUS[idx_y]
     lda.z idx_y
     asl
-    sta.z __32
+    sta.z __27
     lda.z idx_y+1
     rol
-    sta.z __32+1
+    sta.z __27+1
     clc
-    lda.z __34
+    lda.z __31
     adc #<SINUS
-    sta.z __34
-    lda.z __34+1
+    sta.z __31
+    lda.z __31+1
     adc #>SINUS
-    sta.z __34+1
+    sta.z __31+1
     ldy #0
     lda (sin_y),y
     pha
@@ -176,18 +176,18 @@ main: {
     // ypos = mul16s(r, sin_y)
     // >ypos
     lda.z ypos+2
-    sta.z __13
+    sta.z __29
     lda.z ypos+3
-    sta.z __13+1
+    sta.z __29+1
     // ((signed word)>ypos)>>2
-    lda.z __14+1
+    lda.z __11+1
     cmp #$80
-    ror.z __14+1
-    ror.z __14
-    lda.z __14+1
+    ror.z __11+1
+    ror.z __11
+    lda.z __11+1
     cmp #$80
-    ror.z __14+1
-    ror.z __14
+    ror.z __11+1
+    ror.z __11
     // 100 + ((signed word)>ypos)>>2
     lda.z y
     clc
@@ -198,7 +198,6 @@ main: {
     sta.z y+1
     // bitmap_plot(x, (byte)y)
     lda.z y
-    tax
     jsr bitmap_plot
     // plots_per_frame[frame_cnt]++;
     ldx.z frame_cnt
@@ -280,30 +279,31 @@ main: {
     jmp __b7
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($1c) x, byte register(X) y)
+// bitmap_plot(word zp($1c) x, byte register(A) y)
 bitmap_plot: {
-    .label __1 = $2b
+    .label __0 = $2b
     .label plotter = $25
     .label x = $1c
-    // (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    tay
+    lda bitmap_plot_yhi,y
     sta.z plotter+1
-    lda bitmap_plot_ylo,x
+    lda bitmap_plot_ylo,y
     sta.z plotter
     // x & $fff8
     lda.z x
     and #<$fff8
-    sta.z __1
+    sta.z __0
     lda.z x+1
     and #>$fff8
-    sta.z __1+1
+    sta.z __0+1
     // plotter += ( x & $fff8 )
     lda.z plotter
     clc
-    adc.z __1
+    adc.z __0
     sta.z plotter
     lda.z plotter+1
-    adc.z __1+1
+    adc.z __0+1
     sta.z plotter+1
     // <x
     ldx.z x
@@ -319,10 +319,10 @@ bitmap_plot: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp(4) a, signed word zp(9) b)
 mul16s: {
-    .label __9 = $2b
-    .label __13 = $25
-    .label __16 = $2b
-    .label __17 = $25
+    .label __6 = $2b
+    .label __9 = $25
+    .label __11 = $2b
+    .label __12 = $25
     .label m = $b
     .label return = $b
     .label a = 4
@@ -344,20 +344,20 @@ mul16s: {
     bpl __b1
     // >m
     lda.z m+2
-    sta.z __9
+    sta.z __6
     lda.z m+3
-    sta.z __9+1
+    sta.z __6+1
     // >m = (>m)-(unsigned int)b
-    lda.z __16
+    lda.z __11
     sec
     sbc.z b
-    sta.z __16
-    lda.z __16+1
+    sta.z __11
+    lda.z __11+1
     sbc.z b+1
-    sta.z __16+1
-    lda.z __16
+    sta.z __11+1
+    lda.z __11
     sta.z m+2
-    lda.z __16+1
+    lda.z __11+1
     sta.z m+3
   __b1:
     // if(b<0)
@@ -365,23 +365,23 @@ mul16s: {
     bpl __b2
     // >m
     lda.z m+2
-    sta.z __13
+    sta.z __9
     lda.z m+3
-    sta.z __13+1
+    sta.z __9+1
     // >m = (>m)-(unsigned int)a
-    lda.z __17
+    lda.z __12
     sec
     sbc.z a
-    sta.z __17
-    lda.z __17+1
+    sta.z __12
+    lda.z __12+1
     sbc.z a+1
-    sta.z __17+1
-    lda.z __17
+    sta.z __12+1
+    lda.z __12
     sta.z m+2
-    lda.z __17+1
+    lda.z __12+1
     sta.z m+3
   __b2:
-    // (signed long)m
+    // return (signed long)m;
     // }
     rts
 }
@@ -628,7 +628,7 @@ sin16s_gen2: {
     .const max = $1001
     .const ampl = max-min
     .label __6 = $b
-    .label __9 = $25
+    .label __8 = $25
     .label step = $21
     .label sintab = $1c
     // u[4.28]
@@ -686,15 +686,15 @@ sin16s_gen2: {
     // mul16s(sin16s(x), ampl)
     // >mul16s(sin16s(x), ampl)
     lda.z __6+2
-    sta.z __9
+    sta.z __8
     lda.z __6+3
-    sta.z __9+1
+    sta.z __8+1
     // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl)
     ldy #0
-    lda.z __9
+    lda.z __8
     sta (sintab),y
     iny
-    lda.z __9+1
+    lda.z __8+1
     sta (sintab),y
     // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl);
     lda #SIZEOF_SIGNED_WORD

@@ -1,6 +1,8 @@
 Fixing pointer array-indexing *((const word*) PLEX_XPOS + (byte) plexShowSprite::xpos_idx)
 Fixing pointer array-indexing *((const word*) PLEX_XPOS + (byte) plexShowSprite::xpos_idx)
 Fixing pointer array-indexing *((const word*) PLEX_XPOS + (byte) init::sx)
+De-inlining cast (word)toD018::screen
+De-inlining cast (word)toSpritePtr::sprite
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) SPRITE
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
@@ -257,14 +259,13 @@ init::@1: scope:[init]  from init::@1 init::@5
   (word) init::xp#2 ← phi( init::@1/(word) init::xp#1 init::@5/(word) init::xp#0 )
   (byte) init::sx#2 ← phi( init::@1/(byte) init::sx#1 init::@5/(byte) init::sx#0 )
   (byte*~) init::$1 ← (const byte*) SPRITE / (number) $40
-  (byte~) init::$2 ← ((byte)) (byte*~) init::$1
-  *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte~) init::$2
-  (byte~) init::$5 ← (byte) init::sx#2 * (const byte) SIZEOF_WORD
-  *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2
+  *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte)(byte*~) init::$1
+  (byte~) init::$4 ← (byte) init::sx#2 * (const byte) SIZEOF_WORD
+  *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2
   (word) init::xp#1 ← (word) init::xp#2 + (number) 9
   (byte) init::sx#1 ← (byte) init::sx#2 + rangenext(0,PLEX_COUNT-1)
-  (bool~) init::$3 ← (byte) init::sx#1 != rangelast(0,PLEX_COUNT-1)
-  if((bool~) init::$3) goto init::@1
+  (bool~) init::$2 ← (byte) init::sx#1 != rangelast(0,PLEX_COUNT-1)
+  if((bool~) init::$2) goto init::@1
   to:init::@2
 init::@2: scope:[init]  from init::@1
   (byte*) PLEX_SCREEN_PTR#24 ← phi( init::@1/(byte*) PLEX_SCREEN_PTR#28 )
@@ -276,8 +277,8 @@ init::@3: scope:[init]  from init::@2 init::@3
   (byte) init::ss#2 ← phi( init::@2/(byte) init::ss#0 init::@3/(byte) init::ss#1 )
   *((const nomodify byte*) SPRITES_COLS + (byte) init::ss#2) ← (const nomodify byte) GREEN
   (byte) init::ss#1 ← (byte) init::ss#2 + rangenext(0,7)
-  (bool~) init::$4 ← (byte) init::ss#1 != rangelast(0,7)
-  if((bool~) init::$4) goto init::@3
+  (bool~) init::$3 ← (byte) init::ss#1 != rangelast(0,7)
+  if((bool~) init::$3) goto init::@3
   to:init::@return
 init::@return: scope:[init]  from init::@3
   (byte*) PLEX_SCREEN_PTR#13 ← phi( init::@3/(byte*) PLEX_SCREEN_PTR#20 )
@@ -495,10 +496,9 @@ SYMBOL TABLE SSA
  }}
 (void()) init()
 (byte*~) init::$1
-(byte~) init::$2
+(bool~) init::$2
 (bool~) init::$3
-(bool~) init::$4
-(byte~) init::$5
+(byte~) init::$4
 (label) init::@1
 (label) init::@2
 (label) init::@3
@@ -743,7 +743,6 @@ Inlining cast *((const byte*) PLEX_FREE_YPOS + (byte) plexSort::plexFreePrepare1
 Inlining cast (volatile byte) plex_free_next ← (unumber)(number) 0
 Inlining cast (volatile byte) plex_sprite_msb ← (unumber)(number) 1
 Inlining cast *((const nomodify byte*) D011) ← (unumber)(const nomodify byte) VIC_DEN|(const nomodify byte) VIC_RSEL|(unumber)(number) 3
-Inlining cast (byte~) init::$2 ← (byte)(byte*~) init::$1
 Inlining cast *((const nomodify byte*) SPRITES_ENABLE) ← (unumber)(number) $ff
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53248
@@ -913,13 +912,13 @@ Simple Condition (bool~) plexSort::$8 [23] if((byte) plexSort::m#1!=rangelast(0,
 Simple Condition (bool~) plexSort::plexFreePrepare1_$0 [42] if((byte) plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1
 Simple Condition (bool~) plexShowSprite::$4 [62] if((byte~) plexShowSprite::$3!=(byte) 0) goto plexShowSprite::@1
 Simple Condition (bool~) plexShowSprite::$8 [72] if((volatile byte) plex_sprite_msb!=(byte) 0) goto plexShowSprite::@return
-Simple Condition (bool~) init::$3 [99] if((byte) init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1
-Simple Condition (bool~) init::$4 [106] if((byte) init::ss#1!=rangelast(0,7)) goto init::@3
-Simple Condition (bool~) loop::$0 [114] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@4
-Simple Condition (bool~) loop::$2 [122] if((byte) loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10
-Simple Condition (bool~) loop::$6 [130] if((byte~) loop::$5!=(byte) 0) goto loop::@12
-Simple Condition (bool~) loop::$8 [137] if(*((const nomodify byte*) RASTER)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@19
-Simple Condition (bool~) loop::$11 [142] if((byte) loop::ss#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@18
+Simple Condition (bool~) init::$2 [98] if((byte) init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1
+Simple Condition (bool~) init::$3 [105] if((byte) init::ss#1!=rangelast(0,7)) goto init::@3
+Simple Condition (bool~) loop::$0 [113] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@4
+Simple Condition (bool~) loop::$2 [121] if((byte) loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10
+Simple Condition (bool~) loop::$6 [129] if((byte~) loop::$5!=(byte) 0) goto loop::@12
+Simple Condition (bool~) loop::$8 [136] if(*((const nomodify byte*) RASTER)<(byte) loop::plexFreeNextYpos1_return#0) goto loop::@19
+Simple Condition (bool~) loop::$11 [141] if((byte) loop::ss#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@18
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting && if()-condition to two if()s [30] (bool~) plexSort::$7 ← (bool~) plexSort::$5 && (bool~) plexSort::$6
 Successful SSA optimization Pass2ConditionalAndOrRewriting
@@ -938,9 +937,9 @@ Constant (const byte) loop::sin_idx#0 = 0
 Constant (const byte) loop::sy#0 = 0
 Constant (const byte) loop::ss#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) init::$2 = (byte)init::$1
-Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [111] if(true) goto loop::@4
+Constant value identified (byte)init::$1 in [92] *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) init::$1
+Successful SSA optimization Pass2ConstantValues
+if() condition always true - replacing block destination [110] if(true) goto loop::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [9] plexInit::i#1 ← ++ plexInit::i#2 to ++
 Resolved ranged comparison value [11] if(plexInit::i#1!=rangelast(0,PLEX_COUNT-1)) goto plexInit::@1 to (const nomodify byte) PLEX_COUNT-(byte) 1+(number) 1
@@ -948,14 +947,14 @@ Resolved ranged next value [21] plexSort::m#1 ← ++ plexSort::m#2 to ++
 Resolved ranged comparison value [23] if(plexSort::m#1!=rangelast(0,PLEX_COUNT-2)) goto plexSort::@1 to (const nomodify byte) PLEX_COUNT-(byte) 2+(number) 1
 Resolved ranged next value [40] plexSort::plexFreePrepare1_s#1 ← ++ plexSort::plexFreePrepare1_s#2 to ++
 Resolved ranged comparison value [42] if(plexSort::plexFreePrepare1_s#1!=rangelast(0,7)) goto plexSort::plexFreePrepare1_@1 to (number) 8
-Resolved ranged next value [97] init::sx#1 ← ++ init::sx#2 to ++
-Resolved ranged comparison value [99] if(init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1 to (const nomodify byte) PLEX_COUNT-(byte) 1+(number) 1
-Resolved ranged next value [104] init::ss#1 ← ++ init::ss#2 to ++
-Resolved ranged comparison value [106] if(init::ss#1!=rangelast(0,7)) goto init::@3 to (number) 8
-Resolved ranged next value [120] loop::sy#1 ← ++ loop::sy#2 to ++
-Resolved ranged comparison value [122] if(loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10 to (const nomodify byte) PLEX_COUNT-(byte) 1+(number) 1
-Resolved ranged next value [140] loop::ss#1 ← ++ loop::ss#5 to ++
-Resolved ranged comparison value [142] if(loop::ss#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@18 to (const nomodify byte) PLEX_COUNT-(byte) 1+(number) 1
+Resolved ranged next value [96] init::sx#1 ← ++ init::sx#2 to ++
+Resolved ranged comparison value [98] if(init::sx#1!=rangelast(0,PLEX_COUNT-1)) goto init::@1 to (const nomodify byte) PLEX_COUNT-(byte) 1+(number) 1
+Resolved ranged next value [103] init::ss#1 ← ++ init::ss#2 to ++
+Resolved ranged comparison value [105] if(init::ss#1!=rangelast(0,7)) goto init::@3 to (number) 8
+Resolved ranged next value [119] loop::sy#1 ← ++ loop::sy#2 to ++
+Resolved ranged comparison value [121] if(loop::sy#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@10 to (const nomodify byte) PLEX_COUNT-(byte) 1+(number) 1
+Resolved ranged next value [139] loop::ss#1 ← ++ loop::ss#5 to ++
+Resolved ranged comparison value [141] if(loop::ss#1!=rangelast(0,PLEX_COUNT-1)) goto loop::@18 to (const nomodify byte) PLEX_COUNT-(byte) 1+(number) 1
 Eliminating unused constant (const byte*) PLEX_SCREEN_PTR#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block loop::@return
@@ -1013,7 +1012,7 @@ Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_
 Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$6 
 Rewriting multiplication to use shift [31] (byte) plexShowSprite::plex_sprite_idx2#0 ← (volatile byte) plex_sprite_idx * (byte) 2
 Rewriting multiplication to use shift [41] (byte~) plexShowSprite::$11 ← (byte) plexShowSprite::xpos_idx#0 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [67] (byte~) init::$5 ← (byte) init::sx#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [67] (byte~) init::$4 ← (byte) init::sx#2 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) plexInit::i#0
 Inlining constant with var siblings (const byte) plexSort::m#0
@@ -1033,7 +1032,6 @@ Constant inlined plexSort::plexFreePrepare1_s#0 = (byte) 0
 Constant inlined init::ss#0 = (byte) 0
 Constant inlined plexInit::i#0 = (byte) 0
 Constant inlined plexSort::m#0 = (byte) 0
-Constant inlined init::$2 = (byte)(const byte*) SPRITE/(byte) $40
 Constant inlined init::$1 = (const byte*) SPRITE/(byte) $40
 Constant inlined loop::sin_idx#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
@@ -1339,8 +1337,8 @@ init::@1: scope:[init]  from init init::@1
   [92] (word) init::xp#2 ← phi( init::@1/(word) init::xp#1 init/(word) $20 )
   [92] (byte) init::sx#2 ← phi( init::@1/(byte) init::sx#1 init/(byte) 0 )
   [93] *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40
-  [94] (byte~) init::$5 ← (byte) init::sx#2 << (byte) 1
-  [95] *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2
+  [94] (byte~) init::$4 ← (byte) init::sx#2 << (byte) 1
+  [95] *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2
   [96] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9
   [97] (byte) init::sx#1 ← ++ (byte) init::sx#2
   [98] if((byte) init::sx#1!=(const nomodify byte) PLEX_COUNT-(byte) 1+(byte) 1) goto init::@1
@@ -1379,7 +1377,7 @@ plexInit::@return: scope:[plexInit]  from plexInit::@1
 VARIABLE REGISTER WEIGHTS
 (byte*) PLEX_SCREEN_PTR
 (void()) init()
-(byte~) init::$5 2002.0
+(byte~) init::$4 2002.0
 (byte) init::ss
 (byte) init::ss#1 1501.5
 (byte) init::ss#2 1501.5
@@ -1485,7 +1483,7 @@ Added variable plexShowSprite::$6 to live range equivalence class [ plexShowSpri
 Added variable plexSort::nxt_idx#0 to live range equivalence class [ plexSort::nxt_idx#0 ]
 Added variable plexSort::nxt_y#0 to live range equivalence class [ plexSort::nxt_y#0 ]
 Added variable plexSort::s#2 to live range equivalence class [ plexSort::s#2 ]
-Added variable init::$5 to live range equivalence class [ init::$5 ]
+Added variable init::$4 to live range equivalence class [ init::$4 ]
 Complete equivalence classes
 [ loop::sin_idx#6 loop::sin_idx#1 ]
 [ loop::y_idx#2 loop::y_idx#1 loop::y_idx#4 ]
@@ -1519,7 +1517,7 @@ Complete equivalence classes
 [ plexSort::nxt_idx#0 ]
 [ plexSort::nxt_y#0 ]
 [ plexSort::s#2 ]
-[ init::$5 ]
+[ init::$4 ]
 Allocated zp[1]:2 [ loop::sin_idx#6 loop::sin_idx#1 ]
 Allocated zp[1]:3 [ loop::y_idx#2 loop::y_idx#1 loop::y_idx#4 ]
 Allocated zp[1]:4 [ loop::sy#2 loop::sy#1 ]
@@ -1552,7 +1550,7 @@ Allocated zp[1]:31 [ plexShowSprite::$6 ]
 Allocated zp[1]:32 [ plexSort::nxt_idx#0 ]
 Allocated zp[1]:33 [ plexSort::nxt_y#0 ]
 Allocated zp[1]:34 [ plexSort::s#2 ]
-Allocated zp[1]:35 [ init::$5 ]
+Allocated zp[1]:35 [ init::$4 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -2082,7 +2080,7 @@ plexSort: {
   // init
 // Initialize the program
 init: {
-    .label __5 = $23
+    .label __4 = $23
     // Set the x-positions & pointers
     .label xp = $a
     .label sx = 9
@@ -2117,12 +2115,12 @@ init: {
     lda #SPRITE/$40
     ldy.z sx
     sta PLEX_PTR,y
-    // [94] (byte~) init::$5 ← (byte) init::sx#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [94] (byte~) init::$4 ← (byte) init::sx#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z sx
     asl
-    sta.z __5
-    // [95] *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2 -- pwuc1_derefidx_vbuz1=vwuz2 
-    ldy.z __5
+    sta.z __4
+    // [95] *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2 -- pwuc1_derefidx_vbuz1=vwuz2 
+    ldy.z __4
     lda.z xp
     sta PLEX_XPOS,y
     lda.z xp+1
@@ -2295,8 +2293,8 @@ Statement [88] (volatile byte) plex_free_next ← (byte) 0 [ plex_show_idx plex_
 Statement [90] *((const nomodify byte*) D011) ← (const nomodify byte) VIC_DEN|(const nomodify byte) VIC_RSEL|(byte) 3 [ ] ( main:7::init:10 [ ] { }  ) always clobbers reg byte a 
 Statement [93] *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ init::sx#2 init::sx#1 ]
-Statement [94] (byte~) init::$5 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$5 ] ( main:7::init:10 [ init::sx#2 init::xp#2 init::$5 ] { }  ) always clobbers reg byte a 
-Statement [95] *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
+Statement [94] (byte~) init::$4 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$4 ] ( main:7::init:10 [ init::sx#2 init::xp#2 init::$4 ] { }  ) always clobbers reg byte a 
+Statement [95] *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [96] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 [ init::sx#2 init::xp#1 ] ( main:7::init:10 [ init::sx#2 init::xp#1 ] { }  ) always clobbers reg byte a 
 Statement [99] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ ] ( main:7::init:10 [ ] { }  ) always clobbers reg byte a 
 Statement [101] *((const nomodify byte*) SPRITES_COLS + (byte) init::ss#2) ← (const nomodify byte) GREEN [ init::ss#2 ] ( main:7::init:10 [ init::ss#2 ] { }  ) always clobbers reg byte a 
@@ -2341,8 +2339,8 @@ Statement [85] *((const byte*) PLEX_FREE_YPOS + (byte) plexSort::plexFreePrepare
 Statement [88] (volatile byte) plex_free_next ← (byte) 0 [ plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( main:7::loop:12::plexSort:26 [ loop::sin_idx#1 plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [90] *((const nomodify byte*) D011) ← (const nomodify byte) VIC_DEN|(const nomodify byte) VIC_RSEL|(byte) 3 [ ] ( main:7::init:10 [ ] { }  ) always clobbers reg byte a 
 Statement [93] *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
-Statement [94] (byte~) init::$5 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$5 ] ( main:7::init:10 [ init::sx#2 init::xp#2 init::$5 ] { }  ) always clobbers reg byte a 
-Statement [95] *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
+Statement [94] (byte~) init::$4 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$4 ] ( main:7::init:10 [ init::sx#2 init::xp#2 init::$4 ] { }  ) always clobbers reg byte a 
+Statement [95] *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [96] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 [ init::sx#2 init::xp#1 ] ( main:7::init:10 [ init::sx#2 init::xp#1 ] { }  ) always clobbers reg byte a 
 Statement [99] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ ] ( main:7::init:10 [ ] { }  ) always clobbers reg byte a 
 Statement [101] *((const nomodify byte*) SPRITES_COLS + (byte) init::ss#2) ← (const nomodify byte) GREEN [ init::ss#2 ] ( main:7::init:10 [ init::ss#2 ] { }  ) always clobbers reg byte a 
@@ -2385,8 +2383,8 @@ Statement [85] *((const byte*) PLEX_FREE_YPOS + (byte) plexSort::plexFreePrepare
 Statement [88] (volatile byte) plex_free_next ← (byte) 0 [ plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( main:7::loop:12::plexSort:26 [ loop::sin_idx#1 plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [90] *((const nomodify byte*) D011) ← (const nomodify byte) VIC_DEN|(const nomodify byte) VIC_RSEL|(byte) 3 [ ] ( main:7::init:10 [ ] { }  ) always clobbers reg byte a 
 Statement [93] *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
-Statement [94] (byte~) init::$5 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$5 ] ( main:7::init:10 [ init::sx#2 init::xp#2 init::$5 ] { }  ) always clobbers reg byte a 
-Statement [95] *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
+Statement [94] (byte~) init::$4 ← (byte) init::sx#2 << (byte) 1 [ init::sx#2 init::xp#2 init::$4 ] ( main:7::init:10 [ init::sx#2 init::xp#2 init::$4 ] { }  ) always clobbers reg byte a 
+Statement [95] *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2 [ init::sx#2 init::xp#2 ] ( main:7::init:10 [ init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [96] (word) init::xp#1 ← (word) init::xp#2 + (byte) 9 [ init::sx#2 init::xp#1 ] ( main:7::init:10 [ init::sx#2 init::xp#1 ] { }  ) always clobbers reg byte a 
 Statement [99] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ ] ( main:7::init:10 [ ] { }  ) always clobbers reg byte a 
 Statement [101] *((const nomodify byte*) SPRITES_COLS + (byte) init::ss#2) ← (const nomodify byte) GREEN [ init::ss#2 ] ( main:7::init:10 [ init::ss#2 ] { }  ) always clobbers reg byte a 
@@ -2422,7 +2420,7 @@ Potential registers zp[1]:31 [ plexShowSprite::$6 ] : zp[1]:31 , reg byte a , re
 Potential registers zp[1]:32 [ plexSort::nxt_idx#0 ] : zp[1]:32 , reg byte x , reg byte y , 
 Potential registers zp[1]:33 [ plexSort::nxt_y#0 ] : zp[1]:33 , reg byte x , reg byte y , 
 Potential registers zp[1]:34 [ plexSort::s#2 ] : zp[1]:34 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:35 [ init::$5 ] : zp[1]:35 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:35 [ init::$4 ] : zp[1]:35 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [plexSort] 36,166,672.83: zp[1]:7 [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ] 3,000,003: zp[1]:8 [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ] 2,000,002: zp[1]:34 [ plexSort::s#2 ] 1,916,668.58: zp[1]:6 [ plexSort::m#2 plexSort::m#1 ] 1,500,000.38: zp[1]:33 [ plexSort::nxt_y#0 ] 300,000.3: zp[1]:32 [ plexSort::nxt_idx#0 ] 
@@ -2430,7 +2428,7 @@ Uplift Scope [plexShowSprite] 200,002: zp[1]:22 [ plexShowSprite::plexFreeAdd1_$
 Uplift Scope [loop] 55,001: zp[1]:19 [ loop::plexFreeNextYpos1_return#0 ] 25,002.5: zp[1]:4 [ loop::sy#2 loop::sy#1 ] 24,171.33: zp[1]:3 [ loop::y_idx#2 loop::y_idx#1 loop::y_idx#4 ] 20,002: zp[1]:18 [ loop::$5 ] 18,335.17: zp[1]:5 [ loop::ss#5 loop::ss#1 ] 467.13: zp[1]:2 [ loop::sin_idx#6 loop::sin_idx#1 ] 
 Uplift Scope [] 13,261.07: zp[1]:16 [ plex_sprite_msb ] 10,625.17: zp[1]:14 [ plex_show_idx ] 9,111.27: zp[1]:15 [ plex_sprite_idx ] 8,421.24: zp[1]:17 [ plex_free_next ] 
 Uplift Scope [plexInit] 35,003.5: zp[1]:13 [ plexInit::i#2 plexInit::i#1 ] 
-Uplift Scope [init] 3,003: zp[1]:12 [ init::ss#2 init::ss#1 ] 2,302.3: zp[1]:9 [ init::sx#2 init::sx#1 ] 2,002: zp[1]:35 [ init::$5 ] 1,418.08: zp[2]:10 [ init::xp#2 init::xp#1 ] 
+Uplift Scope [init] 3,003: zp[1]:12 [ init::ss#2 init::ss#1 ] 2,302.3: zp[1]:9 [ init::sx#2 init::sx#1 ] 2,002: zp[1]:35 [ init::$4 ] 1,418.08: zp[2]:10 [ init::xp#2 init::xp#1 ] 
 Uplift Scope [main] 
 
 Uplifting [plexSort] best 82790 combination reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ] reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ] zp[1]:34 [ plexSort::s#2 ] zp[1]:6 [ plexSort::m#2 plexSort::m#1 ] zp[1]:33 [ plexSort::nxt_y#0 ] zp[1]:32 [ plexSort::nxt_idx#0 ] 
@@ -2441,7 +2439,7 @@ Uplifting [loop] best 81580 combination zp[1]:19 [ loop::plexFreeNextYpos1_retur
 Limited combination testing to 10 combinations of 144 possible.
 Uplifting [] best 81580 combination zp[1]:16 [ plex_sprite_msb ] zp[1]:14 [ plex_show_idx ] zp[1]:15 [ plex_sprite_idx ] zp[1]:17 [ plex_free_next ] 
 Uplifting [plexInit] best 81460 combination reg byte x [ plexInit::i#2 plexInit::i#1 ] 
-Uplifting [init] best 81210 combination reg byte x [ init::ss#2 init::ss#1 ] reg byte x [ init::sx#2 init::sx#1 ] zp[1]:35 [ init::$5 ] zp[2]:10 [ init::xp#2 init::xp#1 ] 
+Uplifting [init] best 81210 combination reg byte x [ init::ss#2 init::ss#1 ] reg byte x [ init::sx#2 init::sx#1 ] zp[1]:35 [ init::$4 ] zp[2]:10 [ init::xp#2 init::xp#1 ] 
 Limited combination testing to 10 combinations of 36 possible.
 Uplifting [main] best 81210 combination 
 Attempting to uplift remaining variables inzp[1]:34 [ plexSort::s#2 ]
@@ -2488,8 +2486,8 @@ Attempting to uplift remaining variables inzp[1]:15 [ plex_sprite_idx ]
 Uplifting [] best 79226 combination zp[1]:15 [ plex_sprite_idx ] 
 Attempting to uplift remaining variables inzp[1]:17 [ plex_free_next ]
 Uplifting [] best 79226 combination zp[1]:17 [ plex_free_next ] 
-Attempting to uplift remaining variables inzp[1]:35 [ init::$5 ]
-Uplifting [init] best 79186 combination reg byte a [ init::$5 ] 
+Attempting to uplift remaining variables inzp[1]:35 [ init::$4 ]
+Uplifting [init] best 79186 combination reg byte a [ init::$4 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ loop::sin_idx#6 loop::sin_idx#1 ]
 Uplifting [loop] best 79186 combination zp[1]:2 [ loop::sin_idx#6 loop::sin_idx#1 ] 
 Coalescing zero page register [ zp[1]:19 [ loop::plexFreeNextYpos1_return#0 ] ] with [ zp[1]:6 [ plexSort::m#2 plexSort::m#1 ] ]
@@ -3006,10 +3004,10 @@ init: {
     // [93] *((const byte*) PLEX_PTR + (byte) init::sx#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta PLEX_PTR,x
-    // [94] (byte~) init::$5 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [94] (byte~) init::$4 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [95] *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [95] *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda.z xp
     sta PLEX_XPOS,y
@@ -3287,7 +3285,7 @@ FINAL SYMBOL TABLE
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
  }}
 (void()) init()
-(byte~) init::$5 reg byte a 2002.0
+(byte~) init::$4 reg byte a 2002.0
 (label) init::@1
 (label) init::@2
 (label) init::@3
@@ -3430,7 +3428,7 @@ reg byte a [ plexShowSprite::$6 ]
 zp[1]:11 [ plexSort::nxt_idx#0 plexShowSprite::plex_sprite_idx2#0 ]
 zp[1]:12 [ plexSort::nxt_y#0 ]
 reg byte x [ plexSort::s#2 ]
-reg byte a [ init::$5 ]
+reg byte a [ init::$4 ]
 
 
 FINAL ASSEMBLER
@@ -3916,10 +3914,10 @@ init: {
     lda #SPRITE/$40
     sta PLEX_PTR,x
     // PLEX_XPOS[sx] = xp
-    // [94] (byte~) init::$5 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [94] (byte~) init::$4 ← (byte) init::sx#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [95] *((const word*) PLEX_XPOS + (byte~) init::$5) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
+    // [95] *((const word*) PLEX_XPOS + (byte~) init::$4) ← (word) init::xp#2 -- pwuc1_derefidx_vbuaa=vwuz1 
     tay
     lda.z xp
     sta PLEX_XPOS,y

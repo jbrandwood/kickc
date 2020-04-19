@@ -326,7 +326,7 @@ init_screen: {
 bitmap_clear: {
     .label bitmap = 7
     .label y = 6
-    // (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
+    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap
     lda bitmap_plot_xhi

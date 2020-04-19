@@ -47,20 +47,23 @@ public class ValueSourceConstant extends ValueSourceBase {
    @Override
    public ValueSource getMemberUnwinding(String memberName, Program program, ProgramScope programScope, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       StructDefinition structDefinition = ((SymbolTypeStruct) getSymbolType()).getStructDefinition(programScope);
-      if(value instanceof ConstantStructValue) {
-         ConstantStructValue constantStructValue = (ConstantStructValue) value;
+      ConstantValue val = this.value;
+      while(val instanceof ConstantCastValue)
+         val = ((ConstantCastValue) val).getValue();
+      if(val instanceof ConstantStructValue) {
+         ConstantStructValue constantStructValue = (ConstantStructValue) val;
          final Variable member = structDefinition.getMember(memberName);
          final SymbolType type = member.getType();
          final ArraySpec arraySpec = member.getArraySpec();
          final ConstantValue memberValue = constantStructValue.getValue(member.getRef());
          return new ValueSourceConstant(type, arraySpec, memberValue);
-      } else if(value instanceof StructZero) {
+      } else if(val instanceof StructZero) {
          final SymbolType memberType = structDefinition.getMember(memberName).getType();
          final ArraySpec memberArraySpec = structDefinition.getMember(memberName).getArraySpec();
          final ConstantValue memberZeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(memberType, memberArraySpec), currentStmt.getSource());
          return new ValueSourceConstant(memberType, memberArraySpec, memberZeroValue);
       }
-      throw new InternalError("Not supported "+value);
+      throw new InternalError("Not supported "+ val);
    }
 
    @Override

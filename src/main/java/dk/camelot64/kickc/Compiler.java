@@ -284,6 +284,7 @@ public class Compiler {
       new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
 
+      new PassNDeInlineCastValues(program).execute();
       new PassNAddBooleanCasts(program).execute();
       new PassNAddTypeConversionAssignment(program, false).execute();
 

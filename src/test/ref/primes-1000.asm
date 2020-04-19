@@ -16,10 +16,10 @@
   .label lastprime = 4
 main: {
     .label __0 = $11
-    .label __1 = $1b
-    .label __13 = $19
-    .label __14 = $d
-    .label __15 = $1d
+    .label __12 = $19
+    .label __13 = $d
+    .label __14 = $1d
+    .label __15 = $1b
     .label p = $19
     .label __16 = $19
     .label __17 = $d
@@ -54,10 +54,10 @@ main: {
     // p = primenum[lasttest]
     lda.z lasttest
     asl
-    sta.z __13
+    sta.z __12
     lda.z lasttest+1
     rol
-    sta.z __13+1
+    sta.z __12+1
     clc
     lda.z __16
     adc #<primenum
@@ -75,15 +75,15 @@ main: {
     sta.z p
     // mul16s(p, p)
     jsr mul16s
-    // (int)mul16s(p, p)
+    // testnum > (int)mul16s(p, p)
     lda.z __0
-    sta.z __1
+    sta.z __15
     lda.z __0+1
-    sta.z __1+1
+    sta.z __15+1
     // if(testnum > (int)mul16s(p, p))
-    lda.z __1
+    lda.z __15
     cmp.z testnum
-    lda.z __1+1
+    lda.z __15+1
     sbc.z testnum+1
     bvc !+
     eor #$80
@@ -111,10 +111,10 @@ main: {
     // div16s(testnum, primenum[primeptr++])
     lda.z primeptr
     asl
-    sta.z __14
+    sta.z __13
     lda.z primeptr+1
     rol
-    sta.z __14+1
+    sta.z __13+1
     clc
     lda.z __17
     adc #<primenum
@@ -171,10 +171,10 @@ main: {
     // primenum[++lastprime] = testnum
     lda.z lastprime
     asl
-    sta.z __15
+    sta.z __14
     lda.z lastprime+1
     rol
-    sta.z __15+1
+    sta.z __14+1
     clc
     lda.z __18
     adc #<primenum
@@ -308,9 +308,8 @@ utoa: {
     lda.z digit
     cmp #max_digits-1
     bcc __b2
-    // (char)value
-    lda.z value
     // *buffer++ = DIGITS[(char)value]
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0
@@ -432,7 +431,6 @@ div16s: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zp($19) dividend, signed word zp($d) divisor)
 divr16s: {
-    .label __16 = $f
     .label dividendu = $19
     .label divisoru = $d
     .label dividend = $19
@@ -451,7 +449,6 @@ divr16s: {
     // if(neg==0)
     cpy #0
     beq __breturn
-    // (signed int)rem16u
     // rem16s = -(signed int)rem16u
     sec
     lda #0
@@ -563,10 +560,10 @@ divr16u: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp($19) a, signed word zp($19) b)
 mul16s: {
-    .label __9 = $1f
-    .label __13 = $21
-    .label __16 = $1f
-    .label __17 = $21
+    .label __6 = $1f
+    .label __9 = $21
+    .label __11 = $1f
+    .label __12 = $21
     .label m = $11
     .label return = $11
     .label a = $19
@@ -587,20 +584,20 @@ mul16s: {
     bpl __b1
     // >m
     lda.z m+2
-    sta.z __9
+    sta.z __6
     lda.z m+3
-    sta.z __9+1
+    sta.z __6+1
     // >m = (>m)-(unsigned int)b
-    lda.z __16
+    lda.z __11
     sec
     sbc.z b
-    sta.z __16
-    lda.z __16+1
+    sta.z __11
+    lda.z __11+1
     sbc.z b+1
-    sta.z __16+1
-    lda.z __16
+    sta.z __11+1
+    lda.z __11
     sta.z m+2
-    lda.z __16+1
+    lda.z __11+1
     sta.z m+3
   __b1:
     // if(b<0)
@@ -608,23 +605,23 @@ mul16s: {
     bpl __b2
     // >m
     lda.z m+2
-    sta.z __13
+    sta.z __9
     lda.z m+3
-    sta.z __13+1
+    sta.z __9+1
     // >m = (>m)-(unsigned int)a
-    lda.z __17
+    lda.z __12
     sec
     sbc.z a
-    sta.z __17
-    lda.z __17+1
+    sta.z __12
+    lda.z __12+1
     sbc.z a+1
-    sta.z __17+1
-    lda.z __17
+    sta.z __12+1
+    lda.z __12
     sta.z m+2
-    lda.z __17+1
+    lda.z __12+1
     sta.z m+3
   __b2:
-    // (signed long)m
+    // return (signed long)m;
     // }
     rts
 }

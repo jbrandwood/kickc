@@ -2327,7 +2327,7 @@ bitmap_line_ydxd: {
 bitmap_clear: {
     .label bitmap = 4
     .label y = $b
-    // (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
+    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     lda bitmap_plot_xlo
     sta.z bitmap
     lda bitmap_plot_xhi

@@ -2116,12 +2116,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          consumeExpr(child);
          return new ConstantCastValue(castType, (ConstantValue) child);
       } else {
-         Variable tmpVar = getCurrentScope().addVariableIntermediate();
-         SymbolVariableRef tmpVarRef = tmpVar.getRef();
-         Statement stmt = new StatementAssignment((LValue) tmpVarRef, operator, child, true, new StatementSource(ctx), ensureUnusedComments(getCommentsSymbol(ctx)));
-         sequence.addStatement(stmt);
-         consumeExpr(child);
-         return tmpVarRef;
+         return new CastValue(castType, child);
       }
    }
 

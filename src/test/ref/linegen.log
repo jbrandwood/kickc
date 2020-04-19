@@ -1,5 +1,5 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer increment (word*) lin16u_gen::lintab ← ++ (word*) lin16u_gen::lintab
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
@@ -7,6 +7,17 @@ Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::dig
 Fixing pointer array-indexing *((const word*) main::lintab1 + (byte) main::i)
 Fixing pointer array-indexing *((const word*) main::lintab2 + (byte) main::i)
 Fixing pointer array-indexing *((const word*) main::lintab3 + (byte) main::i)
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -184,9 +195,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -194,8 +205,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -939,8 +950,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -1292,7 +1303,6 @@ Adding number conversion cast (unumber) 1 in (number~) lin16u_gen::$3 ← (word)
 Adding number conversion cast (unumber) lin16u_gen::$3 in (number~) lin16u_gen::$3 ← (word) lin16u_gen::length#4 - (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (word) divr16u::dividend#2 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (word) lin16u_gen::min#0 ← (unumber)(number) $22d
@@ -1412,7 +1422,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1569,7 +1579,7 @@ Simple Condition (bool~) divr16u::$4 [9] if((byte~) divr16u::$2==(byte) 0) goto 
 Simple Condition (bool~) divr16u::$9 [14] if((word) divr16u::rem#6<(word) divr16u::divisor#6) goto divr16u::@3
 Simple Condition (bool~) divr16u::$11 [19] if((byte) divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1
 Simple Condition (bool~) memset::$1 [26] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [33] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [33] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$1 [41] if((byte) 0!=*((byte*) print_str::str#10)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [51] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#11) goto print_ln::@1
 Simple Condition (bool~) main::$18 [126] if((byte) main::i#10<(byte) $14) goto main::@2
@@ -1615,7 +1625,7 @@ Constant (const word) lin16u_gen::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1637,9 +1647,9 @@ Simplifying constant integer cast $10
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [18] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [18] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting multiplication to use shift [71] (byte~) main::$27 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [75] (byte~) main::$28 ← (byte) main::i#10 * (const byte) SIZEOF_WORD
@@ -1692,8 +1702,8 @@ Constant inlined main::str3 = (const byte*) main::str1
 Constant inlined lin16u_gen::max#0 = (word) $7461
 Constant inlined lin16u_gen::max#2 = (word) $6488
 Constant inlined lin16u_gen::max#1 = (word) $f781
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined divr16u::quotient#0 = (word) 0
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined lin16u_gen::min#0 = (word) $22d
 Constant inlined print_line_cursor#0 = (byte*) 1024

@@ -421,7 +421,7 @@ sid_rnd_init: {
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp(9) screen)
 init_angle_screen: {
-    .label __11 = $1c
+    .label __7 = $1c
     .label screen = 9
     .label screen_topline = 7
     .label screen_bottomline = 9
@@ -491,14 +491,14 @@ init_angle_screen: {
     eor #$ff
     clc
     adc #$27+1
-    // (word){ 39-x*2, 0 }
+    // xw = (signed word)(word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // (word){ y*2, 0 }
+    // yw = (signed word)(word){ y*2, 0 }
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
@@ -507,13 +507,13 @@ init_angle_screen: {
     // angle_w+0x0080
     lda #$80
     clc
-    adc.z __11
-    sta.z __11
+    adc.z __7
+    sta.z __7
     bcc !+
-    inc.z __11+1
+    inc.z __7+1
   !:
     // ang_w = >(angle_w+0x0080)
-    lda.z __11+1
+    lda.z __7+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
     ldy.z xb
@@ -890,7 +890,7 @@ init_dist_screen: {
 // sqrt(word zp($1a) val)
 sqrt: {
     .label __1 = $14
-    .label __3 = $14
+    .label __2 = $14
     .label found = $14
     .label val = $1a
     // bsearch16u(val, SQUARES, NUM_SQUARES)
@@ -902,16 +902,16 @@ sqrt: {
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     // found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // found-SQUARES
-    lda.z __3
+    lda.z __2
     sec
     sbc.z SQUARES
-    sta.z __3
-    lda.z __3+1
+    sta.z __2
+    lda.z __2+1
     sbc.z SQUARES+1
-    sta.z __3+1
+    sta.z __2+1
     lsr.z __1+1
     ror.z __1
-    // (char)(found-SQUARES)
+    // sq = (char)(found-SQUARES)
     lda.z __1
     // }
     rts

@@ -264,10 +264,10 @@ main: {
 // init_buckets(byte* zp($10) screen)
 init_buckets: {
     .label __4 = 6
-    .label __7 = $28
-    .label __8 = $22
-    .label __12 = $26
-    .label __13 = $28
+    .label __7 = $22
+    .label __11 = $26
+    .label __12 = $28
+    .label __14 = $28
     .label screen = $10
     .label dist = $e
     .label i1 = $1a
@@ -346,10 +346,10 @@ init_buckets: {
     // BUCKETS[i] = malloc(BUCKET_SIZES[i]*sizeof(byte*))
     lda.z i2
     asl
-    sta.z __12
+    sta.z __11
     lda.z i2+1
     rol
-    sta.z __12+1
+    sta.z __11+1
     lda.z __16
     clc
     adc.z BUCKETS
@@ -396,13 +396,12 @@ init_buckets: {
     ldy #0
     lda (dist_1),y
     sta.z distance
-    // (word)distance
-    sta.z __7
-    tya
-    sta.z __7+1
     // bucket = BUCKETS[(word)distance]
-    asl.z __13
-    rol.z __13+1
+    sta.z __14
+    tya
+    sta.z __14+1
+    asl.z __12
+    rol.z __12+1
     lda.z __17
     clc
     adc.z BUCKETS
@@ -421,19 +420,19 @@ init_buckets: {
     lda.z dist_1
     sec
     sbc.z screen
-    sta.z __8
+    sta.z __7
     lda.z dist_1+1
     sbc.z screen+1
-    sta.z __8+1
+    sta.z __7+1
     // bucket[BUCKET_IDX[distance]] = dist-screen
     ldy.z distance
     lda (BUCKET_IDX),y
     asl
     tay
-    lda.z __8
+    lda.z __7
     sta (bucket),y
     iny
-    lda.z __8+1
+    lda.z __7+1
     sta (bucket),y
     // BUCKET_IDX[distance]++;
     ldy.z distance
@@ -486,7 +485,7 @@ malloc: {
 // Utilizes symmetry around the center
 // init_angle_screen(byte* zp($1a) screen)
 init_angle_screen: {
-    .label __11 = $24
+    .label __7 = $24
     .label screen = $1a
     .label screen_topline = $e
     .label screen_bottomline = $1a
@@ -556,14 +555,14 @@ init_angle_screen: {
     eor #$ff
     clc
     adc #$27+1
-    // (word){ 39-x*2, 0 }
+    // xw = (signed word)(word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
     sty.z xw
     // y*2
     lda.z y
     asl
-    // (word){ y*2, 0 }
+    // yw = (signed word)(word){ y*2, 0 }
     sta.z yw+1
     sty.z yw
     // atan2_16(xw, yw)
@@ -572,13 +571,13 @@ init_angle_screen: {
     // angle_w+0x0080
     lda #$80
     clc
-    adc.z __11
-    sta.z __11
+    adc.z __7
+    sta.z __7
     bcc !+
-    inc.z __11+1
+    inc.z __7+1
   !:
     // ang_w = >(angle_w+0x0080)
-    lda.z __11+1
+    lda.z __7+1
     sta.z ang_w
     // screen_bottomline[xb] = ang_w
     ldy.z xb
@@ -956,7 +955,7 @@ init_dist_screen: {
 // sqrt(word zp($24) val)
 sqrt: {
     .label __1 = $e
-    .label __3 = $e
+    .label __2 = $e
     .label found = $e
     .label val = $24
     // bsearch16u(val, SQUARES, NUM_SQUARES)
@@ -968,16 +967,16 @@ sqrt: {
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     // found = bsearch16u(val, SQUARES, NUM_SQUARES)
     // found-SQUARES
-    lda.z __3
+    lda.z __2
     sec
     sbc.z SQUARES
-    sta.z __3
-    lda.z __3+1
+    sta.z __2
+    lda.z __2+1
     sbc.z SQUARES+1
-    sta.z __3+1
+    sta.z __2+1
     lsr.z __1+1
     ror.z __1
-    // (char)(found-SQUARES)
+    // sq = (char)(found-SQUARES)
     lda.z __1
     // }
     rts

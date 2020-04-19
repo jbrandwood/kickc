@@ -34,9 +34,8 @@ print: scope:[print]  from main main::@1
   (byte) screen_idx#10 ← phi( main/(byte) screen_idx#13 main::@1/(byte) screen_idx#0 )
   (byte*) print::m#2 ← phi( main/(byte*) print::m#0 main::@1/(byte*) print::m#1 )
   (byte*~) print::$0 ← (byte*) print::m#2 + (number) 2
-  (word*~) print::$1 ← ((word*)) (byte*~) print::$0
-  (byte~) print::$2 ← (byte) screen_idx#10 * (const byte) SIZEOF_WORD
-  *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*~) print::$1)
+  (byte~) print::$1 ← (byte) screen_idx#10 * (const byte) SIZEOF_WORD
+  *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*~) print::$0)
   (byte) screen_idx#4 ← ++ (byte) screen_idx#10
   to:print::@return
 print::@return: scope:[print]  from print
@@ -70,8 +69,7 @@ SYMBOL TABLE SSA
 (const byte*) msg2[]  = { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
 (void()) print((byte*) print::m)
 (byte*~) print::$0
-(word*~) print::$1
-(byte~) print::$2
+(byte~) print::$1
 (label) print::@return
 (byte*) print::m
 (byte*) print::m#0
@@ -96,8 +94,6 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 2 in (byte*~) print::$0 ← (byte*) print::m#2 + (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word*~) print::$1 ← (word*)(byte*~) print::$0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
@@ -118,13 +114,11 @@ Constant (const byte*) print::m#0 = msg1
 Constant (const byte*) print::m#1 = msg2
 Constant (const byte) screen_idx#14 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [13] *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*~) print::$1)  -- *((word*)print::m#2 + 2)
+Converting *(pointer+n) to pointer[n] [12] *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*~) print::$0)  -- *((word*)print::m#2 + 2)
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable (word*~) print::$1 and assignment [5] (word*~) print::$1 ← (word*)(byte*~) print::$0
-Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused variable (byte*~) print::$0 and assignment [4] (byte*~) print::$0 ← (byte*) print::m#2 + (byte) 2
 Successful SSA optimization PassNEliminateUnusedVars
-Rewriting multiplication to use shift [4] (byte~) print::$2 ← (byte) screen_idx#10 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [4] (byte~) print::$1 ← (byte) screen_idx#10 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte*) print::m#0
 Inlining constant with var siblings (const byte*) print::m#1
@@ -187,8 +181,8 @@ main::@return: scope:[main]  from main::@1
 print: scope:[print]  from main main::@1
   [9] (byte) screen_idx#10 ← phi( main/(byte) 0 main::@1/(byte) screen_idx#11 )
   [9] (byte*) print::m#2 ← phi( main/(const byte*) msg1 main::@1/(const byte*) msg2 )
-  [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1
-  [11] *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2)
+  [10] (byte~) print::$1 ← (byte) screen_idx#10 << (byte) 1
+  [11] *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*) print::m#2 + (byte) 2)
   [12] (byte) screen_idx#11 ← ++ (byte) screen_idx#10
   to:print::@return
 print::@return: scope:[print]  from print
@@ -199,7 +193,7 @@ print::@return: scope:[print]  from print
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (void()) print((byte*) print::m)
-(byte~) print::$2 202.0
+(byte~) print::$1 202.0
 (byte*) print::m
 (byte*) print::m#2
 (byte) screen_idx
@@ -209,14 +203,14 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ print::m#2 ]
 [ screen_idx#10 screen_idx#11 ]
-Added variable print::$2 to live range equivalence class [ print::$2 ]
+Added variable print::$1 to live range equivalence class [ print::$1 ]
 Complete equivalence classes
 [ print::m#2 ]
 [ screen_idx#10 screen_idx#11 ]
-[ print::$2 ]
+[ print::$1 ]
 Allocated zp[2]:2 [ print::m#2 ]
 Allocated zp[1]:4 [ screen_idx#10 screen_idx#11 ]
-Allocated zp[1]:5 [ print::$2 ]
+Allocated zp[1]:5 [ print::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -283,14 +277,14 @@ main: {
   // print
 // print(byte* zp(2) m)
 print: {
-    .label __2 = 5
+    .label __1 = 5
     .label m = 2
-    // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [10] (byte~) print::$1 ← (byte) screen_idx#10 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z screen_idx
     asl
-    sta.z __2
-    // [11] *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuz1=pwuz2_derefidx_vbuc2 
-    ldx.z __2
+    sta.z __1
+    // [11] *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuz1=pwuz2_derefidx_vbuc2 
+    ldx.z __1
     ldy #2
     lda (m),y
     sta SCREEN,x
@@ -310,22 +304,22 @@ print: {
   msg2: .byte '1', '2', '3', '4'
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 [ print::m#2 screen_idx#10 print::$2 ] ( main:2::print:5 [ print::m#2 screen_idx#10 print::$2 ] { }  main:2::print:7 [ print::m#2 screen_idx#10 print::$2 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a 
+Statement [10] (byte~) print::$1 ← (byte) screen_idx#10 << (byte) 1 [ print::m#2 screen_idx#10 print::$1 ] ( main:2::print:5 [ print::m#2 screen_idx#10 print::$1 ] { }  main:2::print:7 [ print::m#2 screen_idx#10 print::$1 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ screen_idx#10 screen_idx#11 ]
-Statement [11] *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] { }  main:2::print:7 [ screen_idx#10 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a reg byte y 
+Statement [11] *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] { }  main:2::print:7 [ screen_idx#10 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ screen_idx#10 screen_idx#11 ]
-Statement [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 [ print::m#2 screen_idx#10 print::$2 ] ( main:2::print:5 [ print::m#2 screen_idx#10 print::$2 ] { }  main:2::print:7 [ print::m#2 screen_idx#10 print::$2 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] { }  main:2::print:7 [ screen_idx#10 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a reg byte y 
+Statement [10] (byte~) print::$1 ← (byte) screen_idx#10 << (byte) 1 [ print::m#2 screen_idx#10 print::$1 ] ( main:2::print:5 [ print::m#2 screen_idx#10 print::$1 ] { }  main:2::print:7 [ print::m#2 screen_idx#10 print::$1 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*) print::m#2 + (byte) 2) [ screen_idx#10 ] ( main:2::print:5 [ screen_idx#10 ] { }  main:2::print:7 [ screen_idx#10 ] { { screen_idx#10 = screen_idx#11 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ print::m#2 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ screen_idx#10 screen_idx#11 ] : zp[1]:4 , reg byte x , 
-Potential registers zp[1]:5 [ print::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ print::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print] 202: zp[1]:5 [ print::$2 ] 0: zp[2]:2 [ print::m#2 ] 
+Uplift Scope [print] 202: zp[1]:5 [ print::$1 ] 0: zp[2]:2 [ print::m#2 ] 
 Uplift Scope [] 99: zp[1]:4 [ screen_idx#10 screen_idx#11 ] 
 Uplift Scope [main] 
 
-Uplifting [print] best 107 combination reg byte a [ print::$2 ] zp[2]:2 [ print::m#2 ] 
+Uplifting [print] best 107 combination reg byte a [ print::$1 ] zp[2]:2 [ print::m#2 ] 
 Uplifting [] best 107 combination zp[1]:4 [ screen_idx#10 screen_idx#11 ] 
 Uplifting [main] best 107 combination 
 Attempting to uplift remaining variables inzp[1]:4 [ screen_idx#10 screen_idx#11 ]
@@ -396,10 +390,10 @@ main: {
 // print(byte* zp(2) m)
 print: {
     .label m = 2
-    // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [10] (byte~) print::$1 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z screen_idx
     asl
-    // [11] *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
+    // [11] *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
     ldy #2
     tax
     lda (m),y
@@ -456,7 +450,7 @@ FINAL SYMBOL TABLE
 (const byte*) msg1[]  = { (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd' }
 (const byte*) msg2[]  = { (byte) '1', (byte) '2', (byte) '3', (byte) '4' }
 (void()) print((byte*) print::m)
-(byte~) print::$2 reg byte a 202.0
+(byte~) print::$1 reg byte a 202.0
 (label) print::@return
 (byte*) print::m
 (byte*) print::m#2 m zp[2]:2
@@ -466,7 +460,7 @@ FINAL SYMBOL TABLE
 
 zp[2]:2 [ print::m#2 ]
 zp[1]:4 [ screen_idx#10 screen_idx#11 ]
-reg byte a [ print::$2 ]
+reg byte a [ print::$1 ]
 
 
 FINAL ASSEMBLER
@@ -524,10 +518,10 @@ main: {
 print: {
     .label m = 2
     // SCREEN[screen_idx++] = *(word*)(m+2)
-    // [10] (byte~) print::$2 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [10] (byte~) print::$1 ← (byte) screen_idx#10 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z screen_idx
     asl
-    // [11] *((const nomodify word*) SCREEN + (byte~) print::$2) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
+    // [11] *((const nomodify word*) SCREEN + (byte~) print::$1) ← *((word*)(byte*) print::m#2 + (byte) 2) -- pwuc1_derefidx_vbuaa=pwuz1_derefidx_vbuc2 
     ldy #2
     tax
     lda (m),y

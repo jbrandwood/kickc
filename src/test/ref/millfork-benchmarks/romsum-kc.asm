@@ -162,9 +162,8 @@ utoa: {
     lda.z digit
     cmp #max_digits-1
     bcc __b2
-    // (char)value
-    lda.z value
     // *buffer++ = DIGITS[(char)value]
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0

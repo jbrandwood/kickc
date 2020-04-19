@@ -8,9 +8,8 @@ main: {
     // strlen(STR)
     jsr strlen
     // strlen(STR)
-    // (char) strlen(STR)
-    lda.z __0
     // SCREEN [0] = (char) strlen(STR)
+    lda.z __0
     sta SCREEN
     // }
     rts

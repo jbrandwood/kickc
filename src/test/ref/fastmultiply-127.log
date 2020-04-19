@@ -1,8 +1,21 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
+De-inlining cast (signed word)mulf8s127::b
+De-inlining cast (signed word)mulf8s127::a
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -89,9 +102,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -99,8 +112,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -192,8 +205,8 @@ print_sint::@5: scope:[print_sint]  from print_sint::@1
   (signed word) print_sint::w#3 ← phi( print_sint::@1/(signed word) print_sint::w#5 )
   (byte*) print_char_cursor#66 ← phi( print_sint::@1/(byte*) print_char_cursor#20 )
   (byte*) print_char_cursor#5 ← (byte*) print_char_cursor#66
-  (signed word~) print_sint::$5 ← - (signed word) print_sint::w#3
-  (signed word) print_sint::w#0 ← (signed word~) print_sint::$5
+  (signed word~) print_sint::$4 ← - (signed word) print_sint::w#3
+  (signed word) print_sint::w#0 ← (signed word~) print_sint::$4
   to:print_sint::@2
 print_sint::@3: scope:[print_sint]  from print_sint
   (signed word) print_sint::w#7 ← phi( print_sint/(signed word) print_sint::w#2 )
@@ -209,8 +222,7 @@ print_sint::@6: scope:[print_sint]  from print_sint::@3
 print_sint::@2: scope:[print_sint]  from print_sint::@5 print_sint::@6
   (byte*) print_char_cursor#127 ← phi( print_sint::@5/(byte*) print_char_cursor#5 print_sint::@6/(byte*) print_char_cursor#6 )
   (signed word) print_sint::w#4 ← phi( print_sint::@5/(signed word) print_sint::w#0 print_sint::@6/(signed word) print_sint::w#6 )
-  (word~) print_sint::$1 ← ((word)) (signed word) print_sint::w#4
-  (word) print_uint::w#0 ← (word~) print_sint::$1
+  (word) print_uint::w#0 ← (word)(signed word) print_sint::w#4
   call print_uint 
   to:print_sint::@7
 print_sint::@7: scope:[print_sint]  from print_sint::@2
@@ -240,8 +252,8 @@ print_schar::@5: scope:[print_schar]  from print_schar::@1
   (signed byte) print_schar::b#4 ← phi( print_schar::@1/(signed byte) print_schar::b#6 )
   (byte*) print_char_cursor#70 ← phi( print_schar::@1/(byte*) print_char_cursor#20 )
   (byte*) print_char_cursor#9 ← (byte*) print_char_cursor#70
-  (signed byte~) print_schar::$5 ← - (signed byte) print_schar::b#4
-  (signed byte) print_schar::b#0 ← (signed byte~) print_schar::$5
+  (signed byte~) print_schar::$4 ← - (signed byte) print_schar::b#4
+  (signed byte) print_schar::b#0 ← (signed byte~) print_schar::$4
   to:print_schar::@2
 print_schar::@3: scope:[print_schar]  from print_schar
   (signed byte) print_schar::b#8 ← phi( print_schar/(signed byte) print_schar::b#3 )
@@ -257,8 +269,7 @@ print_schar::@6: scope:[print_schar]  from print_schar::@3
 print_schar::@2: scope:[print_schar]  from print_schar::@5 print_schar::@6
   (byte*) print_char_cursor#130 ← phi( print_schar::@5/(byte*) print_char_cursor#9 print_schar::@6/(byte*) print_char_cursor#10 )
   (signed byte) print_schar::b#5 ← phi( print_schar::@5/(signed byte) print_schar::b#0 print_schar::@6/(signed byte) print_schar::b#7 )
-  (byte~) print_schar::$1 ← ((byte)) (signed byte) print_schar::b#5
-  (byte) print_uchar::b#0 ← (byte~) print_schar::$1
+  (byte) print_uchar::b#0 ← (byte)(signed byte) print_schar::b#5
   call print_uchar 
   to:print_schar::@7
 print_schar::@7: scope:[print_schar]  from print_schar::@2
@@ -740,10 +751,8 @@ mulf8u127::@return: scope:[mulf8u127]  from mulf8u127
 mulf8s127: scope:[mulf8s127]  from print_mulf8s127
   (signed byte) mulf8s127::b#1 ← phi( print_mulf8s127/(signed byte) mulf8s127::b#0 )
   (signed byte) mulf8s127::a#1 ← phi( print_mulf8s127/(signed byte) mulf8s127::a#0 )
-  (byte~) mulf8s127::$0 ← ((byte)) (signed byte) mulf8s127::a#1
-  (byte~) mulf8s127::$1 ← ((byte)) (signed byte) mulf8s127::b#1
-  (byte) mulf8u127::a#1 ← (byte~) mulf8s127::$0
-  (byte) mulf8u127::b#1 ← (byte~) mulf8s127::$1
+  (byte) mulf8u127::a#1 ← (byte)(signed byte) mulf8s127::a#1
+  (byte) mulf8u127::b#1 ← (byte)(signed byte) mulf8s127::b#1
   call mulf8u127 
   (word) mulf8u127::return#3 ← (word) mulf8u127::return#2
   to:mulf8s127::@8
@@ -751,46 +760,45 @@ mulf8s127::@8: scope:[mulf8s127]  from mulf8s127
   (signed byte) mulf8s127::b#5 ← phi( mulf8s127/(signed byte) mulf8s127::b#1 )
   (signed byte) mulf8s127::a#2 ← phi( mulf8s127/(signed byte) mulf8s127::a#1 )
   (word) mulf8u127::return#6 ← phi( mulf8s127/(word) mulf8u127::return#3 )
-  (word~) mulf8s127::$2 ← (word) mulf8u127::return#6
-  (signed word~) mulf8s127::$3 ← ((signed word)) (word~) mulf8s127::$2
-  (signed word) mulf8s127::c#0 ← (signed word~) mulf8s127::$3
-  (bool~) mulf8s127::$4 ← (signed byte) mulf8s127::a#2 < (number) 0
-  (bool~) mulf8s127::$5 ← ! (bool~) mulf8s127::$4
-  if((bool~) mulf8s127::$5) goto mulf8s127::@1
+  (word~) mulf8s127::$0 ← (word) mulf8u127::return#6
+  (signed word) mulf8s127::c#0 ← (signed word)(word~) mulf8s127::$0
+  (bool~) mulf8s127::$1 ← (signed byte) mulf8s127::a#2 < (number) 0
+  (bool~) mulf8s127::$2 ← ! (bool~) mulf8s127::$1
+  if((bool~) mulf8s127::$2) goto mulf8s127::@1
   to:mulf8s127::@4
 mulf8s127::@1: scope:[mulf8s127]  from mulf8s127::@4 mulf8s127::@8
   (signed word) mulf8s127::c#8 ← phi( mulf8s127::@4/(signed word) mulf8s127::c#1 mulf8s127::@8/(signed word) mulf8s127::c#0 )
   (signed byte) mulf8s127::a#5 ← phi( mulf8s127::@4/(signed byte) mulf8s127::a#6 mulf8s127::@8/(signed byte) mulf8s127::a#2 )
   (signed byte) mulf8s127::b#2 ← phi( mulf8s127::@4/(signed byte) mulf8s127::b#3 mulf8s127::@8/(signed byte) mulf8s127::b#5 )
-  (bool~) mulf8s127::$6 ← (signed byte) mulf8s127::b#2 < (number) 0
-  (bool~) mulf8s127::$7 ← ! (bool~) mulf8s127::$6
-  if((bool~) mulf8s127::$7) goto mulf8s127::@2
+  (bool~) mulf8s127::$3 ← (signed byte) mulf8s127::b#2 < (number) 0
+  (bool~) mulf8s127::$4 ← ! (bool~) mulf8s127::$3
+  if((bool~) mulf8s127::$4) goto mulf8s127::@2
   to:mulf8s127::@5
 mulf8s127::@4: scope:[mulf8s127]  from mulf8s127::@8
   (signed byte) mulf8s127::a#6 ← phi( mulf8s127::@8/(signed byte) mulf8s127::a#2 )
   (signed word) mulf8s127::c#4 ← phi( mulf8s127::@8/(signed word) mulf8s127::c#0 )
   (signed byte) mulf8s127::b#3 ← phi( mulf8s127::@8/(signed byte) mulf8s127::b#5 )
-  (signed word~) mulf8s127::$12 ← ((signed word)) (signed byte) mulf8s127::b#3
-  (number~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 * (number) 2
-  (signed word) mulf8s127::c#1 ← (signed word) mulf8s127::c#4 - (number~) mulf8s127::$13
+  (signed word~) mulf8s127::$11 ← (signed word)(signed byte) mulf8s127::b#3
+  (number~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 * (number) 2
+  (signed word) mulf8s127::c#1 ← (signed word) mulf8s127::c#4 - (number~) mulf8s127::$9
   to:mulf8s127::@1
 mulf8s127::@2: scope:[mulf8s127]  from mulf8s127::@1 mulf8s127::@5
   (signed word) mulf8s127::c#9 ← phi( mulf8s127::@1/(signed word) mulf8s127::c#8 mulf8s127::@5/(signed word) mulf8s127::c#2 )
   (signed byte) mulf8s127::b#4 ← phi( mulf8s127::@1/(signed byte) mulf8s127::b#2 mulf8s127::@5/(signed byte) mulf8s127::b#6 )
   (signed byte) mulf8s127::a#3 ← phi( mulf8s127::@1/(signed byte) mulf8s127::a#5 mulf8s127::@5/(signed byte) mulf8s127::a#4 )
-  (bool~) mulf8s127::$8 ← (signed byte) mulf8s127::a#3 < (number) 0
-  (bool~) mulf8s127::$9 ← (signed byte) mulf8s127::b#4 < (number) 0
-  (bool~) mulf8s127::$10 ← (bool~) mulf8s127::$8 && (bool~) mulf8s127::$9
-  (bool~) mulf8s127::$11 ← ! (bool~) mulf8s127::$10
-  if((bool~) mulf8s127::$11) goto mulf8s127::@3
+  (bool~) mulf8s127::$5 ← (signed byte) mulf8s127::a#3 < (number) 0
+  (bool~) mulf8s127::$6 ← (signed byte) mulf8s127::b#4 < (number) 0
+  (bool~) mulf8s127::$7 ← (bool~) mulf8s127::$5 && (bool~) mulf8s127::$6
+  (bool~) mulf8s127::$8 ← ! (bool~) mulf8s127::$7
+  if((bool~) mulf8s127::$8) goto mulf8s127::@3
   to:mulf8s127::@6
 mulf8s127::@5: scope:[mulf8s127]  from mulf8s127::@1
   (signed byte) mulf8s127::b#6 ← phi( mulf8s127::@1/(signed byte) mulf8s127::b#2 )
   (signed word) mulf8s127::c#5 ← phi( mulf8s127::@1/(signed word) mulf8s127::c#8 )
   (signed byte) mulf8s127::a#4 ← phi( mulf8s127::@1/(signed byte) mulf8s127::a#5 )
-  (signed word~) mulf8s127::$14 ← ((signed word)) (signed byte) mulf8s127::a#4
-  (number~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 * (number) 2
-  (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (number~) mulf8s127::$15
+  (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::a#4
+  (number~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 * (number) 2
+  (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (number~) mulf8s127::$10
   to:mulf8s127::@2
 mulf8s127::@3: scope:[mulf8s127]  from mulf8s127::@2 mulf8s127::@6
   (signed word) mulf8s127::c#6 ← phi( mulf8s127::@2/(signed word) mulf8s127::c#9 mulf8s127::@6/(signed word) mulf8s127::c#3 )
@@ -860,8 +868,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -903,22 +911,19 @@ SYMBOL TABLE SSA
 (const byte*) mulf127_sqr2_hi[(number) $200]  = kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
 (const byte*) mulf127_sqr2_lo[(number) $200]  = kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
 (signed word()) mulf8s127((signed byte) mulf8s127::a , (signed byte) mulf8s127::b)
-(byte~) mulf8s127::$0
-(byte~) mulf8s127::$1
-(bool~) mulf8s127::$10
-(bool~) mulf8s127::$11
+(word~) mulf8s127::$0
+(bool~) mulf8s127::$1
+(number~) mulf8s127::$10
+(signed word~) mulf8s127::$11
 (signed word~) mulf8s127::$12
-(number~) mulf8s127::$13
-(signed word~) mulf8s127::$14
-(number~) mulf8s127::$15
-(word~) mulf8s127::$2
-(signed word~) mulf8s127::$3
+(bool~) mulf8s127::$2
+(bool~) mulf8s127::$3
 (bool~) mulf8s127::$4
 (bool~) mulf8s127::$5
 (bool~) mulf8s127::$6
 (bool~) mulf8s127::$7
 (bool~) mulf8s127::$8
-(bool~) mulf8s127::$9
+(number~) mulf8s127::$9
 (label) mulf8s127::@1
 (label) mulf8s127::@2
 (label) mulf8s127::@3
@@ -1320,8 +1325,7 @@ SYMBOL TABLE SSA
 (word) print_mulf8u127::c#4
 (void()) print_schar((signed byte) print_schar::b)
 (bool~) print_schar::$0
-(byte~) print_schar::$1
-(signed byte~) print_schar::$5
+(signed byte~) print_schar::$4
 (label) print_schar::@1
 (label) print_schar::@2
 (label) print_schar::@3
@@ -1347,8 +1351,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#4
 (void()) print_sint((signed word) print_sint::w)
 (bool~) print_sint::$0
-(word~) print_sint::$1
-(signed word~) print_sint::$5
+(signed word~) print_sint::$4
 (label) print_sint::@1
 (label) print_sint::@2
 (label) print_sint::@3
@@ -1450,20 +1453,17 @@ Adding number conversion cast (snumber) $7f in (signed byte) print_mulf8s127::a#
 Adding number conversion cast (snumber) -$7f in (signed byte) print_mulf8s127::b#8 ← (number) -$7f
 Adding number conversion cast (snumber) -$7f in (signed byte) print_mulf8s127::a#9 ← (number) -$7f
 Adding number conversion cast (snumber) -$7f in (signed byte) print_mulf8s127::b#9 ← (number) -$7f
-Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$4 ← (signed byte) mulf8s127::a#2 < (number) 0
-Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$6 ← (signed byte) mulf8s127::b#2 < (number) 0
-Adding number conversion cast (snumber) 2 in (number~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 * (number) 2
-Adding number conversion cast (snumber) mulf8s127::$13 in (number~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 * (snumber)(number) 2
-Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$8 ← (signed byte) mulf8s127::a#3 < (number) 0
-Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$9 ← (signed byte) mulf8s127::b#4 < (number) 0
-Adding number conversion cast (snumber) 2 in (number~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 * (number) 2
-Adding number conversion cast (snumber) mulf8s127::$15 in (number~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 * (snumber)(number) 2
+Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$1 ← (signed byte) mulf8s127::a#2 < (number) 0
+Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$3 ← (signed byte) mulf8s127::b#2 < (number) 0
+Adding number conversion cast (snumber) 2 in (number~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 * (number) 2
+Adding number conversion cast (snumber) mulf8s127::$9 in (number~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 * (snumber)(number) 2
+Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$5 ← (signed byte) mulf8s127::a#3 < (number) 0
+Adding number conversion cast (snumber) 0 in (bool~) mulf8s127::$6 ← (signed byte) mulf8s127::b#4 < (number) 0
+Adding number conversion cast (snumber) 2 in (number~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 * (number) 2
+Adding number conversion cast (snumber) mulf8s127::$10 in (number~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 * (snumber)(number) 2
 Adding number conversion cast (snumber) $200 in (signed word) mulf8s127::c#3 ← (signed word) mulf8s127::c#7 - (number) $200
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (word~) print_sint::$1 ← (word)(signed word) print_sint::w#4
-Inlining cast (byte~) print_schar::$1 ← (byte)(signed byte) print_schar::b#5
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte) print_mulf8u127::a#0 ← (unumber)(number) 0
 Inlining cast (byte) print_mulf8u127::b#0 ← (unumber)(number) 0
@@ -1501,11 +1501,6 @@ Inlining cast (signed byte) print_mulf8s127::a#8 ← (snumber)(number) $7f
 Inlining cast (signed byte) print_mulf8s127::b#8 ← (snumber)(number) -$7f
 Inlining cast (signed byte) print_mulf8s127::a#9 ← (snumber)(number) -$7f
 Inlining cast (signed byte) print_mulf8s127::b#9 ← (snumber)(number) -$7f
-Inlining cast (byte~) mulf8s127::$0 ← (byte)(signed byte) mulf8s127::a#1
-Inlining cast (byte~) mulf8s127::$1 ← (byte)(signed byte) mulf8s127::b#1
-Inlining cast (signed word~) mulf8s127::$3 ← (signed word)(word~) mulf8s127::$2
-Inlining cast (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::b#3
-Inlining cast (signed word~) mulf8s127::$14 ← (signed word)(signed byte) mulf8s127::a#4
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 252
 Simplifying constant pointer cast (byte*) 253
@@ -1618,17 +1613,17 @@ Finalized signed number type (signed byte) 2
 Finalized signed number type (signed word) $200
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) print_uchar::$2 ← (byte) print_uchar::b#6 & (byte) $f
-Inferred type updated to signed word in (snumber~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 * (signed byte) 2
-Inferred type updated to signed word in (snumber~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 * (signed byte) 2
+Inferred type updated to signed word in (snumber~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 * (signed byte) 2
+Inferred type updated to signed word in (snumber~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 * (signed byte) 2
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
-Inversing boolean not [368] (bool~) mulf8s127::$5 ← (signed byte) mulf8s127::a#2 >= (signed byte) 0 from [367] (bool~) mulf8s127::$4 ← (signed byte) mulf8s127::a#2 < (signed byte) 0
-Inversing boolean not [372] (bool~) mulf8s127::$7 ← (signed byte) mulf8s127::b#2 >= (signed byte) 0 from [371] (bool~) mulf8s127::$6 ← (signed byte) mulf8s127::b#2 < (signed byte) 0
+Inversing boolean not [363] (bool~) mulf8s127::$2 ← (signed byte) mulf8s127::a#2 >= (signed byte) 0 from [362] (bool~) mulf8s127::$1 ← (signed byte) mulf8s127::a#2 < (signed byte) 0
+Inversing boolean not [367] (bool~) mulf8s127::$4 ← (signed byte) mulf8s127::b#2 >= (signed byte) 0 from [366] (bool~) mulf8s127::$3 ← (signed byte) mulf8s127::b#2 < (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1641,16 +1636,14 @@ Alias print_line_cursor#1 = print_ln::$0 print_line_cursor#33 print_char_cursor#
 Alias print_char_cursor#125 = print_char_cursor#138 print_char_cursor#126 
 Alias print_sint::w#2 = print_sint::w#5 print_sint::w#3 print_sint::w#7 print_sint::w#6 
 Alias print_char_cursor#5 = print_char_cursor#66 
-Alias print_sint::w#0 = print_sint::$5 
+Alias print_sint::w#0 = print_sint::$4 
 Alias print_char_cursor#6 = print_char_cursor#67 
-Alias print_uint::w#0 = print_sint::$1 
 Alias print_char_cursor#68 = print_char_cursor#7 print_char_cursor#69 print_char_cursor#8 
 Alias print_char_cursor#128 = print_char_cursor#139 print_char_cursor#129 
 Alias print_schar::b#3 = print_schar::b#6 print_schar::b#4 print_schar::b#8 print_schar::b#7 
 Alias print_char_cursor#70 = print_char_cursor#9 
-Alias print_schar::b#0 = print_schar::$5 
+Alias print_schar::b#0 = print_schar::$4 
 Alias print_char_cursor#10 = print_char_cursor#71 
-Alias print_uchar::b#0 = print_schar::$1 
 Alias print_char_cursor#11 = print_char_cursor#72 print_char_cursor#73 print_char_cursor#12 
 Alias print_uchar::b#1 = print_uint::$0 
 Alias print_uint::w#2 = print_uint::w#3 
@@ -1733,12 +1726,10 @@ Alias print_char_cursor#118 = print_char_cursor#58
 Alias print_line_cursor#29 = print_line_cursor#60 print_line_cursor#61 print_line_cursor#30 
 Alias print_char_cursor#119 = print_char_cursor#59 print_char_cursor#120 print_char_cursor#60 
 Alias mulf8u127::return#1 = mulf8u127::return#5 mulf8u127::return#2 
-Alias mulf8u127::a#1 = mulf8s127::$0 
-Alias mulf8u127::b#1 = mulf8s127::$1 
 Alias mulf8u127::return#3 = mulf8u127::return#6 
 Alias mulf8s127::a#1 = mulf8s127::a#2 mulf8s127::a#6 
 Alias mulf8s127::b#1 = mulf8s127::b#5 mulf8s127::b#3 
-Alias mulf8s127::c#0 = mulf8s127::$3 mulf8s127::c#4 
+Alias mulf8s127::c#0 = mulf8s127::c#4 
 Alias mulf8s127::a#4 = mulf8s127::a#5 
 Alias mulf8s127::c#5 = mulf8s127::c#8 
 Alias mulf8s127::b#2 = mulf8s127::b#6 
@@ -1848,16 +1839,16 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) print_char_cursor#131 (byte*) print_char_cursor#19
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str::$1 [17] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
 Simple Condition (bool~) print_ln::$1 [27] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#124) goto print_ln::@1
 Simple Condition (bool~) print_sint::$0 [31] if((signed word) print_sint::w#1<(signed byte) 0) goto print_sint::@1
 Simple Condition (bool~) print_schar::$0 [46] if((signed byte) print_schar::b#3<(signed byte) 0) goto print_schar::@1
-Simple Condition (bool~) mulf8s127::$5 [236] if((signed byte) mulf8s127::a#0>=(signed byte) 0) goto mulf8s127::@1
-Simple Condition (bool~) mulf8s127::$7 [239] if((signed byte) mulf8s127::b#0>=(signed byte) 0) goto mulf8s127::@2
+Simple Condition (bool~) mulf8s127::$2 [236] if((signed byte) mulf8s127::a#0>=(signed byte) 0) goto mulf8s127::@1
+Simple Condition (bool~) mulf8s127::$4 [239] if((signed byte) mulf8s127::b#0>=(signed byte) 0) goto mulf8s127::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Rewriting ! if()-condition to reversed if() [247] (bool~) mulf8s127::$11 ← ! (bool~) mulf8s127::$10
-Rewriting && if()-condition to two if()s [246] (bool~) mulf8s127::$10 ← (bool~) mulf8s127::$8 && (bool~) mulf8s127::$9
+Rewriting ! if()-condition to reversed if() [247] (bool~) mulf8s127::$8 ← ! (bool~) mulf8s127::$7
+Rewriting && if()-condition to two if()s [246] (bool~) mulf8s127::$7 ← (bool~) mulf8s127::$5 && (bool~) mulf8s127::$6
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Constant (const byte*) print_line_cursor#0 = (byte*) 1024
 Constant (const byte) print_char::ch#1 = '-'
@@ -1911,7 +1902,7 @@ Constant (const byte) print_char::ch#10 = '='
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -1919,20 +1910,20 @@ if() condition always false - eliminating [2] if((const word) memset::num#0<=(by
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const void*) memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
-Simple Condition (bool~) mulf8s127::$8 [132] if((signed byte) mulf8s127::a#0<(signed byte) 0) goto mulf8s127::@9
-Simple Condition (bool~) mulf8s127::$9 [140] if((signed byte) mulf8s127::b#0<(signed byte) 0) goto mulf8s127::@6
+Simple Condition (bool~) mulf8s127::$5 [132] if((signed byte) mulf8s127::a#0<(signed byte) 0) goto mulf8s127::@9
+Simple Condition (bool~) mulf8s127::$6 [140] if((signed byte) mulf8s127::b#0<(signed byte) 0) goto mulf8s127::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Negating conditional jump and destination [132] if((signed byte) mulf8s127::a#0>=(signed byte) 0) goto mulf8s127::@3
 Negating conditional jump and destination [140] if((signed byte) mulf8s127::b#0>=(signed byte) 0) goto mulf8s127::@3
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [121] (signed word) mulf8s127::c#0 ← (signed word)(word~) mulf8s127::$2 keeping mulf8s127::c#0
+Inlining Noop Cast [121] (signed word) mulf8s127::c#0 ← (signed word)(word~) mulf8s127::$0 keeping mulf8s127::c#0
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [126] (signed word~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 * (signed byte) 2
-Rewriting multiplication to use shift [131] (signed word~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 * (signed byte) 2
+Rewriting multiplication to use shift [126] (signed word~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 * (signed byte) 2
+Rewriting multiplication to use shift [131] (signed word~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 * (signed byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte*) print_str::str#1
@@ -2008,7 +1999,7 @@ Constant inlined print_mulf8u127::b#1 = (byte) $7f
 Constant inlined print_mulf8u127::b#0 = (byte) 0
 Constant inlined print_mulf8s127::b#8 = (signed byte) -$7f
 Constant inlined print_mulf8s127::b#9 = (signed byte) -$7f
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined print_mulf8s127::a#7 = (signed byte) -$7f
 Constant inlined print_mulf8s127::a#8 = (signed byte) $7f
 Constant inlined print_mulf8s127::a#5 = (signed byte) -$40
@@ -2477,18 +2468,18 @@ mulf8s127::@7: scope:[mulf8s127]  from mulf8s127
   [120] if((signed byte) mulf8s127::a#0>=(signed byte) 0) goto mulf8s127::@9
   to:mulf8s127::@4
 mulf8s127::@4: scope:[mulf8s127]  from mulf8s127::@7
-  [121] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::b#0
-  [122] (signed word~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 << (byte) 1
-  [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$13
+  [121] (signed word~) mulf8s127::$11 ← (signed word)(signed byte) mulf8s127::b#0
+  [122] (signed word~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 << (byte) 1
+  [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$9
   to:mulf8s127::@1
 mulf8s127::@1: scope:[mulf8s127]  from mulf8s127::@4 mulf8s127::@9
   [124] (signed word) mulf8s127::c#5 ← phi( mulf8s127::@4/(signed word) mulf8s127::c#1 mulf8s127::@9/(signed word) mulf8s127::c#11 )
   [125] if((signed byte) mulf8s127::b#0>=(signed byte) 0) goto mulf8s127::@2
   to:mulf8s127::@5
 mulf8s127::@5: scope:[mulf8s127]  from mulf8s127::@1
-  [126] (signed word~) mulf8s127::$14 ← (signed word)(signed byte) mulf8s127::a#0
-  [127] (signed word~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 << (byte) 1
-  [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$15
+  [126] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::a#0
+  [127] (signed word~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 << (byte) 1
+  [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$10
   to:mulf8s127::@2
 mulf8s127::@2: scope:[mulf8s127]  from mulf8s127::@1 mulf8s127::@5
   [129] (signed word) mulf8s127::c#7 ← phi( mulf8s127::@1/(signed word) mulf8s127::c#5 mulf8s127::@5/(signed word) mulf8s127::c#2 )
@@ -2621,10 +2612,10 @@ VARIABLE REGISTER WEIGHTS
 (void*) memset::return
 (void*) memset::str
 (signed word()) mulf8s127((signed byte) mulf8s127::a , (signed byte) mulf8s127::b)
+(signed word~) mulf8s127::$10 2002.0
+(signed word~) mulf8s127::$11 2002.0
 (signed word~) mulf8s127::$12 2002.0
-(signed word~) mulf8s127::$13 2002.0
-(signed word~) mulf8s127::$14 2002.0
-(signed word~) mulf8s127::$15 2002.0
+(signed word~) mulf8s127::$9 2002.0
 (signed byte) mulf8s127::a
 (signed byte) mulf8s127::a#0 116.83333333333334
 (signed byte) mulf8s127::b
@@ -2749,10 +2740,10 @@ Added variable print_uchar::$0 to live range equivalence class [ print_uchar::$0
 Added variable print_uchar::$2 to live range equivalence class [ print_uchar::$2 ]
 Added variable mulf8u127::return#3 to live range equivalence class [ mulf8u127::return#3 ]
 Added variable mulf8s127::c#0 to live range equivalence class [ mulf8s127::c#0 ]
+Added variable mulf8s127::$11 to live range equivalence class [ mulf8s127::$11 ]
+Added variable mulf8s127::$9 to live range equivalence class [ mulf8s127::$9 ]
 Added variable mulf8s127::$12 to live range equivalence class [ mulf8s127::$12 ]
-Added variable mulf8s127::$13 to live range equivalence class [ mulf8s127::$13 ]
-Added variable mulf8s127::$14 to live range equivalence class [ mulf8s127::$14 ]
-Added variable mulf8s127::$15 to live range equivalence class [ mulf8s127::$15 ]
+Added variable mulf8s127::$10 to live range equivalence class [ mulf8s127::$10 ]
 Added variable mulf8u127::return#1 to live range equivalence class [ mulf8u127::return#1 ]
 Added variable mulf8u127::return#0 to live range equivalence class [ mulf8u127::return#0 ]
 Added variable print_mulf8u127::c#0 to live range equivalence class [ print_mulf8u127::c#0 ]
@@ -2781,10 +2772,10 @@ Complete equivalence classes
 [ print_uchar::$2 ]
 [ mulf8u127::return#3 ]
 [ mulf8s127::c#0 ]
+[ mulf8s127::$11 ]
+[ mulf8s127::$9 ]
 [ mulf8s127::$12 ]
-[ mulf8s127::$13 ]
-[ mulf8s127::$14 ]
-[ mulf8s127::$15 ]
+[ mulf8s127::$10 ]
 [ mulf8u127::return#1 ]
 [ mulf8u127::return#0 ]
 [ print_mulf8u127::c#0 ]
@@ -2812,10 +2803,10 @@ Allocated zp[1]:31 [ print_uchar::$0 ]
 Allocated zp[1]:32 [ print_uchar::$2 ]
 Allocated zp[2]:33 [ mulf8u127::return#3 ]
 Allocated zp[2]:35 [ mulf8s127::c#0 ]
-Allocated zp[2]:37 [ mulf8s127::$12 ]
-Allocated zp[2]:39 [ mulf8s127::$13 ]
-Allocated zp[2]:41 [ mulf8s127::$14 ]
-Allocated zp[2]:43 [ mulf8s127::$15 ]
+Allocated zp[2]:37 [ mulf8s127::$11 ]
+Allocated zp[2]:39 [ mulf8s127::$9 ]
+Allocated zp[2]:41 [ mulf8s127::$12 ]
+Allocated zp[2]:43 [ mulf8s127::$10 ]
 Allocated zp[2]:45 [ mulf8u127::return#1 ]
 Allocated zp[2]:47 [ mulf8u127::return#0 ]
 Allocated zp[2]:49 [ print_mulf8u127::c#0 ]
@@ -3577,10 +3568,10 @@ print_schar: {
   // mulf8s127
 // mulf8s127(signed byte zp($19) a, signed byte zp($1a) b)
 mulf8s127: {
-    .label __12 = $25
-    .label __13 = $27
-    .label __14 = $29
-    .label __15 = $2b
+    .label __9 = $27
+    .label __10 = $2b
+    .label __11 = $25
+    .label __12 = $29
     .label a = $19
     .label b = $1a
     .label return = $1b
@@ -3619,28 +3610,28 @@ mulf8s127: {
     jmp __b4
     // mulf8s127::@4
   __b4:
-    // [121] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::b#0 -- vwsz1=_sword_vbsz2 
+    // [121] (signed word~) mulf8s127::$11 ← (signed word)(signed byte) mulf8s127::b#0 -- vwsz1=_sword_vbsz2 
     lda.z b
-    sta.z __12
+    sta.z __11
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z __12+1
-    // [122] (signed word~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z __12
+    sta.z __11+1
+    // [122] (signed word~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 << (byte) 1 -- vwsz1=vwsz2_rol_1 
+    lda.z __11
     asl
-    sta.z __13
-    lda.z __12+1
+    sta.z __9
+    lda.z __11+1
     rol
-    sta.z __13+1
-    // [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$13 -- vwsz1=vwsz2_minus_vwsz3 
+    sta.z __9+1
+    // [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$9 -- vwsz1=vwsz2_minus_vwsz3 
     lda.z c
     sec
-    sbc.z __13
+    sbc.z __9
     sta.z c_1
     lda.z c+1
-    sbc.z __13+1
+    sbc.z __9+1
     sta.z c_1+1
     // [124] phi from mulf8s127::@4 mulf8s127::@9 to mulf8s127::@1 [phi:mulf8s127::@4/mulf8s127::@9->mulf8s127::@1]
   __b1_from___b4:
@@ -3656,28 +3647,28 @@ mulf8s127: {
     jmp __b5
     // mulf8s127::@5
   __b5:
-    // [126] (signed word~) mulf8s127::$14 ← (signed word)(signed byte) mulf8s127::a#0 -- vwsz1=_sword_vbsz2 
+    // [126] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::a#0 -- vwsz1=_sword_vbsz2 
     lda.z a
-    sta.z __14
+    sta.z __12
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z __14+1
-    // [127] (signed word~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 << (byte) 1 -- vwsz1=vwsz2_rol_1 
-    lda.z __14
+    sta.z __12+1
+    // [127] (signed word~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 << (byte) 1 -- vwsz1=vwsz2_rol_1 
+    lda.z __12
     asl
-    sta.z __15
-    lda.z __14+1
+    sta.z __10
+    lda.z __12+1
     rol
-    sta.z __15+1
-    // [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$15 -- vwsz1=vwsz1_minus_vwsz2 
+    sta.z __10+1
+    // [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$10 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z c_1
     sec
-    sbc.z __15
+    sbc.z __10
     sta.z c_1
     lda.z c_1+1
-    sbc.z __15+1
+    sbc.z __10+1
     sta.z c_1+1
     // [129] phi from mulf8s127::@1 mulf8s127::@5 to mulf8s127::@2 [phi:mulf8s127::@1/mulf8s127::@5->mulf8s127::@2]
   __b2_from___b1:
@@ -4044,12 +4035,12 @@ Statement [118] (word) mulf8u127::return#3 ← (word) mulf8u127::return#1 [ mulf
 Removing always clobbered register reg byte a as potential for zp[1]:25 [ mulf8s127::a#0 ]
 Removing always clobbered register reg byte a as potential for zp[1]:26 [ mulf8s127::b#0 ]
 Statement [119] (word) mulf8s127::c#0 ← (word) mulf8u127::return#3 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [121] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::b#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [122] (signed word~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$13 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [126] (signed word~) mulf8s127::$14 ← (signed word)(signed byte) mulf8s127::a#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [127] (signed word~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$15 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [121] (signed word~) mulf8s127::$11 ← (signed word)(signed byte) mulf8s127::b#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [122] (signed word~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$9 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [126] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::a#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [127] (signed word~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$10 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
 Statement [132] (signed word) mulf8s127::c#3 ← (signed word) mulf8s127::c#7 - (signed word) $200 [ mulf8s127::c#3 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
 Statement [135] (signed word) mulf8s127::c#11 ← (signed word)(word) mulf8s127::c#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  } always clobbers reg byte a reg byte x 
@@ -4085,12 +4076,12 @@ Statement [100] (byte~) print_uchar::$2 ← (byte) print_uchar::b#5 & (byte) $f 
 Statement [114] (signed byte) print_schar::b#0 ← - (signed byte) print_schar::b#3 [ print_char_cursor#19 print_schar::b#0 ] ( main:2::print_mulf8s127:31::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:33::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:35::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:37::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:39::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:41::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:43::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:45::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:47::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:49::print_schar:59 [ print_line_cursor#1 print_mulf8s127::b#10 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#1 = print_schar::b#3 print_mulf8s127::a#10 } { print_char_cursor#128 = print_char_cursor#149 } }  main:2::print_mulf8s127:31::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:33::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:35::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:37::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:39::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:41::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:43::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:45::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:47::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  main:2::print_mulf8s127:49::print_schar:63 [ print_line_cursor#1 print_mulf8s127::c#0 print_char_cursor#19 print_schar::b#0 ] { { print_schar::b#2 = print_schar::b#3 print_mulf8s127::b#10 } { print_char_cursor#128 = print_char_cursor#19 } }  ) always clobbers reg byte a 
 Statement [118] (word) mulf8u127::return#3 ← (word) mulf8u127::return#1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8u127::return#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } { mulf8u127::a#1 = mulf8u127::a#2 } { mulf8u127::b#1 = mulf8u127::b#2 } { mulf8u127::return#1 = mulf8u127::return#3 } }  ) always clobbers reg byte a 
 Statement [119] (word) mulf8s127::c#0 ← (word) mulf8u127::return#3 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [121] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::b#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [122] (signed word~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$13 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$13 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [126] (signed word~) mulf8s127::$14 ← (signed word)(signed byte) mulf8s127::a#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$14 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [127] (signed word~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$15 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
-Statement [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$15 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [121] (signed word~) mulf8s127::$11 ← (signed word)(signed byte) mulf8s127::b#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [122] (signed word~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#0 mulf8s127::$9 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$9 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#1 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [126] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::a#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$12 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [127] (signed word~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 << (byte) 1 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#5 mulf8s127::$10 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
+Statement [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$10 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#2 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
 Statement [132] (signed word) mulf8s127::c#3 ← (signed word) mulf8s127::c#7 - (signed word) $200 [ mulf8s127::c#3 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::c#3 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
 Statement [135] (signed word) mulf8s127::c#11 ← (signed word)(word) mulf8s127::c#0 [ mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] ( main:2::print_mulf8s127:31::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:33::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:35::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:37::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:39::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:41::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:43::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:45::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:47::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  main:2::print_mulf8s127:49::mulf8s127:54 [ print_line_cursor#1 print_mulf8s127::a#10 print_mulf8s127::b#10 mulf8s127::a#0 mulf8s127::b#0 mulf8s127::c#11 ] { { mulf8s127::a#0 = print_mulf8s127::a#10 } { mulf8s127::b#0 = print_mulf8s127::b#10 } { mulf8s127::return#0 = mulf8s127::return#1 } }  ) always clobbers reg byte a 
 Statement asm { ldamemA stasm1+1 stasm3+1 eor#$ff stasm2+1 stasm4+1 ldxmemB sec sm1: ldamulf127_sqr1_lo,x sm2: sbcmulf127_sqr2_lo,x staresL sm3: ldamulf127_sqr1_hi,x sm4: sbcmulf127_sqr2_hi,x staresH  } always clobbers reg byte a reg byte x 
@@ -4127,10 +4118,10 @@ Potential registers zp[1]:31 [ print_uchar::$0 ] : zp[1]:31 , reg byte a , reg b
 Potential registers zp[1]:32 [ print_uchar::$2 ] : zp[1]:32 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:33 [ mulf8u127::return#3 ] : zp[2]:33 , 
 Potential registers zp[2]:35 [ mulf8s127::c#0 ] : zp[2]:35 , 
-Potential registers zp[2]:37 [ mulf8s127::$12 ] : zp[2]:37 , 
-Potential registers zp[2]:39 [ mulf8s127::$13 ] : zp[2]:39 , 
-Potential registers zp[2]:41 [ mulf8s127::$14 ] : zp[2]:41 , 
-Potential registers zp[2]:43 [ mulf8s127::$15 ] : zp[2]:43 , 
+Potential registers zp[2]:37 [ mulf8s127::$11 ] : zp[2]:37 , 
+Potential registers zp[2]:39 [ mulf8s127::$9 ] : zp[2]:39 , 
+Potential registers zp[2]:41 [ mulf8s127::$12 ] : zp[2]:41 , 
+Potential registers zp[2]:43 [ mulf8s127::$10 ] : zp[2]:43 , 
 Potential registers zp[2]:45 [ mulf8u127::return#1 ] : zp[2]:45 , 
 Potential registers zp[2]:47 [ mulf8u127::return#0 ] : zp[2]:47 , 
 Potential registers zp[2]:49 [ print_mulf8u127::c#0 ] : zp[2]:49 , 
@@ -4141,7 +4132,7 @@ Uplift Scope [] 1,168,650.45: zp[2]:9 [ print_char_cursor#80 print_char_cursor#1
 Uplift Scope [print_uchar] 200,002: zp[1]:31 [ print_uchar::$0 ] 200,002: zp[1]:32 [ print_uchar::$2 ] 97,610.75: zp[1]:13 [ print_uchar::b#5 print_uchar::b#3 print_uchar::b#4 print_uchar::b#0 print_uchar::b#1 print_uchar::b#2 ] 
 Uplift Scope [memset] 33,336.67: zp[2]:23 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [mulf8u127] 12,205: zp[1]:17 [ mulf8u127::a#2 mulf8u127::a#1 mulf8u127::a#0 ] 7,755.5: zp[1]:18 [ mulf8u127::b#2 mulf8u127::b#1 mulf8u127::b#0 ] 2,775.75: zp[2]:45 [ mulf8u127::return#1 ] 2,002: zp[2]:33 [ mulf8u127::return#3 ] 202: zp[2]:47 [ mulf8u127::return#0 ] 
-Uplift Scope [mulf8s127] 11,044.67: zp[2]:15 [ mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 ] 2,002: zp[2]:37 [ mulf8s127::$12 ] 2,002: zp[2]:39 [ mulf8s127::$13 ] 2,002: zp[2]:41 [ mulf8s127::$14 ] 2,002: zp[2]:43 [ mulf8s127::$15 ] 250.25: zp[2]:35 [ mulf8s127::c#0 ] 202: zp[2]:27 [ mulf8s127::return#0 ] 116.83: zp[1]:25 [ mulf8s127::a#0 ] 116.83: zp[1]:26 [ mulf8s127::b#0 ] 
+Uplift Scope [mulf8s127] 11,044.67: zp[2]:15 [ mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 ] 2,002: zp[2]:37 [ mulf8s127::$11 ] 2,002: zp[2]:39 [ mulf8s127::$9 ] 2,002: zp[2]:41 [ mulf8s127::$12 ] 2,002: zp[2]:43 [ mulf8s127::$10 ] 250.25: zp[2]:35 [ mulf8s127::c#0 ] 202: zp[2]:27 [ mulf8s127::return#0 ] 116.83: zp[1]:25 [ mulf8s127::a#0 ] 116.83: zp[1]:26 [ mulf8s127::b#0 ] 
 Uplift Scope [print_uint] 9,238.67: zp[2]:11 [ print_uint::w#2 print_uint::w#1 print_uint::w#0 ] 
 Uplift Scope [print_schar] 4,841.17: zp[1]:14 [ print_schar::b#5 print_schar::b#0 print_schar::b#3 print_schar::b#1 print_schar::b#2 ] 
 Uplift Scope [print_sint] 4,521.33: zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 ] 
@@ -4158,7 +4149,7 @@ Uplifting [] best 2828 combination zp[2]:9 [ print_char_cursor#80 print_char_cur
 Uplifting [print_uchar] best 2801 combination reg byte a [ print_uchar::$0 ] reg byte x [ print_uchar::$2 ] reg byte x [ print_uchar::b#5 print_uchar::b#3 print_uchar::b#4 print_uchar::b#0 print_uchar::b#1 print_uchar::b#2 ] 
 Uplifting [memset] best 2801 combination zp[2]:23 [ memset::dst#2 memset::dst#1 ] 
 Uplifting [mulf8u127] best 2783 combination reg byte x [ mulf8u127::a#2 mulf8u127::a#1 mulf8u127::a#0 ] reg byte a [ mulf8u127::b#2 mulf8u127::b#1 mulf8u127::b#0 ] zp[2]:45 [ mulf8u127::return#1 ] zp[2]:33 [ mulf8u127::return#3 ] zp[2]:47 [ mulf8u127::return#0 ] 
-Uplifting [mulf8s127] best 2772 combination zp[2]:15 [ mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 ] zp[2]:37 [ mulf8s127::$12 ] zp[2]:39 [ mulf8s127::$13 ] zp[2]:41 [ mulf8s127::$14 ] zp[2]:43 [ mulf8s127::$15 ] zp[2]:35 [ mulf8s127::c#0 ] zp[2]:27 [ mulf8s127::return#0 ] zp[1]:25 [ mulf8s127::a#0 ] reg byte y [ mulf8s127::b#0 ] 
+Uplifting [mulf8s127] best 2772 combination zp[2]:15 [ mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 ] zp[2]:37 [ mulf8s127::$11 ] zp[2]:39 [ mulf8s127::$9 ] zp[2]:41 [ mulf8s127::$12 ] zp[2]:43 [ mulf8s127::$10 ] zp[2]:35 [ mulf8s127::c#0 ] zp[2]:27 [ mulf8s127::return#0 ] zp[1]:25 [ mulf8s127::a#0 ] reg byte y [ mulf8s127::b#0 ] 
 Uplifting [print_uint] best 2772 combination zp[2]:11 [ print_uint::w#2 print_uint::w#1 print_uint::w#0 ] 
 Uplifting [print_schar] best 2760 combination reg byte x [ print_schar::b#5 print_schar::b#0 print_schar::b#3 print_schar::b#1 print_schar::b#2 ] 
 Uplifting [print_sint] best 2760 combination zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 ] 
@@ -4183,22 +4174,22 @@ Coalescing zero page register [ zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_
 Coalescing zero page register [ zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 print_uint::w#2 print_uint::w#1 print_uint::w#0 ] ] with [ zp[2]:29 [ print_mulf8s127::c#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:15 [ mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 mulf8s127::c#0 ] ] with [ zp[2]:27 [ mulf8s127::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:33 [ mulf8u127::return#3 ] ] with [ zp[2]:45 [ mulf8u127::return#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:37 [ mulf8s127::$12 ] ] with [ zp[2]:39 [ mulf8s127::$13 ] ] - score: 1
-Coalescing zero page register [ zp[2]:41 [ mulf8s127::$14 ] ] with [ zp[2]:43 [ mulf8s127::$15 ] ] - score: 1
+Coalescing zero page register [ zp[2]:37 [ mulf8s127::$11 ] ] with [ zp[2]:39 [ mulf8s127::$9 ] ] - score: 1
+Coalescing zero page register [ zp[2]:41 [ mulf8s127::$12 ] ] with [ zp[2]:43 [ mulf8s127::$10 ] ] - score: 1
 Coalescing zero page register [ zp[2]:47 [ mulf8u127::return#0 ] ] with [ zp[2]:49 [ print_mulf8u127::c#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 print_uint::w#2 print_uint::w#1 print_uint::w#0 print_mulf8s127::c#0 ] ] with [ zp[2]:15 [ mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 mulf8s127::c#0 mulf8s127::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 print_uint::w#2 print_uint::w#1 print_uint::w#0 print_mulf8s127::c#0 mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 mulf8s127::c#0 mulf8s127::return#0 ] ] with [ zp[2]:47 [ mulf8u127::return#0 print_mulf8u127::c#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 print_uint::w#2 print_uint::w#1 print_uint::w#0 print_mulf8s127::c#0 mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 mulf8s127::c#0 mulf8s127::return#0 mulf8u127::return#0 print_mulf8u127::c#0 ] ] with [ zp[2]:33 [ mulf8u127::return#3 mulf8u127::return#1 ] ] - score: 2
 Coalescing zero page register [ zp[2]:19 [ print_str::str#3 print_str::str#6 print_str::str#0 ] ] with [ zp[2]:6 [ print_sint::w#4 print_sint::w#0 print_sint::w#1 print_uint::w#2 print_uint::w#1 print_uint::w#0 print_mulf8s127::c#0 mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 mulf8s127::c#0 mulf8s127::return#0 mulf8u127::return#0 print_mulf8u127::c#0 mulf8u127::return#3 mulf8u127::return#1 ] ]
 Coalescing zero page register [ zp[1]:22 [ print_mulf8u127::b#10 ] ] with [ zp[1]:2 [ print_mulf8s127::a#10 mulf8s127::a#0 ] ]
-Coalescing zero page register [ zp[2]:37 [ mulf8s127::$12 mulf8s127::$13 ] ] with [ zp[2]:23 [ memset::dst#2 memset::dst#1 ] ]
+Coalescing zero page register [ zp[2]:37 [ mulf8s127::$11 mulf8s127::$9 ] ] with [ zp[2]:23 [ memset::dst#2 memset::dst#1 ] ]
 Allocated (was zp[1]:3) zp[1]:2 [ print_mulf8s127::b#10 ]
 Allocated (was zp[2]:4) zp[2]:3 [ print_line_cursor#32 print_line_cursor#63 print_line_cursor#1 ]
 Allocated (was zp[2]:9) zp[2]:5 [ print_char_cursor#80 print_char_cursor#124 print_char_cursor#122 print_char_cursor#19 print_char_cursor#128 print_char_cursor#132 print_char_cursor#151 print_char_cursor#149 print_char_cursor#137 print_char_cursor#142 ]
 Allocated (was zp[2]:19) zp[2]:7 [ print_str::str#3 print_str::str#6 print_str::str#0 print_sint::w#4 print_sint::w#0 print_sint::w#1 print_uint::w#2 print_uint::w#1 print_uint::w#0 print_mulf8s127::c#0 mulf8s127::return#1 mulf8s127::c#7 mulf8s127::c#5 mulf8s127::c#1 mulf8s127::c#11 mulf8s127::c#2 mulf8s127::c#3 mulf8s127::c#0 mulf8s127::return#0 mulf8u127::return#0 print_mulf8u127::c#0 mulf8u127::return#3 mulf8u127::return#1 ]
 Allocated (was zp[1]:22) zp[1]:9 [ print_mulf8u127::b#10 print_mulf8s127::a#10 mulf8s127::a#0 ]
-Allocated (was zp[2]:37) zp[2]:10 [ mulf8s127::$12 mulf8s127::$13 memset::dst#2 memset::dst#1 ]
-Allocated (was zp[2]:41) zp[2]:12 [ mulf8s127::$14 mulf8s127::$15 ]
+Allocated (was zp[2]:37) zp[2]:10 [ mulf8s127::$11 mulf8s127::$9 memset::dst#2 memset::dst#1 ]
+Allocated (was zp[2]:41) zp[2]:12 [ mulf8s127::$12 mulf8s127::$10 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -4906,10 +4897,10 @@ print_schar: {
   // mulf8s127
 // mulf8s127(signed byte zp(9) a, signed byte register(Y) b)
 mulf8s127: {
-    .label __12 = $a
-    .label __13 = $a
-    .label __14 = $c
-    .label __15 = $c
+    .label __9 = $a
+    .label __10 = $c
+    .label __11 = $a
+    .label __12 = $c
     .label a = 9
     .label return = 7
     .label c = 7
@@ -4935,24 +4926,24 @@ mulf8s127: {
     jmp __b4
     // mulf8s127::@4
   __b4:
-    // [121] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::b#0 -- vwsz1=_sword_vbsyy 
+    // [121] (signed word~) mulf8s127::$11 ← (signed word)(signed byte) mulf8s127::b#0 -- vwsz1=_sword_vbsyy 
     tya
-    sta.z __12
+    sta.z __11
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z __12+1
-    // [122] (signed word~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z __13
-    rol.z __13+1
-    // [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$13 -- vwsz1=vwsz1_minus_vwsz2 
+    sta.z __11+1
+    // [122] (signed word~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 << (byte) 1 -- vwsz1=vwsz1_rol_1 
+    asl.z __9
+    rol.z __9+1
+    // [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$9 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z c
     sec
-    sbc.z __13
+    sbc.z __9
     sta.z c
     lda.z c+1
-    sbc.z __13+1
+    sbc.z __9+1
     sta.z c+1
     // [124] phi from mulf8s127::@4 mulf8s127::@9 to mulf8s127::@1 [phi:mulf8s127::@4/mulf8s127::@9->mulf8s127::@1]
   __b1_from___b4:
@@ -4967,24 +4958,24 @@ mulf8s127: {
     jmp __b5
     // mulf8s127::@5
   __b5:
-    // [126] (signed word~) mulf8s127::$14 ← (signed word)(signed byte) mulf8s127::a#0 -- vwsz1=_sword_vbsz2 
+    // [126] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::a#0 -- vwsz1=_sword_vbsz2 
     lda.z a
-    sta.z __14
+    sta.z __12
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z __14+1
-    // [127] (signed word~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z __15
-    rol.z __15+1
-    // [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$15 -- vwsz1=vwsz1_minus_vwsz2 
+    sta.z __12+1
+    // [127] (signed word~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 << (byte) 1 -- vwsz1=vwsz1_rol_1 
+    asl.z __10
+    rol.z __10+1
+    // [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$10 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z c
     sec
-    sbc.z __15
+    sbc.z __10
     sta.z c
     lda.z c+1
-    sbc.z __15+1
+    sbc.z __10+1
     sta.z c+1
     // [129] phi from mulf8s127::@1 mulf8s127::@5 to mulf8s127::@2 [phi:mulf8s127::@1/mulf8s127::@5->mulf8s127::@2]
   __b2_from___b1:
@@ -5624,10 +5615,10 @@ FINAL SYMBOL TABLE
 (const byte*) mulf127_sqr2_hi[(number) $200]  = kickasm {{ .fill 512, >round(((i-255)/127*(i-255)/127)*127/4)  }}
 (const byte*) mulf127_sqr2_lo[(number) $200]  = kickasm {{ .fill 512, <round(((i-255)/127*(i-255)/127)*127/4)  }}
 (signed word()) mulf8s127((signed byte) mulf8s127::a , (signed byte) mulf8s127::b)
-(signed word~) mulf8s127::$12 zp[2]:10 2002.0
-(signed word~) mulf8s127::$13 zp[2]:10 2002.0
-(signed word~) mulf8s127::$14 zp[2]:12 2002.0
-(signed word~) mulf8s127::$15 zp[2]:12 2002.0
+(signed word~) mulf8s127::$10 zp[2]:12 2002.0
+(signed word~) mulf8s127::$11 zp[2]:10 2002.0
+(signed word~) mulf8s127::$12 zp[2]:12 2002.0
+(signed word~) mulf8s127::$9 zp[2]:10 2002.0
 (label) mulf8s127::@1
 (label) mulf8s127::@2
 (label) mulf8s127::@3
@@ -5794,8 +5785,8 @@ zp[1]:9 [ print_mulf8u127::b#10 print_mulf8s127::a#10 mulf8s127::a#0 ]
 reg byte y [ mulf8s127::b#0 ]
 reg byte a [ print_uchar::$0 ]
 reg byte x [ print_uchar::$2 ]
-zp[2]:10 [ mulf8s127::$12 mulf8s127::$13 memset::dst#2 memset::dst#1 ]
-zp[2]:12 [ mulf8s127::$14 mulf8s127::$15 ]
+zp[2]:10 [ mulf8s127::$11 mulf8s127::$9 memset::dst#2 memset::dst#1 ]
+zp[2]:12 [ mulf8s127::$12 mulf8s127::$10 ]
 
 
 FINAL ASSEMBLER
@@ -6391,10 +6382,10 @@ print_schar: {
   // mulf8s127
 // mulf8s127(signed byte zp(9) a, signed byte register(Y) b)
 mulf8s127: {
-    .label __12 = $a
-    .label __13 = $a
-    .label __14 = $c
-    .label __15 = $c
+    .label __9 = $a
+    .label __10 = $c
+    .label __11 = $a
+    .label __12 = $c
     .label a = 9
     .label return = 7
     .label c = 7
@@ -6418,27 +6409,26 @@ mulf8s127: {
     cmp #0
     bpl __b1
     // mulf8s127::@4
-    // (signed word)b
-    // [121] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::b#0 -- vwsz1=_sword_vbsyy 
+    // (signed word)b*2
+    // [121] (signed word~) mulf8s127::$11 ← (signed word)(signed byte) mulf8s127::b#0 -- vwsz1=_sword_vbsyy 
     tya
-    sta.z __12
+    sta.z __11
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z __12+1
-    // (signed word)b*2
-    // [122] (signed word~) mulf8s127::$13 ← (signed word~) mulf8s127::$12 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z __13
-    rol.z __13+1
+    sta.z __11+1
+    // [122] (signed word~) mulf8s127::$9 ← (signed word~) mulf8s127::$11 << (byte) 1 -- vwsz1=vwsz1_rol_1 
+    asl.z __9
+    rol.z __9+1
     // c -= (signed word)b*2
-    // [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$13 -- vwsz1=vwsz1_minus_vwsz2 
+    // [123] (signed word) mulf8s127::c#1 ← (signed word)(word) mulf8s127::c#0 - (signed word~) mulf8s127::$9 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z c
     sec
-    sbc.z __13
+    sbc.z __9
     sta.z c
     lda.z c+1
-    sbc.z __13+1
+    sbc.z __9+1
     sta.z c+1
     // [124] phi from mulf8s127::@4 mulf8s127::@9 to mulf8s127::@1 [phi:mulf8s127::@4/mulf8s127::@9->mulf8s127::@1]
     // [124] phi (signed word) mulf8s127::c#5 = (signed word) mulf8s127::c#1 [phi:mulf8s127::@4/mulf8s127::@9->mulf8s127::@1#0] -- register_copy 
@@ -6449,27 +6439,26 @@ mulf8s127: {
     cpy #0
     bpl __b2
     // mulf8s127::@5
-    // (signed word)a
-    // [126] (signed word~) mulf8s127::$14 ← (signed word)(signed byte) mulf8s127::a#0 -- vwsz1=_sword_vbsz2 
+    // (signed word)a*2
+    // [126] (signed word~) mulf8s127::$12 ← (signed word)(signed byte) mulf8s127::a#0 -- vwsz1=_sword_vbsz2 
     lda.z a
-    sta.z __14
+    sta.z __12
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z __14+1
-    // (signed word)a*2
-    // [127] (signed word~) mulf8s127::$15 ← (signed word~) mulf8s127::$14 << (byte) 1 -- vwsz1=vwsz1_rol_1 
-    asl.z __15
-    rol.z __15+1
+    sta.z __12+1
+    // [127] (signed word~) mulf8s127::$10 ← (signed word~) mulf8s127::$12 << (byte) 1 -- vwsz1=vwsz1_rol_1 
+    asl.z __10
+    rol.z __10+1
     // c -= (signed word)a*2
-    // [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$15 -- vwsz1=vwsz1_minus_vwsz2 
+    // [128] (signed word) mulf8s127::c#2 ← (signed word) mulf8s127::c#5 - (signed word~) mulf8s127::$10 -- vwsz1=vwsz1_minus_vwsz2 
     lda.z c
     sec
-    sbc.z __15
+    sbc.z __10
     sta.z c
     lda.z c+1
-    sbc.z __15+1
+    sbc.z __10+1
     sta.z c+1
     // [129] phi from mulf8s127::@1 mulf8s127::@5 to mulf8s127::@2 [phi:mulf8s127::@1/mulf8s127::@5->mulf8s127::@2]
     // [129] phi (signed word) mulf8s127::c#7 = (signed word) mulf8s127::c#5 [phi:mulf8s127::@1/mulf8s127::@5->mulf8s127::@2#0] -- register_copy 

@@ -1,10 +1,23 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+Replacing struct member reference *((struct fileentry*) main::file).bufEdit with member unwinding reference *((byte**~) main::$2)
 Replacing struct member reference *((struct fileentry*) main::file).bufEdit with member unwinding reference *((byte**~) main::$3)
-Replacing struct member reference *((struct fileentry*) main::file).bufEdit with member unwinding reference *((byte**~) main::$4)
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
+De-inlining cast (byte**)main::file
+De-inlining cast (byte**)main::file
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -133,12 +146,13 @@ main: scope:[main]  from @41
   (struct fileentry*) main::file#0 ← (struct fileentry*) 0
   (word) main::uSize#0 ← (word) 0
   (struct fileentry*) main::file#1 ← ((struct fileentry*)) (number) $4000
-  (byte**~) main::$3 ← (byte**)(struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-  *((byte**~) main::$3) ← ((byte*)) (number) 4
-  (byte**~) main::$4 ← (byte**)(struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-  (byte*~) main::$0 ← *((byte**~) main::$4) + (number) $1e
-  (word*~) main::$1 ← ((word*)) (byte*~) main::$0
-  (word*) main::ptrw#0 ← (word*~) main::$1
+  (byte**~) main::$4 ← (byte**)(struct fileentry*) main::file#1
+  (byte**~) main::$2 ← (byte**~) main::$4 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+  *((byte**~) main::$2) ← ((byte*)) (number) 4
+  (byte**~) main::$5 ← (byte**)(struct fileentry*) main::file#1
+  (byte**~) main::$3 ← (byte**~) main::$5 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+  (byte*~) main::$0 ← *((byte**~) main::$3) + (number) $1e
+  (word*) main::ptrw#0 ← (word*)(byte*~) main::$0
   (word) main::uSize#1 ← *((word*) main::ptrw#0)
   (word) print_uint::w#0 ← (word) main::uSize#1
   call print_uint 
@@ -178,9 +192,10 @@ SYMBOL TABLE SSA
 (byte*) fileentry::bufEdit
 (void()) main()
 (byte*~) main::$0
-(word*~) main::$1
+(byte**~) main::$2
 (byte**~) main::$3
 (byte**~) main::$4
+(byte**~) main::$5
 (label) main::@1
 (label) main::@return
 (struct fileentry*) main::file
@@ -255,11 +270,10 @@ SYMBOL TABLE SSA
 Adding number conversion cast (unumber) 4 in (byte~) print_uchar::$0 ← (byte) print_uchar::b#2 >> (number) 4
 Adding number conversion cast (unumber) $f in (number~) print_uchar::$2 ← (byte) print_uchar::b#3 & (number) $f
 Adding number conversion cast (unumber) print_uchar::$2 in (number~) print_uchar::$2 ← (byte) print_uchar::b#3 & (unumber)(number) $f
-Adding number conversion cast (unumber) $1e in (byte*~) main::$0 ← *((byte**~) main::$4) + (number) $1e
+Adding number conversion cast (unumber) $1e in (byte*~) main::$0 ← *((byte**~) main::$3) + (number) $1e
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (struct fileentry*) main::file#1 ← (struct fileentry*)(number) $4000
-Inlining cast *((byte**~) main::$3) ← (byte*)(number) 4
-Inlining cast (word*~) main::$1 ← (word*)(byte*~) main::$0
+Inlining cast *((byte**~) main::$2) ← (byte*)(number) 4
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 4
@@ -283,7 +297,6 @@ Alias print_uchar::b#2 = print_uchar::b#3
 Alias print_char_cursor#15 = print_char_cursor#4 
 Alias print_char_cursor#16 = print_char_cursor#5 print_char_cursor#17 print_char_cursor#6 
 Alias print_char_cursor#19 = print_char_cursor#7 print_char_cursor#8 
-Alias main::ptrw#0 = main::$1 
 Alias print_char_cursor#10 = print_char_cursor#9 print_char_cursor#20 print_char_cursor#21 
 Alias print_char_cursor#11 = print_char_cursor#22 
 Successful SSA optimization Pass2AliasElimination
@@ -302,30 +315,32 @@ Constant (const struct fileentry*) main::file#0 = (struct fileentry*) 0
 Constant (const word) main::uSize#0 = 0
 Constant (const struct fileentry*) main::file#1 = (struct fileentry*) 16384
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte**)main::file#1 in [27] (byte**~) main::$3 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Constant value identified (byte**)main::file#1 in [29] (byte**~) main::$4 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Successful SSA optimization Pass2ConstantValues
-Converting *(pointer+n) to pointer[n] [28] *((byte**~) main::$3) ← (byte*) 4  -- *((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [30] (byte*~) main::$0 ← *((byte**~) main::$4) + (byte) $1e  -- *((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
-Converting *(pointer+n) to pointer[n] [32] (word) main::uSize#1 ← *((word*) main::ptrw#0)  -- *((word*)*((byte**)main::file#1 + OFFSET_STRUCT_FILEENTRY_BUFEDIT) + $1e)
+Constant (const byte**) main::$4 = (byte**)main::file#1
+Constant (const byte**) main::$5 = (byte**)main::file#1
+Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [29] *((byte**~) main::$2) ← (byte*) 4  -- *(main::$4 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [32] (byte*~) main::$0 ← *((byte**~) main::$3) + (byte) $1e  -- *(main::$5 + OFFSET_STRUCT_FILEENTRY_BUFEDIT)
+Converting *(pointer+n) to pointer[n] [34] (word) main::uSize#1 ← *((word*) main::ptrw#0)  -- *((word*)*(main::$5 + OFFSET_STRUCT_FILEENTRY_BUFEDIT) + $1e)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (byte**)main::file#1 in [27] (byte**~) main::$3 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)main::file#1 in [28] *((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 4
-Simplifying expression containing zero (byte**)main::file#1 in [29] (byte**~) main::$4 ← (byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
-Simplifying expression containing zero (byte**)main::file#1 in [30] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e
-Simplifying expression containing zero (byte**)main::file#1 in [32] (word) main::uSize#1 ← *((word*)*((byte**)(const struct fileentry*) main::file#1 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e)
+Simplifying expression containing zero main::$4 in [28] (byte**~) main::$2 ← (const byte**) main::$4 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero main::$4 in [29] *((const byte**) main::$4 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) ← (byte*) 4
+Simplifying expression containing zero main::$5 in [31] (byte**~) main::$3 ← (const byte**) main::$5 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
+Simplifying expression containing zero main::$5 in [32] (byte*~) main::$0 ← *((const byte**) main::$5 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e
+Simplifying expression containing zero main::$5 in [34] (word) main::uSize#1 ← *((word*)*((const byte**) main::$5 + (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT) + (byte) $1e)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte**~) main::$3 and assignment [17] (byte**~) main::$3 ← (byte**)(const struct fileentry*) main::file#1
-Eliminating unused variable (byte**~) main::$4 and assignment [19] (byte**~) main::$4 ← (byte**)(const struct fileentry*) main::file#1
+Eliminating unused variable (byte**~) main::$2 and assignment [17] (byte**~) main::$2 ← (const byte**) main::$4
+Eliminating unused variable (byte**~) main::$3 and assignment [19] (byte**~) main::$3 ← (const byte**) main::$5
 Eliminating unused variable (word*) main::ptrw#0 and assignment [21] (word*) main::ptrw#0 ← (word*)(byte*~) main::$0
 Eliminating unused constant (const struct fileentry*) main::file#0
 Eliminating unused constant (const word) main::uSize#0
 Eliminating unused constant (const byte) OFFSET_STRUCT_FILEENTRY_BUFEDIT
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable (byte*~) main::$0 and assignment [18] (byte*~) main::$0 ← *((byte**)(const struct fileentry*) main::file#1) + (byte) $1e
+Eliminating unused variable (byte*~) main::$0 and assignment [18] (byte*~) main::$0 ← *((const byte**) main::$5) + (byte) $1e
 Successful SSA optimization PassNEliminateUnusedVars
 Inlining constant with var siblings (const byte*) print_char_cursor#0
+Constant inlined main::$5 = (byte**)(const struct fileentry*) main::file#1
 Constant inlined print_char_cursor#0 = (byte*) 1024
+Constant inlined main::$4 = (byte**)(const struct fileentry*) main::file#1
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @15

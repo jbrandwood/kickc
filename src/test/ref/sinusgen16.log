@@ -1,12 +1,29 @@
 Fixing pointer increment (signed word*) sin16s_gen::sintab ← ++ (signed word*) sin16s_gen::sintab
 Fixing pointer increment (signed word*) sin16s_gen2::sintab ← ++ (signed word*) sin16s_gen2::sintab
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer addition (signed word*~) main::$2 ← (const signed word*) main::sintab1 + (word) main::wavelength
 Fixing pointer increment (signed word*) main::st1 ← ++ (signed word*) main::st1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (byte)mul8s::b
+De-inlining cast (byte)mul8s::a
+De-inlining cast (byte)mul8su::b
+De-inlining cast (word)mul16s::b
+De-inlining cast (word)mul16s::a
+De-inlining cast (signed word)sin16s_gen2::$7
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -362,8 +379,8 @@ sin16s::@1: scope:[sin16s]  from sin16s sin16s::@4
   to:sin16s::@5
 sin16s::@4: scope:[sin16s]  from sin16s
   (dword) sin16s::x#5 ← phi( sin16s/(dword) sin16s::x#3 )
-  (dword~) sin16s::$17 ← (dword) sin16s::x#5 - (const nomodify dword) PI_u4f28
-  (dword) sin16s::x#1 ← (dword~) sin16s::$17
+  (dword~) sin16s::$16 ← (dword) sin16s::x#5 - (const nomodify dword) PI_u4f28
+  (dword) sin16s::x#1 ← (dword~) sin16s::$16
   (byte) sin16s::isUpper#1 ← (number) 1
   to:sin16s::@1
 sin16s::@2: scope:[sin16s]  from sin16s::@1 sin16s::@5
@@ -440,17 +457,16 @@ sin16s::@12: scope:[sin16s]  from sin16s::@11
   (word) sin16s::x5_128#0 ← (word~) sin16s::$12
   (word~) sin16s::$13 ← (word) sin16s::usinx#2 + (word) sin16s::x5_128#0
   (word) sin16s::usinx#1 ← (word~) sin16s::$13
-  (signed word~) sin16s::$14 ← ((signed word)) (word) sin16s::usinx#1
-  (signed word) sin16s::sinx#0 ← (signed word~) sin16s::$14
-  (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (number) 0
-  (bool~) sin16s::$16 ← ! (bool~) sin16s::$15
-  if((bool~) sin16s::$16) goto sin16s::@3
+  (signed word) sin16s::sinx#0 ← (signed word)(word) sin16s::usinx#1
+  (bool~) sin16s::$14 ← (byte) sin16s::isUpper#2 != (number) 0
+  (bool~) sin16s::$15 ← ! (bool~) sin16s::$14
+  if((bool~) sin16s::$15) goto sin16s::@3
   to:sin16s::@6
 sin16s::@5: scope:[sin16s]  from sin16s::@1
   (byte) sin16s::isUpper#9 ← phi( sin16s::@1/(byte) sin16s::isUpper#8 )
   (dword) sin16s::x#7 ← phi( sin16s::@1/(dword) sin16s::x#4 )
-  (dword~) sin16s::$18 ← (const nomodify dword) PI_u4f28 - (dword) sin16s::x#7
-  (dword) sin16s::x#2 ← (dword~) sin16s::$18
+  (dword~) sin16s::$17 ← (const nomodify dword) PI_u4f28 - (dword) sin16s::x#7
+  (dword) sin16s::x#2 ← (dword~) sin16s::$17
   to:sin16s::@2
 sin16s::@3: scope:[sin16s]  from sin16s::@12 sin16s::@6
   (signed word) sin16s::sinx#2 ← phi( sin16s::@12/(signed word) sin16s::sinx#0 sin16s::@6/(signed word) sin16s::sinx#1 )
@@ -458,9 +474,8 @@ sin16s::@3: scope:[sin16s]  from sin16s::@12 sin16s::@6
   to:sin16s::@return
 sin16s::@6: scope:[sin16s]  from sin16s::@12
   (word) sin16s::usinx#3 ← phi( sin16s::@12/(word) sin16s::usinx#1 )
-  (signed word~) sin16s::$19 ← ((signed word)) (word) sin16s::usinx#3
-  (signed word~) sin16s::$20 ← - (signed word~) sin16s::$19
-  (signed word) sin16s::sinx#1 ← (signed word~) sin16s::$20
+  (signed word~) sin16s::$18 ← - (signed word)(word) sin16s::usinx#3
+  (signed word) sin16s::sinx#1 ← (signed word~) sin16s::$18
   to:sin16s::@3
 sin16s::@return: scope:[sin16s]  from sin16s::@3
   (signed word) sin16s::return#4 ← phi( sin16s::@3/(signed word) sin16s::return#1 )
@@ -509,9 +524,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -519,8 +534,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -588,8 +603,8 @@ print_sint::@5: scope:[print_sint]  from print_sint::@1
   (signed word) print_sint::w#3 ← phi( print_sint::@1/(signed word) print_sint::w#5 )
   (byte*) print_char_cursor#25 ← phi( print_sint::@1/(byte*) print_char_cursor#14 )
   (byte*) print_char_cursor#3 ← (byte*) print_char_cursor#25
-  (signed word~) print_sint::$5 ← - (signed word) print_sint::w#3
-  (signed word) print_sint::w#0 ← (signed word~) print_sint::$5
+  (signed word~) print_sint::$4 ← - (signed word) print_sint::w#3
+  (signed word) print_sint::w#0 ← (signed word~) print_sint::$4
   to:print_sint::@2
 print_sint::@3: scope:[print_sint]  from print_sint
   (signed word) print_sint::w#7 ← phi( print_sint/(signed word) print_sint::w#2 )
@@ -605,8 +620,7 @@ print_sint::@6: scope:[print_sint]  from print_sint::@3
 print_sint::@2: scope:[print_sint]  from print_sint::@5 print_sint::@6
   (byte*) print_char_cursor#48 ← phi( print_sint::@5/(byte*) print_char_cursor#3 print_sint::@6/(byte*) print_char_cursor#4 )
   (signed word) print_sint::w#4 ← phi( print_sint::@5/(signed word) print_sint::w#0 print_sint::@6/(signed word) print_sint::w#6 )
-  (word~) print_sint::$1 ← ((word)) (signed word) print_sint::w#4
-  (word) print_uint::w#0 ← (word~) print_sint::$1
+  (word) print_uint::w#0 ← (word)(signed word) print_sint::w#4
   call print_uint 
   to:print_sint::@7
 print_sint::@7: scope:[print_sint]  from print_sint::@2
@@ -982,8 +996,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -1212,8 +1226,7 @@ SYMBOL TABLE SSA
 (byte*) print_screen#5
 (void()) print_sint((signed word) print_sint::w)
 (bool~) print_sint::$0
-(word~) print_sint::$1
-(signed word~) print_sint::$5
+(signed word~) print_sint::$4
 (label) print_sint::@1
 (label) print_sint::@2
 (label) print_sint::@3
@@ -1309,14 +1322,12 @@ SYMBOL TABLE SSA
 (word~) sin16s::$11
 (word~) sin16s::$12
 (word~) sin16s::$13
-(signed word~) sin16s::$14
+(bool~) sin16s::$14
 (bool~) sin16s::$15
-(bool~) sin16s::$16
+(dword~) sin16s::$16
 (dword~) sin16s::$17
-(dword~) sin16s::$18
-(signed word~) sin16s::$19
+(signed word~) sin16s::$18
 (bool~) sin16s::$2
-(signed word~) sin16s::$20
 (bool~) sin16s::$3
 (dword~) sin16s::$4
 (word~) sin16s::$5
@@ -1460,7 +1471,7 @@ Adding number conversion cast (unumber) 1 in (byte) mulu16_sel::select#2 ← (nu
 Adding number conversion cast (unumber) 0 in (byte) mulu16_sel::select#3 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) mulu16_sel::select#4 ← (number) 0
 Adding number conversion cast (unumber) 4 in (word~) sin16s::$12 ← (word) sin16s::x5#0 >> (number) 4
-Adding number conversion cast (unumber) 0 in (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (number) 0
+Adding number conversion cast (unumber) 0 in (bool~) sin16s::$14 ← (byte) sin16s::isUpper#2 != (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) print_str::$1 ← (number) 0 != *((byte*) print_str::str#3)
 Adding number conversion cast (snumber) 0 in (bool~) print_sint::$0 ← (signed word) print_sint::w#2 < (number) 0
@@ -1478,11 +1489,7 @@ Inlining cast (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
 Inlining cast (byte) mulu16_sel::select#2 ← (unumber)(number) 1
 Inlining cast (byte) mulu16_sel::select#3 ← (unumber)(number) 0
 Inlining cast (byte) mulu16_sel::select#4 ← (unumber)(number) 0
-Inlining cast (signed word~) sin16s::$14 ← (signed word)(word) sin16s::usinx#1
-Inlining cast (signed word~) sin16s::$19 ← (signed word)(word) sin16s::usinx#3
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (word~) print_sint::$1 ← (word)(signed word) print_sint::w#4
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 1
@@ -1555,9 +1562,9 @@ Inversing boolean not [18] (bool~) divr16u::$9 ← (word) divr16u::rem#6 < (word
 Inversing boolean not [75] (bool~) mul16u::$3 ← (byte~) mul16u::$1 == (byte) 0 from [74] (bool~) mul16u::$2 ← (byte~) mul16u::$1 != (byte) 0
 Inversing boolean not [121] (bool~) sin16s::$1 ← (dword) sin16s::x#3 < (const nomodify dword) PI_u4f28 from [120] (bool~) sin16s::$0 ← (dword) sin16s::x#3 >= (const nomodify dword) PI_u4f28
 Inversing boolean not [125] (bool~) sin16s::$3 ← (dword) sin16s::x#4 < (const nomodify dword) PI_HALF_u4f28 from [124] (bool~) sin16s::$2 ← (dword) sin16s::x#4 >= (const nomodify dword) PI_HALF_u4f28
-Inversing boolean not [184] (bool~) sin16s::$16 ← (byte) sin16s::isUpper#2 == (byte) 0 from [183] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 != (byte) 0
-Inversing boolean not [213] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [212] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
-Inversing boolean not [338] (bool~) main::$5 ← (signed word) main::sw#0 < (signed byte) 0 from [337] (bool~) main::$4 ← (signed word) main::sw#0 >= (signed byte) 0
+Inversing boolean not [183] (bool~) sin16s::$15 ← (byte) sin16s::isUpper#2 == (byte) 0 from [182] (bool~) sin16s::$14 ← (byte) sin16s::isUpper#2 != (byte) 0
+Inversing boolean not [211] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [210] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
+Inversing boolean not [335] (bool~) main::$5 ← (signed word) main::sw#0 < (signed byte) 0 from [334] (bool~) main::$4 ← (signed word) main::sw#0 >= (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias divr16u::rem#0 = divr16u::$0 divr16u::rem#7 
 Alias divr16u::dividend#0 = divr16u::$6 divr16u::dividend#8 
@@ -1605,7 +1612,7 @@ Alias rem16u#16 = rem16u#30 rem16u#22 rem16u#26 rem16u#7
 Alias sin16s::return#0 = sin16s::return#3 
 Alias sin16s_gen::x#1 = sin16s_gen::$3 
 Alias sin16s::x#3 = sin16s::x#5 
-Alias sin16s::x#1 = sin16s::$17 
+Alias sin16s::x#1 = sin16s::$16 
 Alias sin16s::x1#0 = sin16s::$5 sin16s::x1#1 sin16s::x1#4 sin16s::x1#2 sin16s::x1#3 
 Alias mulu16_sel::return#0 = mulu16_sel::return#7 
 Alias sin16s::isUpper#2 = sin16s::isUpper#6 sin16s::isUpper#7 sin16s::isUpper#5 sin16s::isUpper#4 sin16s::isUpper#3 
@@ -1621,12 +1628,11 @@ Alias mulu16_sel::return#11 = mulu16_sel::return#4
 Alias sin16s::x5#0 = sin16s::$11 
 Alias sin16s::x5_128#0 = sin16s::$12 
 Alias sin16s::usinx#1 = sin16s::$13 sin16s::usinx#3 
-Alias sin16s::sinx#0 = sin16s::$14 
 Alias sin16s::x#4 = sin16s::x#7 
 Alias sin16s::isUpper#8 = sin16s::isUpper#9 
-Alias sin16s::x#2 = sin16s::$18 
+Alias sin16s::x#2 = sin16s::$17 
 Alias sin16s::return#1 = sin16s::sinx#2 sin16s::return#4 sin16s::return#2 
-Alias sin16s::sinx#1 = sin16s::$20 
+Alias sin16s::sinx#1 = sin16s::$18 
 Alias mul16u::return#2 = mul16u::return#4 
 Alias mulu16_sel::select#5 = mulu16_sel::select#6 
 Alias mulu16_sel::return#12 = mulu16_sel::return#5 mulu16_sel::$2 mulu16_sel::return#6 
@@ -1634,7 +1640,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -1647,9 +1653,8 @@ Alias print_char_cursor#1 = print_char_cursor#23
 Alias print_char_cursor#46 = print_char_cursor#57 print_char_cursor#47 
 Alias print_sint::w#2 = print_sint::w#5 print_sint::w#3 print_sint::w#7 print_sint::w#6 
 Alias print_char_cursor#25 = print_char_cursor#3 
-Alias print_sint::w#0 = print_sint::$5 
+Alias print_sint::w#0 = print_sint::$4 
 Alias print_char_cursor#26 = print_char_cursor#4 
-Alias print_uint::w#0 = print_sint::$1 
 Alias print_char_cursor#27 = print_char_cursor#5 print_char_cursor#28 print_char_cursor#6 
 Alias print_uchar::b#0 = print_uint::$0 
 Alias print_uint::w#1 = print_uint::w#2 
@@ -1759,16 +1764,16 @@ Simple Condition (bool~) mul16u::$3 [49] if((byte~) mul16u::$1==(byte) 0) goto m
 Simple Condition (bool~) sin16s_gen::$1 [66] if((word) sin16s_gen::i#2<(word) sin16s_gen::wavelength#0) goto sin16s_gen::@2
 Simple Condition (bool~) sin16s::$1 [79] if((dword) sin16s::x#0<(const nomodify dword) PI_u4f28) goto sin16s::@1
 Simple Condition (bool~) sin16s::$3 [82] if((dword) sin16s::x#4<(const nomodify dword) PI_HALF_u4f28) goto sin16s::@2
-Simple Condition (bool~) sin16s::$16 [123] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
-Simple Condition (bool~) memset::$1 [140] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [147] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
-Simple Condition (bool~) print_str::$1 [155] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
-Simple Condition (bool~) print_sint::$0 [163] if((signed word) print_sint::w#1<(signed byte) 0) goto print_sint::@1
-Simple Condition (bool~) main::$3 [217] if((signed word*) main::st1#2<(signed word*~) main::$2) goto main::@2
-Simple Condition (bool~) main::$5 [220] if((signed word) main::sw#0<(signed byte) 0) goto main::@4
+Simple Condition (bool~) sin16s::$15 [123] if((byte) sin16s::isUpper#2==(byte) 0) goto sin16s::@3
+Simple Condition (bool~) memset::$1 [139] if((word) memset::num#0<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$3 [146] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) print_str::$1 [154] if((byte) 0!=*((byte*) print_str::str#3)) goto print_str::@2
+Simple Condition (bool~) print_sint::$0 [162] if((signed word) print_sint::w#1<(signed byte) 0) goto print_sint::@1
+Simple Condition (bool~) main::$3 [216] if((signed word*) main::st1#2<(signed word*~) main::$2) goto main::@2
+Simple Condition (bool~) main::$5 [219] if((signed word) main::sw#0<(signed byte) 0) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [101] (word) mulu16_sel::v2#2 ← (unumber)(number) $10000/(number) 6
-Constant right-side identified [214] (word~) main::$9 ← (const word) main::wavelength * (const byte) SIZEOF_SIGNED_WORD
+Constant right-side identified [213] (word~) main::$9 ← (const word) main::wavelength * (const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) rem16u#0 = 0
 Constant (const word) divr16u::quotient#0 = 0
@@ -1803,11 +1808,11 @@ Constant (const void*) memset::str#0 = (void*)print_line_cursor#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) divr16u::divisor#0 = div32u16u::divisor#0
 Constant (const word) divr16u::divisor#1 = div32u16u::divisor#0
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [140] if((const word) memset::num#0<=(byte) 0) goto memset::@1
+if() condition always false - eliminating [139] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [17] divr16u::i#1 ← ++ divr16u::i#2 to ++
 Resolved ranged comparison value [19] if(divr16u::i#1!=rangelast(0,$f)) goto divr16u::@1 to (number) $10
@@ -1822,16 +1827,15 @@ Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [18] (word) divr16u::dividend#1 ← > (const dword) div32u16u::dividend#0
 Constant right-side identified [22] (word) divr16u::dividend#2 ← < (const dword) div32u16u::dividend#0
-Constant right-side identified [103] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
-Constant right-side identified [146] (signed word*~) main::$2 ← (const signed word*) main::sintab1 + (const word) main::$9
+Constant right-side identified [102] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
+Constant right-side identified [145] (signed word*~) main::$2 ← (const signed word*) main::sintab1 + (const word) main::$9
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) divr16u::dividend#1 = >div32u16u::dividend#0
 Constant (const word) divr16u::dividend#2 = <div32u16u::dividend#0
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Constant (const signed word*) main::$2 = main::sintab1+main::$9
 Successful SSA optimization Pass2ConstantIdentification
 Inlining Noop Cast [85] (signed word) sin16s::sinx#0 ← (signed word)(word) sin16s::usinx#1 keeping sin16s::usinx#1
-Inlining Noop Cast [89] (signed word~) sin16s::$19 ← (signed word)(word) sin16s::usinx#1 keeping sin16s::usinx#1
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const word) divr16u::quotient#0
 Inlining constant with var siblings (const byte) divr16u::i#0
@@ -1864,10 +1868,10 @@ Constant inlined sin16s_gen::wavelength#0 = (const word) main::wavelength
 Constant inlined div32u16u::dividend#0 = (const nomodify dword) PI2_u4f28
 Constant inlined sin16s::isUpper#0 = (byte) 0
 Constant inlined mulu16_sel::select#4 = (byte) 0
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
 Constant inlined divr16u::quotient#0 = (word) 0
 Constant inlined mulu16_sel::select#2 = (byte) 1
 Constant inlined mulu16_sel::select#3 = (byte) 0
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined mul16u::res#0 = (dword) 0
 Constant inlined mulu16_sel::select#0 = (byte) 0
 Constant inlined sin16s::isUpper#1 = (byte) 1

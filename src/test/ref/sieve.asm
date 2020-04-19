@@ -44,7 +44,7 @@ main: {
     .label j = 6
     .label s = 8
     .label i_1 = 4
-    .label __34 = $1b
+    .label __33 = $1b
     // *D018 = toD018(SCREEN, 0x1800)
     //Show lower case font
     lda #toD0181_return
@@ -199,12 +199,12 @@ main: {
     lda.z i_1
     clc
     adc #<sieve
-    sta.z __34
+    sta.z __33
     lda.z i_1+1
     adc #>sieve
-    sta.z __34+1
+    sta.z __33+1
     ldy #0
-    lda (__34),y
+    lda (__33),y
     cmp #0
     bne __b11
     // print_uint_decimal(i)
@@ -388,9 +388,8 @@ utoa: {
     lda.z digit
     cmp #max_digits-1
     bcc __b2
-    // (char)value
-    lda.z value
     // *buffer++ = DIGITS[(char)value]
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0
@@ -548,9 +547,8 @@ ultoa: {
     lda.z digit
     cmp #max_digits-1
     bcc __b2
-    // (char)value
-    lda.z value
     // *buffer++ = DIGITS[(char)value]
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0

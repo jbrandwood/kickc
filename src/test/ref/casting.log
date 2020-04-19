@@ -29,14 +29,12 @@ main::@1: scope:[main]  from main main::@1
   (number~) main::$1 ← (number) $c8 - (byte) main::b#2
   (byte) main::b2#0 ← (number~) main::$1
   *((const byte*) SCREEN + (byte) main::b#2) ← (byte) main::b2#0
-  (signed byte~) main::$2 ← ((signed byte)) (byte) main::b#2
-  (signed byte~) main::$3 ← - (signed byte~) main::$2
-  (signed byte) main::sb#0 ← (signed byte~) main::$3
-  (byte~) main::$4 ← ((byte)) (signed byte) main::sb#0
-  *((byte*) SCREEN2#1 + (byte) main::b#2) ← (byte~) main::$4
+  (signed byte~) main::$2 ← - (signed byte)(byte) main::b#2
+  (signed byte) main::sb#0 ← (signed byte~) main::$2
+  *((byte*) SCREEN2#1 + (byte) main::b#2) ← (byte)(signed byte) main::sb#0
   (byte) main::b#1 ← (byte) main::b#2 + rangenext(0,$64)
-  (bool~) main::$5 ← (byte) main::b#1 != rangelast(0,$64)
-  if((bool~) main::$5) goto main::@1
+  (bool~) main::$3 ← (byte) main::b#1 != rangelast(0,$64)
+  if((bool~) main::$3) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
   (byte*) SCREEN4#3 ← phi( main::@1/(byte*) SCREEN4#4 )
@@ -60,15 +58,14 @@ w::@1: scope:[w]  from w w::@1
   (byte*) SCREEN3#1 ← phi( w/(byte*) SCREEN3#2 w::@1/(byte*) SCREEN3#1 )
   (byte) w::i#2 ← phi( w/(byte) w::i#0 w::@1/(byte) w::i#1 )
   (word~) w::$0 ← (const word) w::w1 - (const word) w::w2
-  (byte~) w::$1 ← ((byte)) (word~) w::$0
-  (byte) w::b#0 ← (byte~) w::$1
-  (number~) w::$2 ← (number) $578-(number) $546 + (byte) w::i#2
-  (byte) w::b2#0 ← (number~) w::$2
+  (byte) w::b#0 ← (byte)(word~) w::$0
+  (number~) w::$1 ← (number) $578-(number) $546 + (byte) w::i#2
+  (byte) w::b2#0 ← (number~) w::$1
   *((byte*) SCREEN3#1 + (byte) w::i#2) ← (byte) w::b#0
   *((byte*) SCREEN4#1 + (byte) w::i#2) ← (byte) w::b2#0
   (byte) w::i#1 ← (byte) w::i#2 + rangenext(0,$a)
-  (bool~) w::$3 ← (byte) w::i#1 != rangelast(0,$a)
-  if((bool~) w::$3) goto w::@1
+  (bool~) w::$2 ← (byte) w::i#1 != rangelast(0,$a)
+  if((bool~) w::$2) goto w::@1
   to:w::@return
 w::@return: scope:[w]  from w::@1
   return 
@@ -116,9 +113,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (number~) main::$1
 (signed byte~) main::$2
-(signed byte~) main::$3
-(byte~) main::$4
-(bool~) main::$5
+(bool~) main::$3
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -133,9 +128,8 @@ SYMBOL TABLE SSA
 (signed byte) main::sb#0
 (void()) w()
 (word~) w::$0
-(byte~) w::$1
-(number~) w::$2
-(bool~) w::$3
+(number~) w::$1
+(bool~) w::$2
 (label) w::@1
 (label) w::@return
 (byte) w::b
@@ -154,29 +148,24 @@ Adding number conversion cast (unumber) $28*6 in (byte*~) $1 ← (const byte*) S
 Adding number conversion cast (unumber) $28*9 in (byte*~) $2 ← (const byte*) SCREEN + (number) $28*(number) 9
 Adding number conversion cast (unumber) $c8 in (number~) main::$1 ← (number) $c8 - (byte) main::b#2
 Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unumber)(number) $c8 - (byte) main::b#2
-Adding number conversion cast (unumber) $578-$546 in (number~) w::$2 ← (number) $578-(number) $546 + (byte) w::i#2
-Adding number conversion cast (unumber) w::$2 in (number~) w::$2 ← (unumber)(number) $578-(number) $546 + (byte) w::i#2
+Adding number conversion cast (unumber) $578-$546 in (number~) w::$1 ← (number) $578-(number) $546 + (byte) w::i#2
+Adding number conversion cast (unumber) w::$1 in (number~) w::$1 ← (unumber)(number) $578-(number) $546 + (byte) w::i#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (signed byte~) main::$2 ← (signed byte)(byte) main::b#2
-Inlining cast (byte~) main::$4 ← (byte)(signed byte) main::sb#0
-Inlining cast (byte~) w::$1 ← (byte)(word~) w::$0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $c8
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $c8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$1 ← (byte) $c8 - (byte) main::b#2
-Inferred type updated to byte in (unumber~) w::$2 ← (byte)(number) $578-(number) $546 + (byte) w::i#2
+Inferred type updated to byte in (unumber~) w::$1 ← (byte)(number) $578-(number) $546 + (byte) w::i#2
 Alias SCREEN2#0 = $0 SCREEN2#3 
 Alias SCREEN3#0 = $1 SCREEN3#6 
 Alias SCREEN4#0 = $2 SCREEN4#6 
 Alias main::b2#0 = main::$1 
-Alias main::sb#0 = main::$3 
+Alias main::sb#0 = main::$2 
 Alias SCREEN3#3 = SCREEN3#4 
 Alias SCREEN4#3 = SCREEN4#4 
-Alias w::b#0 = w::$1 
-Alias w::b2#0 = w::$2 
+Alias w::b2#0 = w::$1 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) SCREEN2#2 (byte*) SCREEN2#0
 Identical Phi Values (byte*) SCREEN3#5 (byte*) SCREEN3#0
@@ -189,13 +178,13 @@ Identical Phi Values (byte*) SCREEN4#2 (byte*) SCREEN4#3
 Identical Phi Values (byte*) SCREEN3#1 (byte*) SCREEN3#2
 Identical Phi Values (byte*) SCREEN4#1 (byte*) SCREEN4#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$5 [14] if((byte) main::b#1!=rangelast(0,$64)) goto main::@1
-Simple Condition (bool~) w::$3 [27] if((byte) w::i#1!=rangelast(0,$a)) goto w::@1
+Simple Condition (bool~) main::$3 [12] if((byte) main::b#1!=rangelast(0,$64)) goto main::@1
+Simple Condition (bool~) w::$2 [25] if((byte) w::i#1!=rangelast(0,$a)) goto w::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (byte*) SCREEN2#0 ← (const byte*) SCREEN + (byte)(number) $28*(number) 3
 Constant right-side identified [1] (byte*) SCREEN3#0 ← (const byte*) SCREEN + (byte)(number) $28*(number) 6
 Constant right-side identified [2] (byte*) SCREEN4#0 ← (const byte*) SCREEN + (word)(number) $28*(number) 9
-Constant right-side identified [20] (word~) w::$0 ← (const word) w::w1 - (const word) w::w2
+Constant right-side identified [18] (word~) w::$0 ← (const word) w::w1 - (const word) w::w2
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) SCREEN2#0 = SCREEN+(byte)$28*3
 Constant (const byte*) SCREEN3#0 = SCREEN+(byte)$28*6
@@ -206,10 +195,10 @@ Constant (const word) w::$0 = w::w1-w::w2
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) w::b#0 = (byte)w::$0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [12] main::b#1 ← ++ main::b#2 to ++
-Resolved ranged comparison value [14] if(main::b#1!=rangelast(0,$64)) goto main::@1 to (number) $65
-Resolved ranged next value [25] w::i#1 ← ++ w::i#2 to ++
-Resolved ranged comparison value [27] if(w::i#1!=rangelast(0,$a)) goto w::@1 to (number) $b
+Resolved ranged next value [10] main::b#1 ← ++ main::b#2 to ++
+Resolved ranged comparison value [12] if(main::b#1!=rangelast(0,$64)) goto main::@1 to (number) $65
+Resolved ranged next value [23] w::i#1 ← ++ w::i#2 to ++
+Resolved ranged comparison value [25] if(w::i#1!=rangelast(0,$a)) goto w::@1 to (number) $b
 Adding number conversion cast (unumber) $65 in if((byte) main::b#1!=(number) $65) goto main::@1
 Adding number conversion cast (unumber) $b in if((byte) w::i#1!=(number) $b) goto w::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -219,9 +208,6 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $65
 Finalized unsigned number type (byte) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining Noop Cast [3] (signed byte~) main::$2 ← (signed byte)(byte) main::b#2 keeping main::b#2
-Inlining Noop Cast [5] (byte~) main::$4 ← (byte)(signed byte) main::sb#0 keeping main::sb#0
-Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const byte) main::b#0
 Inlining constant with var siblings (const byte) w::i#0
 Constant inlined w::i#0 = (byte) 0

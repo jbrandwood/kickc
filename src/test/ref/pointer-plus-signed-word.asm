@@ -20,9 +20,8 @@ main: {
     lda #>SCREEN
     adc.z i+1
     sta.z sc+1
-    // (char)i
-    lda.z i
     // *sc = (char)i
+    lda.z i
     ldy #0
     sta (sc),y
     // for (signed word i : -10..10 )

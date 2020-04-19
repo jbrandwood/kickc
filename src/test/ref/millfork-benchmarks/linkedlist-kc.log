@@ -3,7 +3,7 @@ Fixing struct type size struct node to 4
 Setting inferred volatile on symbol affected by address-of (word) last_time
 Setting inferred volatile on symbol affected by address-of (word) rand_seed
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer addition (struct node*~) alloc::$0 ← (const struct node*) heap + (word) free_
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
@@ -12,6 +12,23 @@ Replacing struct member reference *((struct node*) prepend::new).next with membe
 Replacing struct member reference *((struct node*) prepend::new).value with member unwinding reference *((word*~) prepend::$2)
 Replacing struct member reference *((struct node*) sum::current).value with member unwinding reference *((word*~) sum::$0)
 Replacing struct member reference *((struct node*) sum::current).next with member unwinding reference *((struct node**~) sum::$1)
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
+De-inlining cast (word)toD018::screen
+De-inlining cast (word)toSpritePtr::sprite
+De-inlining cast (struct node**)prepend::new
+De-inlining cast (word*)prepend::new
+De-inlining cast (word*)sum::current
+De-inlining cast (struct node**)sum::current
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -286,9 +303,11 @@ prepend::@1: scope:[prepend]  from prepend
   (struct node*~) prepend::$0 ← (struct node*) alloc::return#4
   (word) free_#5 ← (word) free_#14
   (struct node*) prepend::new#1 ← (struct node*~) prepend::$0
-  (struct node**~) prepend::$1 ← (struct node**)(struct node*) prepend::new#1 + (const byte) OFFSET_STRUCT_NODE_NEXT
+  (struct node**~) prepend::$3 ← (struct node**)(struct node*) prepend::new#1
+  (struct node**~) prepend::$1 ← (struct node**~) prepend::$3 + (const byte) OFFSET_STRUCT_NODE_NEXT
   *((struct node**~) prepend::$1) ← (struct node*) root#10
-  (word*~) prepend::$2 ← (word*)(struct node*) prepend::new#1 + (const byte) OFFSET_STRUCT_NODE_VALUE
+  (word*~) prepend::$4 ← (word*)(struct node*) prepend::new#1
+  (word*~) prepend::$2 ← (word*~) prepend::$4 + (const byte) OFFSET_STRUCT_NODE_VALUE
   *((word*~) prepend::$2) ← (word) prepend::x#1
   (struct node*) root#3 ← (struct node*) prepend::new#1
   to:prepend::@return
@@ -311,15 +330,17 @@ sum: scope:[sum]  from main::@3
 sum::@1: scope:[sum]  from sum sum::@2
   (word) sum::s#5 ← phi( sum/(word) sum::s#1 sum::@2/(word) sum::s#2 )
   (struct node*) sum::current#3 ← phi( sum/(struct node*) sum::current#1 sum::@2/(struct node*) sum::current#2 )
-  (bool~) sum::$2 ← (struct node*)(word) 0 != (struct node*) sum::current#3
-  if((bool~) sum::$2) goto sum::@2
+  (bool~) sum::$4 ← (struct node*)(word) 0 != (struct node*) sum::current#3
+  if((bool~) sum::$4) goto sum::@2
   to:sum::@3
 sum::@2: scope:[sum]  from sum::@1
   (word) sum::s#3 ← phi( sum::@1/(word) sum::s#5 )
   (struct node*) sum::current#4 ← phi( sum::@1/(struct node*) sum::current#3 )
-  (word*~) sum::$0 ← (word*)(struct node*) sum::current#4 + (const byte) OFFSET_STRUCT_NODE_VALUE
+  (word*~) sum::$2 ← (word*)(struct node*) sum::current#4
+  (word*~) sum::$0 ← (word*~) sum::$2 + (const byte) OFFSET_STRUCT_NODE_VALUE
   (word) sum::s#2 ← (word) sum::s#3 + *((word*~) sum::$0)
-  (struct node**~) sum::$1 ← (struct node**)(struct node*) sum::current#4 + (const byte) OFFSET_STRUCT_NODE_NEXT
+  (struct node**~) sum::$3 ← (struct node**)(struct node*) sum::current#4
+  (struct node**~) sum::$1 ← (struct node**~) sum::$3 + (const byte) OFFSET_STRUCT_NODE_NEXT
   (struct node*) sum::current#2 ← *((struct node**~) sum::$1)
   to:sum::@1
 sum::@3: scope:[sum]  from sum::@1
@@ -415,8 +436,7 @@ main::@8: scope:[main]  from main::@3
   (byte*) print_char_cursor#38 ← phi( main::@3/(byte*) print_char_cursor#43 )
   (word) sum::return#4 ← phi( main::@3/(word) sum::return#2 )
   (word~) main::$5 ← (word) sum::return#4
-  (byte~) main::$6 ← ((byte)) (word~) main::$5
-  (byte) print_char::ch#2 ← (byte~) main::$6
+  (byte) print_char::ch#2 ← (byte)(word~) main::$5
   call print_char 
   to:main::@9
 main::@9: scope:[main]  from main::@8
@@ -428,8 +448,8 @@ main::@9: scope:[main]  from main::@8
   (byte*) print_char_cursor#31 ← phi( main::@8/(byte*) print_char_cursor#10 )
   (byte*) print_char_cursor#14 ← (byte*) print_char_cursor#31
   (byte) main::c#2 ← (byte) main::c#3 + rangenext(0,4)
-  (bool~) main::$8 ← (byte) main::c#2 != rangelast(0,4)
-  if((bool~) main::$8) goto main::@1
+  (bool~) main::$7 ← (byte) main::c#2 != rangelast(0,4)
+  if((bool~) main::$7) goto main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@9
   (struct node*) root#25 ← phi( main::@9/(struct node*) root#24 )
@@ -583,8 +603,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (bool~) main::$4
 (word~) main::$5
-(byte~) main::$6
-(bool~) main::$8
+(bool~) main::$7
 (label) main::@1
 (label) main::@10
 (label) main::@2
@@ -619,6 +638,8 @@ SYMBOL TABLE SSA
 (struct node*~) prepend::$0
 (struct node**~) prepend::$1
 (word*~) prepend::$2
+(struct node**~) prepend::$3
+(word*~) prepend::$4
 (label) prepend::@1
 (label) prepend::@return
 (struct node*) prepend::new
@@ -787,7 +808,9 @@ SYMBOL TABLE SSA
 (word()) sum()
 (word*~) sum::$0
 (struct node**~) sum::$1
-(bool~) sum::$2
+(word*~) sum::$2
+(struct node**~) sum::$3
+(bool~) sum::$4
 (label) sum::@1
 (label) sum::@2
 (label) sum::@3
@@ -826,7 +849,6 @@ Inlining cast (struct node*) root#1 ← (struct node*)(number) 0
 Inlining cast (word) sum::s#1 ← (unumber)(number) 0
 Inlining cast (byte) main::c#1 ← (unumber)(number) 0
 Inlining cast (word) main::i#1 ← (unumber)(number) 0
-Inlining cast (byte~) main::$6 ← (byte)(word~) main::$5
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
@@ -897,7 +919,6 @@ Alias print_line_cursor#18 = print_line_cursor#27 print_line_cursor#28 print_lin
 Alias free_#17 = free_#8 free_#30 free_#29 free_#26 free_#27 free_#23 free_#18 free_#9 
 Alias root#14 = root#6 root#18 root#27 root#24 root#25 root#21 root#15 root#7 
 Alias sum::return#2 = sum::return#4 
-Alias print_char::ch#2 = main::$6 
 Alias print_char_cursor#14 = print_char_cursor#31 print_char_cursor#40 
 Alias Ticks#10 = Ticks#4 Ticks#9 Ticks#5 
 Alias print_char_cursor#15 = print_char_cursor#32 print_char_cursor#33 print_char_cursor#16 
@@ -958,9 +979,9 @@ Identical Phi Values (word) Ticks#22 (word) Ticks#0
 Identical Phi Values (byte*) print_line_cursor#29 (byte*) print_char_cursor#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) print_ln::$1 [5] if((byte*) print_line_cursor#1<(byte*) print_char_cursor#10) goto print_ln::@1
-Simple Condition (bool~) sum::$2 [74] if((struct node*)(word) 0!=(struct node*) sum::current#3) goto sum::@2
-Simple Condition (bool~) main::$4 [95] if((word) main::i#2!=rangelast(0,$bb7)) goto main::@2
-Simple Condition (bool~) main::$8 [104] if((byte) main::c#2!=rangelast(0,4)) goto main::@1
+Simple Condition (bool~) sum::$4 [76] if((struct node*)(word) 0!=(struct node*) sum::current#3) goto sum::@2
+Simple Condition (bool~) main::$4 [99] if((word) main::i#2!=rangelast(0,$bb7)) goto main::@2
+Simple Condition (bool~) main::$7 [108] if((byte) main::c#2!=rangelast(0,4)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_char_cursor#0 = (byte*) 1024
 Constant (const word) Ticks#0 = 0
@@ -978,24 +999,24 @@ Constant (const byte) main::c#0 = 0
 Constant (const byte) main::c#1 = 0
 Constant (const word) main::i#1 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [93] main::i#2 ← ++ main::i#3 to ++
-Resolved ranged comparison value [95] if(main::i#2!=rangelast(0,$bb7)) goto main::@2 to (number) $bb8
-Resolved ranged next value [102] main::c#2 ← ++ main::c#8 to ++
-Resolved ranged comparison value [104] if(main::c#2!=rangelast(0,4)) goto main::@1 to (number) 5
-Converting *(pointer+n) to pointer[n] [62] *((struct node**~) prepend::$1) ← (struct node*) root#20  -- *((struct node**)prepend::new#1 + OFFSET_STRUCT_NODE_NEXT)
-Converting *(pointer+n) to pointer[n] [64] *((word*~) prepend::$2) ← (word) prepend::x#0  -- *((word*)prepend::new#1 + OFFSET_STRUCT_NODE_VALUE)
-Converting *(pointer+n) to pointer[n] [76] (word) sum::s#2 ← (word) sum::s#3 + *((word*~) sum::$0)  -- *((word*)sum::current#3 + OFFSET_STRUCT_NODE_VALUE)
-Converting *(pointer+n) to pointer[n] [78] (struct node*) sum::current#2 ← *((struct node**~) sum::$1)  -- *((struct node**)sum::current#3 + OFFSET_STRUCT_NODE_NEXT)
+Resolved ranged next value [97] main::i#2 ← ++ main::i#3 to ++
+Resolved ranged comparison value [99] if(main::i#2!=rangelast(0,$bb7)) goto main::@2 to (number) $bb8
+Resolved ranged next value [106] main::c#2 ← ++ main::c#8 to ++
+Resolved ranged comparison value [108] if(main::c#2!=rangelast(0,4)) goto main::@1 to (number) 5
+Converting *(pointer+n) to pointer[n] [63] *((struct node**~) prepend::$1) ← (struct node*) root#20  -- *(prepend::$3 + OFFSET_STRUCT_NODE_NEXT)
+Converting *(pointer+n) to pointer[n] [66] *((word*~) prepend::$2) ← (word) prepend::x#0  -- *(prepend::$4 + OFFSET_STRUCT_NODE_VALUE)
+Converting *(pointer+n) to pointer[n] [79] (word) sum::s#2 ← (word) sum::s#3 + *((word*~) sum::$0)  -- *(sum::$2 + OFFSET_STRUCT_NODE_VALUE)
+Converting *(pointer+n) to pointer[n] [82] (struct node*) sum::current#2 ← *((struct node**~) sum::$1)  -- *(sum::$3 + OFFSET_STRUCT_NODE_NEXT)
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero (struct node**)prepend::new#1 in [61] (struct node**~) prepend::$1 ← (struct node**)(struct node*) prepend::new#1 + (const byte) OFFSET_STRUCT_NODE_NEXT
-Simplifying expression containing zero (struct node**)prepend::new#1 in [62] *((struct node**)(struct node*) prepend::new#1 + (const byte) OFFSET_STRUCT_NODE_NEXT) ← (struct node*) root#20
-Simplifying expression containing zero (struct node**)sum::current#3 in [77] (struct node**~) sum::$1 ← (struct node**)(struct node*) sum::current#3 + (const byte) OFFSET_STRUCT_NODE_NEXT
-Simplifying expression containing zero (struct node**)sum::current#3 in [78] (struct node*) sum::current#2 ← *((struct node**)(struct node*) sum::current#3 + (const byte) OFFSET_STRUCT_NODE_NEXT)
+Simplifying expression containing zero prepend::$3 in [62] (struct node**~) prepend::$1 ← (struct node**~) prepend::$3 + (const byte) OFFSET_STRUCT_NODE_NEXT
+Simplifying expression containing zero prepend::$3 in [63] *((struct node**~) prepend::$3 + (const byte) OFFSET_STRUCT_NODE_NEXT) ← (struct node*) root#20
+Simplifying expression containing zero sum::$3 in [81] (struct node**~) sum::$1 ← (struct node**~) sum::$3 + (const byte) OFFSET_STRUCT_NODE_NEXT
+Simplifying expression containing zero sum::$3 in [82] (struct node*) sum::current#2 ← *((struct node**~) sum::$3 + (const byte) OFFSET_STRUCT_NODE_NEXT)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (struct node**~) prepend::$1 and assignment [40] (struct node**~) prepend::$1 ← (struct node**)(struct node*) prepend::new#1
-Eliminating unused variable (word*~) prepend::$2 and assignment [42] (word*~) prepend::$2 ← (word*)(struct node*) prepend::new#1 + (const byte) OFFSET_STRUCT_NODE_VALUE
-Eliminating unused variable (word*~) sum::$0 and assignment [49] (word*~) sum::$0 ← (word*)(struct node*) sum::current#3 + (const byte) OFFSET_STRUCT_NODE_VALUE
-Eliminating unused variable (struct node**~) sum::$1 and assignment [51] (struct node**~) sum::$1 ← (struct node**)(struct node*) sum::current#3
+Eliminating unused variable (struct node**~) prepend::$1 and assignment [41] (struct node**~) prepend::$1 ← (struct node**~) prepend::$3
+Eliminating unused variable (word*~) prepend::$2 and assignment [44] (word*~) prepend::$2 ← (word*~) prepend::$4 + (const byte) OFFSET_STRUCT_NODE_VALUE
+Eliminating unused variable (word*~) sum::$0 and assignment [52] (word*~) sum::$0 ← (word*~) sum::$2 + (const byte) OFFSET_STRUCT_NODE_VALUE
+Eliminating unused variable (struct node**~) sum::$1 and assignment [55] (struct node**~) sum::$1 ← (struct node**~) sum::$3
 Eliminating unused variable - keeping the phi block (word) free_#21
 Eliminating unused variable - keeping the phi block (struct node*) root#19
 Eliminating unused constant (const struct node*) alloc::result#0
@@ -1019,6 +1040,11 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (word) $bb8
 Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inlining Noop Cast [40] (struct node**~) prepend::$3 ← (struct node**)(struct node*) prepend::new#1 keeping prepend::new#1
+Inlining Noop Cast [42] (word*~) prepend::$4 ← (word*)(struct node*) prepend::new#1 keeping prepend::new#1
+Inlining Noop Cast [49] (word*~) sum::$2 ← (word*)(struct node*) sum::current#3 keeping sum::current#3
+Inlining Noop Cast [51] (struct node**~) sum::$3 ← (struct node**)(struct node*) sum::current#3 keeping sum::current#3
+Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [33] (word~) alloc::$1 ← (word) free_#22 * (const byte) SIZEOF_STRUCT_NODE
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const word) sum::s#1

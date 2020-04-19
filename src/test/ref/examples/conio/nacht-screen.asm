@@ -225,9 +225,8 @@ MakeNiceScreen: {
     sta.z strlen.str+1
     jsr strlen
     // strlen (T->Msg)
-    // (char)strlen (T->Msg)
-    lda.z __21
     // XSize - (char)strlen (T->Msg)
+    lda.z __21
     eor #$ff
     sec
     adc.z XSize
@@ -397,7 +396,7 @@ cputc: {
 // gotoxy(byte register(X) x, byte register(A) y)
 gotoxy: {
     .label __4 = 8
-    .label __5 = 8
+    .label __8 = 8
     .label offset = 8
     .label __9 = $11
     .label __10 = 8
@@ -415,15 +414,14 @@ gotoxy: {
     stx.z conio_cursor_x
     // conio_cursor_y = y
     sta.z conio_cursor_y
-    // (unsigned int)y
-    sta.z __4
-    lda #0
-    sta.z __4+1
     // (unsigned int)y*CONIO_WIDTH
-    lda.z __4
+    sta.z __8
+    lda #0
+    sta.z __8+1
+    lda.z __8
     asl
     sta.z __9
-    lda.z __4+1
+    lda.z __8+1
     rol
     sta.z __9+1
     asl.z __9
@@ -435,12 +433,12 @@ gotoxy: {
     lda.z __10+1
     adc.z __9+1
     sta.z __10+1
-    asl.z __5
-    rol.z __5+1
-    asl.z __5
-    rol.z __5+1
-    asl.z __5
-    rol.z __5+1
+    asl.z __4
+    rol.z __4+1
+    asl.z __4
+    rol.z __4+1
+    asl.z __4
+    rol.z __4+1
     // offset = (unsigned int)y*CONIO_WIDTH + x
     txa
     clc

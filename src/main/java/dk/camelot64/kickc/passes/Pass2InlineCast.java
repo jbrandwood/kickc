@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.CastValue;
 
-/** Identify unary casts */
+/** Convert unary cast operator to CastValue */
 public class Pass2InlineCast extends Pass2SsaOptimization {
 
    public Pass2InlineCast(Program program) {

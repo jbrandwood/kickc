@@ -5,21 +5,15 @@
 main: {
     .label bscreen = $400
     .label wscreen = bscreen
-    .label __1 = 2
     ldx #0
   __b1:
-    // (word)i
-    txa
-    sta.z __1
-    lda #0
-    sta.z __1+1
     // wscreen[i] = (word)i
     txa
     asl
     tay
-    lda.z __1
+    txa
     sta wscreen,y
-    lda.z __1+1
+    lda #0
     sta wscreen+1,y
     // for(byte i: 0..2)
     inx

@@ -6,7 +6,7 @@
   .label print_char_cursor = 4
   .label print_line_cursor = 2
 main: {
-    .label __0 = 6
+    .label __13 = 6
     // file->bufEdit = 0x4000
     lda #<$4000
     sta files
@@ -20,16 +20,15 @@ main: {
     ldx files+1
     stx.z $ff
     sta ($fe),y
-    // (char *)file->bufEdit
-    lda files
-    sta.z __0
-    lda files+1
-    sta.z __0+1
     // ((char *)file->bufEdit)[4] = 0xCC
+    lda files
+    sta.z __13
+    lda files+1
+    sta.z __13+1
     // writes address 0x0000 (wrong!)
     lda #$cc
     ldy #4
-    sta (__0),y
+    sta (__13),y
     // print_cls()
   // writes address 0x4004 (right!)
     jsr print_cls

@@ -262,7 +262,6 @@ div16s: {
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 // divr16s(signed word zp(7) dividend, signed word zp(9) divisor)
 divr16s: {
-    .label __16 = $d
     .label dividendu = 7
     .label divisoru = 9
     .label resultu = $b
@@ -285,7 +284,6 @@ divr16s: {
     // if(neg==0)
     cpy #0
     beq __breturn
-    // (signed int)rem16u
     // rem16s = -(signed int)rem16u
     sec
     lda #0
@@ -526,9 +524,8 @@ div8s: {
     lda.z neg
     cmp #0
     beq __b5
-    // (signed char)rem8u
-    txa
     // rem8s = -(signed char)rem8u
+    txa
     eor #$ff
     clc
     adc #1

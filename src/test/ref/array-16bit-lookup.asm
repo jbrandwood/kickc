@@ -43,7 +43,7 @@ getValue: {
     and arr16,y
     // (arr16[index & 0x7f] & 0xff) >> 1
     lsr
-    // (unsigned int)((arr16[index & 0x7f] & 0xff) >> 1)
+    // return (unsigned int)((arr16[index & 0x7f] & 0xff) >> 1);
     sta.z return
     lda #0
     sta.z return+1

@@ -7,7 +7,7 @@
   .const OFFSET_STRUCT_POINT_Z = 2
 main: {
     .label SCREEN = $400
-    .label __2 = 3
+    .label __0 = 3
     .label i1 = 2
     ldx #0
   __b1:
@@ -16,7 +16,7 @@ main: {
     eor #$ff
     clc
     adc #1
-    sta.z __2
+    sta.z __0
     // points[i] = { (signed byte)i, -(signed byte)i, (signed byte)i }
     txa
     asl
@@ -26,7 +26,7 @@ main: {
     tay
     txa
     sta points,y
-    lda.z __2
+    lda.z __0
     sta points+OFFSET_STRUCT_POINT_Y,y
     txa
     sta points+OFFSET_STRUCT_POINT_Z,y

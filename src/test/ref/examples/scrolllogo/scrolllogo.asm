@@ -142,14 +142,13 @@ loop: {
 }
 // render_logo(signed word zp($18) xpos)
 render_logo: {
-    .label __3 = $1a
+    .label __2 = $1a
     .label xpos = $18
     .label x_char = $1c
     .label logo_idx = 4
     .label logo_idx_1 = 5
-    // (char)xpos
-    lda.z xpos
     // (char)xpos&7
+    lda.z xpos
     and #7
     // VIC_MCM|((char)xpos&7)
     ora #VIC_MCM
@@ -159,20 +158,20 @@ render_logo: {
     lda.z xpos+1
     cmp #$80
     ror
-    sta.z __3+1
+    sta.z __2+1
     lda.z xpos
     ror
-    sta.z __3
-    lda.z __3+1
+    sta.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
-    lda.z __3+1
+    ror.z __2+1
+    ror.z __2
+    lda.z __2+1
     cmp #$80
-    ror.z __3+1
-    ror.z __3
+    ror.z __2+1
+    ror.z __2
     // x_char = (signed char)(xpos/8)
-    lda.z __3
+    lda.z __2
     sta.z x_char
     // if(xpos<0)
     lda.z xpos+1
@@ -320,7 +319,7 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .label __6 = $a
-    .label __9 = $29
+    .label __8 = $29
     .label step = $1d
     .label sintab = $18
     // u[4.28]
@@ -373,15 +372,15 @@ sin16s_gen2: {
     jsr mul16s
     // >mul16s(sin16s(x), ampl)
     lda.z __6+2
-    sta.z __9
+    sta.z __8
     lda.z __6+3
-    sta.z __9+1
+    sta.z __8+1
     // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl)
     ldy #0
-    lda.z __9
+    lda.z __8
     sta (sintab),y
     iny
-    lda.z __9+1
+    lda.z __8+1
     sta (sintab),y
     // *sintab++ = offs + (signed int)>mul16s(sin16s(x), ampl);
     lda #SIZEOF_SIGNED_WORD
@@ -416,8 +415,8 @@ sin16s_gen2: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp($14) a)
 mul16s: {
-    .label __9 = $25
-    .label __16 = $25
+    .label __6 = $25
+    .label __11 = $25
     .label m = $a
     .label return = $a
     .label a = $14
@@ -438,23 +437,23 @@ mul16s: {
     bpl __b2
     // >m
     lda.z m+2
-    sta.z __9
+    sta.z __6
     lda.z m+3
-    sta.z __9+1
+    sta.z __6+1
     // >m = (>m)-(unsigned int)b
-    lda.z __16
+    lda.z __11
     sec
     sbc #<sin16s_gen2.ampl
-    sta.z __16
-    lda.z __16+1
+    sta.z __11
+    lda.z __11+1
     sbc #>sin16s_gen2.ampl
-    sta.z __16+1
-    lda.z __16
+    sta.z __11+1
+    lda.z __11
     sta.z m+2
-    lda.z __16+1
+    lda.z __11+1
     sta.z m+3
   __b2:
-    // (signed long)m
+    // return (signed long)m;
     // }
     rts
 }

@@ -1,3 +1,9 @@
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Culled Empty Block (label) memcpy::@4
@@ -21,17 +27,17 @@ memcpy: scope:[memcpy]  from main::@4 main::@5
   (void*) memcpy::source#2 ← phi( main::@4/(void*) memcpy::source#0 main::@5/(void*) memcpy::source#1 )
   (byte*) memcpy::src#0 ← ((byte*)) (void*) memcpy::source#2
   (byte*) memcpy::dst#0 ← ((byte*)) (void*) memcpy::destination#2
-  (byte*~) memcpy::$0 ← ((byte*)) (void*) memcpy::source#2
-  (byte*~) memcpy::$1 ← (byte*~) memcpy::$0 + (word) memcpy::num#2
-  (byte*) memcpy::src_end#0 ← (byte*~) memcpy::$1
+  (byte*~) memcpy::$2 ← (byte*)(void*) memcpy::source#2
+  (byte*~) memcpy::$0 ← (byte*~) memcpy::$2 + (word) memcpy::num#2
+  (byte*) memcpy::src_end#0 ← (byte*~) memcpy::$0
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
   (void*) memcpy::destination#4 ← phi( memcpy/(void*) memcpy::destination#2 memcpy::@2/(void*) memcpy::destination#5 )
   (byte*) memcpy::dst#3 ← phi( memcpy/(byte*) memcpy::dst#0 memcpy::@2/(byte*) memcpy::dst#1 )
   (byte*) memcpy::src_end#1 ← phi( memcpy/(byte*) memcpy::src_end#0 memcpy::@2/(byte*) memcpy::src_end#2 )
   (byte*) memcpy::src#2 ← phi( memcpy/(byte*) memcpy::src#0 memcpy::@2/(byte*) memcpy::src#1 )
-  (bool~) memcpy::$2 ← (byte*) memcpy::src#2 != (byte*) memcpy::src_end#1
-  if((bool~) memcpy::$2) goto memcpy::@2
+  (bool~) memcpy::$1 ← (byte*) memcpy::src#2 != (byte*) memcpy::src_end#1
+  if((bool~) memcpy::$1) goto memcpy::@2
   to:memcpy::@3
 memcpy::@2: scope:[memcpy]  from memcpy::@1
   (void*) memcpy::destination#5 ← phi( memcpy::@1/(void*) memcpy::destination#4 )
@@ -156,8 +162,8 @@ SYMBOL TABLE SSA
 (byte*) main::sc2#2
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 (byte*~) memcpy::$0
-(byte*~) memcpy::$1
-(bool~) memcpy::$2
+(bool~) memcpy::$1
+(byte*~) memcpy::$2
 (label) memcpy::@1
 (label) memcpy::@2
 (label) memcpy::@3
@@ -206,7 +212,6 @@ Adding number conversion cast (unumber) 5 in (word) memcpy::num#1 ← (number) 5
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2
-Inlining cast (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (word) memcpy::num#0 ← (unumber)(number) 7
 Inlining cast (word) memcpy::num#1 ← (unumber)(number) 5
 Successful SSA optimization Pass2InlineCast
@@ -223,7 +228,7 @@ Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) $32
 Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias memcpy::src_end#0 = memcpy::$1 
+Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
 Alias memcpy::src_end#1 = memcpy::src_end#2 
@@ -232,7 +237,7 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) memcpy::src_end#1 (byte*) memcpy::src_end#0
 Identical Phi Values (void*) memcpy::destination#3 (void*) memcpy::destination#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memcpy::$2 [7] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
+Simple Condition (bool~) memcpy::$1 [7] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
 Simple Condition (bool~) main::$2 [21] if((byte) main::i#1!=rangelast(0,6)) goto main::@1
 Simple Condition (bool~) main::$3 [31] if((byte) main::i1#1!=rangelast(0,5)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -267,7 +272,7 @@ Finalized unsigned number type (byte) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining Noop Cast [1] (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Inlining Noop Cast [2] (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2 keeping memcpy::destination#2
-Inlining Noop Cast [3] (byte*~) memcpy::$0 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
+Inlining Noop Cast [3] (byte*~) memcpy::$2 ← (byte*)(void*) memcpy::source#2 keeping memcpy::source#2
 Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const void*) memcpy::destination#0
 Inlining constant with var siblings (const void*) memcpy::source#0

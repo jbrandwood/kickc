@@ -15,9 +15,9 @@
   // The index of the last prime we put into the PRIME[] table
   .label prime_idx = 3
 main: {
-    .label __1 = $d
-    .label __16 = $f
-    .label __17 = $f
+    .label __0 = $d
+    .label __14 = $f
+    .label __15 = $f
     // PRIMES[1] = 2
     lda #0
     sta PRIMES+1*SIZEOF_WORD+1
@@ -43,10 +43,9 @@ main: {
     lda #2
     sta.z test_last
   __b1:
-    // (char)PRIMES[test_last]
+    // p = (char)PRIMES[test_last]
     lda.z test_last
     asl
-    // p = (char)PRIMES[test_last]
     tay
     lda PRIMES,y
     // mul8u(p, p)
@@ -54,10 +53,10 @@ main: {
     jsr mul8u
     // if(potential > mul8u(p, p))
     lda.z potential+1
-    cmp.z __1+1
+    cmp.z __0+1
     bne !+
     lda.z potential
-    cmp.z __1
+    cmp.z __0
     beq __b2
   !:
     bcc __b2
@@ -75,12 +74,11 @@ main: {
     lda #2
     sta.z test_idx
   __b3:
-    // (char)PRIMES[test_idx++]
+    // div16u8u(potential, (char)PRIMES[test_idx++])
     lda.z test_idx
     asl
-    // div16u8u(potential, (char)PRIMES[test_idx++])
-    tay
-    lda PRIMES,y
+    tax
+    lda PRIMES,x
     sta.z div16u8u.divisor
     jsr div16u8u
     // div16u8u(potential, (char)PRIMES[test_idx++]);
@@ -111,23 +109,23 @@ main: {
     // PRIMES[++prime_idx] = potential
     lda.z prime_idx
     asl
-    sta.z __16
+    sta.z __14
     lda.z prime_idx+1
     rol
-    sta.z __16+1
+    sta.z __14+1
     clc
-    lda.z __17
+    lda.z __15
     adc #<PRIMES
-    sta.z __17
-    lda.z __17+1
+    sta.z __15
+    lda.z __15+1
     adc #>PRIMES
-    sta.z __17+1
+    sta.z __15+1
     ldy #0
     lda.z potential
-    sta (__17),y
+    sta (__15),y
     iny
     lda.z potential+1
-    sta (__17),y
+    sta (__15),y
     // print_uint_decimal(potential)
     jsr print_uint_decimal
     // print_char(' ')
@@ -230,9 +228,8 @@ utoa: {
     lda.z digit
     cmp #max_digits-1
     bcc __b2
-    // (char)value
-    lda.z value
     // *buffer++ = DIGITS[(char)value]
+    lda.z value
     tay
     lda DIGITS,y
     ldy #0

@@ -1,3 +1,5 @@
+De-inlining cast (word){ 1, 1 }
+De-inlining cast (word){ 0, 0 }
 Identified constant variable (byte) main::b
 Identified constant variable (byte*) main::pos
 Identified constant variable (byte*) main::bgcol
@@ -11,15 +13,15 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   (word) main::w#0 ← (word){ (const byte) main::b, (byte) 0 }
-  (word~) main::$0 ← ((word)) { (number) 1, (number) 1 }
-  (word~) main::$1 ← (word~) main::$0 + (word) main::w#0
-  (word~) main::$2 ← ((word)) { (number) 0, (number) 0 }
-  (word~) main::$3 ← (word~) main::$1 + (word~) main::$2
-  (word) main::w2#0 ← (word~) main::$3
+  (word~) main::$3 ← (word){ (number) 1, (number) 1 }
+  (word~) main::$0 ← (word~) main::$3 + (word) main::w#0
+  (word~) main::$4 ← (word){ (number) 0, (number) 0 }
+  (word~) main::$1 ← (word~) main::$0 + (word~) main::$4
+  (word) main::w2#0 ← (word~) main::$1
   (byte*) main::sc#0 ← ((byte*)) (word) main::w2#0
   *((byte*) main::sc#0) ← *((const byte*) main::bs + (number) 1)
-  (bool~) main::$4 ← *((const byte*) main::pos) == (byte) 'm'
-  if((bool~) main::$4) goto main::@1
+  (bool~) main::$2 ← *((const byte*) main::pos) == (byte) 'm'
+  if((bool~) main::$2) goto main::@1
   to:main::@3
 main::@1: scope:[main]  from main
   *((const byte*) main::bgcol) ← (number) 5
@@ -45,9 +47,9 @@ SYMBOL TABLE SSA
 (void()) main()
 (word~) main::$0
 (word~) main::$1
-(word~) main::$2
+(bool~) main::$2
 (word~) main::$3
-(bool~) main::$4
+(word~) main::$4
 (label) main::@1
 (label) main::@3
 (label) main::@return
@@ -91,30 +93,30 @@ Finalized unsigned number type (byte) 5
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::w#0 = main::$5 
-Alias main::$0 = main::$6 
-Alias main::$2 = main::$7 
-Alias main::w2#0 = main::$3 
+Alias main::$3 = main::$6 
+Alias main::$4 = main::$7 
+Alias main::w2#0 = main::$1 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$4 [8] if(*((const byte*) main::pos)==(byte) 'm') goto main::@1
+Simple Condition (bool~) main::$2 [8] if(*((const byte*) main::pos)==(byte) 'm') goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [0] (word) main::w#0 ← (const byte) main::b w= (byte) 0
-Constant right-side identified [1] (word~) main::$0 ← (byte) 1 w= (byte) 1
-Constant right-side identified [3] (word~) main::$2 ← (byte) 0 w= (byte) 0
+Constant right-side identified [1] (word~) main::$3 ← (byte) 1 w= (byte) 1
+Constant right-side identified [3] (word~) main::$4 ← (byte) 0 w= (byte) 0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Simplifying constant evaluating to zero (byte) 0*(number) $100+(byte) 0 in [3] (word~) main::$2 ← (byte) 0*(number) $100+(byte) 0
+Simplifying constant evaluating to zero (byte) 0*(number) $100+(byte) 0 in [3] (word~) main::$4 ← (byte) 0*(number) $100+(byte) 0
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero main::b*$100 in [0] (word) main::w#0 ← (const byte) main::b*(number) $100+(byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding number conversion cast (unumber) main::b*$100 in (word) main::w#0 ← (const byte) main::b*(number) $100
 Adding number conversion cast (unumber) $100 in (word) main::w#0 ← ((unumber)) (const byte) main::b*(number) $100
-Adding number conversion cast (unumber) 1*$100+1 in (word~) main::$0 ← (byte) 1*(number) $100+(byte) 1
-Adding number conversion cast (unumber) 1*$100 in (word~) main::$0 ← ((unumber)) (byte) 1*(number) $100+(byte) 1
-Adding number conversion cast (unumber) $100 in (word~) main::$0 ← ((unumber)) (unumber)(byte) 1*(number) $100+(byte) 1
-Adding number conversion cast (unumber) 0 in (word~) main::$2 ← (number) 0
+Adding number conversion cast (unumber) 1*$100+1 in (word~) main::$3 ← (byte) 1*(number) $100+(byte) 1
+Adding number conversion cast (unumber) 1*$100 in (word~) main::$3 ← ((unumber)) (byte) 1*(number) $100+(byte) 1
+Adding number conversion cast (unumber) $100 in (word~) main::$3 ← ((unumber)) (unumber)(byte) 1*(number) $100+(byte) 1
+Adding number conversion cast (unumber) 0 in (word~) main::$4 ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (word) main::w#0 ← (unumber)(const byte) main::b*(unumber)(number) $100
-Inlining cast (word~) main::$0 ← (unumber)(unumber)(byte) 1*(unumber)(number) $100+(byte) 1
-Inlining cast (word~) main::$2 ← (unumber)(number) 0
+Inlining cast (word~) main::$3 ← (unumber)(unumber)(byte) 1*(unumber)(number) $100+(byte) 1
+Inlining cast (word~) main::$4 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast (const byte) main::b*(unumber)(number) $100
 Simplifying constant integer cast $100
@@ -128,22 +130,22 @@ Finalized unsigned number type (word) $100
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant (const word) main::w#0 = main::b*$100
-Constant (const word) main::$0 = 1*$100+1
-Constant (const word) main::$2 = 0
+Constant (const word) main::$3 = 1*$100+1
+Constant (const word) main::$4 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::$1 in [4] (word) main::w2#0 ← (word~) main::$1 + (const word) main::$2
+Simplifying expression containing zero main::$0 in [4] (word) main::w2#0 ← (word~) main::$0 + (const word) main::$4
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const word) main::$2
+Eliminating unused constant (const word) main::$4
 Successful SSA optimization PassNEliminateUnusedVars
-Alias main::w2#0 = main::$1 
+Alias main::w2#0 = main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (word) main::w2#0 ← (const word) main::$0 + (const word) main::w#0
+Constant right-side identified [0] (word) main::w2#0 ← (const word) main::$3 + (const word) main::w#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::w2#0 = main::$0+main::w#0
+Constant (const word) main::w2#0 = main::$3+main::w#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) main::sc#0 = (byte*)main::w2#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = (byte) 1*(word) $100+(byte) 1
+Constant inlined main::$3 = (byte) 1*(word) $100+(byte) 1
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::bs+1)
 Successful SSA optimization Pass2ConstantAdditionElimination

@@ -7,6 +7,8 @@ Adding value simple copy (byte) main::p_y ← (byte) 7
 Unwinding value copy *((struct PointDef*) main::SCREEN) ← (struct PointDef) main::p
 Adding value simple copy *((byte*~) main::$0) ← (byte) main::p_x
 Adding value simple copy *((byte*~) main::$1) ← (byte) main::p_y
+De-inlining cast (byte*)main::SCREEN
+De-inlining cast (byte*)main::SCREEN
 Identified constant variable (struct PointDef*) main::SCREEN
 Identified constant variable (byte) main::p_x
 Identified constant variable (byte) main::p_y
@@ -17,9 +19,11 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*~) main::$0 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X
+  (byte*~) main::$2 ← (byte*)(const struct PointDef*) main::SCREEN
+  (byte*~) main::$0 ← (byte*~) main::$2 + (const byte) OFFSET_STRUCT_POINTDEF_X
   *((byte*~) main::$0) ← (const byte) main::p_x
-  (byte*~) main::$1 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_Y
+  (byte*~) main::$3 ← (byte*)(const struct PointDef*) main::SCREEN
+  (byte*~) main::$1 ← (byte*~) main::$3 + (const byte) OFFSET_STRUCT_POINTDEF_Y
   *((byte*~) main::$1) ← (const byte) main::p_y
   to:main::@return
 main::@return: scope:[main]  from main
@@ -44,6 +48,8 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte*~) main::$0
 (byte*~) main::$1
+(byte*~) main::$2
+(byte*~) main::$3
 (label) main::@return
 (const struct PointDef*) main::SCREEN = (struct PointDef*)(number) $400
 (const byte) main::p_x = (byte) 4
@@ -51,19 +57,27 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (struct PointDef*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [0] (byte*~) main::$0 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_X
-Constant right-side identified [2] (byte*~) main::$1 ← (byte*)(const struct PointDef*) main::SCREEN + (const byte) OFFSET_STRUCT_POINTDEF_Y
+Constant right-side identified [0] (byte*~) main::$2 ← (byte*)(const struct PointDef*) main::SCREEN
+Constant right-side identified [3] (byte*~) main::$3 ← (byte*)(const struct PointDef*) main::SCREEN
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = (byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_X
-Constant (const byte*) main::$1 = (byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y
+Constant (const byte*) main::$2 = (byte*)main::SCREEN
+Constant (const byte*) main::$3 = (byte*)main::SCREEN
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)main::SCREEN in 
+Converting *(pointer+n) to pointer[n] [2] *((byte*~) main::$0) ← (const byte) main::p_x  -- *(main::$2 + OFFSET_STRUCT_POINTDEF_X)
+Converting *(pointer+n) to pointer[n] [5] *((byte*~) main::$1) ← (const byte) main::p_y  -- *(main::$3 + OFFSET_STRUCT_POINTDEF_Y)
+Successful SSA optimization Pass2InlineDerefIdx
+Simplifying expression containing zero main::$2 in [1] (byte*~) main::$0 ← (const byte*) main::$2 + (const byte) OFFSET_STRUCT_POINTDEF_X
+Simplifying expression containing zero main::$2 in [2] *((const byte*) main::$2 + (const byte) OFFSET_STRUCT_POINTDEF_X) ← (const byte) main::p_x
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused variable (byte*~) main::$0 and assignment [0] (byte*~) main::$0 ← (const byte*) main::$2
+Eliminating unused variable (byte*~) main::$1 and assignment [2] (byte*~) main::$1 ← (const byte*) main::$3 + (const byte) OFFSET_STRUCT_POINTDEF_Y
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINTDEF_X
 Successful SSA optimization PassNEliminateUnusedVars
-Constant inlined main::$1 = (byte*)(const struct PointDef*) main::SCREEN+(const byte) OFFSET_STRUCT_POINTDEF_Y
-Constant inlined main::$0 = (byte*)(const struct PointDef*) main::SCREEN
+Constant inlined main::$2 = (byte*)(const struct PointDef*) main::SCREEN
+Constant inlined main::$3 = (byte*)(const struct PointDef*) main::SCREEN
 Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *((byte*)main::SCREEN+OFFSET_STRUCT_POINTDEF_Y)
+Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2

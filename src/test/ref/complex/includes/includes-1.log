@@ -1,3 +1,9 @@
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Identified constant variable (byte*) STR
@@ -51,8 +57,7 @@ main: scope:[main]  from @6
 main::@1: scope:[main]  from main
   (word) strlen::return#4 ← phi( main/(word) strlen::return#2 )
   (word~) main::$0 ← (word) strlen::return#4
-  (byte~) main::$1 ← ((byte)) (word~) main::$0
-  *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$1
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte)(word~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
@@ -73,7 +78,6 @@ SYMBOL TABLE SSA
 (const byte*) STR = (byte*) "camelot!"
 (void()) main()
 (word~) main::$0
-(byte~) main::$1
 (label) main::@1
 (label) main::@return
 (word()) strlen((byte*) strlen::str)
@@ -102,10 +106,8 @@ SYMBOL TABLE SSA
 (byte*) strlen::str#4
 
 Adding number conversion cast (unumber) 0 in (bool~) strlen::$0 ← (number) 0 != *((byte*) strlen::str#2)
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$1
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte)(word~) main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte~) main::$1 ← (byte)(word~) main::$0
-Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -124,7 +126,7 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const word) strlen::len#0 = 0
 Constant (const byte*) strlen::str#1 = STR
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [13] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte~) main::$1
+Simplifying expression containing zero SCREEN in [12] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte)(word~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const word) strlen::len#0
 Inlining constant with var siblings (const byte*) strlen::str#1
@@ -143,8 +145,8 @@ Calls in [] to main:2
 Calls in [main] to strlen:6 
 
 Created 2 initial phi equivalence classes
-Coalesced [19] strlen::str#5 ← strlen::str#0
-Coalesced [20] strlen::len#5 ← strlen::len#1
+Coalesced [18] strlen::str#5 ← strlen::str#0
+Coalesced [19] strlen::len#5 ← strlen::len#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @7
 Culled Empty Block (label) strlen::@3
@@ -174,35 +176,33 @@ main: scope:[main]  from @1
   to:main::@1
 main::@1: scope:[main]  from main
   [7] (word~) main::$0 ← (word) strlen::return#2
-  [8] (byte~) main::$1 ← (byte)(word~) main::$0
-  [9] *((const nomodify byte*) SCREEN) ← (byte~) main::$1
+  [8] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [10] return 
+  [9] return 
   to:@return
 
 (word()) strlen((byte*) strlen::str)
 strlen: scope:[strlen]  from main
-  [11] phi()
+  [10] phi()
   to:strlen::@1
 strlen::@1: scope:[strlen]  from strlen strlen::@2
-  [12] (word) strlen::len#2 ← phi( strlen/(word) 0 strlen::@2/(word) strlen::len#1 )
-  [12] (byte*) strlen::str#2 ← phi( strlen/(const byte*) STR strlen::@2/(byte*) strlen::str#0 )
-  [13] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2
+  [11] (word) strlen::len#2 ← phi( strlen/(word) 0 strlen::@2/(word) strlen::len#1 )
+  [11] (byte*) strlen::str#2 ← phi( strlen/(const byte*) STR strlen::@2/(byte*) strlen::str#0 )
+  [12] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2
   to:strlen::@return
 strlen::@return: scope:[strlen]  from strlen::@1
-  [14] return 
+  [13] return 
   to:@return
 strlen::@2: scope:[strlen]  from strlen::@1
-  [15] (word) strlen::len#1 ← ++ (word) strlen::len#2
-  [16] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2
+  [14] (word) strlen::len#1 ← ++ (word) strlen::len#2
+  [15] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2
   to:strlen::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (word~) main::$0 11.0
-(byte~) main::$1 22.0
 (word()) strlen((byte*) strlen::str)
 (word) strlen::len
 (word) strlen::len#1 1001.0
@@ -218,18 +218,15 @@ Initial phi equivalence classes
 [ strlen::len#2 strlen::len#1 ]
 Added variable strlen::return#2 to live range equivalence class [ strlen::return#2 ]
 Added variable main::$0 to live range equivalence class [ main::$0 ]
-Added variable main::$1 to live range equivalence class [ main::$1 ]
 Complete equivalence classes
 [ strlen::str#2 strlen::str#0 ]
 [ strlen::len#2 strlen::len#1 ]
 [ strlen::return#2 ]
 [ main::$0 ]
-[ main::$1 ]
 Allocated zp[2]:2 [ strlen::str#2 strlen::str#0 ]
 Allocated zp[2]:4 [ strlen::len#2 strlen::len#1 ]
 Allocated zp[2]:6 [ strlen::return#2 ]
 Allocated zp[2]:8 [ main::$0 ]
-Allocated zp[1]:10 [ main::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -260,9 +257,8 @@ __bend:
   // main
 main: {
     .label __0 = 8
-    .label __1 = $a
     // [5] call strlen 
-    // [11] phi from main to strlen [phi:main->strlen]
+    // [10] phi from main to strlen [phi:main->strlen]
   strlen_from_main:
     jsr strlen
     // [6] (word) strlen::return#2 ← (word) strlen::len#2 -- vwuz1=vwuz2 
@@ -278,16 +274,13 @@ main: {
     sta.z __0
     lda.z strlen.return+1
     sta.z __0+1
-    // [8] (byte~) main::$1 ← (byte)(word~) main::$0 -- vbuz1=_byte_vwuz2 
+    // [8] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 -- _deref_pbuc1=_byte_vwuz1 
     lda.z __0
-    sta.z __1
-    // [9] *((const nomodify byte*) SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda.z __1
     sta SCREEN
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [9] return 
     rts
 }
   // strlen
@@ -297,14 +290,14 @@ strlen: {
     .label len = 4
     .label str = 2
     .label return = 6
-    // [12] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
+    // [11] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
   __b1_from_strlen:
-    // [12] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
+    // [11] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z len
     lda #>0
     sta.z len+1
-    // [12] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [11] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<STR
     sta.z str
     lda #>STR
@@ -312,7 +305,7 @@ strlen: {
     jmp __b1
     // strlen::@1
   __b1:
-    // [13] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [12] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -320,24 +313,24 @@ strlen: {
     jmp __breturn
     // strlen::@return
   __breturn:
-    // [14] return 
+    // [13] return 
     rts
     // strlen::@2
   __b2:
-    // [15] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
+    // [14] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
     inc.z len
     bne !+
     inc.z len+1
   !:
-    // [16] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
+    // [15] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
   !:
-    // [12] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
+    // [11] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
   __b1_from___b2:
-    // [12] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [12] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
+    // [11] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
+    // [11] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -347,21 +340,20 @@ strlen: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] (word) strlen::return#2 ← (word) strlen::len#2 [ strlen::return#2 ] ( main:2 [ strlen::return#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Statement [7] (word~) main::$0 ← (word) strlen::return#2 [ main::$0 ] ( main:2 [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte~) main::$1 ← (byte)(word~) main::$0 [ main::$1 ] ( main:2 [ main::$1 ] { }  ) always clobbers reg byte a 
-Statement [13] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( main:2::strlen:5 [ strlen::len#2 strlen::str#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [8] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [12] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( main:2::strlen:5 [ strlen::len#2 strlen::str#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ strlen::str#2 strlen::str#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ strlen::len#2 strlen::len#1 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ strlen::return#2 ] : zp[2]:6 , 
 Potential registers zp[2]:8 [ main::$0 ] : zp[2]:8 , 
-Potential registers zp[1]:10 [ main::$1 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [strlen] 3,003: zp[2]:2 [ strlen::str#2 strlen::str#0 ] 1,504.25: zp[2]:4 [ strlen::len#2 strlen::len#1 ] 22: zp[2]:6 [ strlen::return#2 ] 
-Uplift Scope [main] 22: zp[1]:10 [ main::$1 ] 11: zp[2]:8 [ main::$0 ] 
+Uplift Scope [main] 11: zp[2]:8 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [strlen] best 733 combination zp[2]:2 [ strlen::str#2 strlen::str#0 ] zp[2]:4 [ strlen::len#2 strlen::len#1 ] zp[2]:6 [ strlen::return#2 ] 
-Uplifting [main] best 727 combination reg byte a [ main::$1 ] zp[2]:8 [ main::$0 ] 
+Uplifting [strlen] best 727 combination zp[2]:2 [ strlen::str#2 strlen::str#0 ] zp[2]:4 [ strlen::len#2 strlen::len#1 ] zp[2]:6 [ strlen::return#2 ] 
+Uplifting [main] best 727 combination zp[2]:8 [ main::$0 ] 
 Uplifting [] best 727 combination 
 Coalescing zero page register [ zp[2]:4 [ strlen::len#2 strlen::len#1 ] ] with [ zp[2]:6 [ strlen::return#2 ] ] - score: 1
 Coalescing zero page register [ zp[2]:4 [ strlen::len#2 strlen::len#1 strlen::return#2 ] ] with [ zp[2]:8 [ main::$0 ] ] - score: 1
@@ -395,7 +387,7 @@ __bend:
 main: {
     .label __0 = 4
     // [5] call strlen 
-    // [11] phi from main to strlen [phi:main->strlen]
+    // [10] phi from main to strlen [phi:main->strlen]
   strlen_from_main:
     jsr strlen
     // [6] (word) strlen::return#2 ← (word) strlen::len#2
@@ -403,14 +395,13 @@ main: {
     // main::@1
   __b1:
     // [7] (word~) main::$0 ← (word) strlen::return#2
-    // [8] (byte~) main::$1 ← (byte)(word~) main::$0 -- vbuaa=_byte_vwuz1 
+    // [8] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 -- _deref_pbuc1=_byte_vwuz1 
     lda.z __0
-    // [9] *((const nomodify byte*) SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [9] return 
     rts
 }
   // strlen
@@ -420,14 +411,14 @@ strlen: {
     .label len = 4
     .label str = 2
     .label return = 4
-    // [12] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
+    // [11] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
   __b1_from_strlen:
-    // [12] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
+    // [11] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z len
     lda #>0
     sta.z len+1
-    // [12] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [11] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<STR
     sta.z str
     lda #>STR
@@ -435,7 +426,7 @@ strlen: {
     jmp __b1
     // strlen::@1
   __b1:
-    // [13] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [12] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -443,24 +434,24 @@ strlen: {
     jmp __breturn
     // strlen::@return
   __breturn:
-    // [14] return 
+    // [13] return 
     rts
     // strlen::@2
   __b2:
-    // [15] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
+    // [14] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
     inc.z len
     bne !+
     inc.z len+1
   !:
-    // [16] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
+    // [15] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
   !:
-    // [12] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
+    // [11] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
   __b1_from___b2:
-    // [12] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [12] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
+    // [11] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
+    // [11] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -504,7 +495,6 @@ FINAL SYMBOL TABLE
 (const byte*) STR = (byte*) "camelot!"
 (void()) main()
 (word~) main::$0 zp[2]:4 11.0
-(byte~) main::$1 reg byte a 22.0
 (label) main::@1
 (label) main::@return
 (word()) strlen((byte*) strlen::str)
@@ -522,7 +512,6 @@ FINAL SYMBOL TABLE
 
 zp[2]:2 [ strlen::str#2 strlen::str#0 ]
 zp[2]:4 [ strlen::len#2 strlen::len#1 strlen::return#2 main::$0 ]
-reg byte a [ main::$1 ]
 
 
 FINAL ASSEMBLER
@@ -548,21 +537,19 @@ main: {
     .label __0 = 4
     // strlen(STR)
     // [5] call strlen 
-    // [11] phi from main to strlen [phi:main->strlen]
+    // [10] phi from main to strlen [phi:main->strlen]
     jsr strlen
     // strlen(STR)
     // [6] (word) strlen::return#2 ← (word) strlen::len#2
     // main::@1
     // [7] (word~) main::$0 ← (word) strlen::return#2
-    // (char) strlen(STR)
-    // [8] (byte~) main::$1 ← (byte)(word~) main::$0 -- vbuaa=_byte_vwuz1 
-    lda.z __0
     // SCREEN [0] = (char) strlen(STR)
-    // [9] *((const nomodify byte*) SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [8] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 -- _deref_pbuc1=_byte_vwuz1 
+    lda.z __0
     sta SCREEN
     // main::@return
     // }
-    // [10] return 
+    // [9] return 
     rts
 }
   // strlen
@@ -572,12 +559,12 @@ strlen: {
     .label len = 4
     .label str = 2
     .label return = 4
-    // [12] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
-    // [12] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
+    // [11] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
+    // [11] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z len
     sta.z len+1
-    // [12] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [11] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<STR
     sta.z str
     lda #>STR
@@ -585,32 +572,32 @@ strlen: {
     // strlen::@1
   __b1:
     // while(*str)
-    // [13] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [12] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
     // strlen::@return
     // }
-    // [14] return 
+    // [13] return 
     rts
     // strlen::@2
   __b2:
     // len++;
-    // [15] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
+    // [14] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
     inc.z len
     bne !+
     inc.z len+1
   !:
     // str++;
-    // [16] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
+    // [15] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
   !:
-    // [12] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
-    // [12] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [12] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
+    // [11] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
+    // [11] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
+    // [11] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

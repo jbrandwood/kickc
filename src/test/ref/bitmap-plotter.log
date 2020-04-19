@@ -1,3 +1,4 @@
+De-inlining cast (word)SCREEN
 Identified constant variable (byte*) D011
 Identified constant variable (byte) RST8
 Identified constant variable (byte) ECM
@@ -45,11 +46,10 @@ main: scope:[main]  from @5
   (byte~) main::$1 ← (byte~) main::$0 | (const byte) RSEL
   (number~) main::$2 ← (byte~) main::$1 | (number) 3
   *((const byte*) D011) ← (number~) main::$2
-  (word~) main::$3 ← ((word)) (const byte*) SCREEN
-  (number~) main::$4 ← (word~) main::$3 / (number) $40
-  (number~) main::$5 ← (number~) main::$4 | (word)(const nomodify byte*) BITMAP/(number) $400
-  (byte~) main::$6 ← ((byte)) (number~) main::$5
-  *((const byte*) D018) ← (byte~) main::$6
+  (word~) main::$11 ← (word)(const byte*) SCREEN
+  (number~) main::$3 ← (word~) main::$11 / (number) $40
+  (number~) main::$4 ← (number~) main::$3 | (word)(const nomodify byte*) BITMAP/(number) $400
+  *((const byte*) D018) ← (byte)(number~) main::$4
   call init_screen 
   to:main::@5
 main::@5: scope:[main]  from main
@@ -58,8 +58,8 @@ main::@5: scope:[main]  from main
 main::@6: scope:[main]  from main::@5
   to:main::@2
 main::@2: scope:[main]  from main::@2 main::@6 main::@7
-  (bool~) main::$9 ← *((const byte*) RASTER) != (number) $ff
-  if((bool~) main::$9) goto main::@2
+  (bool~) main::$7 ← *((const byte*) RASTER) != (number) $ff
+  if((bool~) main::$7) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
@@ -306,12 +306,11 @@ SYMBOL TABLE SSA
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
+(word~) main::$11
 (number~) main::$2
-(word~) main::$3
+(number~) main::$3
 (number~) main::$4
-(number~) main::$5
-(byte~) main::$6
-(bool~) main::$9
+(bool~) main::$7
 (label) main::@2
 (label) main::@3
 (label) main::@5
@@ -367,12 +366,12 @@ Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number)
 Adding number conversion cast (unumber) 0 in *((const byte*) FGCOL) ← (number) 0
 Adding number conversion cast (unumber) 3 in (number~) main::$2 ← (byte~) main::$1 | (number) 3
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte~) main::$1 | (unumber)(number) 3
-Adding number conversion cast (unumber) $40 in (number~) main::$4 ← (word~) main::$3 / (number) $40
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (word~) main::$3 / (unumber)(number) $40
-Adding number conversion cast (unumber) (word)BITMAP/$400 in (number~) main::$5 ← (unumber~) main::$4 | (word)(const nomodify byte*) BITMAP/(number) $400
-Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber~) main::$4 | (unumber)(word)(const nomodify byte*) BITMAP/(number) $400
-Adding number conversion cast (unumber) $400 in (unumber~) main::$5 ← (unumber~) main::$4 | (unumber)(word)(const nomodify byte*) BITMAP/(number) $400
-Adding number conversion cast (unumber) $ff in (bool~) main::$9 ← *((const byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $40 in (number~) main::$3 ← (word~) main::$11 / (number) $40
+Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (word~) main::$11 / (unumber)(number) $40
+Adding number conversion cast (unumber) (word)BITMAP/$400 in (number~) main::$4 ← (unumber~) main::$3 | (word)(const nomodify byte*) BITMAP/(number) $400
+Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber~) main::$3 | (unumber)(word)(const nomodify byte*) BITMAP/(number) $400
+Adding number conversion cast (unumber) $400 in (unumber~) main::$4 ← (unumber~) main::$3 | (unumber)(word)(const nomodify byte*) BITMAP/(number) $400
+Adding number conversion cast (unumber) $ff in (bool~) main::$7 ← *((const byte*) RASTER) != (number) $ff
 Adding number conversion cast (unumber) $f8 in (number~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (number) $f8
 Adding number conversion cast (unumber) init_plot_tables::$0 in (number~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (unumber)(number) $f8
 Adding number conversion cast (unumber) 2 in (number~) init_plot_tables::$1 ← (byte) init_plot_tables::bits#3 / (number) 2
@@ -393,8 +392,6 @@ Adding number conversion cast (unumber) $14 in *((byte*) init_screen::c#3) ← (
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
 Inlining cast *((const byte*) FGCOL) ← (unumber)(number) 0
-Inlining cast (word~) main::$3 ← (word)(const byte*) SCREEN
-Inlining cast (byte~) main::$6 ← (byte)(unumber~) main::$5
 Inlining cast (byte) init_plot_tables::bits#2 ← (unumber)(number) $80
 Inlining cast *((byte*) init_screen::b#3) ← (unumber)(number) 0
 Inlining cast *((byte*) init_screen::c#3) ← (unumber)(number) $14
@@ -446,15 +443,15 @@ Finalized unsigned number type (word) $400
 Finalized unsigned number type (byte) $14
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::$2 ← (byte~) main::$1 | (byte) 3
-Inferred type updated to word in (unumber~) main::$4 ← (word~) main::$3 / (byte) $40
-Inferred type updated to word in (unumber~) main::$5 ← (word~) main::$4 | (word)(const nomodify byte*) BITMAP/(word) $400
+Inferred type updated to word in (unumber~) main::$3 ← (word~) main::$11 / (byte) $40
+Inferred type updated to word in (unumber~) main::$4 ← (word~) main::$3 | (word)(const nomodify byte*) BITMAP/(word) $400
 Inferred type updated to byte in (unumber~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8
 Inferred type updated to byte in (unumber~) init_plot_tables::$1 ← (byte) init_plot_tables::bits#3 / (byte) 2
 Inferred type updated to byte in (unumber~) init_plot_tables::$5 ← (byte) init_plot_tables::y#2 & (byte) 7
 Inferred type updated to byte in (unumber~) init_plot_tables::$7 ← (byte~) init_plot_tables::$5 | (byte~) init_plot_tables::$6
 Inferred type updated to byte in (unumber~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
-Inversing boolean not [57] (bool~) init_plot_tables::$3 ← (byte) init_plot_tables::bits#1 != (byte) 0 from [56] (bool~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#1 == (byte) 0
-Inversing boolean not [76] (bool~) init_plot_tables::$11 ← (byte~) init_plot_tables::$9 != (byte) 7 from [75] (bool~) init_plot_tables::$10 ← (byte~) init_plot_tables::$9 == (byte) 7
+Inversing boolean not [56] (bool~) init_plot_tables::$3 ← (byte) init_plot_tables::bits#1 != (byte) 0 from [55] (bool~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#1 == (byte) 0
+Inversing boolean not [75] (bool~) init_plot_tables::$11 ← (byte~) init_plot_tables::$9 != (byte) 7 from [74] (bool~) init_plot_tables::$10 ← (byte~) init_plot_tables::$9 == (byte) 7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias plots::i#2 = plots::i#3 plots::i#4 
 Alias plot::plotter#0 = plot::$4 
@@ -472,23 +469,23 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) plot::x#1 (byte) plot::x#0
 Identical Phi Values (byte) plot::y#1 (byte) plot::y#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [74] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
+Identified duplicate assignment right side [73] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$9 [14] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
-Simple Condition (bool~) plots::$0 [23] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2
-Simple Condition (bool~) init_plot_tables::$3 [53] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@2
-Simple Condition (bool~) init_plot_tables::$4 [57] if((byte) init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1
-Simple Condition (bool~) init_plot_tables::$11 [70] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@6
-Simple Condition (bool~) init_plot_tables::$13 [74] if((byte) init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5
-Simple Condition (bool~) init_screen::$0 [80] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2
-Simple Condition (bool~) init_screen::$2 [87] if((byte*) init_screen::c#2!=(byte*~) init_screen::$1) goto init_screen::@8
+Simple Condition (bool~) main::$7 [13] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+Simple Condition (bool~) plots::$0 [22] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2
+Simple Condition (bool~) init_plot_tables::$3 [52] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@2
+Simple Condition (bool~) init_plot_tables::$4 [56] if((byte) init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1
+Simple Condition (bool~) init_plot_tables::$11 [69] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@6
+Simple Condition (bool~) init_plot_tables::$13 [73] if((byte) init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5
+Simple Condition (bool~) init_screen::$0 [79] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2
+Simple Condition (bool~) init_screen::$2 [86] if((byte*) init_screen::c#2!=(byte*~) init_screen::$1) goto init_screen::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [2] (byte~) main::$0 ← (const byte) BMM | (const byte) DEN
-Constant right-side identified [6] (word~) main::$3 ← (word)(const byte*) SCREEN
-Constant right-side identified [85] (byte*~) init_screen::$1 ← (const byte*) SCREEN + (word) $400
+Constant right-side identified [6] (word~) main::$11 ← (word)(const byte*) SCREEN
+Constant right-side identified [84] (byte*~) init_screen::$1 ← (const byte*) SCREEN + (word) $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$0 = BMM|DEN
-Constant (const word) main::$3 = (word)SCREEN
+Constant (const word) main::$11 = (word)SCREEN
 Constant (const byte) plots::i#0 = 0
 Constant (const byte*) plot::plotter_x#0 = (byte*) 0
 Constant (const word) plot::plotter_y#0 = 0
@@ -501,12 +498,12 @@ Constant (const byte*) init_screen::b#0 = BITMAP
 Constant (const byte*) init_screen::c#0 = SCREEN
 Constant (const byte*) init_screen::$1 = SCREEN+$400
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [18] if(true) goto main::@2
+if() condition always true - replacing block destination [17] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [55] init_plot_tables::x#1 ← ++ init_plot_tables::x#2 to ++
-Resolved ranged comparison value [57] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1 to (number) 0
-Resolved ranged next value [72] init_plot_tables::y#1 ← ++ init_plot_tables::y#2 to ++
-Resolved ranged comparison value [74] if(init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5 to (number) 0
+Resolved ranged next value [54] init_plot_tables::x#1 ← ++ init_plot_tables::x#2 to ++
+Resolved ranged comparison value [56] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1 to (number) 0
+Resolved ranged next value [71] init_plot_tables::y#1 ← ++ init_plot_tables::y#2 to ++
+Resolved ranged comparison value [73] if(init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5 to (number) 0
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) 0 in if((byte) init_plot_tables::x#1!=(number) 0) goto init_plot_tables::@1
@@ -521,19 +518,19 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias init_plot_tables::$9 = init_plot_tables::$5 
 Successful SSA optimization Pass2AliasElimination
 Constant right-side identified [2] (byte~) main::$1 ← (const byte) main::$0 | (const byte) RSEL
-Constant right-side identified [5] (word~) main::$4 ← (const word) main::$3 / (byte) $40
+Constant right-side identified [5] (word~) main::$3 ← (const word) main::$11 / (byte) $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$1 = main::$0|RSEL
-Constant (const word) main::$4 = main::$3/$40
+Constant (const word) main::$3 = main::$11/$40
 Successful SSA optimization Pass2ConstantIdentification
 Constant right-side identified [2] (byte~) main::$2 ← (const byte) main::$1 | (byte) 3
-Constant right-side identified [4] (word~) main::$5 ← (const word) main::$4 | (word)(const nomodify byte*) BITMAP/(word) $400
+Constant right-side identified [4] (word~) main::$4 ← (const word) main::$3 | (word)(const nomodify byte*) BITMAP/(word) $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$2 = main::$1|3
-Constant (const word) main::$5 = main::$4|(word)BITMAP/$400
+Constant (const word) main::$4 = main::$3|(word)BITMAP/$400
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) main::$6 = (byte)main::$5
-Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (byte)main::$4 in [5] *((const byte*) D018) ← (byte)(const word) main::$4
+Successful SSA optimization Pass2ConstantValues
 Rewriting division to use shift [34] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 / (byte) 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) plots::i#0
@@ -550,17 +547,16 @@ Constant inlined plots::i#0 = (byte) 0
 Constant inlined init_plot_tables::bits#2 = (byte) $80
 Constant inlined init_plot_tables::bits#0 = (byte) $80
 Constant inlined plot::plotter_y#0 = (word) 0
+Constant inlined main::$11 = (word)(const byte*) SCREEN
 Constant inlined plot::plotter_x#0 = (byte*) 0
 Constant inlined init_screen::$1 = (const byte*) SCREEN+(word) $400
 Constant inlined main::$1 = (const byte) BMM|(const byte) DEN|(const byte) RSEL
 Constant inlined main::$2 = (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3
 Constant inlined main::$0 = (const byte) BMM|(const byte) DEN
-Constant inlined main::$5 = (word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400
 Constant inlined init_plot_tables::y#0 = (byte) 0
-Constant inlined main::$6 = (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400
 Constant inlined init_plot_tables::yoffs#0 = (byte*) 0
-Constant inlined main::$3 = (word)(const byte*) SCREEN
-Constant inlined main::$4 = (word)(const byte*) SCREEN/(byte) $40
+Constant inlined main::$3 = (word)(const byte*) SCREEN/(byte) $40
+Constant inlined main::$4 = (word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400
 Constant inlined init_plot_tables::x#0 = (byte) 0
 Constant inlined init_screen::c#0 = (const byte*) SCREEN
 Constant inlined init_screen::b#0 = (const nomodify byte*) BITMAP

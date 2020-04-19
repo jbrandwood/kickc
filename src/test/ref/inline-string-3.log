@@ -7,8 +7,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   *((const nomodify byte*) main::PTR) ← <(const to_nomodify byte*) main::STRING
   *((const nomodify byte*) main::PTR+(number) 1) ← >(const to_nomodify byte*) main::STRING
-  (byte*~) main::$0 ← ((byte*)) { *((const nomodify byte*) main::PTR+(number) 1), *((const nomodify byte*) main::PTR) }
-  (byte*) main::ptr#0 ← (byte*~) main::$0
+  (byte*) main::ptr#0 ← (byte*){ *((const nomodify byte*) main::PTR+(number) 1), *((const nomodify byte*) main::PTR) }
   *((const nomodify byte*) main::SCREEN) ← *((byte*) main::ptr#0)
   to:main::@return
 main::@return: scope:[main]  from main
@@ -27,7 +26,6 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (void()) main()
-(byte*~) main::$0
 (label) main::@return
 (const nomodify byte*) main::PTR = (byte*)(number) $9ffe
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
@@ -35,10 +33,10 @@ SYMBOL TABLE SSA
 (byte*) main::ptr
 (byte*) main::ptr#0
 
-Fixing inline constructor with main::$1 ← (byte)*(main::PTR+1) w= (byte)*(main::PTR)
+Fixing inline constructor with main::$0 ← (byte)*(main::PTR+1) w= (byte)*(main::PTR)
 Successful SSA optimization Pass2FixInlineConstructors
 Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::PTR+(number) 1) ← >(const to_nomodify byte*) main::STRING
-Adding number conversion cast (unumber) 1 in (var~) main::$1 ← (byte)*((const nomodify byte*) main::PTR+(number) 1) w= (byte)*((const nomodify byte*) main::PTR)
+Adding number conversion cast (unumber) 1 in (byte*~) main::$0 ← (byte)*((const nomodify byte*) main::PTR+(number) 1) w= (byte)*((const nomodify byte*) main::PTR)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 40958
 Simplifying constant pointer cast (byte*) 1024
@@ -50,7 +48,7 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Adding pointer type conversion cast (byte*) main::$0 in (byte*~) main::$0 ← (word~) main::$1
+Adding pointer type conversion cast (byte*) main::$0 in (byte*~) main::$0 ← *((const nomodify byte*) main::PTR+(byte) 1) w= *((const nomodify byte*) main::PTR)
 Successful SSA optimization PassNAddTypeConversionAssignment
 Alias main::ptr#0 = main::$0 
 Successful SSA optimization Pass2AliasElimination
@@ -291,7 +289,7 @@ main: {
     // [5] *((const nomodify byte*) main::PTR+(byte) 1) ← >(const to_nomodify byte*) main::STRING -- _deref_pbuc1=vbuc2 
     lda #>STRING
     sta PTR+1
-    // (byte*) { *(PTR+1), *PTR }
+    // ptr = (byte*) { *(PTR+1), *PTR }
     // [6] (word) main::ptr#0 ← *((const nomodify byte*) main::PTR+(byte) 1) w= *((const nomodify byte*) main::PTR) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda PTR
     sta.z ptr

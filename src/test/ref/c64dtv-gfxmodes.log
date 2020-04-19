@@ -1,8 +1,21 @@
 Fixing pointer addition (word*~) bsearch16u::$7 ← (word*) bsearch16u::items + (byte~) bsearch16u::$6
-Fixing pointer addition (word*~) bsearch16u::$15 ← (word*) bsearch16u::pivot + (number) 1
+Fixing pointer addition (word*~) bsearch16u::$13 ← (word*) bsearch16u::pivot + (number) 1
 Fixing pointer addition (word*~) bsearch16u::$1 ← (word*) bsearch16u::items - (number) 1
 Fixing pointer array-indexing *((word*) utoa::digit_values + (byte) utoa::digit)
 Fixing pointer array-indexing *((dword*) ultoa::digit_values + (byte) ultoa::digit)
+De-inlining cast (word)toD018::screen
+De-inlining cast (word)toSpritePtr::sprite
+De-inlining cast (byte*)memcpy::source
+De-inlining cast (word)memmove::destination
+De-inlining cast (word)memmove::source
+De-inlining cast (byte*)memmove::source
+De-inlining cast (byte*)memmove::destination
+De-inlining cast (byte*)memset::str
+De-inlining cast (signed word)bsearch16u::key
+De-inlining cast (signed word)*(bsearch16u::pivot)
+De-inlining cast (byte)uctoa::value
+De-inlining cast (byte)utoa::value
+De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Warning! Adding boolean cast to non-boolean condition *((byte*) print_str_lines::str)
@@ -193,9 +206,9 @@ memset::@2: scope:[memset]  from memset
   (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
   (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
   (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$2 ← ((byte*)) (void*) memset::str#2
-  (byte*~) memset::$3 ← (byte*~) memset::$2 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$3
+  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
+  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
+  (byte*) memset::end#0 ← (byte*~) memset::$2
   (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
   to:memset::@4
 memset::@4: scope:[memset]  from memset::@2 memset::@5
@@ -203,8 +216,8 @@ memset::@4: scope:[memset]  from memset::@2 memset::@5
   (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@5/(void*) memset::str#5 )
   (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@5/(byte*) memset::end#2 )
   (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@5/(byte*) memset::dst#1 )
-  (bool~) memset::$4 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$4) goto memset::@5
+  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
+  if((bool~) memset::$3) goto memset::@5
   to:memset::@1
 memset::@5: scope:[memset]  from memset::@4
   (void*) memset::str#5 ← phi( memset::@4/(void*) memset::str#4 )
@@ -478,8 +491,7 @@ bitmap_init::@return: scope:[bitmap_init]  from bitmap_init::@6
 
 (void()) bitmap_clear()
 bitmap_clear: scope:[bitmap_clear]  from mode_stdbitmap::@13
-  (byte*~) bitmap_clear::$0 ← ((byte*)) { *((const to_nomodify byte*) bitmap_plot_xhi + (number) 0), *((const to_nomodify byte*) bitmap_plot_xlo + (number) 0) }
-  (byte*) bitmap_clear::bitmap#0 ← (byte*~) bitmap_clear::$0
+  (byte*) bitmap_clear::bitmap#0 ← (byte*){ *((const to_nomodify byte*) bitmap_plot_xhi + (number) 0), *((const to_nomodify byte*) bitmap_plot_xlo + (number) 0) }
   (byte) bitmap_clear::y#0 ← (byte) 0
   to:bitmap_clear::@1
 bitmap_clear::@1: scope:[bitmap_clear]  from bitmap_clear bitmap_clear::@3
@@ -494,15 +506,15 @@ bitmap_clear::@2: scope:[bitmap_clear]  from bitmap_clear::@1 bitmap_clear::@2
   *((byte*) bitmap_clear::bitmap#2) ← (number) 0
   (byte*) bitmap_clear::bitmap#1 ← ++ (byte*) bitmap_clear::bitmap#2
   (byte) bitmap_clear::x#1 ← (byte) bitmap_clear::x#2 + rangenext(0,$c7)
-  (bool~) bitmap_clear::$1 ← (byte) bitmap_clear::x#1 != rangelast(0,$c7)
-  if((bool~) bitmap_clear::$1) goto bitmap_clear::@2
+  (bool~) bitmap_clear::$0 ← (byte) bitmap_clear::x#1 != rangelast(0,$c7)
+  if((bool~) bitmap_clear::$0) goto bitmap_clear::@2
   to:bitmap_clear::@3
 bitmap_clear::@3: scope:[bitmap_clear]  from bitmap_clear::@2
   (byte*) bitmap_clear::bitmap#4 ← phi( bitmap_clear::@2/(byte*) bitmap_clear::bitmap#1 )
   (byte) bitmap_clear::y#2 ← phi( bitmap_clear::@2/(byte) bitmap_clear::y#3 )
   (byte) bitmap_clear::y#1 ← (byte) bitmap_clear::y#2 + rangenext(0,$27)
-  (bool~) bitmap_clear::$2 ← (byte) bitmap_clear::y#1 != rangelast(0,$27)
-  if((bool~) bitmap_clear::$2) goto bitmap_clear::@1
+  (bool~) bitmap_clear::$1 ← (byte) bitmap_clear::y#1 != rangelast(0,$27)
+  if((bool~) bitmap_clear::$1) goto bitmap_clear::@1
   to:bitmap_clear::@return
 bitmap_clear::@return: scope:[bitmap_clear]  from bitmap_clear::@3
   return 
@@ -3008,13 +3020,12 @@ mode_8bppchunkybmm::@5: scope:[mode_8bppchunkybmm]  from mode_8bppchunkybmm::@10
   (byte) mode_8bppchunkybmm::y#2 ← phi( mode_8bppchunkybmm::@10/(byte) mode_8bppchunkybmm::y#4 mode_8bppchunkybmm::@4/(byte) mode_8bppchunkybmm::y#5 )
   (word) mode_8bppchunkybmm::x#2 ← phi( mode_8bppchunkybmm::@10/(word) mode_8bppchunkybmm::x#3 mode_8bppchunkybmm::@4/(word) mode_8bppchunkybmm::x#4 )
   (word~) mode_8bppchunkybmm::$7 ← (word) mode_8bppchunkybmm::x#2 + (byte) mode_8bppchunkybmm::y#2
-  (byte~) mode_8bppchunkybmm::$8 ← ((byte)) (word~) mode_8bppchunkybmm::$7
-  (byte) mode_8bppchunkybmm::c#0 ← (byte~) mode_8bppchunkybmm::$8
+  (byte) mode_8bppchunkybmm::c#0 ← (byte)(word~) mode_8bppchunkybmm::$7
   *((byte*) mode_8bppchunkybmm::gfxb#4) ← (byte) mode_8bppchunkybmm::c#0
   (byte*) mode_8bppchunkybmm::gfxb#1 ← ++ (byte*) mode_8bppchunkybmm::gfxb#4
   (word) mode_8bppchunkybmm::x#1 ← (word) mode_8bppchunkybmm::x#2 + rangenext(0,$13f)
-  (bool~) mode_8bppchunkybmm::$9 ← (word) mode_8bppchunkybmm::x#1 != rangelast(0,$13f)
-  if((bool~) mode_8bppchunkybmm::$9) goto mode_8bppchunkybmm::@4
+  (bool~) mode_8bppchunkybmm::$8 ← (word) mode_8bppchunkybmm::x#1 != rangelast(0,$13f)
+  if((bool~) mode_8bppchunkybmm::$8) goto mode_8bppchunkybmm::@4
   to:mode_8bppchunkybmm::@7
 mode_8bppchunkybmm::@6: scope:[mode_8bppchunkybmm]  from mode_8bppchunkybmm::@4
   (byte) dtv_control#234 ← phi( mode_8bppchunkybmm::@4/(byte) dtv_control#219 )
@@ -3038,8 +3049,8 @@ mode_8bppchunkybmm::@7: scope:[mode_8bppchunkybmm]  from mode_8bppchunkybmm::@5
   (byte*) mode_8bppchunkybmm::gfxb#6 ← phi( mode_8bppchunkybmm::@5/(byte*) mode_8bppchunkybmm::gfxb#1 )
   (byte) mode_8bppchunkybmm::y#3 ← phi( mode_8bppchunkybmm::@5/(byte) mode_8bppchunkybmm::y#2 )
   (byte) mode_8bppchunkybmm::y#1 ← (byte) mode_8bppchunkybmm::y#3 + rangenext(0,$c7)
-  (bool~) mode_8bppchunkybmm::$10 ← (byte) mode_8bppchunkybmm::y#1 != rangelast(0,$c7)
-  if((bool~) mode_8bppchunkybmm::$10) goto mode_8bppchunkybmm::@3
+  (bool~) mode_8bppchunkybmm::$9 ← (byte) mode_8bppchunkybmm::y#1 != rangelast(0,$c7)
+  if((bool~) mode_8bppchunkybmm::$9) goto mode_8bppchunkybmm::@3
   to:mode_8bppchunkybmm::@8
 mode_8bppchunkybmm::@8: scope:[mode_8bppchunkybmm]  from mode_8bppchunkybmm::@7
   (byte) dtv_control#158 ← phi( mode_8bppchunkybmm::@7/(byte) dtv_control#187 )
@@ -3166,9 +3177,8 @@ SYMBOL TABLE SSA
 (const nomodify byte*) VIC_MEMORY = (byte*)(number) $d018
 (const nomodify byte) VIC_RSEL = (byte) 8
 (void()) bitmap_clear()
-(byte*~) bitmap_clear::$0
+(bool~) bitmap_clear::$0
 (bool~) bitmap_clear::$1
-(bool~) bitmap_clear::$2
 (label) bitmap_clear::@1
 (label) bitmap_clear::@2
 (label) bitmap_clear::@3
@@ -4053,8 +4063,8 @@ SYMBOL TABLE SSA
 (bool~) memset::$0
 (bool~) memset::$1
 (byte*~) memset::$2
-(byte*~) memset::$3
-(bool~) memset::$4
+(bool~) memset::$3
+(byte*~) memset::$4
 (label) memset::@1
 (label) memset::@2
 (label) memset::@4
@@ -4200,12 +4210,11 @@ SYMBOL TABLE SSA
 (byte) menu::i#1
 (byte) menu::i#2
 (void()) mode_8bppchunkybmm()
-(bool~) mode_8bppchunkybmm::$10
 (bool~) mode_8bppchunkybmm::$3
 (bool~) mode_8bppchunkybmm::$4
 (bool~) mode_8bppchunkybmm::$5
 (word~) mode_8bppchunkybmm::$7
-(byte~) mode_8bppchunkybmm::$8
+(bool~) mode_8bppchunkybmm::$8
 (bool~) mode_8bppchunkybmm::$9
 (label) mode_8bppchunkybmm::@1
 (label) mode_8bppchunkybmm::@10
@@ -5417,7 +5426,7 @@ SYMBOL TABLE SSA
 (byte*) print_str_lines::str#8
 (byte*) print_str_lines::str#9
 
-Fixing inline constructor with bitmap_clear::$3 ← (byte)*(bitmap_plot_xhi + 0) w= (byte)*(bitmap_plot_xlo + 0)
+Fixing inline constructor with bitmap_clear::$2 ← (byte)*(bitmap_plot_xhi + 0) w= (byte)*(bitmap_plot_xlo + 0)
 Fixing inline constructor with bitmap_plot::$2 ← (byte)*(bitmap_plot_xhi + bitmap_plot::x#4) w= (byte)*(bitmap_plot_xlo + bitmap_plot::x#4)
 Fixing inline constructor with bitmap_plot::$3 ← (byte)*(bitmap_plot_yhi + bitmap_plot::y#4) w= (byte)*(bitmap_plot_ylo + bitmap_plot::y#4)
 Successful SSA optimization Pass2FixInlineConstructors
@@ -5442,8 +5451,8 @@ Adding number conversion cast (unumber) 7 in (number~) bitmap_init::$10 ← (byt
 Adding number conversion cast (unumber) bitmap_init::$10 in (number~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (unumber)(number) 7
 Adding number conversion cast (unumber) 7 in (bool~) bitmap_init::$11 ← (unumber~) bitmap_init::$10 == (number) 7
 Adding number conversion cast (unumber) $28*8 in (byte*~) bitmap_init::$13 ← (byte*) bitmap_init::yoffs#3 + (number) $28*(number) 8
-Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((const to_nomodify byte*) bitmap_plot_xhi + (number) 0) w= (byte)*((const to_nomodify byte*) bitmap_plot_xlo + (number) 0)
-Adding number conversion cast (unumber) 0 in (var~) bitmap_clear::$3 ← (byte)*((const to_nomodify byte*) bitmap_plot_xhi + (unumber)(number) 0) w= (byte)*((const to_nomodify byte*) bitmap_plot_xlo + (number) 0)
+Adding number conversion cast (unumber) 0 in (byte*~) bitmap_clear::$2 ← (byte)*((const to_nomodify byte*) bitmap_plot_xhi + (number) 0) w= (byte)*((const to_nomodify byte*) bitmap_plot_xlo + (number) 0)
+Adding number conversion cast (unumber) 0 in (byte*~) bitmap_clear::$2 ← (byte)*((const to_nomodify byte*) bitmap_plot_xhi + (unumber)(number) 0) w= (byte)*((const to_nomodify byte*) bitmap_plot_xlo + (number) 0)
 Adding number conversion cast (unumber) 0 in *((byte*) bitmap_clear::bitmap#2) ← (number) 0
 Adding number conversion cast (unumber) 1 in (byte~) bitmap_line_xdyi::$0 ← (byte) bitmap_line_xdyi::yd#2 >> (number) 1
 Adding number conversion cast (unumber) 1 in (number~) bitmap_line_xdyi::$6 ← (byte) bitmap_line_xdyi::x1#2 + (number) 1
@@ -5777,7 +5786,6 @@ Adding number conversion cast (unumber) $400 in *((const nomodify byte*) VIC_MEM
 Adding number conversion cast (unumber) $40 in *((const nomodify byte*) VIC_MEMORY) ← (byte)(word)(const nomodify byte*) mode_hicolmcchar::SCREEN&(unumber)(number) $3fff/(number) $40|(word)(const nomodify byte*) mode_hicolmcchar::CHARSET&(unumber)(number) $3fff/(number) $400
 Adding number conversion cast (unumber) $400 in *((const nomodify byte*) VIC_MEMORY) ← (byte)(word)(const nomodify byte*) mode_hicolmcchar::SCREEN&(unumber)(number) $3fff/(unumber)(number) $40|(word)(const nomodify byte*) mode_hicolmcchar::CHARSET&(unumber)(number) $3fff/(number) $400
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*~) memset::$2 ← (byte*)(void*) memset::str#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast (byte) bitmap_init::bits#2 ← (unumber)(number) $80
@@ -5890,7 +5898,6 @@ Inlining cast *((const nomodify byte*) DTV_PLANEB_STEP) ← (unumber)(number) 8
 Inlining cast *((const nomodify byte*) DTV_PLANEB_MODULO_LO) ← (unumber)(number) 0
 Inlining cast *((const nomodify byte*) DTV_PLANEB_MODULO_HI) ← (unumber)(number) 0
 Inlining cast *((const nomodify byte*) BORDERCOL) ← (unumber)(number) 0
-Inlining cast (byte~) mode_8bppchunkybmm::$8 ← (byte)(word~) mode_8bppchunkybmm::$7
 Inlining cast (byte*) mode_8bppchunkybmm::gfxb#2 ← (byte*)(number) $4000
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 0
@@ -6598,7 +6605,7 @@ Inferred type updated to byte in (unumber~) mode_8bpppixelcell::$4 ← (byte) mo
 Inferred type updated to byte in (unumber~) mode_8bpppixelcell::$5 ← (byte~) mode_8bpppixelcell::$3 | (byte~) mode_8bpppixelcell::$4
 Inferred type updated to byte in (unumber~) mode_8bpppixelcell::$8 ← (byte) mode_8bpppixelcell::bits#2 & (byte) $80
 Inferred type updated to byte in (unumber~) mode_8bpppixelcell::$11 ← (byte) mode_8bpppixelcell::bits#3 * (byte) 2
-Adding pointer type conversion cast (byte*) bitmap_clear::$0 in (byte*~) bitmap_clear::$0 ← (word~) bitmap_clear::$3
+Adding pointer type conversion cast (byte*) bitmap_clear::$2 in (byte*~) bitmap_clear::$2 ← *((const to_nomodify byte*) bitmap_plot_xhi + (byte) 0) w= *((const to_nomodify byte*) bitmap_plot_xlo + (byte) 0)
 Successful SSA optimization PassNAddTypeConversionAssignment
 Inversing boolean not [6] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [5] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
 Inversing boolean not [35] (bool~) print_str_lines::$0 ← (byte) 0 == (byte) print_str_lines::ch#0 from [34] (bool~) print_str_lines::$5 ← (byte) 0 != (byte) print_str_lines::ch#0
@@ -6636,7 +6643,7 @@ Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
 Alias memset::c#3 = memset::c#4 
-Alias memset::end#0 = memset::$3 
+Alias memset::end#0 = memset::$2 
 Alias memset::c#1 = memset::c#2 
 Alias memset::dst#2 = memset::dst#3 
 Alias memset::end#1 = memset::end#2 
@@ -6669,7 +6676,7 @@ Alias bitmap_init::bitmap#1 = bitmap_init::bitmap#4
 Alias bitmap_init::yoffs#2 = bitmap_init::yoffs#3 
 Alias bitmap_init::y#2 = bitmap_init::y#4 
 Alias bitmap_init::yoffs#1 = bitmap_init::$13 
-Alias bitmap_clear::bitmap#0 = bitmap_clear::$0 
+Alias bitmap_clear::bitmap#0 = bitmap_clear::$2 
 Alias bitmap_clear::y#2 = bitmap_clear::y#3 
 Alias bitmap_clear::bitmap#1 = bitmap_clear::bitmap#4 
 Alias bitmap_plot::plotter_x#0 = bitmap_plot::$2 
@@ -6919,7 +6926,6 @@ Alias dtv_control#127 = dtv_control#186 dtv_control#201 dtv_control#157
 Alias dtv_control#49 = dtv_control#93 dtv_control#94 dtv_control#50 
 Alias dtv_control#244 = dtv_control#253 dtv_control#262 
 Alias mode_8bppchunkybmm::gfxbCpuBank#0 = mode_8bppchunkybmm::gfxbCpuBank#3 
-Alias mode_8bppchunkybmm::c#0 = mode_8bppchunkybmm::$8 
 Alias mode_8bppchunkybmm::gfxbCpuBank#4 = mode_8bppchunkybmm::gfxbCpuBank#6 mode_8bppchunkybmm::gfxbCpuBank#5 
 Alias mode_8bppchunkybmm::x#3 = mode_8bppchunkybmm::x#5 mode_8bppchunkybmm::x#4 
 Alias mode_8bppchunkybmm::y#4 = mode_8bppchunkybmm::y#7 mode_8bppchunkybmm::y#5 
@@ -7158,7 +7164,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identified duplicate assignment right side [146] (byte~) bitmap_init::$10 ← (byte) bitmap_init::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) memset::$1 [6] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$4 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
+Simple Condition (bool~) memset::$3 [13] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@5
 Simple Condition (bool~) print_str_lines::$3 [21] if((byte) 0!=*((byte*) print_str_lines::str#2)) goto print_str_lines::@4
 Simple Condition (bool~) print_str_lines::$0 [26] if((byte) 0==(byte) print_str_lines::ch#0) goto print_str_lines::@5
 Simple Condition (bool~) print_str_lines::$4 [29] if((byte) 0!=(byte) print_str_lines::ch#0) goto print_str_lines::@4
@@ -7167,8 +7173,8 @@ Simple Condition (bool~) bitmap_init::$4 [80] if((byte) bitmap_init::bits#1!=(by
 Simple Condition (bool~) bitmap_init::$5 [84] if((byte) bitmap_init::x#1!=rangelast(0,$ff)) goto bitmap_init::@1
 Simple Condition (bool~) bitmap_init::$12 [97] if((byte~) bitmap_init::$10!=(byte) 7) goto bitmap_init::@6
 Simple Condition (bool~) bitmap_init::$14 [101] if((byte) bitmap_init::y#1!=rangelast(0,$ff)) goto bitmap_init::@5
-Simple Condition (bool~) bitmap_clear::$1 [114] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
-Simple Condition (bool~) bitmap_clear::$2 [117] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
+Simple Condition (bool~) bitmap_clear::$0 [114] if((byte) bitmap_clear::x#1!=rangelast(0,$c7)) goto bitmap_clear::@2
+Simple Condition (bool~) bitmap_clear::$1 [117] if((byte) bitmap_clear::y#1!=rangelast(0,$27)) goto bitmap_clear::@1
 Simple Condition (bool~) bitmap_line::$0 [131] if((byte) bitmap_line::x0#0<(byte) bitmap_line::x1#0) goto bitmap_line::@1
 Simple Condition (bool~) bitmap_line::$12 [134] if((byte) bitmap_line::y0#0<(byte) bitmap_line::y1#0) goto bitmap_line::@20
 Simple Condition (bool~) bitmap_line::$2 [137] if((byte) bitmap_line::y0#0<(byte) bitmap_line::y1#0) goto bitmap_line::@10
@@ -7261,8 +7267,8 @@ Simple Condition (bool~) mode_8bpppixelcell::$13 [1089] if((byte) mode_8bpppixel
 Simple Condition (bool~) mode_8bpppixelcell::$14 [1092] if((byte) mode_8bpppixelcell::ch#1!=rangelast(0,$ff)) goto mode_8bpppixelcell::@7
 Simple Condition (bool~) mode_8bppchunkybmm::$3 [1113] if((byte) mode_8bppchunkybmm::i#1!=rangelast(0,$f)) goto mode_8bppchunkybmm::@1
 Simple Condition (bool~) mode_8bppchunkybmm::$5 [1124] if((byte*) mode_8bppchunkybmm::gfxb#3!=(word) $8000) goto mode_8bppchunkybmm::@5
-Simple Condition (bool~) mode_8bppchunkybmm::$9 [1132] if((word) mode_8bppchunkybmm::x#1!=rangelast(0,$13f)) goto mode_8bppchunkybmm::@4
-Simple Condition (bool~) mode_8bppchunkybmm::$10 [1139] if((byte) mode_8bppchunkybmm::y#1!=rangelast(0,$c7)) goto mode_8bppchunkybmm::@3
+Simple Condition (bool~) mode_8bppchunkybmm::$8 [1132] if((word) mode_8bppchunkybmm::x#1!=rangelast(0,$13f)) goto mode_8bppchunkybmm::@4
+Simple Condition (bool~) mode_8bppchunkybmm::$9 [1139] if((byte) mode_8bppchunkybmm::y#1!=rangelast(0,$c7)) goto mode_8bppchunkybmm::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) print_screen#0 = (byte*) 1024
 Constant (const byte) memset::c#0 = ' '
@@ -7404,7 +7410,7 @@ Constant (const byte) dtvSetCpuBankSegment1::cpuBankIdx#0 = mode_8bppchunkybmm::
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) memset::str#0 = (void*)print_screen#1
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$2 = (byte*)memset::str#0
+Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
 Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -7763,11 +7769,11 @@ Finalized unsigned number type (byte) $c8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias bitmap_init::$10 = bitmap_init::$6 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [4] (byte*) memset::end#0 ← (const byte*) memset::$2 + (const word) memset::num#0
+Constant right-side identified [4] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Constant right-side identified [47] (byte~) bitmap_init::$1 ← > (const byte*) bitmap_init::bitmap#0
 Constant right-side identified [827] (byte) mode_8bppchunkybmm::gfxbCpuBank#1 ← ++ (const byte) mode_8bppchunkybmm::gfxbCpuBank#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$2+memset::num#0
+Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
 Constant (const byte) bitmap_init::$1 = >bitmap_init::bitmap#0
 Constant (const byte) mode_8bppchunkybmm::gfxbCpuBank#1 = ++mode_8bppchunkybmm::gfxbCpuBank#0
 Successful SSA optimization Pass2ConstantIdentification
@@ -8020,7 +8026,7 @@ Constant inlined bitmap_init::bits#2 = (byte) $80
 Constant inlined mode_8bppchunkybmm::gfxbCpuBank#0 = (byte)(const nomodify dword) mode_8bppchunkybmm::PLANEB/(word) $4000
 Constant inlined mode_8bppchunkybmm::gfxb#0 = (byte*) 16384
 Constant inlined mode_twoplanebitmap::gfxa#0 = (const nomodify byte*) mode_twoplanebitmap::PLANEA
-Constant inlined memset::$2 = (byte*)(const void*) memset::str#0
+Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined print_set_screen::screen#0 = (const nomodify byte*) menu::SCREEN
 Constant inlined mode_8bpppixelcell::ch#0 = (byte) 0
 Constant inlined mode_8bpppixelcell::c#0 = (byte) 0
@@ -29646,7 +29652,7 @@ bitmap_line_ydxd: {
 bitmap_clear: {
     .label bitmap = 4
     .label y = $b
-    // (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
+    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
     // [721] (word) bitmap_clear::bitmap#0 ← *((const to_nomodify byte*) bitmap_plot_xhi) w= *((const to_nomodify byte*) bitmap_plot_xlo) -- vwuz1=_deref_pbuc1_word__deref_pbuc2 
     lda bitmap_plot_xlo
     sta.z bitmap

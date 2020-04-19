@@ -247,7 +247,7 @@ clear_screen: {
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
-    .label __24 = $13
+    .label __20 = $13
     .label i = $b
     .label min = 9
     .label length = $a
@@ -378,10 +378,9 @@ gen_sintab: {
     jsr addMEMtoFAC
     // getFAC()
     jsr getFAC
-    // (char)getFAC()
-    lda.z __24
     // sintab[i] = (char)getFAC()
     // fac =  sin( i * 2 * PI / length ) * (max - min) / 2 + min + (max - min) / 2
+    lda.z __20
     ldy.z i
     sta (sintab),y
     // progress_inc()
@@ -616,7 +615,7 @@ gen_sprites: {
 // gen_chargen_sprite(byte register(X) ch, byte* zp($13) sprite)
 gen_chargen_sprite: {
     .label __0 = $15
-    .label __1 = $15
+    .label __14 = $15
     .label sprite = $13
     .label chargen = $15
     .label bits = $a
@@ -626,18 +625,17 @@ gen_chargen_sprite: {
     .label y = 9
     // Find the current chargen pixel (c)
     .label c = $c
-    // (unsigned int)ch
-    txa
-    sta.z __0
-    lda #0
-    sta.z __0+1
     // ((unsigned int)ch)*8
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
-    asl.z __1
-    rol.z __1+1
+    txa
+    sta.z __14
+    lda #0
+    sta.z __14+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
+    asl.z __0
+    rol.z __0+1
     // chargen = CHARGEN+((unsigned int)ch)*8
     clc
     lda.z chargen

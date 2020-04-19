@@ -9,6 +9,7 @@ import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
+import dk.camelot64.kickc.model.types.SymbolTypeInteger;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
 
@@ -38,8 +39,12 @@ public class ValueSourceFactory {
          }
          return new ValueSourceStructValueList(valueList, structDefinition);
       }
-      while(value instanceof CastValue)
-         value = ((CastValue) value).getValue();
+      if(value instanceof CastValue && ((CastValue) value).getToType() instanceof SymbolTypeInteger) {
+         final CastValue castValue = (CastValue) value;
+         final RValue subValue = castValue.getValue();
+         final ValueSource subValueSource = getValueSource(subValue, program, programScope, currentStmt, stmtIt, currentBlock);
+         return new ValueSourceCastValue(castValue.getToType(), subValueSource);
+      }
       if(value instanceof VariableRef) {
          Variable variable = programScope.getVariable((VariableRef) value);
          return new ValueSourceVariable(variable);

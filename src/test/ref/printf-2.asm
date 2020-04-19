@@ -28,7 +28,7 @@ __bbegin:
 main: {
     // printf_cls()
     jsr printf_cls
-    // printf_schar(-77, format)
+    // printf_schar(-77, { 6, 0, 0, 0, DECIMAL})
     lda #0
     sta.z printf_schar.format_zero_padding
     lda #DECIMAL
@@ -38,7 +38,7 @@ main: {
     jsr printf_schar
     // printf_ln()
     jsr printf_ln
-    // printf_schar(99, format)
+    // printf_schar(99, {6, 0, 1, 1, OCTAL})
     lda #1
     sta.z printf_schar.format_zero_padding
     lda #OCTAL
@@ -48,7 +48,7 @@ main: {
     jsr printf_schar
     // printf_ln()
     jsr printf_ln
-    // printf_uint(3456, format)
+    // printf_uint(3456, {10, 1, 0, 0, HEXADECIMAL})
     jsr printf_uint
     // printf_ln()
     jsr printf_ln
@@ -86,6 +86,9 @@ printf_ln: {
 // Print an unsigned int using a specific format
 printf_uint: {
     .label uvalue = $d80
+    .const format_min_length = $a
+    .const format_justify_left = 1
+    .const format_zero_padding = 0
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -101,11 +104,11 @@ printf_uint: {
     sta.z printf_number_buffer.buffer_digits
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z printf_number_buffer.buffer_digits+1
-    lda #0
+    lda #format_zero_padding
     sta.z printf_number_buffer.format_zero_padding
-    lda #1
+    lda #format_justify_left
     sta.z printf_number_buffer.format_justify_left
-    ldx #$a
+    ldx #format_min_length
     jsr printf_number_buffer
     // }
     rts

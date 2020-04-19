@@ -5,18 +5,24 @@ import dk.camelot64.kickc.model.Initializers;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
+import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
-import dk.camelot64.kickc.model.values.ConstantValue;
-import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.*;
+
+import java.util.List;
 
 /**
- * Constantify all assignment RValues that are structs
+ * Prepare structs for unwinding.
+ * - Constantify all assignment RValues that are structs
+ * - Add casts to struct parameter values in calls
  */
-public class Pass1ConstantifyRValue extends Pass2SsaOptimization {
+public class Pass1PrepareUnwindStruct extends Pass2SsaOptimization {
 
-   public Pass1ConstantifyRValue(Program program) {
+   public Pass1PrepareUnwindStruct(Program program) {
       super(program);
    }
 
@@ -39,6 +45,21 @@ public class Pass1ConstantifyRValue extends Pass2SsaOptimization {
                      }
                   }
 
+               }
+            }
+            if(statement instanceof StatementCall) {
+               final StatementCall call = (StatementCall) statement;
+               final Procedure procedure = getScope().getProcedure(call.getProcedure());
+               final List<Variable> paramDefs = procedure.getParameters();
+               final List<RValue> paramVals = call.getParameters();
+               for(int i=0;i<paramDefs.size();i++) {
+                  final Variable paramDef = paramDefs.get(i);
+                  final RValue paramVal = paramVals.get(i);
+                  if(paramDef.getType() instanceof SymbolTypeStruct && paramVal instanceof ValueList) {
+                     // Add a cast to the parameter value list
+                     paramVals.set(i, new CastValue(paramDef.getType(), paramVal));
+                     getLog().append("Added struct type cast to parameter value list "+call.toString(getProgram(), false));
+                  }
                }
             }
          }

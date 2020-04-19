@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testProblemStructInlineParameter1() throws IOException, URISyntaxException {
+      compileAndCompare("problem-struct-inline-parameter-1.c");
+   }
+
+   @Test
    public void testProblemStructInlineParameter() throws IOException, URISyntaxException {
       compileAndCompare("problem-struct-inline-parameter.c");
    }

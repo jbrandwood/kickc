@@ -280,7 +280,7 @@ public class Compiler {
 
       new PassNAssertTypeMatch(program).check();
 
-      new Pass1ConstantifyRValue(program).execute();
+      new Pass1PrepareUnwindStruct(program).execute();
       new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
 

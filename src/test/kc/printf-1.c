@@ -7,16 +7,12 @@ void main() {
 
     printf_cls();
 
-    struct printf_format_string format;
-    format.min_length = 10;
-    format.justify_left = 0;
-    printf_string( "cml", format);
+    printf_string( "cml", { 10, 0 } );
     printf_ln();
-    printf_string( "rules", format);
+    printf_string( "rules", { 10, 0 } );
     printf_ln();
     
-    format.justify_left = 1;
-    printf_string( "cml", format);
+    printf_string( "cml", { 10, 1 } );
     printf_ln();
-    printf_string( "rules", format);
+    printf_string( "rules", { 10, 1 } );
 }

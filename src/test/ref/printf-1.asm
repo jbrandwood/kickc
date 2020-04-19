@@ -20,10 +20,9 @@ __bbegin:
   jsr main
   rts
 main: {
-    .label format_min_length = $a
     // printf_cls()
     jsr printf_cls
-    // printf_string( "cml", format)
+    // printf_string( "cml", { 10, 0 } )
     lda #<str
     sta.z printf_string.str
     lda #>str
@@ -33,7 +32,7 @@ main: {
     jsr printf_string
     // printf_ln()
     jsr printf_ln
-    // printf_string( "rules", format)
+    // printf_string( "rules", { 10, 0 } )
     lda #<str1
     sta.z printf_string.str
     lda #>str1
@@ -43,7 +42,7 @@ main: {
     jsr printf_string
     // printf_ln()
     jsr printf_ln
-    // printf_string( "cml", format)
+    // printf_string( "cml", { 10, 1 } )
     lda #<str
     sta.z printf_string.str
     lda #>str
@@ -53,7 +52,7 @@ main: {
     jsr printf_string
     // printf_ln()
     jsr printf_ln
-    // printf_string( "rules", format)
+    // printf_string( "rules", { 10, 1 } )
     lda #<str1
     sta.z printf_string.str
     lda #>str1
@@ -88,7 +87,7 @@ printf_string: {
     // padding = (signed char)format.min_length  - len
     eor #$ff
     clc
-    adc #main.format_min_length+1
+    adc #$a+1
     sta.z padding
     // if(padding<0)
     cmp #0

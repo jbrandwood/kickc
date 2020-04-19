@@ -510,6 +510,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterParameterDeclList(KickCParser.ParameterDeclListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitParameterDeclList(KickCParser.ParameterDeclListContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -781,6 +793,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDirectiveInline(KickCParser.DirectiveInlineContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDirectiveIntrinsic(KickCParser.DirectiveIntrinsicContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDirectiveIntrinsic(KickCParser.DirectiveIntrinsicContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

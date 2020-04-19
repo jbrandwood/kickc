@@ -252,10 +252,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       // Check that the declaration matches any existing declaration!
       final Symbol existingSymbol = program.getScope().getSymbol(procedure.getRef());
-      if(existingSymbol!=null) {
+      if(existingSymbol != null) {
          // Already declared  - check equality
          if(!(existingSymbol instanceof Procedure) || !SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
-            throw new CompileError("Error! Conflicting declarations for: "+procedure.getFullName(), new StatementSource(ctx));
+            throw new CompileError("Error! Conflicting declarations for: " + procedure.getFullName(), new StatementSource(ctx));
       } else {
          // Not declared before - add it
          program.getScope().add(procedure);
@@ -263,7 +263,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       if(ctx.declFunctionBody() != null) {
          // Make sure directives and more are taken from the procedure with the body!
-         if(existingSymbol!=null) {
+         if(existingSymbol != null) {
             program.getScope().remove(existingSymbol);
             program.getScope().add(procedure);
          }
@@ -271,7 +271,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Check that the body has not already been added
          for(Statement statement : sequence.getStatements())
             if(statement instanceof StatementProcedureBegin && ((StatementProcedureBegin) statement).getProcedure().equals(procedure.getRef()))
-               throw new CompileError("Error! Redefinition of function: "+procedure.getFullName(), StatementSource.procedureBegin(ctx));
+               throw new CompileError("Error! Redefinition of function: " + procedure.getFullName(), StatementSource.procedureBegin(ctx));
          // Add the body
          scopeStack.push(procedure);
          sequence.addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
@@ -302,11 +302,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return null;
    }
 
-
    @Override
    public List<Variable> visitParameterListDecl(KickCParser.ParameterListDeclContext ctx) {
       ArrayList<Variable> parameterDecls = new ArrayList<>();
+      boolean encounteredVariableLengthParamList = false;
       for(KickCParser.ParameterDeclContext parameterDeclCtx : ctx.parameterDecl()) {
+         if(encounteredVariableLengthParamList) {
+            throw new CompileError("Variable length parameter list is only legal as the last parameter.", new StatementSource(ctx));
+         }
          Object parameterDecl = this.visit(parameterDeclCtx);
          if(parameterDecl.equals(SymbolType.VOID)) {
             if(ctx.parameterDecl().size() == 1) {
@@ -315,6 +318,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             } else {
                throw new CompileError("Illegal void parameter.", new StatementSource(ctx));
             }
+         } else if(parameterDecl == PARAM_LIST) {
+            // A "..." parameter list. Update the procedure.
+            final Procedure procedure = (Procedure) getCurrentScope();
+            procedure.setVariableLengthParameterList(true);
+            encounteredVariableLengthParamList = true;
          } else if(parameterDecl instanceof Variable) {
             parameterDecls.add((Variable) parameterDecl);
          } else {
@@ -343,6 +351,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError("Illegal unnamed parameter " + ctx.SIMPLETYPE().getText(), new StatementSource(ctx));
       }
       return SymbolType.VOID;
+   }
+
+   /** Singleton signalling a "..." parameter list. */
+   public static Object PARAM_LIST = new Object();
+
+   @Override
+   public Object visitParameterDeclList(KickCParser.ParameterDeclListContext ctx) {
+      return PARAM_LIST;
    }
 
    @Override
@@ -528,7 +544,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       resourceName = resourceName.substring(1, resourceName.length() - 1);
       Path currentPath = cParser.getSourceFolderPath(ctx);
       File resourceFile = SourceLoader.loadFile(resourceName, currentPath, new ArrayList<>());
-      if(resourceFile==null)
+      if(resourceFile == null)
          throw new CompileError("File  not found " + resourceName);
       program.addAsmResourceFile(resourceFile.toPath());
       if(program.getLog().isVerboseParse()) {
@@ -999,6 +1015,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             procedure.setInterruptType(((Directive.Interrupt) directive).interruptType);
          } else if(directive instanceof Directive.ReserveZp) {
             procedure.setReservedZps(((Directive.ReserveZp) directive).reservedZp);
+         } else if(directive instanceof Directive.Intrinsic) {
+            procedure.setDeclaredIntrinsic(true);
          } else {
             throw new CompileError("Unsupported function directive " + directive, source);
          }
@@ -1032,6 +1050,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitDirectiveInline(KickCParser.DirectiveInlineContext ctx) {
       return new Directive.Inline();
+   }
+
+   @Override
+   public Object visitDirectiveIntrinsic(KickCParser.DirectiveIntrinsicContext ctx) {
+      return new Directive.Intrinsic();
    }
 
    @Override
@@ -1289,6 +1312,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /**
     * Add code to evaluate a comma-expr condition (used in while/for/...).
+    *
     * @param conditionCtx The comma-expr condition to evaluate
     * @param statementSource The statement source used for errors
     * @return The RValue of the condition
@@ -1679,7 +1703,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue rValue;
       if(exprCtx != null) {
          if(SymbolType.VOID.equals(procedure.getReturnType())) {
-            throw new CompileError("Error! Return value from void function "+procedure.getFullName(), new StatementSource(ctx));
+            throw new CompileError("Error! Return value from void function " + procedure.getFullName(), new StatementSource(ctx));
          }
          PrePostModifierHandler.addPreModifiers(this, exprCtx, new StatementSource(ctx));
          rValue = (RValue) this.visit(exprCtx);

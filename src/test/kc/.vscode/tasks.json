@@ -1,0 +1,146 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "KickAssembler",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar",
+                "${config:kickassembler.kickAssPath}",
+                "${file}",
+                "-odir",
+                "build",
+                "-showmem",
+                "-execute",
+                "${workspaceFolder}\\tools\\exomize.bat"
+            ],
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "KickAsm Vice",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar",
+                "${config:kickassembler.kickAssPath}",
+                "${file}",
+                "-define",
+                "AUTORUN",
+                "-showmem",
+                "-vicesymbols",
+                "-execute",
+                "\"${config:vice.vicePath}\" -moncommands ${fileBasenameNoExtension}.vs"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "KickAsm Vice Debug",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar",
+                "${config:kickassembler.kickAssPath}",
+                "${file}",
+                "-odir",
+                "debug",
+                "-define",
+                "AUTORUN",
+                "-define",
+                "DEBUG",
+                "-showmem",
+                "-vicesymbols",
+                ":debug=true",
+                "-execute",
+                "\"${config:vice.vicePath}\" -moncommands ${fileBasenameNoExtension}.vs"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "KickAsm C64Debugger",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar",
+                "${config:kickassembler.kickAssPath}",
+                "${file}",
+                "-odir",
+                "bin",
+                "-define",
+                "AUTORUN",
+                "-showmem",
+                "-debugdump",
+                "-execute",
+                "\"${config:c64debugger.c64debuggerPath}\""
+            ],
+            "group": "build"
+        },
+        {
+            "label": "KickAsm C64Debugger Debug",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar",
+                "${config:kickassembler.kickAssPath}",
+                "${file}",
+                "-odir",
+                "debug",
+                "-define",
+                "AUTORUN",
+                "-define",
+                "DEBUG",
+                "-showmem",
+                "-debugdump",
+                ":debug=true",
+                "-execute",
+                "\"${config:c64debugger.c64debuggerPath}\""
+            ],
+            "group": "build"
+        },
+        {
+            "label": "KickAsm Build",
+            "command": "java",
+            "args": [
+                "-jar",
+                "${config:kickassembler.kickAssPath}",
+                "${file}",
+                "-odir",
+                "build",
+                "-showmem"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "KickC Build & Run",
+            "type": "shell",
+            "cwd": "${workspaceFolder}",
+            "command": "~/c64/kickc_local/bin/kickc.sh",
+            "args": [
+                "-odir",
+                "~/c64/tmp/",
+                "-e",
+                "${relativeFile}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Exomize Build",
+            "command": "${workspaceFolder}\\tools\\exomize.bat",
+            "args": [
+                "${config:exomizer.exomizerPath}",
+                "${file}"
+            ],
+            "dependsOn": [
+                "KickAsm Build"
+            ],
+            "group": "build"
+        }
+    ]
+}

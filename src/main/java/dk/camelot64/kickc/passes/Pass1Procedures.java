@@ -6,7 +6,6 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
 
 /**
  * Updates procedure calls to point to the actual procedure called.
@@ -29,11 +28,12 @@ public class Pass1Procedures extends Pass2SsaOptimization {
                   throw new CompileError("Called procedure not found. " + call.toString(getProgram(), false), statement.getSource());
                }
                call.setProcedure(procedure.getRef());
-               if(procedure.getParameters().size() != call.getParameters().size()) {
+               if(procedure.isVariableLengthParameterList() && procedure.getParameters().size() > call.getParameters().size()) {
+                  throw new CompileError("Wrong number of parameters in call. Expected " + procedure.getParameters().size() + " or more. " + statement.toString(), statement.getSource());
+               } else if(!procedure.isVariableLengthParameterList() && procedure.getParameters().size() != call.getParameters().size()) {
                   throw new CompileError("Wrong number of parameters in call. Expected " + procedure.getParameters().size() + ". " + statement.toString(), statement.getSource());
                }
             }
-
          }
       }
       return false;

@@ -27,6 +27,10 @@ public interface Directive {
    class Inline implements Directive {
    }
 
+   /** Function declared intrinsic. */
+   class Intrinsic implements Directive {
+   }
+
    /** Variable declared as extern. */
    class Extern implements Directive {
    }

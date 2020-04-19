@@ -255,6 +255,7 @@ public class Compiler {
       new PassNTypeInference(program).execute();
       new PassNTypeIdSimplification(program).execute();
       new Pass1StructTypeSizeFix(program).execute();
+      new Pass1PrintfIntrinsicRewrite(program).execute();
       new Pass1AssertReturn(program).execute();
       new Pass1AssertUsedVars(program).execute();
       new Pass1AssertNoModifyVars(program).execute();

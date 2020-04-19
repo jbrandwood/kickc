@@ -142,6 +142,7 @@ parameterListDecl
 parameterDecl
     : declType declPointer* NAME #parameterDeclType
     | SIMPLETYPE #parameterDeclVoid
+    | PARAM_LIST #parameterDeclList
     ;
 
 globalDirective
@@ -171,6 +172,7 @@ directive
     | EXTERN #directiveExtern
     | EXPORT #directiveExport
     | INLINE #directiveInline
+    | INTRINSIC #directiveIntrinsic
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
     | RESERVE PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END  #directiveReserveZp
     | CALLINGCONVENTION #directiveCallingConvention

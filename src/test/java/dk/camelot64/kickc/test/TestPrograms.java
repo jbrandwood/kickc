@@ -41,6 +41,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPintf10() throws IOException, URISyntaxException {
+      compileAndCompare("printf-10.c", log());
+   }
+
+   @Test
    public void testProblemNegateConst() throws IOException, URISyntaxException {
       compileAndCompare("problem-negate-const.c");
    }
@@ -3894,6 +3899,16 @@ public class TestPrograms {
    @Test
    public void testToFewParams() throws IOException, URISyntaxException {
       assertError("tofewparams.c", "Wrong number of parameters in call");
+   }
+
+   @Test
+   public void testToFewParamsVarlength() throws IOException, URISyntaxException {
+      assertError("tofewparams-varlength.c", "Wrong number of parameters in call");
+   }
+
+   @Test
+   public void testVarlengthError() throws IOException, URISyntaxException {
+      assertError("varlength-error.c", "Variable length parameter list is only legal as the last parameter.");
    }
 
    @Test

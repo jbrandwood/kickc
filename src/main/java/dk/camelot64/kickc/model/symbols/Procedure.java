@@ -5,10 +5,9 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.passes.Pass1PrintfIntrinsicRewrite;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /** Symbol describing a procedure/function */
 public class Procedure extends Scope {
@@ -17,6 +16,8 @@ public class Procedure extends Scope {
    private final SymbolType returnType;
    /** The names of the parameters of the procedure. */
    private List<String> parameterNames;
+   /** True if the parameter list ends with a variable length parameter list "..." */
+   private boolean variableLengthParameterList;
    /** true if the procedure is declared inline. */
    private boolean declaredInline;
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
@@ -27,6 +28,11 @@ public class Procedure extends Scope {
    private List<Integer> reservedZps;
    /** The code segment to put the procedure into. */
    private String codeSegment;
+   /** True if the procedure is declared intrinsic. */
+   private boolean declaredIntrinsic;
+
+   /** The names of all legal intrinsic procedures. */
+   final public static List<String> INTRINSIC_PROCEDURES = Collections.singletonList(Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME);
 
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {
@@ -83,6 +89,22 @@ public class Procedure extends Scope {
 
    public List<String> getParameterNames() {
       return parameterNames;
+   }
+
+   public void setVariableLengthParameterList(boolean variableLengthParameterList) {
+      this.variableLengthParameterList = variableLengthParameterList;
+   }
+
+   public boolean isVariableLengthParameterList() {
+      return variableLengthParameterList;
+   }
+
+   public boolean isDeclaredIntrinsic() {
+      return declaredIntrinsic;
+   }
+
+   public void setDeclaredIntrinsic(boolean declaredIntrinsic) {
+      this.declaredIntrinsic = declaredIntrinsic;
    }
 
    public Label getLabel() {
@@ -192,7 +214,6 @@ public class Procedure extends Scope {
 
    }
 
-
    @Override
    public String toString() {
       return toString(null);
@@ -203,6 +224,9 @@ public class Procedure extends Scope {
       StringBuilder res = new StringBuilder();
       if(declaredInline) {
          res.append("inline ");
+      }
+      if(declaredIntrinsic) {
+         res.append("__intrinsic ");
       }
       if(!callingConvention.equals(CallingConvention.PHI_CALL)) {
          res.append(getCallingConvention().getName()).append(" ");
@@ -220,6 +244,9 @@ public class Procedure extends Scope {
             first = false;
             res.append(parameter.toString(program));
          }
+      }
+      if(isVariableLengthParameterList()) {
+         res.append(", ...");
       }
       res.append(")");
       return res.toString();

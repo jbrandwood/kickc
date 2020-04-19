@@ -460,6 +460,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitParameterDeclVoid(KickCParser.ParameterDeclVoidContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code parameterDeclList}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 */
+	void enterParameterDeclList(KickCParser.ParameterDeclListContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code parameterDeclList}
+	 * labeled alternative in {@link KickCParser#parameterDecl}.
+	 * @param ctx the parse tree
+	 */
+	void exitParameterDeclList(KickCParser.ParameterDeclListContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code globalDirectiveReserve}
 	 * labeled alternative in {@link KickCParser#globalDirective}.
 	 * @param ctx the parse tree
@@ -735,6 +747,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDirectiveInline(KickCParser.DirectiveInlineContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code directiveIntrinsic}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveIntrinsic(KickCParser.DirectiveIntrinsicContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code directiveIntrinsic}
+	 * labeled alternative in {@link KickCParser#directive}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveIntrinsic(KickCParser.DirectiveIntrinsicContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveInterrupt}
 	 * labeled alternative in {@link KickCParser#directive}.

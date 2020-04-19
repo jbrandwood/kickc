@@ -20,35 +20,35 @@ public class KickCParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		TYPEDEFNAME=1, CURLY_BEGIN=2, CURLY_END=3, BRACKET_BEGIN=4, BRACKET_END=5, 
-		PAR_BEGIN=6, PAR_END=7, SEMICOLON=8, COLON=9, COMMA=10, RANGE=11, CONDITION=12, 
-		DOT=13, ARROW=14, PLUS=15, MINUS=16, ASTERISK=17, DIVIDE=18, MODULO=19, 
-		INC=20, DEC=21, AND=22, BIT_NOT=23, BIT_XOR=24, BIT_OR=25, SHIFT_LEFT=26, 
-		SHIFT_RIGHT=27, EQUAL=28, NOT_EQUAL=29, LESS_THAN=30, LESS_THAN_EQUAL=31, 
-		GREATER_THAN_EQUAL=32, GREATER_THAN=33, LOGIC_AND=34, LOGIC_OR=35, ASSIGN=36, 
-		ASSIGN_COMPOUND=37, TYPEDEF=38, RESERVE=39, PC=40, TARGET=41, LINK=42, 
-		CPU=43, CODESEG=44, DATASEG=45, ENCODING=46, CONST=47, EXTERN=48, EXPORT=49, 
-		ALIGN=50, INLINE=51, VOLATILE=52, STATIC=53, INTERRUPT=54, REGISTER=55, 
-		ADDRESS=56, ADDRESS_ZEROPAGE=57, ADDRESS_MAINMEM=58, FORM_SSA=59, FORM_MA=60, 
-		CALLING=61, CALLINGCONVENTION=62, VARMODEL=63, IF=64, ELSE=65, WHILE=66, 
-		DO=67, FOR=68, SWITCH=69, RETURN=70, BREAK=71, CONTINUE=72, ASM=73, DEFAULT=74, 
-		CASE=75, STRUCT=76, ENUM=77, SIZEOF=78, TYPEID=79, DEFINED=80, KICKASM=81, 
-		RESOURCE=82, USES=83, CLOBBERS=84, BYTES=85, CYCLES=86, LOGIC_NOT=87, 
-		SIGNEDNESS=88, SIMPLETYPE=89, BOOLEAN=90, KICKASM_BODY=91, IMPORT=92, 
-		INCLUDE=93, PRAGMA=94, DEFINE=95, DEFINE_CONTINUE=96, UNDEF=97, IFDEF=98, 
-		IFNDEF=99, IFIF=100, ELIF=101, IFELSE=102, ENDIF=103, NUMBER=104, NUMFLOAT=105, 
-		BINFLOAT=106, DECFLOAT=107, HEXFLOAT=108, NUMINT=109, BININTEGER=110, 
-		DECINTEGER=111, HEXINTEGER=112, NAME=113, STRING=114, CHAR=115, WS=116, 
-		COMMENT_LINE=117, COMMENT_BLOCK=118, ASM_BYTE=119, ASM_MNEMONIC=120, ASM_IMM=121, 
-		ASM_COLON=122, ASM_COMMA=123, ASM_PAR_BEGIN=124, ASM_PAR_END=125, ASM_BRACKET_BEGIN=126, 
-		ASM_BRACKET_END=127, ASM_DOT=128, ASM_SHIFT_LEFT=129, ASM_SHIFT_RIGHT=130, 
-		ASM_PLUS=131, ASM_MINUS=132, ASM_LESS_THAN=133, ASM_GREATER_THAN=134, 
-		ASM_MULTIPLY=135, ASM_DIVIDE=136, ASM_CURLY_BEGIN=137, ASM_CURLY_END=138, 
-		ASM_NUMBER=139, ASM_NUMFLOAT=140, ASM_BINFLOAT=141, ASM_DECFLOAT=142, 
-		ASM_HEXFLOAT=143, ASM_NUMINT=144, ASM_BININTEGER=145, ASM_DECINTEGER=146, 
-		ASM_HEXINTEGER=147, ASM_CHAR=148, ASM_MULTI_REL=149, ASM_MULTI_NAME=150, 
-		ASM_NAME=151, ASM_WS=152, ASM_COMMENT_LINE=153, ASM_COMMENT_BLOCK=154, 
-		IMPORT_SYSTEMFILE=155, IMPORT_LOCALFILE=156, IMPORT_WS=157, IMPORT_COMMENT_LINE=158, 
-		IMPORT_COMMENT_BLOCK=159;
+		PAR_BEGIN=6, PAR_END=7, SEMICOLON=8, COLON=9, COMMA=10, RANGE=11, PARAM_LIST=12, 
+		CONDITION=13, DOT=14, ARROW=15, PLUS=16, MINUS=17, ASTERISK=18, DIVIDE=19, 
+		MODULO=20, INC=21, DEC=22, AND=23, BIT_NOT=24, BIT_XOR=25, BIT_OR=26, 
+		SHIFT_LEFT=27, SHIFT_RIGHT=28, EQUAL=29, NOT_EQUAL=30, LESS_THAN=31, LESS_THAN_EQUAL=32, 
+		GREATER_THAN_EQUAL=33, GREATER_THAN=34, LOGIC_AND=35, LOGIC_OR=36, ASSIGN=37, 
+		ASSIGN_COMPOUND=38, TYPEDEF=39, RESERVE=40, PC=41, TARGET=42, LINK=43, 
+		CPU=44, CODESEG=45, DATASEG=46, ENCODING=47, CONST=48, EXTERN=49, EXPORT=50, 
+		ALIGN=51, INLINE=52, VOLATILE=53, STATIC=54, INTERRUPT=55, REGISTER=56, 
+		ADDRESS=57, ADDRESS_ZEROPAGE=58, ADDRESS_MAINMEM=59, FORM_SSA=60, FORM_MA=61, 
+		INTRINSIC=62, CALLING=63, CALLINGCONVENTION=64, VARMODEL=65, IF=66, ELSE=67, 
+		WHILE=68, DO=69, FOR=70, SWITCH=71, RETURN=72, BREAK=73, CONTINUE=74, 
+		ASM=75, DEFAULT=76, CASE=77, STRUCT=78, ENUM=79, SIZEOF=80, TYPEID=81, 
+		DEFINED=82, KICKASM=83, RESOURCE=84, USES=85, CLOBBERS=86, BYTES=87, CYCLES=88, 
+		LOGIC_NOT=89, SIGNEDNESS=90, SIMPLETYPE=91, BOOLEAN=92, KICKASM_BODY=93, 
+		IMPORT=94, INCLUDE=95, PRAGMA=96, DEFINE=97, DEFINE_CONTINUE=98, UNDEF=99, 
+		IFDEF=100, IFNDEF=101, IFIF=102, ELIF=103, IFELSE=104, ENDIF=105, NUMBER=106, 
+		NUMFLOAT=107, BINFLOAT=108, DECFLOAT=109, HEXFLOAT=110, NUMINT=111, BININTEGER=112, 
+		DECINTEGER=113, HEXINTEGER=114, NAME=115, STRING=116, CHAR=117, WS=118, 
+		COMMENT_LINE=119, COMMENT_BLOCK=120, ASM_BYTE=121, ASM_MNEMONIC=122, ASM_IMM=123, 
+		ASM_COLON=124, ASM_COMMA=125, ASM_PAR_BEGIN=126, ASM_PAR_END=127, ASM_BRACKET_BEGIN=128, 
+		ASM_BRACKET_END=129, ASM_DOT=130, ASM_SHIFT_LEFT=131, ASM_SHIFT_RIGHT=132, 
+		ASM_PLUS=133, ASM_MINUS=134, ASM_LESS_THAN=135, ASM_GREATER_THAN=136, 
+		ASM_MULTIPLY=137, ASM_DIVIDE=138, ASM_CURLY_BEGIN=139, ASM_CURLY_END=140, 
+		ASM_NUMBER=141, ASM_NUMFLOAT=142, ASM_BINFLOAT=143, ASM_DECFLOAT=144, 
+		ASM_HEXFLOAT=145, ASM_NUMINT=146, ASM_BININTEGER=147, ASM_DECINTEGER=148, 
+		ASM_HEXINTEGER=149, ASM_CHAR=150, ASM_MULTI_REL=151, ASM_MULTI_NAME=152, 
+		ASM_NAME=153, ASM_WS=154, ASM_COMMENT_LINE=155, ASM_COMMENT_BLOCK=156, 
+		IMPORT_SYSTEMFILE=157, IMPORT_LOCALFILE=158, IMPORT_WS=159, IMPORT_COMMENT_LINE=160, 
+		IMPORT_COMMENT_BLOCK=161;
 	public static final int
 		RULE_file = 0, RULE_asmFile = 1, RULE_declSeq = 2, RULE_declOrImport = 3, 
 		RULE_importDecl = 4, RULE_decl = 5, RULE_declVariables = 6, RULE_declVariableList = 7, 
@@ -81,37 +81,37 @@ public class KickCParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, null, null, null, null, null, null, null, "';'", null, null, "'..'", 
-			"'?'", null, "'->'", null, null, null, null, "'%'", "'++'", "'--'", "'&'", 
-			"'~'", "'^'", "'|'", null, null, "'=='", "'!='", null, "'<='", "'>='", 
-			null, "'&&'", "'||'", "'='", null, "'typedef'", "'reserve'", "'pc'", 
-			"'target'", "'link'", "'cpu'", "'code_seg'", "'data_seg'", "'encoding'", 
+			"'...'", "'?'", null, "'->'", null, null, null, null, "'%'", "'++'", 
+			"'--'", "'&'", "'~'", "'^'", "'|'", null, null, "'=='", "'!='", null, 
+			"'<='", "'>='", null, "'&&'", "'||'", "'='", null, "'typedef'", "'reserve'", 
+			"'pc'", "'target'", "'link'", "'cpu'", "'code_seg'", "'data_seg'", "'encoding'", 
 			"'const'", "'extern'", "'export'", "'align'", "'inline'", "'volatile'", 
 			"'static'", "'interrupt'", "'register'", "'__address'", "'__zp'", "'__mem'", 
-			"'__ssa'", "'__ma'", "'calling'", null, "'var_model'", "'if'", "'else'", 
-			"'while'", "'do'", "'for'", "'switch'", "'return'", "'break'", "'continue'", 
-			"'asm'", "'default'", "'case'", "'struct'", "'enum'", "'sizeof'", "'typeid'", 
-			"'defined'", "'kickasm'", "'resource'", "'uses'", "'clobbers'", "'bytes'", 
-			"'cycles'", "'!'", null, null, null, null, "'#import'", "'#include'", 
-			"'#pragma'", "'#define'", null, "'#undef'", "'#ifdef'", "'#ifndef'", 
-			"'#if'", "'#elif'", "'#else'", "'#endif'", null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, "'.byte'", 
-			null, "'#'"
+			"'__ssa'", "'__ma'", "'__intrinsic'", "'calling'", null, "'var_model'", 
+			"'if'", "'else'", "'while'", "'do'", "'for'", "'switch'", "'return'", 
+			"'break'", "'continue'", "'asm'", "'default'", "'case'", "'struct'", 
+			"'enum'", "'sizeof'", "'typeid'", "'defined'", "'kickasm'", "'resource'", 
+			"'uses'", "'clobbers'", "'bytes'", "'cycles'", "'!'", null, null, null, 
+			null, "'#import'", "'#include'", "'#pragma'", "'#define'", null, "'#undef'", 
+			"'#ifdef'", "'#ifndef'", "'#if'", "'#elif'", "'#else'", "'#endif'", null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, "'.byte'", null, "'#'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, "TYPEDEFNAME", "CURLY_BEGIN", "CURLY_END", "BRACKET_BEGIN", "BRACKET_END", 
-			"PAR_BEGIN", "PAR_END", "SEMICOLON", "COLON", "COMMA", "RANGE", "CONDITION", 
-			"DOT", "ARROW", "PLUS", "MINUS", "ASTERISK", "DIVIDE", "MODULO", "INC", 
-			"DEC", "AND", "BIT_NOT", "BIT_XOR", "BIT_OR", "SHIFT_LEFT", "SHIFT_RIGHT", 
+			"PAR_BEGIN", "PAR_END", "SEMICOLON", "COLON", "COMMA", "RANGE", "PARAM_LIST", 
+			"CONDITION", "DOT", "ARROW", "PLUS", "MINUS", "ASTERISK", "DIVIDE", "MODULO", 
+			"INC", "DEC", "AND", "BIT_NOT", "BIT_XOR", "BIT_OR", "SHIFT_LEFT", "SHIFT_RIGHT", 
 			"EQUAL", "NOT_EQUAL", "LESS_THAN", "LESS_THAN_EQUAL", "GREATER_THAN_EQUAL", 
 			"GREATER_THAN", "LOGIC_AND", "LOGIC_OR", "ASSIGN", "ASSIGN_COMPOUND", 
 			"TYPEDEF", "RESERVE", "PC", "TARGET", "LINK", "CPU", "CODESEG", "DATASEG", 
 			"ENCODING", "CONST", "EXTERN", "EXPORT", "ALIGN", "INLINE", "VOLATILE", 
 			"STATIC", "INTERRUPT", "REGISTER", "ADDRESS", "ADDRESS_ZEROPAGE", "ADDRESS_MAINMEM", 
-			"FORM_SSA", "FORM_MA", "CALLING", "CALLINGCONVENTION", "VARMODEL", "IF", 
-			"ELSE", "WHILE", "DO", "FOR", "SWITCH", "RETURN", "BREAK", "CONTINUE", 
+			"FORM_SSA", "FORM_MA", "INTRINSIC", "CALLING", "CALLINGCONVENTION", "VARMODEL", 
+			"IF", "ELSE", "WHILE", "DO", "FOR", "SWITCH", "RETURN", "BREAK", "CONTINUE", 
 			"ASM", "DEFAULT", "CASE", "STRUCT", "ENUM", "SIZEOF", "TYPEID", "DEFINED", 
 			"KICKASM", "RESOURCE", "USES", "CLOBBERS", "BYTES", "CYCLES", "LOGIC_NOT", 
 			"SIGNEDNESS", "SIMPLETYPE", "BOOLEAN", "KICKASM_BODY", "IMPORT", "INCLUDE", 
@@ -320,7 +320,7 @@ public class KickCParser extends Parser {
 			setState(103);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << TYPEDEF) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 76)) & ~0x3f) == 0 && ((1L << (_la - 76)) & ((1L << (STRUCT - 76)) | (1L << (ENUM - 76)) | (1L << (KICKASM - 76)) | (1L << (SIGNEDNESS - 76)) | (1L << (SIMPLETYPE - 76)) | (1L << (IMPORT - 76)) | (1L << (INCLUDE - 76)) | (1L << (PRAGMA - 76)))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << TYPEDEF) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (KICKASM - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (IMPORT - 64)) | (1L << (INCLUDE - 64)) | (1L << (PRAGMA - 64)))) != 0)) {
 				{
 				{
 				setState(100);
@@ -395,6 +395,7 @@ public class KickCParser extends Parser {
 			case ADDRESS_MAINMEM:
 			case FORM_SSA:
 			case FORM_MA:
+			case INTRINSIC:
 			case CALLINGCONVENTION:
 			case STRUCT:
 			case ENUM:
@@ -1116,7 +1117,7 @@ public class KickCParser extends Parser {
 			setState(203);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0)) {
+			while (((((_la - 40)) & ~0x3f) == 0 && ((1L << (_la - 40)) & ((1L << (RESERVE - 40)) | (1L << (CONST - 40)) | (1L << (EXTERN - 40)) | (1L << (EXPORT - 40)) | (1L << (ALIGN - 40)) | (1L << (INLINE - 40)) | (1L << (VOLATILE - 40)) | (1L << (STATIC - 40)) | (1L << (INTERRUPT - 40)) | (1L << (REGISTER - 40)) | (1L << (ADDRESS - 40)) | (1L << (ADDRESS_ZEROPAGE - 40)) | (1L << (ADDRESS_MAINMEM - 40)) | (1L << (FORM_SSA - 40)) | (1L << (FORM_MA - 40)) | (1L << (INTRINSIC - 40)) | (1L << (CALLINGCONVENTION - 40)))) != 0)) {
 				{
 				{
 				setState(200);
@@ -1132,7 +1133,7 @@ public class KickCParser extends Parser {
 			setState(210);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0)) {
+			while (((((_la - 40)) & ~0x3f) == 0 && ((1L << (_la - 40)) & ((1L << (RESERVE - 40)) | (1L << (CONST - 40)) | (1L << (EXTERN - 40)) | (1L << (EXPORT - 40)) | (1L << (ALIGN - 40)) | (1L << (INLINE - 40)) | (1L << (VOLATILE - 40)) | (1L << (STATIC - 40)) | (1L << (INTERRUPT - 40)) | (1L << (REGISTER - 40)) | (1L << (ADDRESS - 40)) | (1L << (ADDRESS_ZEROPAGE - 40)) | (1L << (ADDRESS_MAINMEM - 40)) | (1L << (FORM_SSA - 40)) | (1L << (FORM_MA - 40)) | (1L << (INTRINSIC - 40)) | (1L << (CALLINGCONVENTION - 40)))) != 0)) {
 				{
 				{
 				setState(207);
@@ -1195,7 +1196,7 @@ public class KickCParser extends Parser {
 			setState(217);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0)) {
+			while (((((_la - 40)) & ~0x3f) == 0 && ((1L << (_la - 40)) & ((1L << (RESERVE - 40)) | (1L << (CONST - 40)) | (1L << (EXTERN - 40)) | (1L << (EXPORT - 40)) | (1L << (ALIGN - 40)) | (1L << (INLINE - 40)) | (1L << (VOLATILE - 40)) | (1L << (STATIC - 40)) | (1L << (INTERRUPT - 40)) | (1L << (REGISTER - 40)) | (1L << (ADDRESS - 40)) | (1L << (ADDRESS_ZEROPAGE - 40)) | (1L << (ADDRESS_MAINMEM - 40)) | (1L << (FORM_SSA - 40)) | (1L << (FORM_MA - 40)) | (1L << (INTRINSIC - 40)) | (1L << (CALLINGCONVENTION - 40)))) != 0)) {
 				{
 				{
 				setState(214);
@@ -1256,7 +1257,7 @@ public class KickCParser extends Parser {
 			setState(222);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (SIZEOF - 78)) | (1L << (TYPEID - 78)) | (1L << (DEFINED - 78)) | (1L << (LOGIC_NOT - 78)) | (1L << (BOOLEAN - 78)) | (1L << (NUMBER - 78)) | (1L << (NAME - 78)) | (1L << (STRING - 78)) | (1L << (CHAR - 78)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 80)) & ~0x3f) == 0 && ((1L << (_la - 80)) & ((1L << (SIZEOF - 80)) | (1L << (TYPEID - 80)) | (1L << (DEFINED - 80)) | (1L << (LOGIC_NOT - 80)) | (1L << (BOOLEAN - 80)) | (1L << (NUMBER - 80)) | (1L << (NAME - 80)) | (1L << (STRING - 80)) | (1L << (CHAR - 80)))) != 0)) {
 				{
 				setState(221);
 				expr(0);
@@ -1410,7 +1411,7 @@ public class KickCParser extends Parser {
 						setState(234);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (SIZEOF - 78)) | (1L << (TYPEID - 78)) | (1L << (DEFINED - 78)) | (1L << (LOGIC_NOT - 78)) | (1L << (BOOLEAN - 78)) | (1L << (NUMBER - 78)) | (1L << (NAME - 78)) | (1L << (STRING - 78)) | (1L << (CHAR - 78)))) != 0)) {
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 80)) & ~0x3f) == 0 && ((1L << (_la - 80)) & ((1L << (SIZEOF - 80)) | (1L << (TYPEID - 80)) | (1L << (DEFINED - 80)) | (1L << (LOGIC_NOT - 80)) | (1L << (BOOLEAN - 80)) | (1L << (NUMBER - 80)) | (1L << (NAME - 80)) | (1L << (STRING - 80)) | (1L << (CHAR - 80)))) != 0)) {
 							{
 							setState(233);
 							expr(0);
@@ -1777,7 +1778,7 @@ public class KickCParser extends Parser {
 						setState(262);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (SIZEOF - 78)) | (1L << (TYPEID - 78)) | (1L << (DEFINED - 78)) | (1L << (LOGIC_NOT - 78)) | (1L << (BOOLEAN - 78)) | (1L << (NUMBER - 78)) | (1L << (NAME - 78)) | (1L << (STRING - 78)) | (1L << (CHAR - 78)))) != 0)) {
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 80)) & ~0x3f) == 0 && ((1L << (_la - 80)) & ((1L << (SIZEOF - 80)) | (1L << (TYPEID - 80)) | (1L << (DEFINED - 80)) | (1L << (LOGIC_NOT - 80)) | (1L << (BOOLEAN - 80)) | (1L << (NUMBER - 80)) | (1L << (NAME - 80)) | (1L << (STRING - 80)) | (1L << (CHAR - 80)))) != 0)) {
 							{
 							setState(261);
 							expr(0);
@@ -1929,7 +1930,7 @@ public class KickCParser extends Parser {
 				setState(284); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 76)) & ~0x3f) == 0 && ((1L << (_la - 76)) & ((1L << (STRUCT - 76)) | (1L << (ENUM - 76)) | (1L << (SIGNEDNESS - 76)) | (1L << (SIMPLETYPE - 76)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)))) != 0) );
 			setState(286);
 			match(CURLY_END);
 			}
@@ -2313,7 +2314,7 @@ public class KickCParser extends Parser {
 			setState(328);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 76)) & ~0x3f) == 0 && ((1L << (_la - 76)) & ((1L << (STRUCT - 76)) | (1L << (ENUM - 76)) | (1L << (SIGNEDNESS - 76)) | (1L << (SIMPLETYPE - 76)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << PARAM_LIST) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)))) != 0)) {
 				{
 				setState(327);
 				parameterListDecl();
@@ -2390,7 +2391,7 @@ public class KickCParser extends Parser {
 			setState(337);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
 				{
 				setState(336);
 				stmtSeq();
@@ -2491,6 +2492,23 @@ public class KickCParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class ParameterDeclListContext extends ParameterDeclContext {
+		public TerminalNode PARAM_LIST() { return getToken(KickCParser.PARAM_LIST, 0); }
+		public ParameterDeclListContext(ParameterDeclContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).enterParameterDeclList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).exitParameterDeclList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof KickCParserVisitor ) return ((KickCParserVisitor<? extends T>)visitor).visitParameterDeclList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class ParameterDeclTypeContext extends ParameterDeclContext {
 		public DeclTypeContext declType() {
 			return getRuleContext(DeclTypeContext.class,0);
@@ -2540,7 +2558,7 @@ public class KickCParser extends Parser {
 		enterRule(_localctx, 50, RULE_parameterDecl);
 		int _la;
 		try {
-			setState(359);
+			setState(360);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,36,_ctx) ) {
 			case 1:
@@ -2573,6 +2591,14 @@ public class KickCParser extends Parser {
 				{
 				setState(358);
 				match(SIMPLETYPE);
+				}
+				break;
+			case 3:
+				_localctx = new ParameterDeclListContext(_localctx);
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(359);
+				match(PARAM_LIST);
 				}
 				break;
 			}
@@ -2829,7 +2855,7 @@ public class KickCParser extends Parser {
 		enterRule(_localctx, 52, RULE_globalDirective);
 		int _la;
 		try {
-			setState(435);
+			setState(436);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,39,_ctx) ) {
 			case 1:
@@ -2837,32 +2863,32 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				{
-				setState(361);
-				match(PRAGMA);
 				setState(362);
+				match(PRAGMA);
+				setState(363);
 				match(RESERVE);
 				}
-				setState(364);
-				match(PAR_BEGIN);
 				setState(365);
+				match(PAR_BEGIN);
+				setState(366);
 				match(NUMBER);
-				setState(370);
+				setState(371);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(366);
-					match(COMMA);
 					setState(367);
+					match(COMMA);
+					setState(368);
 					match(NUMBER);
 					}
 					}
-					setState(372);
+					setState(373);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(373);
+				setState(374);
 				match(PAR_END);
 				}
 				break;
@@ -2871,16 +2897,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 2);
 				{
 				{
-				setState(374);
-				match(PRAGMA);
 				setState(375);
+				match(PRAGMA);
+				setState(376);
 				match(PC);
 				}
-				setState(377);
-				match(PAR_BEGIN);
 				setState(378);
-				match(NUMBER);
+				match(PAR_BEGIN);
 				setState(379);
+				match(NUMBER);
+				setState(380);
 				match(PAR_END);
 				}
 				break;
@@ -2889,16 +2915,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 3);
 				{
 				{
-				setState(380);
-				match(PRAGMA);
 				setState(381);
+				match(PRAGMA);
+				setState(382);
 				match(TARGET);
 				}
-				setState(383);
-				match(PAR_BEGIN);
 				setState(384);
-				match(NAME);
+				match(PAR_BEGIN);
 				setState(385);
+				match(NAME);
+				setState(386);
 				match(PAR_END);
 				}
 				break;
@@ -2907,16 +2933,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 4);
 				{
 				{
-				setState(386);
-				match(PRAGMA);
 				setState(387);
+				match(PRAGMA);
+				setState(388);
 				match(CPU);
 				}
-				setState(389);
-				match(PAR_BEGIN);
 				setState(390);
-				match(NAME);
+				match(PAR_BEGIN);
 				setState(391);
+				match(NAME);
+				setState(392);
 				match(PAR_END);
 				}
 				break;
@@ -2925,16 +2951,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 5);
 				{
 				{
-				setState(392);
-				match(PRAGMA);
 				setState(393);
+				match(PRAGMA);
+				setState(394);
 				match(LINK);
 				}
-				setState(395);
-				match(PAR_BEGIN);
 				setState(396);
-				match(STRING);
+				match(PAR_BEGIN);
 				setState(397);
+				match(STRING);
+				setState(398);
 				match(PAR_END);
 				}
 				break;
@@ -2943,16 +2969,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 6);
 				{
 				{
-				setState(398);
-				match(PRAGMA);
 				setState(399);
+				match(PRAGMA);
+				setState(400);
 				match(CODESEG);
 				}
-				setState(401);
-				match(PAR_BEGIN);
 				setState(402);
-				match(NAME);
+				match(PAR_BEGIN);
 				setState(403);
+				match(NAME);
+				setState(404);
 				match(PAR_END);
 				}
 				break;
@@ -2961,16 +2987,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 7);
 				{
 				{
-				setState(404);
-				match(PRAGMA);
 				setState(405);
+				match(PRAGMA);
+				setState(406);
 				match(DATASEG);
 				}
-				setState(407);
-				match(PAR_BEGIN);
 				setState(408);
-				match(NAME);
+				match(PAR_BEGIN);
 				setState(409);
+				match(NAME);
+				setState(410);
 				match(PAR_END);
 				}
 				break;
@@ -2979,16 +3005,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 8);
 				{
 				{
-				setState(410);
-				match(PRAGMA);
 				setState(411);
+				match(PRAGMA);
+				setState(412);
 				match(ENCODING);
 				}
-				setState(413);
-				match(PAR_BEGIN);
 				setState(414);
-				match(NAME);
+				match(PAR_BEGIN);
 				setState(415);
+				match(NAME);
+				setState(416);
 				match(PAR_END);
 				}
 				break;
@@ -2997,16 +3023,16 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 9);
 				{
 				{
-				setState(416);
-				match(PRAGMA);
 				setState(417);
+				match(PRAGMA);
+				setState(418);
 				match(CALLING);
 				}
-				setState(419);
-				match(PAR_BEGIN);
 				setState(420);
-				match(CALLINGCONVENTION);
+				match(PAR_BEGIN);
 				setState(421);
+				match(CALLINGCONVENTION);
+				setState(422);
 				match(PAR_END);
 				}
 				break;
@@ -3015,32 +3041,32 @@ public class KickCParser extends Parser {
 				enterOuterAlt(_localctx, 10);
 				{
 				{
-				setState(422);
-				match(PRAGMA);
 				setState(423);
+				match(PRAGMA);
+				setState(424);
 				match(VARMODEL);
 				}
-				setState(425);
-				match(PAR_BEGIN);
 				setState(426);
+				match(PAR_BEGIN);
+				setState(427);
 				match(NAME);
-				setState(431);
+				setState(432);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(427);
-					match(COMMA);
 					setState(428);
+					match(COMMA);
+					setState(429);
 					match(NAME);
 					}
 					}
-					setState(433);
+					setState(434);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(434);
+				setState(435);
 				match(PAR_END);
 				}
 				break;
@@ -3278,6 +3304,23 @@ public class KickCParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class DirectiveIntrinsicContext extends DirectiveContext {
+		public TerminalNode INTRINSIC() { return getToken(KickCParser.INTRINSIC, 0); }
+		public DirectiveIntrinsicContext(DirectiveContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).enterDirectiveIntrinsic(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof KickCParserListener ) ((KickCParserListener)listener).exitDirectiveIntrinsic(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof KickCParserVisitor ) return ((KickCParserVisitor<? extends T>)visitor).visitDirectiveIntrinsic(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class DirectiveExternContext extends DirectiveContext {
 		public TerminalNode EXTERN() { return getToken(KickCParser.EXTERN, 0); }
 		public DirectiveExternContext(DirectiveContext ctx) { copyFrom(ctx); }
@@ -3368,14 +3411,14 @@ public class KickCParser extends Parser {
 		enterRule(_localctx, 54, RULE_directive);
 		int _la;
 		try {
-			setState(479);
+			setState(481);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case CONST:
 				_localctx = new DirectiveConstContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(437);
+				setState(438);
 				match(CONST);
 				}
 				break;
@@ -3383,13 +3426,13 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveAlignContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(438);
-				match(ALIGN);
 				setState(439);
-				match(PAR_BEGIN);
+				match(ALIGN);
 				setState(440);
-				match(NUMBER);
+				match(PAR_BEGIN);
 				setState(441);
+				match(NUMBER);
+				setState(442);
 				match(PAR_END);
 				}
 				break;
@@ -3397,20 +3440,20 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveRegisterContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(442);
+				setState(443);
 				match(REGISTER);
-				setState(446);
+				setState(447);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,40,_ctx) ) {
 				case 1:
 					{
-					setState(443);
+					setState(444);
 					match(PAR_BEGIN);
 					{
-					setState(444);
+					setState(445);
 					match(NAME);
 					}
-					setState(445);
+					setState(446);
 					match(PAR_END);
 					}
 					break;
@@ -3421,7 +3464,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveMemoryAreaZpContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(448);
+				setState(449);
 				match(ADDRESS_ZEROPAGE);
 				}
 				break;
@@ -3429,7 +3472,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveMemoryAreaMainContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(449);
+				setState(450);
 				match(ADDRESS_MAINMEM);
 				}
 				break;
@@ -3437,15 +3480,15 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveMemoryAreaAddressContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(450);
-				match(ADDRESS);
 				setState(451);
+				match(ADDRESS);
+				setState(452);
 				match(PAR_BEGIN);
 				{
-				setState(452);
+				setState(453);
 				match(NUMBER);
 				}
-				setState(453);
+				setState(454);
 				match(PAR_END);
 				}
 				break;
@@ -3453,7 +3496,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveVolatileContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(454);
+				setState(455);
 				match(VOLATILE);
 				}
 				break;
@@ -3461,7 +3504,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveStaticContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(455);
+				setState(456);
 				match(STATIC);
 				}
 				break;
@@ -3469,7 +3512,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveFormSsaContext(_localctx);
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(456);
+				setState(457);
 				match(FORM_SSA);
 				}
 				break;
@@ -3477,7 +3520,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveFormMaContext(_localctx);
 				enterOuterAlt(_localctx, 10);
 				{
-				setState(457);
+				setState(458);
 				match(FORM_MA);
 				}
 				break;
@@ -3485,7 +3528,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveExternContext(_localctx);
 				enterOuterAlt(_localctx, 11);
 				{
-				setState(458);
+				setState(459);
 				match(EXTERN);
 				}
 				break;
@@ -3493,7 +3536,7 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveExportContext(_localctx);
 				enterOuterAlt(_localctx, 12);
 				{
-				setState(459);
+				setState(460);
 				match(EXPORT);
 				}
 				break;
@@ -3501,26 +3544,34 @@ public class KickCParser extends Parser {
 				_localctx = new DirectiveInlineContext(_localctx);
 				enterOuterAlt(_localctx, 13);
 				{
-				setState(460);
+				setState(461);
 				match(INLINE);
+				}
+				break;
+			case INTRINSIC:
+				_localctx = new DirectiveIntrinsicContext(_localctx);
+				enterOuterAlt(_localctx, 14);
+				{
+				setState(462);
+				match(INTRINSIC);
 				}
 				break;
 			case INTERRUPT:
 				_localctx = new DirectiveInterruptContext(_localctx);
-				enterOuterAlt(_localctx, 14);
+				enterOuterAlt(_localctx, 15);
 				{
-				setState(461);
+				setState(463);
 				match(INTERRUPT);
-				setState(465);
+				setState(467);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,41,_ctx) ) {
 				case 1:
 					{
-					setState(462);
-					match(PAR_BEGIN);
-					setState(463);
-					match(NAME);
 					setState(464);
+					match(PAR_BEGIN);
+					setState(465);
+					match(NAME);
+					setState(466);
 					match(PAR_END);
 					}
 					break;
@@ -3529,39 +3580,39 @@ public class KickCParser extends Parser {
 				break;
 			case RESERVE:
 				_localctx = new DirectiveReserveZpContext(_localctx);
-				enterOuterAlt(_localctx, 15);
+				enterOuterAlt(_localctx, 16);
 				{
-				setState(467);
-				match(RESERVE);
-				setState(468);
-				match(PAR_BEGIN);
 				setState(469);
+				match(RESERVE);
+				setState(470);
+				match(PAR_BEGIN);
+				setState(471);
 				match(NUMBER);
-				setState(474);
+				setState(476);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(470);
+					setState(472);
 					match(COMMA);
-					setState(471);
+					setState(473);
 					match(NUMBER);
 					}
 					}
-					setState(476);
+					setState(478);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(477);
+				setState(479);
 				match(PAR_END);
 				}
 				break;
 			case CALLINGCONVENTION:
 				_localctx = new DirectiveCallingConventionContext(_localctx);
-				enterOuterAlt(_localctx, 16);
+				enterOuterAlt(_localctx, 17);
 				{
-				setState(478);
+				setState(480);
 				match(CALLINGCONVENTION);
 				}
 				break;
@@ -3613,20 +3664,20 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(482); 
+			setState(484); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(481);
+				setState(483);
 				stmt();
 				}
 				}
-				setState(484); 
+				setState(486); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0) );
 			}
 		}
 		catch (RecognitionException re) {
@@ -3970,16 +4021,16 @@ public class KickCParser extends Parser {
 		enterRule(_localctx, 58, RULE_stmt);
 		int _la;
 		try {
-			setState(570);
+			setState(572);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,52,_ctx) ) {
 			case 1:
 				_localctx = new StmtDeclVarContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(486);
+				setState(488);
 				declVariables();
-				setState(487);
+				setState(489);
 				match(SEMICOLON);
 				}
 				break;
@@ -3987,19 +4038,19 @@ public class KickCParser extends Parser {
 				_localctx = new StmtBlockContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(489);
-				match(CURLY_BEGIN);
 				setState(491);
+				match(CURLY_BEGIN);
+				setState(493);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
 					{
-					setState(490);
+					setState(492);
 					stmtSeq();
 					}
 				}
 
-				setState(493);
+				setState(495);
 				match(CURLY_END);
 				}
 				break;
@@ -4007,9 +4058,9 @@ public class KickCParser extends Parser {
 				_localctx = new StmtExprContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(494);
+				setState(496);
 				commaExpr(0);
-				setState(495);
+				setState(497);
 				match(SEMICOLON);
 				}
 				break;
@@ -4017,24 +4068,24 @@ public class KickCParser extends Parser {
 				_localctx = new StmtIfElseContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(497);
-				match(IF);
-				setState(498);
-				match(PAR_BEGIN);
 				setState(499);
-				commaExpr(0);
+				match(IF);
 				setState(500);
-				match(PAR_END);
+				match(PAR_BEGIN);
 				setState(501);
+				commaExpr(0);
+				setState(502);
+				match(PAR_END);
+				setState(503);
 				stmt();
-				setState(504);
+				setState(506);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,46,_ctx) ) {
 				case 1:
 					{
-					setState(502);
+					setState(504);
 					match(ELSE);
-					setState(503);
+					setState(505);
 					stmt();
 					}
 					break;
@@ -4045,29 +4096,29 @@ public class KickCParser extends Parser {
 				_localctx = new StmtWhileContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(509);
+				setState(511);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0)) {
+				while (((((_la - 40)) & ~0x3f) == 0 && ((1L << (_la - 40)) & ((1L << (RESERVE - 40)) | (1L << (CONST - 40)) | (1L << (EXTERN - 40)) | (1L << (EXPORT - 40)) | (1L << (ALIGN - 40)) | (1L << (INLINE - 40)) | (1L << (VOLATILE - 40)) | (1L << (STATIC - 40)) | (1L << (INTERRUPT - 40)) | (1L << (REGISTER - 40)) | (1L << (ADDRESS - 40)) | (1L << (ADDRESS_ZEROPAGE - 40)) | (1L << (ADDRESS_MAINMEM - 40)) | (1L << (FORM_SSA - 40)) | (1L << (FORM_MA - 40)) | (1L << (INTRINSIC - 40)) | (1L << (CALLINGCONVENTION - 40)))) != 0)) {
 					{
 					{
-					setState(506);
+					setState(508);
 					directive();
 					}
 					}
-					setState(511);
+					setState(513);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(512);
-				match(WHILE);
-				setState(513);
-				match(PAR_BEGIN);
 				setState(514);
-				commaExpr(0);
+				match(WHILE);
 				setState(515);
-				match(PAR_END);
+				match(PAR_BEGIN);
 				setState(516);
+				commaExpr(0);
+				setState(517);
+				match(PAR_END);
+				setState(518);
 				stmt();
 				}
 				break;
@@ -4075,33 +4126,33 @@ public class KickCParser extends Parser {
 				_localctx = new StmtDoWhileContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(521);
+				setState(523);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0)) {
+				while (((((_la - 40)) & ~0x3f) == 0 && ((1L << (_la - 40)) & ((1L << (RESERVE - 40)) | (1L << (CONST - 40)) | (1L << (EXTERN - 40)) | (1L << (EXPORT - 40)) | (1L << (ALIGN - 40)) | (1L << (INLINE - 40)) | (1L << (VOLATILE - 40)) | (1L << (STATIC - 40)) | (1L << (INTERRUPT - 40)) | (1L << (REGISTER - 40)) | (1L << (ADDRESS - 40)) | (1L << (ADDRESS_ZEROPAGE - 40)) | (1L << (ADDRESS_MAINMEM - 40)) | (1L << (FORM_SSA - 40)) | (1L << (FORM_MA - 40)) | (1L << (INTRINSIC - 40)) | (1L << (CALLINGCONVENTION - 40)))) != 0)) {
 					{
 					{
-					setState(518);
+					setState(520);
 					directive();
 					}
 					}
-					setState(523);
+					setState(525);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(524);
-				match(DO);
-				setState(525);
-				stmt();
 				setState(526);
-				match(WHILE);
+				match(DO);
 				setState(527);
-				match(PAR_BEGIN);
+				stmt();
 				setState(528);
-				commaExpr(0);
+				match(WHILE);
 				setState(529);
-				match(PAR_END);
+				match(PAR_BEGIN);
 				setState(530);
+				commaExpr(0);
+				setState(531);
+				match(PAR_END);
+				setState(532);
 				match(SEMICOLON);
 				}
 				break;
@@ -4109,29 +4160,29 @@ public class KickCParser extends Parser {
 				_localctx = new StmtForContext(_localctx);
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(535);
+				setState(537);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0)) {
+				while (((((_la - 40)) & ~0x3f) == 0 && ((1L << (_la - 40)) & ((1L << (RESERVE - 40)) | (1L << (CONST - 40)) | (1L << (EXTERN - 40)) | (1L << (EXPORT - 40)) | (1L << (ALIGN - 40)) | (1L << (INLINE - 40)) | (1L << (VOLATILE - 40)) | (1L << (STATIC - 40)) | (1L << (INTERRUPT - 40)) | (1L << (REGISTER - 40)) | (1L << (ADDRESS - 40)) | (1L << (ADDRESS_ZEROPAGE - 40)) | (1L << (ADDRESS_MAINMEM - 40)) | (1L << (FORM_SSA - 40)) | (1L << (FORM_MA - 40)) | (1L << (INTRINSIC - 40)) | (1L << (CALLINGCONVENTION - 40)))) != 0)) {
 					{
 					{
-					setState(532);
+					setState(534);
 					directive();
 					}
 					}
-					setState(537);
+					setState(539);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(538);
-				match(FOR);
-				setState(539);
-				match(PAR_BEGIN);
 				setState(540);
-				forLoop();
+				match(FOR);
 				setState(541);
-				match(PAR_END);
+				match(PAR_BEGIN);
 				setState(542);
+				forLoop();
+				setState(543);
+				match(PAR_END);
+				setState(544);
 				stmt();
 				}
 				break;
@@ -4139,19 +4190,19 @@ public class KickCParser extends Parser {
 				_localctx = new StmtSwitchContext(_localctx);
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(544);
-				match(SWITCH);
-				setState(545);
-				match(PAR_BEGIN);
 				setState(546);
-				commaExpr(0);
+				match(SWITCH);
 				setState(547);
-				match(PAR_END);
+				match(PAR_BEGIN);
 				setState(548);
-				match(CURLY_BEGIN);
+				commaExpr(0);
 				setState(549);
-				switchCases();
+				match(PAR_END);
 				setState(550);
+				match(CURLY_BEGIN);
+				setState(551);
+				switchCases();
+				setState(552);
 				match(CURLY_END);
 				}
 				break;
@@ -4159,19 +4210,19 @@ public class KickCParser extends Parser {
 				_localctx = new StmtReturnContext(_localctx);
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(552);
-				match(RETURN);
 				setState(554);
+				match(RETURN);
+				setState(556);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (SIZEOF - 78)) | (1L << (TYPEID - 78)) | (1L << (DEFINED - 78)) | (1L << (LOGIC_NOT - 78)) | (1L << (BOOLEAN - 78)) | (1L << (NUMBER - 78)) | (1L << (NAME - 78)) | (1L << (STRING - 78)) | (1L << (CHAR - 78)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 80)) & ~0x3f) == 0 && ((1L << (_la - 80)) & ((1L << (SIZEOF - 80)) | (1L << (TYPEID - 80)) | (1L << (DEFINED - 80)) | (1L << (LOGIC_NOT - 80)) | (1L << (BOOLEAN - 80)) | (1L << (NUMBER - 80)) | (1L << (NAME - 80)) | (1L << (STRING - 80)) | (1L << (CHAR - 80)))) != 0)) {
 					{
-					setState(553);
+					setState(555);
 					commaExpr(0);
 					}
 				}
 
-				setState(556);
+				setState(558);
 				match(SEMICOLON);
 				}
 				break;
@@ -4179,9 +4230,9 @@ public class KickCParser extends Parser {
 				_localctx = new StmtBreakContext(_localctx);
 				enterOuterAlt(_localctx, 10);
 				{
-				setState(557);
+				setState(559);
 				match(BREAK);
-				setState(558);
+				setState(560);
 				match(SEMICOLON);
 				}
 				break;
@@ -4189,9 +4240,9 @@ public class KickCParser extends Parser {
 				_localctx = new StmtContinueContext(_localctx);
 				enterOuterAlt(_localctx, 11);
 				{
-				setState(559);
+				setState(561);
 				match(CONTINUE);
-				setState(560);
+				setState(562);
 				match(SEMICOLON);
 				}
 				break;
@@ -4199,23 +4250,23 @@ public class KickCParser extends Parser {
 				_localctx = new StmtAsmContext(_localctx);
 				enterOuterAlt(_localctx, 12);
 				{
-				setState(561);
-				match(ASM);
 				setState(563);
+				match(ASM);
+				setState(565);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==PAR_BEGIN) {
 					{
-					setState(562);
+					setState(564);
 					asmDirectives();
 					}
 				}
 
-				setState(565);
-				match(CURLY_BEGIN);
-				setState(566);
-				asmLines();
 				setState(567);
+				match(CURLY_BEGIN);
+				setState(568);
+				asmLines();
+				setState(569);
 				match(ASM_CURLY_END);
 				}
 				break;
@@ -4223,7 +4274,7 @@ public class KickCParser extends Parser {
 				_localctx = new StmtDeclKasmContext(_localctx);
 				enterOuterAlt(_localctx, 13);
 				{
-				setState(569);
+				setState(571);
 				declKasm();
 				}
 				break;
@@ -4278,35 +4329,35 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(573); 
+			setState(575); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(572);
+				setState(574);
 				switchCase();
 				}
 				}
-				setState(575); 
+				setState(577); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==CASE );
-			setState(582);
+			setState(584);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==DEFAULT) {
 				{
-				setState(577);
+				setState(579);
 				match(DEFAULT);
-				setState(578);
-				match(COLON);
 				setState(580);
+				match(COLON);
+				setState(582);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
 					{
-					setState(579);
+					setState(581);
 					stmtSeq();
 					}
 				}
@@ -4362,18 +4413,18 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(584);
-			match(CASE);
-			setState(585);
-			expr(0);
 			setState(586);
-			match(COLON);
+			match(CASE);
+			setState(587);
+			expr(0);
 			setState(588);
+			match(COLON);
+			setState(590);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (IF - 64)) | (1L << (WHILE - 64)) | (1L << (DO - 64)) | (1L << (FOR - 64)) | (1L << (SWITCH - 64)) | (1L << (RETURN - 64)) | (1L << (BREAK - 64)) | (1L << (CONTINUE - 64)) | (1L << (ASM - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIZEOF - 64)) | (1L << (TYPEID - 64)) | (1L << (DEFINED - 64)) | (1L << (KICKASM - 64)) | (1L << (LOGIC_NOT - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)) | (1L << (BOOLEAN - 64)) | (1L << (NUMBER - 64)) | (1L << (NAME - 64)) | (1L << (STRING - 64)) | (1L << (CHAR - 64)))) != 0)) {
 				{
-				setState(587);
+				setState(589);
 				stmtSeq();
 				}
 			}
@@ -4471,27 +4522,27 @@ public class KickCParser extends Parser {
 		enterRule(_localctx, 64, RULE_forLoop);
 		int _la;
 		try {
-			setState(612);
+			setState(614);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,60,_ctx) ) {
 			case 1:
 				_localctx = new ForClassicContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(590);
-				forClassicInit();
-				setState(591);
-				match(SEMICOLON);
 				setState(592);
-				commaExpr(0);
+				forClassicInit();
 				setState(593);
 				match(SEMICOLON);
+				setState(594);
+				commaExpr(0);
 				setState(595);
+				match(SEMICOLON);
+				setState(597);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (SIZEOF - 78)) | (1L << (TYPEID - 78)) | (1L << (DEFINED - 78)) | (1L << (LOGIC_NOT - 78)) | (1L << (BOOLEAN - 78)) | (1L << (NUMBER - 78)) | (1L << (NAME - 78)) | (1L << (STRING - 78)) | (1L << (CHAR - 78)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 80)) & ~0x3f) == 0 && ((1L << (_la - 80)) & ((1L << (SIZEOF - 80)) | (1L << (TYPEID - 80)) | (1L << (DEFINED - 80)) | (1L << (LOGIC_NOT - 80)) | (1L << (BOOLEAN - 80)) | (1L << (NUMBER - 80)) | (1L << (NAME - 80)) | (1L << (STRING - 80)) | (1L << (CHAR - 80)))) != 0)) {
 					{
-					setState(594);
+					setState(596);
 					commaExpr(0);
 					}
 				}
@@ -4502,39 +4553,39 @@ public class KickCParser extends Parser {
 				_localctx = new ForRangeContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(604);
+				setState(606);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 76)) & ~0x3f) == 0 && ((1L << (_la - 76)) & ((1L << (STRUCT - 76)) | (1L << (ENUM - 76)) | (1L << (SIGNEDNESS - 76)) | (1L << (SIMPLETYPE - 76)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)))) != 0)) {
 					{
-					setState(597);
+					setState(599);
 					declType();
-					setState(601);
+					setState(603);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 					while (_la==ASTERISK) {
 						{
 						{
-						setState(598);
+						setState(600);
 						declPointer();
 						}
 						}
-						setState(603);
+						setState(605);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 					}
 					}
 				}
 
-				setState(606);
-				match(NAME);
-				setState(607);
-				match(COLON);
 				setState(608);
-				expr(0);
+				match(NAME);
 				setState(609);
-				match(RANGE);
+				match(COLON);
 				setState(610);
+				expr(0);
+				setState(611);
+				match(RANGE);
+				setState(612);
 				expr(0);
 				}
 				break;
@@ -4606,19 +4657,19 @@ public class KickCParser extends Parser {
 		enterRule(_localctx, 66, RULE_forClassicInit);
 		int _la;
 		try {
-			setState(618);
+			setState(620);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,62,_ctx) ) {
 			case 1:
 				_localctx = new ForClassicInitDeclContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(615);
+				setState(617);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << CALLINGCONVENTION))) != 0) || ((((_la - 76)) & ~0x3f) == 0 && ((1L << (_la - 76)) & ((1L << (STRUCT - 76)) | (1L << (ENUM - 76)) | (1L << (SIGNEDNESS - 76)) | (1L << (SIMPLETYPE - 76)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TYPEDEFNAME) | (1L << PAR_BEGIN) | (1L << RESERVE) | (1L << CONST) | (1L << EXTERN) | (1L << EXPORT) | (1L << ALIGN) | (1L << INLINE) | (1L << VOLATILE) | (1L << STATIC) | (1L << INTERRUPT) | (1L << REGISTER) | (1L << ADDRESS) | (1L << ADDRESS_ZEROPAGE) | (1L << ADDRESS_MAINMEM) | (1L << FORM_SSA) | (1L << FORM_MA) | (1L << INTRINSIC))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (CALLINGCONVENTION - 64)) | (1L << (STRUCT - 64)) | (1L << (ENUM - 64)) | (1L << (SIGNEDNESS - 64)) | (1L << (SIMPLETYPE - 64)))) != 0)) {
 					{
-					setState(614);
+					setState(616);
 					declVariables();
 					}
 				}
@@ -4629,7 +4680,7 @@ public class KickCParser extends Parser {
 				_localctx = new ForClassicInitExprContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(617);
+				setState(619);
 				commaExpr(0);
 				}
 				break;
@@ -4720,11 +4771,11 @@ public class KickCParser extends Parser {
 			_ctx = _localctx;
 			_prevctx = _localctx;
 
-			setState(621);
+			setState(623);
 			expr(0);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(628);
+			setState(630);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,63,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -4735,16 +4786,16 @@ public class KickCParser extends Parser {
 					{
 					_localctx = new CommaSimpleContext(new CommaExprContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_commaExpr);
-					setState(623);
-					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-					setState(624);
-					match(COMMA);
 					setState(625);
+					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
+					setState(626);
+					match(COMMA);
+					setState(627);
 					expr(0);
 					}
 					} 
 				}
-				setState(630);
+				setState(632);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,63,_ctx);
 			}
@@ -5308,7 +5359,7 @@ public class KickCParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(693);
+			setState(695);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,70,_ctx) ) {
 			case 1:
@@ -5317,11 +5368,11 @@ public class KickCParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(632);
-				match(PAR_BEGIN);
-				setState(633);
-				commaExpr(0);
 				setState(634);
+				match(PAR_BEGIN);
+				setState(635);
+				commaExpr(0);
+				setState(636);
 				match(PAR_END);
 				}
 				break;
@@ -5330,27 +5381,27 @@ public class KickCParser extends Parser {
 				_localctx = new ExprSizeOfContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(636);
+				setState(638);
 				match(SIZEOF);
-				setState(637);
+				setState(639);
 				match(PAR_BEGIN);
-				setState(640);
+				setState(642);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,64,_ctx) ) {
 				case 1:
 					{
-					setState(638);
+					setState(640);
 					expr(0);
 					}
 					break;
 				case 2:
 					{
-					setState(639);
+					setState(641);
 					typeSpecifier(0);
 					}
 					break;
 				}
-				setState(642);
+				setState(644);
 				match(PAR_END);
 				}
 				break;
@@ -5359,27 +5410,27 @@ public class KickCParser extends Parser {
 				_localctx = new ExprTypeIdContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(644);
+				setState(646);
 				match(TYPEID);
-				setState(645);
+				setState(647);
 				match(PAR_BEGIN);
-				setState(648);
+				setState(650);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,65,_ctx) ) {
 				case 1:
 					{
-					setState(646);
+					setState(648);
 					expr(0);
 					}
 					break;
 				case 2:
 					{
-					setState(647);
+					setState(649);
 					typeSpecifier(0);
 					}
 					break;
 				}
-				setState(650);
+				setState(652);
 				match(PAR_END);
 				}
 				break;
@@ -5388,26 +5439,26 @@ public class KickCParser extends Parser {
 				_localctx = new ExprDefinedContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(652);
-				match(DEFINED);
 				setState(654);
+				match(DEFINED);
+				setState(656);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if (_la==PAR_BEGIN) {
 					{
-					setState(653);
+					setState(655);
 					match(PAR_BEGIN);
 					}
 				}
 
-				setState(656);
-				match(NAME);
 				setState(658);
+				match(NAME);
+				setState(660);
 				_errHandler.sync(this);
 				switch ( getInterpreter().adaptivePredict(_input,67,_ctx) ) {
 				case 1:
 					{
-					setState(657);
+					setState(659);
 					match(PAR_END);
 					}
 					break;
@@ -5419,13 +5470,13 @@ public class KickCParser extends Parser {
 				_localctx = new ExprCastContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(660);
-				match(PAR_BEGIN);
-				setState(661);
-				typeSpecifier(0);
 				setState(662);
-				match(PAR_END);
+				match(PAR_BEGIN);
 				setState(663);
+				typeSpecifier(0);
+				setState(664);
+				match(PAR_END);
+				setState(665);
 				expr(24);
 				}
 				break;
@@ -5434,7 +5485,7 @@ public class KickCParser extends Parser {
 				_localctx = new ExprPreModContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(665);
+				setState(667);
 				_la = _input.LA(1);
 				if ( !(_la==INC || _la==DEC) ) {
 				_errHandler.recoverInline(this);
@@ -5444,7 +5495,7 @@ public class KickCParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(666);
+				setState(668);
 				expr(23);
 				}
 				break;
@@ -5453,9 +5504,9 @@ public class KickCParser extends Parser {
 				_localctx = new ExprPtrContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(667);
+				setState(669);
 				match(ASTERISK);
-				setState(668);
+				setState(670);
 				expr(21);
 				}
 				break;
@@ -5464,7 +5515,7 @@ public class KickCParser extends Parser {
 				_localctx = new ExprUnaryContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(669);
+				setState(671);
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << AND) | (1L << BIT_NOT))) != 0) || _la==LOGIC_NOT) ) {
 				_errHandler.recoverInline(this);
@@ -5474,7 +5525,7 @@ public class KickCParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(670);
+				setState(672);
 				expr(20);
 				}
 				break;
@@ -5483,7 +5534,7 @@ public class KickCParser extends Parser {
 				_localctx = new ExprUnaryContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(671);
+				setState(673);
 				_la = _input.LA(1);
 				if ( !(_la==LESS_THAN || _la==GREATER_THAN) ) {
 				_errHandler.recoverInline(this);
@@ -5493,7 +5544,7 @@ public class KickCParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(672);
+				setState(674);
 				expr(16);
 				}
 				break;
@@ -5502,27 +5553,27 @@ public class KickCParser extends Parser {
 				_localctx = new InitListContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(673);
+				setState(675);
 				match(CURLY_BEGIN);
-				setState(674);
+				setState(676);
 				expr(0);
-				setState(679);
+				setState(681);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(675);
+					setState(677);
 					match(COMMA);
-					setState(676);
+					setState(678);
 					expr(0);
 					}
 					}
-					setState(681);
+					setState(683);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(682);
+				setState(684);
 				match(CURLY_END);
 				}
 				break;
@@ -5531,7 +5582,7 @@ public class KickCParser extends Parser {
 				_localctx = new ExprIdContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(684);
+				setState(686);
 				match(NAME);
 				}
 				break;
@@ -5540,7 +5591,7 @@ public class KickCParser extends Parser {
 				_localctx = new ExprNumberContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(685);
+				setState(687);
 				match(NUMBER);
 				}
 				break;
@@ -5549,7 +5600,7 @@ public class KickCParser extends Parser {
 				_localctx = new ExprStringContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(687); 
+				setState(689); 
 				_errHandler.sync(this);
 				_alt = 1;
 				do {
@@ -5557,7 +5608,7 @@ public class KickCParser extends Parser {
 					case 1:
 						{
 						{
-						setState(686);
+						setState(688);
 						match(STRING);
 						}
 						}
@@ -5565,7 +5616,7 @@ public class KickCParser extends Parser {
 					default:
 						throw new NoViableAltException(this);
 					}
-					setState(689); 
+					setState(691); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,69,_ctx);
 				} while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
@@ -5576,7 +5627,7 @@ public class KickCParser extends Parser {
 				_localctx = new ExprCharContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(691);
+				setState(693);
 				match(CHAR);
 				}
 				break;
@@ -5585,13 +5636,13 @@ public class KickCParser extends Parser {
 				_localctx = new ExprBoolContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(692);
+				setState(694);
 				match(BOOLEAN);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(755);
+			setState(757);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,73,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -5599,16 +5650,16 @@ public class KickCParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(753);
+					setState(755);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,72,_ctx) ) {
 					case 1:
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(695);
+						setState(697);
 						if (!(precpred(_ctx, 19))) throw new FailedPredicateException(this, "precpred(_ctx, 19)");
-						setState(696);
+						setState(698);
 						_la = _input.LA(1);
 						if ( !(_la==SHIFT_LEFT || _la==SHIFT_RIGHT) ) {
 						_errHandler.recoverInline(this);
@@ -5618,7 +5669,7 @@ public class KickCParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(697);
+						setState(699);
 						expr(20);
 						}
 						break;
@@ -5626,9 +5677,9 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(698);
+						setState(700);
 						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
-						setState(699);
+						setState(701);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ASTERISK) | (1L << DIVIDE) | (1L << MODULO))) != 0)) ) {
 						_errHandler.recoverInline(this);
@@ -5638,7 +5689,7 @@ public class KickCParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(700);
+						setState(702);
 						expr(19);
 						}
 						break;
@@ -5646,9 +5697,9 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(701);
+						setState(703);
 						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
-						setState(702);
+						setState(704);
 						_la = _input.LA(1);
 						if ( !(_la==PLUS || _la==MINUS) ) {
 						_errHandler.recoverInline(this);
@@ -5658,7 +5709,7 @@ public class KickCParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(703);
+						setState(705);
 						expr(18);
 						}
 						break;
@@ -5666,9 +5717,9 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(704);
+						setState(706);
 						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
-						setState(705);
+						setState(707);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUAL) | (1L << NOT_EQUAL) | (1L << LESS_THAN) | (1L << LESS_THAN_EQUAL) | (1L << GREATER_THAN_EQUAL) | (1L << GREATER_THAN))) != 0)) ) {
 						_errHandler.recoverInline(this);
@@ -5678,7 +5729,7 @@ public class KickCParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(706);
+						setState(708);
 						expr(16);
 						}
 						break;
@@ -5686,13 +5737,13 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(707);
+						setState(709);
 						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
 						{
-						setState(708);
+						setState(710);
 						match(AND);
 						}
-						setState(709);
+						setState(711);
 						expr(15);
 						}
 						break;
@@ -5700,13 +5751,13 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(710);
+						setState(712);
 						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
 						{
-						setState(711);
+						setState(713);
 						match(BIT_XOR);
 						}
-						setState(712);
+						setState(714);
 						expr(14);
 						}
 						break;
@@ -5714,13 +5765,13 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(713);
+						setState(715);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
 						{
-						setState(714);
+						setState(716);
 						match(BIT_OR);
 						}
-						setState(715);
+						setState(717);
 						expr(13);
 						}
 						break;
@@ -5728,13 +5779,13 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(716);
+						setState(718);
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
 						{
-						setState(717);
+						setState(719);
 						match(LOGIC_AND);
 						}
-						setState(718);
+						setState(720);
 						expr(12);
 						}
 						break;
@@ -5742,13 +5793,13 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprBinaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(719);
+						setState(721);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						{
-						setState(720);
+						setState(722);
 						match(LOGIC_OR);
 						}
-						setState(721);
+						setState(723);
 						expr(11);
 						}
 						break;
@@ -5756,15 +5807,15 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprTernaryContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(722);
-						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
-						setState(723);
-						match(CONDITION);
 						setState(724);
-						expr(0);
+						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(725);
-						match(COLON);
+						match(CONDITION);
 						setState(726);
+						expr(0);
+						setState(727);
+						match(COLON);
+						setState(728);
 						expr(10);
 						}
 						break;
@@ -5772,11 +5823,11 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprAssignmentContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(728);
-						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
-						setState(729);
-						match(ASSIGN);
 						setState(730);
+						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
+						setState(731);
+						match(ASSIGN);
+						setState(732);
 						expr(8);
 						}
 						break;
@@ -5784,11 +5835,11 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprAssignmentCompoundContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(731);
-						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
-						setState(732);
-						match(ASSIGN_COMPOUND);
 						setState(733);
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
+						setState(734);
+						match(ASSIGN_COMPOUND);
+						setState(735);
 						expr(7);
 						}
 						break;
@@ -5796,11 +5847,11 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprDotContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(734);
-						if (!(precpred(_ctx, 31))) throw new FailedPredicateException(this, "precpred(_ctx, 31)");
-						setState(735);
-						match(DOT);
 						setState(736);
+						if (!(precpred(_ctx, 31))) throw new FailedPredicateException(this, "precpred(_ctx, 31)");
+						setState(737);
+						match(DOT);
+						setState(738);
 						match(NAME);
 						}
 						break;
@@ -5808,11 +5859,11 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprArrowContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(737);
-						if (!(precpred(_ctx, 30))) throw new FailedPredicateException(this, "precpred(_ctx, 30)");
-						setState(738);
-						match(ARROW);
 						setState(739);
+						if (!(precpred(_ctx, 30))) throw new FailedPredicateException(this, "precpred(_ctx, 30)");
+						setState(740);
+						match(ARROW);
+						setState(741);
 						match(NAME);
 						}
 						break;
@@ -5820,21 +5871,21 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprCallContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(740);
+						setState(742);
 						if (!(precpred(_ctx, 29))) throw new FailedPredicateException(this, "precpred(_ctx, 29)");
-						setState(741);
-						match(PAR_BEGIN);
 						setState(743);
+						match(PAR_BEGIN);
+						setState(745);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
-						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 78)) & ~0x3f) == 0 && ((1L << (_la - 78)) & ((1L << (SIZEOF - 78)) | (1L << (TYPEID - 78)) | (1L << (DEFINED - 78)) | (1L << (LOGIC_NOT - 78)) | (1L << (BOOLEAN - 78)) | (1L << (NUMBER - 78)) | (1L << (NAME - 78)) | (1L << (STRING - 78)) | (1L << (CHAR - 78)))) != 0)) {
+						if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << CURLY_BEGIN) | (1L << PAR_BEGIN) | (1L << PLUS) | (1L << MINUS) | (1L << ASTERISK) | (1L << INC) | (1L << DEC) | (1L << AND) | (1L << BIT_NOT) | (1L << LESS_THAN) | (1L << GREATER_THAN))) != 0) || ((((_la - 80)) & ~0x3f) == 0 && ((1L << (_la - 80)) & ((1L << (SIZEOF - 80)) | (1L << (TYPEID - 80)) | (1L << (DEFINED - 80)) | (1L << (LOGIC_NOT - 80)) | (1L << (BOOLEAN - 80)) | (1L << (NUMBER - 80)) | (1L << (NAME - 80)) | (1L << (STRING - 80)) | (1L << (CHAR - 80)))) != 0)) {
 							{
-							setState(742);
+							setState(744);
 							parameterList();
 							}
 						}
 
-						setState(745);
+						setState(747);
 						match(PAR_END);
 						}
 						break;
@@ -5842,13 +5893,13 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprArrayContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(746);
-						if (!(precpred(_ctx, 25))) throw new FailedPredicateException(this, "precpred(_ctx, 25)");
-						setState(747);
-						match(BRACKET_BEGIN);
 						setState(748);
-						commaExpr(0);
+						if (!(precpred(_ctx, 25))) throw new FailedPredicateException(this, "precpred(_ctx, 25)");
 						setState(749);
+						match(BRACKET_BEGIN);
+						setState(750);
+						commaExpr(0);
+						setState(751);
 						match(BRACKET_END);
 						}
 						break;
@@ -5856,9 +5907,9 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new ExprPostModContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(751);
+						setState(753);
 						if (!(precpred(_ctx, 22))) throw new FailedPredicateException(this, "precpred(_ctx, 22)");
-						setState(752);
+						setState(754);
 						_la = _input.LA(1);
 						if ( !(_la==INC || _la==DEC) ) {
 						_errHandler.recoverInline(this);
@@ -5873,7 +5924,7 @@ public class KickCParser extends Parser {
 					}
 					} 
 				}
-				setState(757);
+				setState(759);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,73,_ctx);
 			}
@@ -5927,21 +5978,21 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(758);
+			setState(760);
 			expr(0);
-			setState(763);
+			setState(765);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(759);
+				setState(761);
 				match(COMMA);
-				setState(760);
+				setState(762);
 				expr(0);
 				}
 				}
-				setState(765);
+				setState(767);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -5990,19 +6041,19 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(766);
-			match(KICKASM);
 			setState(768);
+			match(KICKASM);
+			setState(770);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==PAR_BEGIN) {
 				{
-				setState(767);
+				setState(769);
 				asmDirectives();
 				}
 			}
 
-			setState(770);
+			setState(772);
 			match(KICKASM_BODY);
 			}
 		}
@@ -6056,27 +6107,27 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(772);
+			setState(774);
 			match(PAR_BEGIN);
-			setState(773);
+			setState(775);
 			asmDirective();
-			setState(778);
+			setState(780);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(774);
+				setState(776);
 				match(COMMA);
-				setState(775);
+				setState(777);
 				asmDirective();
 				}
 				}
-				setState(780);
+				setState(782);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(781);
+			setState(783);
 			match(PAR_END);
 			}
 		}
@@ -6222,16 +6273,16 @@ public class KickCParser extends Parser {
 		AsmDirectiveContext _localctx = new AsmDirectiveContext(_ctx, getState());
 		enterRule(_localctx, 78, RULE_asmDirective);
 		try {
-			setState(798);
+			setState(800);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case RESOURCE:
 				_localctx = new AsmDirectiveResourceContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(783);
+				setState(785);
 				match(RESOURCE);
-				setState(784);
+				setState(786);
 				match(STRING);
 				}
 				break;
@@ -6239,9 +6290,9 @@ public class KickCParser extends Parser {
 				_localctx = new AsmDirectiveUsesContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(785);
+				setState(787);
 				match(USES);
-				setState(786);
+				setState(788);
 				match(NAME);
 				}
 				break;
@@ -6249,9 +6300,9 @@ public class KickCParser extends Parser {
 				_localctx = new AsmDirectiveClobberContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(787);
+				setState(789);
 				match(CLOBBERS);
-				setState(788);
+				setState(790);
 				match(STRING);
 				}
 				break;
@@ -6259,9 +6310,9 @@ public class KickCParser extends Parser {
 				_localctx = new AsmDirectiveBytesContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(789);
+				setState(791);
 				match(BYTES);
-				setState(790);
+				setState(792);
 				expr(0);
 				}
 				break;
@@ -6269,9 +6320,9 @@ public class KickCParser extends Parser {
 				_localctx = new AsmDirectiveCyclesContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(791);
+				setState(793);
 				match(CYCLES);
-				setState(792);
+				setState(794);
 				expr(0);
 				}
 				break;
@@ -6279,14 +6330,14 @@ public class KickCParser extends Parser {
 				_localctx = new AsmDirectiveAddressContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(793);
+				setState(795);
 				match(PC);
-				setState(796);
+				setState(798);
 				_errHandler.sync(this);
 				switch (_input.LA(1)) {
 				case INLINE:
 					{
-					setState(794);
+					setState(796);
 					match(INLINE);
 					}
 					break;
@@ -6311,7 +6362,7 @@ public class KickCParser extends Parser {
 				case STRING:
 				case CHAR:
 					{
-					setState(795);
+					setState(797);
 					expr(0);
 					}
 					break;
@@ -6368,17 +6419,17 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(803);
+			setState(805);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (((((_la - 119)) & ~0x3f) == 0 && ((1L << (_la - 119)) & ((1L << (ASM_BYTE - 119)) | (1L << (ASM_MNEMONIC - 119)) | (1L << (ASM_MULTI_NAME - 119)) | (1L << (ASM_NAME - 119)))) != 0)) {
+			while (((((_la - 121)) & ~0x3f) == 0 && ((1L << (_la - 121)) & ((1L << (ASM_BYTE - 121)) | (1L << (ASM_MNEMONIC - 121)) | (1L << (ASM_MULTI_NAME - 121)) | (1L << (ASM_NAME - 121)))) != 0)) {
 				{
 				{
-				setState(800);
+				setState(802);
 				asmLine();
 				}
 				}
-				setState(805);
+				setState(807);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -6428,28 +6479,28 @@ public class KickCParser extends Parser {
 		AsmLineContext _localctx = new AsmLineContext(_ctx, getState());
 		enterRule(_localctx, 82, RULE_asmLine);
 		try {
-			setState(809);
+			setState(811);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ASM_MULTI_NAME:
 			case ASM_NAME:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(806);
+				setState(808);
 				asmLabel();
 				}
 				break;
 			case ASM_MNEMONIC:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(807);
+				setState(809);
 				asmInstruction();
 				}
 				break;
 			case ASM_BYTE:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(808);
+				setState(810);
 				asmBytes();
 				}
 				break;
@@ -6520,16 +6571,16 @@ public class KickCParser extends Parser {
 		AsmLabelContext _localctx = new AsmLabelContext(_ctx, getState());
 		enterRule(_localctx, 84, RULE_asmLabel);
 		try {
-			setState(815);
+			setState(817);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ASM_NAME:
 				_localctx = new AsmLabelNameContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(811);
+				setState(813);
 				match(ASM_NAME);
-				setState(812);
+				setState(814);
 				match(ASM_COLON);
 				}
 				break;
@@ -6537,9 +6588,9 @@ public class KickCParser extends Parser {
 				_localctx = new AsmLabelMultiContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(813);
+				setState(815);
 				match(ASM_MULTI_NAME);
-				setState(814);
+				setState(816);
 				match(ASM_COLON);
 				}
 				break;
@@ -6588,14 +6639,14 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(817);
-			match(ASM_MNEMONIC);
 			setState(819);
+			match(ASM_MNEMONIC);
+			setState(821);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,82,_ctx) ) {
 			case 1:
 				{
-				setState(818);
+				setState(820);
 				asmParamMode();
 				}
 				break;
@@ -6651,23 +6702,23 @@ public class KickCParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(821);
+			setState(823);
 			match(ASM_BYTE);
-			setState(822);
+			setState(824);
 			asmExpr(0);
-			setState(827);
+			setState(829);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==ASM_COMMA) {
 				{
 				{
-				setState(823);
+				setState(825);
 				match(ASM_COMMA);
-				setState(824);
+				setState(826);
 				asmExpr(0);
 				}
 				}
-				setState(829);
+				setState(831);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -6827,14 +6878,14 @@ public class KickCParser extends Parser {
 		AsmParamModeContext _localctx = new AsmParamModeContext(_ctx, getState());
 		enterRule(_localctx, 90, RULE_asmParamMode);
 		try {
-			setState(853);
+			setState(855);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,84,_ctx) ) {
 			case 1:
 				_localctx = new AsmModeAbsContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(830);
+				setState(832);
 				asmExpr(0);
 				}
 				break;
@@ -6842,9 +6893,9 @@ public class KickCParser extends Parser {
 				_localctx = new AsmModeImmContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(831);
+				setState(833);
 				match(ASM_IMM);
-				setState(832);
+				setState(834);
 				asmExpr(0);
 				}
 				break;
@@ -6852,11 +6903,11 @@ public class KickCParser extends Parser {
 				_localctx = new AsmModeAbsXYContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(833);
-				asmExpr(0);
-				setState(834);
-				match(ASM_COMMA);
 				setState(835);
+				asmExpr(0);
+				setState(836);
+				match(ASM_COMMA);
+				setState(837);
 				match(ASM_NAME);
 				}
 				break;
@@ -6864,15 +6915,15 @@ public class KickCParser extends Parser {
 				_localctx = new AsmModeIndIdxXYContext(_localctx);
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(837);
-				match(ASM_PAR_BEGIN);
-				setState(838);
-				asmExpr(0);
 				setState(839);
-				match(ASM_PAR_END);
+				match(ASM_PAR_BEGIN);
 				setState(840);
-				match(ASM_COMMA);
+				asmExpr(0);
 				setState(841);
+				match(ASM_PAR_END);
+				setState(842);
+				match(ASM_COMMA);
+				setState(843);
 				match(ASM_NAME);
 				}
 				break;
@@ -6880,15 +6931,15 @@ public class KickCParser extends Parser {
 				_localctx = new AsmModeIdxIndXYContext(_localctx);
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(843);
-				match(ASM_PAR_BEGIN);
-				setState(844);
-				asmExpr(0);
 				setState(845);
-				match(ASM_COMMA);
+				match(ASM_PAR_BEGIN);
 				setState(846);
-				match(ASM_NAME);
+				asmExpr(0);
 				setState(847);
+				match(ASM_COMMA);
+				setState(848);
+				match(ASM_NAME);
+				setState(849);
 				match(ASM_PAR_END);
 				}
 				break;
@@ -6896,11 +6947,11 @@ public class KickCParser extends Parser {
 				_localctx = new AsmModeIndContext(_localctx);
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(849);
-				match(ASM_PAR_BEGIN);
-				setState(850);
-				asmExpr(0);
 				setState(851);
+				match(ASM_PAR_BEGIN);
+				setState(852);
+				asmExpr(0);
+				setState(853);
 				match(ASM_PAR_END);
 				}
 				break;
@@ -7105,7 +7156,7 @@ public class KickCParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(869);
+			setState(871);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ASM_BRACKET_BEGIN:
@@ -7114,11 +7165,11 @@ public class KickCParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 
-				setState(856);
-				match(ASM_BRACKET_BEGIN);
-				setState(857);
-				asmExpr(0);
 				setState(858);
+				match(ASM_BRACKET_BEGIN);
+				setState(859);
+				asmExpr(0);
+				setState(860);
 				match(ASM_BRACKET_END);
 				}
 				break;
@@ -7130,9 +7181,9 @@ public class KickCParser extends Parser {
 				_localctx = new AsmExprUnaryContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(860);
+				setState(862);
 				_la = _input.LA(1);
-				if ( !(((((_la - 131)) & ~0x3f) == 0 && ((1L << (_la - 131)) & ((1L << (ASM_PLUS - 131)) | (1L << (ASM_MINUS - 131)) | (1L << (ASM_LESS_THAN - 131)) | (1L << (ASM_GREATER_THAN - 131)))) != 0)) ) {
+				if ( !(((((_la - 133)) & ~0x3f) == 0 && ((1L << (_la - 133)) & ((1L << (ASM_PLUS - 133)) | (1L << (ASM_MINUS - 133)) | (1L << (ASM_LESS_THAN - 133)) | (1L << (ASM_GREATER_THAN - 133)))) != 0)) ) {
 				_errHandler.recoverInline(this);
 				}
 				else {
@@ -7140,7 +7191,7 @@ public class KickCParser extends Parser {
 					_errHandler.reportMatch(this);
 					consume();
 				}
-				setState(861);
+				setState(863);
 				asmExpr(8);
 				}
 				break;
@@ -7149,7 +7200,7 @@ public class KickCParser extends Parser {
 				_localctx = new AsmExprLabelContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(862);
+				setState(864);
 				match(ASM_NAME);
 				}
 				break;
@@ -7158,7 +7209,7 @@ public class KickCParser extends Parser {
 				_localctx = new AsmExprLabelRelContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(863);
+				setState(865);
 				match(ASM_MULTI_REL);
 				}
 				break;
@@ -7167,11 +7218,11 @@ public class KickCParser extends Parser {
 				_localctx = new AsmExprReplaceContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(864);
-				match(ASM_CURLY_BEGIN);
-				setState(865);
-				match(ASM_NAME);
 				setState(866);
+				match(ASM_CURLY_BEGIN);
+				setState(867);
+				match(ASM_NAME);
+				setState(868);
 				match(ASM_CURLY_END);
 				}
 				break;
@@ -7180,7 +7231,7 @@ public class KickCParser extends Parser {
 				_localctx = new AsmExprIntContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(867);
+				setState(869);
 				match(ASM_NUMBER);
 				}
 				break;
@@ -7189,7 +7240,7 @@ public class KickCParser extends Parser {
 				_localctx = new AsmExprCharContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(868);
+				setState(870);
 				match(ASM_CHAR);
 				}
 				break;
@@ -7197,7 +7248,7 @@ public class KickCParser extends Parser {
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(885);
+			setState(887);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,87,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -7205,20 +7256,20 @@ public class KickCParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(883);
+					setState(885);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,86,_ctx) ) {
 					case 1:
 						{
 						_localctx = new AsmExprBinaryContext(new AsmExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_asmExpr);
-						setState(871);
+						setState(873);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
 						{
-						setState(872);
+						setState(874);
 						match(ASM_DOT);
 						}
-						setState(873);
+						setState(875);
 						asmExpr(11);
 						}
 						break;
@@ -7226,9 +7277,9 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new AsmExprBinaryContext(new AsmExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_asmExpr);
-						setState(874);
+						setState(876);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
-						setState(875);
+						setState(877);
 						_la = _input.LA(1);
 						if ( !(_la==ASM_SHIFT_LEFT || _la==ASM_SHIFT_RIGHT) ) {
 						_errHandler.recoverInline(this);
@@ -7238,7 +7289,7 @@ public class KickCParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(876);
+						setState(878);
 						asmExpr(10);
 						}
 						break;
@@ -7246,9 +7297,9 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new AsmExprBinaryContext(new AsmExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_asmExpr);
-						setState(877);
+						setState(879);
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
-						setState(878);
+						setState(880);
 						_la = _input.LA(1);
 						if ( !(_la==ASM_MULTIPLY || _la==ASM_DIVIDE) ) {
 						_errHandler.recoverInline(this);
@@ -7258,7 +7309,7 @@ public class KickCParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(879);
+						setState(881);
 						asmExpr(8);
 						}
 						break;
@@ -7266,9 +7317,9 @@ public class KickCParser extends Parser {
 						{
 						_localctx = new AsmExprBinaryContext(new AsmExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_asmExpr);
-						setState(880);
+						setState(882);
 						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
-						setState(881);
+						setState(883);
 						_la = _input.LA(1);
 						if ( !(_la==ASM_PLUS || _la==ASM_MINUS) ) {
 						_errHandler.recoverInline(this);
@@ -7278,14 +7329,14 @@ public class KickCParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(882);
+						setState(884);
 						asmExpr(7);
 						}
 						break;
 					}
 					} 
 				}
-				setState(887);
+				setState(889);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,87,_ctx);
 			}
@@ -7414,7 +7465,7 @@ public class KickCParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u00a1\u037b\4\2\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\u00a3\u037d\4\2\t"+
 		"\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13"+
 		"\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -7442,61 +7493,61 @@ public class KickCParser extends Parser {
 		"\u0143\n\30\f\30\16\30\u0146\13\30\3\30\3\30\3\30\5\30\u014b\n\30\3\30"+
 		"\3\30\3\30\5\30\u0150\n\30\3\31\3\31\5\31\u0154\n\31\3\31\3\31\3\32\3"+
 		"\32\3\32\7\32\u015b\n\32\f\32\16\32\u015e\13\32\3\33\3\33\7\33\u0162\n"+
-		"\33\f\33\16\33\u0165\13\33\3\33\3\33\3\33\5\33\u016a\n\33\3\34\3\34\3"+
-		"\34\3\34\3\34\3\34\3\34\7\34\u0173\n\34\f\34\16\34\u0176\13\34\3\34\3"+
+		"\33\f\33\16\33\u0165\13\33\3\33\3\33\3\33\3\33\5\33\u016b\n\33\3\34\3"+
+		"\34\3\34\3\34\3\34\3\34\3\34\7\34\u0174\n\34\f\34\16\34\u0177\13\34\3"+
 		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3"+
 		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3"+
 		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3"+
-		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\7\34\u01b0"+
-		"\n\34\f\34\16\34\u01b3\13\34\3\34\5\34\u01b6\n\34\3\35\3\35\3\35\3\35"+
-		"\3\35\3\35\3\35\3\35\3\35\5\35\u01c1\n\35\3\35\3\35\3\35\3\35\3\35\3\35"+
-		"\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\5\35\u01d4\n\35"+
-		"\3\35\3\35\3\35\3\35\3\35\7\35\u01db\n\35\f\35\16\35\u01de\13\35\3\35"+
-		"\3\35\5\35\u01e2\n\35\3\36\6\36\u01e5\n\36\r\36\16\36\u01e6\3\37\3\37"+
-		"\3\37\3\37\3\37\5\37\u01ee\n\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37"+
-		"\3\37\3\37\3\37\5\37\u01fb\n\37\3\37\7\37\u01fe\n\37\f\37\16\37\u0201"+
-		"\13\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\7\37\u020a\n\37\f\37\16\37\u020d"+
-		"\13\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\7\37\u0218\n\37\f"+
-		"\37\16\37\u021b\13\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37"+
-		"\3\37\3\37\3\37\3\37\3\37\3\37\5\37\u022d\n\37\3\37\3\37\3\37\3\37\3\37"+
-		"\3\37\3\37\5\37\u0236\n\37\3\37\3\37\3\37\3\37\3\37\5\37\u023d\n\37\3"+
-		" \6 \u0240\n \r \16 \u0241\3 \3 \3 \5 \u0247\n \5 \u0249\n \3!\3!\3!\3"+
-		"!\5!\u024f\n!\3\"\3\"\3\"\3\"\3\"\5\"\u0256\n\"\3\"\3\"\7\"\u025a\n\""+
-		"\f\"\16\"\u025d\13\"\5\"\u025f\n\"\3\"\3\"\3\"\3\"\3\"\3\"\5\"\u0267\n"+
-		"\"\3#\5#\u026a\n#\3#\5#\u026d\n#\3$\3$\3$\3$\3$\3$\7$\u0275\n$\f$\16$"+
-		"\u0278\13$\3%\3%\3%\3%\3%\3%\3%\3%\3%\5%\u0283\n%\3%\3%\3%\3%\3%\3%\5"+
-		"%\u028b\n%\3%\3%\3%\3%\5%\u0291\n%\3%\3%\5%\u0295\n%\3%\3%\3%\3%\3%\3"+
-		"%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\7%\u02a8\n%\f%\16%\u02ab\13%\3%\3%"+
-		"\3%\3%\3%\6%\u02b2\n%\r%\16%\u02b3\3%\3%\5%\u02b8\n%\3%\3%\3%\3%\3%\3"+
+		"\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\3\34\7"+
+		"\34\u01b1\n\34\f\34\16\34\u01b4\13\34\3\34\5\34\u01b7\n\34\3\35\3\35\3"+
+		"\35\3\35\3\35\3\35\3\35\3\35\3\35\5\35\u01c2\n\35\3\35\3\35\3\35\3\35"+
+		"\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35\3\35"+
+		"\5\35\u01d6\n\35\3\35\3\35\3\35\3\35\3\35\7\35\u01dd\n\35\f\35\16\35\u01e0"+
+		"\13\35\3\35\3\35\5\35\u01e4\n\35\3\36\6\36\u01e7\n\36\r\36\16\36\u01e8"+
+		"\3\37\3\37\3\37\3\37\3\37\5\37\u01f0\n\37\3\37\3\37\3\37\3\37\3\37\3\37"+
+		"\3\37\3\37\3\37\3\37\3\37\5\37\u01fd\n\37\3\37\7\37\u0200\n\37\f\37\16"+
+		"\37\u0203\13\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\7\37\u020c\n\37\f\37"+
+		"\16\37\u020f\13\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\7\37\u021a"+
+		"\n\37\f\37\16\37\u021d\13\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\3"+
+		"\37\3\37\3\37\3\37\3\37\3\37\3\37\3\37\5\37\u022f\n\37\3\37\3\37\3\37"+
+		"\3\37\3\37\3\37\3\37\5\37\u0238\n\37\3\37\3\37\3\37\3\37\3\37\5\37\u023f"+
+		"\n\37\3 \6 \u0242\n \r \16 \u0243\3 \3 \3 \5 \u0249\n \5 \u024b\n \3!"+
+		"\3!\3!\3!\5!\u0251\n!\3\"\3\"\3\"\3\"\3\"\5\"\u0258\n\"\3\"\3\"\7\"\u025c"+
+		"\n\"\f\"\16\"\u025f\13\"\5\"\u0261\n\"\3\"\3\"\3\"\3\"\3\"\3\"\5\"\u0269"+
+		"\n\"\3#\5#\u026c\n#\3#\5#\u026f\n#\3$\3$\3$\3$\3$\3$\7$\u0277\n$\f$\16"+
+		"$\u027a\13$\3%\3%\3%\3%\3%\3%\3%\3%\3%\5%\u0285\n%\3%\3%\3%\3%\3%\3%\5"+
+		"%\u028d\n%\3%\3%\3%\3%\5%\u0293\n%\3%\3%\5%\u0297\n%\3%\3%\3%\3%\3%\3"+
+		"%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\7%\u02aa\n%\f%\16%\u02ad\13%\3%\3%"+
+		"\3%\3%\3%\6%\u02b4\n%\r%\16%\u02b5\3%\3%\5%\u02ba\n%\3%\3%\3%\3%\3%\3"+
 		"%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3"+
-		"%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\5%\u02ea\n"+
-		"%\3%\3%\3%\3%\3%\3%\3%\3%\7%\u02f4\n%\f%\16%\u02f7\13%\3&\3&\3&\7&\u02fc"+
-		"\n&\f&\16&\u02ff\13&\3\'\3\'\5\'\u0303\n\'\3\'\3\'\3(\3(\3(\3(\7(\u030b"+
-		"\n(\f(\16(\u030e\13(\3(\3(\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\5)\u031f"+
-		"\n)\5)\u0321\n)\3*\7*\u0324\n*\f*\16*\u0327\13*\3+\3+\3+\5+\u032c\n+\3"+
-		",\3,\3,\3,\5,\u0332\n,\3-\3-\5-\u0336\n-\3.\3.\3.\3.\7.\u033c\n.\f.\16"+
-		".\u033f\13.\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3"+
-		"/\3/\3/\3/\5/\u0358\n/\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3"+
-		"\60\3\60\3\60\3\60\3\60\5\60\u0368\n\60\3\60\3\60\3\60\3\60\3\60\3\60"+
-		"\3\60\3\60\3\60\3\60\3\60\3\60\7\60\u0376\n\60\f\60\16\60\u0379\13\60"+
+		"%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\3%\5%\u02ec\n"+
+		"%\3%\3%\3%\3%\3%\3%\3%\3%\7%\u02f6\n%\f%\16%\u02f9\13%\3&\3&\3&\7&\u02fe"+
+		"\n&\f&\16&\u0301\13&\3\'\3\'\5\'\u0305\n\'\3\'\3\'\3(\3(\3(\3(\7(\u030d"+
+		"\n(\f(\16(\u0310\13(\3(\3(\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\3)\5)\u0321"+
+		"\n)\5)\u0323\n)\3*\7*\u0326\n*\f*\16*\u0329\13*\3+\3+\3+\5+\u032e\n+\3"+
+		",\3,\3,\3,\5,\u0334\n,\3-\3-\5-\u0338\n-\3.\3.\3.\3.\7.\u033e\n.\f.\16"+
+		".\u0341\13.\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3/\3"+
+		"/\3/\3/\3/\5/\u035a\n/\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3\60\3"+
+		"\60\3\60\3\60\3\60\3\60\5\60\u036a\n\60\3\60\3\60\3\60\3\60\3\60\3\60"+
+		"\3\60\3\60\3\60\3\60\3\60\3\60\7\60\u0378\n\60\f\60\16\60\u037b\13\60"+
 		"\3\60\2\t\20\34\36*FH^\61\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&"+
-		"(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^\2\r\3\2\26\27\5\2\21\22\30\31YY"+
-		"\4\2  ##\3\2\34\35\3\2\23\25\3\2\21\22\3\2\36#\3\2\u0085\u0088\3\2\u0083"+
-		"\u0084\3\2\u0089\u008a\3\2\u0085\u0086\2\u03fc\2`\3\2\2\2\4c\3\2\2\2\6"+
+		"(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^\2\r\3\2\27\30\5\2\22\23\31\32[["+
+		"\4\2!!$$\3\2\35\36\3\2\24\26\3\2\22\23\3\2\37$\3\2\u0087\u008a\3\2\u0085"+
+		"\u0086\3\2\u008b\u008c\3\2\u0087\u0088\2\u0400\2`\3\2\2\2\4c\3\2\2\2\6"+
 		"i\3\2\2\2\bn\3\2\2\2\nv\3\2\2\2\f\u0087\3\2\2\2\16\u0089\3\2\2\2\20\u008c"+
 		"\3\2\2\2\22\u00a3\3\2\2\2\24\u00c8\3\2\2\2\26\u00cd\3\2\2\2\30\u00d7\3"+
 		"\2\2\2\32\u00de\3\2\2\2\34\u00e4\3\2\2\2\36\u0103\3\2\2\2 \u0113\3\2\2"+
 		"\2\"\u0116\3\2\2\2$\u0122\3\2\2\2&\u0125\3\2\2\2(\u0128\3\2\2\2*\u0130"+
 		"\3\2\2\2,\u013b\3\2\2\2.\u0140\3\2\2\2\60\u0151\3\2\2\2\62\u0157\3\2\2"+
-		"\2\64\u0169\3\2\2\2\66\u01b5\3\2\2\28\u01e1\3\2\2\2:\u01e4\3\2\2\2<\u023c"+
-		"\3\2\2\2>\u023f\3\2\2\2@\u024a\3\2\2\2B\u0266\3\2\2\2D\u026c\3\2\2\2F"+
-		"\u026e\3\2\2\2H\u02b7\3\2\2\2J\u02f8\3\2\2\2L\u0300\3\2\2\2N\u0306\3\2"+
-		"\2\2P\u0320\3\2\2\2R\u0325\3\2\2\2T\u032b\3\2\2\2V\u0331\3\2\2\2X\u0333"+
-		"\3\2\2\2Z\u0337\3\2\2\2\\\u0357\3\2\2\2^\u0367\3\2\2\2`a\5\6\4\2ab\7\2"+
+		"\2\64\u016a\3\2\2\2\66\u01b6\3\2\2\28\u01e3\3\2\2\2:\u01e6\3\2\2\2<\u023e"+
+		"\3\2\2\2>\u0241\3\2\2\2@\u024c\3\2\2\2B\u0268\3\2\2\2D\u026e\3\2\2\2F"+
+		"\u0270\3\2\2\2H\u02b9\3\2\2\2J\u02fa\3\2\2\2L\u0302\3\2\2\2N\u0308\3\2"+
+		"\2\2P\u0322\3\2\2\2R\u0327\3\2\2\2T\u032d\3\2\2\2V\u0333\3\2\2\2X\u0335"+
+		"\3\2\2\2Z\u0339\3\2\2\2\\\u0359\3\2\2\2^\u0369\3\2\2\2`a\5\6\4\2ab\7\2"+
 		"\2\3b\3\3\2\2\2cd\5R*\2de\7\2\2\3e\5\3\2\2\2fh\5\b\5\2gf\3\2\2\2hk\3\2"+
 		"\2\2ig\3\2\2\2ij\3\2\2\2j\7\3\2\2\2ki\3\2\2\2lo\5\f\7\2mo\5\n\6\2nl\3"+
-		"\2\2\2nm\3\2\2\2o\t\3\2\2\2pq\7^\2\2qw\7\u009e\2\2rs\7_\2\2sw\7\u009e"+
-		"\2\2tu\7_\2\2uw\7\u009d\2\2vp\3\2\2\2vr\3\2\2\2vt\3\2\2\2w\13\3\2\2\2"+
+		"\2\2\2nm\3\2\2\2o\t\3\2\2\2pq\7`\2\2qw\7\u00a0\2\2rs\7a\2\2sw\7\u00a0"+
+		"\2\2tu\7a\2\2uw\7\u009f\2\2vp\3\2\2\2vr\3\2\2\2vt\3\2\2\2w\13\3\2\2\2"+
 		"xy\5\16\b\2yz\7\n\2\2z\u0088\3\2\2\2{|\5\"\22\2|}\7\n\2\2}\u0088\3\2\2"+
 		"\2~\177\5(\25\2\177\u0080\7\n\2\2\u0080\u0088\3\2\2\2\u0081\u0088\5.\30"+
 		"\2\u0082\u0088\5L\'\2\u0083\u0088\5\66\34\2\u0084\u0085\5\22\n\2\u0085"+
@@ -7510,36 +7561,36 @@ public class KickCParser extends Parser {
 		"\r\2\u0098\u0097\3\2\2\2\u0099\u009c\3\2\2\2\u009a\u0098\3\2\2\2\u009a"+
 		"\u009b\3\2\2\2\u009b\u009d\3\2\2\2\u009c\u009a\3\2\2\2\u009d\u009f\5\24"+
 		"\13\2\u009e\u0095\3\2\2\2\u009f\u00a2\3\2\2\2\u00a0\u009e\3\2\2\2\u00a0"+
-		"\u00a1\3\2\2\2\u00a1\21\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a3\u00a4\7(\2\2"+
+		"\u00a1\3\2\2\2\u00a1\21\3\2\2\2\u00a2\u00a0\3\2\2\2\u00a3\u00a4\7)\2\2"+
 		"\u00a4\u00a8\5\26\f\2\u00a5\u00a7\5\30\r\2\u00a6\u00a5\3\2\2\2\u00a7\u00aa"+
 		"\3\2\2\2\u00a8\u00a6\3\2\2\2\u00a8\u00a9\3\2\2\2\u00a9\u00ab\3\2\2\2\u00aa"+
-		"\u00a8\3\2\2\2\u00ab\u00af\7s\2\2\u00ac\u00ae\5\32\16\2\u00ad\u00ac\3"+
+		"\u00a8\3\2\2\2\u00ab\u00af\7u\2\2\u00ac\u00ae\5\32\16\2\u00ad\u00ac\3"+
 		"\2\2\2\u00ae\u00b1\3\2\2\2\u00af\u00ad\3\2\2\2\u00af\u00b0\3\2\2\2\u00b0"+
 		"\u00b2\3\2\2\2\u00b1\u00af\3\2\2\2\u00b2\u00b3\b\n\1\2\u00b3\23\3\2\2"+
-		"\2\u00b4\u00b8\7s\2\2\u00b5\u00b7\5\32\16\2\u00b6\u00b5\3\2\2\2\u00b7"+
+		"\2\u00b4\u00b8\7u\2\2\u00b5\u00b7\5\32\16\2\u00b6\u00b5\3\2\2\2\u00b7"+
 		"\u00ba\3\2\2\2\u00b8\u00b6\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\u00bd\3\2"+
-		"\2\2\u00ba\u00b8\3\2\2\2\u00bb\u00bc\7&\2\2\u00bc\u00be\5H%\2\u00bd\u00bb"+
-		"\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\u00c9\3\2\2\2\u00bf\u00c3\7s\2\2\u00c0"+
+		"\2\2\u00ba\u00b8\3\2\2\2\u00bb\u00bc\7\'\2\2\u00bc\u00be\5H%\2\u00bd\u00bb"+
+		"\3\2\2\2\u00bd\u00be\3\2\2\2\u00be\u00c9\3\2\2\2\u00bf\u00c3\7u\2\2\u00c0"+
 		"\u00c2\5\32\16\2\u00c1\u00c0\3\2\2\2\u00c2\u00c5\3\2\2\2\u00c3\u00c1\3"+
 		"\2\2\2\u00c3\u00c4\3\2\2\2\u00c4\u00c6\3\2\2\2\u00c5\u00c3\3\2\2\2\u00c6"+
-		"\u00c7\7&\2\2\u00c7\u00c9\5L\'\2\u00c8\u00b4\3\2\2\2\u00c8\u00bf\3\2\2"+
-		"\2\u00c9\25\3\2\2\2\u00ca\u00cc\58\35\2\u00cb\u00ca\3\2\2\2\u00cc\u00cf"+
+		"\u00c7\7\'\2\2\u00c7\u00c9\5L\'\2\u00c8\u00b4\3\2\2\2\u00c8\u00bf\3\2"+
+		"\2\2\u00c9\25\3\2\2\2\u00ca\u00cc\58\35\2\u00cb\u00ca\3\2\2\2\u00cc\u00cf"+
 		"\3\2\2\2\u00cd\u00cb\3\2\2\2\u00cd\u00ce\3\2\2\2\u00ce\u00d0\3\2\2\2\u00cf"+
 		"\u00cd\3\2\2\2\u00d0\u00d4\5\36\20\2\u00d1\u00d3\58\35\2\u00d2\u00d1\3"+
 		"\2\2\2\u00d3\u00d6\3\2\2\2\u00d4\u00d2\3\2\2\2\u00d4\u00d5\3\2\2\2\u00d5"+
-		"\27\3\2\2\2\u00d6\u00d4\3\2\2\2\u00d7\u00db\7\23\2\2\u00d8\u00da\58\35"+
+		"\27\3\2\2\2\u00d6\u00d4\3\2\2\2\u00d7\u00db\7\24\2\2\u00d8\u00da\58\35"+
 		"\2\u00d9\u00d8\3\2\2\2\u00da\u00dd\3\2\2\2\u00db\u00d9\3\2\2\2\u00db\u00dc"+
 		"\3\2\2\2\u00dc\31\3\2\2\2\u00dd\u00db\3\2\2\2\u00de\u00e0\7\6\2\2\u00df"+
 		"\u00e1\5H%\2\u00e0\u00df\3\2\2\2\u00e0\u00e1\3\2\2\2\u00e1\u00e2\3\2\2"+
 		"\2\u00e2\u00e3\7\7\2\2\u00e3\33\3\2\2\2\u00e4\u00e5\b\17\1\2\u00e5\u00e6"+
-		"\5\36\20\2\u00e6\u00f1\3\2\2\2\u00e7\u00e8\f\4\2\2\u00e8\u00f0\7\23\2"+
+		"\5\36\20\2\u00e6\u00f1\3\2\2\2\u00e7\u00e8\f\4\2\2\u00e8\u00f0\7\24\2"+
 		"\2\u00e9\u00ea\f\3\2\2\u00ea\u00ec\7\6\2\2\u00eb\u00ed\5H%\2\u00ec\u00eb"+
 		"\3\2\2\2\u00ec\u00ed\3\2\2\2\u00ed\u00ee\3\2\2\2\u00ee\u00f0\7\7\2\2\u00ef"+
 		"\u00e7\3\2\2\2\u00ef\u00e9\3\2\2\2\u00f0\u00f3\3\2\2\2\u00f1\u00ef\3\2"+
 		"\2\2\u00f1\u00f2\3\2\2\2\u00f2\35\3\2\2\2\u00f3\u00f1\3\2\2\2\u00f4\u00f5"+
 		"\b\20\1\2\u00f5\u00f6\7\b\2\2\u00f6\u00f7\5\36\20\2\u00f7\u00f8\7\t\2"+
-		"\2\u00f8\u0104\3\2\2\2\u00f9\u0104\7[\2\2\u00fa\u00fc\7Z\2\2\u00fb\u00fd"+
-		"\7[\2\2\u00fc\u00fb\3\2\2\2\u00fc\u00fd\3\2\2\2\u00fd\u0104\3\2\2\2\u00fe"+
+		"\2\u00f8\u0104\3\2\2\2\u00f9\u0104\7]\2\2\u00fa\u00fc\7\\\2\2\u00fb\u00fd"+
+		"\7]\2\2\u00fc\u00fb\3\2\2\2\u00fc\u00fd\3\2\2\2\u00fd\u0104\3\2\2\2\u00fe"+
 		"\u0104\5\"\22\2\u00ff\u0104\5 \21\2\u0100\u0104\5(\25\2\u0101\u0104\5"+
 		"&\24\2\u0102\u0104\7\3\2\2\u0103\u00f4\3\2\2\2\u0103\u00f9\3\2\2\2\u0103"+
 		"\u00fa\3\2\2\2\u0103\u00fe\3\2\2\2\u0103\u00ff\3\2\2\2\u0103\u0100\3\2"+
@@ -7548,23 +7599,23 @@ public class KickCParser extends Parser {
 		"\2\u0108\u0109\3\2\2\2\u0109\u010a\3\2\2\2\u010a\u010f\7\7\2\2\u010b\u010c"+
 		"\f\b\2\2\u010c\u010d\7\b\2\2\u010d\u010f\7\t\2\2\u010e\u0105\3\2\2\2\u010e"+
 		"\u010b\3\2\2\2\u010f\u0112\3\2\2\2\u0110\u010e\3\2\2\2\u0110\u0111\3\2"+
-		"\2\2\u0111\37\3\2\2\2\u0112\u0110\3\2\2\2\u0113\u0114\7N\2\2\u0114\u0115"+
-		"\7s\2\2\u0115!\3\2\2\2\u0116\u0118\7N\2\2\u0117\u0119\7s\2\2\u0118\u0117"+
+		"\2\2\u0111\37\3\2\2\2\u0112\u0110\3\2\2\2\u0113\u0114\7P\2\2\u0114\u0115"+
+		"\7u\2\2\u0115!\3\2\2\2\u0116\u0118\7P\2\2\u0117\u0119\7u\2\2\u0118\u0117"+
 		"\3\2\2\2\u0118\u0119\3\2\2\2\u0119\u011a\3\2\2\2\u011a\u011c\7\4\2\2\u011b"+
 		"\u011d\5$\23\2\u011c\u011b\3\2\2\2\u011d\u011e\3\2\2\2\u011e\u011c\3\2"+
 		"\2\2\u011e\u011f\3\2\2\2\u011f\u0120\3\2\2\2\u0120\u0121\7\5\2\2\u0121"+
 		"#\3\2\2\2\u0122\u0123\5\16\b\2\u0123\u0124\7\n\2\2\u0124%\3\2\2\2\u0125"+
-		"\u0126\7O\2\2\u0126\u0127\7s\2\2\u0127\'\3\2\2\2\u0128\u012a\7O\2\2\u0129"+
-		"\u012b\7s\2\2\u012a\u0129\3\2\2\2\u012a\u012b\3\2\2\2\u012b\u012c\3\2"+
+		"\u0126\7Q\2\2\u0126\u0127\7u\2\2\u0127\'\3\2\2\2\u0128\u012a\7Q\2\2\u0129"+
+		"\u012b\7u\2\2\u012a\u0129\3\2\2\2\u012a\u012b\3\2\2\2\u012b\u012c\3\2"+
 		"\2\2\u012c\u012d\7\4\2\2\u012d\u012e\5*\26\2\u012e\u012f\7\5\2\2\u012f"+
 		")\3\2\2\2\u0130\u0131\b\26\1\2\u0131\u0132\5,\27\2\u0132\u0138\3\2\2\2"+
 		"\u0133\u0134\f\3\2\2\u0134\u0135\7\f\2\2\u0135\u0137\5,\27\2\u0136\u0133"+
 		"\3\2\2\2\u0137\u013a\3\2\2\2\u0138\u0136\3\2\2\2\u0138\u0139\3\2\2\2\u0139"+
-		"+\3\2\2\2\u013a\u0138\3\2\2\2\u013b\u013e\7s\2\2\u013c\u013d\7&\2\2\u013d"+
+		"+\3\2\2\2\u013a\u0138\3\2\2\2\u013b\u013e\7u\2\2\u013c\u013d\7\'\2\2\u013d"+
 		"\u013f\5H%\2\u013e\u013c\3\2\2\2\u013e\u013f\3\2\2\2\u013f-\3\2\2\2\u0140"+
 		"\u0144\5\26\f\2\u0141\u0143\5\30\r\2\u0142\u0141\3\2\2\2\u0143\u0146\3"+
 		"\2\2\2\u0144\u0142\3\2\2\2\u0144\u0145\3\2\2\2\u0145\u0147\3\2\2\2\u0146"+
-		"\u0144\3\2\2\2\u0147\u0148\7s\2\2\u0148\u014a\7\b\2\2\u0149\u014b\5\62"+
+		"\u0144\3\2\2\2\u0147\u0148\7u\2\2\u0148\u014a\7\b\2\2\u0149\u014b\5\62"+
 		"\32\2\u014a\u0149\3\2\2\2\u014a\u014b\3\2\2\2\u014b\u014c\3\2\2\2\u014c"+
 		"\u014f\7\t\2\2\u014d\u0150\5\60\31\2\u014e\u0150\7\n\2\2\u014f\u014d\3"+
 		"\2\2\2\u014f\u014e\3\2\2\2\u0150/\3\2\2\2\u0151\u0153\7\4\2\2\u0152\u0154"+
@@ -7574,198 +7625,199 @@ public class KickCParser extends Parser {
 		"\u015a\3\2\2\2\u015c\u015d\3\2\2\2\u015d\63\3\2\2\2\u015e\u015c\3\2\2"+
 		"\2\u015f\u0163\5\26\f\2\u0160\u0162\5\30\r\2\u0161\u0160\3\2\2\2\u0162"+
 		"\u0165\3\2\2\2\u0163\u0161\3\2\2\2\u0163\u0164\3\2\2\2\u0164\u0166\3\2"+
-		"\2\2\u0165\u0163\3\2\2\2\u0166\u0167\7s\2\2\u0167\u016a\3\2\2\2\u0168"+
-		"\u016a\7[\2\2\u0169\u015f\3\2\2\2\u0169\u0168\3\2\2\2\u016a\65\3\2\2\2"+
-		"\u016b\u016c\7`\2\2\u016c\u016d\7)\2\2\u016d\u016e\3\2\2\2\u016e\u016f"+
-		"\7\b\2\2\u016f\u0174\7j\2\2\u0170\u0171\7\f\2\2\u0171\u0173\7j\2\2\u0172"+
-		"\u0170\3\2\2\2\u0173\u0176\3\2\2\2\u0174\u0172\3\2\2\2\u0174\u0175\3\2"+
-		"\2\2\u0175\u0177\3\2\2\2\u0176\u0174\3\2\2\2\u0177\u01b6\7\t\2\2\u0178"+
-		"\u0179\7`\2\2\u0179\u017a\7*\2\2\u017a\u017b\3\2\2\2\u017b\u017c\7\b\2"+
-		"\2\u017c\u017d\7j\2\2\u017d\u01b6\7\t\2\2\u017e\u017f\7`\2\2\u017f\u0180"+
-		"\7+\2\2\u0180\u0181\3\2\2\2\u0181\u0182\7\b\2\2\u0182\u0183\7s\2\2\u0183"+
-		"\u01b6\7\t\2\2\u0184\u0185\7`\2\2\u0185\u0186\7-\2\2\u0186\u0187\3\2\2"+
-		"\2\u0187\u0188\7\b\2\2\u0188\u0189\7s\2\2\u0189\u01b6\7\t\2\2\u018a\u018b"+
-		"\7`\2\2\u018b\u018c\7,\2\2\u018c\u018d\3\2\2\2\u018d\u018e\7\b\2\2\u018e"+
-		"\u018f\7t\2\2\u018f\u01b6\7\t\2\2\u0190\u0191\7`\2\2\u0191\u0192\7.\2"+
-		"\2\u0192\u0193\3\2\2\2\u0193\u0194\7\b\2\2\u0194\u0195\7s\2\2\u0195\u01b6"+
-		"\7\t\2\2\u0196\u0197\7`\2\2\u0197\u0198\7/\2\2\u0198\u0199\3\2\2\2\u0199"+
-		"\u019a\7\b\2\2\u019a\u019b\7s\2\2\u019b\u01b6\7\t\2\2\u019c\u019d\7`\2"+
-		"\2\u019d\u019e\7\60\2\2\u019e\u019f\3\2\2\2\u019f\u01a0\7\b\2\2\u01a0"+
-		"\u01a1\7s\2\2\u01a1\u01b6\7\t\2\2\u01a2\u01a3\7`\2\2\u01a3\u01a4\7?\2"+
-		"\2\u01a4\u01a5\3\2\2\2\u01a5\u01a6\7\b\2\2\u01a6\u01a7\7@\2\2\u01a7\u01b6"+
-		"\7\t\2\2\u01a8\u01a9\7`\2\2\u01a9\u01aa\7A\2\2\u01aa\u01ab\3\2\2\2\u01ab"+
-		"\u01ac\7\b\2\2\u01ac\u01b1\7s\2\2\u01ad\u01ae\7\f\2\2\u01ae\u01b0\7s\2"+
-		"\2\u01af\u01ad\3\2\2\2\u01b0\u01b3\3\2\2\2\u01b1\u01af\3\2\2\2\u01b1\u01b2"+
-		"\3\2\2\2\u01b2\u01b4\3\2\2\2\u01b3\u01b1\3\2\2\2\u01b4\u01b6\7\t\2\2\u01b5"+
-		"\u016b\3\2\2\2\u01b5\u0178\3\2\2\2\u01b5\u017e\3\2\2\2\u01b5\u0184\3\2"+
-		"\2\2\u01b5\u018a\3\2\2\2\u01b5\u0190\3\2\2\2\u01b5\u0196\3\2\2\2\u01b5"+
-		"\u019c\3\2\2\2\u01b5\u01a2\3\2\2\2\u01b5\u01a8\3\2\2\2\u01b6\67\3\2\2"+
-		"\2\u01b7\u01e2\7\61\2\2\u01b8\u01b9\7\64\2\2\u01b9\u01ba\7\b\2\2\u01ba"+
-		"\u01bb\7j\2\2\u01bb\u01e2\7\t\2\2\u01bc\u01c0\79\2\2\u01bd\u01be\7\b\2"+
-		"\2\u01be\u01bf\7s\2\2\u01bf\u01c1\7\t\2\2\u01c0\u01bd\3\2\2\2\u01c0\u01c1"+
-		"\3\2\2\2\u01c1\u01e2\3\2\2\2\u01c2\u01e2\7;\2\2\u01c3\u01e2\7<\2\2\u01c4"+
-		"\u01c5\7:\2\2\u01c5\u01c6\7\b\2\2\u01c6\u01c7\7j\2\2\u01c7\u01e2\7\t\2"+
-		"\2\u01c8\u01e2\7\66\2\2\u01c9\u01e2\7\67\2\2\u01ca\u01e2\7=\2\2\u01cb"+
-		"\u01e2\7>\2\2\u01cc\u01e2\7\62\2\2\u01cd\u01e2\7\63\2\2\u01ce\u01e2\7"+
-		"\65\2\2\u01cf\u01d3\78\2\2\u01d0\u01d1\7\b\2\2\u01d1\u01d2\7s\2\2\u01d2"+
-		"\u01d4\7\t\2\2\u01d3\u01d0\3\2\2\2\u01d3\u01d4\3\2\2\2\u01d4\u01e2\3\2"+
-		"\2\2\u01d5\u01d6\7)\2\2\u01d6\u01d7\7\b\2\2\u01d7\u01dc\7j\2\2\u01d8\u01d9"+
-		"\7\f\2\2\u01d9\u01db\7j\2\2\u01da\u01d8\3\2\2\2\u01db\u01de\3\2\2\2\u01dc"+
-		"\u01da\3\2\2\2\u01dc\u01dd\3\2\2\2\u01dd\u01df\3\2\2\2\u01de\u01dc\3\2"+
-		"\2\2\u01df\u01e2\7\t\2\2\u01e0\u01e2\7@\2\2\u01e1\u01b7\3\2\2\2\u01e1"+
-		"\u01b8\3\2\2\2\u01e1\u01bc\3\2\2\2\u01e1\u01c2\3\2\2\2\u01e1\u01c3\3\2"+
-		"\2\2\u01e1\u01c4\3\2\2\2\u01e1\u01c8\3\2\2\2\u01e1\u01c9\3\2\2\2\u01e1"+
-		"\u01ca\3\2\2\2\u01e1\u01cb\3\2\2\2\u01e1\u01cc\3\2\2\2\u01e1\u01cd\3\2"+
-		"\2\2\u01e1\u01ce\3\2\2\2\u01e1\u01cf\3\2\2\2\u01e1\u01d5\3\2\2\2\u01e1"+
-		"\u01e0\3\2\2\2\u01e29\3\2\2\2\u01e3\u01e5\5<\37\2\u01e4\u01e3\3\2\2\2"+
-		"\u01e5\u01e6\3\2\2\2\u01e6\u01e4\3\2\2\2\u01e6\u01e7\3\2\2\2\u01e7;\3"+
-		"\2\2\2\u01e8\u01e9\5\16\b\2\u01e9\u01ea\7\n\2\2\u01ea\u023d\3\2\2\2\u01eb"+
-		"\u01ed\7\4\2\2\u01ec\u01ee\5:\36\2\u01ed\u01ec\3\2\2\2\u01ed\u01ee\3\2"+
-		"\2\2\u01ee\u01ef\3\2\2\2\u01ef\u023d\7\5\2\2\u01f0\u01f1\5F$\2\u01f1\u01f2"+
-		"\7\n\2\2\u01f2\u023d\3\2\2\2\u01f3\u01f4\7B\2\2\u01f4\u01f5\7\b\2\2\u01f5"+
-		"\u01f6\5F$\2\u01f6\u01f7\7\t\2\2\u01f7\u01fa\5<\37\2\u01f8\u01f9\7C\2"+
-		"\2\u01f9\u01fb\5<\37\2\u01fa\u01f8\3\2\2\2\u01fa\u01fb\3\2\2\2\u01fb\u023d"+
-		"\3\2\2\2\u01fc\u01fe\58\35\2\u01fd\u01fc\3\2\2\2\u01fe\u0201\3\2\2\2\u01ff"+
-		"\u01fd\3\2\2\2\u01ff\u0200\3\2\2\2\u0200\u0202\3\2\2\2\u0201\u01ff\3\2"+
-		"\2\2\u0202\u0203\7D\2\2\u0203\u0204\7\b\2\2\u0204\u0205\5F$\2\u0205\u0206"+
-		"\7\t\2\2\u0206\u0207\5<\37\2\u0207\u023d\3\2\2\2\u0208\u020a\58\35\2\u0209"+
-		"\u0208\3\2\2\2\u020a\u020d\3\2\2\2\u020b\u0209\3\2\2\2\u020b\u020c\3\2"+
-		"\2\2\u020c\u020e\3\2\2\2\u020d\u020b\3\2\2\2\u020e\u020f\7E\2\2\u020f"+
-		"\u0210\5<\37\2\u0210\u0211\7D\2\2\u0211\u0212\7\b\2\2\u0212\u0213\5F$"+
-		"\2\u0213\u0214\7\t\2\2\u0214\u0215\7\n\2\2\u0215\u023d\3\2\2\2\u0216\u0218"+
-		"\58\35\2\u0217\u0216\3\2\2\2\u0218\u021b\3\2\2\2\u0219\u0217\3\2\2\2\u0219"+
-		"\u021a\3\2\2\2\u021a\u021c\3\2\2\2\u021b\u0219\3\2\2\2\u021c\u021d\7F"+
-		"\2\2\u021d\u021e\7\b\2\2\u021e\u021f\5B\"\2\u021f\u0220\7\t\2\2\u0220"+
-		"\u0221\5<\37\2\u0221\u023d\3\2\2\2\u0222\u0223\7G\2\2\u0223\u0224\7\b"+
-		"\2\2\u0224\u0225\5F$\2\u0225\u0226\7\t\2\2\u0226\u0227\7\4\2\2\u0227\u0228"+
-		"\5> \2\u0228\u0229\7\5\2\2\u0229\u023d\3\2\2\2\u022a\u022c\7H\2\2\u022b"+
-		"\u022d\5F$\2\u022c\u022b\3\2\2\2\u022c\u022d\3\2\2\2\u022d\u022e\3\2\2"+
-		"\2\u022e\u023d\7\n\2\2\u022f\u0230\7I\2\2\u0230\u023d\7\n\2\2\u0231\u0232"+
-		"\7J\2\2\u0232\u023d\7\n\2\2\u0233\u0235\7K\2\2\u0234\u0236\5N(\2\u0235"+
-		"\u0234\3\2\2\2\u0235\u0236\3\2\2\2\u0236\u0237\3\2\2\2\u0237\u0238\7\4"+
-		"\2\2\u0238\u0239\5R*\2\u0239\u023a\7\u008c\2\2\u023a\u023d\3\2\2\2\u023b"+
-		"\u023d\5L\'\2\u023c\u01e8\3\2\2\2\u023c\u01eb\3\2\2\2\u023c\u01f0\3\2"+
-		"\2\2\u023c\u01f3\3\2\2\2\u023c\u01ff\3\2\2\2\u023c\u020b\3\2\2\2\u023c"+
-		"\u0219\3\2\2\2\u023c\u0222\3\2\2\2\u023c\u022a\3\2\2\2\u023c\u022f\3\2"+
-		"\2\2\u023c\u0231\3\2\2\2\u023c\u0233\3\2\2\2\u023c\u023b\3\2\2\2\u023d"+
-		"=\3\2\2\2\u023e\u0240\5@!\2\u023f\u023e\3\2\2\2\u0240\u0241\3\2\2\2\u0241"+
-		"\u023f\3\2\2\2\u0241\u0242\3\2\2\2\u0242\u0248\3\2\2\2\u0243\u0244\7L"+
-		"\2\2\u0244\u0246\7\13\2\2\u0245\u0247\5:\36\2\u0246\u0245\3\2\2\2\u0246"+
-		"\u0247\3\2\2\2\u0247\u0249\3\2\2\2\u0248\u0243\3\2\2\2\u0248\u0249\3\2"+
-		"\2\2\u0249?\3\2\2\2\u024a\u024b\7M\2\2\u024b\u024c\5H%\2\u024c\u024e\7"+
-		"\13\2\2\u024d\u024f\5:\36\2\u024e\u024d\3\2\2\2\u024e\u024f\3\2\2\2\u024f"+
-		"A\3\2\2\2\u0250\u0251\5D#\2\u0251\u0252\7\n\2\2\u0252\u0253\5F$\2\u0253"+
-		"\u0255\7\n\2\2\u0254\u0256\5F$\2\u0255\u0254\3\2\2\2\u0255\u0256\3\2\2"+
-		"\2\u0256\u0267\3\2\2\2\u0257\u025b\5\26\f\2\u0258\u025a\5\30\r\2\u0259"+
-		"\u0258\3\2\2\2\u025a\u025d\3\2\2\2\u025b\u0259\3\2\2\2\u025b\u025c\3\2"+
-		"\2\2\u025c\u025f\3\2\2\2\u025d\u025b\3\2\2\2\u025e\u0257\3\2\2\2\u025e"+
-		"\u025f\3\2\2\2\u025f\u0260\3\2\2\2\u0260\u0261\7s\2\2\u0261\u0262\7\13"+
-		"\2\2\u0262\u0263\5H%\2\u0263\u0264\7\r\2\2\u0264\u0265\5H%\2\u0265\u0267"+
-		"\3\2\2\2\u0266\u0250\3\2\2\2\u0266\u025e\3\2\2\2\u0267C\3\2\2\2\u0268"+
-		"\u026a\5\16\b\2\u0269\u0268\3\2\2\2\u0269\u026a\3\2\2\2\u026a\u026d\3"+
-		"\2\2\2\u026b\u026d\5F$\2\u026c\u0269\3\2\2\2\u026c\u026b\3\2\2\2\u026d"+
-		"E\3\2\2\2\u026e\u026f\b$\1\2\u026f\u0270\5H%\2\u0270\u0276\3\2\2\2\u0271"+
-		"\u0272\f\3\2\2\u0272\u0273\7\f\2\2\u0273\u0275\5H%\2\u0274\u0271\3\2\2"+
-		"\2\u0275\u0278\3\2\2\2\u0276\u0274\3\2\2\2\u0276\u0277\3\2\2\2\u0277G"+
-		"\3\2\2\2\u0278\u0276\3\2\2\2\u0279\u027a\b%\1\2\u027a\u027b\7\b\2\2\u027b"+
-		"\u027c\5F$\2\u027c\u027d\7\t\2\2\u027d\u02b8\3\2\2\2\u027e\u027f\7P\2"+
-		"\2\u027f\u0282\7\b\2\2\u0280\u0283\5H%\2\u0281\u0283\5\34\17\2\u0282\u0280"+
-		"\3\2\2\2\u0282\u0281\3\2\2\2\u0283\u0284\3\2\2\2\u0284\u0285\7\t\2\2\u0285"+
-		"\u02b8\3\2\2\2\u0286\u0287\7Q\2\2\u0287\u028a\7\b\2\2\u0288\u028b\5H%"+
-		"\2\u0289\u028b\5\34\17\2\u028a\u0288\3\2\2\2\u028a\u0289\3\2\2\2\u028b"+
-		"\u028c\3\2\2\2\u028c\u028d\7\t\2\2\u028d\u02b8\3\2\2\2\u028e\u0290\7R"+
-		"\2\2\u028f\u0291\7\b\2\2\u0290\u028f\3\2\2\2\u0290\u0291\3\2\2\2\u0291"+
-		"\u0292\3\2\2\2\u0292\u0294\7s\2\2\u0293\u0295\7\t\2\2\u0294\u0293\3\2"+
-		"\2\2\u0294\u0295\3\2\2\2\u0295\u02b8\3\2\2\2\u0296\u0297\7\b\2\2\u0297"+
-		"\u0298\5\34\17\2\u0298\u0299\7\t\2\2\u0299\u029a\5H%\32\u029a\u02b8\3"+
-		"\2\2\2\u029b\u029c\t\2\2\2\u029c\u02b8\5H%\31\u029d\u029e\7\23\2\2\u029e"+
-		"\u02b8\5H%\27\u029f\u02a0\t\3\2\2\u02a0\u02b8\5H%\26\u02a1\u02a2\t\4\2"+
-		"\2\u02a2\u02b8\5H%\22\u02a3\u02a4\7\4\2\2\u02a4\u02a9\5H%\2\u02a5\u02a6"+
-		"\7\f\2\2\u02a6\u02a8\5H%\2\u02a7\u02a5\3\2\2\2\u02a8\u02ab\3\2\2\2\u02a9"+
-		"\u02a7\3\2\2\2\u02a9\u02aa\3\2\2\2\u02aa\u02ac\3\2\2\2\u02ab\u02a9\3\2"+
-		"\2\2\u02ac\u02ad\7\5\2\2\u02ad\u02b8\3\2\2\2\u02ae\u02b8\7s\2\2\u02af"+
-		"\u02b8\7j\2\2\u02b0\u02b2\7t\2\2\u02b1\u02b0\3\2\2\2\u02b2\u02b3\3\2\2"+
-		"\2\u02b3\u02b1\3\2\2\2\u02b3\u02b4\3\2\2\2\u02b4\u02b8\3\2\2\2\u02b5\u02b8"+
-		"\7u\2\2\u02b6\u02b8\7\\\2\2\u02b7\u0279\3\2\2\2\u02b7\u027e\3\2\2\2\u02b7"+
-		"\u0286\3\2\2\2\u02b7\u028e\3\2\2\2\u02b7\u0296\3\2\2\2\u02b7\u029b\3\2"+
-		"\2\2\u02b7\u029d\3\2\2\2\u02b7\u029f\3\2\2\2\u02b7\u02a1\3\2\2\2\u02b7"+
-		"\u02a3\3\2\2\2\u02b7\u02ae\3\2\2\2\u02b7\u02af\3\2\2\2\u02b7\u02b1\3\2"+
-		"\2\2\u02b7\u02b5\3\2\2\2\u02b7\u02b6\3\2\2\2\u02b8\u02f5\3\2\2\2\u02b9"+
-		"\u02ba\f\25\2\2\u02ba\u02bb\t\5\2\2\u02bb\u02f4\5H%\26\u02bc\u02bd\f\24"+
-		"\2\2\u02bd\u02be\t\6\2\2\u02be\u02f4\5H%\25\u02bf\u02c0\f\23\2\2\u02c0"+
-		"\u02c1\t\7\2\2\u02c1\u02f4\5H%\24\u02c2\u02c3\f\21\2\2\u02c3\u02c4\t\b"+
-		"\2\2\u02c4\u02f4\5H%\22\u02c5\u02c6\f\20\2\2\u02c6\u02c7\7\30\2\2\u02c7"+
-		"\u02f4\5H%\21\u02c8\u02c9\f\17\2\2\u02c9\u02ca\7\32\2\2\u02ca\u02f4\5"+
-		"H%\20\u02cb\u02cc\f\16\2\2\u02cc\u02cd\7\33\2\2\u02cd\u02f4\5H%\17\u02ce"+
-		"\u02cf\f\r\2\2\u02cf\u02d0\7$\2\2\u02d0\u02f4\5H%\16\u02d1\u02d2\f\f\2"+
-		"\2\u02d2\u02d3\7%\2\2\u02d3\u02f4\5H%\r\u02d4\u02d5\f\13\2\2\u02d5\u02d6"+
-		"\7\16\2\2\u02d6\u02d7\5H%\2\u02d7\u02d8\7\13\2\2\u02d8\u02d9\5H%\f\u02d9"+
-		"\u02f4\3\2\2\2\u02da\u02db\f\n\2\2\u02db\u02dc\7&\2\2\u02dc\u02f4\5H%"+
-		"\n\u02dd\u02de\f\t\2\2\u02de\u02df\7\'\2\2\u02df\u02f4\5H%\t\u02e0\u02e1"+
-		"\f!\2\2\u02e1\u02e2\7\17\2\2\u02e2\u02f4\7s\2\2\u02e3\u02e4\f \2\2\u02e4"+
-		"\u02e5\7\20\2\2\u02e5\u02f4\7s\2\2\u02e6\u02e7\f\37\2\2\u02e7\u02e9\7"+
-		"\b\2\2\u02e8\u02ea\5J&\2\u02e9\u02e8\3\2\2\2\u02e9\u02ea\3\2\2\2\u02ea"+
-		"\u02eb\3\2\2\2\u02eb\u02f4\7\t\2\2\u02ec\u02ed\f\33\2\2\u02ed\u02ee\7"+
-		"\6\2\2\u02ee\u02ef\5F$\2\u02ef\u02f0\7\7\2\2\u02f0\u02f4\3\2\2\2\u02f1"+
-		"\u02f2\f\30\2\2\u02f2\u02f4\t\2\2\2\u02f3\u02b9\3\2\2\2\u02f3\u02bc\3"+
-		"\2\2\2\u02f3\u02bf\3\2\2\2\u02f3\u02c2\3\2\2\2\u02f3\u02c5\3\2\2\2\u02f3"+
-		"\u02c8\3\2\2\2\u02f3\u02cb\3\2\2\2\u02f3\u02ce\3\2\2\2\u02f3\u02d1\3\2"+
-		"\2\2\u02f3\u02d4\3\2\2\2\u02f3\u02da\3\2\2\2\u02f3\u02dd\3\2\2\2\u02f3"+
-		"\u02e0\3\2\2\2\u02f3\u02e3\3\2\2\2\u02f3\u02e6\3\2\2\2\u02f3\u02ec\3\2"+
-		"\2\2\u02f3\u02f1\3\2\2\2\u02f4\u02f7\3\2\2\2\u02f5\u02f3\3\2\2\2\u02f5"+
-		"\u02f6\3\2\2\2\u02f6I\3\2\2\2\u02f7\u02f5\3\2\2\2\u02f8\u02fd\5H%\2\u02f9"+
-		"\u02fa\7\f\2\2\u02fa\u02fc\5H%\2\u02fb\u02f9\3\2\2\2\u02fc\u02ff\3\2\2"+
-		"\2\u02fd\u02fb\3\2\2\2\u02fd\u02fe\3\2\2\2\u02feK\3\2\2\2\u02ff\u02fd"+
-		"\3\2\2\2\u0300\u0302\7S\2\2\u0301\u0303\5N(\2\u0302\u0301\3\2\2\2\u0302"+
-		"\u0303\3\2\2\2\u0303\u0304\3\2\2\2\u0304\u0305\7]\2\2\u0305M\3\2\2\2\u0306"+
-		"\u0307\7\b\2\2\u0307\u030c\5P)\2\u0308\u0309\7\f\2\2\u0309\u030b\5P)\2"+
-		"\u030a\u0308\3\2\2\2\u030b\u030e\3\2\2\2\u030c\u030a\3\2\2\2\u030c\u030d"+
-		"\3\2\2\2\u030d\u030f\3\2\2\2\u030e\u030c\3\2\2\2\u030f\u0310\7\t\2\2\u0310"+
-		"O\3\2\2\2\u0311\u0312\7T\2\2\u0312\u0321\7t\2\2\u0313\u0314\7U\2\2\u0314"+
-		"\u0321\7s\2\2\u0315\u0316\7V\2\2\u0316\u0321\7t\2\2\u0317\u0318\7W\2\2"+
-		"\u0318\u0321\5H%\2\u0319\u031a\7X\2\2\u031a\u0321\5H%\2\u031b\u031e\7"+
-		"*\2\2\u031c\u031f\7\65\2\2\u031d\u031f\5H%\2\u031e\u031c\3\2\2\2\u031e"+
-		"\u031d\3\2\2\2\u031f\u0321\3\2\2\2\u0320\u0311\3\2\2\2\u0320\u0313\3\2"+
-		"\2\2\u0320\u0315\3\2\2\2\u0320\u0317\3\2\2\2\u0320\u0319\3\2\2\2\u0320"+
-		"\u031b\3\2\2\2\u0321Q\3\2\2\2\u0322\u0324\5T+\2\u0323\u0322\3\2\2\2\u0324"+
-		"\u0327\3\2\2\2\u0325\u0323\3\2\2\2\u0325\u0326\3\2\2\2\u0326S\3\2\2\2"+
-		"\u0327\u0325\3\2\2\2\u0328\u032c\5V,\2\u0329\u032c\5X-\2\u032a\u032c\5"+
-		"Z.\2\u032b\u0328\3\2\2\2\u032b\u0329\3\2\2\2\u032b\u032a\3\2\2\2\u032c"+
-		"U\3\2\2\2\u032d\u032e\7\u0099\2\2\u032e\u0332\7|\2\2\u032f\u0330\7\u0098"+
-		"\2\2\u0330\u0332\7|\2\2\u0331\u032d\3\2\2\2\u0331\u032f\3\2\2\2\u0332"+
-		"W\3\2\2\2\u0333\u0335\7z\2\2\u0334\u0336\5\\/\2\u0335\u0334\3\2\2\2\u0335"+
-		"\u0336\3\2\2\2\u0336Y\3\2\2\2\u0337\u0338\7y\2\2\u0338\u033d\5^\60\2\u0339"+
-		"\u033a\7}\2\2\u033a\u033c\5^\60\2\u033b\u0339\3\2\2\2\u033c\u033f\3\2"+
-		"\2\2\u033d\u033b\3\2\2\2\u033d\u033e\3\2\2\2\u033e[\3\2\2\2\u033f\u033d"+
-		"\3\2\2\2\u0340\u0358\5^\60\2\u0341\u0342\7{\2\2\u0342\u0358\5^\60\2\u0343"+
-		"\u0344\5^\60\2\u0344\u0345\7}\2\2\u0345\u0346\7\u0099\2\2\u0346\u0358"+
-		"\3\2\2\2\u0347\u0348\7~\2\2\u0348\u0349\5^\60\2\u0349\u034a\7\177\2\2"+
-		"\u034a\u034b\7}\2\2\u034b\u034c\7\u0099\2\2\u034c\u0358\3\2\2\2\u034d"+
-		"\u034e\7~\2\2\u034e\u034f\5^\60\2\u034f\u0350\7}\2\2\u0350\u0351\7\u0099"+
-		"\2\2\u0351\u0352\7\177\2\2\u0352\u0358\3\2\2\2\u0353\u0354\7~\2\2\u0354"+
-		"\u0355\5^\60\2\u0355\u0356\7\177\2\2\u0356\u0358\3\2\2\2\u0357\u0340\3"+
-		"\2\2\2\u0357\u0341\3\2\2\2\u0357\u0343\3\2\2\2\u0357\u0347\3\2\2\2\u0357"+
-		"\u034d\3\2\2\2\u0357\u0353\3\2\2\2\u0358]\3\2\2\2\u0359\u035a\b\60\1\2"+
-		"\u035a\u035b\7\u0080\2\2\u035b\u035c\5^\60\2\u035c\u035d\7\u0081\2\2\u035d"+
-		"\u0368\3\2\2\2\u035e\u035f\t\t\2\2\u035f\u0368\5^\60\n\u0360\u0368\7\u0099"+
-		"\2\2\u0361\u0368\7\u0097\2\2\u0362\u0363\7\u008b\2\2\u0363\u0364\7\u0099"+
-		"\2\2\u0364\u0368\7\u008c\2\2\u0365\u0368\7\u008d\2\2\u0366\u0368\7\u0096"+
-		"\2\2\u0367\u0359\3\2\2\2\u0367\u035e\3\2\2\2\u0367\u0360\3\2\2\2\u0367"+
-		"\u0361\3\2\2\2\u0367\u0362\3\2\2\2\u0367\u0365\3\2\2\2\u0367\u0366\3\2"+
-		"\2\2\u0368\u0377\3\2\2\2\u0369\u036a\f\f\2\2\u036a\u036b\7\u0082\2\2\u036b"+
-		"\u0376\5^\60\r\u036c\u036d\f\13\2\2\u036d\u036e\t\n\2\2\u036e\u0376\5"+
-		"^\60\f\u036f\u0370\f\t\2\2\u0370\u0371\t\13\2\2\u0371\u0376\5^\60\n\u0372"+
-		"\u0373\f\b\2\2\u0373\u0374\t\f\2\2\u0374\u0376\5^\60\t\u0375\u0369\3\2"+
-		"\2\2\u0375\u036c\3\2\2\2\u0375\u036f\3\2\2\2\u0375\u0372\3\2\2\2\u0376"+
-		"\u0379\3\2\2\2\u0377\u0375\3\2\2\2\u0377\u0378\3\2\2\2\u0378_\3\2\2\2"+
-		"\u0379\u0377\3\2\2\2Zinv\u0087\u0090\u009a\u00a0\u00a8\u00af\u00b8\u00bd"+
-		"\u00c3\u00c8\u00cd\u00d4\u00db\u00e0\u00ec\u00ef\u00f1\u00fc\u0103\u0108"+
-		"\u010e\u0110\u0118\u011e\u012a\u0138\u013e\u0144\u014a\u014f\u0153\u015c"+
-		"\u0163\u0169\u0174\u01b1\u01b5\u01c0\u01d3\u01dc\u01e1\u01e6\u01ed\u01fa"+
-		"\u01ff\u020b\u0219\u022c\u0235\u023c\u0241\u0246\u0248\u024e\u0255\u025b"+
-		"\u025e\u0266\u0269\u026c\u0276\u0282\u028a\u0290\u0294\u02a9\u02b3\u02b7"+
-		"\u02e9\u02f3\u02f5\u02fd\u0302\u030c\u031e\u0320\u0325\u032b\u0331\u0335"+
-		"\u033d\u0357\u0367\u0375\u0377";
+		"\2\2\u0165\u0163\3\2\2\2\u0166\u0167\7u\2\2\u0167\u016b\3\2\2\2\u0168"+
+		"\u016b\7]\2\2\u0169\u016b\7\16\2\2\u016a\u015f\3\2\2\2\u016a\u0168\3\2"+
+		"\2\2\u016a\u0169\3\2\2\2\u016b\65\3\2\2\2\u016c\u016d\7b\2\2\u016d\u016e"+
+		"\7*\2\2\u016e\u016f\3\2\2\2\u016f\u0170\7\b\2\2\u0170\u0175\7l\2\2\u0171"+
+		"\u0172\7\f\2\2\u0172\u0174\7l\2\2\u0173\u0171\3\2\2\2\u0174\u0177\3\2"+
+		"\2\2\u0175\u0173\3\2\2\2\u0175\u0176\3\2\2\2\u0176\u0178\3\2\2\2\u0177"+
+		"\u0175\3\2\2\2\u0178\u01b7\7\t\2\2\u0179\u017a\7b\2\2\u017a\u017b\7+\2"+
+		"\2\u017b\u017c\3\2\2\2\u017c\u017d\7\b\2\2\u017d\u017e\7l\2\2\u017e\u01b7"+
+		"\7\t\2\2\u017f\u0180\7b\2\2\u0180\u0181\7,\2\2\u0181\u0182\3\2\2\2\u0182"+
+		"\u0183\7\b\2\2\u0183\u0184\7u\2\2\u0184\u01b7\7\t\2\2\u0185\u0186\7b\2"+
+		"\2\u0186\u0187\7.\2\2\u0187\u0188\3\2\2\2\u0188\u0189\7\b\2\2\u0189\u018a"+
+		"\7u\2\2\u018a\u01b7\7\t\2\2\u018b\u018c\7b\2\2\u018c\u018d\7-\2\2\u018d"+
+		"\u018e\3\2\2\2\u018e\u018f\7\b\2\2\u018f\u0190\7v\2\2\u0190\u01b7\7\t"+
+		"\2\2\u0191\u0192\7b\2\2\u0192\u0193\7/\2\2\u0193\u0194\3\2\2\2\u0194\u0195"+
+		"\7\b\2\2\u0195\u0196\7u\2\2\u0196\u01b7\7\t\2\2\u0197\u0198\7b\2\2\u0198"+
+		"\u0199\7\60\2\2\u0199\u019a\3\2\2\2\u019a\u019b\7\b\2\2\u019b\u019c\7"+
+		"u\2\2\u019c\u01b7\7\t\2\2\u019d\u019e\7b\2\2\u019e\u019f\7\61\2\2\u019f"+
+		"\u01a0\3\2\2\2\u01a0\u01a1\7\b\2\2\u01a1\u01a2\7u\2\2\u01a2\u01b7\7\t"+
+		"\2\2\u01a3\u01a4\7b\2\2\u01a4\u01a5\7A\2\2\u01a5\u01a6\3\2\2\2\u01a6\u01a7"+
+		"\7\b\2\2\u01a7\u01a8\7B\2\2\u01a8\u01b7\7\t\2\2\u01a9\u01aa\7b\2\2\u01aa"+
+		"\u01ab\7C\2\2\u01ab\u01ac\3\2\2\2\u01ac\u01ad\7\b\2\2\u01ad\u01b2\7u\2"+
+		"\2\u01ae\u01af\7\f\2\2\u01af\u01b1\7u\2\2\u01b0\u01ae\3\2\2\2\u01b1\u01b4"+
+		"\3\2\2\2\u01b2\u01b0\3\2\2\2\u01b2\u01b3\3\2\2\2\u01b3\u01b5\3\2\2\2\u01b4"+
+		"\u01b2\3\2\2\2\u01b5\u01b7\7\t\2\2\u01b6\u016c\3\2\2\2\u01b6\u0179\3\2"+
+		"\2\2\u01b6\u017f\3\2\2\2\u01b6\u0185\3\2\2\2\u01b6\u018b\3\2\2\2\u01b6"+
+		"\u0191\3\2\2\2\u01b6\u0197\3\2\2\2\u01b6\u019d\3\2\2\2\u01b6\u01a3\3\2"+
+		"\2\2\u01b6\u01a9\3\2\2\2\u01b7\67\3\2\2\2\u01b8\u01e4\7\62\2\2\u01b9\u01ba"+
+		"\7\65\2\2\u01ba\u01bb\7\b\2\2\u01bb\u01bc\7l\2\2\u01bc\u01e4\7\t\2\2\u01bd"+
+		"\u01c1\7:\2\2\u01be\u01bf\7\b\2\2\u01bf\u01c0\7u\2\2\u01c0\u01c2\7\t\2"+
+		"\2\u01c1\u01be\3\2\2\2\u01c1\u01c2\3\2\2\2\u01c2\u01e4\3\2\2\2\u01c3\u01e4"+
+		"\7<\2\2\u01c4\u01e4\7=\2\2\u01c5\u01c6\7;\2\2\u01c6\u01c7\7\b\2\2\u01c7"+
+		"\u01c8\7l\2\2\u01c8\u01e4\7\t\2\2\u01c9\u01e4\7\67\2\2\u01ca\u01e4\78"+
+		"\2\2\u01cb\u01e4\7>\2\2\u01cc\u01e4\7?\2\2\u01cd\u01e4\7\63\2\2\u01ce"+
+		"\u01e4\7\64\2\2\u01cf\u01e4\7\66\2\2\u01d0\u01e4\7@\2\2\u01d1\u01d5\7"+
+		"9\2\2\u01d2\u01d3\7\b\2\2\u01d3\u01d4\7u\2\2\u01d4\u01d6\7\t\2\2\u01d5"+
+		"\u01d2\3\2\2\2\u01d5\u01d6\3\2\2\2\u01d6\u01e4\3\2\2\2\u01d7\u01d8\7*"+
+		"\2\2\u01d8\u01d9\7\b\2\2\u01d9\u01de\7l\2\2\u01da\u01db\7\f\2\2\u01db"+
+		"\u01dd\7l\2\2\u01dc\u01da\3\2\2\2\u01dd\u01e0\3\2\2\2\u01de\u01dc\3\2"+
+		"\2\2\u01de\u01df\3\2\2\2\u01df\u01e1\3\2\2\2\u01e0\u01de\3\2\2\2\u01e1"+
+		"\u01e4\7\t\2\2\u01e2\u01e4\7B\2\2\u01e3\u01b8\3\2\2\2\u01e3\u01b9\3\2"+
+		"\2\2\u01e3\u01bd\3\2\2\2\u01e3\u01c3\3\2\2\2\u01e3\u01c4\3\2\2\2\u01e3"+
+		"\u01c5\3\2\2\2\u01e3\u01c9\3\2\2\2\u01e3\u01ca\3\2\2\2\u01e3\u01cb\3\2"+
+		"\2\2\u01e3\u01cc\3\2\2\2\u01e3\u01cd\3\2\2\2\u01e3\u01ce\3\2\2\2\u01e3"+
+		"\u01cf\3\2\2\2\u01e3\u01d0\3\2\2\2\u01e3\u01d1\3\2\2\2\u01e3\u01d7\3\2"+
+		"\2\2\u01e3\u01e2\3\2\2\2\u01e49\3\2\2\2\u01e5\u01e7\5<\37\2\u01e6\u01e5"+
+		"\3\2\2\2\u01e7\u01e8\3\2\2\2\u01e8\u01e6\3\2\2\2\u01e8\u01e9\3\2\2\2\u01e9"+
+		";\3\2\2\2\u01ea\u01eb\5\16\b\2\u01eb\u01ec\7\n\2\2\u01ec\u023f\3\2\2\2"+
+		"\u01ed\u01ef\7\4\2\2\u01ee\u01f0\5:\36\2\u01ef\u01ee\3\2\2\2\u01ef\u01f0"+
+		"\3\2\2\2\u01f0\u01f1\3\2\2\2\u01f1\u023f\7\5\2\2\u01f2\u01f3\5F$\2\u01f3"+
+		"\u01f4\7\n\2\2\u01f4\u023f\3\2\2\2\u01f5\u01f6\7D\2\2\u01f6\u01f7\7\b"+
+		"\2\2\u01f7\u01f8\5F$\2\u01f8\u01f9\7\t\2\2\u01f9\u01fc\5<\37\2\u01fa\u01fb"+
+		"\7E\2\2\u01fb\u01fd\5<\37\2\u01fc\u01fa\3\2\2\2\u01fc\u01fd\3\2\2\2\u01fd"+
+		"\u023f\3\2\2\2\u01fe\u0200\58\35\2\u01ff\u01fe\3\2\2\2\u0200\u0203\3\2"+
+		"\2\2\u0201\u01ff\3\2\2\2\u0201\u0202\3\2\2\2\u0202\u0204\3\2\2\2\u0203"+
+		"\u0201\3\2\2\2\u0204\u0205\7F\2\2\u0205\u0206\7\b\2\2\u0206\u0207\5F$"+
+		"\2\u0207\u0208\7\t\2\2\u0208\u0209\5<\37\2\u0209\u023f\3\2\2\2\u020a\u020c"+
+		"\58\35\2\u020b\u020a\3\2\2\2\u020c\u020f\3\2\2\2\u020d\u020b\3\2\2\2\u020d"+
+		"\u020e\3\2\2\2\u020e\u0210\3\2\2\2\u020f\u020d\3\2\2\2\u0210\u0211\7G"+
+		"\2\2\u0211\u0212\5<\37\2\u0212\u0213\7F\2\2\u0213\u0214\7\b\2\2\u0214"+
+		"\u0215\5F$\2\u0215\u0216\7\t\2\2\u0216\u0217\7\n\2\2\u0217\u023f\3\2\2"+
+		"\2\u0218\u021a\58\35\2\u0219\u0218\3\2\2\2\u021a\u021d\3\2\2\2\u021b\u0219"+
+		"\3\2\2\2\u021b\u021c\3\2\2\2\u021c\u021e\3\2\2\2\u021d\u021b\3\2\2\2\u021e"+
+		"\u021f\7H\2\2\u021f\u0220\7\b\2\2\u0220\u0221\5B\"\2\u0221\u0222\7\t\2"+
+		"\2\u0222\u0223\5<\37\2\u0223\u023f\3\2\2\2\u0224\u0225\7I\2\2\u0225\u0226"+
+		"\7\b\2\2\u0226\u0227\5F$\2\u0227\u0228\7\t\2\2\u0228\u0229\7\4\2\2\u0229"+
+		"\u022a\5> \2\u022a\u022b\7\5\2\2\u022b\u023f\3\2\2\2\u022c\u022e\7J\2"+
+		"\2\u022d\u022f\5F$\2\u022e\u022d\3\2\2\2\u022e\u022f\3\2\2\2\u022f\u0230"+
+		"\3\2\2\2\u0230\u023f\7\n\2\2\u0231\u0232\7K\2\2\u0232\u023f\7\n\2\2\u0233"+
+		"\u0234\7L\2\2\u0234\u023f\7\n\2\2\u0235\u0237\7M\2\2\u0236\u0238\5N(\2"+
+		"\u0237\u0236\3\2\2\2\u0237\u0238\3\2\2\2\u0238\u0239\3\2\2\2\u0239\u023a"+
+		"\7\4\2\2\u023a\u023b\5R*\2\u023b\u023c\7\u008e\2\2\u023c\u023f\3\2\2\2"+
+		"\u023d\u023f\5L\'\2\u023e\u01ea\3\2\2\2\u023e\u01ed\3\2\2\2\u023e\u01f2"+
+		"\3\2\2\2\u023e\u01f5\3\2\2\2\u023e\u0201\3\2\2\2\u023e\u020d\3\2\2\2\u023e"+
+		"\u021b\3\2\2\2\u023e\u0224\3\2\2\2\u023e\u022c\3\2\2\2\u023e\u0231\3\2"+
+		"\2\2\u023e\u0233\3\2\2\2\u023e\u0235\3\2\2\2\u023e\u023d\3\2\2\2\u023f"+
+		"=\3\2\2\2\u0240\u0242\5@!\2\u0241\u0240\3\2\2\2\u0242\u0243\3\2\2\2\u0243"+
+		"\u0241\3\2\2\2\u0243\u0244\3\2\2\2\u0244\u024a\3\2\2\2\u0245\u0246\7N"+
+		"\2\2\u0246\u0248\7\13\2\2\u0247\u0249\5:\36\2\u0248\u0247\3\2\2\2\u0248"+
+		"\u0249\3\2\2\2\u0249\u024b\3\2\2\2\u024a\u0245\3\2\2\2\u024a\u024b\3\2"+
+		"\2\2\u024b?\3\2\2\2\u024c\u024d\7O\2\2\u024d\u024e\5H%\2\u024e\u0250\7"+
+		"\13\2\2\u024f\u0251\5:\36\2\u0250\u024f\3\2\2\2\u0250\u0251\3\2\2\2\u0251"+
+		"A\3\2\2\2\u0252\u0253\5D#\2\u0253\u0254\7\n\2\2\u0254\u0255\5F$\2\u0255"+
+		"\u0257\7\n\2\2\u0256\u0258\5F$\2\u0257\u0256\3\2\2\2\u0257\u0258\3\2\2"+
+		"\2\u0258\u0269\3\2\2\2\u0259\u025d\5\26\f\2\u025a\u025c\5\30\r\2\u025b"+
+		"\u025a\3\2\2\2\u025c\u025f\3\2\2\2\u025d\u025b\3\2\2\2\u025d\u025e\3\2"+
+		"\2\2\u025e\u0261\3\2\2\2\u025f\u025d\3\2\2\2\u0260\u0259\3\2\2\2\u0260"+
+		"\u0261\3\2\2\2\u0261\u0262\3\2\2\2\u0262\u0263\7u\2\2\u0263\u0264\7\13"+
+		"\2\2\u0264\u0265\5H%\2\u0265\u0266\7\r\2\2\u0266\u0267\5H%\2\u0267\u0269"+
+		"\3\2\2\2\u0268\u0252\3\2\2\2\u0268\u0260\3\2\2\2\u0269C\3\2\2\2\u026a"+
+		"\u026c\5\16\b\2\u026b\u026a\3\2\2\2\u026b\u026c\3\2\2\2\u026c\u026f\3"+
+		"\2\2\2\u026d\u026f\5F$\2\u026e\u026b\3\2\2\2\u026e\u026d\3\2\2\2\u026f"+
+		"E\3\2\2\2\u0270\u0271\b$\1\2\u0271\u0272\5H%\2\u0272\u0278\3\2\2\2\u0273"+
+		"\u0274\f\3\2\2\u0274\u0275\7\f\2\2\u0275\u0277\5H%\2\u0276\u0273\3\2\2"+
+		"\2\u0277\u027a\3\2\2\2\u0278\u0276\3\2\2\2\u0278\u0279\3\2\2\2\u0279G"+
+		"\3\2\2\2\u027a\u0278\3\2\2\2\u027b\u027c\b%\1\2\u027c\u027d\7\b\2\2\u027d"+
+		"\u027e\5F$\2\u027e\u027f\7\t\2\2\u027f\u02ba\3\2\2\2\u0280\u0281\7R\2"+
+		"\2\u0281\u0284\7\b\2\2\u0282\u0285\5H%\2\u0283\u0285\5\34\17\2\u0284\u0282"+
+		"\3\2\2\2\u0284\u0283\3\2\2\2\u0285\u0286\3\2\2\2\u0286\u0287\7\t\2\2\u0287"+
+		"\u02ba\3\2\2\2\u0288\u0289\7S\2\2\u0289\u028c\7\b\2\2\u028a\u028d\5H%"+
+		"\2\u028b\u028d\5\34\17\2\u028c\u028a\3\2\2\2\u028c\u028b\3\2\2\2\u028d"+
+		"\u028e\3\2\2\2\u028e\u028f\7\t\2\2\u028f\u02ba\3\2\2\2\u0290\u0292\7T"+
+		"\2\2\u0291\u0293\7\b\2\2\u0292\u0291\3\2\2\2\u0292\u0293\3\2\2\2\u0293"+
+		"\u0294\3\2\2\2\u0294\u0296\7u\2\2\u0295\u0297\7\t\2\2\u0296\u0295\3\2"+
+		"\2\2\u0296\u0297\3\2\2\2\u0297\u02ba\3\2\2\2\u0298\u0299\7\b\2\2\u0299"+
+		"\u029a\5\34\17\2\u029a\u029b\7\t\2\2\u029b\u029c\5H%\32\u029c\u02ba\3"+
+		"\2\2\2\u029d\u029e\t\2\2\2\u029e\u02ba\5H%\31\u029f\u02a0\7\24\2\2\u02a0"+
+		"\u02ba\5H%\27\u02a1\u02a2\t\3\2\2\u02a2\u02ba\5H%\26\u02a3\u02a4\t\4\2"+
+		"\2\u02a4\u02ba\5H%\22\u02a5\u02a6\7\4\2\2\u02a6\u02ab\5H%\2\u02a7\u02a8"+
+		"\7\f\2\2\u02a8\u02aa\5H%\2\u02a9\u02a7\3\2\2\2\u02aa\u02ad\3\2\2\2\u02ab"+
+		"\u02a9\3\2\2\2\u02ab\u02ac\3\2\2\2\u02ac\u02ae\3\2\2\2\u02ad\u02ab\3\2"+
+		"\2\2\u02ae\u02af\7\5\2\2\u02af\u02ba\3\2\2\2\u02b0\u02ba\7u\2\2\u02b1"+
+		"\u02ba\7l\2\2\u02b2\u02b4\7v\2\2\u02b3\u02b2\3\2\2\2\u02b4\u02b5\3\2\2"+
+		"\2\u02b5\u02b3\3\2\2\2\u02b5\u02b6\3\2\2\2\u02b6\u02ba\3\2\2\2\u02b7\u02ba"+
+		"\7w\2\2\u02b8\u02ba\7^\2\2\u02b9\u027b\3\2\2\2\u02b9\u0280\3\2\2\2\u02b9"+
+		"\u0288\3\2\2\2\u02b9\u0290\3\2\2\2\u02b9\u0298\3\2\2\2\u02b9\u029d\3\2"+
+		"\2\2\u02b9\u029f\3\2\2\2\u02b9\u02a1\3\2\2\2\u02b9\u02a3\3\2\2\2\u02b9"+
+		"\u02a5\3\2\2\2\u02b9\u02b0\3\2\2\2\u02b9\u02b1\3\2\2\2\u02b9\u02b3\3\2"+
+		"\2\2\u02b9\u02b7\3\2\2\2\u02b9\u02b8\3\2\2\2\u02ba\u02f7\3\2\2\2\u02bb"+
+		"\u02bc\f\25\2\2\u02bc\u02bd\t\5\2\2\u02bd\u02f6\5H%\26\u02be\u02bf\f\24"+
+		"\2\2\u02bf\u02c0\t\6\2\2\u02c0\u02f6\5H%\25\u02c1\u02c2\f\23\2\2\u02c2"+
+		"\u02c3\t\7\2\2\u02c3\u02f6\5H%\24\u02c4\u02c5\f\21\2\2\u02c5\u02c6\t\b"+
+		"\2\2\u02c6\u02f6\5H%\22\u02c7\u02c8\f\20\2\2\u02c8\u02c9\7\31\2\2\u02c9"+
+		"\u02f6\5H%\21\u02ca\u02cb\f\17\2\2\u02cb\u02cc\7\33\2\2\u02cc\u02f6\5"+
+		"H%\20\u02cd\u02ce\f\16\2\2\u02ce\u02cf\7\34\2\2\u02cf\u02f6\5H%\17\u02d0"+
+		"\u02d1\f\r\2\2\u02d1\u02d2\7%\2\2\u02d2\u02f6\5H%\16\u02d3\u02d4\f\f\2"+
+		"\2\u02d4\u02d5\7&\2\2\u02d5\u02f6\5H%\r\u02d6\u02d7\f\13\2\2\u02d7\u02d8"+
+		"\7\17\2\2\u02d8\u02d9\5H%\2\u02d9\u02da\7\13\2\2\u02da\u02db\5H%\f\u02db"+
+		"\u02f6\3\2\2\2\u02dc\u02dd\f\n\2\2\u02dd\u02de\7\'\2\2\u02de\u02f6\5H"+
+		"%\n\u02df\u02e0\f\t\2\2\u02e0\u02e1\7(\2\2\u02e1\u02f6\5H%\t\u02e2\u02e3"+
+		"\f!\2\2\u02e3\u02e4\7\20\2\2\u02e4\u02f6\7u\2\2\u02e5\u02e6\f \2\2\u02e6"+
+		"\u02e7\7\21\2\2\u02e7\u02f6\7u\2\2\u02e8\u02e9\f\37\2\2\u02e9\u02eb\7"+
+		"\b\2\2\u02ea\u02ec\5J&\2\u02eb\u02ea\3\2\2\2\u02eb\u02ec\3\2\2\2\u02ec"+
+		"\u02ed\3\2\2\2\u02ed\u02f6\7\t\2\2\u02ee\u02ef\f\33\2\2\u02ef\u02f0\7"+
+		"\6\2\2\u02f0\u02f1\5F$\2\u02f1\u02f2\7\7\2\2\u02f2\u02f6\3\2\2\2\u02f3"+
+		"\u02f4\f\30\2\2\u02f4\u02f6\t\2\2\2\u02f5\u02bb\3\2\2\2\u02f5\u02be\3"+
+		"\2\2\2\u02f5\u02c1\3\2\2\2\u02f5\u02c4\3\2\2\2\u02f5\u02c7\3\2\2\2\u02f5"+
+		"\u02ca\3\2\2\2\u02f5\u02cd\3\2\2\2\u02f5\u02d0\3\2\2\2\u02f5\u02d3\3\2"+
+		"\2\2\u02f5\u02d6\3\2\2\2\u02f5\u02dc\3\2\2\2\u02f5\u02df\3\2\2\2\u02f5"+
+		"\u02e2\3\2\2\2\u02f5\u02e5\3\2\2\2\u02f5\u02e8\3\2\2\2\u02f5\u02ee\3\2"+
+		"\2\2\u02f5\u02f3\3\2\2\2\u02f6\u02f9\3\2\2\2\u02f7\u02f5\3\2\2\2\u02f7"+
+		"\u02f8\3\2\2\2\u02f8I\3\2\2\2\u02f9\u02f7\3\2\2\2\u02fa\u02ff\5H%\2\u02fb"+
+		"\u02fc\7\f\2\2\u02fc\u02fe\5H%\2\u02fd\u02fb\3\2\2\2\u02fe\u0301\3\2\2"+
+		"\2\u02ff\u02fd\3\2\2\2\u02ff\u0300\3\2\2\2\u0300K\3\2\2\2\u0301\u02ff"+
+		"\3\2\2\2\u0302\u0304\7U\2\2\u0303\u0305\5N(\2\u0304\u0303\3\2\2\2\u0304"+
+		"\u0305\3\2\2\2\u0305\u0306\3\2\2\2\u0306\u0307\7_\2\2\u0307M\3\2\2\2\u0308"+
+		"\u0309\7\b\2\2\u0309\u030e\5P)\2\u030a\u030b\7\f\2\2\u030b\u030d\5P)\2"+
+		"\u030c\u030a\3\2\2\2\u030d\u0310\3\2\2\2\u030e\u030c\3\2\2\2\u030e\u030f"+
+		"\3\2\2\2\u030f\u0311\3\2\2\2\u0310\u030e\3\2\2\2\u0311\u0312\7\t\2\2\u0312"+
+		"O\3\2\2\2\u0313\u0314\7V\2\2\u0314\u0323\7v\2\2\u0315\u0316\7W\2\2\u0316"+
+		"\u0323\7u\2\2\u0317\u0318\7X\2\2\u0318\u0323\7v\2\2\u0319\u031a\7Y\2\2"+
+		"\u031a\u0323\5H%\2\u031b\u031c\7Z\2\2\u031c\u0323\5H%\2\u031d\u0320\7"+
+		"+\2\2\u031e\u0321\7\66\2\2\u031f\u0321\5H%\2\u0320\u031e\3\2\2\2\u0320"+
+		"\u031f\3\2\2\2\u0321\u0323\3\2\2\2\u0322\u0313\3\2\2\2\u0322\u0315\3\2"+
+		"\2\2\u0322\u0317\3\2\2\2\u0322\u0319\3\2\2\2\u0322\u031b\3\2\2\2\u0322"+
+		"\u031d\3\2\2\2\u0323Q\3\2\2\2\u0324\u0326\5T+\2\u0325\u0324\3\2\2\2\u0326"+
+		"\u0329\3\2\2\2\u0327\u0325\3\2\2\2\u0327\u0328\3\2\2\2\u0328S\3\2\2\2"+
+		"\u0329\u0327\3\2\2\2\u032a\u032e\5V,\2\u032b\u032e\5X-\2\u032c\u032e\5"+
+		"Z.\2\u032d\u032a\3\2\2\2\u032d\u032b\3\2\2\2\u032d\u032c\3\2\2\2\u032e"+
+		"U\3\2\2\2\u032f\u0330\7\u009b\2\2\u0330\u0334\7~\2\2\u0331\u0332\7\u009a"+
+		"\2\2\u0332\u0334\7~\2\2\u0333\u032f\3\2\2\2\u0333\u0331\3\2\2\2\u0334"+
+		"W\3\2\2\2\u0335\u0337\7|\2\2\u0336\u0338\5\\/\2\u0337\u0336\3\2\2\2\u0337"+
+		"\u0338\3\2\2\2\u0338Y\3\2\2\2\u0339\u033a\7{\2\2\u033a\u033f\5^\60\2\u033b"+
+		"\u033c\7\177\2\2\u033c\u033e\5^\60\2\u033d\u033b\3\2\2\2\u033e\u0341\3"+
+		"\2\2\2\u033f\u033d\3\2\2\2\u033f\u0340\3\2\2\2\u0340[\3\2\2\2\u0341\u033f"+
+		"\3\2\2\2\u0342\u035a\5^\60\2\u0343\u0344\7}\2\2\u0344\u035a\5^\60\2\u0345"+
+		"\u0346\5^\60\2\u0346\u0347\7\177\2\2\u0347\u0348\7\u009b\2\2\u0348\u035a"+
+		"\3\2\2\2\u0349\u034a\7\u0080\2\2\u034a\u034b\5^\60\2\u034b\u034c\7\u0081"+
+		"\2\2\u034c\u034d\7\177\2\2\u034d\u034e\7\u009b\2\2\u034e\u035a\3\2\2\2"+
+		"\u034f\u0350\7\u0080\2\2\u0350\u0351\5^\60\2\u0351\u0352\7\177\2\2\u0352"+
+		"\u0353\7\u009b\2\2\u0353\u0354\7\u0081\2\2\u0354\u035a\3\2\2\2\u0355\u0356"+
+		"\7\u0080\2\2\u0356\u0357\5^\60\2\u0357\u0358\7\u0081\2\2\u0358\u035a\3"+
+		"\2\2\2\u0359\u0342\3\2\2\2\u0359\u0343\3\2\2\2\u0359\u0345\3\2\2\2\u0359"+
+		"\u0349\3\2\2\2\u0359\u034f\3\2\2\2\u0359\u0355\3\2\2\2\u035a]\3\2\2\2"+
+		"\u035b\u035c\b\60\1\2\u035c\u035d\7\u0082\2\2\u035d\u035e\5^\60\2\u035e"+
+		"\u035f\7\u0083\2\2\u035f\u036a\3\2\2\2\u0360\u0361\t\t\2\2\u0361\u036a"+
+		"\5^\60\n\u0362\u036a\7\u009b\2\2\u0363\u036a\7\u0099\2\2\u0364\u0365\7"+
+		"\u008d\2\2\u0365\u0366\7\u009b\2\2\u0366\u036a\7\u008e\2\2\u0367\u036a"+
+		"\7\u008f\2\2\u0368\u036a\7\u0098\2\2\u0369\u035b\3\2\2\2\u0369\u0360\3"+
+		"\2\2\2\u0369\u0362\3\2\2\2\u0369\u0363\3\2\2\2\u0369\u0364\3\2\2\2\u0369"+
+		"\u0367\3\2\2\2\u0369\u0368\3\2\2\2\u036a\u0379\3\2\2\2\u036b\u036c\f\f"+
+		"\2\2\u036c\u036d\7\u0084\2\2\u036d\u0378\5^\60\r\u036e\u036f\f\13\2\2"+
+		"\u036f\u0370\t\n\2\2\u0370\u0378\5^\60\f\u0371\u0372\f\t\2\2\u0372\u0373"+
+		"\t\13\2\2\u0373\u0378\5^\60\n\u0374\u0375\f\b\2\2\u0375\u0376\t\f\2\2"+
+		"\u0376\u0378\5^\60\t\u0377\u036b\3\2\2\2\u0377\u036e\3\2\2\2\u0377\u0371"+
+		"\3\2\2\2\u0377\u0374\3\2\2\2\u0378\u037b\3\2\2\2\u0379\u0377\3\2\2\2\u0379"+
+		"\u037a\3\2\2\2\u037a_\3\2\2\2\u037b\u0379\3\2\2\2Zinv\u0087\u0090\u009a"+
+		"\u00a0\u00a8\u00af\u00b8\u00bd\u00c3\u00c8\u00cd\u00d4\u00db\u00e0\u00ec"+
+		"\u00ef\u00f1\u00fc\u0103\u0108\u010e\u0110\u0118\u011e\u012a\u0138\u013e"+
+		"\u0144\u014a\u014f\u0153\u015c\u0163\u016a\u0175\u01b2\u01b6\u01c1\u01d5"+
+		"\u01de\u01e3\u01e8\u01ef\u01fc\u0201\u020d\u021b\u022e\u0237\u023e\u0243"+
+		"\u0248\u024a\u0250\u0257\u025d\u0260\u0268\u026b\u026e\u0278\u0284\u028c"+
+		"\u0292\u0296\u02ab\u02b5\u02b9\u02eb\u02f5\u02f7\u02ff\u0304\u030e\u0320"+
+		"\u0322\u0327\u032d\u0333\u0337\u033f\u0359\u0369\u0377\u0379";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

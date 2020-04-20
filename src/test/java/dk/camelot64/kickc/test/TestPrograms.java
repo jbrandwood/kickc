@@ -41,7 +41,12 @@ public class TestPrograms {
    }
 
    @Test
-   public void testPintf10() throws IOException, URISyntaxException {
+   public void testPrintf11() throws IOException, URISyntaxException {
+      compileAndCompare("printf-11.c");
+   }
+
+   @Test
+   public void testPrintf10() throws IOException, URISyntaxException {
       compileAndCompare("printf-10.c");
    }
 

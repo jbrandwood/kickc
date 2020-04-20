@@ -24,10 +24,21 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    public static final String INTRINSIC_PRINTF_NAME = "printf";
    /** The printf routine used to print formatted strings. */
    public static final String PRINTF_STRING = "printf_string";
+   /** The printf routine used to print signed chars. */
+   public static final String PRINTF_SCHAR  = "printf_schar";
+   /** The printf routine used to print unsigned chars. */
+   public static final String PRINTF_UCHAR = "printf_uchar";
    /** The printf routine used to print signed integers. */
    public static final String PRINTF_SINT = "printf_sint";
    /** The printf routine used to print unsigned integers. */
    public static final String PRINTF_UINT = "printf_uint";
+   /** The printf routine used to print signed long integers. */
+   public static final String PRINTF_SLONG = "printf_slong";
+   /** The printf routine used to print unsigned long integers. */
+   public static final String PRINTF_ULONG = "printf_ulong";
+   public static final String DECIMAL = "DECIMAL";
+   public static final String HEXADECIMAL = "HEXADECIMAL";
+   public static final String OCTAL = "OCTAL";
 
    public Pass1PrintfIntrinsicRewrite(Program program) {
       super(program);
@@ -78,24 +89,19 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                   final String paramField = matcher.group(1);
                   if(paramField != null)
                      throw new CompileError("printf parameter field not supported", printfCall);
-
                   final String flagsField = matcher.group(2);
                   long leftJustify = (flagsField != null && flagsField.contains("-")) ? 1 : 0;
                   long signAlways = (flagsField != null && flagsField.contains("+")) ? 1 : 0;
                   long zeroPadding = (flagsField != null && flagsField.contains("0")) ? 1 : 0;
-
                   final String widthField = matcher.group(3);
                   long width = (widthField == null) ? 0 : Integer.parseInt(widthField);
-
                   final String lengthField = matcher.group(4);
-
                   final String typeField = matcher.group(5);
 
                   // First output the non-matching part before the pattern
                   String prefix = formatString.substring(formatIdx, start);
                   printfConstantString(prefix, printfCall, stmtIt, formatEncoding);
                   formatIdx = end;
-
 
                   if(typeField.equals("s")) {
                      // A formatted string
@@ -116,14 +122,43 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                      // A formatted integer
                      SymbolVariableRef radix;
                      String printf_number_procedure;
-                     if(typeField.equals("d")) {
-                        radix = getScope().getLocalConstant("DECIMAL").getRef();
-                        printf_number_procedure = PRINTF_SINT;
-                     } else if(typeField.equals("x")) {
-                        radix = getScope().getLocalConstant("HEXADECIMAL").getRef();
-                        printf_number_procedure = PRINTF_UINT;
+                     boolean signed;
+                     switch(typeField) {
+                        case "d":
+                        case "i":
+                           radix = getScope().getLocalConstant(DECIMAL).getRef();
+                           signed = true;
+                           break;
+                        case "u":
+                           radix = getScope().getLocalConstant(DECIMAL).getRef();
+                           signed = false;
+                           break;
+                        case "x":
+                           radix = getScope().getLocalConstant(HEXADECIMAL).getRef();
+                           signed = false;
+                           break;
+                        case "X":
+                           throw new CompileError("printf hexadecimal upper case not supported", printfCall);
+                        case "o":
+                           radix = getScope().getLocalConstant(OCTAL).getRef();
+                           signed = false;
+                           break;
+                        default:
+                           throw new CompileError("printf type field not supported", printfCall);
+                     }
+
+                     if(lengthField == null) {
+                        // Integer (16bit)
+                        printf_number_procedure = signed ? PRINTF_SINT : PRINTF_UINT;
+                     } else if(lengthField.equals("hh")) {
+                        // TODO: Handle 8-bits in a better way - since KickC does not do integer promotion!
+                        // Integer (8bit)
+                        printf_number_procedure = signed ? PRINTF_SCHAR : PRINTF_UCHAR;
+                     } else if(lengthField.equals("l")) {
+                        // Integer (32bit)
+                        printf_number_procedure = signed ? PRINTF_SLONG : PRINTF_ULONG;
                      } else {
-                        throw new CompileError("printf type field not supported", printfCall);
+                        throw new CompileError("printf length field not supported", printfCall);
                      }
 
                      // Format specifying how to format a printed number

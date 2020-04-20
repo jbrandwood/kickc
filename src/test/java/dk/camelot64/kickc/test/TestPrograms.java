@@ -42,7 +42,7 @@ public class TestPrograms {
 
    @Test
    public void testPintf10() throws IOException, URISyntaxException {
-      compileAndCompare("printf-10.c", log());
+      compileAndCompare("printf-10.c");
    }
 
    @Test

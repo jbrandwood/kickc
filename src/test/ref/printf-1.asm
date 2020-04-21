@@ -166,13 +166,15 @@ printf_char: {
     bne !+
     inc.z printf_char_cursor+1
   !:
-    // if(printf_char_cursor==printf_screen+PRINTF_SCREEN_BYTES)
+    // if(printf_char_cursor>=(printf_screen+PRINTF_SCREEN_BYTES))
     lda.z printf_char_cursor+1
     cmp #>printf_screen+$28*$19
-    bne __breturn
+    bcc __breturn
+    bne !+
     lda.z printf_char_cursor
     cmp #<printf_screen+$28*$19
-    bne __breturn
+    bcc __breturn
+  !:
     // memcpy(printf_screen, printf_screen+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
     jsr memcpy
     // memset(printf_screen+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
@@ -292,28 +294,62 @@ memcpy: {
     jmp __b1
 }
 // Print a zero-terminated string
+// Handles escape codes such as newline
 // printf_str(byte* zp(3) str)
 printf_str: {
     .label str = 3
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
   __b2:
-    // printf_char(*str++)
+    // ch = *str++
     ldy #0
     lda (str),y
-    jsr printf_char
-    // printf_char(*str++);
     inc.z str
     bne !+
     inc.z str+1
   !:
-    jmp __b1
+    // if(ch==0)
+    cmp #0
+    bne __b3
+    // }
+    rts
+  __b3:
+    // if(ch=='\n')
+    cmp #'\n'
+    beq __b4
+    // printf_char(ch)
+    jsr printf_char
+    jmp __b2
+  __b4:
+    // printf_ln()
+    jsr printf_ln
+    jmp __b2
+}
+// Print a newline
+printf_ln: {
+  __b1:
+    // printf_line_cursor +=  PRINTF_SCREEN_WIDTH
+    lda #$28
+    clc
+    adc.z printf_line_cursor
+    sta.z printf_line_cursor
+    bcc !+
+    inc.z printf_line_cursor+1
+  !:
+    // while (printf_line_cursor<printf_char_cursor)
+    lda.z printf_line_cursor+1
+    cmp.z printf_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z printf_line_cursor
+    cmp.z printf_char_cursor
+    bcc __b1
+  !:
+    // printf_char_cursor = printf_line_cursor
+    lda.z printf_line_cursor
+    sta.z printf_char_cursor
+    lda.z printf_line_cursor+1
+    sta.z printf_char_cursor+1
+    // }
+    rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
 // strlen(byte* zp(9) str)
@@ -344,34 +380,6 @@ strlen: {
     inc.z str+1
   !:
     jmp __b1
-}
-// Print a newline
-printf_ln: {
-  __b1:
-    // printf_line_cursor +=  PRINTF_SCREEN_WIDTH
-    lda #$28
-    clc
-    adc.z printf_line_cursor
-    sta.z printf_line_cursor
-    bcc !+
-    inc.z printf_line_cursor+1
-  !:
-    // while (printf_line_cursor<printf_char_cursor)
-    lda.z printf_line_cursor+1
-    cmp.z printf_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z printf_line_cursor
-    cmp.z printf_char_cursor
-    bcc __b1
-  !:
-    // printf_char_cursor = printf_line_cursor
-    lda.z printf_line_cursor
-    sta.z printf_char_cursor
-    lda.z printf_line_cursor+1
-    sta.z printf_char_cursor+1
-    // }
-    rts
 }
 // Clear the screen. Also resets current line/char cursor.
 printf_cls: {

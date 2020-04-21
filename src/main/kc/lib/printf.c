@@ -7,9 +7,13 @@
 #define PRINTF_SCREEN_HEIGHT 25
 #define PRINTF_SCREEN_BYTES PRINTF_SCREEN_WIDTH*PRINTF_SCREEN_HEIGHT
 
-__ma char* printf_screen = PRINTF_SCREEN_ADDRESS;
-__ma char* printf_line_cursor = PRINTF_SCREEN_ADDRESS;
-__ma char* printf_char_cursor = PRINTF_SCREEN_ADDRESS;
+// X-position of cursor
+__ma char printf_cursor_x = 0;
+// Y-position of cursor
+__ma char printf_cursor_y = 0;
+// Pointer to cursor address
+__ma char* printf_cursor_ptr = PRINTF_SCREEN_ADDRESS;
+
 // Buffer used for stringified number being printed
 struct printf_buffer_number printf_buffer;
 
@@ -20,30 +24,33 @@ __intrinsic void printf(char* format, ...);
 
 // Clear the screen. Also resets current line/char cursor.
 void printf_cls() {
-    memset(printf_screen, ' ', PRINTF_SCREEN_BYTES);
-    printf_line_cursor = printf_screen;
-    printf_char_cursor = printf_line_cursor;
+    memset(PRINTF_SCREEN_ADDRESS, ' ', PRINTF_SCREEN_BYTES);
+    printf_cursor_ptr = PRINTF_SCREEN_ADDRESS;
+    printf_cursor_x = 0;
+    printf_cursor_y = 0;
 }
 
 // Print a single char
 // If the end of the screen is reached scroll it up one char and place the cursor at the
 void printf_char(char ch) {
-    *(printf_char_cursor++) = ch;
-    // Scroll the screen if the cursor has moved past the end of the screen
-    if(printf_char_cursor>=(printf_screen+PRINTF_SCREEN_BYTES)) {
-        memcpy(printf_screen, printf_screen+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH);
-        memset(printf_screen+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH);
-        printf_char_cursor = printf_char_cursor-PRINTF_SCREEN_WIDTH;
-        printf_line_cursor = printf_char_cursor;
+    *(printf_cursor_ptr++) = ch;
+    if(++printf_cursor_x==PRINTF_SCREEN_WIDTH) {
+        printf_cursor_x = 0;
+        ++printf_cursor_y;
+        if(printf_cursor_y==PRINTF_SCREEN_HEIGHT) {
+            memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH);
+            memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH);
+            printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH;
+            printf_cursor_y--;
+        }
     }
 }
 
 // Print a newline
 void printf_ln() {
-    do {
-        printf_line_cursor +=  PRINTF_SCREEN_WIDTH;
-    } while (printf_line_cursor<printf_char_cursor);
-    printf_char_cursor = printf_line_cursor;
+    printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH;
+    printf_cursor_x = 0;
+    printf_cursor_y++;
 }
 
 // Print a padding char a number of times

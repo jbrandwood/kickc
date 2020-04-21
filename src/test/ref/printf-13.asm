@@ -8,21 +8,24 @@
   .const DECIMAL = $a
   .const HEXADECIMAL = $10
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
-  .label printf_screen = $400
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  .label printf_line_cursor = $f
-  .label printf_char_cursor = $11
+  .label printf_cursor_x = $f
+  .label printf_cursor_y = $10
+  .label printf_cursor_ptr = $11
 __bbegin:
-  // printf_line_cursor = PRINTF_SCREEN_ADDRESS
+  // printf_cursor_x = 0
+  // X-position of cursor
+  lda #0
+  sta.z printf_cursor_x
+  // printf_cursor_y = 0
+  // Y-position of cursor
+  sta.z printf_cursor_y
+  // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
+  // Pointer to cursor address
   lda #<$400
-  sta.z printf_line_cursor
+  sta.z printf_cursor_ptr
   lda #>$400
-  sta.z printf_line_cursor+1
-  // printf_char_cursor = PRINTF_SCREEN_ADDRESS
-  lda #<$400
-  sta.z printf_char_cursor
-  lda #>$400
-  sta.z printf_char_cursor+1
+  sta.z printf_cursor_ptr+1
   jsr main
   rts
 main: {
@@ -692,29 +695,30 @@ printf_str: {
 }
 // Print a newline
 printf_ln: {
-  __b1:
-    // printf_line_cursor +=  PRINTF_SCREEN_WIDTH
+    .label __0 = $11
+    .label __1 = $11
+    // printf_cursor_ptr - printf_cursor_x
+    sec
+    lda.z __0
+    sbc.z printf_cursor_x
+    sta.z __0
+    bcs !+
+    dec.z __0+1
+  !:
+    // printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
     lda #$28
     clc
-    adc.z printf_line_cursor
-    sta.z printf_line_cursor
+    adc.z __1
+    sta.z __1
     bcc !+
-    inc.z printf_line_cursor+1
+    inc.z __1+1
   !:
-    // while (printf_line_cursor<printf_char_cursor)
-    lda.z printf_line_cursor+1
-    cmp.z printf_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z printf_line_cursor
-    cmp.z printf_char_cursor
-    bcc __b1
-  !:
-    // printf_char_cursor = printf_line_cursor
-    lda.z printf_line_cursor
-    sta.z printf_char_cursor
-    lda.z printf_line_cursor+1
-    sta.z printf_char_cursor+1
+    // printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
+    // printf_cursor_x = 0
+    lda #0
+    sta.z printf_cursor_x
+    // printf_cursor_y++;
+    inc.z printf_cursor_y
     // }
     rts
 }
@@ -722,51 +726,53 @@ printf_ln: {
 // If the end of the screen is reached scroll it up one char and place the cursor at the
 // printf_char(byte register(A) ch)
 printf_char: {
-    .label __8 = $11
-    // *(printf_char_cursor++) = ch
+    .label __6 = $11
+    // *(printf_cursor_ptr++) = ch
     ldy #0
-    sta (printf_char_cursor),y
-    // *(printf_char_cursor++) = ch;
-    inc.z printf_char_cursor
+    sta (printf_cursor_ptr),y
+    // *(printf_cursor_ptr++) = ch;
+    inc.z printf_cursor_ptr
     bne !+
-    inc.z printf_char_cursor+1
+    inc.z printf_cursor_ptr+1
   !:
-    // if(printf_char_cursor>=(printf_screen+PRINTF_SCREEN_BYTES))
-    lda.z printf_char_cursor+1
-    cmp #>printf_screen+$28*$19
-    bcc __breturn
-    bne !+
-    lda.z printf_char_cursor
-    cmp #<printf_screen+$28*$19
-    bcc __breturn
-  !:
-    // memcpy(printf_screen, printf_screen+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
+    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
+    inc.z printf_cursor_x
+    lda #$28
+    cmp.z printf_cursor_x
+    bne __breturn
+    // printf_cursor_x = 0
+    lda #0
+    sta.z printf_cursor_x
+    // ++printf_cursor_y;
+    inc.z printf_cursor_y
+    // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
+    lda #$19
+    cmp.z printf_cursor_y
+    bne __breturn
+    // memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
     jsr memcpy
-    // memset(printf_screen+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
+    // memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
     ldx #' '
-    lda #<printf_screen+$28*$19-$28
+    lda #<$400+$28*$19-$28
     sta.z memset.str
-    lda #>printf_screen+$28*$19-$28
+    lda #>$400+$28*$19-$28
     sta.z memset.str+1
     lda #<$28
     sta.z memset.num
     lda #>$28
     sta.z memset.num+1
     jsr memset
-    // printf_char_cursor-PRINTF_SCREEN_WIDTH
-    lda.z __8
+    // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
+    lda.z __6
     sec
     sbc #<$28
-    sta.z __8
-    lda.z __8+1
+    sta.z __6
+    lda.z __6+1
     sbc #>$28
-    sta.z __8+1
-    // printf_char_cursor = printf_char_cursor-PRINTF_SCREEN_WIDTH
-    // printf_line_cursor = printf_char_cursor
-    lda.z printf_char_cursor
-    sta.z printf_line_cursor
-    lda.z printf_char_cursor+1
-    sta.z printf_line_cursor+1
+    sta.z __6+1
+    // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
+    // printf_cursor_y--;
+    dec.z printf_cursor_y
   __breturn:
     // }
     rts
@@ -818,9 +824,9 @@ memset: {
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 memcpy: {
-    .label destination = printf_screen
+    .label destination = $400
+    .label source = $400+$28
     .const num = $28*$19-$28
-    .label source = printf_screen+$28
     .label src_end = source+num
     .label dst = $b
     .label src = 8
@@ -1367,27 +1373,27 @@ printf_string: {
 }
 // Clear the screen. Also resets current line/char cursor.
 printf_cls: {
-    // memset(printf_screen, ' ', PRINTF_SCREEN_BYTES)
+    // memset(PRINTF_SCREEN_ADDRESS, ' ', PRINTF_SCREEN_BYTES)
     ldx #' '
-    lda #<printf_screen
+    lda #<$400
     sta.z memset.str
-    lda #>printf_screen
+    lda #>$400
     sta.z memset.str+1
     lda #<$28*$19
     sta.z memset.num
     lda #>$28*$19
     sta.z memset.num+1
     jsr memset
-    // printf_line_cursor = printf_screen
-    lda #<printf_screen
-    sta.z printf_line_cursor
-    lda #>printf_screen
-    sta.z printf_line_cursor+1
-    // printf_char_cursor = printf_line_cursor
-    lda.z printf_line_cursor
-    sta.z printf_char_cursor
-    lda.z printf_line_cursor+1
-    sta.z printf_char_cursor+1
+    // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
+    lda #<$400
+    sta.z printf_cursor_ptr
+    lda #>$400
+    sta.z printf_cursor_ptr+1
+    // printf_cursor_x = 0
+    lda #0
+    sta.z printf_cursor_x
+    // printf_cursor_y = 0
+    sta.z printf_cursor_y
     // }
     rts
 }

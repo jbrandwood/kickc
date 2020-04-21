@@ -41,6 +41,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPrintfError1() throws IOException, URISyntaxException {
+      assertError("printf-error-1.c", "Needed printf sub-procedure not found");
+   }
+
+   @Test
+   public void testPrintf13() throws IOException, URISyntaxException {
+      compileAndCompare("printf-13.c");
+   }
+
+   @Test
+   public void testPrintf12() throws IOException, URISyntaxException {
+      compileAndCompare("printf-12.c");
+   }
+
+   @Test
    public void testPrintf11() throws IOException, URISyntaxException {
       compileAndCompare("printf-11.c");
    }

@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 
@@ -22,10 +23,14 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
    /** The printf procedure name. */
    public static final String INTRINSIC_PRINTF_NAME = "printf";
+   /** The printf routine used to print a raw char */
+   public static final String PRINTF_CHAR = "printf_char";
+   /** The printf routine used to print a raw string */
+   public static final String PRINTF_STR = "printf_str";
    /** The printf routine used to print formatted strings. */
    public static final String PRINTF_STRING = "printf_string";
    /** The printf routine used to print signed chars. */
-   public static final String PRINTF_SCHAR  = "printf_schar";
+   public static final String PRINTF_SCHAR = "printf_schar";
    /** The printf routine used to print unsigned chars. */
    public static final String PRINTF_UCHAR = "printf_uchar";
    /** The printf routine used to print signed integers. */
@@ -36,8 +41,11 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    public static final String PRINTF_SLONG = "printf_slong";
    /** The printf routine used to print unsigned long integers. */
    public static final String PRINTF_ULONG = "printf_ulong";
-   public static final String DECIMAL = "DECIMAL";
+   /** Hexadecimal Radix name. */
    public static final String HEXADECIMAL = "HEXADECIMAL";
+   /** Decimal Radix name. */
+   public static final String DECIMAL = "DECIMAL";
+   /** Octal Radix name. */
    public static final String OCTAL = "OCTAL";
 
    public Pass1PrintfIntrinsicRewrite(Program program) {
@@ -100,10 +108,12 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
                   // First output the non-matching part before the pattern
                   String prefix = formatString.substring(formatIdx, start);
-                  printfConstantString(prefix, printfCall, stmtIt, formatEncoding);
+                  addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(prefix, formatEncoding, true)), stmtIt, printfCall);
                   formatIdx = end;
 
-                  if(typeField.equals("s")) {
+                  if(typeField.equals("%")) {
+                     addPrintfCall(PRINTF_CHAR, Arrays.asList(new ConstantChar('%', formatEncoding)), stmtIt, printfCall);
+                  } else if(typeField.equals("s")) {
                      // A formatted string
                      //struct printf_format_string {
                      // char min_length; // The minimal number of chars to output (used for padding with spaces or 0).
@@ -114,9 +124,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(width, SymbolType.BYTE),
                                  new ConstantInteger(leftJustify, SymbolType.BYTE)
                            ));
-                     final StatementCall call_printf_str = new StatementCall(null, PRINTF_STRING, Arrays.asList(parameters.get(paramIdx), format_string_struct), printfCall.getSource(), Comment.NO_COMMENTS);
-                     call_printf_str.setProcedure(getScope().getLocalProcedure(call_printf_str.getProcedureName()).getRef());
-                     stmtIt.add(call_printf_str);
+                     addPrintfCall(PRINTF_STRING, Arrays.asList(parameters.get(paramIdx), format_string_struct), stmtIt, printfCall);
                      paramIdx++;
                   } else if("diuxXo".contains(typeField)) {
                      // A formatted integer
@@ -177,15 +185,29 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(zeroPadding, SymbolType.BYTE),
                                  radix
                            ));
-                     final StatementCall call_printf_str = new StatementCall(null, printf_number_procedure, Arrays.asList(parameters.get(paramIdx), format_number_struct), printfCall.getSource(), Comment.NO_COMMENTS);
-                     call_printf_str.setProcedure(getScope().getLocalProcedure(call_printf_str.getProcedureName()).getRef());
-                     stmtIt.add(call_printf_str);
+                     addPrintfCall(printf_number_procedure, Arrays.asList(parameters.get(paramIdx), format_number_struct), stmtIt, printfCall);
+                     paramIdx++;
+                  } else if(typeField.equals("c")) {
+                     // Print char
+                     addPrintfCall(PRINTF_CHAR, Arrays.asList(parameters.get(paramIdx)), stmtIt, printfCall);
+                     paramIdx++;
+                  } else if(typeField.equals("p")) {
+                     // Print a pointer
+                     final ValueList format_number_struct =
+                           new ValueList(Arrays.asList(
+                                 new ConstantInteger(width, SymbolType.BYTE),
+                                 new ConstantInteger(leftJustify, SymbolType.BYTE),
+                                 new ConstantInteger(signAlways, SymbolType.BYTE),
+                                 new ConstantInteger(zeroPadding, SymbolType.BYTE),
+                                 getScope().getLocalConstant(HEXADECIMAL).getRef()
+                           ));
+                     addPrintfCall(PRINTF_UINT, Arrays.asList(new CastValue(SymbolType.WORD, parameters.get(paramIdx)), format_number_struct), stmtIt, printfCall);
                      paramIdx++;
                   }
                }
                // Grab the rest
                String suffix = formatString.substring(formatIdx);
-               printfConstantString(suffix, printfCall, stmtIt, formatEncoding);
+               addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(suffix, formatEncoding, true)), stmtIt, printfCall);
             }
          }
       }
@@ -193,17 +215,20 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    }
 
    /**
-    * Add a printf_str() that prints a constant string.
-    *
-    * @param prefix The string to print
-    * @param printfCall The original printf call
+    * Adds a call to a PRINTF sub-function.
+    * @param printfProcedureName The name of ths sub-function to call
+    * @param printfProcedureParameters The parameters to pass
     * @param stmtIt The statement iterator to add to
-    * @param encoding The string encoding
+    * @param printfCall The original printf call statement
     */
-   private void printfConstantString(String prefix, StatementCall printfCall, ListIterator<Statement> stmtIt, StringEncoding encoding) {
-      final StatementCall call_printf_str = new StatementCall(null, "printf_str", Arrays.asList(new ConstantString(prefix, encoding, true)), printfCall.getSource(), Comment.NO_COMMENTS);
-      call_printf_str.setProcedure(getScope().getLocalProcedure(call_printf_str.getProcedureName()).getRef());
-      stmtIt.add(call_printf_str);
+   private void addPrintfCall(String printfProcedureName, List<RValue> printfProcedureParameters, ListIterator<Statement> stmtIt, StatementCall printfCall) {
+      final StatementCall call_printf_str_prefix = new StatementCall(null, printfProcedureName, printfProcedureParameters, printfCall.getSource(), Comment.NO_COMMENTS);
+      final Procedure printfProcedure = getScope().getLocalProcedure(call_printf_str_prefix.getProcedureName());
+      if(printfProcedure==null) {
+         throw new CompileError("Needed printf sub-procedure not found " + printfProcedureName+"().", printfCall.getSource());
+      }
+      call_printf_str_prefix.setProcedure(printfProcedure.getRef());
+      stmtIt.add(call_printf_str_prefix);
    }
 
 

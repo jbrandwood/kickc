@@ -13,6 +13,11 @@ __ma char* printf_char_cursor = PRINTF_SCREEN_ADDRESS;
 // Buffer used for stringified number being printed
 struct printf_buffer_number printf_buffer;
 
+// Print a formatted string.
+// https://en.wikipedia.org/wiki/Printf_format_string
+// This implementation supports decimal, octal and hexadecimal radix. It supports min length, left/right justify, zero-padding and always-sign.
+__intrinsic void printf(char* format, ...);
+
 // Clear the screen. Also resets current line/char cursor.
 void printf_cls() {
     memset(printf_screen, ' ', PRINTF_SCREEN_BYTES);
@@ -24,7 +29,8 @@ void printf_cls() {
 // If the end of the screen is reached scroll it up one char and place the cursor at the
 void printf_char(char ch) {
     *(printf_char_cursor++) = ch;
-    if(printf_char_cursor==printf_screen+PRINTF_SCREEN_BYTES) {
+    // Scroll the screen if the cursor has moved past the end of the screen
+    if(printf_char_cursor>=(printf_screen+PRINTF_SCREEN_BYTES)) {
         memcpy(printf_screen, printf_screen+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH);
         memset(printf_screen+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH);
         printf_char_cursor = printf_char_cursor-PRINTF_SCREEN_WIDTH;
@@ -47,9 +53,15 @@ void printf_padding(char pad, char length) {
 }
 
 // Print a zero-terminated string
+// Handles escape codes such as newline
 void printf_str(char* str) {
-    while(*str) {
-        printf_char(*str++);
+    while(true) {
+        char ch = *str++;
+        if(ch==0) break;
+        if(ch=='\n')
+            printf_ln();
+        else
+            printf_char(ch);
     }
 }
 

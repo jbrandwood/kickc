@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.Arrays;
@@ -156,10 +157,20 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                      }
 
                      if(lengthField == null) {
-                        // Integer (16bit)
-                        printf_number_procedure = signed ? PRINTF_SINT : PRINTF_UINT;
+                        // Check if the parameter type is 8-bit or 32-bit
+                        RValue paramValue = parameters.get(paramIdx);
+                        SymbolType paramType = SymbolTypeInference.inferType(getScope(), paramValue);
+                        if(SymbolType.BYTE.equals(paramType) || SymbolType.SBYTE.equals(paramType)) {
+                           // Integer (8bit)
+                           printf_number_procedure = signed ? PRINTF_SCHAR : PRINTF_UCHAR;
+                        } else if(SymbolType.DWORD.equals(paramType) || SymbolType.SDWORD.equals(paramType)) {
+                           // Integer (32bit)
+                           printf_number_procedure = signed ? PRINTF_SLONG : PRINTF_ULONG;
+                        } else {
+                           // Integer (16bit)
+                           printf_number_procedure = signed ? PRINTF_SINT : PRINTF_UINT;
+                        }
                      } else if(lengthField.equals("hh")) {
-                        // TODO: Handle 8-bits in a better way - since KickC does not do integer promotion!
                         // Integer (8bit)
                         printf_number_procedure = signed ? PRINTF_SCHAR : PRINTF_UCHAR;
                      } else if(lengthField.equals("l")) {

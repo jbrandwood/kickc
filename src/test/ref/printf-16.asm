@@ -312,32 +312,14 @@ printf_ln: {
     sta.z printf_cursor_x
     // printf_cursor_y++;
     inc.z printf_cursor_y
+    // printf_scroll()
+    jsr printf_scroll
     // }
     rts
 }
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte register(A) ch)
-printf_char: {
-    .label __6 = 9
-    // *(printf_cursor_ptr++) = ch
-    ldy #0
-    sta (printf_cursor_ptr),y
-    // *(printf_cursor_ptr++) = ch;
-    inc.z printf_cursor_ptr
-    bne !+
-    inc.z printf_cursor_ptr+1
-  !:
-    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
-    inc.z printf_cursor_x
-    lda #$28
-    cmp.z printf_cursor_x
-    bne __breturn
-    // printf_cursor_x = 0
-    lda #0
-    sta.z printf_cursor_x
-    // ++printf_cursor_y;
-    inc.z printf_cursor_y
+// Scroll the entire screen if the cursor is on the last line
+printf_scroll: {
+    .label __4 = 9
     // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
     lda #$19
     cmp.z printf_cursor_y
@@ -356,13 +338,13 @@ printf_char: {
     sta.z memset.num+1
     jsr memset
     // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    lda.z __6
+    lda.z __4
     sec
     sbc #<$28
-    sta.z __6
-    lda.z __6+1
+    sta.z __4
+    lda.z __4+1
     sbc #>$28
-    sta.z __6+1
+    sta.z __4+1
     // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
     // printf_cursor_y--;
     dec.z printf_cursor_y
@@ -456,6 +438,34 @@ memcpy: {
     inc.z src+1
   !:
     jmp __b1
+}
+// Print a single char
+// If the end of the screen is reached scroll it up one char and place the cursor at the
+// printf_char(byte register(A) ch)
+printf_char: {
+    // *(printf_cursor_ptr++) = ch
+    ldy #0
+    sta (printf_cursor_ptr),y
+    // *(printf_cursor_ptr++) = ch;
+    inc.z printf_cursor_ptr
+    bne !+
+    inc.z printf_cursor_ptr+1
+  !:
+    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
+    inc.z printf_cursor_x
+    lda #$28
+    cmp.z printf_cursor_x
+    bne __breturn
+    // printf_cursor_x = 0
+    lda #0
+    sta.z printf_cursor_x
+    // ++printf_cursor_y;
+    inc.z printf_cursor_y
+    // printf_scroll()
+    jsr printf_scroll
+  __breturn:
+    // }
+    rts
 }
 // Print a signed integer using a specific format
 // printf_sint(signed word zp(2) value)

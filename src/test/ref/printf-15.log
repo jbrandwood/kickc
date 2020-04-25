@@ -128,10 +128,10 @@ CONTROL FLOW GRAPH SSA
   to:@1
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
-memcpy: scope:[memcpy]  from printf_char::@2
-  (word) memcpy::num#1 ← phi( printf_char::@2/(word) memcpy::num#0 )
-  (void*) memcpy::destination#1 ← phi( printf_char::@2/(void*) memcpy::destination#0 )
-  (void*) memcpy::source#1 ← phi( printf_char::@2/(void*) memcpy::source#0 )
+memcpy: scope:[memcpy]  from printf_scroll::@1
+  (word) memcpy::num#1 ← phi( printf_scroll::@1/(word) memcpy::num#0 )
+  (void*) memcpy::destination#1 ← phi( printf_scroll::@1/(void*) memcpy::destination#0 )
+  (void*) memcpy::source#1 ← phi( printf_scroll::@1/(void*) memcpy::source#0 )
   (byte*) memcpy::src#0 ← ((byte*)) (void*) memcpy::source#1
   (byte*) memcpy::dst#0 ← ((byte*)) (void*) memcpy::destination#1
   (byte*~) memcpy::$2 ← (byte*)(void*) memcpy::source#1
@@ -166,10 +166,10 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   to:@return
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
-memset: scope:[memset]  from printf_char::@3 printf_cls
-  (byte) memset::c#5 ← phi( printf_char::@3/(byte) memset::c#1 printf_cls/(byte) memset::c#0 )
-  (void*) memset::str#4 ← phi( printf_char::@3/(void*) memset::str#1 printf_cls/(void*) memset::str#0 )
-  (word) memset::num#2 ← phi( printf_char::@3/(word) memset::num#1 printf_cls/(word) memset::num#0 )
+memset: scope:[memset]  from printf_cls printf_scroll::@2
+  (byte) memset::c#5 ← phi( printf_cls/(byte) memset::c#0 printf_scroll::@2/(byte) memset::c#1 )
+  (void*) memset::str#4 ← phi( printf_cls/(void*) memset::str#0 printf_scroll::@2/(void*) memset::str#1 )
+  (word) memset::num#2 ← phi( printf_cls/(word) memset::num#0 printf_scroll::@2/(word) memset::num#1 )
   (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
   (bool~) memset::$1 ← ! (bool~) memset::$0
   if((bool~) memset::$1) goto memset::@1
@@ -244,30 +244,11 @@ printf_char: scope:[printf_char]  from printf_str::@5
 printf_char::@1: scope:[printf_char]  from printf_char
   (byte) printf_cursor_x ← (number) 0
   (byte) printf_cursor_y ← ++ (byte) printf_cursor_y
-  (bool~) printf_char::$2 ← (byte) printf_cursor_y == (number) $19
-  (bool~) printf_char::$3 ← ! (bool~) printf_char::$2
-  if((bool~) printf_char::$3) goto printf_char::@return
+  call printf_scroll 
   to:printf_char::@2
 printf_char::@2: scope:[printf_char]  from printf_char::@1
-  (void*) memcpy::destination#0 ← (void*)(number) $400
-  (void*) memcpy::source#0 ← (void*)(number) $400+(number) $28
-  (word) memcpy::num#0 ← (number) $28*(number) $19-(number) $28
-  call memcpy 
-  (void*) memcpy::return#2 ← (void*) memcpy::return#1
-  to:printf_char::@3
-printf_char::@3: scope:[printf_char]  from printf_char::@2
-  (void*) memset::str#1 ← (void*)(number) $400+(number) $28*(number) $19-(number) $28
-  (byte) memset::c#1 ← (byte) ' '
-  (word) memset::num#1 ← (number) $28
-  call memset 
-  (void*) memset::return#3 ← (void*) memset::return#1
-  to:printf_char::@4
-printf_char::@4: scope:[printf_char]  from printf_char::@3
-  (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (number) $28
-  (byte*) printf_cursor_ptr ← (byte*~) printf_char::$6
-  (byte) printf_cursor_y ← -- (byte) printf_cursor_y
   to:printf_char::@return
-printf_char::@return: scope:[printf_char]  from printf_char printf_char::@1 printf_char::@4
+printf_char::@return: scope:[printf_char]  from printf_char printf_char::@2
   return 
   to:@return
 
@@ -278,8 +259,40 @@ printf_ln: scope:[printf_ln]  from printf_str::@4
   (byte*) printf_cursor_ptr ← (byte*~) printf_ln::$1
   (byte) printf_cursor_x ← (number) 0
   (byte) printf_cursor_y ← ++ (byte) printf_cursor_y
+  call printf_scroll 
+  to:printf_ln::@1
+printf_ln::@1: scope:[printf_ln]  from printf_ln
   to:printf_ln::@return
-printf_ln::@return: scope:[printf_ln]  from printf_ln
+printf_ln::@return: scope:[printf_ln]  from printf_ln::@1
+  return 
+  to:@return
+
+(void()) printf_scroll()
+printf_scroll: scope:[printf_scroll]  from printf_char::@1 printf_ln
+  (bool~) printf_scroll::$0 ← (byte) printf_cursor_y == (number) $19
+  (bool~) printf_scroll::$1 ← ! (bool~) printf_scroll::$0
+  if((bool~) printf_scroll::$1) goto printf_scroll::@return
+  to:printf_scroll::@1
+printf_scroll::@1: scope:[printf_scroll]  from printf_scroll
+  (void*) memcpy::destination#0 ← (void*)(number) $400
+  (void*) memcpy::source#0 ← (void*)(number) $400+(number) $28
+  (word) memcpy::num#0 ← (number) $28*(number) $19-(number) $28
+  call memcpy 
+  (void*) memcpy::return#2 ← (void*) memcpy::return#1
+  to:printf_scroll::@2
+printf_scroll::@2: scope:[printf_scroll]  from printf_scroll::@1
+  (void*) memset::str#1 ← (void*)(number) $400+(number) $28*(number) $19-(number) $28
+  (byte) memset::c#1 ← (byte) ' '
+  (word) memset::num#1 ← (number) $28
+  call memset 
+  (void*) memset::return#3 ← (void*) memset::return#1
+  to:printf_scroll::@3
+printf_scroll::@3: scope:[printf_scroll]  from printf_scroll::@2
+  (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (number) $28
+  (byte*) printf_cursor_ptr ← (byte*~) printf_scroll::$4
+  (byte) printf_cursor_y ← -- (byte) printf_cursor_y
+  to:printf_scroll::@return
+printf_scroll::@return: scope:[printf_scroll]  from printf_scroll printf_scroll::@3
   return 
   to:@return
 
@@ -459,13 +472,8 @@ SYMBOL TABLE SSA
 (void()) printf_char((byte) printf_char::ch)
 (bool~) printf_char::$0
 (bool~) printf_char::$1
-(bool~) printf_char::$2
-(bool~) printf_char::$3
-(byte*~) printf_char::$6
 (label) printf_char::@1
 (label) printf_char::@2
-(label) printf_char::@3
-(label) printf_char::@4
 (label) printf_char::@return
 (byte) printf_char::ch
 (byte) printf_char::ch#0
@@ -487,7 +495,16 @@ SYMBOL TABLE SSA
 (void()) printf_ln()
 (byte*~) printf_ln::$0
 (byte*~) printf_ln::$1
+(label) printf_ln::@1
 (label) printf_ln::@return
+(void()) printf_scroll()
+(bool~) printf_scroll::$0
+(bool~) printf_scroll::$1
+(byte*~) printf_scroll::$4
+(label) printf_scroll::@1
+(label) printf_scroll::@2
+(label) printf_scroll::@3
+(label) printf_scroll::@return
 (void()) printf_str((byte*) printf_str::str)
 (bool~) printf_str::$0
 (bool~) printf_str::$1
@@ -523,12 +540,12 @@ Adding number conversion cast (unumber) 0 in (byte) printf_cursor_x ← (number)
 Adding number conversion cast (unumber) 0 in (byte) printf_cursor_y ← (number) 0
 Adding number conversion cast (unumber) $28 in (bool~) printf_char::$0 ← (byte) printf_cursor_x == (number) $28
 Adding number conversion cast (unumber) 0 in (byte) printf_cursor_x ← (number) 0
-Adding number conversion cast (unumber) $19 in (bool~) printf_char::$2 ← (byte) printf_cursor_y == (number) $19
-Adding number conversion cast (unumber) $28*$19-$28 in (word) memcpy::num#0 ← (number) $28*(number) $19-(number) $28
-Adding number conversion cast (unumber) $28 in (word) memset::num#1 ← (number) $28
-Adding number conversion cast (unumber) $28 in (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (number) $28
 Adding number conversion cast (unumber) $28 in (byte*~) printf_ln::$1 ← (byte*~) printf_ln::$0 + (number) $28
 Adding number conversion cast (unumber) 0 in (byte) printf_cursor_x ← (number) 0
+Adding number conversion cast (unumber) $19 in (bool~) printf_scroll::$0 ← (byte) printf_cursor_y == (number) $19
+Adding number conversion cast (unumber) $28*$19-$28 in (word) memcpy::num#0 ← (number) $28*(number) $19-(number) $28
+Adding number conversion cast (unumber) $28 in (word) memset::num#1 ← (number) $28
+Adding number conversion cast (unumber) $28 in (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (number) $28
 Adding number conversion cast (unumber) 0 in (bool~) printf_str::$0 ← (byte) printf_str::ch#0 == (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#1
@@ -539,9 +556,9 @@ Inlining cast (byte*) printf_cursor_ptr ← (byte*)(number) $400
 Inlining cast (byte) printf_cursor_x ← (unumber)(number) 0
 Inlining cast (byte) printf_cursor_y ← (unumber)(number) 0
 Inlining cast (byte) printf_cursor_x ← (unumber)(number) 0
+Inlining cast (byte) printf_cursor_x ← (unumber)(number) 0
 Inlining cast (word) memcpy::num#0 ← (unumber)(number) $28*(number) $19-(number) $28
 Inlining cast (word) memset::num#1 ← (unumber)(number) $28
-Inlining cast (byte) printf_cursor_x ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
@@ -551,12 +568,12 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
+Simplifying constant integer cast $28
+Simplifying constant integer cast 0
 Simplifying constant integer cast $19
 Simplifying constant pointer cast (void*) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast $28
-Simplifying constant integer cast $28
-Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
@@ -564,19 +581,19 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [20] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [19] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
 Inversing boolean not [55] (bool~) printf_char::$1 ← (byte) printf_cursor_x != (byte) $28 from [54] (bool~) printf_char::$0 ← (byte) printf_cursor_x == (byte) $28
-Inversing boolean not [60] (bool~) printf_char::$3 ← (byte) printf_cursor_y != (byte) $19 from [59] (bool~) printf_char::$2 ← (byte) printf_cursor_y == (byte) $19
-Inversing boolean not [89] (bool~) printf_str::$1 ← (byte) printf_str::ch#0 != (byte) 0 from [88] (bool~) printf_str::$0 ← (byte) printf_str::ch#0 == (byte) 0
+Inversing boolean not [69] (bool~) printf_scroll::$1 ← (byte) printf_cursor_y != (byte) $19 from [68] (bool~) printf_scroll::$0 ← (byte) printf_cursor_y == (byte) $19
+Inversing boolean not [92] (bool~) printf_str::$1 ← (byte) printf_str::ch#0 != (byte) 0 from [91] (bool~) printf_str::$0 ← (byte) printf_str::ch#0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias candidate removed (volatile)printf_cursor_ptr = printf_char::$6 printf_ln::$1 
+Alias candidate removed (volatile)printf_cursor_ptr = printf_ln::$1 printf_scroll::$4 
 Alias memcpy::src_end#0 = memcpy::$0 
 Alias memcpy::src#2 = memcpy::src#3 
 Alias memcpy::dst#2 = memcpy::dst#3 
@@ -595,7 +612,7 @@ Alias printf_str::str#3 = printf_str::str#4
 Alias printf_str::ch#0 = printf_str::ch#1 printf_str::ch#2 
 Alias printf_str::str#0 = printf_str::str#10 printf_str::str#8 printf_str::str#6 printf_str::str#9 printf_str::str#7 
 Successful SSA optimization Pass2AliasElimination
-Alias candidate removed (volatile)printf_cursor_ptr = printf_char::$6 printf_ln::$1 
+Alias candidate removed (volatile)printf_cursor_ptr = printf_ln::$1 printf_scroll::$4 
 Identical Phi Values (void*) memcpy::source#1 (void*) memcpy::source#0
 Identical Phi Values (void*) memcpy::destination#1 (void*) memcpy::destination#0
 Identical Phi Values (word) memcpy::num#1 (word) memcpy::num#0
@@ -612,13 +629,13 @@ Simple Condition (bool~) memcpy::$1 [7] if((byte*) memcpy::src#2!=(byte*) memcpy
 Simple Condition (bool~) memset::$1 [14] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$3 [21] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
 Simple Condition (bool~) printf_char::$1 [42] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return
-Simple Condition (bool~) printf_char::$3 [46] if((byte) printf_cursor_y!=(byte) $19) goto printf_char::@return
-Simple Condition (bool~) printf_str::$1 [73] if((byte) printf_str::ch#0!=(byte) 0) goto printf_str::@3
-Simple Condition (bool~) printf_str::$2 [75] if((byte) printf_str::ch#0==(byte) '
+Simple Condition (bool~) printf_scroll::$1 [55] if((byte) printf_cursor_y!=(byte) $19) goto printf_scroll::@return
+Simple Condition (bool~) printf_str::$1 [76] if((byte) printf_str::ch#0!=(byte) 0) goto printf_str::@3
+Simple Condition (bool~) printf_str::$2 [78] if((byte) printf_str::ch#0==(byte) '
 ') goto printf_str::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [30] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
-Constant right-side identified [49] (word) memcpy::num#0 ← (unumber)(number) $28*(number) $19-(number) $28
+Constant right-side identified [58] (word) memcpy::num#0 ← (unumber)(number) $28*(number) $19-(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void*) memset::str#0 = (void*) 1024
 Constant (const byte) memset::c#0 = ' '
@@ -637,18 +654,18 @@ Constant (const byte*) memcpy::dst#0 = (byte*)memcpy::destination#0
 Constant (const byte*) memcpy::$2 = (byte*)memcpy::source#0
 Constant (const void*) memcpy::return#2 = memcpy::destination#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [69] if(true) goto printf_str::@2
+if() condition always true - replacing block destination [72] if(true) goto printf_str::@2
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused variable (void*) memset::return#2 and assignment [21] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [35] (void*) memset::return#3 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [44] (void*) memset::return#3 ← (void*) memset::str#3
 Eliminating unused constant (const void*) memcpy::return#2
 Successful SSA optimization PassNEliminateUnusedVars
-Alias candidate removed (volatile)printf_cursor_ptr = printf_char::$6 printf_ln::$1 
+Alias candidate removed (volatile)printf_cursor_ptr = printf_ln::$1 printf_scroll::$4 
 Constant right-side identified [0] (byte*) memcpy::src_end#0 ← (const byte*) memcpy::$2 + (const word) memcpy::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memcpy::src_end#0 = memcpy::$2+memcpy::num#0
 Successful SSA optimization Pass2ConstantIdentification
-Alias candidate removed (volatile)printf_cursor_ptr = printf_char::$6 printf_ln::$1 
+Alias candidate removed (volatile)printf_cursor_ptr = printf_ln::$1 printf_scroll::$4 
 Inlining Noop Cast [8] (byte*~) memset::$4 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Inlining Noop Cast [10] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
@@ -674,8 +691,8 @@ Constant inlined printf_str::str#2 = (const byte*) main::str1
 Constant inlined memset::c#1 = (byte) ' '
 Constant inlined printf_str::str#1 = (const byte*) main::str
 Successful SSA optimization Pass2ConstantInlining
-Alias candidate removed (volatile)printf_cursor_ptr = printf_char::$6 printf_ln::$1 
-Alias candidate removed (volatile)printf_cursor_ptr = printf_char::$6 printf_ln::$1 
+Alias candidate removed (volatile)printf_cursor_ptr = printf_ln::$1 printf_scroll::$4 
+Alias candidate removed (volatile)printf_cursor_ptr = printf_ln::$1 printf_scroll::$4 
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
@@ -685,33 +702,39 @@ Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of printf_str::@4
-Adding NOP phi() at start of printf_char::@2
-Adding NOP phi() at start of printf_char::@3
+Adding NOP phi() at start of printf_ln::@1
+Adding NOP phi() at start of printf_scroll::@1
+Adding NOP phi() at start of printf_scroll::@2
 Adding NOP phi() at start of memset::@1
 Adding NOP phi() at start of memcpy
 Adding NOP phi() at start of memcpy::@3
+Adding NOP phi() at start of printf_char::@2
 Adding NOP phi() at start of printf_cls
 CALL GRAPH
 Calls in [] to main:5 
 Calls in [main] to printf_cls:9 printf_str:11 printf_str:13 
 Calls in [printf_str] to printf_char:25 printf_ln:28 
-Calls in [printf_char] to memcpy:44 memset:46 
-Calls in [printf_cls] to memset:73 
+Calls in [printf_ln] to printf_scroll:35 
+Calls in [printf_scroll] to memcpy:40 memset:42 
+Calls in [printf_char] to printf_scroll:74 
+Calls in [printf_cls] to memset:78 
 
 Created 8 initial phi equivalence classes
 Coalesced [17] printf_str::str#11 ← printf_str::str#5
 Coalesced [26] printf_str::str#13 ← printf_str::str#0
 Coalesced (already) [29] printf_str::str#12 ← printf_str::str#0
-Coalesced [61] memset::dst#5 ← memset::dst#1
-Coalesced [70] memcpy::src#4 ← memcpy::src#1
-Coalesced [71] memcpy::dst#4 ← memcpy::dst#1
+Coalesced [57] memset::dst#5 ← memset::dst#1
+Coalesced [66] memcpy::src#4 ← memcpy::src#1
+Coalesced [67] memcpy::dst#4 ← memcpy::dst#1
 Coalesced down to 7 phi equivalence classes
 Culled Empty Block (label) @3
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) printf_str::@7
 Culled Empty Block (label) printf_str::@6
+Culled Empty Block (label) printf_ln::@1
 Culled Empty Block (label) memset::@1
 Culled Empty Block (label) memcpy::@3
+Culled Empty Block (label) printf_char::@2
 Renumbering block memset::@2 to memset::@1
 Renumbering block memset::@3 to memset::@2
 Renumbering block memset::@4 to memset::@3
@@ -722,8 +745,8 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of printf_str::@4
-Adding NOP phi() at start of printf_char::@2
-Adding NOP phi() at start of printf_char::@3
+Adding NOP phi() at start of printf_scroll::@1
+Adding NOP phi() at start of printf_scroll::@2
 Adding NOP phi() at start of memcpy
 Adding NOP phi() at start of printf_cls
 
@@ -795,93 +818,102 @@ printf_ln: scope:[printf_ln]  from printf_str::@4
   [27] (byte*) printf_cursor_ptr ← (byte*~) printf_ln::$1
   [28] (byte) printf_cursor_x ← (byte) 0
   [29] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y
+  [30] call printf_scroll 
   to:printf_ln::@return
 printf_ln::@return: scope:[printf_ln]  from printf_ln
-  [30] return 
+  [31] return 
   to:@return
 
-(void()) printf_char((byte) printf_char::ch)
-printf_char: scope:[printf_char]  from printf_str::@5
-  [31] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0
-  [32] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr
-  [33] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x
-  [34] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return
-  to:printf_char::@1
-printf_char::@1: scope:[printf_char]  from printf_char
-  [35] (byte) printf_cursor_x ← (byte) 0
-  [36] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y
-  [37] if((byte) printf_cursor_y!=(byte) $19) goto printf_char::@return
-  to:printf_char::@2
-printf_char::@2: scope:[printf_char]  from printf_char::@1
-  [38] phi()
-  [39] call memcpy 
-  to:printf_char::@3
-printf_char::@3: scope:[printf_char]  from printf_char::@2
-  [40] phi()
-  [41] call memset 
-  to:printf_char::@4
-printf_char::@4: scope:[printf_char]  from printf_char::@3
-  [42] (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (byte) $28
-  [43] (byte*) printf_cursor_ptr ← (byte*~) printf_char::$6
-  [44] (byte) printf_cursor_y ← -- (byte) printf_cursor_y
-  to:printf_char::@return
-printf_char::@return: scope:[printf_char]  from printf_char printf_char::@1 printf_char::@4
-  [45] return 
+(void()) printf_scroll()
+printf_scroll: scope:[printf_scroll]  from printf_char::@1 printf_ln
+  [32] if((byte) printf_cursor_y!=(byte) $19) goto printf_scroll::@return
+  to:printf_scroll::@1
+printf_scroll::@1: scope:[printf_scroll]  from printf_scroll
+  [33] phi()
+  [34] call memcpy 
+  to:printf_scroll::@2
+printf_scroll::@2: scope:[printf_scroll]  from printf_scroll::@1
+  [35] phi()
+  [36] call memset 
+  to:printf_scroll::@3
+printf_scroll::@3: scope:[printf_scroll]  from printf_scroll::@2
+  [37] (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (byte) $28
+  [38] (byte*) printf_cursor_ptr ← (byte*~) printf_scroll::$4
+  [39] (byte) printf_cursor_y ← -- (byte) printf_cursor_y
+  to:printf_scroll::@return
+printf_scroll::@return: scope:[printf_scroll]  from printf_scroll printf_scroll::@3
+  [40] return 
   to:@return
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
-memset: scope:[memset]  from printf_char::@3 printf_cls
-  [46] (byte) memset::c#4 ← phi( printf_char::@3/(byte) ' ' printf_cls/(byte) ' ' )
-  [46] (void*) memset::str#3 ← phi( printf_char::@3/(void*)(number) $400+(number) $28*(number) $19-(number) $28 printf_cls/(void*) 1024 )
-  [46] (word) memset::num#2 ← phi( printf_char::@3/(byte) $28 printf_cls/(word)(number) $28*(number) $19 )
-  [47] if((word) memset::num#2<=(byte) 0) goto memset::@return
+memset: scope:[memset]  from printf_cls printf_scroll::@2
+  [41] (byte) memset::c#4 ← phi( printf_cls/(byte) ' ' printf_scroll::@2/(byte) ' ' )
+  [41] (void*) memset::str#3 ← phi( printf_cls/(void*) 1024 printf_scroll::@2/(void*)(number) $400+(number) $28*(number) $19-(number) $28 )
+  [41] (word) memset::num#2 ← phi( printf_cls/(word)(number) $28*(number) $19 printf_scroll::@2/(byte) $28 )
+  [42] if((word) memset::num#2<=(byte) 0) goto memset::@return
   to:memset::@1
 memset::@1: scope:[memset]  from memset
-  [48] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2
-  [49] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+  [43] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2
+  [44] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
   to:memset::@2
 memset::@2: scope:[memset]  from memset::@1 memset::@3
-  [50] (byte*) memset::dst#2 ← phi( memset::@1/(byte*) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
-  [51] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
+  [45] (byte*) memset::dst#2 ← phi( memset::@1/(byte*) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
+  [46] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
   to:memset::@return
 memset::@return: scope:[memset]  from memset memset::@2
-  [52] return 
+  [47] return 
   to:@return
 memset::@3: scope:[memset]  from memset::@2
-  [53] *((byte*) memset::dst#2) ← (byte) memset::c#4
-  [54] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [48] *((byte*) memset::dst#2) ← (byte) memset::c#4
+  [49] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@2
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
-memcpy: scope:[memcpy]  from printf_char::@2
-  [55] phi()
+memcpy: scope:[memcpy]  from printf_scroll::@1
+  [50] phi()
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
-  [56] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*)(const void*) memcpy::destination#0 memcpy::@2/(byte*) memcpy::dst#1 )
-  [56] (byte*) memcpy::src#2 ← phi( memcpy/(byte*)(const void*) memcpy::source#0 memcpy::@2/(byte*) memcpy::src#1 )
-  [57] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2
+  [51] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*)(const void*) memcpy::destination#0 memcpy::@2/(byte*) memcpy::dst#1 )
+  [51] (byte*) memcpy::src#2 ← phi( memcpy/(byte*)(const void*) memcpy::source#0 memcpy::@2/(byte*) memcpy::src#1 )
+  [52] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2
   to:memcpy::@return
 memcpy::@return: scope:[memcpy]  from memcpy::@1
-  [58] return 
+  [53] return 
   to:@return
 memcpy::@2: scope:[memcpy]  from memcpy::@1
-  [59] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2)
-  [60] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2
-  [61] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2
+  [54] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2)
+  [55] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2
+  [56] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2
   to:memcpy::@1
+
+(void()) printf_char((byte) printf_char::ch)
+printf_char: scope:[printf_char]  from printf_str::@5
+  [57] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0
+  [58] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr
+  [59] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x
+  [60] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return
+  to:printf_char::@1
+printf_char::@1: scope:[printf_char]  from printf_char
+  [61] (byte) printf_cursor_x ← (byte) 0
+  [62] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y
+  [63] call printf_scroll 
+  to:printf_char::@return
+printf_char::@return: scope:[printf_char]  from printf_char printf_char::@1
+  [64] return 
+  to:@return
 
 (void()) printf_cls()
 printf_cls: scope:[printf_cls]  from main
-  [62] phi()
-  [63] call memset 
+  [65] phi()
+  [66] call memset 
   to:printf_cls::@1
 printf_cls::@1: scope:[printf_cls]  from printf_cls
-  [64] (byte*) printf_cursor_ptr ← (byte*) 1024
-  [65] (byte) printf_cursor_x ← (byte) 0
-  [66] (byte) printf_cursor_y ← (byte) 0
+  [67] (byte*) printf_cursor_ptr ← (byte*) 1024
+  [68] (byte) printf_cursor_x ← (byte) 0
+  [69] (byte) printf_cursor_y ← (byte) 0
   to:printf_cls::@return
 printf_cls::@return: scope:[printf_cls]  from printf_cls::@1
-  [67] return 
+  [70] return 
   to:@return
 
 
@@ -890,38 +922,37 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 (void*) memcpy::destination
 (byte*) memcpy::dst
-(byte*) memcpy::dst#1 1.0000001E7
-(byte*) memcpy::dst#2 1.0000001E7
+(byte*) memcpy::dst#1 1.00000001E8
+(byte*) memcpy::dst#2 1.00000001E8
 (word) memcpy::num
 (void*) memcpy::return
 (void*) memcpy::source
 (byte*) memcpy::src
-(byte*) memcpy::src#1 2.0000002E7
-(byte*) memcpy::src#2 1.0000001E7
+(byte*) memcpy::src#1 2.00000002E8
+(byte*) memcpy::src#2 1.00000001E8
 (byte*) memcpy::src_end
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
-(byte) memset::c#4 1250000.125
+(byte) memset::c#4 1.2500000125E7
 (byte*) memset::dst
-(byte*) memset::dst#1 2.0000002E7
-(byte*) memset::dst#2 1.3366668333333332E7
-(byte*) memset::dst#4 200002.0
+(byte*) memset::dst#1 2.00000002E8
+(byte*) memset::dst#2 1.3366666833333334E8
+(byte*) memset::dst#4 2000002.0
 (byte*) memset::end
-(byte*) memset::end#0 1683333.6666666665
+(byte*) memset::end#0 1.6833333666666668E7
 (word) memset::num
-(word) memset::num#2 100001.0
+(word) memset::num#2 1000001.0
 (void*) memset::return
 (void*) memset::str
 (void*) memset::str#3
 (byte) printf_buffer_number::sign
 (void()) printf_char((byte) printf_char::ch)
-(byte*~) printf_char::$6 20002.0
 (byte) printf_char::ch
 (byte) printf_char::ch#0 11002.0
 (void()) printf_cls()
-(byte*) printf_cursor_ptr loadstore 1894.864864864865
-(byte) printf_cursor_x loadstore 1669.6944444444448
-(byte) printf_cursor_y loadstore 1845.0000000000002
+(byte*) printf_cursor_ptr loadstore 6252.749999999998
+(byte) printf_cursor_x loadstore 2003.6333333333334
+(byte) printf_cursor_y loadstore 8295.365853658537
 (byte) printf_format_number::justify_left
 (byte) printf_format_number::min_length
 (byte) printf_format_number::radix
@@ -933,6 +964,8 @@ VARIABLE REGISTER WEIGHTS
 (void()) printf_ln()
 (byte*~) printf_ln::$0 20002.0
 (byte*~) printf_ln::$1 20002.0
+(void()) printf_scroll()
+(byte*~) printf_scroll::$4 200002.0
 (void()) printf_str((byte*) printf_str::str)
 (byte) printf_str::ch
 (byte) printf_str::ch#0 1001.0
@@ -956,7 +989,7 @@ Added variable printf_str::ch#0 to live range equivalence class [ printf_str::ch
 Added variable printf_char::ch#0 to live range equivalence class [ printf_char::ch#0 ]
 Added variable printf_ln::$0 to live range equivalence class [ printf_ln::$0 ]
 Added variable printf_ln::$1 to live range equivalence class [ printf_ln::$1 ]
-Added variable printf_char::$6 to live range equivalence class [ printf_char::$6 ]
+Added variable printf_scroll::$4 to live range equivalence class [ printf_scroll::$4 ]
 Added variable memset::end#0 to live range equivalence class [ memset::end#0 ]
 Complete equivalence classes
 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ]
@@ -973,7 +1006,7 @@ Complete equivalence classes
 [ printf_char::ch#0 ]
 [ printf_ln::$0 ]
 [ printf_ln::$1 ]
-[ printf_char::$6 ]
+[ printf_scroll::$4 ]
 [ memset::end#0 ]
 Allocated zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ]
 Allocated zp[2]:4 [ memset::num#2 ]
@@ -989,7 +1022,7 @@ Allocated zp[1]:19 [ printf_str::ch#0 ]
 Allocated zp[1]:20 [ printf_char::ch#0 ]
 Allocated zp[2]:21 [ printf_ln::$0 ]
 Allocated zp[2]:23 [ printf_ln::$1 ]
-Allocated zp[2]:25 [ printf_char::$6 ]
+Allocated zp[2]:25 [ printf_scroll::$4 ]
 Allocated zp[2]:27 [ memset::end#0 ]
 
 INITIAL ASM
@@ -1041,7 +1074,7 @@ __bend:
   // main
 main: {
     // [8] call printf_cls 
-    // [62] phi from main to printf_cls [phi:main->printf_cls]
+    // [65] phi from main to printf_cls [phi:main->printf_cls]
   printf_cls_from_main:
     jsr printf_cls
     // [9] phi from main to main::@1 [phi:main->main::@1]
@@ -1173,99 +1206,75 @@ printf_ln: {
     sta.z printf_cursor_x
     // [29] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z printf_cursor_y
+    // [30] call printf_scroll 
+    jsr printf_scroll
     jmp __breturn
     // printf_ln::@return
   __breturn:
-    // [30] return 
+    // [31] return 
     rts
 }
-  // printf_char
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte zp($14) ch)
-printf_char: {
-    .label __6 = $19
-    .label ch = $14
-    // [31] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 -- _deref_pbuz1=vbuz2 
-    lda.z ch
-    ldy #0
-    sta (printf_cursor_ptr),y
-    // [32] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr -- pbuz1=_inc_pbuz1 
-    inc.z printf_cursor_ptr
-    bne !+
-    inc.z printf_cursor_ptr+1
-  !:
-    // [33] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x -- vbuz1=_inc_vbuz1 
-    inc.z printf_cursor_x
-    // [34] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
-    lda #$28
-    cmp.z printf_cursor_x
-    bne __breturn
-    jmp __b1
-    // printf_char::@1
-  __b1:
-    // [35] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_cursor_x
-    // [36] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
-    inc.z printf_cursor_y
-    // [37] if((byte) printf_cursor_y!=(byte) $19) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
+  // printf_scroll
+// Scroll the entire screen if the cursor is on the last line
+printf_scroll: {
+    .label __4 = $19
+    // [32] if((byte) printf_cursor_y!=(byte) $19) goto printf_scroll::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z printf_cursor_y
     bne __breturn
-    // [38] phi from printf_char::@1 to printf_char::@2 [phi:printf_char::@1->printf_char::@2]
+    // [33] phi from printf_scroll to printf_scroll::@1 [phi:printf_scroll->printf_scroll::@1]
+  __b1_from_printf_scroll:
+    jmp __b1
+    // printf_scroll::@1
+  __b1:
+    // [34] call memcpy 
+    // [50] phi from printf_scroll::@1 to memcpy [phi:printf_scroll::@1->memcpy]
+  memcpy_from___b1:
+    jsr memcpy
+    // [35] phi from printf_scroll::@1 to printf_scroll::@2 [phi:printf_scroll::@1->printf_scroll::@2]
   __b2_from___b1:
     jmp __b2
-    // printf_char::@2
+    // printf_scroll::@2
   __b2:
-    // [39] call memcpy 
-    // [55] phi from printf_char::@2 to memcpy [phi:printf_char::@2->memcpy]
-  memcpy_from___b2:
-    jsr memcpy
-    // [40] phi from printf_char::@2 to printf_char::@3 [phi:printf_char::@2->printf_char::@3]
-  __b3_from___b2:
-    jmp __b3
-    // printf_char::@3
-  __b3:
-    // [41] call memset 
-    // [46] phi from printf_char::@3 to memset [phi:printf_char::@3->memset]
-  memset_from___b3:
-    // [46] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_char::@3->memset#0] -- vbuz1=vbuc1 
+    // [36] call memset 
+    // [41] phi from printf_scroll::@2 to memset [phi:printf_scroll::@2->memset]
+  memset_from___b2:
+    // [41] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_scroll::@2->memset#0] -- vbuz1=vbuc1 
     lda #' '
     sta.z memset.c
-    // [46] phi (void*) memset::str#3 = (void*)(number) $400+(number) $28*(number) $19-(number) $28 [phi:printf_char::@3->memset#1] -- pvoz1=pvoc1 
+    // [41] phi (void*) memset::str#3 = (void*)(number) $400+(number) $28*(number) $19-(number) $28 [phi:printf_scroll::@2->memset#1] -- pvoz1=pvoc1 
     lda #<$400+$28*$19-$28
     sta.z memset.str
     lda #>$400+$28*$19-$28
     sta.z memset.str+1
-    // [46] phi (word) memset::num#2 = (byte) $28 [phi:printf_char::@3->memset#2] -- vwuz1=vbuc1 
+    // [41] phi (word) memset::num#2 = (byte) $28 [phi:printf_scroll::@2->memset#2] -- vwuz1=vbuc1 
     lda #<$28
     sta.z memset.num
     lda #>$28
     sta.z memset.num+1
     jsr memset
-    jmp __b4
-    // printf_char::@4
-  __b4:
-    // [42] (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (byte) $28 -- pbuz1=pbuz2_minus_vwuc1 
+    jmp __b3
+    // printf_scroll::@3
+  __b3:
+    // [37] (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (byte) $28 -- pbuz1=pbuz2_minus_vwuc1 
     lda.z printf_cursor_ptr
     sec
     sbc #<$28
-    sta.z __6
+    sta.z __4
     lda.z printf_cursor_ptr+1
     sbc #>$28
-    sta.z __6+1
-    // [43] (byte*) printf_cursor_ptr ← (byte*~) printf_char::$6 -- pbuz1=pbuz2 
-    lda.z __6
+    sta.z __4+1
+    // [38] (byte*) printf_cursor_ptr ← (byte*~) printf_scroll::$4 -- pbuz1=pbuz2 
+    lda.z __4
     sta.z printf_cursor_ptr
-    lda.z __6+1
+    lda.z __4+1
     sta.z printf_cursor_ptr+1
-    // [44] (byte) printf_cursor_y ← -- (byte) printf_cursor_y -- vbuz1=_dec_vbuz1 
+    // [39] (byte) printf_cursor_y ← -- (byte) printf_cursor_y -- vbuz1=_dec_vbuz1 
     dec.z printf_cursor_y
     jmp __breturn
-    // printf_char::@return
+    // printf_scroll::@return
   __breturn:
-    // [45] return 
+    // [40] return 
     rts
 }
   // memset
@@ -1277,7 +1286,7 @@ memset: {
     .label num = 4
     .label str = 6
     .label c = 8
-    // [47] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
+    // [42] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
     lda.z num
     bne !+
     lda.z num+1
@@ -1286,7 +1295,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [48] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz3 
+    // [43] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz3 
     lda.z str
     clc
     adc.z num
@@ -1294,19 +1303,19 @@ memset: {
     lda.z str+1
     adc.z num+1
     sta.z end+1
-    // [49] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
+    // [44] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
     lda.z str
     sta.z dst
     lda.z str+1
     sta.z dst+1
-    // [50] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [45] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [50] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [45] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
-    // [51] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [46] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -1316,15 +1325,15 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [52] return 
+    // [47] return 
     rts
     // memset::@3
   __b3:
-    // [53] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
+    // [48] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
     lda.z c
     ldy #0
     sta (dst),y
-    // [54] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [49] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
@@ -1341,14 +1350,14 @@ memcpy: {
     .label src_end = source+num
     .label dst = $d
     .label src = $b
-    // [56] phi from memcpy to memcpy::@1 [phi:memcpy->memcpy::@1]
+    // [51] phi from memcpy to memcpy::@1 [phi:memcpy->memcpy::@1]
   __b1_from_memcpy:
-    // [56] phi (byte*) memcpy::dst#2 = (byte*)(const void*) memcpy::destination#0 [phi:memcpy->memcpy::@1#0] -- pbuz1=pbuc1 
+    // [51] phi (byte*) memcpy::dst#2 = (byte*)(const void*) memcpy::destination#0 [phi:memcpy->memcpy::@1#0] -- pbuz1=pbuc1 
     lda #<destination
     sta.z dst
     lda #>destination
     sta.z dst+1
-    // [56] phi (byte*) memcpy::src#2 = (byte*)(const void*) memcpy::source#0 [phi:memcpy->memcpy::@1#1] -- pbuz1=pbuc1 
+    // [51] phi (byte*) memcpy::src#2 = (byte*)(const void*) memcpy::source#0 [phi:memcpy->memcpy::@1#1] -- pbuz1=pbuc1 
     lda #<source
     sta.z src
     lda #>source
@@ -1356,7 +1365,7 @@ memcpy: {
     jmp __b1
     // memcpy::@1
   __b1:
-    // [57] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [52] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z src+1
     cmp #>src_end
     bne __b2
@@ -1366,46 +1375,83 @@ memcpy: {
     jmp __breturn
     // memcpy::@return
   __breturn:
-    // [58] return 
+    // [53] return 
     rts
     // memcpy::@2
   __b2:
-    // [59] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [54] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     ldy #0
     sta (dst),y
-    // [60] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [55] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [61] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [56] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc.z src
     bne !+
     inc.z src+1
   !:
-    // [56] phi from memcpy::@2 to memcpy::@1 [phi:memcpy::@2->memcpy::@1]
+    // [51] phi from memcpy::@2 to memcpy::@1 [phi:memcpy::@2->memcpy::@1]
   __b1_from___b2:
-    // [56] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#1 [phi:memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [56] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#1 [phi:memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [51] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#1 [phi:memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [51] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#1 [phi:memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
+}
+  // printf_char
+// Print a single char
+// If the end of the screen is reached scroll it up one char and place the cursor at the
+// printf_char(byte zp($14) ch)
+printf_char: {
+    .label ch = $14
+    // [57] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 -- _deref_pbuz1=vbuz2 
+    lda.z ch
+    ldy #0
+    sta (printf_cursor_ptr),y
+    // [58] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr -- pbuz1=_inc_pbuz1 
+    inc.z printf_cursor_ptr
+    bne !+
+    inc.z printf_cursor_ptr+1
+  !:
+    // [59] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x -- vbuz1=_inc_vbuz1 
+    inc.z printf_cursor_x
+    // [60] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
+    lda #$28
+    cmp.z printf_cursor_x
+    bne __breturn
+    jmp __b1
+    // printf_char::@1
+  __b1:
+    // [61] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z printf_cursor_x
+    // [62] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
+    inc.z printf_cursor_y
+    // [63] call printf_scroll 
+    jsr printf_scroll
+    jmp __breturn
+    // printf_char::@return
+  __breturn:
+    // [64] return 
+    rts
 }
   // printf_cls
 // Clear the screen. Also resets current line/char cursor.
 printf_cls: {
-    // [63] call memset 
-    // [46] phi from printf_cls to memset [phi:printf_cls->memset]
+    // [66] call memset 
+    // [41] phi from printf_cls to memset [phi:printf_cls->memset]
   memset_from_printf_cls:
-    // [46] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_cls->memset#0] -- vbuz1=vbuc1 
+    // [41] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_cls->memset#0] -- vbuz1=vbuc1 
     lda #' '
     sta.z memset.c
-    // [46] phi (void*) memset::str#3 = (void*) 1024 [phi:printf_cls->memset#1] -- pvoz1=pvoc1 
+    // [41] phi (void*) memset::str#3 = (void*) 1024 [phi:printf_cls->memset#1] -- pvoz1=pvoc1 
     lda #<$400
     sta.z memset.str
     lda #>$400
     sta.z memset.str+1
-    // [46] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:printf_cls->memset#2] -- vwuz1=vwuc1 
+    // [41] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:printf_cls->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta.z memset.num
     lda #>$28*$19
@@ -1414,21 +1460,21 @@ printf_cls: {
     jmp __b1
     // printf_cls::@1
   __b1:
-    // [64] (byte*) printf_cursor_ptr ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [67] (byte*) printf_cursor_ptr ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z printf_cursor_ptr
     lda #>$400
     sta.z printf_cursor_ptr+1
-    // [65] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    // [68] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z printf_cursor_x
-    // [66] (byte) printf_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    // [69] (byte) printf_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z printf_cursor_y
     jmp __breturn
     // printf_cls::@return
   __breturn:
-    // [67] return 
+    // [70] return 
     rts
 }
   // File Data
@@ -1442,24 +1488,24 @@ Statement [25] (byte*~) printf_ln::$0 ← (byte*) printf_cursor_ptr - (byte) pri
 Statement [26] (byte*~) printf_ln::$1 ← (byte*~) printf_ln::$0 + (byte) $28 [ printf_cursor_y printf_ln::$1 ] ( main:5::printf_str:10::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_ln::$1 ] { }  main:5::printf_str:12::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_ln::$1 ] { }  ) always clobbers reg byte a 
 Statement [27] (byte*) printf_cursor_ptr ← (byte*~) printf_ln::$1 [ printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
 Statement [28] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
-Statement [31] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte y 
-Statement [34] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [35] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [37] if((byte) printf_cursor_y!=(byte) $19) goto printf_char::@return [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [42] (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (byte) $28 [ printf_cursor_x printf_cursor_y printf_char::$6 ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_char::$6 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_char::$6 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [43] (byte*) printf_cursor_ptr ← (byte*~) printf_char::$6 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [47] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::num#2 memset::str#3 memset::c#4 ] { }  ) always clobbers reg byte a 
+Statement [32] if((byte) printf_cursor_y!=(byte) $19) goto printf_scroll::@return [ printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [37] (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (byte) $28 [ printf_cursor_y printf_scroll::$4 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [38] (byte*) printf_cursor_ptr ← (byte*~) printf_scroll::$4 [ printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [42] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::num#2 memset::str#3 memset::c#4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ memset::c#4 ]
-Statement [48] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
-Statement [49] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
-Statement [51] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [53] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [43] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [44] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [46] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [48] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:8 [ memset::c#4 ]
-Statement [57] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [59] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a reg byte y 
-Statement [64] (byte*) printf_cursor_ptr ← (byte*) 1024 [ printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_ptr ] { }  ) always clobbers reg byte a 
-Statement [65] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_ptr ] { }  ) always clobbers reg byte a 
-Statement [66] (byte) printf_cursor_y ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
+Statement [52] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [54] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [57] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte y 
+Statement [60] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [61] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [67] (byte*) printf_cursor_ptr ← (byte*) 1024 [ printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_ptr ] { }  ) always clobbers reg byte a 
+Statement [68] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_ptr ] { }  ) always clobbers reg byte a 
+Statement [69] (byte) printf_cursor_y ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
 Statement [1] (byte) printf_cursor_x ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] (byte) printf_cursor_y ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] (byte*) printf_cursor_ptr ← (byte*) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1468,22 +1514,22 @@ Statement [25] (byte*~) printf_ln::$0 ← (byte*) printf_cursor_ptr - (byte) pri
 Statement [26] (byte*~) printf_ln::$1 ← (byte*~) printf_ln::$0 + (byte) $28 [ printf_cursor_y printf_ln::$1 ] ( main:5::printf_str:10::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_ln::$1 ] { }  main:5::printf_str:12::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_ln::$1 ] { }  ) always clobbers reg byte a 
 Statement [27] (byte*) printf_cursor_ptr ← (byte*~) printf_ln::$1 [ printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24 [ printf_str::str#0 printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
 Statement [28] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
-Statement [31] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte y 
-Statement [34] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [35] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [37] if((byte) printf_cursor_y!=(byte) $19) goto printf_char::@return [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [42] (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (byte) $28 [ printf_cursor_x printf_cursor_y printf_char::$6 ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_char::$6 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_char::$6 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [43] (byte*) printf_cursor_ptr ← (byte*~) printf_char::$6 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [47] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::num#2 memset::str#3 memset::c#4 ] { }  ) always clobbers reg byte a 
-Statement [48] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
-Statement [49] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
-Statement [51] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [53] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memset:41 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:63 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [57] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
-Statement [59] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::memcpy:39 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a reg byte y 
-Statement [64] (byte*) printf_cursor_ptr ← (byte*) 1024 [ printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_ptr ] { }  ) always clobbers reg byte a 
-Statement [65] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_ptr ] { }  ) always clobbers reg byte a 
-Statement [66] (byte) printf_cursor_y ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
+Statement [32] if((byte) printf_cursor_y!=(byte) $19) goto printf_scroll::@return [ printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [37] (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (byte) $28 [ printf_cursor_y printf_scroll::$4 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_scroll::$4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [38] (byte*) printf_cursor_ptr ← (byte*~) printf_scroll::$4 [ printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [42] if((word) memset::num#2<=(byte) 0) goto memset::@return [ memset::num#2 memset::str#3 memset::c#4 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::num#2 memset::str#3 memset::c#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::num#2 memset::str#3 memset::c#4 ] { }  ) always clobbers reg byte a 
+Statement [43] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::str#3 memset::c#4 memset::end#0 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [44] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#4 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [46] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [48] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memset:36 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memset::c#4 memset::end#0 memset::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_cls:8::memset:66 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [52] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [54] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src#2 memcpy::dst#2 ] ( main:5::printf_str:10::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:12::printf_ln:24::printf_scroll:30::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { }  main:5::printf_str:10::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22::printf_scroll:63::memcpy:34 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr memcpy::src#2 memcpy::dst#2 ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a reg byte y 
+Statement [57] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte y 
+Statement [60] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [61] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_str:10::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  main:5::printf_str:12::printf_char:22 [ printf_str::str#0 printf_cursor_x printf_cursor_y printf_cursor_ptr ] { { printf_char::ch#0 = printf_str::ch#0 } }  ) always clobbers reg byte a 
+Statement [67] (byte*) printf_cursor_ptr ← (byte*) 1024 [ printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_ptr ] { }  ) always clobbers reg byte a 
+Statement [68] (byte) printf_cursor_x ← (byte) 0 [ printf_cursor_x printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_ptr ] { }  ) always clobbers reg byte a 
+Statement [69] (byte) printf_cursor_y ← (byte) 0 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] ( main:5::printf_cls:8 [ printf_cursor_x printf_cursor_y printf_cursor_ptr ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ memset::num#2 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ memset::str#3 ] : zp[2]:6 , 
@@ -1498,15 +1544,16 @@ Potential registers zp[1]:19 [ printf_str::ch#0 ] : zp[1]:19 , reg byte a , reg 
 Potential registers zp[1]:20 [ printf_char::ch#0 ] : zp[1]:20 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:21 [ printf_ln::$0 ] : zp[2]:21 , 
 Potential registers zp[2]:23 [ printf_ln::$1 ] : zp[2]:23 , 
-Potential registers zp[2]:25 [ printf_char::$6 ] : zp[2]:25 , 
+Potential registers zp[2]:25 [ printf_scroll::$4 ] : zp[2]:25 , 
 Potential registers zp[2]:27 [ memset::end#0 ] : zp[2]:27 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memcpy] 30,000,003: zp[2]:11 [ memcpy::src#2 memcpy::src#1 ] 20,000,002: zp[2]:13 [ memcpy::dst#2 memcpy::dst#1 ] 
-Uplift Scope [memset] 33,566,672.33: zp[2]:9 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 1,683,333.67: zp[2]:27 [ memset::end#0 ] 1,250,000.12: zp[1]:8 [ memset::c#4 ] 100,001: zp[2]:4 [ memset::num#2 ] 0: zp[2]:6 [ memset::str#3 ] 
+Uplift Scope [memcpy] 300,000,003: zp[2]:11 [ memcpy::src#2 memcpy::src#1 ] 200,000,002: zp[2]:13 [ memcpy::dst#2 memcpy::dst#1 ] 
+Uplift Scope [memset] 335,666,672.33: zp[2]:9 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 16,833,333.67: zp[2]:27 [ memset::end#0 ] 12,500,000.12: zp[1]:8 [ memset::c#4 ] 1,000,001: zp[2]:4 [ memset::num#2 ] 0: zp[2]:6 [ memset::str#3 ] 
+Uplift Scope [printf_scroll] 200,002: zp[2]:25 [ printf_scroll::$4 ] 
 Uplift Scope [printf_ln] 20,002: zp[2]:21 [ printf_ln::$0 ] 20,002: zp[2]:23 [ printf_ln::$1 ] 
-Uplift Scope [printf_char] 20,002: zp[2]:25 [ printf_char::$6 ] 11,002: zp[1]:20 [ printf_char::ch#0 ] 
-Uplift Scope [] 1,894.86: zp[2]:17 [ printf_cursor_ptr ] 1,845: zp[1]:16 [ printf_cursor_y ] 1,669.69: zp[1]:15 [ printf_cursor_x ] 
+Uplift Scope [] 8,295.37: zp[1]:16 [ printf_cursor_y ] 6,252.75: zp[2]:17 [ printf_cursor_ptr ] 2,003.63: zp[1]:15 [ printf_cursor_x ] 
+Uplift Scope [printf_char] 11,002: zp[1]:20 [ printf_char::ch#0 ] 
 Uplift Scope [printf_str] 2,582.5: zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ] 1,001: zp[1]:19 [ printf_str::ch#0 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [printf_format_number] 
@@ -1515,34 +1562,35 @@ Uplift Scope [printf_format_string]
 Uplift Scope [printf_cls] 
 Uplift Scope [main] 
 
-Uplifting [memcpy] best 14625 combination zp[2]:11 [ memcpy::src#2 memcpy::src#1 ] zp[2]:13 [ memcpy::dst#2 memcpy::dst#1 ] 
-Uplifting [memset] best 14519 combination zp[2]:9 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:27 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:4 [ memset::num#2 ] zp[2]:6 [ memset::str#3 ] 
-Uplifting [printf_ln] best 14519 combination zp[2]:21 [ printf_ln::$0 ] zp[2]:23 [ printf_ln::$1 ] 
-Uplifting [printf_char] best 14486 combination zp[2]:25 [ printf_char::$6 ] reg byte a [ printf_char::ch#0 ] 
-Uplifting [] best 14486 combination zp[2]:17 [ printf_cursor_ptr ] zp[1]:16 [ printf_cursor_y ] zp[1]:15 [ printf_cursor_x ] 
-Uplifting [printf_str] best 14366 combination zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ] reg byte a [ printf_str::ch#0 ] 
-Uplifting [RADIX] best 14366 combination 
-Uplifting [printf_format_number] best 14366 combination 
-Uplifting [printf_buffer_number] best 14366 combination 
-Uplifting [printf_format_string] best 14366 combination 
-Uplifting [printf_cls] best 14366 combination 
-Uplifting [main] best 14366 combination 
+Uplifting [memcpy] best 14646 combination zp[2]:11 [ memcpy::src#2 memcpy::src#1 ] zp[2]:13 [ memcpy::dst#2 memcpy::dst#1 ] 
+Uplifting [memset] best 14540 combination zp[2]:9 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:27 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:4 [ memset::num#2 ] zp[2]:6 [ memset::str#3 ] 
+Uplifting [printf_scroll] best 14540 combination zp[2]:25 [ printf_scroll::$4 ] 
+Uplifting [printf_ln] best 14540 combination zp[2]:21 [ printf_ln::$0 ] zp[2]:23 [ printf_ln::$1 ] 
+Uplifting [] best 14540 combination zp[1]:16 [ printf_cursor_y ] zp[2]:17 [ printf_cursor_ptr ] zp[1]:15 [ printf_cursor_x ] 
+Uplifting [printf_char] best 14507 combination reg byte a [ printf_char::ch#0 ] 
+Uplifting [printf_str] best 14387 combination zp[2]:2 [ printf_str::str#3 printf_str::str#5 printf_str::str#0 ] reg byte a [ printf_str::ch#0 ] 
+Uplifting [RADIX] best 14387 combination 
+Uplifting [printf_format_number] best 14387 combination 
+Uplifting [printf_buffer_number] best 14387 combination 
+Uplifting [printf_format_string] best 14387 combination 
+Uplifting [printf_cls] best 14387 combination 
+Uplifting [main] best 14387 combination 
 Attempting to uplift remaining variables inzp[1]:16 [ printf_cursor_y ]
-Uplifting [] best 14366 combination zp[1]:16 [ printf_cursor_y ] 
+Uplifting [] best 14387 combination zp[1]:16 [ printf_cursor_y ] 
 Attempting to uplift remaining variables inzp[1]:15 [ printf_cursor_x ]
-Uplifting [] best 14366 combination zp[1]:15 [ printf_cursor_x ] 
-Coalescing zero page register [ zp[2]:17 [ printf_cursor_ptr ] ] with [ zp[2]:25 [ printf_char::$6 ] ] - score: 2
+Uplifting [] best 14387 combination zp[1]:15 [ printf_cursor_x ] 
+Coalescing zero page register [ zp[2]:17 [ printf_cursor_ptr ] ] with [ zp[2]:25 [ printf_scroll::$4 ] ] - score: 2
 Coalescing zero page register [ zp[2]:4 [ memset::num#2 ] ] with [ zp[2]:27 [ memset::end#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ memset::str#3 ] ] with [ zp[2]:9 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:17 [ printf_cursor_ptr printf_char::$6 ] ] with [ zp[2]:21 [ printf_ln::$0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:17 [ printf_cursor_ptr printf_char::$6 printf_ln::$0 ] ] with [ zp[2]:23 [ printf_ln::$1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:17 [ printf_cursor_ptr printf_scroll::$4 ] ] with [ zp[2]:21 [ printf_ln::$0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:17 [ printf_cursor_ptr printf_scroll::$4 printf_ln::$0 ] ] with [ zp[2]:23 [ printf_ln::$1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:11 [ memcpy::src#2 memcpy::src#1 ] ] with [ zp[2]:4 [ memset::num#2 memset::end#0 ] ]
 Coalescing zero page register [ zp[2]:13 [ memcpy::dst#2 memcpy::dst#1 ] ] with [ zp[2]:6 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ]
 Allocated (was zp[2]:11) zp[2]:4 [ memcpy::src#2 memcpy::src#1 memset::num#2 memset::end#0 ]
 Allocated (was zp[2]:13) zp[2]:6 [ memcpy::dst#2 memcpy::dst#1 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
 Allocated (was zp[1]:15) zp[1]:8 [ printf_cursor_x ]
 Allocated (was zp[1]:16) zp[1]:9 [ printf_cursor_y ]
-Allocated (was zp[2]:17) zp[2]:10 [ printf_cursor_ptr printf_char::$6 printf_ln::$0 printf_ln::$1 ]
+Allocated (was zp[2]:17) zp[2]:10 [ printf_cursor_ptr printf_scroll::$4 printf_ln::$0 printf_ln::$1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1592,7 +1640,7 @@ __bend:
   // main
 main: {
     // [8] call printf_cls 
-    // [62] phi from main to printf_cls [phi:main->printf_cls]
+    // [65] phi from main to printf_cls [phi:main->printf_cls]
   printf_cls_from_main:
     jsr printf_cls
     // [9] phi from main to main::@1 [phi:main->main::@1]
@@ -1714,92 +1762,70 @@ printf_ln: {
     sta.z printf_cursor_x
     // [29] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z printf_cursor_y
+    // [30] call printf_scroll 
+    jsr printf_scroll
     jmp __breturn
     // printf_ln::@return
   __breturn:
-    // [30] return 
+    // [31] return 
     rts
 }
-  // printf_char
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte register(A) ch)
-printf_char: {
-    .label __6 = $a
-    // [31] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 -- _deref_pbuz1=vbuaa 
-    ldy #0
-    sta (printf_cursor_ptr),y
-    // [32] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr -- pbuz1=_inc_pbuz1 
-    inc.z printf_cursor_ptr
-    bne !+
-    inc.z printf_cursor_ptr+1
-  !:
-    // [33] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x -- vbuz1=_inc_vbuz1 
-    inc.z printf_cursor_x
-    // [34] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
-    lda #$28
-    cmp.z printf_cursor_x
-    bne __breturn
-    jmp __b1
-    // printf_char::@1
-  __b1:
-    // [35] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_cursor_x
-    // [36] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
-    inc.z printf_cursor_y
-    // [37] if((byte) printf_cursor_y!=(byte) $19) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
+  // printf_scroll
+// Scroll the entire screen if the cursor is on the last line
+printf_scroll: {
+    .label __4 = $a
+    // [32] if((byte) printf_cursor_y!=(byte) $19) goto printf_scroll::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z printf_cursor_y
     bne __breturn
-    // [38] phi from printf_char::@1 to printf_char::@2 [phi:printf_char::@1->printf_char::@2]
+    // [33] phi from printf_scroll to printf_scroll::@1 [phi:printf_scroll->printf_scroll::@1]
+  __b1_from_printf_scroll:
+    jmp __b1
+    // printf_scroll::@1
+  __b1:
+    // [34] call memcpy 
+    // [50] phi from printf_scroll::@1 to memcpy [phi:printf_scroll::@1->memcpy]
+  memcpy_from___b1:
+    jsr memcpy
+    // [35] phi from printf_scroll::@1 to printf_scroll::@2 [phi:printf_scroll::@1->printf_scroll::@2]
   __b2_from___b1:
     jmp __b2
-    // printf_char::@2
+    // printf_scroll::@2
   __b2:
-    // [39] call memcpy 
-    // [55] phi from printf_char::@2 to memcpy [phi:printf_char::@2->memcpy]
-  memcpy_from___b2:
-    jsr memcpy
-    // [40] phi from printf_char::@2 to printf_char::@3 [phi:printf_char::@2->printf_char::@3]
-  __b3_from___b2:
-    jmp __b3
-    // printf_char::@3
-  __b3:
-    // [41] call memset 
-    // [46] phi from printf_char::@3 to memset [phi:printf_char::@3->memset]
-  memset_from___b3:
-    // [46] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_char::@3->memset#0] -- vbuxx=vbuc1 
+    // [36] call memset 
+    // [41] phi from printf_scroll::@2 to memset [phi:printf_scroll::@2->memset]
+  memset_from___b2:
+    // [41] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_scroll::@2->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [46] phi (void*) memset::str#3 = (void*)(number) $400+(number) $28*(number) $19-(number) $28 [phi:printf_char::@3->memset#1] -- pvoz1=pvoc1 
+    // [41] phi (void*) memset::str#3 = (void*)(number) $400+(number) $28*(number) $19-(number) $28 [phi:printf_scroll::@2->memset#1] -- pvoz1=pvoc1 
     lda #<$400+$28*$19-$28
     sta.z memset.str
     lda #>$400+$28*$19-$28
     sta.z memset.str+1
-    // [46] phi (word) memset::num#2 = (byte) $28 [phi:printf_char::@3->memset#2] -- vwuz1=vbuc1 
+    // [41] phi (word) memset::num#2 = (byte) $28 [phi:printf_scroll::@2->memset#2] -- vwuz1=vbuc1 
     lda #<$28
     sta.z memset.num
     lda #>$28
     sta.z memset.num+1
     jsr memset
-    jmp __b4
-    // printf_char::@4
-  __b4:
-    // [42] (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
-    lda.z __6
+    jmp __b3
+    // printf_scroll::@3
+  __b3:
+    // [37] (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
+    lda.z __4
     sec
     sbc #<$28
-    sta.z __6
-    lda.z __6+1
+    sta.z __4
+    lda.z __4+1
     sbc #>$28
-    sta.z __6+1
-    // [43] (byte*) printf_cursor_ptr ← (byte*~) printf_char::$6
-    // [44] (byte) printf_cursor_y ← -- (byte) printf_cursor_y -- vbuz1=_dec_vbuz1 
+    sta.z __4+1
+    // [38] (byte*) printf_cursor_ptr ← (byte*~) printf_scroll::$4
+    // [39] (byte) printf_cursor_y ← -- (byte) printf_cursor_y -- vbuz1=_dec_vbuz1 
     dec.z printf_cursor_y
     jmp __breturn
-    // printf_char::@return
+    // printf_scroll::@return
   __breturn:
-    // [45] return 
+    // [40] return 
     rts
 }
   // memset
@@ -1810,7 +1836,7 @@ memset: {
     .label dst = 6
     .label num = 4
     .label str = 6
-    // [47] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
+    // [42] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
     lda.z num
     bne !+
     lda.z num+1
@@ -1819,7 +1845,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [48] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+    // [43] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
     adc.z str
@@ -1827,15 +1853,15 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-    // [49] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
-    // [50] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [44] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [45] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [50] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [45] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
-    // [51] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [46] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -1845,15 +1871,15 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [52] return 
+    // [47] return 
     rts
     // memset::@3
   __b3:
-    // [53] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
+    // [48] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
-    // [54] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [49] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
@@ -1870,14 +1896,14 @@ memcpy: {
     .label src_end = source+num
     .label dst = 6
     .label src = 4
-    // [56] phi from memcpy to memcpy::@1 [phi:memcpy->memcpy::@1]
+    // [51] phi from memcpy to memcpy::@1 [phi:memcpy->memcpy::@1]
   __b1_from_memcpy:
-    // [56] phi (byte*) memcpy::dst#2 = (byte*)(const void*) memcpy::destination#0 [phi:memcpy->memcpy::@1#0] -- pbuz1=pbuc1 
+    // [51] phi (byte*) memcpy::dst#2 = (byte*)(const void*) memcpy::destination#0 [phi:memcpy->memcpy::@1#0] -- pbuz1=pbuc1 
     lda #<destination
     sta.z dst
     lda #>destination
     sta.z dst+1
-    // [56] phi (byte*) memcpy::src#2 = (byte*)(const void*) memcpy::source#0 [phi:memcpy->memcpy::@1#1] -- pbuz1=pbuc1 
+    // [51] phi (byte*) memcpy::src#2 = (byte*)(const void*) memcpy::source#0 [phi:memcpy->memcpy::@1#1] -- pbuz1=pbuc1 
     lda #<source
     sta.z src
     lda #>source
@@ -1885,7 +1911,7 @@ memcpy: {
     jmp __b1
     // memcpy::@1
   __b1:
-    // [57] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [52] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z src+1
     cmp #>src_end
     bne __b2
@@ -1895,45 +1921,80 @@ memcpy: {
     jmp __breturn
     // memcpy::@return
   __breturn:
-    // [58] return 
+    // [53] return 
     rts
     // memcpy::@2
   __b2:
-    // [59] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [54] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     ldy #0
     sta (dst),y
-    // [60] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [55] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [61] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [56] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc.z src
     bne !+
     inc.z src+1
   !:
-    // [56] phi from memcpy::@2 to memcpy::@1 [phi:memcpy::@2->memcpy::@1]
+    // [51] phi from memcpy::@2 to memcpy::@1 [phi:memcpy::@2->memcpy::@1]
   __b1_from___b2:
-    // [56] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#1 [phi:memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [56] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#1 [phi:memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [51] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#1 [phi:memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [51] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#1 [phi:memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
+}
+  // printf_char
+// Print a single char
+// If the end of the screen is reached scroll it up one char and place the cursor at the
+// printf_char(byte register(A) ch)
+printf_char: {
+    // [57] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (printf_cursor_ptr),y
+    // [58] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr -- pbuz1=_inc_pbuz1 
+    inc.z printf_cursor_ptr
+    bne !+
+    inc.z printf_cursor_ptr+1
+  !:
+    // [59] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x -- vbuz1=_inc_vbuz1 
+    inc.z printf_cursor_x
+    // [60] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
+    lda #$28
+    cmp.z printf_cursor_x
+    bne __breturn
+    jmp __b1
+    // printf_char::@1
+  __b1:
+    // [61] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z printf_cursor_x
+    // [62] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
+    inc.z printf_cursor_y
+    // [63] call printf_scroll 
+    jsr printf_scroll
+    jmp __breturn
+    // printf_char::@return
+  __breturn:
+    // [64] return 
+    rts
 }
   // printf_cls
 // Clear the screen. Also resets current line/char cursor.
 printf_cls: {
-    // [63] call memset 
-    // [46] phi from printf_cls to memset [phi:printf_cls->memset]
+    // [66] call memset 
+    // [41] phi from printf_cls to memset [phi:printf_cls->memset]
   memset_from_printf_cls:
-    // [46] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_cls->memset#0] -- vbuxx=vbuc1 
+    // [41] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_cls->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [46] phi (void*) memset::str#3 = (void*) 1024 [phi:printf_cls->memset#1] -- pvoz1=pvoc1 
+    // [41] phi (void*) memset::str#3 = (void*) 1024 [phi:printf_cls->memset#1] -- pvoz1=pvoc1 
     lda #<$400
     sta.z memset.str
     lda #>$400
     sta.z memset.str+1
-    // [46] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:printf_cls->memset#2] -- vwuz1=vwuc1 
+    // [41] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:printf_cls->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta.z memset.num
     lda #>$28*$19
@@ -1942,21 +2003,21 @@ printf_cls: {
     jmp __b1
     // printf_cls::@1
   __b1:
-    // [64] (byte*) printf_cursor_ptr ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [67] (byte*) printf_cursor_ptr ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z printf_cursor_ptr
     lda #>$400
     sta.z printf_cursor_ptr+1
-    // [65] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    // [68] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z printf_cursor_x
-    // [66] (byte) printf_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    // [69] (byte) printf_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z printf_cursor_y
     jmp __breturn
     // printf_cls::@return
   __breturn:
-    // [67] return 
+    // [70] return 
     rts
 }
   // File Data
@@ -1977,10 +2038,11 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
-Removing instruction jmp __b4
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
@@ -2008,10 +2070,10 @@ Removing instruction __b1_from___b4:
 Removing instruction __b1_from___b5:
 Removing instruction __b1:
 Removing instruction __b4_from___b3:
+Removing instruction __b1_from_printf_scroll:
+Removing instruction memcpy_from___b1:
 Removing instruction __b2_from___b1:
-Removing instruction memcpy_from___b2:
-Removing instruction __b3_from___b2:
-Removing instruction memset_from___b3:
+Removing instruction memset_from___b2:
 Removing instruction __b2_from___b1:
 Removing instruction __b2_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
@@ -2027,11 +2089,11 @@ Removing instruction __breturn:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __b3:
-Removing instruction __b4:
 Removing instruction __b1:
 Removing instruction __b1_from_memcpy:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
+Removing instruction __b1:
 Removing instruction memset_from_printf_cls:
 Removing instruction __b1:
 Removing instruction __breturn:
@@ -2063,16 +2125,16 @@ FINAL SYMBOL TABLE
 (void*) memcpy::destination
 (const void*) memcpy::destination#0 destination = (void*) 1024
 (byte*) memcpy::dst
-(byte*) memcpy::dst#1 dst zp[2]:6 1.0000001E7
-(byte*) memcpy::dst#2 dst zp[2]:6 1.0000001E7
+(byte*) memcpy::dst#1 dst zp[2]:6 1.00000001E8
+(byte*) memcpy::dst#2 dst zp[2]:6 1.00000001E8
 (word) memcpy::num
 (const word) memcpy::num#0 num = (word)(number) $28*(number) $19-(number) $28
 (void*) memcpy::return
 (void*) memcpy::source
 (const void*) memcpy::source#0 source = (void*)(number) $400+(number) $28
 (byte*) memcpy::src
-(byte*) memcpy::src#1 src zp[2]:4 2.0000002E7
-(byte*) memcpy::src#2 src zp[2]:4 1.0000001E7
+(byte*) memcpy::src#1 src zp[2]:4 2.00000002E8
+(byte*) memcpy::src#2 src zp[2]:4 1.00000001E8
 (byte*) memcpy::src_end
 (const byte*) memcpy::src_end#0 src_end = (byte*)(const void*) memcpy::source#0+(const word) memcpy::num#0
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
@@ -2081,35 +2143,31 @@ FINAL SYMBOL TABLE
 (label) memset::@3
 (label) memset::@return
 (byte) memset::c
-(byte) memset::c#4 reg byte x 1250000.125
+(byte) memset::c#4 reg byte x 1.2500000125E7
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp[2]:6 2.0000002E7
-(byte*) memset::dst#2 dst zp[2]:6 1.3366668333333332E7
-(byte*) memset::dst#4 dst zp[2]:6 200002.0
+(byte*) memset::dst#1 dst zp[2]:6 2.00000002E8
+(byte*) memset::dst#2 dst zp[2]:6 1.3366666833333334E8
+(byte*) memset::dst#4 dst zp[2]:6 2000002.0
 (byte*) memset::end
-(byte*) memset::end#0 end zp[2]:4 1683333.6666666665
+(byte*) memset::end#0 end zp[2]:4 1.6833333666666668E7
 (word) memset::num
-(word) memset::num#2 num zp[2]:4 100001.0
+(word) memset::num#2 num zp[2]:4 1000001.0
 (void*) memset::return
 (void*) memset::str
 (void*) memset::str#3 str zp[2]:6
 (const byte*) printf_buffer_number::digits[(number) $b]  = { fill( $b, 0) }
 (byte) printf_buffer_number::sign
 (void()) printf_char((byte) printf_char::ch)
-(byte*~) printf_char::$6 zp[2]:10 20002.0
 (label) printf_char::@1
-(label) printf_char::@2
-(label) printf_char::@3
-(label) printf_char::@4
 (label) printf_char::@return
 (byte) printf_char::ch
 (byte) printf_char::ch#0 reg byte a 11002.0
 (void()) printf_cls()
 (label) printf_cls::@1
 (label) printf_cls::@return
-(byte*) printf_cursor_ptr loadstore zp[2]:10 1894.864864864865
-(byte) printf_cursor_x loadstore zp[1]:8 1669.6944444444448
-(byte) printf_cursor_y loadstore zp[1]:9 1845.0000000000002
+(byte*) printf_cursor_ptr loadstore zp[2]:10 6252.749999999998
+(byte) printf_cursor_x loadstore zp[1]:8 2003.6333333333334
+(byte) printf_cursor_y loadstore zp[1]:9 8295.365853658537
 (byte) printf_format_number::justify_left
 (byte) printf_format_number::min_length
 (byte) printf_format_number::radix
@@ -2122,6 +2180,12 @@ FINAL SYMBOL TABLE
 (byte*~) printf_ln::$0 zp[2]:10 20002.0
 (byte*~) printf_ln::$1 zp[2]:10 20002.0
 (label) printf_ln::@return
+(void()) printf_scroll()
+(byte*~) printf_scroll::$4 zp[2]:10 200002.0
+(label) printf_scroll::@1
+(label) printf_scroll::@2
+(label) printf_scroll::@3
+(label) printf_scroll::@return
 (void()) printf_str((byte*) printf_str::str)
 (label) printf_str::@1
 (label) printf_str::@2
@@ -2142,13 +2206,13 @@ zp[2]:4 [ memcpy::src#2 memcpy::src#1 memset::num#2 memset::end#0 ]
 zp[2]:6 [ memcpy::dst#2 memcpy::dst#1 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
 zp[1]:8 [ printf_cursor_x ]
 zp[1]:9 [ printf_cursor_y ]
-zp[2]:10 [ printf_cursor_ptr printf_char::$6 printf_ln::$0 printf_ln::$1 ]
+zp[2]:10 [ printf_cursor_ptr printf_scroll::$4 printf_ln::$0 printf_ln::$1 ]
 reg byte a [ printf_str::ch#0 ]
 reg byte a [ printf_char::ch#0 ]
 
 
 FINAL ASSEMBLER
-Score: 12708
+Score: 12726
 
   // File Comments
 // Tests printf function call rewriting
@@ -2192,7 +2256,7 @@ __bbegin:
 main: {
     // printf_cls()
     // [8] call printf_cls 
-    // [62] phi from main to printf_cls [phi:main->printf_cls]
+    // [65] phi from main to printf_cls [phi:main->printf_cls]
     jsr printf_cls
     // [9] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
@@ -2305,90 +2369,66 @@ printf_ln: {
     // printf_cursor_y++;
     // [29] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z printf_cursor_y
+    // printf_scroll()
+    // [30] call printf_scroll 
+    jsr printf_scroll
     // printf_ln::@return
     // }
-    // [30] return 
+    // [31] return 
     rts
 }
-  // printf_char
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte register(A) ch)
-printf_char: {
-    .label __6 = $a
-    // *(printf_cursor_ptr++) = ch
-    // [31] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 -- _deref_pbuz1=vbuaa 
-    ldy #0
-    sta (printf_cursor_ptr),y
-    // *(printf_cursor_ptr++) = ch;
-    // [32] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr -- pbuz1=_inc_pbuz1 
-    inc.z printf_cursor_ptr
-    bne !+
-    inc.z printf_cursor_ptr+1
-  !:
-    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
-    // [33] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x -- vbuz1=_inc_vbuz1 
-    inc.z printf_cursor_x
-    // [34] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
-    lda #$28
-    cmp.z printf_cursor_x
-    bne __breturn
-    // printf_char::@1
-    // printf_cursor_x = 0
-    // [35] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z printf_cursor_x
-    // ++printf_cursor_y;
-    // [36] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
-    inc.z printf_cursor_y
+  // printf_scroll
+// Scroll the entire screen if the cursor is on the last line
+printf_scroll: {
+    .label __4 = $a
     // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
-    // [37] if((byte) printf_cursor_y!=(byte) $19) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
+    // [32] if((byte) printf_cursor_y!=(byte) $19) goto printf_scroll::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z printf_cursor_y
     bne __breturn
-    // [38] phi from printf_char::@1 to printf_char::@2 [phi:printf_char::@1->printf_char::@2]
-    // printf_char::@2
+    // [33] phi from printf_scroll to printf_scroll::@1 [phi:printf_scroll->printf_scroll::@1]
+    // printf_scroll::@1
     // memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
-    // [39] call memcpy 
-    // [55] phi from printf_char::@2 to memcpy [phi:printf_char::@2->memcpy]
+    // [34] call memcpy 
+    // [50] phi from printf_scroll::@1 to memcpy [phi:printf_scroll::@1->memcpy]
     jsr memcpy
-    // [40] phi from printf_char::@2 to printf_char::@3 [phi:printf_char::@2->printf_char::@3]
-    // printf_char::@3
+    // [35] phi from printf_scroll::@1 to printf_scroll::@2 [phi:printf_scroll::@1->printf_scroll::@2]
+    // printf_scroll::@2
     // memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
-    // [41] call memset 
-    // [46] phi from printf_char::@3 to memset [phi:printf_char::@3->memset]
-    // [46] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_char::@3->memset#0] -- vbuxx=vbuc1 
+    // [36] call memset 
+    // [41] phi from printf_scroll::@2 to memset [phi:printf_scroll::@2->memset]
+    // [41] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_scroll::@2->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [46] phi (void*) memset::str#3 = (void*)(number) $400+(number) $28*(number) $19-(number) $28 [phi:printf_char::@3->memset#1] -- pvoz1=pvoc1 
+    // [41] phi (void*) memset::str#3 = (void*)(number) $400+(number) $28*(number) $19-(number) $28 [phi:printf_scroll::@2->memset#1] -- pvoz1=pvoc1 
     lda #<$400+$28*$19-$28
     sta.z memset.str
     lda #>$400+$28*$19-$28
     sta.z memset.str+1
-    // [46] phi (word) memset::num#2 = (byte) $28 [phi:printf_char::@3->memset#2] -- vwuz1=vbuc1 
+    // [41] phi (word) memset::num#2 = (byte) $28 [phi:printf_scroll::@2->memset#2] -- vwuz1=vbuc1 
     lda #<$28
     sta.z memset.num
     lda #>$28
     sta.z memset.num+1
     jsr memset
-    // printf_char::@4
+    // printf_scroll::@3
     // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    // [42] (byte*~) printf_char::$6 ← (byte*) printf_cursor_ptr - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
-    lda.z __6
+    // [37] (byte*~) printf_scroll::$4 ← (byte*) printf_cursor_ptr - (byte) $28 -- pbuz1=pbuz1_minus_vwuc1 
+    lda.z __4
     sec
     sbc #<$28
-    sta.z __6
-    lda.z __6+1
+    sta.z __4
+    lda.z __4+1
     sbc #>$28
-    sta.z __6+1
+    sta.z __4+1
     // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    // [43] (byte*) printf_cursor_ptr ← (byte*~) printf_char::$6
+    // [38] (byte*) printf_cursor_ptr ← (byte*~) printf_scroll::$4
     // printf_cursor_y--;
-    // [44] (byte) printf_cursor_y ← -- (byte) printf_cursor_y -- vbuz1=_dec_vbuz1 
+    // [39] (byte) printf_cursor_y ← -- (byte) printf_cursor_y -- vbuz1=_dec_vbuz1 
     dec.z printf_cursor_y
-    // printf_char::@return
+    // printf_scroll::@return
   __breturn:
     // }
-    // [45] return 
+    // [40] return 
     rts
 }
   // memset
@@ -2400,7 +2440,7 @@ memset: {
     .label num = 4
     .label str = 6
     // if(num>0)
-    // [47] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
+    // [42] if((word) memset::num#2<=(byte) 0) goto memset::@return -- vwuz1_le_0_then_la1 
     lda.z num
     bne !+
     lda.z num+1
@@ -2408,7 +2448,7 @@ memset: {
   !:
     // memset::@1
     // end = (char*)str + num
-    // [48] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+    // [43] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) memset::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
     adc.z str
@@ -2416,13 +2456,13 @@ memset: {
     lda.z end+1
     adc.z str+1
     sta.z end+1
-    // [49] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
-    // [50] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
-    // [50] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [44] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [45] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [45] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2
   __b2:
     // for(char* dst = str; dst!=end; dst++)
-    // [51] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [46] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -2432,17 +2472,17 @@ memset: {
     // memset::@return
   __breturn:
     // }
-    // [52] return 
+    // [47] return 
     rts
     // memset::@3
   __b3:
     // *dst = c
-    // [53] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
+    // [48] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [54] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [49] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
@@ -2459,13 +2499,13 @@ memcpy: {
     .label src_end = source+num
     .label dst = 6
     .label src = 4
-    // [56] phi from memcpy to memcpy::@1 [phi:memcpy->memcpy::@1]
-    // [56] phi (byte*) memcpy::dst#2 = (byte*)(const void*) memcpy::destination#0 [phi:memcpy->memcpy::@1#0] -- pbuz1=pbuc1 
+    // [51] phi from memcpy to memcpy::@1 [phi:memcpy->memcpy::@1]
+    // [51] phi (byte*) memcpy::dst#2 = (byte*)(const void*) memcpy::destination#0 [phi:memcpy->memcpy::@1#0] -- pbuz1=pbuc1 
     lda #<destination
     sta.z dst
     lda #>destination
     sta.z dst+1
-    // [56] phi (byte*) memcpy::src#2 = (byte*)(const void*) memcpy::source#0 [phi:memcpy->memcpy::@1#1] -- pbuz1=pbuc1 
+    // [51] phi (byte*) memcpy::src#2 = (byte*)(const void*) memcpy::source#0 [phi:memcpy->memcpy::@1#1] -- pbuz1=pbuc1 
     lda #<source
     sta.z src
     lda #>source
@@ -2473,7 +2513,7 @@ memcpy: {
     // memcpy::@1
   __b1:
     // while(src!=src_end)
-    // [57] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [52] if((byte*) memcpy::src#2!=(const byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z src+1
     cmp #>src_end
     bne __b2
@@ -2482,45 +2522,84 @@ memcpy: {
     bne __b2
     // memcpy::@return
     // }
-    // [58] return 
+    // [53] return 
     rts
     // memcpy::@2
   __b2:
     // *dst++ = *src++
-    // [59] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [54] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     sta (dst),y
     // *dst++ = *src++;
-    // [60] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [55] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [61] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [56] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc.z src
     bne !+
     inc.z src+1
   !:
-    // [56] phi from memcpy::@2 to memcpy::@1 [phi:memcpy::@2->memcpy::@1]
-    // [56] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#1 [phi:memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [56] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#1 [phi:memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [51] phi from memcpy::@2 to memcpy::@1 [phi:memcpy::@2->memcpy::@1]
+    // [51] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#1 [phi:memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [51] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#1 [phi:memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
+}
+  // printf_char
+// Print a single char
+// If the end of the screen is reached scroll it up one char and place the cursor at the
+// printf_char(byte register(A) ch)
+printf_char: {
+    // *(printf_cursor_ptr++) = ch
+    // [57] *((byte*) printf_cursor_ptr) ← (byte) printf_char::ch#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (printf_cursor_ptr),y
+    // *(printf_cursor_ptr++) = ch;
+    // [58] (byte*) printf_cursor_ptr ← ++ (byte*) printf_cursor_ptr -- pbuz1=_inc_pbuz1 
+    inc.z printf_cursor_ptr
+    bne !+
+    inc.z printf_cursor_ptr+1
+  !:
+    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
+    // [59] (byte) printf_cursor_x ← ++ (byte) printf_cursor_x -- vbuz1=_inc_vbuz1 
+    inc.z printf_cursor_x
+    // [60] if((byte) printf_cursor_x!=(byte) $28) goto printf_char::@return -- vbuz1_neq_vbuc1_then_la1 
+    lda #$28
+    cmp.z printf_cursor_x
+    bne __breturn
+    // printf_char::@1
+    // printf_cursor_x = 0
+    // [61] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z printf_cursor_x
+    // ++printf_cursor_y;
+    // [62] (byte) printf_cursor_y ← ++ (byte) printf_cursor_y -- vbuz1=_inc_vbuz1 
+    inc.z printf_cursor_y
+    // printf_scroll()
+    // [63] call printf_scroll 
+    jsr printf_scroll
+    // printf_char::@return
+  __breturn:
+    // }
+    // [64] return 
+    rts
 }
   // printf_cls
 // Clear the screen. Also resets current line/char cursor.
 printf_cls: {
     // memset(PRINTF_SCREEN_ADDRESS, ' ', PRINTF_SCREEN_BYTES)
-    // [63] call memset 
-    // [46] phi from printf_cls to memset [phi:printf_cls->memset]
-    // [46] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_cls->memset#0] -- vbuxx=vbuc1 
+    // [66] call memset 
+    // [41] phi from printf_cls to memset [phi:printf_cls->memset]
+    // [41] phi (byte) memset::c#4 = (byte) ' ' [phi:printf_cls->memset#0] -- vbuxx=vbuc1 
     ldx #' '
-    // [46] phi (void*) memset::str#3 = (void*) 1024 [phi:printf_cls->memset#1] -- pvoz1=pvoc1 
+    // [41] phi (void*) memset::str#3 = (void*) 1024 [phi:printf_cls->memset#1] -- pvoz1=pvoc1 
     lda #<$400
     sta.z memset.str
     lda #>$400
     sta.z memset.str+1
-    // [46] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:printf_cls->memset#2] -- vwuz1=vwuc1 
+    // [41] phi (word) memset::num#2 = (word)(number) $28*(number) $19 [phi:printf_cls->memset#2] -- vwuz1=vwuc1 
     lda #<$28*$19
     sta.z memset.num
     lda #>$28*$19
@@ -2528,21 +2607,21 @@ printf_cls: {
     jsr memset
     // printf_cls::@1
     // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
-    // [64] (byte*) printf_cursor_ptr ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [67] (byte*) printf_cursor_ptr ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z printf_cursor_ptr
     lda #>$400
     sta.z printf_cursor_ptr+1
     // printf_cursor_x = 0
-    // [65] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    // [68] (byte) printf_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z printf_cursor_x
     // printf_cursor_y = 0
-    // [66] (byte) printf_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    // [69] (byte) printf_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
     sta.z printf_cursor_y
     // printf_cls::@return
     // }
-    // [67] return 
+    // [70] return 
     rts
 }
   // File Data

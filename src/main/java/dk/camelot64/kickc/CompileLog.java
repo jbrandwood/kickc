@@ -179,6 +179,12 @@ public class CompileLog {
       this.verboseSequencePlan = verboseSequencePlan;
    }
 
+   public CompileLog verboseSequencePlan() {
+      setVerboseSequencePlan(true);
+      return this;
+   }
+
+
    public CompileLog verboseParse() {
       setVerboseParse(true);
       return this;

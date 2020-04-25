@@ -37,12 +37,7 @@ void printf_char(char ch) {
     if(++printf_cursor_x==PRINTF_SCREEN_WIDTH) {
         printf_cursor_x = 0;
         ++printf_cursor_y;
-        if(printf_cursor_y==PRINTF_SCREEN_HEIGHT) {
-            memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH);
-            memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH);
-            printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH;
-            printf_cursor_y--;
-        }
+        printf_scroll();
     }
 }
 
@@ -51,6 +46,17 @@ void printf_ln() {
     printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH;
     printf_cursor_x = 0;
     printf_cursor_y++;
+    printf_scroll();
+}
+
+// Scroll the entire screen if the cursor is on the last line
+void printf_scroll() {
+    if(printf_cursor_y==PRINTF_SCREEN_HEIGHT) {
+        memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH);
+        memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH);
+        printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH;
+        printf_cursor_y--;
+    }
 }
 
 // Print a padding char a number of times

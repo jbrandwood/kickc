@@ -41,6 +41,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEightQueens() throws IOException, URISyntaxException {
+      compileAndCompare("examples/eightqueens/eightqueens.c");
+   }
+
+   @Test
    public void testAtoi() throws IOException, URISyntaxException {
       compileAndCompare("atoi-1.c");
    }

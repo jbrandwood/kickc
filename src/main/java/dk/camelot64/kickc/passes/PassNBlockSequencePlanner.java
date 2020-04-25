@@ -37,7 +37,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
          }
          sequence.add(block.getLabel());
          if(block.getCallSuccessor() != null) {
-            pushTodo(getGraph().getCallSuccessor(block));
+            pushCallTodo(getGraph().getCallSuccessor(block));
          }
          ControlFlowBlock conditionalSuccessor = getGraph().getConditionalSuccessor(block);
          ControlFlowBlock defaultSuccessor = getGraph().getDefaultSuccessor(block);
@@ -90,6 +90,26 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       todoScopes.push(newScopeTodo);
       newScopeTodo.addTodo(block);
    }
+
+   void pushCallTodo(ControlFlowBlock block) {
+      LabelRef blockRef = block.getLabel();
+      Scope blockScope = getScope().getSymbol(blockRef).getScope();
+      for(ScopeTodo todoScope : todoScopes) {
+         if(todoScope.scope.equals(blockScope)) {
+            todoScope.addTodo(block);
+            return;
+         }
+      }
+      ScopeTodo newScopeTodo = new ScopeTodo(blockScope);
+      ScopeTodo top = null;
+      if(todoScopes.size() > 0)
+         top = todoScopes.pop();
+      todoScopes.push(newScopeTodo);
+      newScopeTodo.addTodo(block);
+      if(top != null)
+         todoScopes.push(top);
+   }
+
 
    boolean hasTodo() {
       return !todoScopes.isEmpty();

@@ -29,29 +29,51 @@ main: {
     // printf_cls()
     jsr printf_cls
     // printf("%u", c)
-    lda #<str
-    sta.z printf_str.str
-    lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%u", c)
     jsr printf_uchar
-    // printf("%u", c)
-    lda #<str
-    sta.z printf_str.str
-    lda #>str
-    sta.z printf_str.str+1
+    // }
+    rts
+}
+// Print an unsigned char using a specific format
+printf_uchar: {
+    // printf_buffer.sign = format.sign_always?'+':0
+    // Handle any sign
+    lda #0
+    sta printf_buffer
+    // uctoa(uvalue, printf_buffer.digits, format.radix)
+  // Format number into buffer
+    jsr uctoa
+    // printf_number_buffer(printf_buffer, format)
+    lda printf_buffer
+  // Print using format
+    jsr printf_number_buffer
+    // }
+    rts
+}
+// Print the contents of the number buffer using a specific format.
+// This handles minimum length, zero-filling, and left/right justification from the format
+// printf_number_buffer(byte register(A) buffer_sign)
+printf_number_buffer: {
+    .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    // if(buffer.sign)
+    cmp #0
+    beq __b2
+    // printf_char(buffer.sign)
+    jsr printf_char
+  __b2:
+    // printf_str(buffer.digits)
     jsr printf_str
     // }
     rts
-    str: .text ""
-    .byte 0
 }
 // Print a zero-terminated string
 // Handles escape codes such as newline
 // printf_str(byte* zp(8) str)
 printf_str: {
     .label str = 8
+    lda #<printf_number_buffer.buffer_digits
+    sta.z str
+    lda #>printf_number_buffer.buffer_digits
+    sta.z str+1
   __b2:
     // ch = *str++
     ldy #0
@@ -247,42 +269,6 @@ memcpy: {
     inc.z src+1
   !:
     jmp __b1
-}
-// Print an unsigned char using a specific format
-printf_uchar: {
-    // printf_buffer.sign = format.sign_always?'+':0
-    // Handle any sign
-    lda #0
-    sta printf_buffer
-    // uctoa(uvalue, printf_buffer.digits, format.radix)
-  // Format number into buffer
-    jsr uctoa
-    // printf_number_buffer(printf_buffer, format)
-    lda printf_buffer
-  // Print using format
-    jsr printf_number_buffer
-    // }
-    rts
-}
-// Print the contents of the number buffer using a specific format.
-// This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte register(A) buffer_sign)
-printf_number_buffer: {
-    .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    // if(buffer.sign)
-    cmp #0
-    beq __b2
-    // printf_char(buffer.sign)
-    jsr printf_char
-  __b2:
-    // printf_str(buffer.digits)
-    lda #<buffer_digits
-    sta.z printf_str.str
-    lda #>buffer_digits
-    sta.z printf_str.str+1
-    jsr printf_str
-    // }
-    rts
 }
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.

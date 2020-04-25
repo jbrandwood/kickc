@@ -108,7 +108,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                      if(!fieldParamIdx && paramIdx > 1)
                         throw new CompileError("Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!", statement);
                      fieldParamIdx = true;
-                     paramIdx = Integer.parseInt(paramField.substring(0, paramField.length()-1));
+                     paramIdx = Integer.parseInt(paramField.substring(0, paramField.length() - 1));
                   }
                   final String flagsField = matcher.group(2);
                   long leftJustify = (flagsField != null && flagsField.contains("-")) ? 1 : 0;
@@ -121,7 +121,8 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
                   // First output the non-matching part before the pattern
                   String prefix = formatString.substring(formatIdx, start);
-                  addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(prefix, formatEncoding, true)), stmtIt, printfCall);
+                  if(prefix.length() > 0)
+                     addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(prefix, formatEncoding, true)), stmtIt, printfCall);
                   formatIdx = end;
 
                   if(typeField.equals("%")) {
@@ -236,7 +237,8 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                }
                // Grab the rest
                String suffix = formatString.substring(formatIdx);
-               addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(suffix, formatEncoding, true)), stmtIt, printfCall);
+               if(suffix.length() > 0)
+                  addPrintfCall(PRINTF_STR, Arrays.asList(new ConstantString(suffix, formatEncoding, true)), stmtIt, printfCall);
             }
          }
       }

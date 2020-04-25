@@ -249,6 +249,26 @@ unsigned long ultoa_append(char *buffer, unsigned long value, unsigned long sub)
     return value;
 }
 
+// Converts the string argument str to an integer.
+int atoi(const char *str) {
+    int res = 0; // Initialize result
+    char negative = 0; // Initialize sign as positive
+    char i = 0; // Initialize index of first digit
+
+    if (str[i] == '-') {
+        negative = 1;
+        i++;
+    }
+    // Iterate through all digits and update the result
+    for (; str[i]; ++i)
+        res = res * 10 + str[i] - '0';
+    // Return result with sign
+    if(negative)
+        return -res;
+    else
+        return res;
+}
+
 // Returns the absolute value of int x.
 inline int abs(int x) {
     if(x<0)

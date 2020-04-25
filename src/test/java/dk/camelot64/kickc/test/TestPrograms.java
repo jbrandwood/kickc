@@ -41,6 +41,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAtoi() throws IOException, URISyntaxException {
+      compileAndCompare("atoi-1.c");
+   }
+
+   @Test
    public void testToUpper1() throws IOException, URISyntaxException {
       compileAndCompare("toupper-1.c");
    }

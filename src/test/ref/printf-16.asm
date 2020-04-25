@@ -28,6 +28,9 @@ main: {
     // printf_cls()
     jsr printf_cls
     // printf("%%d %%d:     %d %d\n",1, 2)
+    lda #'%'
+    jsr printf_char
+    // printf("%%d %%d:     %d %d\n",1, 2)
     lda #<str
     sta.z printf_str.str
     lda #>str
@@ -43,8 +46,11 @@ main: {
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%d %%d:     %d %d\n",1, 2)
-    lda #'%'
-    jsr printf_char
+    lda #<1
+    sta.z printf_sint.value
+    lda #>1
+    sta.z printf_sint.value+1
+    jsr printf_sint
     // printf("%%d %%d:     %d %d\n",1, 2)
     lda #<str2
     sta.z printf_str.str
@@ -52,9 +58,9 @@ main: {
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%d %%d:     %d %d\n",1, 2)
-    lda #<1
+    lda #<2
     sta.z printf_sint.value
-    lda #>1
+    lda #>2
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%d %%d:     %d %d\n",1, 2)
@@ -63,40 +69,22 @@ main: {
     lda #>str3
     sta.z printf_str.str+1
     jsr printf_str
-    // printf("%%d %%d:     %d %d\n",1, 2)
-    lda #<2
-    sta.z printf_sint.value
-    lda #>2
-    sta.z printf_sint.value+1
-    jsr printf_sint
-    // printf("%%d %%d:     %d %d\n",1, 2)
+    // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
+    lda #'%'
+    jsr printf_char
+    // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
     lda #<str4
     sta.z printf_str.str
     lda #>str4
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
-    lda #<str
-    sta.z printf_str.str
-    lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
     lda #'%'
     jsr printf_char
     // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
-    lda #<str6
+    lda #<str5
     sta.z printf_str.str
-    lda #>str6
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
-    lda #'%'
-    jsr printf_char
-    // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
-    lda #<str7
-    sta.z printf_str.str
-    lda #>str7
+    lda #>str5
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
@@ -106,9 +94,9 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
-    lda #<str3
+    lda #<str2
     sta.z printf_str.str
-    lda #>str3
+    lda #>str2
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
@@ -118,81 +106,81 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%1$d %%2$d: %1$d %2$d\n",1, 2)
+    lda #<str3
+    sta.z printf_str.str
+    lda #>str3
+    sta.z printf_str.str+1
+    jsr printf_str
+    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
+    lda #'%'
+    jsr printf_char
+    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
     lda #<str4
     sta.z printf_str.str
     lda #>str4
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
-    lda #<str
-    sta.z printf_str.str
-    lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
     lda #'%'
     jsr printf_char
     // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
-    lda #<str6
+    lda #<str9
     sta.z printf_str.str
-    lda #>str6
+    lda #>str9
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
+    lda #<1
+    sta.z printf_sint.value
+    lda #>1
+    sta.z printf_sint.value+1
+    jsr printf_sint
+    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
+    lda #<str2
+    sta.z printf_str.str
+    lda #>str2
+    sta.z printf_str.str+1
+    jsr printf_str
+    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
+    lda #<1
+    sta.z printf_sint.value
+    lda #>1
+    sta.z printf_sint.value+1
+    jsr printf_sint
+    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
+    lda #<str3
+    sta.z printf_str.str
+    lda #>str3
+    sta.z printf_str.str+1
+    jsr printf_str
+    // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
     lda #'%'
     jsr printf_char
-    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
+    // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
     lda #<str12
     sta.z printf_str.str
     lda #>str12
     sta.z printf_str.str+1
     jsr printf_str
-    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
-    lda #<1
-    sta.z printf_sint.value
-    lda #>1
-    sta.z printf_sint.value+1
-    jsr printf_sint
-    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
-    lda #<str3
-    sta.z printf_str.str
-    lda #>str3
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
-    lda #<1
-    sta.z printf_sint.value
-    lda #>1
-    sta.z printf_sint.value+1
-    jsr printf_sint
-    // printf("%%1$d %%1$d: %1$d %1$d\n",1, 2)
-    lda #<str4
-    sta.z printf_str.str
-    lda #>str4
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
-    lda #<str
-    sta.z printf_str.str
-    lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
     // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
     lda #'%'
     jsr printf_char
     // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
-    lda #<str16
+    lda #<str5
     sta.z printf_str.str
-    lda #>str16
+    lda #>str5
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
-    lda #'%'
-    jsr printf_char
+    lda #<2
+    sta.z printf_sint.value
+    lda #>2
+    sta.z printf_sint.value+1
+    jsr printf_sint
     // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
-    lda #<str7
+    lda #<str2
     sta.z printf_str.str
-    lda #>str7
+    lda #>str2
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
@@ -205,33 +193,6 @@ main: {
     lda #<str3
     sta.z printf_str.str
     lda #>str3
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
-    lda #<2
-    sta.z printf_sint.value
-    lda #>2
-    sta.z printf_sint.value+1
-    jsr printf_sint
-    // printf("%%2$d %%2$d: %2$d %2$d\n",1, 2)
-    lda #<str4
-    sta.z printf_str.str
-    lda #>str4
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
-    lda #<str
-    sta.z printf_str.str
-    lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
-    lda #'%'
-    jsr printf_char
-    // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
-    lda #<str16
-    sta.z printf_str.str
-    lda #>str16
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
@@ -244,15 +205,24 @@ main: {
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
+    lda #'%'
+    jsr printf_char
+    // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
+    lda #<str9
+    sta.z printf_str.str
+    lda #>str9
+    sta.z printf_str.str+1
+    jsr printf_str
+    // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
     lda #<2
     sta.z printf_sint.value
     lda #>2
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
-    lda #<str3
+    lda #<str2
     sta.z printf_str.str
-    lda #>str3
+    lda #>str2
     sta.z printf_str.str+1
     jsr printf_str
     // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
@@ -262,30 +232,28 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%2$d %%1$d: %2$d %1$d\n",1, 2)
-    lda #<str4
+    lda #<str3
     sta.z printf_str.str
-    lda #>str4
+    lda #>str3
     sta.z printf_str.str+1
     jsr printf_str
     // }
     rts
-    str: .text ""
+    str: .text "d "
     .byte 0
-    str1: .text "d "
+    str1: .text "d:     "
     .byte 0
-    str2: .text "d:     "
+    str2: .text " "
     .byte 0
-    str3: .text " "
+    str3: .text @"\n"
     .byte 0
-    str4: .text @"\n"
+    str4: .text "1$d "
     .byte 0
-    str6: .text "1$d "
+    str5: .text "2$d: "
     .byte 0
-    str7: .text "2$d: "
+    str9: .text "1$d: "
     .byte 0
-    str12: .text "1$d: "
-    .byte 0
-    str16: .text "2$d "
+    str12: .text "2$d "
     .byte 0
 }
 // Print a zero-terminated string

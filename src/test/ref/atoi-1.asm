@@ -509,7 +509,13 @@ atoi: {
     asl.z __3
     rol.z __3+1
     // res * 10 + str[i]
-    .assert "Missing ASM fragment Fragment not found vwsz1=vwsz1_plus_pbuz2_derefidx_vbuyy. Attempted variations vwsz1=vwsz1_plus_pbuz2_derefidx_vbuyy ", 0, 1
+    clc
+    lda.z __4
+    adc (str),y
+    sta.z __4
+    bcc !+
+    inc.z __4+1
+  !:
     // res = res * 10 + str[i] - '0'
     sec
     lda.z res

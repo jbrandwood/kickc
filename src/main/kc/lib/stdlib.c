@@ -248,3 +248,11 @@ unsigned long ultoa_append(char *buffer, unsigned long value, unsigned long sub)
     *buffer = DIGITS[digit];
     return value;
 }
+
+// Returns the absolute value of int x.
+inline int abs(int x) {
+    if(x<0)
+        return -x;
+    else
+        return x;
+}

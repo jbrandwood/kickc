@@ -79,7 +79,7 @@ public class PassNCalcVariableRegisterWeight extends PassNCalcBase<VariableRegis
    }
 
    private static double addWeight(VariableRef variable, LabelRef block, LiveRangeVariables liveRangeVariables, NaturalLoopSet loopSet, CallGraph callGraph, StatementInfos statementInfos, VariableRegisterWeights variableRegisterWeights) {
-      int loopCallDepth = getLoopCallDepth(block, loopSet, callGraph,statementInfos);
+      int loopCallDepth = getLoopCallDepth(block, loopSet, callGraph, statementInfos);
       double w = 1.0 + Math.pow(10.0, loopCallDepth);
       LiveRange liveRange = liveRangeVariables.getLiveRange(variable);
       double s = liveRange == null ? 0.0 : liveRange.size();
@@ -104,11 +104,15 @@ public class PassNCalcVariableRegisterWeight extends PassNCalcBase<VariableRegis
       final Collection<CallGraph.CallBlock.Call> callers = callGraph.getCallers(procedureRef);
       int maxCallDepth = 0;
       for(CallGraph.CallBlock.Call caller : callers) {
-         final Integer callStatementIdx = caller.getCallStatementIdx();
-         final ControlFlowBlock callBlock = statementInfos.getBlock(callStatementIdx);
-         int callDepth = getLoopCallDepth(callBlock.getLabel(), loopSet, callGraph, statementInfos) + 1;
-         if(callDepth > maxCallDepth)
-            maxCallDepth = callDepth;
+         if(callGraph.isRecursive(caller)) {
+            maxCallDepth = 1;
+         } else {
+            final Integer callStatementIdx = caller.getCallStatementIdx();
+            final ControlFlowBlock callBlock = statementInfos.getBlock(callStatementIdx);
+            int callDepth = getLoopCallDepth(callBlock.getLabel(), loopSet, callGraph, statementInfos) + 1;
+            if(callDepth > maxCallDepth)
+               maxCallDepth = callDepth;
+         }
       }
       int loopDepth = loopSet.getMaxLoopDepth(block);
       return maxCallDepth + loopDepth;

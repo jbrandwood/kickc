@@ -518,6 +518,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testProcedureCallingConventionStack13() throws IOException, URISyntaxException {
+      compileAndCompare("procedure-callingconvention-stack-13.c");
+   }
+
+   @Test
    public void testProcedureCallingConventionStack12() throws IOException, URISyntaxException {
       compileAndCompare("procedure-callingconvention-stack-12.c");
    }

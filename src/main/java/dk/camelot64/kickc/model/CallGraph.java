@@ -221,20 +221,15 @@ public class CallGraph {
       }
    }
 
-   public int getCallDepth(ProcedureRef procedureRef) {
-      final Collection<CallBlock.Call> callers = getCallers(procedureRef);
-      int maxCallDepth = 1;
-      for(CallBlock.Call caller : callers) {
-         final ScopeRef callStatementScope = caller.getCallStatementScope();
-         if(callStatementScope instanceof ProcedureRef) {
-             int callerDepth = getCallDepth((ProcedureRef) callStatementScope)+1;
-             if(callerDepth>maxCallDepth)
-                maxCallDepth = callerDepth;
-         }
-      }
-      return maxCallDepth;
+   /**
+    * Determine if a specific call is part of a recursive procedure call
+    * @param call to examine
+    * @return true if the call is part of procedure recursive calls
+    */
+   public boolean isRecursive(CallBlock.Call call) {
+      final Collection<ScopeRef> recursiveCalls = getRecursiveCalls(call.callStatementScope);
+      return recursiveCalls.contains(call.callStatementScope);
    }
-
 
    /**
     * A block in the call graph, matching a scope in the program.

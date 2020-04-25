@@ -39,3 +39,6 @@ void utoa(unsigned int value, char* buffer, enum RADIX radix);
 // - radix : The radix to convert the number to (from the enum RADIX)
 void ultoa(unsigned long value, char* buffer, enum RADIX radix);
 
+// Returns the absolute value of int x.
+int abs(int x);
+

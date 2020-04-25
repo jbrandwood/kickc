@@ -206,6 +206,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCStyleDeclFunctionIntrinsic() throws IOException, URISyntaxException {
+      compileAndCompare("cstyle-decl-function-intrinsic.c");
+   }
+
+   @Test
    public void testCStyleDeclFunction() throws IOException, URISyntaxException {
       compileAndCompare("cstyle-decl-function.c");
    }

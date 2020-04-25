@@ -261,12 +261,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          program.getScope().add(procedure);
       }
 
-      if(ctx.declFunctionBody() != null) {
-         // Make sure directives and more are taken from the procedure with the body!
+      if(ctx.declFunctionBody() != null || VariableBuilder.hasDirective(Directive.Intrinsic.class, directives)) {
+         // Make sure directives and more are taken from the procedure with the body / intrinsic declaration!
          if(existingSymbol != null) {
             program.getScope().remove(existingSymbol);
             program.getScope().add(procedure);
          }
+      }
+
+      if(ctx.declFunctionBody() != null) {
 
          // Check that the body has not already been added
          for(Statement statement : sequence.getStatements())

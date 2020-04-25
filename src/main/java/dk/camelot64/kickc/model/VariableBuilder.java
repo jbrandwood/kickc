@@ -319,7 +319,7 @@ public class VariableBuilder {
          return Variable.MemoryArea.ZEROPAGE_MEMORY;
       else if(hasDirective(Directive.MemMain.class))
          return Variable.MemoryArea.MAIN_MEMORY;
-      Directive.Address addressDirective = findDirective(Directive.Address.class);
+      Directive.Address addressDirective = findDirective(Directive.Address.class, directives);
       if(addressDirective != null)
          return (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
       else if(!isConstant() && isOptimize())
@@ -341,7 +341,7 @@ public class VariableBuilder {
     * @return The memory alignment
     */
    public Integer getAlignment() {
-      Directive.Align alignDirective = findDirective(Directive.Align.class);
+      Directive.Align alignDirective = findDirective(Directive.Align.class, directives);
       if(alignDirective != null) {
          if(isArray()) {
             return alignDirective.alignment;
@@ -359,7 +359,7 @@ public class VariableBuilder {
     * @return Hard-coded register allocation. Null if not hard-coded.
     */
    public Registers.Register getRegister() {
-      Directive.Address addressDirective = findDirective(Directive.Address.class);
+      Directive.Address addressDirective = findDirective(Directive.Address.class, directives);
       if(addressDirective != null) {
          Variable.MemoryArea memoryArea = (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
          if(Variable.MemoryArea.ZEROPAGE_MEMORY.equals(memoryArea)) {
@@ -370,7 +370,7 @@ public class VariableBuilder {
          }
       }
 
-      Directive.NamedRegister registerDirective = findDirective(Directive.NamedRegister.class);
+      Directive.NamedRegister registerDirective = findDirective(Directive.NamedRegister.class, directives);
       if(registerDirective != null) {
          Registers.Register register = Registers.getRegister(registerDirective.name);
          if(register == null) {
@@ -391,8 +391,18 @@ public class VariableBuilder {
     * @param <DirectiveClass> The class of the type to look for
     * @return true if the directive if found. false otherwise.
     */
-   public <DirectiveClass extends Directive> boolean hasDirective(Class<DirectiveClass> directiveClass) {
-      return findDirective(directiveClass) != null;
+   private <DirectiveClass extends Directive> boolean hasDirective(Class<DirectiveClass> directiveClass) {
+      return findDirective(directiveClass, directives) != null;
+   }
+   /**
+    * Examines whether a specific directive is present in the source
+    *
+    * @param directiveClass The class of the type to look for
+    * @param <DirectiveClass> The class of the type to look for
+    * @return true if the directive if found. false otherwise.
+    */
+   public static <DirectiveClass extends Directive> boolean hasDirective(Class<DirectiveClass> directiveClass, List<Directive> directives) {
+      return findDirective(directiveClass, directives) != null;
    }
 
    /**
@@ -402,7 +412,7 @@ public class VariableBuilder {
     * @param <DirectiveClass> The class of the type to look for
     * @return The directive if found. null if not found.
     */
-   private <DirectiveClass extends Directive> DirectiveClass findDirective(Class<DirectiveClass> directiveClass) {
+   private static <DirectiveClass extends Directive> DirectiveClass findDirective(Class<DirectiveClass> directiveClass, List<Directive> directives) {
       if(directives == null) return null;
       for(Directive directive : directives) {
          if(directiveClass.isInstance(directive)) {

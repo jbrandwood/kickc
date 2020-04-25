@@ -6,7 +6,7 @@
 // Print a formatted string.
 // https://en.wikipedia.org/wiki/Printf_format_string
 // This implementation supports decimal, octal and hexadecimal radix. It supports min length, left/right justify, zero-padding and always-sign.
-__intrinsic void printf(char* format, ...);
+void printf(char* format, ...);
 
 // Clear the screen. Also places cursor at the top left.
 void printf_cls();

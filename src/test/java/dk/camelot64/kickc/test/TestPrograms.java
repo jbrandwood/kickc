@@ -41,6 +41,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testToUpper1() throws IOException, URISyntaxException {
+      compileAndCompare("toupper-1.c");
+   }
+
+   @Test
    public void testPrintfError5() throws IOException, URISyntaxException {
       assertError("printf-error-5.c", "Error! printf() format parameter must be a string!");
    }

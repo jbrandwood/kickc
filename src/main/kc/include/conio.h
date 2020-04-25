@@ -31,7 +31,7 @@ void cputc(char c);
 
 // Move cursor and output one character
 // Same as "gotoxy (x, y); cputc (c);"
-void cputcxy (unsigned char x, unsigned char y, char c);
+void cputcxy(unsigned char x, unsigned char y, char c);
 
 // Output a NUL-terminated string at the current cursor position
 void cputs(const char* s);
@@ -44,7 +44,7 @@ void cputsxy(unsigned char x, unsigned char y, const char* s);
 void chline(unsigned char length);
 
 // Output a vertical line with the given length at the current cursor position.
-void cvline (unsigned char length);
+void cvline(unsigned char length);
 
 // Move cursor and output a vertical line with the given length
 // Same as "gotoxy (x, y); cvline (length);"

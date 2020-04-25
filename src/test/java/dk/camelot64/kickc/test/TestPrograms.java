@@ -41,6 +41,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPrintfError5() throws IOException, URISyntaxException {
+      assertError("printf-error-5.c", "Error! printf() format parameter must be a string!");
+   }
+
+   @Test
+   public void testPrintfError4() throws IOException, URISyntaxException {
+      assertError("printf-error-4.c", "Error! Only constant printf() format parameter supported!");
+   }
+
+   @Test
    public void testPrintfError3() throws IOException, URISyntaxException {
       assertError("printf-error-3.c", "Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!");
    }

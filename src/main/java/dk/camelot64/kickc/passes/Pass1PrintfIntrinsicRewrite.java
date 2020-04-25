@@ -25,23 +25,23 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    /** The printf procedure name. */
    public static final String INTRINSIC_PRINTF_NAME = "printf";
    /** The printf routine used to print a raw char */
-   public static final String PRINTF_CHAR = "printf_char";
+   private static final String PRINTF_CHAR = "printf_char";
    /** The printf routine used to print a raw string */
-   public static final String PRINTF_STR = "printf_str";
+   private static final String PRINTF_STR = "printf_str";
    /** The printf routine used to print formatted strings. */
-   public static final String PRINTF_STRING = "printf_string";
+   private static final String PRINTF_STRING = "printf_string";
    /** The printf routine used to print signed chars. */
-   public static final String PRINTF_SCHAR = "printf_schar";
+   private static final String PRINTF_SCHAR = "printf_schar";
    /** The printf routine used to print unsigned chars. */
-   public static final String PRINTF_UCHAR = "printf_uchar";
+   private static final String PRINTF_UCHAR = "printf_uchar";
    /** The printf routine used to print signed integers. */
-   public static final String PRINTF_SINT = "printf_sint";
+   private static final String PRINTF_SINT = "printf_sint";
    /** The printf routine used to print unsigned integers. */
-   public static final String PRINTF_UINT = "printf_uint";
+   private static final String PRINTF_UINT = "printf_uint";
    /** The printf routine used to print signed long integers. */
-   public static final String PRINTF_SLONG = "printf_slong";
+   private static final String PRINTF_SLONG = "printf_slong";
    /** The printf routine used to print unsigned long integers. */
-   public static final String PRINTF_ULONG = "printf_ulong";
+   private static final String PRINTF_ULONG = "printf_ulong";
    /** Hexadecimal Radix name. */
    public static final String HEXADECIMAL = "HEXADECIMAL";
    /** Decimal Radix name. */
@@ -83,8 +83,12 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                // [%diuxXoscp]         type (specifies the type of the parameter/output "d"/"i" decimal signed, "u": decimal unsigned, "x": hexadecimal unsigned (lowercase), "X": hexadecimal unsigned (uppercase), "o": octal unsigned, "s": string, "c": character, "p": pointer, "%": output "%" )
                Pattern pattern = Pattern.compile("%([1-9][0-9]*[$])?([-+0#]*)([1-9][0-9]*)?(hh|l)?([%diuxXoscp])");
                final Matcher matcher = pattern.matcher(formatString);
+               // The index for the format field within the string
                int formatIdx = 0;
+               // The index of the parameter being used as value for formatting. Incremented automatically unless field parameter index syntax (eg. %2$d) is used.
                int paramIdx = 1;
+               // True if field parameter index syntax (eg. %2$d) is used.
+               boolean fieldParamIdx = false;
                while(true) {
                   // Find the next pattern match!
                   boolean found = matcher.find();
@@ -95,9 +99,17 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                   final int start = matcher.start();
                   final int end = matcher.end();
 
+                  final String typeField = matcher.group(5);
                   final String paramField = matcher.group(1);
-                  if(paramField != null)
-                     throw new CompileError("printf parameter field not supported", printfCall);
+                  // Ensure that all fields use parameter index syntax!
+                  if(paramField == null && fieldParamIdx && !typeField.equals("%"))
+                     throw new CompileError("Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!", statement);
+                  if(paramField != null) {
+                     if(!fieldParamIdx && paramIdx > 1)
+                        throw new CompileError("Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!", statement);
+                     fieldParamIdx = true;
+                     paramIdx = Integer.parseInt(paramField.substring(0, paramField.length()-1));
+                  }
                   final String flagsField = matcher.group(2);
                   long leftJustify = (flagsField != null && flagsField.contains("-")) ? 1 : 0;
                   long signAlways = (flagsField != null && flagsField.contains("+")) ? 1 : 0;
@@ -105,8 +117,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                   final String widthField = matcher.group(3);
                   long width = (widthField == null) ? 0 : Integer.parseInt(widthField);
                   final String lengthField = matcher.group(4);
-                  final String typeField = matcher.group(5);
-                  long upperCase = 0l;
+                  long upperCase = 0L;
 
                   // First output the non-matching part before the pattern
                   String prefix = formatString.substring(formatIdx, start);
@@ -234,6 +245,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
    /**
     * Adds a call to a PRINTF sub-function.
+    *
     * @param printfProcedureName The name of ths sub-function to call
     * @param printfProcedureParameters The parameters to pass
     * @param stmtIt The statement iterator to add to
@@ -242,8 +254,8 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    private void addPrintfCall(String printfProcedureName, List<RValue> printfProcedureParameters, ListIterator<Statement> stmtIt, StatementCall printfCall) {
       final StatementCall call_printf_str_prefix = new StatementCall(null, printfProcedureName, printfProcedureParameters, printfCall.getSource(), Comment.NO_COMMENTS);
       final Procedure printfProcedure = getScope().getLocalProcedure(call_printf_str_prefix.getProcedureName());
-      if(printfProcedure==null) {
-         throw new CompileError("Needed printf sub-procedure not found " + printfProcedureName+"().", printfCall.getSource());
+      if(printfProcedure == null) {
+         throw new CompileError("Needed printf sub-procedure not found " + printfProcedureName + "().", printfCall.getSource());
       }
       call_printf_str_prefix.setProcedure(printfProcedure.getRef());
       stmtIt.add(call_printf_str_prefix);

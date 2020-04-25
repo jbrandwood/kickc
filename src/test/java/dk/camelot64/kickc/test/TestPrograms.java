@@ -41,8 +41,23 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPrintfError3() throws IOException, URISyntaxException {
+      assertError("printf-error-3.c", "Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!");
+   }
+
+   @Test
+   public void testPrintfError2() throws IOException, URISyntaxException {
+      assertError("printf-error-2.c", "Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!");
+   }
+
+   @Test
    public void testPrintfError1() throws IOException, URISyntaxException {
       assertError("printf-error-1.c", "Needed printf sub-procedure not found");
+   }
+
+   @Test
+   public void testPrintf16() throws IOException, URISyntaxException {
+      compileAndCompare("printf-16.c");
    }
 
    @Test

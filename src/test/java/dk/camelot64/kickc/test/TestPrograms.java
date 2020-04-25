@@ -76,6 +76,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPrintf2() throws IOException, URISyntaxException {
+      compileAndCompare("printf-2.c");
+   }
+
+   @Test
+   public void testPrintf1() throws IOException, URISyntaxException {
+      compileAndCompare("printf-1.c");
+   }
+
+   @Test
    public void testProblemNegateConst() throws IOException, URISyntaxException {
       compileAndCompare("problem-negate-const.c");
    }
@@ -88,16 +98,6 @@ public class TestPrograms {
    @Test
    public void testProblemStructInlineParameter() throws IOException, URISyntaxException {
       compileAndCompare("problem-struct-inline-parameter.c");
-   }
-
-   @Test
-   public void testPrintf2() throws IOException, URISyntaxException {
-      compileAndCompare("printf-2.c");
-   }
-
-   @Test
-   public void testPrintf1() throws IOException, URISyntaxException {
-      compileAndCompare("printf-1.c");
    }
 
    @Test

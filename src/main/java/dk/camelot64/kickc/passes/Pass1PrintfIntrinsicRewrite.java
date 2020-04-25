@@ -106,6 +106,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                   long width = (widthField == null) ? 0 : Integer.parseInt(widthField);
                   final String lengthField = matcher.group(4);
                   final String typeField = matcher.group(5);
+                  long upperCase = 0l;
 
                   // First output the non-matching part before the pattern
                   String prefix = formatString.substring(formatIdx, start);
@@ -147,7 +148,10 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                            signed = false;
                            break;
                         case "X":
-                           throw new CompileError("printf hexadecimal upper case not supported", printfCall);
+                           radix = getScope().getLocalConstant(HEXADECIMAL).getRef();
+                           signed = false;
+                           upperCase = 1l;
+                           break;
                         case "o":
                            radix = getScope().getLocalConstant(OCTAL).getRef();
                            signed = false;
@@ -186,6 +190,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                      // char justify_left; // Justify left instead of right, which is the default.
                      // char sign_always; // Always show a sign for a number, even if is is positive. (Default is to only show sign for negative numbers)
                      // char zero_padding; // Pad the number with zeros to get the min width
+                     // char upper_case; // Upper-case the letters in the number
                      // enum RADIX radix; // The number radix to use for formatting
                      // };
                      final ValueList format_number_struct =
@@ -194,6 +199,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(leftJustify, SymbolType.BYTE),
                                  new ConstantInteger(signAlways, SymbolType.BYTE),
                                  new ConstantInteger(zeroPadding, SymbolType.BYTE),
+                                 new ConstantInteger(upperCase, SymbolType.BYTE),
                                  radix
                            ));
                      addPrintfCall(printf_number_procedure, Arrays.asList(parameters.get(paramIdx), format_number_struct), stmtIt, printfCall);
@@ -210,6 +216,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(leftJustify, SymbolType.BYTE),
                                  new ConstantInteger(signAlways, SymbolType.BYTE),
                                  new ConstantInteger(zeroPadding, SymbolType.BYTE),
+                                 new ConstantInteger(upperCase, SymbolType.BYTE),
                                  getScope().getLocalConstant(HEXADECIMAL).getRef()
                            ));
                      addPrintfCall(PRINTF_UINT, Arrays.asList(new CastValue(SymbolType.WORD, parameters.get(paramIdx)), format_number_struct), stmtIt, printfCall);

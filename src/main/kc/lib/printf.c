@@ -179,6 +179,9 @@ void printf_number_buffer(struct printf_buffer_number buffer, struct printf_form
         printf_char(buffer.sign);
     if(format.zero_padding && padding)
         printf_padding('0',(char)padding);
+    if(format.upper_case) {
+        strupr(buffer.digits);
+    }
     printf_str(buffer.digits);
     if(format.justify_left && !format.zero_padding && padding)
         printf_padding(' ',(char)padding);

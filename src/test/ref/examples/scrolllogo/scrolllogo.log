@@ -17,6 +17,7 @@ De-inlining cast (byte*)memmove::destination
 De-inlining cast (byte*)memset::str
 De-inlining cast (byte)render_logo::xpos
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strupr::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) LOGO
@@ -61,13 +62,15 @@ Culled Empty Block (label) @24
 Culled Empty Block (label) @25
 Culled Empty Block (label) @26
 Culled Empty Block (label) @27
+Culled Empty Block (label) @28
 Culled Empty Block (label) memset::@7
 Culled Empty Block (label) memset::@6
 Culled Empty Block (label) memset::@8
 Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
-Culled Empty Block (label) @28
 Culled Empty Block (label) @29
+Culled Empty Block (label) @30
+Culled Empty Block (label) @31
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) loop::@2
 Culled Empty Block (label) loop::@12
@@ -78,7 +81,7 @@ Culled Empty Block (label) loop::@7
 Culled Empty Block (label) loop::@8
 Culled Empty Block (label) loop::@9
 Culled Empty Block (label) loop::@14
-Culled Empty Block (label) @32
+Culled Empty Block (label) @34
 Culled Empty Block (label) render_logo::@10
 Culled Empty Block (label) render_logo::@11
 Culled Empty Block (label) render_logo::@9
@@ -102,7 +105,7 @@ CONTROL FLOW GRAPH SSA
   to:@7
 @7: scope:[]  from @begin
   (word) rem16u#0 ← (word) 0
-  to:@30
+  to:@32
 
 (word()) divr16u((word) divr16u::dividend , (word) divr16u::divisor , (word) divr16u::rem)
 divr16u: scope:[divr16u]  from div32u16u div32u16u::@2
@@ -618,7 +621,7 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@30: scope:[]  from @7
+@32: scope:[]  from @7
   (word) rem16u#31 ← phi( @7/(word) rem16u#0 )
   kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
@@ -626,12 +629,12 @@ memset::@return: scope:[memset]  from memset::@1
             .for(var cp=0; cp<8; cp++)
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
  }}
-  to:@31
+  to:@33
 
 (void()) main()
-main: scope:[main]  from @33
-  (word) xsin_idx#26 ← phi( @33/(word) xsin_idx#16 )
-  (word) rem16u#37 ← phi( @33/(word) rem16u#25 )
+main: scope:[main]  from @35
+  (word) xsin_idx#26 ← phi( @35/(word) xsin_idx#16 )
+  (word) rem16u#37 ← phi( @35/(word) rem16u#25 )
   asm { sei  }
   *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
   *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY
@@ -724,10 +727,10 @@ main::@return: scope:[main]  from main::@7
   (word) xsin_idx#1 ← (word) xsin_idx#8
   return 
   to:@return
-@31: scope:[]  from @30
-  (word) rem16u#28 ← phi( @30/(word) rem16u#31 )
+@33: scope:[]  from @32
+  (word) rem16u#28 ← phi( @32/(word) rem16u#31 )
   (word) xsin_idx#2 ← (word) 0
-  to:@33
+  to:@35
 
 (void()) loop()
 loop: scope:[loop]  from main::@6
@@ -914,24 +917,24 @@ render_logo::@33: scope:[render_logo]  from render_logo::@32
 render_logo::@return: scope:[render_logo]  from render_logo::@12 render_logo::@29
   return 
   to:@return
-@33: scope:[]  from @31
-  (word) xsin_idx#16 ← phi( @31/(word) xsin_idx#2 )
-  (word) rem16u#25 ← phi( @31/(word) rem16u#28 )
+@35: scope:[]  from @33
+  (word) xsin_idx#16 ← phi( @33/(word) xsin_idx#2 )
+  (word) rem16u#25 ← phi( @33/(word) rem16u#28 )
   call main 
-  to:@34
-@34: scope:[]  from @33
-  (word) xsin_idx#12 ← phi( @33/(word) xsin_idx#1 )
-  (word) rem16u#19 ← phi( @33/(word) rem16u#9 )
+  to:@36
+@36: scope:[]  from @35
+  (word) xsin_idx#12 ← phi( @35/(word) xsin_idx#1 )
+  (word) rem16u#19 ← phi( @35/(word) rem16u#9 )
   (word) rem16u#10 ← (word) rem16u#19
   (word) xsin_idx#6 ← (word) xsin_idx#12
   to:@end
-@end: scope:[]  from @34
+@end: scope:[]  from @36
 
 SYMBOL TABLE SSA
-(label) @30
-(label) @31
+(label) @32
 (label) @33
-(label) @34
+(label) @35
+(label) @36
 (label) @7
 (label) @begin
 (label) @end
@@ -3006,9 +3009,9 @@ Added new block during phi lifting divr16u::@9(between divr16u::@1 and divr16u::
 Added new block during phi lifting divr16u::@10(between divr16u::@2 and divr16u::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @7
-Adding NOP phi() at start of @31
 Adding NOP phi() at start of @33
-Adding NOP phi() at start of @34
+Adding NOP phi() at start of @35
+Adding NOP phi() at start of @36
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
@@ -3095,8 +3098,8 @@ Coalesced [279] divr16u::rem#15 ← divr16u::rem#0
 Coalesced [289] memset::dst#5 ← memset::dst#1
 Coalesced down to 27 phi equivalence classes
 Culled Empty Block (label) @7
-Culled Empty Block (label) @31
-Culled Empty Block (label) @34
+Culled Empty Block (label) @33
+Culled Empty Block (label) @36
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@7
@@ -3118,8 +3121,8 @@ Culled Empty Block (label) divr16u::@8
 Culled Empty Block (label) divr16u::@10
 Culled Empty Block (label) divr16u::@9
 Culled Empty Block (label) memset::@1
-Renumbering block @30 to @1
-Renumbering block @33 to @2
+Renumbering block @32 to @1
+Renumbering block @35 to @2
 Renumbering block div32u16u::@2 to div32u16u::@1
 Renumbering block div32u16u::@3 to div32u16u::@2
 Renumbering block mul16u::@4 to mul16u::@3

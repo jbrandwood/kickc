@@ -7,6 +7,7 @@ De-inlining cast (byte*)memmove::source
 De-inlining cast (byte*)memmove::destination
 De-inlining cast (byte*)memset::str
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strupr::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Identified constant variable (byte*) SCREEN
 Identified constant variable (byte*) LOGO
@@ -18,13 +19,15 @@ Culled Empty Block (label) @3
 Culled Empty Block (label) @4
 Culled Empty Block (label) @5
 Culled Empty Block (label) @6
+Culled Empty Block (label) @7
 Culled Empty Block (label) memset::@7
 Culled Empty Block (label) memset::@6
 Culled Empty Block (label) memset::@8
 Culled Empty Block (label) memset::@9
 Culled Empty Block (label) memset::@3
-Culled Empty Block (label) @7
 Culled Empty Block (label) @8
+Culled Empty Block (label) @9
+Culled Empty Block (label) @10
 Culled Empty Block (label) main::toD0181_@1
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@6
@@ -34,7 +37,7 @@ Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@9
+  to:@11
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main::@10 main::@9
@@ -79,17 +82,17 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@9: scope:[]  from @begin
+@11: scope:[]  from @begin
   kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
  }}
-  to:@10
+  to:@12
 
 (void()) main()
-main: scope:[main]  from @10
+main: scope:[main]  from @12
   *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
   *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY
   *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2)
@@ -153,17 +156,17 @@ main::@4: scope:[main]  from main::@3
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@10: scope:[]  from @9
+@12: scope:[]  from @11
   call main 
-  to:@11
-@11: scope:[]  from @10
+  to:@13
+@13: scope:[]  from @12
   to:@end
-@end: scope:[]  from @11
+@end: scope:[]  from @13
 
 SYMBOL TABLE SSA
-(label) @10
 (label) @11
-(label) @9
+(label) @12
+(label) @13
 (label) @begin
 (label) @end
 (const nomodify byte*) BGCOL = (byte*)(number) $d021
@@ -429,8 +432,8 @@ Constant inlined main::ch#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@12(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @10
-Adding NOP phi() at start of @11
+Adding NOP phi() at start of @12
+Adding NOP phi() at start of @13
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
@@ -446,14 +449,14 @@ Created 5 initial phi equivalence classes
 Coalesced [25] main::ch#3 ← main::ch#1
 Coalesced [36] memset::dst#5 ← memset::dst#1
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) @11
+Culled Empty Block (label) @13
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@12
 Culled Empty Block (label) memset::@1
-Renumbering block @9 to @1
-Renumbering block @10 to @2
+Renumbering block @11 to @1
+Renumbering block @12 to @2
 Renumbering block memset::@2 to memset::@1
 Renumbering block memset::@4 to memset::@2
 Renumbering block memset::@5 to memset::@3

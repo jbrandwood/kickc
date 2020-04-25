@@ -1,6 +1,7 @@
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
 #include <string.h>
+#include <ctype.h>
 
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
@@ -43,6 +44,16 @@ char* strcpy( char* destination, char* source ) {
     while(*src) *dst++ = *src++;
     *dst = 0;
     return destination;
+}
+
+// Converts a string to uppercase.
+char * strupr(char *str) {
+    char * src = str;
+    while(*src) {
+        *src = toupper(*src);
+        src++;
+    }
+    return str;
 }
 
 // Computes the length of the string str up to but not including the terminating null character.

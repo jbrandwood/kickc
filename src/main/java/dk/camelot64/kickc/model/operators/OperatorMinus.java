@@ -5,10 +5,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypeInteger;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.values.ConstantChar;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.ConstantLiteral;
-import dk.camelot64.kickc.model.values.ConstantPointer;
+import dk.camelot64.kickc.model.values.*;
 
 /** Binary minus Operator ( x - y ) */
 public class OperatorMinus extends OperatorBinary {
@@ -19,16 +16,9 @@ public class OperatorMinus extends OperatorBinary {
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral left, ConstantLiteral right) {
-      if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
-         long val = ((ConstantInteger) left).getInteger() - ((ConstantInteger) right).getInteger();
+      if(left instanceof ConstantEnumerable && right instanceof ConstantEnumerable) {
+         long val = ((ConstantEnumerable) left).getInteger() - ((ConstantEnumerable) right).getInteger();
          return new ConstantInteger(val);
-      } else if(left instanceof ConstantPointer && right instanceof ConstantInteger) {
-         long location = ((ConstantPointer) left).getLocation() - ((ConstantInteger) right).getInteger();
-         return new ConstantPointer(location, ((ConstantPointer) left).getElementType());
-      } else if(left instanceof ConstantChar && right instanceof ConstantInteger) {
-         return new ConstantInteger(((ConstantChar) left).getChar() - ((ConstantInteger) right).getInteger());
-      } else if(left instanceof ConstantPointer && right instanceof ConstantPointer) {
-         return new ConstantInteger(((ConstantPointer) left).getLocation()-((ConstantPointer) right).getLocation());
       }
       throw new InternalError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }

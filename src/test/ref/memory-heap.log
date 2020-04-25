@@ -15,6 +15,7 @@ De-inlining cast (byte)uctoa::value
 De-inlining cast (byte)utoa::value
 De-inlining cast (byte)ultoa::value
 Warning! Adding boolean cast to non-boolean condition *((byte*) strcpy::src)
+Warning! Adding boolean cast to non-boolean condition *((byte*) strupr::src)
 Warning! Adding boolean cast to non-boolean condition *((byte*) strlen::str)
 Identified constant variable (byte*) HEAP_TOP
 Identified constant variable (byte*) main::screen
@@ -22,9 +23,9 @@ Culled Empty Block (label) @1
 Culled Empty Block (label) @2
 Culled Empty Block (label) @3
 Culled Empty Block (label) @4
-Culled Empty Block (label) malloc::@1
+Culled Empty Block (label) @5
 Culled Empty Block (label) @6
-Culled Empty Block (label) @7
+Culled Empty Block (label) malloc::@1
 Culled Empty Block (label) @8
 Culled Empty Block (label) @9
 Culled Empty Block (label) @10
@@ -33,13 +34,15 @@ Culled Empty Block (label) @12
 Culled Empty Block (label) @13
 Culled Empty Block (label) @14
 Culled Empty Block (label) @15
+Culled Empty Block (label) @16
+Culled Empty Block (label) @17
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@5
-@5: scope:[]  from @begin
+  to:@7
+@7: scope:[]  from @begin
   (byte*) heap_head#0 ← (const byte*) HEAP_TOP
-  to:@16
+  to:@18
 
 (void*()) malloc((word) malloc::size)
 malloc: scope:[malloc]  from main main::@3
@@ -66,8 +69,8 @@ free::@return: scope:[free]  from free
   to:@return
 
 (void()) main()
-main: scope:[main]  from @16
-  (byte*) heap_head#13 ← phi( @16/(byte*) heap_head#15 )
+main: scope:[main]  from @18
+  (byte*) heap_head#13 ← phi( @18/(byte*) heap_head#15 )
   (word) malloc::size#0 ← (number) $64
   call malloc 
   (void*) malloc::return#2 ← (void*) malloc::return#1
@@ -129,20 +132,20 @@ main::@return: scope:[main]  from main::@6
   (byte*) heap_head#5 ← (byte*) heap_head#11
   return 
   to:@return
-@16: scope:[]  from @5
-  (byte*) heap_head#15 ← phi( @5/(byte*) heap_head#0 )
+@18: scope:[]  from @7
+  (byte*) heap_head#15 ← phi( @7/(byte*) heap_head#0 )
   call main 
-  to:@17
-@17: scope:[]  from @16
-  (byte*) heap_head#12 ← phi( @16/(byte*) heap_head#5 )
+  to:@19
+@19: scope:[]  from @18
+  (byte*) heap_head#12 ← phi( @18/(byte*) heap_head#5 )
   (byte*) heap_head#6 ← (byte*) heap_head#12
   to:@end
-@end: scope:[]  from @17
+@end: scope:[]  from @19
 
 SYMBOL TABLE SSA
-(label) @16
-(label) @17
-(label) @5
+(label) @18
+(label) @19
+(label) @7
 (label) @begin
 (label) @end
 (const byte*) HEAP_TOP = (byte*)(number) $a000
@@ -316,9 +319,9 @@ Identical Phi Values (word) malloc::size#2 (byte) $64
 Successful SSA optimization Pass2IdenticalPhiElimination
 Added new block during phi lifting main::@7(between main::@1 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @5
-Adding NOP phi() at start of @16
-Adding NOP phi() at start of @17
+Adding NOP phi() at start of @7
+Adding NOP phi() at start of @18
+Adding NOP phi() at start of @19
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
@@ -333,10 +336,10 @@ Coalesced [9] heap_head#19 ← heap_head#1
 Coalesced [25] main::i#3 ← main::i#1
 Not coalescing [30] heap_head#1 ← malloc::mem#0
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @5
-Culled Empty Block (label) @17
+Culled Empty Block (label) @7
+Culled Empty Block (label) @19
 Culled Empty Block (label) main::@7
-Renumbering block @16 to @1
+Renumbering block @18 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

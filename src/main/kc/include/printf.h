@@ -34,6 +34,8 @@ struct printf_format_number {
     char sign_always;
     // Pad the number with zeros to get the min width
     char zero_padding;
+    // Upper-case the letters in the number
+    char upper_case;
     // The number radix to use for formatting
     enum RADIX radix;
 };

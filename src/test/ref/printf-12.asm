@@ -9,9 +9,9 @@
   .const HEXADECIMAL = $10
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  .label printf_cursor_x = $12
-  .label printf_cursor_y = $13
-  .label printf_cursor_ptr = $14
+  .label printf_cursor_x = $13
+  .label printf_cursor_y = $14
+  .label printf_cursor_ptr = $15
 __bbegin:
   // printf_cursor_x = 0
   // X-position of cursor
@@ -35,7 +35,7 @@ main: {
     .const ui = $162e
     .label sl = -$1e240
     .label ul = $8aa52
-    .label c = $16
+    .label c = $17
     // printf_cls()
     jsr printf_cls
     // c = 'x'
@@ -204,9 +204,9 @@ main: {
 }
 // Print a zero-terminated string
 // Handles escape codes such as newline
-// printf_str(byte* zp($10) str)
+// printf_str(byte* zp($d) str)
 printf_str: {
-    .label str = $10
+    .label str = $d
   __b2:
     // ch = *str++
     ldy #0
@@ -234,8 +234,8 @@ printf_str: {
 }
 // Print a newline
 printf_ln: {
-    .label __0 = $14
-    .label __1 = $14
+    .label __0 = $15
+    .label __1 = $15
     // printf_cursor_ptr - printf_cursor_x
     sec
     lda.z __0
@@ -265,7 +265,7 @@ printf_ln: {
 // If the end of the screen is reached scroll it up one char and place the cursor at the
 // printf_char(byte register(A) ch)
 printf_char: {
-    .label __6 = $14
+    .label __6 = $15
     // *(printf_cursor_ptr++) = ch
     ldy #0
     sta (printf_cursor_ptr),y
@@ -317,12 +317,12 @@ printf_char: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($b) str, byte register(X) c, word zp(8) num)
+// memset(void* zp(9) str, byte register(X) c, word zp($11) num)
 memset: {
-    .label end = 8
-    .label dst = $b
-    .label num = 8
-    .label str = $b
+    .label end = $11
+    .label dst = 9
+    .label num = $11
+    .label str = 9
     // if(num>0)
     lda.z num
     bne !+
@@ -367,8 +367,8 @@ memcpy: {
     .label source = $400+$28
     .const num = $28*$19-$28
     .label src_end = source+num
-    .label dst = $b
-    .label src = 8
+    .label dst = 9
+    .label src = $11
     lda #<destination
     sta.z dst
     lda #>destination
@@ -408,6 +408,7 @@ printf_ulong: {
     .const format_min_length = 0
     .const format_justify_left = 0
     .const format_zero_padding = 0
+    .const format_upper_case = 0
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -431,6 +432,8 @@ printf_ulong: {
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
+    lda #format_upper_case
+    sta.z printf_number_buffer.format_upper_case
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z printf_number_buffer.buffer_digits
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -446,17 +449,18 @@ printf_ulong: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($d) buffer_sign, byte* zp($10) buffer_digits, byte register(X) format_min_length, byte zp(3) format_justify_left, byte zp($a) format_zero_padding)
+// printf_number_buffer(byte zp($c) buffer_sign, byte* zp($d) buffer_digits, byte register(X) format_min_length, byte zp(4) format_justify_left, byte zp($b) format_zero_padding, byte zp($f) format_upper_case)
 printf_number_buffer: {
-    .label __18 = $b
-    .label buffer_sign = $d
-    .label padding = $e
-    .label format_justify_left = 3
-    .label format_zero_padding = $a
-    .label buffer_digits = $10
+    .label __19 = 9
+    .label buffer_sign = $c
+    .label padding = $10
+    .label format_justify_left = 4
+    .label format_zero_padding = $b
+    .label buffer_digits = $d
+    .label format_upper_case = $f
     // if(format.min_length)
     cpx #0
-    beq __b5
+    beq __b6
     // strlen(buffer.digits)
     lda.z buffer_digits
     sta.z strlen.str
@@ -466,15 +470,15 @@ printf_number_buffer: {
     // strlen(buffer.digits)
     // len = (signed char)strlen(buffer.digits)
     // There is a minimum length - work out the padding
-    lda.z __18
+    lda.z __19
     tay
     // if(buffer.sign)
     lda #0
     cmp.z buffer_sign
-    beq __b11
+    beq __b13
     // len++;
     iny
-  __b11:
+  __b13:
     // padding = (signed char)format.min_length - len
     txa
     sty.z $ff
@@ -484,7 +488,7 @@ printf_number_buffer: {
     // if(padding<0)
     cmp #0
     bpl __b1
-  __b5:
+  __b6:
     lda #0
     sta.z padding
   __b1:
@@ -495,9 +499,9 @@ printf_number_buffer: {
     cmp.z format_zero_padding
     bne __b2
     cmp.z padding
-    bne __b7
+    bne __b8
     jmp __b2
-  __b7:
+  __b8:
     // printf_padding(' ',(char)padding)
     lda.z padding
     sta.z printf_padding.length
@@ -518,9 +522,9 @@ printf_number_buffer: {
     cmp.z format_zero_padding
     beq __b4
     cmp.z padding
-    bne __b9
+    bne __b10
     jmp __b4
-  __b9:
+  __b10:
     // printf_padding('0',(char)padding)
     lda.z padding
     sta.z printf_padding.length
@@ -528,6 +532,17 @@ printf_number_buffer: {
     sta.z printf_padding.pad
     jsr printf_padding
   __b4:
+    // if(format.upper_case)
+    lda #0
+    cmp.z format_upper_case
+    beq __b5
+    // strupr(buffer.digits)
+    lda.z buffer_digits
+    sta.z strupr.str
+    lda.z buffer_digits+1
+    sta.z strupr.str+1
+    jsr strupr
+  __b5:
     // printf_str(buffer.digits)
     jsr printf_str
     // if(format.justify_left && !format.zero_padding && padding)
@@ -537,9 +552,9 @@ printf_number_buffer: {
     cmp.z format_zero_padding
     bne __breturn
     cmp.z padding
-    bne __b10
+    bne __b12
     rts
-  __b10:
+  __b12:
     // printf_padding(' ',(char)padding)
     lda.z padding
     sta.z printf_padding.length
@@ -551,11 +566,11 @@ printf_number_buffer: {
     rts
 }
 // Print a padding char a number of times
-// printf_padding(byte zp($1d) pad, byte zp($f) length)
+// printf_padding(byte zp(2) pad, byte zp($1e) length)
 printf_padding: {
-    .label i = 2
-    .label length = $f
-    .label pad = $1d
+    .label i = 3
+    .label length = $1e
+    .label pad = 2
     lda #0
     sta.z i
   __b1:
@@ -573,12 +588,59 @@ printf_padding: {
     inc.z i
     jmp __b1
 }
+// Converts a string to uppercase.
+// strupr(byte* zp($11) str)
+strupr: {
+    .label src = $11
+    .label str = $11
+  __b1:
+    // while(*src)
+    ldy #0
+    lda (src),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // toupper(*src)
+    ldy #0
+    lda (src),y
+    jsr toupper
+    // *src = toupper(*src)
+    ldy #0
+    sta (src),y
+    // src++;
+    inc.z src
+    bne !+
+    inc.z src+1
+  !:
+    jmp __b1
+}
+// Convert lowercase alphabet to uppercase
+// Returns uppercase equivalent to c, if such value exists, else c remains unchanged
+// toupper(byte register(A) ch)
+toupper: {
+    // if(ch>='a' && ch<='z')
+    cmp #'a'
+    bcc __breturn
+    cmp #'z'
+    bcc __b1
+    beq __b1
+    rts
+  __b1:
+    // return ch + ('A'-'a');
+    clc
+    adc #'A'-'a'
+  __breturn:
+    // }
+    rts
+}
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(8) str)
+// strlen(byte* zp($11) str)
 strlen: {
-    .label len = $b
-    .label str = 8
-    .label return = $b
+    .label len = 9
+    .label str = $11
+    .label return = 9
     lda #<0
     sta.z len
     sta.z len+1
@@ -608,12 +670,12 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp(4) value, byte* zp($10) buffer)
+// ultoa(dword zp(5) value, byte* zp($d) buffer)
 ultoa: {
-    .label digit_value = $17
-    .label buffer = $10
-    .label digit = 3
-    .label value = 4
+    .label digit_value = $18
+    .label buffer = $d
+    .label digit = 4
+    .label value = 5
     ldx #0
     txa
     sta.z digit
@@ -697,12 +759,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($10) buffer, dword zp(4) value, dword zp($17) sub)
+// ultoa_append(byte* zp($d) buffer, dword zp(5) value, dword zp($18) sub)
 ultoa_append: {
-    .label buffer = $10
-    .label value = 4
-    .label sub = $17
-    .label return = 4
+    .label buffer = $d
+    .label value = 5
+    .label sub = $18
+    .label return = 5
     ldx #0
   __b1:
     // while (value >= sub)
@@ -752,6 +814,7 @@ printf_slong: {
     .const format_min_length = 0
     .const format_justify_left = 0
     .const format_zero_padding = 0
+    .const format_upper_case = 0
     .const value = -main.sl
     // Format number into buffer
     .const uvalue = value
@@ -780,6 +843,8 @@ printf_slong: {
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
+    lda #format_upper_case
+    sta.z printf_number_buffer.format_upper_case
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z printf_number_buffer.buffer_digits
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -794,9 +859,9 @@ printf_slong: {
     rts
 }
 // Print an unsigned int using a specific format
-// printf_uint(word zp(8) uvalue, byte register(X) format_radix)
+// printf_uint(word zp(9) uvalue, byte register(X) format_radix)
 printf_uint: {
-    .label uvalue = 8
+    .label uvalue = 9
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -812,6 +877,8 @@ printf_uint: {
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
+    lda #0
+    sta.z printf_number_buffer.format_upper_case
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z printf_number_buffer.buffer_digits
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -829,14 +896,14 @@ printf_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp(8) value, byte* zp($10) buffer, byte register(X) radix)
+// utoa(word zp(9) value, byte* zp($d) buffer, byte register(X) radix)
 utoa: {
-    .label buffer = $10
-    .label digit_value = $1b
-    .label digit = $d
-    .label value = 8
-    .label max_digits = $a
-    .label digit_values = $b
+    .label buffer = $d
+    .label digit_value = $1c
+    .label digit = $c
+    .label value = 9
+    .label max_digits = $b
+    .label digit_values = $11
     // if(radix==DECIMAL)
     cpx #DECIMAL
     beq __b2
@@ -989,12 +1056,12 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($10) buffer, word zp(8) value, word zp($1b) sub)
+// utoa_append(byte* zp($d) buffer, word zp(9) value, word zp($1c) sub)
 utoa_append: {
-    .label buffer = $10
-    .label value = 8
-    .label sub = $1b
-    .label return = 8
+    .label buffer = $d
+    .label value = 9
+    .label sub = $1c
+    .label return = 9
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1030,6 +1097,7 @@ printf_sint: {
     .const format_min_length = 0
     .const format_justify_left = 0
     .const format_zero_padding = 0
+    .const format_upper_case = 0
     .const value = -main.si
     // Format number into buffer
     .const uvalue = value
@@ -1055,6 +1123,8 @@ printf_sint: {
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
+    lda #format_upper_case
+    sta.z printf_number_buffer.format_upper_case
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z printf_number_buffer.buffer_digits
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1073,6 +1143,7 @@ printf_uchar: {
     .const format_min_length = 0
     .const format_justify_left = 0
     .const format_zero_padding = 0
+    .const format_upper_case = 0
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -1089,6 +1160,8 @@ printf_uchar: {
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
+    lda #format_upper_case
+    sta.z printf_number_buffer.format_upper_case
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z printf_number_buffer.buffer_digits
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1107,12 +1180,12 @@ printf_uchar: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($10) buffer)
+// uctoa(byte register(X) value, byte* zp($11) buffer)
 uctoa: {
-    .label digit_value = $1d
-    .label buffer = $10
-    .label digit = $e
-    .label started = $f
+    .label digit_value = $1e
+    .label buffer = $11
+    .label digit = $f
+    .label started = $10
     lda #0
     sta.z started
     sta.z digit
@@ -1173,10 +1246,10 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($10) buffer, byte register(X) value, byte zp($1d) sub)
+// uctoa_append(byte* zp($11) buffer, byte register(X) value, byte zp($1e) sub)
 uctoa_append: {
-    .label buffer = $10
-    .label sub = $1d
+    .label buffer = $11
+    .label sub = $1e
     ldy #0
   __b1:
     // while (value >= sub)
@@ -1203,6 +1276,7 @@ printf_schar: {
     .const format_min_length = 0
     .const format_justify_left = 0
     .const format_zero_padding = 0
+    .const format_upper_case = 0
     .const value = -main.sc
     // Format number into buffer
     .const uvalue = value
@@ -1224,6 +1298,8 @@ printf_schar: {
     lda printf_buffer
     sta.z printf_number_buffer.buffer_sign
   // Print using format
+    lda #format_upper_case
+    sta.z printf_number_buffer.format_upper_case
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z printf_number_buffer.buffer_digits
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS

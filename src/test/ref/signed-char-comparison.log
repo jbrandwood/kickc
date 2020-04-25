@@ -1,28 +1,24 @@
-Identified constant variable (byte*) SCREEN
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @1
-Culled Empty Block (label) debug::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   (signed byte) main::dy#0 ← (signed byte) -$80
   to:main::@1
-main::@1: scope:[main]  from main main::@3
-  (signed byte) main::dy#2 ← phi( main/(signed byte) main::dy#0 main::@3/(signed byte) main::dy#1 )
+main::@1: scope:[main]  from main main::@2
+  (signed byte) main::dy#2 ← phi( main/(signed byte) main::dy#0 main::@2/(signed byte) main::dy#1 )
   (signed byte) debug::dy#0 ← (signed byte) main::dy#2
   call debug 
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   (signed byte) main::dy#3 ← phi( main::@1/(signed byte) main::dy#2 )
   (signed byte) main::dy#1 ← (signed byte) main::dy#3 + rangenext(-$80,$7f)
   (bool~) main::$1 ← (signed byte) main::dy#1 != rangelast(-$80,$7f)
   if((bool~) main::$1) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
@@ -33,31 +29,31 @@ debug: scope:[debug]  from main::@1
   (bool~) debug::$0 ← (signed byte) debug::dy#1 > (number) -$78
   (bool~) debug::$1 ← ! (bool~) debug::$0
   if((bool~) debug::$1) goto debug::@return
-  to:debug::@2
-debug::@2: scope:[debug]  from debug
+  to:debug::@1
+debug::@1: scope:[debug]  from debug
   (byte) debug::i#1 ← phi( debug/(byte) debug::i#0 )
   *((const byte*) SCREEN + (byte) debug::i#1) ← (number) $a
   to:debug::@return
-debug::@return: scope:[debug]  from debug debug::@2
+debug::@return: scope:[debug]  from debug debug::@1
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
 (void()) debug((signed byte) debug::dy)
 (bool~) debug::$0
 (bool~) debug::$1
-(label) debug::@2
+(label) debug::@1
 (label) debug::@return
 (signed byte) debug::dy
 (signed byte) debug::dy#0
@@ -68,7 +64,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (bool~) main::$1
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (signed byte) main::dy
 (signed byte) main::dy#0
@@ -113,10 +109,10 @@ Successful SSA optimization Pass2NopCastInlining
 Inlining constant with var siblings (const signed byte) main::dy#0
 Constant inlined main::dy#0 = (signed byte) -$80
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@4(between main::@3 and main::@1)
+Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -126,11 +122,8 @@ Calls in [main] to debug:8
 Created 1 initial phi equivalence classes
 Coalesced [12] main::dy#4 ← main::dy#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @3
-Culled Empty Block (label) main::@4
-Renumbering block @2 to @1
-Renumbering block main::@3 to main::@2
-Renumbering block debug::@2 to debug::@1
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

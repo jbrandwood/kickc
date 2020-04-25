@@ -23,8 +23,11 @@ import java.util.ListIterator;
  */
 public class PassNAddBooleanCasts extends Pass2SsaOptimization {
 
-   public PassNAddBooleanCasts(Program program) {
+   private boolean pass1;
+
+   public PassNAddBooleanCasts(Program program, boolean pass1) {
       super(program);
+      this.pass1 = pass1;
    }
 
    @Override
@@ -35,12 +38,13 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
             Statement currentStmt = stmtIt.next();
             if(currentStmt instanceof StatementConditionalJump) {
                StatementConditionalJump conditionalJump = (StatementConditionalJump) currentStmt;
-               if(conditionalJump.getOperator()==null) {
+               if(conditionalJump.getOperator() == null) {
                   RValue rValue2 = conditionalJump.getrValue2();
                   SymbolType type = SymbolTypeInference.inferType(getScope(), rValue2);
                   if(SymbolType.isInteger(type) || type instanceof SymbolTypePointer) {
                      // Found integer condition - add boolean cast
-                     getLog().append("Warning! Adding boolean cast to non-boolean condition "+rValue2.toString(getProgram()));
+                     if(!pass1)
+                        getLog().append("Warning! Adding boolean cast to non-boolean condition " + rValue2.toString(getProgram()));
                      Variable tmpVar = addBooleanCast(rValue2, type, currentStmt, stmtIt, currentBlock);
                      conditionalJump.setrValue2(tmpVar.getRef());
                   }
@@ -54,10 +58,11 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
             RValue operand = unaryExpression.getOperand();
             SymbolType operandType = SymbolTypeInference.inferType(getScope(), operand);
             if(SymbolType.isInteger(operandType) || operandType instanceof SymbolTypePointer) {
-               getLog().append("Warning! Adding boolean cast to non-boolean sub-expression "+operand.toString(getProgram()));
+               if(!pass1)
+                  getLog().append("Warning! Adding boolean cast to non-boolean sub-expression " + operand.toString(getProgram()));
                if(operand instanceof ConstantValue) {
                   unaryExpression.setOperand(new ConstantBinary(new ConstantInteger(0L, SymbolType.NUMBER), Operators.NEQ, (ConstantValue) operand));
-               }  else {
+               } else {
                   SymbolType type = SymbolTypeInference.inferType(getScope(), operand);
                   Variable tmpVar = addBooleanCast(operand, type, currentStmt, stmtIt, currentBlock);
                   unaryExpression.setOperand(tmpVar.getRef());
@@ -68,7 +73,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       return false;
    }
 
-   public Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   private Variable addBooleanCast(RValue rValue, SymbolType rValueType, Statement currentStmt, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
       Scope currentScope = getScope().getScope(currentBlock.getScope());
       stmtIt.previous();
       Variable tmpVar = currentScope.addVariableIntermediate();
@@ -77,7 +82,7 @@ public class PassNAddBooleanCasts extends Pass2SsaOptimization {
       ConstantValue nullValue;
       if(rValueType instanceof SymbolTypePointer) {
          nullValue = new ConstantCastValue(rValueType, new ConstantInteger(0L, SymbolType.WORD));
-      }  else {
+      } else {
          nullValue = new ConstantInteger(0L, SymbolType.NUMBER);
       }
       stmtIt.add(new StatementAssignment((LValue) tmpVar.getRef(), nullValue, Operators.NEQ, rValue, true, currentStmt.getSource(), Comment.NO_COMMENTS));

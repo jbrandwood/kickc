@@ -20,8 +20,11 @@ import java.util.ListIterator;
  */
 public class PassNDeInlineCastValues extends Pass2SsaOptimization {
 
-   public PassNDeInlineCastValues(Program program) {
+   private boolean pass1;
+
+   public PassNDeInlineCastValues(Program program, boolean pass1) {
       super(program);
+      this.pass1 = pass1;
    }
 
    @Override
@@ -44,7 +47,8 @@ public class PassNDeInlineCastValues extends Pass2SsaOptimization {
 
    private void deInlineCastValue(ProgramValue castProgramValue, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Statement currentStmt) {
       final CastValue castValue = (CastValue) castProgramValue.get();
-      getLog().append("De-inlining cast "+castValue.toString());
+      if(!pass1)
+         getLog().append("De-inlining cast " + castValue.toString());
       final Scope scope = getScope().getScope(currentBlock.getScope());
       final Variable tmpVar = scope.addVariableIntermediate();
       tmpVar.setType(castValue.getToType());

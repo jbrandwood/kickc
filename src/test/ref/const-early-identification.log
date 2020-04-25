@@ -1,17 +1,12 @@
 Setting inferred volatile on symbol affected by address-of (byte*) main::addrA ← &(byte) A
-Identified constant variable (byte*) SCREEN
-Identified constant variable (byte) main::B
-Identified constant variable (byte*) main::addrA
-Identified constant variable (byte) sub::C
-Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (volatile byte) A ← (byte) 'a'
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   *((const byte*) SCREEN + (number) 0) ← (volatile byte) A
   *((const byte*) SCREEN + (number) 1) ← (const byte) main::B
   *((const byte*) SCREEN + (number) 2) ← *((const byte*) main::addrA)
@@ -33,16 +28,16 @@ sub: scope:[sub]  from main
 sub::@return: scope:[sub]  from sub
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (volatile byte) A loadstore
@@ -92,8 +87,8 @@ Consolidated array index constant in *(SCREEN+2)
 Consolidated array index constant in *(SCREEN+3)
 Consolidated array index constant in *(SCREEN+4)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 CALL GRAPH
@@ -102,9 +97,8 @@ Calls in [main] to sub:8
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
-Renumbering block @2 to @1
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 

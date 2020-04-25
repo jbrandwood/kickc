@@ -1,21 +1,14 @@
-Identified constant variable (byte*) SCREEN
-Identified constant variable (byte*) SCREEN2
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @1
-Culled Empty Block (label) sum::@1
-Culled Empty Block (label) @2
-Culled Empty Block (label) sum2::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@3
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @3
+main: scope:[main]  from @1
   (byte) main::i#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#1 )
+main::@1: scope:[main]  from main main::@3
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
   (number~) main::$0 ← (byte) main::i#2 + (number) 1
   (number~) main::$1 ← (byte) main::i#2 + (number) 2
   (byte) sum::a#0 ← (byte) main::i#2
@@ -23,8 +16,8 @@ main::@1: scope:[main]  from main main::@4
   (byte) sum::c#0 ← (number~) main::$1
   call sum 
   (byte) sum::return#0 ← (byte) sum::return#2
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (byte) sum::return#3 ← phi( main::@1/(byte) sum::return#0 )
   (byte~) main::$2 ← (byte) sum::return#3
@@ -36,17 +29,17 @@ main::@3: scope:[main]  from main::@1
   (byte) sum2::c#0 ← (number~) main::$4
   call sum2 
   (byte) sum2::return#0 ← (byte) sum2::return#2
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte) main::i#4 ← phi( main::@3/(byte) main::i#3 )
-  (byte) sum2::return#3 ← phi( main::@3/(byte) sum2::return#0 )
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte) main::i#4 ← phi( main::@2/(byte) main::i#3 )
+  (byte) sum2::return#3 ← phi( main::@2/(byte) sum2::return#0 )
   (byte~) main::$5 ← (byte) sum2::return#3
   *((const byte*) SCREEN2 + (byte) main::i#4) ← (byte~) main::$5
   (byte) main::i#1 ← (byte) main::i#4 + rangenext(0,$a)
   (bool~) main::$6 ← (byte) main::i#1 != rangelast(0,$a)
   if((bool~) main::$6) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@4
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
@@ -66,10 +59,10 @@ sum::@return: scope:[sum]  from sum
   to:@return
 
 (byte()) sum2((byte) sum2::a , (byte) sum2::b , (byte) sum2::c)
-sum2: scope:[sum2]  from main::@3
-  (byte) sum2::c#1 ← phi( main::@3/(byte) sum2::c#0 )
-  (byte) sum2::b#1 ← phi( main::@3/(byte) sum2::b#0 )
-  (byte) sum2::a#1 ← phi( main::@3/(byte) sum2::a#0 )
+sum2: scope:[sum2]  from main::@2
+  (byte) sum2::c#1 ← phi( main::@2/(byte) sum2::c#0 )
+  (byte) sum2::b#1 ← phi( main::@2/(byte) sum2::b#0 )
+  (byte) sum2::a#1 ← phi( main::@2/(byte) sum2::a#0 )
   (byte~) sum2::$0 ← (byte) sum2::a#1 + (byte) sum2::b#1
   (byte~) sum2::$1 ← (byte~) sum2::$0 + (byte) sum2::c#1
   (byte) sum2::return#1 ← (byte~) sum2::$1
@@ -79,16 +72,16 @@ sum2::@return: scope:[sum2]  from sum2
   (byte) sum2::return#2 ← (byte) sum2::return#4
   return 
   to:@return
-@3: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@4
-@4: scope:[]  from @3
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @4
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(label) @3
-(label) @4
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
@@ -102,8 +95,8 @@ SYMBOL TABLE SSA
 (byte~) main::$5
 (bool~) main::$6
 (label) main::@1
+(label) main::@2
 (label) main::@3
-(label) main::@4
 (label) main::@return
 (byte) main::i
 (byte) main::i#0
@@ -206,10 +199,10 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@5(between main::@4 and main::@1)
+Added new block during phi lifting main::@4(between main::@3 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @4
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -219,11 +212,8 @@ Calls in [main] to sum:10 sum2:17
 Created 1 initial phi equivalence classes
 Coalesced [24] main::i#5 ← main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @4
-Culled Empty Block (label) main::@5
-Renumbering block @3 to @1
-Renumbering block main::@3 to main::@2
-Renumbering block main::@4 to main::@3
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@4
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

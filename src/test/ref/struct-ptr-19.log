@@ -8,19 +8,15 @@ Converted call struct value parameter to member unwinding (void~) main::$0 ← c
 Converted call struct value parameter to member unwinding (void~) main::$1 ← call print *((byte*~) main::$2) *((byte*~) main::$3) 
 Replacing struct member reference (struct Point) print::p.x with member unwinding reference (byte) print::p_x
 Replacing struct member reference (struct Point) print::p.y with member unwinding reference (byte) print::p_y
-De-inlining cast (byte*)main::ptr
-De-inlining cast (byte*)main::ptr
-Identified constant variable (struct Point*) main::ptr
-Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) idx#0 ← (byte) 0
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
-  (byte) idx#14 ← phi( @2/(byte) idx#15 )
+main: scope:[main]  from @1
+  (byte) idx#14 ← phi( @1/(byte) idx#15 )
   *(&(struct Point) main::point) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (struct Point) main::point ← struct-unwound {*(&(struct Point) main::point)}
   (byte) print::p_x#0 ← *((byte*)&(struct Point) main::point+(const byte) OFFSET_STRUCT_POINT_X)
@@ -63,20 +59,20 @@ print::@return: scope:[print]  from print
   (byte) idx#6 ← (byte) idx#12
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   (byte) idx#15 ← phi( @begin/(byte) idx#0 )
   call main 
-  to:@3
-@3: scope:[]  from @2
-  (byte) idx#13 ← phi( @2/(byte) idx#3 )
+  to:@2
+@2: scope:[]  from @1
+  (byte) idx#13 ← phi( @1/(byte) idx#3 )
   (byte) idx#7 ← (byte) idx#13
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
 (const struct Point) $0 = { x: (byte) 1, y: (byte) 2 }
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
@@ -164,8 +160,8 @@ Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *((byte*)main::ptr+OFFSET_STRUCT_POINT_Y)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
 CALL GRAPH
@@ -179,9 +175,8 @@ Coalesced [13] print::p_x#4 ← print::p_x#1
 Coalesced [14] idx#16 ← idx#12
 Coalesced [15] print::p_y#4 ← print::p_y#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

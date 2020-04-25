@@ -45,12 +45,14 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                      if(assignment instanceof StatementAssignment) {
                         StatementAssignment assign = (StatementAssignment) assignment;
                         if(assign.getrValue1() == null && assign.getOperator() == null && assign.getrValue2() instanceof ConstantValue) {
-                           getLog().append("Identified constant variable " + variable.toString(getProgram()));
+                           if(getLog().isVerboseParse())
+                              getLog().append("Identified constant variable " + variable.toString(getProgram()));
                            ConstantValue constantValue = (ConstantValue) assign.getrValue2();
-                           convertToConst(variable, constantValue, assignment.getComments(),  aliases);
+                           convertToConst(variable, constantValue, assignment.getComments(), aliases);
                            removeStmt.add(assign);
                         } else if(assign.getrValue1() == null && assign.getOperator() instanceof OperatorCastPtr && assign.getrValue2() instanceof ConstantValue) {
-                           getLog().append("Identified constant variable " + variable.toString(getProgram()));
+                           if(getLog().isVerboseParse())
+                              getLog().append("Identified constant variable " + variable.toString(getProgram()));
                            ConstantValue constantValue = new ConstantCastValue(((OperatorCastPtr) assign.getOperator()).getToType(), (ConstantValue) assign.getrValue2());
                            convertToConst(variable, constantValue, assignment.getComments(), aliases);
                            removeStmt.add(assign);
@@ -59,7 +61,8 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
                   } else if(varAssignment.type.equals(VarAssignments.VarAssignment.Type.INIT_VALUE)) {
                      if(!(variable.getType() instanceof SymbolTypeStruct)) {
                         // Only assignment is the initValue
-                        getLog().append("Identified constant variable " + variable.toString(getProgram()));
+                        if(getLog().isVerboseParse())
+                           getLog().append("Identified constant variable " + variable.toString(getProgram()));
                         ConstantValue constantValue = variable.getInitValue();
                         convertToConst(variable, constantValue, variable.getComments(), aliases);
                      }
@@ -99,6 +102,7 @@ public class Pass1EarlyConstantIdentification extends Pass1Base {
 
    /**
     * Type check and potentially add cast to the constant value
+    *
     * @param variable
     * @param constantValue
     * @return

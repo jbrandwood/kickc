@@ -1,44 +1,33 @@
-De-inlining cast (word)toD018::screen
-De-inlining cast (word)toSpritePtr::sprite
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Culled Empty Block (label) @1
-Culled Empty Block (label) @2
-Culled Empty Block (label) @3
-Culled Empty Block (label) @4
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@6
-Culled Empty Block (label) @5
-Culled Empty Block (label) raster::@2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@6
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @6
+main: scope:[main]  from @1
   asm { sei  }
-  to:main::@2
-main::@2: scope:[main]  from main main::@2 main::@7
+  to:main::@1
+main::@1: scope:[main]  from main main::@1 main::@4
   (bool~) main::$0 ← *((const nomodify byte*) RASTER) != (number) $a
-  if((bool~) main::$0) goto main::@2
-  to:main::@4
-main::@4: scope:[main]  from main::@2 main::@4
+  if((bool~) main::$0) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1 main::@2
   (bool~) main::$1 ← *((const nomodify byte*) RASTER) != (number) $b
-  if((bool~) main::$1) goto main::@4
-  to:main::@5
-main::@5: scope:[main]  from main::@4
+  if((bool~) main::$1) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   call raster 
-  to:main::@7
-main::@7: scope:[main]  from main::@5
-  if(true) goto main::@2
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  if(true) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@7
+main::@return: scope:[main]  from main::@4
   return 
   to:@return
 
 (void()) raster()
-raster: scope:[raster]  from main::@5
+raster: scope:[raster]  from main::@3
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
   (byte) raster::i#0 ← (byte) 0
   (byte) raster::col#0 ← *((const byte*) rastercols + (byte) raster::i#0)
@@ -57,16 +46,16 @@ raster::@1: scope:[raster]  from raster raster::@1
 raster::@return: scope:[raster]  from raster::@1
   return 
   to:@return
-@6: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@7
-@7: scope:[]  from @6
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(label) @6
-(label) @7
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (const nomodify byte*) BGCOL = (byte*)(number) $d021
@@ -75,10 +64,10 @@ SYMBOL TABLE SSA
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
+(label) main::@1
 (label) main::@2
+(label) main::@3
 (label) main::@4
-(label) main::@5
-(label) main::@7
 (label) main::@return
 (void()) raster()
 (bool~) raster::$0
@@ -109,13 +98,13 @@ Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) $b
 Finalized unsigned number type (byte) $ff
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [2] if(*((const nomodify byte*) RASTER)!=(byte) $a) goto main::@2
-Simple Condition (bool~) main::$1 [4] if(*((const nomodify byte*) RASTER)!=(byte) $b) goto main::@4
+Simple Condition (bool~) main::$0 [2] if(*((const nomodify byte*) RASTER)!=(byte) $a) goto main::@1
+Simple Condition (bool~) main::$1 [4] if(*((const nomodify byte*) RASTER)!=(byte) $b) goto main::@2
 Simple Condition (bool~) raster::$0 [18] if((byte) raster::col#1!=(byte) $ff) goto raster::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) raster::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [6] if(true) goto main::@2
+if() condition always true - replacing block destination [6] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
 Simplifying expression containing zero rastercols in [10] (byte) raster::col#0 ← *((const byte*) rastercols + (const byte) raster::i#0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -124,13 +113,13 @@ Successful SSA optimization Pass2EliminateUnusedBlocks
 Inlining constant with var siblings (const byte) raster::i#0
 Constant inlined raster::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting raster::@3(between raster::@1 and raster::@1)
+Added new block during phi lifting raster::@2(between raster::@1 and raster::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
-Adding NOP phi() at start of @7
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main::@5
-Adding NOP phi() at start of main::@7
+Adding NOP phi() at start of main::@3
+Adding NOP phi() at start of main::@4
 CALL GRAPH
 Calls in [] to main:2 
 Calls in [main] to raster:9 
@@ -140,13 +129,9 @@ Coalesced [13] raster::col#3 ← raster::col#0
 Coalesced [22] raster::col#4 ← raster::col#1
 Coalesced [23] raster::i#3 ← raster::i#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @7
-Culled Empty Block (label) main::@7
-Culled Empty Block (label) raster::@3
-Renumbering block @6 to @1
-Renumbering block main::@2 to main::@1
-Renumbering block main::@4 to main::@2
-Renumbering block main::@5 to main::@3
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@4
+Culled Empty Block (label) raster::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

@@ -42,3 +42,6 @@ void ultoa(unsigned long value, char* buffer, enum RADIX radix);
 // Returns the absolute value of int x.
 int abs(int x);
 
+// Returns the absolute value of long int x.
+long labs(long x);
+

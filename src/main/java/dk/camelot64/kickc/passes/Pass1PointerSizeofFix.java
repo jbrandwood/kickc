@@ -55,7 +55,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             ConstantBinary binary = (ConstantBinary) programValue.get();
             if(Operators.PLUS.equals(binary.getOperator()) || Operators.MINUS.equals(binary.getOperator())) {
                SymbolTypePointer pointerType = getPointerType(binary.getLeft());
-               if(pointerType!=null && pointerType.getElementType().getSizeBytes() > 1) {
+               if(pointerType != null && pointerType.getElementType().getSizeBytes() > 1) {
                   getLog().append("Fixing constant pointer addition " + binary.toString(getProgram()));
                   ConstantRef sizeOfTargetType = SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType());
                   binary.setRight(new ConstantBinary(binary.getRight(), Operators.MULTIPLY, sizeOfTargetType));
@@ -67,7 +67,8 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             if(pointerType != null) {
                if(pointerType.getElementType().getSizeBytes() > 1) {
                   // Array-indexing into a non-byte pointer - multiply by sizeof()
-                  getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
+                  if(getLog().isVerboseParse())
+                     getLog().append("Fixing pointer array-indexing " + deref.toString(getProgram()));
                   SymbolVariableRef idx2VarRef = handled.getOrDefault(currentStmt, new LinkedHashMap<>()).get(deref.getIndex());
                   if(idx2VarRef == null) {
                      Variable idx2Var = getScope().getScope(currentBlock.getScope()).addVariableIntermediate();
@@ -95,7 +96,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
     * @param assignment The assignment statement
     */
 
-   public void fixPointerBinary(ControlFlowBlock block, ListIterator<Statement> stmtIt, StatementAssignment assignment) {
+   private void fixPointerBinary(ControlFlowBlock block, ListIterator<Statement> stmtIt, StatementAssignment assignment) {
       SymbolTypePointer pointerType = getPointerType(assignment.getrValue1());
       if(pointerType != null) {
          if(SymbolType.VOID.equals(pointerType.getElementType())) {
@@ -111,7 +112,8 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                   if(symbolR2.getType() instanceof SymbolTypePointer) {
                      // RValue 2 is a pointer
                      isPointerPlusConst = false;
-                     getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
+                     if(getLog().isVerboseParse())
+                        getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
                      LValue lValue = assignment.getlValue();
                      Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
                      tmpVar.setType(SymbolTypeInference.inferType(getScope(), assignment.getlValue()));
@@ -124,7 +126,8 @@ public class Pass1PointerSizeofFix extends Pass1Base {
                if(isPointerPlusConst) {
                   // Binary operation on a non-byte pointer - sizeof()-handling is probably needed!
                   // Adding to a pointer - multiply by sizeof()
-                  getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
+                  if(getLog().isVerboseParse())
+                     getLog().append("Fixing pointer addition " + assignment.toString(getProgram(), false));
                   Variable tmpVar = getScope().getScope(block.getScope()).addVariableIntermediate();
                   tmpVar.setType(SymbolTypeInference.inferType(getScope(), assignment.getrValue2()));
                   stmtIt.remove();
@@ -143,7 +146,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
     *
     * @param assignment The assignment statement
     */
-   public void fixPointerUnary(StatementAssignment assignment) {
+   private void fixPointerUnary(StatementAssignment assignment) {
       // Found assignment with unary operator
       SymbolTypePointer pointerType = getPointerType(assignment.getrValue2());
       if(pointerType != null) {
@@ -156,13 +159,15 @@ public class Pass1PointerSizeofFix extends Pass1Base {
             // Unary operation on non-byte pointer type - sizeof()-handling is needed!
             if(Operators.INCREMENT.equals(assignment.getOperator())) {
                // Pointer increment - add sizeof(type) instead
-               getLog().append("Fixing pointer increment " + assignment.toString(getProgram(), false));
+               if(getLog().isVerboseParse())
+                  getLog().append("Fixing pointer increment " + assignment.toString(getProgram(), false));
                assignment.setrValue1(assignment.getrValue2());
                assignment.setOperator(Operators.PLUS);
                assignment.setrValue2(SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType()));
             } else if(Operators.DECREMENT.equals(assignment.getOperator())) {
                // Pointer Decrement - add sizeof(type) instead
-               getLog().append("Fixing pointer decrement " + assignment.toString(getProgram(), false));
+               if(getLog().isVerboseParse())
+                  getLog().append("Fixing pointer decrement " + assignment.toString(getProgram(), false));
                assignment.setrValue1(assignment.getrValue2());
                assignment.setOperator(Operators.MINUS);
                assignment.setrValue2(SizeOfConstants.getSizeOfConstantVar(getProgram().getScope(), pointerType.getElementType()));
@@ -174,6 +179,7 @@ public class Pass1PointerSizeofFix extends Pass1Base {
    /**
     * Examine the passed value to determine if it is a pointer.
     * If it is a pointer return the type of the pointer
+    *
     * @param pointer The potential pointer to examine
     * @return The type of the pointer - if the value was a pointer. null if the value is not a pointer.
     */

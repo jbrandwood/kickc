@@ -1,23 +1,17 @@
 Resolved forward reference fn1 to (void()) fn1()
 Resolved forward reference fn2 to (void()) fn2()
-Culled Empty Block (label) main::@6
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@7
-Culled Empty Block (label) main::@9
-Culled Empty Block (label) main::@10
-Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
 
 (void()) main()
-main: scope:[main]  from @3
+main: scope:[main]  from @2
   (void()*) main::f#0 ← (void()*) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@5
-  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@5/(byte) main::i#4 )
+main::@1: scope:[main]  from main main::@4
+  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@4/(byte) main::i#4 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
@@ -25,19 +19,19 @@ main::@2: scope:[main]  from main::@1
   (byte) main::i#1 ← ++ (byte) main::i#2
   (number~) main::$0 ← (byte) main::i#1 & (number) 1
   (bool~) main::$1 ← (number~) main::$0 == (number) 0
-  if((bool~) main::$1) goto main::@4
-  to:main::@8
-main::@4: scope:[main]  from main::@2
+  if((bool~) main::$1) goto main::@3
+  to:main::@5
+main::@3: scope:[main]  from main::@2
   (byte) main::i#5 ← phi( main::@2/(byte) main::i#1 )
   (void()*) main::f#1 ← &(void()) fn1()
-  to:main::@5
-main::@8: scope:[main]  from main::@2
+  to:main::@4
+main::@5: scope:[main]  from main::@2
   (byte) main::i#6 ← phi( main::@2/(byte) main::i#1 )
   (void()*) main::f#2 ← &(void()) fn2()
-  to:main::@5
-main::@5: scope:[main]  from main::@4 main::@8
-  (byte) main::i#4 ← phi( main::@4/(byte) main::i#5 main::@8/(byte) main::i#6 )
-  (void()*) main::f#3 ← phi( main::@4/(void()*) main::f#1 main::@8/(void()*) main::f#2 )
+  to:main::@4
+main::@4: scope:[main]  from main::@3 main::@5
+  (byte) main::i#4 ← phi( main::@3/(byte) main::i#5 main::@5/(byte) main::i#6 )
+  (void()*) main::f#3 ← phi( main::@3/(void()*) main::f#1 main::@5/(void()*) main::f#2 )
   kickasm( uses main::f#3) {{ jsr ff
          }}
   to:main::@1
@@ -48,7 +42,7 @@ main::@return: scope:[main]  from main::@1
   kickasm() {{ ff:
     jmp (main.f)
  }}
-  to:@3
+  to:@2
 
 (void()) fn1()
 fn1: scope:[fn1]  from
@@ -65,17 +59,17 @@ fn2: scope:[fn2]  from
 fn2::@return: scope:[fn2]  from fn2
   return 
   to:@return
-@3: scope:[]  from @1
+@2: scope:[]  from @1
   call main 
-  to:@4
-@4: scope:[]  from @3
+  to:@3
+@3: scope:[]  from @2
   to:@end
-@end: scope:[]  from @4
+@end: scope:[]  from @3
 
 SYMBOL TABLE SSA
 (label) @1
+(label) @2
 (label) @3
-(label) @4
 (label) @begin
 (label) @end
 (void()) fn1()
@@ -89,9 +83,9 @@ SYMBOL TABLE SSA
 (bool~) main::$1
 (label) main::@1
 (label) main::@2
+(label) main::@3
 (label) main::@4
 (label) main::@5
-(label) main::@8
 (label) main::@return
 (void()*) main::f
 (void()*) main::f#0
@@ -125,7 +119,7 @@ Alias main::i#1 = main::i#5 main::i#6
 Successful SSA optimization Pass2AliasElimination
 Alias main::i#1 = main::i#4 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [7] if((byte~) main::$0==(byte) 0) goto main::@4
+Simple Condition (bool~) main::$1 [7] if((byte~) main::$0==(byte) 0) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const void()*) main::f#0 = (void()*) 0
 Constant (const byte) main::i#0 = 0
@@ -146,23 +140,20 @@ Constant inlined main::f#2 = &(void()) fn2()
 Constant inlined main::f#1 = &(void()) fn1()
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @3
-Adding NOP phi() at start of @4
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@8
-Adding NOP phi() at start of main::@4
+Adding NOP phi() at start of main::@5
+Adding NOP phi() at start of main::@3
 CALL GRAPH
 Calls in [] to main:3 
 
 Created 2 initial phi equivalence classes
 Coalesced [14] main::i#7 ← main::i#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @4
-Culled Empty Block (label) main::@8
-Renumbering block @3 to @2
-Renumbering block main::@4 to main::@3
-Renumbering block main::@5 to main::@4
+Culled Empty Block (label) @3
+Culled Empty Block (label) main::@5
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end

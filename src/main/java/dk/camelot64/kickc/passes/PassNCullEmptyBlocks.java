@@ -1,10 +1,12 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraphBaseVisitor;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.RValue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,8 +16,11 @@ import java.util.Map;
 /** Pass that culls empty control flow blocks from the program */
 public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
 
-   public PassNCullEmptyBlocks(Program program) {
+   private boolean pass1;
+
+   public PassNCullEmptyBlocks(Program program, boolean pass1) {
       super(program);
+      this.pass1 = pass1;
    }
 
    @Override
@@ -94,7 +99,8 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
          LabelRef removeBlockLabelRef = removeBlock.getLabel();
          Label removeBlockLabel = getScope().getLabel(removeBlockLabelRef);
          removeBlockLabel.getScope().remove(removeBlockLabel);
-         getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));
+         if(!pass1)
+            getLog().append("Culled Empty Block " + removeBlockLabel.toString(getProgram()));
       }
       remove.removeAll(dontRemove);
       return remove.size() > 0;

@@ -1,24 +1,12 @@
 Resolved forward reference table_driven_irq to interrupt(KERNEL_MIN)(void()) table_driven_irq()
-De-inlining cast (word)toD018::screen
-De-inlining cast (word)toSpritePtr::sprite
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Culled Empty Block (label) @1
-Culled Empty Block (label) @2
-Culled Empty Block (label) @3
-Culled Empty Block (label) @4
-Culled Empty Block (label) table_driven_irq::@4
-Culled Empty Block (label) table_driven_irq::@5
-Culled Empty Block (label) table_driven_irq::@7
-Culled Empty Block (label) table_driven_irq::@6
-Culled Empty Block (label) table_driven_irq::@12
-Culled Empty Block (label) table_driven_irq::@13
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@5
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @6
+main: scope:[main]  from @2
   asm { sei  }
   *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
@@ -31,66 +19,66 @@ main: scope:[main]  from @6
 main::@return: scope:[main]  from main
   return 
   to:@return
-@5: scope:[]  from @begin
+@1: scope:[]  from @begin
   (volatile byte) irq_idx ← (byte) 0
-  to:@6
+  to:@2
 
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   to:table_driven_irq::@1
-table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@8
+table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@4
   (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx)
   (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx)
   (volatile byte) irq_idx ← ++ (volatile byte) irq_idx
   (bool~) table_driven_irq::$0 ← (byte) table_driven_irq::idx#0 < (const nomodify byte) VIC_SIZE
   if((bool~) table_driven_irq::$0) goto table_driven_irq::@2
-  to:table_driven_irq::@9
+  to:table_driven_irq::@5
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
   (byte) table_driven_irq::idx#1 ← phi( table_driven_irq::@1/(byte) table_driven_irq::idx#0 )
   (byte) table_driven_irq::val#1 ← phi( table_driven_irq::@1/(byte) table_driven_irq::val#0 )
   *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#1) ← (byte) table_driven_irq::val#1
-  to:table_driven_irq::@8
-table_driven_irq::@9: scope:[table_driven_irq]  from table_driven_irq::@1
+  to:table_driven_irq::@4
+table_driven_irq::@5: scope:[table_driven_irq]  from table_driven_irq::@1
   (byte) table_driven_irq::val#4 ← phi( table_driven_irq::@1/(byte) table_driven_irq::val#0 )
   (byte) table_driven_irq::idx#2 ← phi( table_driven_irq::@1/(byte) table_driven_irq::idx#0 )
   (bool~) table_driven_irq::$1 ← (byte) table_driven_irq::idx#2 < (const nomodify byte) VIC_SIZE+(number) 8
   if((bool~) table_driven_irq::$1) goto table_driven_irq::@3
-  to:table_driven_irq::@10
-table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@9
-  (byte) table_driven_irq::val#2 ← phi( table_driven_irq::@9/(byte) table_driven_irq::val#4 )
-  (byte) table_driven_irq::idx#3 ← phi( table_driven_irq::@9/(byte) table_driven_irq::idx#2 )
+  to:table_driven_irq::@6
+table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@5
+  (byte) table_driven_irq::val#2 ← phi( table_driven_irq::@5/(byte) table_driven_irq::val#4 )
+  (byte) table_driven_irq::idx#3 ← phi( table_driven_irq::@5/(byte) table_driven_irq::idx#2 )
   (number~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (number) $3f8
   (number~) table_driven_irq::$5 ← (number~) table_driven_irq::$4 - (const nomodify byte) VIC_SIZE
   *((const nomodify byte*) SCREEN + (number~) table_driven_irq::$5) ← (byte) table_driven_irq::val#2
-  to:table_driven_irq::@8
-table_driven_irq::@10: scope:[table_driven_irq]  from table_driven_irq::@9
-  (byte) table_driven_irq::val#3 ← phi( table_driven_irq::@9/(byte) table_driven_irq::val#4 )
+  to:table_driven_irq::@4
+table_driven_irq::@6: scope:[table_driven_irq]  from table_driven_irq::@5
+  (byte) table_driven_irq::val#3 ← phi( table_driven_irq::@5/(byte) table_driven_irq::val#4 )
   *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   *((const nomodify byte*) RASTER) ← (byte) table_driven_irq::val#3
   (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const nomodify byte*) RASTER)
   (bool~) table_driven_irq::$3 ← ! (bool~) table_driven_irq::$2
   if((bool~) table_driven_irq::$3) goto table_driven_irq::@return
-  to:table_driven_irq::@11
-table_driven_irq::@11: scope:[table_driven_irq]  from table_driven_irq::@10
+  to:table_driven_irq::@7
+table_driven_irq::@7: scope:[table_driven_irq]  from table_driven_irq::@6
   (volatile byte) irq_idx ← (number) 0
   to:table_driven_irq::@return
-table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@10 table_driven_irq::@11 table_driven_irq::@8
+table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@4 table_driven_irq::@6 table_driven_irq::@7
   return 
   to:@return
-table_driven_irq::@8: scope:[table_driven_irq]  from table_driven_irq::@2 table_driven_irq::@3
+table_driven_irq::@4: scope:[table_driven_irq]  from table_driven_irq::@2 table_driven_irq::@3
   if(true) goto table_driven_irq::@1
   to:table_driven_irq::@return
-@6: scope:[]  from @5
+@2: scope:[]  from @1
   call main 
-  to:@7
-@7: scope:[]  from @6
+  to:@3
+@3: scope:[]  from @2
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @3
 
 SYMBOL TABLE SSA
-(label) @5
-(label) @6
-(label) @7
+(label) @1
+(label) @2
+(label) @3
 (label) @begin
 (label) @end
 (const nomodify byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
@@ -118,12 +106,12 @@ interrupt(KERNEL_MIN)(void()) table_driven_irq()
 (number~) table_driven_irq::$4
 (number~) table_driven_irq::$5
 (label) table_driven_irq::@1
-(label) table_driven_irq::@10
-(label) table_driven_irq::@11
 (label) table_driven_irq::@2
 (label) table_driven_irq::@3
-(label) table_driven_irq::@8
-(label) table_driven_irq::@9
+(label) table_driven_irq::@4
+(label) table_driven_irq::@5
+(label) table_driven_irq::@6
+(label) table_driven_irq::@7
 (label) table_driven_irq::@return
 (byte) table_driven_irq::idx
 (byte) table_driven_irq::idx#0
@@ -198,23 +186,21 @@ Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (byte*~) table_driven_irq::$6 and assignment [16] (byte*~) table_driven_irq::$6 ← (const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
-Adding NOP phi() at start of @7
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of table_driven_irq
-Adding NOP phi() at start of table_driven_irq::@8
+Adding NOP phi() at start of table_driven_irq::@4
 CALL GRAPH
 Calls in [] to main:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @7
-Culled Empty Block (label) table_driven_irq::@8
-Renumbering block @5 to @1
-Renumbering block @6 to @2
-Renumbering block table_driven_irq::@9 to table_driven_irq::@4
-Renumbering block table_driven_irq::@10 to table_driven_irq::@5
-Renumbering block table_driven_irq::@11 to table_driven_irq::@6
+Culled Empty Block (label) @3
+Culled Empty Block (label) table_driven_irq::@4
+Renumbering block table_driven_irq::@5 to table_driven_irq::@4
+Renumbering block table_driven_irq::@6 to table_driven_irq::@5
+Renumbering block table_driven_irq::@7 to table_driven_irq::@6
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end

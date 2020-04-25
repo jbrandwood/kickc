@@ -8,14 +8,13 @@ Converted call struct value parameter to member unwinding (void~) main::$0 ← c
 Converted call struct value parameter to member unwinding (void~) main::$1 ← call print *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_X) *((byte*)&(struct Point) main::point2+(const byte) OFFSET_STRUCT_POINT_Y) 
 Replacing struct member reference (struct Point) print::p.x with member unwinding reference (byte) print::p_x
 Replacing struct member reference (struct Point) print::p.y with member unwinding reference (byte) print::p_y
-Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
   *(&(struct Point) main::point2) ← memcpy(*(&(const struct Point) $1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
@@ -45,18 +44,18 @@ print: scope:[print]  from main main::@1
 print::@return: scope:[print]  from print
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
 (const struct Point) $0 = { x: (byte) 2, y: (byte) 3 }
 (const struct Point) $1 = { x: (byte) 4, y: (byte) 5 }
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
@@ -104,8 +103,8 @@ Successful SSA optimization PassNEliminateUnusedVars
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@2
 CALL GRAPH
@@ -118,9 +117,8 @@ Coalesced [10] print::p_y#3 ← print::p_y#0
 Coalesced [14] print::p_x#4 ← print::p_x#1
 Coalesced [15] print::p_y#4 ← print::p_y#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Renumbering block @2 to @1
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

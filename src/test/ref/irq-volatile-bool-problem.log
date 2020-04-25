@@ -1,18 +1,12 @@
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
 Resolved forward reference framedone to (volatile bool) framedone
-Culled Empty Block (label) main::@5
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@6
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@8
-Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   asm { sei  }
   *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
@@ -21,15 +15,15 @@ main: scope:[main]  from @2
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   asm { cli  }
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@7
+main::@1: scope:[main]  from main main::@2 main::@3
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (bool~) main::$0 ← *((const nomodify byte*) RASTER) < (number) $14
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@1
-  to:main::@7
-main::@7: scope:[main]  from main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -51,16 +45,16 @@ irq::@2: scope:[irq]  from irq
 irq::@return: scope:[irq]  from irq::@1
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const nomodify byte*) BGCOL = (byte*)(number) $d020
@@ -83,7 +77,7 @@ interrupt(KERNEL_MIN)(void()) irq()
 (bool~) main::$1
 (label) main::@1
 (label) main::@2
-(label) main::@7
+(label) main::@3
 (label) main::@return
 
 Adding number conversion cast (unumber) $7f in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
@@ -130,22 +124,21 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
-Adding NOP phi() at start of main::@7
+Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of irq::@2
 CALL GRAPH
 Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
-Renumbering block @2 to @1
 Renumbering block main::@2 to main::@1
-Renumbering block main::@7 to main::@2
+Renumbering block main::@3 to main::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

@@ -1,6 +1,3 @@
-Fixing pointer array-indexing *((const struct Point*) points + (number) 0)
-Fixing pointer array-indexing *((const struct Point*) points + (number) 1)
-Fixing pointer array-indexing *((const struct Point*) points + (byte) main::i)
 Constantified RValue *((const struct Point*) points + (number~) main::$2) ← { x: (byte) 1, y: (byte) 2 }
 Constantified RValue *((const struct Point*) points + (number~) main::$3) ← { x: (byte) 3, y: (byte) 4 }
 Created struct value member variable (byte) print::p_x
@@ -12,32 +9,30 @@ Adding value bulk copy *((const struct Point*) points + (number~) main::$3) ← 
 Converted call struct value parameter to member unwinding (void~) main::$0 ← call print *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$4) *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4) 
 Replacing struct member reference (struct Point) print::p.x with member unwinding reference (byte) print::p_x
 Replacing struct member reference (struct Point) print::p.y with member unwinding reference (byte) print::p_y
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte) idx#0 ← (byte) 0
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
-  (byte) idx#14 ← phi( @2/(byte) idx#13 )
+main: scope:[main]  from @1
+  (byte) idx#14 ← phi( @1/(byte) idx#13 )
   (number~) main::$2 ← (number) 0 * (const byte) SIZEOF_STRUCT_POINT
   *((const struct Point*) points + (number~) main::$2) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (number~) main::$3 ← (number) 1 * (const byte) SIZEOF_STRUCT_POINT
   *((const struct Point*) points + (number~) main::$3) ← memcpy(*(&(const struct Point) $1), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (byte) main::i#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@3
-  (byte) idx#12 ← phi( main/(byte) idx#14 main::@3/(byte) idx#1 )
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
+main::@1: scope:[main]  from main main::@2
+  (byte) idx#12 ← phi( main/(byte) idx#14 main::@2/(byte) idx#1 )
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
   (byte~) main::$4 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_POINT
   (byte) print::p_x#0 ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_X + (byte~) main::$4)
   (byte) print::p_y#0 ← *((byte*)(const struct Point*) points+(const byte) OFFSET_STRUCT_POINT_Y + (byte~) main::$4)
   call print 
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
   (byte) idx#7 ← phi( main::@1/(byte) idx#5 )
   (byte) idx#1 ← (byte) idx#7
@@ -45,8 +40,8 @@ main::@3: scope:[main]  from main::@1
   (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,1)
   if((bool~) main::$1) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@3
-  (byte) idx#8 ← phi( main::@3/(byte) idx#1 )
+main::@return: scope:[main]  from main::@2
+  (byte) idx#8 ← phi( main::@2/(byte) idx#1 )
   (byte) idx#2 ← (byte) idx#8
   return 
   to:@return
@@ -66,21 +61,21 @@ print::@return: scope:[print]  from print
   (byte) idx#5 ← (byte) idx#10
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   (byte) idx#13 ← phi( @begin/(byte) idx#0 )
   call main 
-  to:@3
-@3: scope:[]  from @2
-  (byte) idx#11 ← phi( @2/(byte) idx#2 )
+  to:@2
+@2: scope:[]  from @1
+  (byte) idx#11 ← phi( @1/(byte) idx#2 )
   (byte) idx#6 ← (byte) idx#11
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
 (const struct Point) $0 = { x: (byte) 1, y: (byte) 2 }
 (const struct Point) $1 = { x: (byte) 3, y: (byte) 4 }
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
@@ -111,7 +106,7 @@ SYMBOL TABLE SSA
 (number~) main::$3
 (byte~) main::$4
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (byte) main::i
 (byte) main::i#0
@@ -192,10 +187,10 @@ Constant inlined main::$3 = (byte) 1*(const byte) SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(points+1*SIZEOF_STRUCT_POINT)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Added new block during phi lifting main::@4(between main::@3 and main::@1)
+Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
@@ -205,10 +200,8 @@ Created 2 initial phi equivalence classes
 Coalesced [15] main::i#4 ← main::i#1
 Coalesced [16] idx#15 ← idx#10
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @3
-Culled Empty Block (label) main::@4
-Renumbering block @2 to @1
-Renumbering block main::@3 to main::@2
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

@@ -1,33 +1,23 @@
-De-inlining cast (word)toD018::screen
-De-inlining cast (word)toSpritePtr::sprite
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
-Culled Empty Block (label) @1
-Culled Empty Block (label) @2
-Culled Empty Block (label) @3
-Culled Empty Block (label) @4
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @5
-Culled Empty Block (label) position_sprite::@2
-Culled Empty Block (label) position_sprite::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@6
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @6
+main: scope:[main]  from @1
   (word) main::xpos#0 ← (word) $c8
   (byte) main::s#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@3
-  (word) main::xpos#2 ← phi( main/(word) main::xpos#0 main::@3/(word) main::xpos#1 )
-  (byte) main::s#2 ← phi( main/(byte) main::s#0 main::@3/(byte) main::s#1 )
+main::@1: scope:[main]  from main main::@2
+  (word) main::xpos#2 ← phi( main/(word) main::xpos#0 main::@2/(word) main::xpos#1 )
+  (byte) main::s#2 ← phi( main/(byte) main::s#0 main::@2/(byte) main::s#1 )
   (byte) position_sprite::spriteno#0 ← (byte) main::s#2
   (word) position_sprite::x#0 ← (word) main::xpos#2
   (byte) position_sprite::y#0 ← (number) $32
   call position_sprite 
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   (byte) main::s#3 ← phi( main::@1/(byte) main::s#2 )
   (word) main::xpos#3 ← phi( main::@1/(word) main::xpos#2 )
   (word) main::xpos#1 ← (word) main::xpos#3 + (number) $a
@@ -35,7 +25,7 @@ main::@3: scope:[main]  from main::@1
   (bool~) main::$1 ← (byte) main::s#1 != rangelast(0,7)
   if((bool~) main::$1) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
@@ -51,31 +41,31 @@ position_sprite: scope:[position_sprite]  from main::@1
   *((const nomodify byte*) SPRITES_XPOS + (number~) position_sprite::$1) ← (byte~) position_sprite::$2
   (bool~) position_sprite::$3 ← (word) position_sprite::x#1 > (number) $ff
   if((bool~) position_sprite::$3) goto position_sprite::@1
-  to:position_sprite::@3
+  to:position_sprite::@2
 position_sprite::@1: scope:[position_sprite]  from position_sprite
   (byte) position_sprite::spriteno#2 ← phi( position_sprite/(byte) position_sprite::spriteno#1 )
   (number~) position_sprite::$6 ← (number) 1 << (byte) position_sprite::spriteno#2
   *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (number~) position_sprite::$6
   to:position_sprite::@return
-position_sprite::@3: scope:[position_sprite]  from position_sprite
+position_sprite::@2: scope:[position_sprite]  from position_sprite
   (byte) position_sprite::spriteno#3 ← phi( position_sprite/(byte) position_sprite::spriteno#1 )
   (number~) position_sprite::$4 ← (number) 1 << (byte) position_sprite::spriteno#3
   (number~) position_sprite::$5 ← (number~) position_sprite::$4 ^ (number) $ff
   *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (number~) position_sprite::$5
   to:position_sprite::@return
-position_sprite::@return: scope:[position_sprite]  from position_sprite::@1 position_sprite::@3
+position_sprite::@return: scope:[position_sprite]  from position_sprite::@1 position_sprite::@2
   return 
   to:@return
-@6: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@7
-@7: scope:[]  from @6
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @7
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(label) @6
-(label) @7
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (const nomodify byte*) SPRITES_XMSB = (byte*)(number) $d010
@@ -84,7 +74,7 @@ SYMBOL TABLE SSA
 (void()) main()
 (bool~) main::$1
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (byte) main::s
 (byte) main::s#0
@@ -105,7 +95,7 @@ SYMBOL TABLE SSA
 (number~) position_sprite::$5
 (number~) position_sprite::$6
 (label) position_sprite::@1
-(label) position_sprite::@3
+(label) position_sprite::@2
 (label) position_sprite::@return
 (byte) position_sprite::spriteno
 (byte) position_sprite::spriteno#0
@@ -195,10 +185,10 @@ Inlining constant with var siblings (const byte) main::s#0
 Constant inlined main::xpos#0 = (word) $c8
 Constant inlined main::s#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@4(between main::@3 and main::@1)
+Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @6
-Adding NOP phi() at start of @7
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -209,11 +199,8 @@ Created 2 initial phi equivalence classes
 Coalesced [14] main::s#4 ← main::s#1
 Coalesced [15] main::xpos#4 ← main::xpos#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @7
-Culled Empty Block (label) main::@4
-Renumbering block @6 to @1
-Renumbering block main::@3 to main::@2
-Renumbering block position_sprite::@3 to position_sprite::@2
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

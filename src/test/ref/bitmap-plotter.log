@@ -1,45 +1,10 @@
-De-inlining cast (word)SCREEN
-Identified constant variable (byte*) D011
-Identified constant variable (byte) RST8
-Identified constant variable (byte) ECM
-Identified constant variable (byte) BMM
-Identified constant variable (byte) DEN
-Identified constant variable (byte) RSEL
-Identified constant variable (byte*) RASTER
-Identified constant variable (byte*) D016
-Identified constant variable (byte) MCM
-Identified constant variable (byte) CSEL
-Identified constant variable (byte*) D018
-Identified constant variable (byte*) BGCOL
-Identified constant variable (byte*) FGCOL
-Identified constant variable (byte*) COLS
-Identified constant variable (byte*) SCREEN
-Identified constant variable (byte) plots_cnt
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) @1
-Culled Empty Block (label) plots::@4
-Culled Empty Block (label) plots::@3
-Culled Empty Block (label) plots::@5
-Culled Empty Block (label) plots::@6
-Culled Empty Block (label) @2
-Culled Empty Block (label) @3
-Culled Empty Block (label) init_plot_tables::@8
-Culled Empty Block (label) @4
-Culled Empty Block (label) init_screen::@4
-Culled Empty Block (label) init_screen::@5
-Culled Empty Block (label) init_screen::@6
-Culled Empty Block (label) init_screen::@10
-Culled Empty Block (label) init_screen::@9
-Culled Empty Block (label) init_screen::@11
-Culled Empty Block (label) init_screen::@12
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@5
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @5
+main: scope:[main]  from @1
   *((const byte*) BGCOL) ← (number) 0
   *((const byte*) FGCOL) ← (number) 0
   (byte~) main::$0 ← (const byte) BMM | (const byte) DEN
@@ -51,34 +16,34 @@ main: scope:[main]  from @5
   (number~) main::$4 ← (number~) main::$3 | (word)(const nomodify byte*) BITMAP/(number) $400
   *((const byte*) D018) ← (byte)(number~) main::$4
   call init_screen 
-  to:main::@5
-main::@5: scope:[main]  from main
-  call init_plot_tables 
-  to:main::@6
-main::@6: scope:[main]  from main::@5
-  to:main::@2
-main::@2: scope:[main]  from main::@2 main::@6 main::@7
-  (bool~) main::$7 ← *((const byte*) RASTER) != (number) $ff
-  if((bool~) main::$7) goto main::@2
   to:main::@3
-main::@3: scope:[main]  from main::@2
+main::@3: scope:[main]  from main
+  call init_plot_tables 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  to:main::@1
+main::@1: scope:[main]  from main::@1 main::@4 main::@5
+  (bool~) main::$7 ← *((const byte*) RASTER) != (number) $ff
+  if((bool~) main::$7) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
   call plots 
-  to:main::@7
-main::@7: scope:[main]  from main::@3
+  to:main::@5
+main::@5: scope:[main]  from main::@2
   *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
-  if(true) goto main::@2
+  if(true) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@7
+main::@return: scope:[main]  from main::@5
   return 
   to:@return
 
 (void()) plots()
-plots: scope:[plots]  from main::@3
+plots: scope:[plots]  from main::@2
   (byte) plots::i#0 ← (byte) 0
   to:plots::@1
-plots::@1: scope:[plots]  from plots plots::@7
-  (byte) plots::i#2 ← phi( plots/(byte) plots::i#0 plots::@7/(byte) plots::i#1 )
+plots::@1: scope:[plots]  from plots plots::@3
+  (byte) plots::i#2 ← phi( plots/(byte) plots::i#0 plots::@3/(byte) plots::i#1 )
   (bool~) plots::$0 ← (byte) plots::i#2 < (const byte) plots_cnt
   if((bool~) plots::$0) goto plots::@2
   to:plots::@return
@@ -87,8 +52,8 @@ plots::@2: scope:[plots]  from plots::@1
   (byte) plot::x#0 ← *((const byte*) plots_x + (byte) plots::i#3)
   (byte) plot::y#0 ← *((const byte*) plots_y + (byte) plots::i#3)
   call plot 
-  to:plots::@7
-plots::@7: scope:[plots]  from plots::@2
+  to:plots::@3
+plots::@3: scope:[plots]  from plots::@2
   (byte) plots::i#4 ← phi( plots::@2/(byte) plots::i#3 )
   (byte) plots::i#1 ← ++ (byte) plots::i#4
   to:plots::@1
@@ -120,7 +85,7 @@ plot::@return: scope:[plot]  from plot
   to:@return
 
 (void()) init_plot_tables()
-init_plot_tables: scope:[init_plot_tables]  from main::@5
+init_plot_tables: scope:[init_plot_tables]  from main::@3
   (byte) init_plot_tables::bits#0 ← (byte) $80
   (byte) init_plot_tables::x#0 ← (byte) 0
   to:init_plot_tables::@1
@@ -199,31 +164,31 @@ init_screen::@2: scope:[init_screen]  from init_screen::@1
   to:init_screen::@1
 init_screen::@3: scope:[init_screen]  from init_screen::@1
   (byte*) init_screen::c#0 ← (const byte*) SCREEN
-  to:init_screen::@7
-init_screen::@7: scope:[init_screen]  from init_screen::@3 init_screen::@8
-  (byte*) init_screen::c#2 ← phi( init_screen::@3/(byte*) init_screen::c#0 init_screen::@8/(byte*) init_screen::c#1 )
+  to:init_screen::@4
+init_screen::@4: scope:[init_screen]  from init_screen::@3 init_screen::@5
+  (byte*) init_screen::c#2 ← phi( init_screen::@3/(byte*) init_screen::c#0 init_screen::@5/(byte*) init_screen::c#1 )
   (byte*~) init_screen::$1 ← (const byte*) SCREEN + (number) $400
   (bool~) init_screen::$2 ← (byte*) init_screen::c#2 != (byte*~) init_screen::$1
-  if((bool~) init_screen::$2) goto init_screen::@8
+  if((bool~) init_screen::$2) goto init_screen::@5
   to:init_screen::@return
-init_screen::@8: scope:[init_screen]  from init_screen::@7
-  (byte*) init_screen::c#3 ← phi( init_screen::@7/(byte*) init_screen::c#2 )
+init_screen::@5: scope:[init_screen]  from init_screen::@4
+  (byte*) init_screen::c#3 ← phi( init_screen::@4/(byte*) init_screen::c#2 )
   *((byte*) init_screen::c#3) ← (number) $14
   (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#3
-  to:init_screen::@7
-init_screen::@return: scope:[init_screen]  from init_screen::@7
+  to:init_screen::@4
+init_screen::@return: scope:[init_screen]  from init_screen::@4
   return 
   to:@return
-@5: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@6
-@6: scope:[]  from @5
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @6
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(label) @5
-(label) @6
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (const byte*) BGCOL = (byte*)(number) $d020
@@ -290,8 +255,8 @@ SYMBOL TABLE SSA
 (label) init_screen::@1
 (label) init_screen::@2
 (label) init_screen::@3
-(label) init_screen::@7
-(label) init_screen::@8
+(label) init_screen::@4
+(label) init_screen::@5
 (label) init_screen::@return
 (byte*) init_screen::b
 (byte*) init_screen::b#0
@@ -311,11 +276,11 @@ SYMBOL TABLE SSA
 (number~) main::$3
 (number~) main::$4
 (bool~) main::$7
+(label) main::@1
 (label) main::@2
 (label) main::@3
+(label) main::@4
 (label) main::@5
-(label) main::@6
-(label) main::@7
 (label) main::@return
 (void()) plot((byte) plot::x , (byte) plot::y)
 (byte*~) plot::$4
@@ -350,7 +315,7 @@ SYMBOL TABLE SSA
 (bool~) plots::$0
 (label) plots::@1
 (label) plots::@2
-(label) plots::@7
+(label) plots::@3
 (label) plots::@return
 (byte) plots::i
 (byte) plots::i#0
@@ -471,14 +436,14 @@ Identical Phi Values (byte) plot::y#1 (byte) plot::y#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Identified duplicate assignment right side [73] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$7 [13] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+Simple Condition (bool~) main::$7 [13] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1
 Simple Condition (bool~) plots::$0 [22] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2
 Simple Condition (bool~) init_plot_tables::$3 [52] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@2
 Simple Condition (bool~) init_plot_tables::$4 [56] if((byte) init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1
 Simple Condition (bool~) init_plot_tables::$11 [69] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@6
 Simple Condition (bool~) init_plot_tables::$13 [73] if((byte) init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5
 Simple Condition (bool~) init_screen::$0 [79] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2
-Simple Condition (bool~) init_screen::$2 [86] if((byte*) init_screen::c#2!=(byte*~) init_screen::$1) goto init_screen::@8
+Simple Condition (bool~) init_screen::$2 [86] if((byte*) init_screen::c#2!=(byte*~) init_screen::$1) goto init_screen::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [2] (byte~) main::$0 ← (const byte) BMM | (const byte) DEN
 Constant right-side identified [6] (word~) main::$11 ← (word)(const byte*) SCREEN
@@ -498,7 +463,7 @@ Constant (const byte*) init_screen::b#0 = BITMAP
 Constant (const byte*) init_screen::c#0 = SCREEN
 Constant (const byte*) init_screen::$1 = SCREEN+$400
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [17] if(true) goto main::@2
+if() condition always true - replacing block destination [17] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [54] init_plot_tables::x#1 ← ++ init_plot_tables::x#2 to ++
 Resolved ranged comparison value [56] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1 to (number) 0
@@ -561,16 +526,16 @@ Constant inlined init_plot_tables::x#0 = (byte) 0
 Constant inlined init_screen::c#0 = (const byte*) SCREEN
 Constant inlined init_screen::b#0 = (const nomodify byte*) BITMAP
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting init_plot_tables::@9(between init_plot_tables::@2 and init_plot_tables::@1)
-Added new block during phi lifting init_plot_tables::@10(between init_plot_tables::@1 and init_plot_tables::@2)
-Added new block during phi lifting init_plot_tables::@11(between init_plot_tables::@6 and init_plot_tables::@5)
-Added new block during phi lifting init_plot_tables::@12(between init_plot_tables::@5 and init_plot_tables::@6)
+Added new block during phi lifting init_plot_tables::@8(between init_plot_tables::@2 and init_plot_tables::@1)
+Added new block during phi lifting init_plot_tables::@9(between init_plot_tables::@1 and init_plot_tables::@2)
+Added new block during phi lifting init_plot_tables::@10(between init_plot_tables::@6 and init_plot_tables::@5)
+Added new block during phi lifting init_plot_tables::@11(between init_plot_tables::@5 and init_plot_tables::@6)
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @5
-Adding NOP phi() at start of @6
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
-Adding NOP phi() at start of main::@5
-Adding NOP phi() at start of main::@6
+Adding NOP phi() at start of main::@3
+Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of plots
 Adding NOP phi() at start of init_plot_tables
 Adding NOP phi() at start of init_plot_tables::@3
@@ -594,26 +559,21 @@ Coalesced [70] init_plot_tables::bits#6 ← init_plot_tables::bits#1
 Coalesced [80] init_screen::c#4 ← init_screen::c#1
 Coalesced [83] init_screen::b#4 ← init_screen::b#1
 Coalesced down to 7 phi equivalence classes
-Culled Empty Block (label) @6
-Culled Empty Block (label) main::@6
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@4
 Culled Empty Block (label) init_plot_tables::@3
 Culled Empty Block (label) init_plot_tables::@4
+Culled Empty Block (label) init_plot_tables::@10
 Culled Empty Block (label) init_plot_tables::@11
-Culled Empty Block (label) init_plot_tables::@12
-Culled Empty Block (label) init_plot_tables::@9
+Culled Empty Block (label) init_plot_tables::@8
 Culled Empty Block (label) init_screen::@3
-Renumbering block @5 to @1
-Renumbering block main::@2 to main::@1
-Renumbering block main::@3 to main::@2
-Renumbering block main::@5 to main::@3
-Renumbering block main::@7 to main::@4
-Renumbering block plots::@7 to plots::@3
+Renumbering block main::@5 to main::@4
 Renumbering block init_plot_tables::@5 to init_plot_tables::@3
 Renumbering block init_plot_tables::@6 to init_plot_tables::@4
 Renumbering block init_plot_tables::@7 to init_plot_tables::@5
-Renumbering block init_plot_tables::@10 to init_plot_tables::@6
-Renumbering block init_screen::@7 to init_screen::@3
-Renumbering block init_screen::@8 to init_screen::@4
+Renumbering block init_plot_tables::@9 to init_plot_tables::@6
+Renumbering block init_screen::@4 to init_screen::@3
+Renumbering block init_screen::@5 to init_screen::@4
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

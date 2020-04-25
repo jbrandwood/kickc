@@ -1,32 +1,26 @@
-Identified constant variable (byte*) SCREEN
-Identified constant variable (byte) cc
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) @1
-Culled Empty Block (label) @2
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@3
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @3
+main: scope:[main]  from @1
   if((number) 1==(number) 1) goto main::@1
-  to:main::@3
+  to:main::@2
 main::@1: scope:[main]  from main
   *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
   to:main::@return
-main::@3: scope:[main]  from main
+main::@2: scope:[main]  from main
   call doit 
-  to:main::@5
-main::@5: scope:[main]  from main::@3
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   to:main::@return
-main::@return: scope:[main]  from main::@1 main::@5
+main::@return: scope:[main]  from main::@1 main::@3
   return 
   to:@return
 
 (void()) doit()
-doit: scope:[doit]  from main::@3
+doit: scope:[doit]  from main::@2
   *((const byte*) SCREEN + (number) 1) ← (const byte) cc
   call doit2 
   to:doit::@1
@@ -43,16 +37,16 @@ doit2: scope:[doit2]  from doit
 doit2::@return: scope:[doit2]  from doit2
   return 
   to:@return
-@3: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@4
-@4: scope:[]  from @3
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @4
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(label) @3
-(label) @4
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (const byte*) SCREEN = (byte*)(number) $400
@@ -64,8 +58,8 @@ SYMBOL TABLE SSA
 (label) doit2::@return
 (void()) main()
 (label) main::@1
+(label) main::@2
 (label) main::@3
-(label) main::@5
 (label) main::@return
 
 Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) 'a'
@@ -85,8 +79,8 @@ if() condition always true - replacing block destination [0] if((number) 1==(num
 Successful SSA optimization Pass2ConstantIfs
 Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused block main::@2
 Removing unused block main::@3
-Removing unused block main::@5
 Removing unused procedure doit
 Removing unused procedure block doit
 Removing unused procedure block doit::@1
@@ -98,8 +92,8 @@ Successful SSA optimization Pass2EliminateUnusedBlocks
 Eliminating unused constant (const byte) cc
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @4
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -107,8 +101,7 @@ Calls in [] to main:2
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @4
-Renumbering block @3 to @1
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

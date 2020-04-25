@@ -1,25 +1,19 @@
-Fixing pointer array-indexing *((word*) main::SCREEN + (byte) main::idx)
-Fixing pointer array-indexing *((const word*) arr16 + (number~) getValue::$0)
-Identified constant variable (word*) main::SCREEN
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @1
-Culled Empty Block (label) getValue::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   (byte) main::idx#0 ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@3
-  (byte) main::idx#2 ← phi( main/(byte) main::idx#0 main::@3/(byte) main::idx#1 )
+main::@1: scope:[main]  from main main::@2
+  (byte) main::idx#2 ← phi( main/(byte) main::idx#0 main::@2/(byte) main::idx#1 )
   (word) getValue::index#0 ← (byte) main::idx#2
   call getValue 
   (word) getValue::return#0 ← (word) getValue::return#2
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#2 )
   (word) getValue::return#3 ← phi( main::@1/(word) getValue::return#0 )
   (word~) main::$0 ← (word) getValue::return#3
@@ -29,7 +23,7 @@ main::@3: scope:[main]  from main::@1
   (bool~) main::$1 ← (byte) main::idx#1 != rangelast(0,$80)
   if((bool~) main::$1) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
@@ -47,16 +41,16 @@ getValue::@return: scope:[getValue]  from getValue
   (word) getValue::return#2 ← (word) getValue::return#4
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const byte) SIZEOF_WORD = (byte) 2
@@ -81,7 +75,7 @@ SYMBOL TABLE SSA
 (bool~) main::$1
 (byte~) main::$2
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (const word*) main::SCREEN = (word*)(number) $400
 (byte) main::idx
@@ -137,10 +131,10 @@ Constant inlined main::idx#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
-Added new block during phi lifting main::@4(between main::@3 and main::@1)
+Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -150,10 +144,8 @@ Calls in [main] to getValue:8
 Created 1 initial phi equivalence classes
 Coalesced [16] main::idx#4 ← main::idx#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @3
-Culled Empty Block (label) main::@4
-Renumbering block @2 to @1
-Renumbering block main::@3 to main::@2
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@3
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

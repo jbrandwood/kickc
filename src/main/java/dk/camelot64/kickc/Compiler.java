@@ -268,7 +268,7 @@ public class Compiler {
       new Pass1AddressOfHandling(program).execute();
       new Pass1FixLValuesLoHi(program).execute();
       new Pass1AssertNoLValueIntermediate(program).execute();
-      new PassNAddTypeConversionAssignment(program, false).execute();
+      new PassNAddTypeConversionAssignment(program, true).execute();
       new Pass1AssertProcedureCallParameters(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
@@ -285,9 +285,9 @@ public class Compiler {
       new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
 
-      new PassNDeInlineCastValues(program).execute();
-      new PassNAddBooleanCasts(program).execute();
-      new PassNAddTypeConversionAssignment(program, false).execute();
+      new PassNDeInlineCastValues(program, true).execute();
+      new PassNAddBooleanCasts(program, true).execute();
+      new PassNAddTypeConversionAssignment(program, true).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
       new PassNAssertConstantModification(program).execute();
@@ -311,7 +311,8 @@ public class Compiler {
       new Pass1EliminateUncalledProcedures(program).execute();
       new PassNEliminateUnusedVars(program, false).execute();
       new Pass1ExtractInlineStrings(program).execute();
-      new PassNCullEmptyBlocks(program).execute();
+      new PassNCullEmptyBlocks(program, true).execute();
+      new PassNRenumberLabels(program, true).execute();
 
       new Pass1UnrollConditionVariableSsa(program).step();
 
@@ -368,7 +369,7 @@ public class Compiler {
       optimizations.add(new PassNCastSimplification(program));
       optimizations.add(new PassNFinalizeNumberTypeConversions(program));
       optimizations.add(new PassNTypeInference(program));
-      optimizations.add(new PassNAddTypeConversionAssignment(program, true));
+      optimizations.add(new PassNAddTypeConversionAssignment(program, false));
       optimizations.add(new PassNTypeIdSimplification(program));
       optimizations.add(new PassNSizeOfSimplification(program));
       optimizations.add(new PassNStatementIndices(program));
@@ -395,7 +396,7 @@ public class Compiler {
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
-      optimizations.add(new PassNAddBooleanCasts(program));
+      optimizations.add(new PassNAddBooleanCasts(program, false));
       optimizations.add(new PassNStructUnwoundPlaceholderRemoval(program));
       optimizations.add(new PassNArrayElementAddressOfRewriting(program));
       optimizations.add(new Pass2ConditionalJumpSequenceImprovement(program));
@@ -589,8 +590,8 @@ public class Compiler {
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).step();
-      new PassNCullEmptyBlocks(program).step();
-      new PassNRenumberLabels(program).execute();
+      new PassNCullEmptyBlocks(program, false).step();
+      new PassNRenumberLabels(program, false).execute();
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();

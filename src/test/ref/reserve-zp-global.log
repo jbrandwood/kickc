@@ -1,21 +1,18 @@
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @1
-Culled Empty Block (label) sub1::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   (volatile byte) main::i ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@3
+main::@1: scope:[main]  from main main::@2
   (byte) sub1::i#0 ← (volatile byte) main::i
   call sub1 
   (byte) sub1::return#0 ← (byte) sub1::return#2
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   (byte) sub1::return#3 ← phi( main::@1/(byte) sub1::return#0 )
   (byte~) main::$0 ← (byte) sub1::return#3
   *((const nomodify byte*) main::SCREEN + (volatile byte) main::i) ← (byte~) main::$0
@@ -23,7 +20,7 @@ main::@3: scope:[main]  from main::@1
   (bool~) main::$1 ← (volatile byte) main::i != rangelast(0,2)
   if((bool~) main::$1) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
@@ -38,23 +35,23 @@ sub1::@return: scope:[sub1]  from sub1
   (byte) sub1::return#2 ← (byte) sub1::return#4
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (void()) main()
 (byte~) main::$0
 (bool~) main::$1
 (label) main::@1
-(label) main::@3
+(label) main::@2
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (volatile byte) main::i loadstore
@@ -89,8 +86,8 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
@@ -98,9 +95,7 @@ Calls in [main] to sub1:7
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
-Renumbering block @2 to @1
-Renumbering block main::@3 to main::@2
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

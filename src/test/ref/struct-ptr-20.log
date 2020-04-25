@@ -1,14 +1,5 @@
-Fixing pointer addition (struct Setting*~) main::$2 ← (const to_nomodify struct Setting*) settings + (byte) main::len
-Fixing pointer increment (struct Setting*) main::setting ← ++ (struct Setting*) main::setting
 Replacing struct member reference *((struct Setting*) main::setting).off with member unwinding reference *((byte*~) main::$7)
 Replacing struct member reference *((struct Setting*) main::setting).id with member unwinding reference *((byte*~) main::$8)
-De-inlining cast (byte*)main::setting
-De-inlining cast (byte*)main::setting
-Warning! Adding boolean cast to non-boolean sub-expression *((byte*~) main::$7)
-Culled Empty Block (label) main::@5
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@6
-Culled Empty Block (label) main::@8
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -22,10 +13,10 @@ main: scope:[main]  from @1
   (byte) main::len#0 ← (byte~) main::$1
   (struct Setting*) main::setting#0 ← (const to_nomodify struct Setting*) settings
   to:main::@1
-main::@1: scope:[main]  from main main::@4
-  (byte) main::idx#4 ← phi( main/(byte) main::idx#0 main::@4/(byte) main::idx#5 )
-  (struct Setting*) main::setting#2 ← phi( main/(struct Setting*) main::setting#0 main::@4/(struct Setting*) main::setting#1 )
-  (byte) main::len#1 ← phi( main/(byte) main::len#0 main::@4/(byte) main::len#2 )
+main::@1: scope:[main]  from main main::@3
+  (byte) main::idx#4 ← phi( main/(byte) main::idx#0 main::@3/(byte) main::idx#5 )
+  (struct Setting*) main::setting#2 ← phi( main/(struct Setting*) main::setting#0 main::@3/(struct Setting*) main::setting#1 )
+  (byte) main::len#1 ← phi( main/(byte) main::len#0 main::@3/(byte) main::len#2 )
   (byte~) main::$6 ← (byte) main::len#1 * (const byte) SIZEOF_STRUCT_SETTING
   (struct Setting*~) main::$2 ← (const to_nomodify struct Setting*) settings + (byte~) main::$6
   (bool~) main::$3 ← (struct Setting*) main::setting#2 < (struct Setting*~) main::$2
@@ -40,15 +31,15 @@ main::@2: scope:[main]  from main::@1
   (bool~) main::$11 ← (number) 0 != *((byte*~) main::$7)
   (bool~) main::$4 ← ! (bool~) main::$11
   (bool~) main::$5 ← ! (bool~) main::$4
-  if((bool~) main::$5) goto main::@4
-  to:main::@7
-main::@4: scope:[main]  from main::@2 main::@7
-  (byte) main::idx#5 ← phi( main::@2/(byte) main::idx#3 main::@7/(byte) main::idx#1 )
-  (byte) main::len#2 ← phi( main::@2/(byte) main::len#3 main::@7/(byte) main::len#4 )
-  (struct Setting*) main::setting#4 ← phi( main::@2/(struct Setting*) main::setting#3 main::@7/(struct Setting*) main::setting#5 )
+  if((bool~) main::$5) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2 main::@4
+  (byte) main::idx#5 ← phi( main::@2/(byte) main::idx#3 main::@4/(byte) main::idx#1 )
+  (byte) main::len#2 ← phi( main::@2/(byte) main::len#3 main::@4/(byte) main::len#4 )
+  (struct Setting*) main::setting#4 ← phi( main::@2/(struct Setting*) main::setting#3 main::@4/(struct Setting*) main::setting#5 )
   (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#4 + (const byte) SIZEOF_STRUCT_SETTING
   to:main::@1
-main::@7: scope:[main]  from main::@2
+main::@4: scope:[main]  from main::@2
   (byte) main::len#4 ← phi( main::@2/(byte) main::len#3 )
   (byte) main::idx#2 ← phi( main::@2/(byte) main::idx#3 )
   (struct Setting*) main::setting#5 ← phi( main::@2/(struct Setting*) main::setting#3 )
@@ -56,7 +47,7 @@ main::@7: scope:[main]  from main::@2
   (byte*~) main::$8 ← (byte*~) main::$10 + (const byte) OFFSET_STRUCT_SETTING_ID
   *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*~) main::$8)
   (byte) main::idx#1 ← ++ (byte) main::idx#2
-  to:main::@4
+  to:main::@3
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
@@ -93,8 +84,8 @@ SYMBOL TABLE SSA
 (byte*~) main::$9
 (label) main::@1
 (label) main::@2
+(label) main::@3
 (label) main::@4
-(label) main::@7
 (label) main::@return
 (byte) main::idx
 (byte) main::idx#0
@@ -139,7 +130,7 @@ Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::len#1 (byte) main::len#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$3 [8] if((struct Setting*) main::setting#2<(struct Setting*~) main::$2) goto main::@2
-Simple Condition (bool~) main::$5 [12] if((byte) 0!=*((byte*~) main::$7)) goto main::@4
+Simple Condition (bool~) main::$5 [12] if((byte) 0!=*((byte*~) main::$7)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [1] (byte~) main::$0 ← sizeof  (const to_nomodify struct Setting*) settings
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -147,11 +138,11 @@ Constant (const byte) main::idx#0 = 0
 Constant (const byte) main::$0 = sizeof settings
 Constant (const struct Setting*) main::setting#0 = settings
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [12] if((byte) 0!=*((byte*~) main::$7)) goto main::@4  -- *(main::$9 + OFFSET_STRUCT_SETTING_OFF)
+Converting *(pointer+n) to pointer[n] [12] if((byte) 0!=*((byte*~) main::$7)) goto main::@3  -- *(main::$9 + OFFSET_STRUCT_SETTING_OFF)
 Converting *(pointer+n) to pointer[n] [17] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*~) main::$8)  -- *(main::$10 + OFFSET_STRUCT_SETTING_ID)
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying expression containing zero main::$9 in [10] (byte*~) main::$7 ← (byte*~) main::$9 + (const byte) OFFSET_STRUCT_SETTING_OFF
-Simplifying expression containing zero main::$9 in [12] if((byte) 0!=*((byte*~) main::$9 + (const byte) OFFSET_STRUCT_SETTING_OFF)) goto main::@4
+Simplifying expression containing zero main::$9 in [12] if((byte) 0!=*((byte*~) main::$9 + (const byte) OFFSET_STRUCT_SETTING_OFF)) goto main::@3
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*~) main::$7 and assignment [6] (byte*~) main::$7 ← (byte*~) main::$9
 Eliminating unused variable (byte*~) main::$8 and assignment [11] (byte*~) main::$8 ← (byte*~) main::$10 + (const byte) OFFSET_STRUCT_SETTING_ID
@@ -188,7 +179,7 @@ Constant inlined main::setting#0 = (const to_nomodify struct Setting*) settings
 Constant inlined main::$2 = (const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING
 Constant inlined main::$0 = (byte) 3*(const byte) SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantInlining
-Added new block during phi lifting main::@9(between main::@2 and main::@4)
+Added new block during phi lifting main::@5(between main::@2 and main::@3)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -204,9 +195,7 @@ Coalesced [16] main::idx#6 ← main::idx#5
 Coalesced (already) [17] main::idx#7 ← main::idx#2
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) @2
-Culled Empty Block (label) main::@9
-Renumbering block main::@4 to main::@3
-Renumbering block main::@7 to main::@4
+Culled Empty Block (label) main::@5
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

@@ -1,10 +1,8 @@
-Identified constant variable (void()*) main::f
-Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (volatile byte) idx ← (byte) 0
-  to:@2
+  to:@1
 
 (void()) fn1()
 fn1: scope:[fn1]  from
@@ -15,7 +13,7 @@ fn1::@return: scope:[fn1]  from fn1
   to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   call *((const void()*) main::f) 
   *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
   call *((const void()*) main::f) 
@@ -24,16 +22,16 @@ main: scope:[main]  from @2
 main::@return: scope:[main]  from main
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const nomodify byte*) SCREEN = (byte*)(number) $400
@@ -51,8 +49,8 @@ Replacing constant pointer function [5] call fn1
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::f
 Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -61,8 +59,7 @@ Calls in [main] to fn1:6 fn1:8
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
-Renumbering block @2 to @1
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main

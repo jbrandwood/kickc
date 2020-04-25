@@ -1,6 +1,3 @@
-Fixing pointer array-indexing *((const nomodify word*) SCREEN + (number) 0)
-Culled Empty Block (label) @1
-Culled Empty Block (label) plus::@1
 Calling convention STACK_CALL adding prepare/execute/finalize for (word~) main::$0 ← call plus (number) $1234 (number) $2345 
 Calling convention STACK_CALL replacing param((word) plus::a) with stackidx(word,(const byte) plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param((word) plus::b) with stackidx(word,(const byte) plus::OFFSET_STACK_B)
@@ -11,10 +8,10 @@ Calling convention STACK_CALL adding stack push stackpush(word) ← $2345
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   stackpush(word) ← (number) $1234
   stackpush(word) ← (number) $2345
   callexecute plus 
@@ -39,16 +36,16 @@ plus::@return: scope:[plus]  from plus
   stackidx(word,(const byte) plus::OFFSET_STACK_RETURN) ← (word) plus::return#1
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const nomodify word*) SCREEN = (word*)(number) $400
@@ -104,8 +101,8 @@ Eliminating unused constant (const byte) main::$1
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
@@ -113,8 +110,7 @@ Calls in [main] to plus:7
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
-Renumbering block @2 to @1
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

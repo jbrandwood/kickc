@@ -1,39 +1,34 @@
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) @1
-Culled Empty Block (label) sub1::@1
-Culled Empty Block (label) @2
-Culled Empty Block (label) sub2::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@3
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @3
+main: scope:[main]  from @1
   (volatile byte) main::i ← (byte) 0
   to:main::@1
-main::@1: scope:[main]  from main main::@4
+main::@1: scope:[main]  from main main::@3
   (byte) sub1::i#0 ← (volatile byte) main::i
   call sub1 
   (byte) sub1::return#0 ← (byte) sub1::return#2
-  to:main::@3
-main::@3: scope:[main]  from main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
   (byte) sub1::return#3 ← phi( main::@1/(byte) sub1::return#0 )
   (byte~) main::$0 ← (byte) sub1::return#3
   *((const nomodify byte*) main::SCREEN + (volatile byte) main::i) ← (byte~) main::$0
   (byte) sub2::i#0 ← (volatile byte) main::i
   call sub2 
   (byte) sub2::return#0 ← (byte) sub2::return#2
-  to:main::@4
-main::@4: scope:[main]  from main::@3
-  (byte) sub2::return#3 ← phi( main::@3/(byte) sub2::return#0 )
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  (byte) sub2::return#3 ← phi( main::@2/(byte) sub2::return#0 )
   (byte~) main::$1 ← (byte) sub2::return#3
   *((const nomodify byte*) main::SCREEN+(number) $28 + (volatile byte) main::i) ← (byte~) main::$1
   (volatile byte) main::i ← (volatile byte) main::i + rangenext(0,2)
   (bool~) main::$2 ← (volatile byte) main::i != rangelast(0,2)
   if((bool~) main::$2) goto main::@1
   to:main::@return
-main::@return: scope:[main]  from main::@4
+main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
@@ -50,8 +45,8 @@ sub1::@return: scope:[sub1]  from sub1
   to:@return
 
 (byte()) sub2((byte) sub2::i)
-sub2: scope:[sub2]  from main::@3
-  (byte) sub2::i#1 ← phi( main::@3/(byte) sub2::i#0 )
+sub2: scope:[sub2]  from main::@2
+  (byte) sub2::i#1 ← phi( main::@2/(byte) sub2::i#0 )
   (byte~) sub2::$0 ← (byte) sub2::i#1 + (byte) sub2::i#1
   (byte~) sub2::$1 ← (byte~) sub2::$0 + (byte) sub2::i#1
   (byte) sub2::return#1 ← (byte~) sub2::$1
@@ -61,16 +56,16 @@ sub2::@return: scope:[sub2]  from sub2
   (byte) sub2::return#2 ← (byte) sub2::return#4
   return 
   to:@return
-@3: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@4
-@4: scope:[]  from @3
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @4
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
-(label) @3
-(label) @4
+(label) @1
+(label) @2
 (label) @begin
 (label) @end
 (void()) main()
@@ -78,8 +73,8 @@ SYMBOL TABLE SSA
 (byte~) main::$1
 (bool~) main::$2
 (label) main::@1
+(label) main::@2
 (label) main::@3
-(label) main::@4
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
 (volatile byte) main::i loadstore
@@ -135,8 +130,8 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @4
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
@@ -144,10 +139,7 @@ Calls in [main] to sub1:7 sub2:12
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @4
-Renumbering block @3 to @1
-Renumbering block main::@3 to main::@2
-Renumbering block main::@4 to main::@3
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

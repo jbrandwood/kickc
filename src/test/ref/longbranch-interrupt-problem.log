@@ -1,30 +1,23 @@
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
-Culled Empty Block (label) main::@5
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) main::@6
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@8
-Culled Empty Block (label) @1
-Culled Empty Block (label) irq::@1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (volatile byte) col ← (byte) 0
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
-main::@1: scope:[main]  from main main::@2 main::@7
+main::@1: scope:[main]  from main main::@2 main::@3
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
   (bool~) main::$0 ← (volatile byte) col > (number) $a
   (bool~) main::$1 ← ! (bool~) main::$0
   if((bool~) main::$1) goto main::@1
-  to:main::@7
-main::@7: scope:[main]  from main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@2
   (volatile byte) col ← (number) 0
   to:main::@1
 main::@return: scope:[main]  from main::@1
@@ -38,23 +31,23 @@ irq: scope:[irq]  from
   (bool~) irq::$0 ← (volatile byte) col != (number) 0
   (bool~) irq::$1 ← ! (bool~) irq::$0
   if((bool~) irq::$1) goto irq::@return
-  to:irq::@2
-irq::@2: scope:[irq]  from irq
+  to:irq::@1
+irq::@1: scope:[irq]  from irq
   (volatile byte) col ← ++ (volatile byte) col
   to:irq::@return
-irq::@return: scope:[irq]  from irq irq::@2
+irq::@return: scope:[irq]  from irq irq::@1
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const nomodify byte*) BGCOL = (byte*)(number) $d020
@@ -63,14 +56,14 @@ SYMBOL TABLE SSA
 interrupt(KERNEL_MIN)(void()) irq()
 (bool~) irq::$0
 (bool~) irq::$1
-(label) irq::@2
+(label) irq::@1
 (label) irq::@return
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
 (label) main::@1
 (label) main::@2
-(label) main::@7
+(label) main::@3
 (label) main::@return
 
 Adding number conversion cast (unumber) $a in (bool~) main::$0 ← (volatile byte) col > (number) $a
@@ -108,8 +101,8 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 CALL GRAPH
@@ -117,12 +110,10 @@ Calls in [] to main:2
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
-Renumbering block @2 to @1
 Renumbering block main::@2 to main::@1
-Renumbering block main::@7 to main::@2
-Renumbering block irq::@2 to irq::@1
+Renumbering block main::@3 to main::@2
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end
 

@@ -256,3 +256,11 @@ inline int abs(int x) {
     else
         return x;
 }
+
+// Returns the absolute value of long int x.
+inline long labs(long x) {
+    if(x<0)
+        return -x;
+    else
+        return x;
+}

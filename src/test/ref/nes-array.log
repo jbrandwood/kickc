@@ -1,14 +1,9 @@
 Setting inferred volatile on symbol affected by address-of (signed word~) main::$0 ← call foo (number) 1 &(signed word) main::y1 
 Setting inferred volatile on symbol affected by address-of (signed word~) main::$1 ← call foo (number) 2 &(signed word) main::y2 
-Fixing pointer increment (signed word*) main::SCREEN ← ++ (signed word*) main::SCREEN
-Fixing pointer increment (signed word*) main::SCREEN ← ++ (signed word*) main::SCREEN
-Fixing pointer array-indexing *((const signed word*) wow + (byte) foo::x)
-Culled Empty Block (label) foo::@1
-Culled Empty Block (label) @1
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
-  to:@2
+  to:@1
 
 (signed word()) foo((byte) foo::x , (signed word*) foo::y)
 foo: scope:[foo]  from main main::@1
@@ -25,7 +20,7 @@ foo::@return: scope:[foo]  from foo
   to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from @1
   (signed word*) main::SCREEN#0 ← (signed word*)(number) $400
   (volatile signed word) main::y1 ← (signed word) $1234
   (volatile signed word) main::y2 ← (signed word) $1234
@@ -55,16 +50,16 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
@@ -151,8 +146,8 @@ Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN#0+SIZEOF_SIGNED_WORD)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 CALL GRAPH
 Calls in [] to main:2 
@@ -160,8 +155,7 @@ Calls in [main] to foo:7 foo:11
 
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @3
-Renumbering block @2 to @1
+Culled Empty Block (label) @2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

@@ -18,8 +18,11 @@ import java.util.Map;
  */
 public class PassNRenumberLabels extends Pass2SsaOptimization {
 
-   public PassNRenumberLabels(Program program) {
+   private boolean pass1;
+
+   public PassNRenumberLabels(Program program, boolean pass1) {
       super(program);
+      this.pass1 = pass1;
    }
 
    @Override
@@ -30,10 +33,10 @@ public class PassNRenumberLabels extends Pass2SsaOptimization {
          renumberLabels(scope, renamed);
       }
       ProgramValueIterator.execute(getGraph(), (programValue, currentStmt, stmtIt, currentBlock) -> {
-         Value value = programValue.get();
-         if(value instanceof LabelRef) {
+               Value value = programValue.get();
+               if(value instanceof LabelRef) {
                   LabelRef newLabelRef = renamed.get(value);
-                  if(newLabelRef!=null) {
+                  if(newLabelRef != null) {
                      programValue.set(newLabelRef);
                   }
                }
@@ -56,7 +59,8 @@ public class PassNRenumberLabels extends Pass2SsaOptimization {
                   oldLabels.add(oldLabel);
                   newLabels.add(newLabel);
                   renamed.put((oldLabel).getRef(), newLabel.getRef());
-                  getLog().append("Renumbering block "+oldLabel.getFullName()+" to "+newLabel.getFullName());
+                  if(!pass1)
+                     getLog().append("Renumbering block " + oldLabel.getFullName() + " to " + newLabel.getFullName());
                }
             }
          }

@@ -1,20 +1,13 @@
-Identified constant variable (byte*) screen1
-Identified constant variable (byte*) cols
-Identified constant variable (byte) GREEN
-Identified constant variable (byte) RED
-Culled Empty Block (label) @1
-Culled Empty Block (label) test::@2
-Culled Empty Block (label) test::@4
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*~) $0 ← (const byte*) screen1 + (number) $28
   (byte*) screen2#0 ← (byte*~) $0
-  to:@2
+  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
-  (byte*) screen2#2 ← phi( @2/(byte*) screen2#13 )
+main: scope:[main]  from @1
+  (byte*) screen2#2 ← phi( @1/(byte*) screen2#13 )
   (byte) main::i#0 ← (byte) 0
   (byte) main::a#0 ← (byte) 3
   (byte) test::i#0 ← (byte) main::i#0
@@ -138,30 +131,30 @@ test: scope:[test]  from main main::@1 main::@10 main::@2 main::@3 main::@4 main
   *((byte*) screen2#1 + (byte) test::i#11) ← *((const byte*) ref + (byte) test::i#11)
   (bool~) test::$0 ← *((const byte*) ref + (byte) test::i#11) == (byte) test::a#11
   if((bool~) test::$0) goto test::@1
-  to:test::@3
+  to:test::@2
 test::@1: scope:[test]  from test
   (byte) test::i#12 ← phi( test/(byte) test::i#11 )
   *((const byte*) cols + (byte) test::i#12) ← (const byte) GREEN
   to:test::@return
-test::@3: scope:[test]  from test
+test::@2: scope:[test]  from test
   (byte) test::i#13 ← phi( test/(byte) test::i#11 )
   *((const byte*) cols + (byte) test::i#13) ← (const byte) RED
   to:test::@return
-test::@return: scope:[test]  from test::@1 test::@3
+test::@return: scope:[test]  from test::@1 test::@2
   return 
   to:@return
-@2: scope:[]  from @begin
+@1: scope:[]  from @begin
   (byte*) screen2#13 ← phi( @begin/(byte*) screen2#0 )
   call main 
-  to:@3
-@3: scope:[]  from @2
+  to:@2
+@2: scope:[]  from @1
   to:@end
-@end: scope:[]  from @3
+@end: scope:[]  from @2
 
 SYMBOL TABLE SSA
 (byte*~) $0
+(label) @1
 (label) @2
-(label) @3
 (label) @begin
 (label) @end
 (const byte) GREEN = (byte) 5
@@ -246,7 +239,7 @@ SYMBOL TABLE SSA
 (void()) test((byte) test::i , (byte) test::a)
 (bool~) test::$0
 (label) test::@1
-(label) test::@3
+(label) test::@2
 (label) test::@return
 (byte) test::a
 (byte) test::a#0
@@ -560,8 +553,8 @@ Successful SSA optimization Pass2ConstantSimplification
 Simplifying constant integer increment ++9
 Successful SSA optimization Pass2ConstantSimplification
 Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
 Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -581,10 +574,8 @@ Calls in [main] to test:6 test:8 test:10 test:12 test:14 test:16 test:18 test:20
 
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) @2
 Culled Empty Block (label) main::@11
-Renumbering block @2 to @1
-Renumbering block test::@3 to test::@2
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @end

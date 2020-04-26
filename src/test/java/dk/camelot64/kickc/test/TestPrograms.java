@@ -41,6 +41,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEightQueensRecursive() throws IOException, URISyntaxException {
+      compileAndCompare("examples/eightqueens/eightqueens-recursive.c");
+   }
+
+   @Test
    public void testEightQueens() throws IOException, URISyntaxException {
       compileAndCompare("examples/eightqueens/eightqueens.c");
    }

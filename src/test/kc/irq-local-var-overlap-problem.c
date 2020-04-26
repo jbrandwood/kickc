@@ -16,7 +16,7 @@ const byte CIA_INTERRUPT_CLEAR = $7f;
 void main() {
     asm { sei }
     // Disable CIA 1 Timer IRQ
-    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
+    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $0fd
     *VIC_CONTROL &=$7f;
     *RASTER = $fd;

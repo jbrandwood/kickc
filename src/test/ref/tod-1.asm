@@ -30,8 +30,6 @@
   // The current cursor address
   .label conio_cursor_color = 7
 main: {
-    .label tod_MIN = 9
-    .label tod_HOURS = $a
     // tod_init(TOD_ZERO)
     lda TOD_ZERO
     sta.z tod_init.tod_TENTHS
@@ -41,20 +39,20 @@ main: {
     ldy TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_HOURS
     jsr tod_init
   __b1:
-    // tod_read()
-    jsr tod_read
-    sta.z tod_read.return_MIN
-    // tod = tod_read()
     // gotoxy(0,0)
     lda #0
     jsr gotoxy
-    // tod_str(tod)
+    // tod_read()
+    jsr tod_read
+    sta.z tod_read.return_MIN
+    lda.z tod_read.return_HOURS
+    // tod_str(tod_read())
     sty.z tod_str.tod_TENTHS
     stx.z tod_str.tod_SEC
-    ldy.z tod_MIN
-    ldx.z tod_HOURS
+    ldy.z tod_read.return_MIN
+    tax
     jsr tod_str
-    // cputs(tod_str(tod))
+    // cputs(tod_str(tod_read()))
     jsr cputs
     jmp __b1
 }
@@ -140,7 +138,7 @@ cputc: {
 gotoxy: {
     .label __8 = 7
     .label offset = 7
-    .label __9 = $d
+    .label __9 = $b
     .label __10 = 7
     // if(y>=CONIO_HEIGHT)
     cmp #CONIO_HEIGHT
@@ -195,10 +193,10 @@ gotoxy: {
     rts
 }
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// tod_str(byte zp($b) tod_TENTHS, byte zp($c) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
+// tod_str(byte zp($a) tod_TENTHS, byte zp($d) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
 tod_str: {
-    .label tod_TENTHS = $b
-    .label tod_SEC = $c
+    .label tod_TENTHS = $a
+    .label tod_SEC = $d
     // tod.HOURS>>4
     txa
     lsr
@@ -280,7 +278,7 @@ tod_str: {
 }
 // Read time of day
 tod_read: {
-    .label return_HOURS = $a
+    .label return_HOURS = $d
     .label return_MIN = 9
     // hours = CIA1->TOD_HOURS
     // Reading sequence is important. TOD latches on reading hours until 10ths is read.

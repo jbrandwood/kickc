@@ -22,10 +22,8 @@ void main() {
   printf("\nnumber of queens:%u",QUEENS);
   tod_init(TOD_ZERO);
   queens();
-  struct TIME_OF_DAY tod = tod_read();
-  printf("\ntime: %s",tod_str(tod));
+  printf("\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()));
 }
-
 
 // Generates all valid placements of queens on a NxN board without recursion
 // Works exactly like the recursive solution by generating all legal placements af a queen for a specific row taking into consideration the queens already placed on the rows below 

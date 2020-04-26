@@ -5,6 +5,7 @@
 // This is a recursive solution
 
 #include<stdio.h>
+#include<tod.h>
 
 #define QUEENS 8
 #define PRINT_SOLUTIONS
@@ -18,8 +19,10 @@ unsigned long count = 0;
 void main() {
   printf_cls();
   printf(" - n queens problem using backtracking -");
-  printf("\nNumber of queens:%u",QUEENS);
+  printf("\nnumber of queens:%u",QUEENS);
+  tod_init(TOD_ZERO);
   queen(1);
+  printf("\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()));
 }
  
 // Generates all valid placements of queens on a NxN board recursively
@@ -31,10 +34,13 @@ __stackcall void queen(char row) {
     if(legal(r,column)) {
       //no conflicts so place queen
       board[r]=column; 
-      if(r==QUEENS) 
-        // we are done! Print the board configuration
+      if(r==QUEENS) {
+        // A solution! Print the board configuration
+        count++;
+        #ifdef PRINT_SOLUTIONS
         print(); 
-      else {
+        #endif
+      } else {
         // Perform recussive placement on rows above
         // Push the local vars on the stack (waiting for proper recursion support)
         asm {
@@ -84,7 +90,7 @@ char diff(char a, char b) {
 
 // Print the board with a legal placement. Also increments the solution count.
 void print() {
-  printf("\n#%lu:\n ",++count);
+  printf("\n#%lu:\n ",count);
   for(char i=1;i<=QUEENS;++i)
     printf("%x",i);
   for(char i=1;i<=QUEENS;++i) {

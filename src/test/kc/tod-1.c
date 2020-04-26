@@ -5,8 +5,7 @@
 void main() {
     tod_init(TOD_ZERO);
     while(1) {
-        struct TIME_OF_DAY tod = tod_read();
         gotoxy(0,0);
-        cputs(tod_str(tod));
+        cputs(tod_str(tod_read()));
     }
 }

@@ -41,16 +41,16 @@ char keyboard_matrix_col_bitmask[8] = { %00000001, %00000010, %00000100, %000010
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 void keyboard_init() {
     // Keyboard Matrix Columns Write Mode
-    *CIA1_PORT_A_DDR = $ff;
+    CIA1->PORT_A_DDR = $ff;
     // Keyboard Matrix Columns Read Mode
-    *CIA1_PORT_B_DDR = $00;
+    CIA1->PORT_B_DDR = $00;
 }
 
 // Check if any key is currently pressed on the keyboard matrix
 // Return 0 if no key is pressed and not 0 if any key is pressed
 char keyboard_matrix_any(void) {
-    *CIA1_PORT_A = 0;
-    return ~*CIA1_PORT_B;
+    CIA1->PORT_A = 0;
+    return ~CIA1->PORT_B;
 }
 
 // Read a single row of the keyboard matrix
@@ -59,8 +59,8 @@ char keyboard_matrix_any(void) {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 char keyboard_matrix_read(char rowid) {
-    *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid];
-    char row_pressed_bits = ~*CIA1_PORT_B;
+    CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid];
+    char row_pressed_bits = ~CIA1->PORT_B;
     return row_pressed_bits;
 }
 

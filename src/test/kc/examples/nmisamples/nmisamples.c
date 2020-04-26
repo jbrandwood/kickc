@@ -24,11 +24,11 @@ void main() {
 				sta $d412	    
     }
     asm { sei }
-    *CIA2_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR;
     *KERNEL_NMI = &nmi;
-    *CIA2_TIMER_A = 0x88; // speed
-    *CIA2_INTERRUPT = 0x81;
-    *CIA2_TIMER_A_CONTROL = 0x01;
+    CIA2->TIMER_A = 0x88; // speed
+    CIA2->INTERRUPT = 0x81;
+    CIA2->TIMER_A_CONTROL = 0x01;
     asm { cli }
 }
 

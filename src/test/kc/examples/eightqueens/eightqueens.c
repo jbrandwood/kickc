@@ -5,6 +5,7 @@
 // This is an iterative solution.
 
 #include<stdio.h>
+#include<tod.h>
 
 #define QUEENS 8
 #define PRINT_SOLUTIONS
@@ -18,9 +19,13 @@ unsigned long count = 0;
 void main() {
   printf_cls();
   printf(" - n queens problem using backtracking -");
-  printf("\nNumber of queens:%u",QUEENS);
+  printf("\nnumber of queens:%u",QUEENS);
+  tod_init(TOD_ZERO);
   queens();
+  struct TIME_OF_DAY tod = tod_read();
+  printf("\ntime: %s",tod_str(tod));
 }
+
 
 // Generates all valid placements of queens on a NxN board without recursion
 // Works exactly like the recursive solution by generating all legal placements af a queen for a specific row taking into consideration the queens already placed on the rows below 
@@ -31,8 +36,8 @@ void main() {
 void queens() {
   // The current row where the queen is moving
   char row = 1;
-  while(true) {
-    // Move the queen forward the current row
+  while(1) {
+    // Move the queen forward on the current row
     board[row]++;
     if(board[row]==QUEENS+1) {
       // We moved past the end of the row - reset position and go down to the lower row
@@ -48,19 +53,15 @@ void queens() {
       if(legal(row, board[row])) {
         // position is legal - move up to the next row
         if(row==QUEENS) {
-          // We have a complete legal board - print it!
+          // We have a complete legal board - print it - and move forward on top row!
+          ++count;
           #ifdef PRINT_SOLUTIONS
           print();
           #endif
-          // Move forward on the top row!
-          continue;
         } else {
           // Move up to the next row
           row++;
         }
-      } else {
-        // position is illegal - move forward on the same row
-        continue;        
       }
     }
   }
@@ -84,16 +85,16 @@ char legal(char row,char column) {
 }
 
 // Find the absolute difference between two unsigned chars
-char diff(char a, char b) {
+inline char diff(char a, char b) {
   if(a<b)
     return b-a;
   else
     return a-b;
 }
 
-// Print the board with a legal placement. Also increments the solution count.
+// Print the board with a legal placement.
 void print() {
-  printf("\n#%lu:\n ",++count);
+  printf("\n#%lu:\n ",count);
   for(char i=1;i<=QUEENS;++i)
     printf("%x",i);
   for(char i=1;i<=QUEENS;++i) {

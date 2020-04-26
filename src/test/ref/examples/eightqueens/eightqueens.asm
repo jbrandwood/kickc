@@ -6,11 +6,22 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
+  .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
+  .const OFFSET_STRUCT_TIME_OF_DAY_MIN = 2
+  .const OFFSET_STRUCT_TIME_OF_DAY_HOURS = 3
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
+  .const OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS = $b
+  .const OFFSET_STRUCT_MOS6526_CIA_TOD_MIN = $a
+  .const OFFSET_STRUCT_MOS6526_CIA_TOD_SEC = 9
+  .const OFFSET_STRUCT_MOS6526_CIA_TOD_10THS = 8
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  .label printf_cursor_x = $17
-  .label printf_cursor_y = $18
-  .label printf_cursor_ptr = $19
+  .label printf_cursor_x = $11
+  .label printf_cursor_y = $12
+  .label printf_cursor_ptr = $13
   // The number of found solutions
   .label count = 2
 __bbegin:
@@ -30,6 +41,7 @@ __bbegin:
   jsr main
   rts
 main: {
+    .label tod_MIN = $17
     // printf_cls()
     jsr printf_cls
     // printf(" - n queens problem using backtracking -")
@@ -38,22 +50,375 @@ main: {
     lda #>str
     sta.z printf_str.str+1
     jsr printf_str
-    // printf("\nNumber of queens:%u",QUEENS)
+    // printf("\nnumber of queens:%u",QUEENS)
     lda #<str1
     sta.z printf_str.str
     lda #>str1
     sta.z printf_str.str+1
     jsr printf_str
-    // printf("\nNumber of queens:%u",QUEENS)
+    // printf("\nnumber of queens:%u",QUEENS)
     jsr printf_uint
+    // tod_init(TOD_ZERO)
+    lda TOD_ZERO
+    sta.z tod_init.tod_TENTHS
+    lda TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_SEC
+    sta.z tod_init.tod_SEC
+    ldx TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_MIN
+    ldy TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_HOURS
+    jsr tod_init
     // queens()
     jsr queens
+    // tod_read()
+    jsr tod_read
+    sta.z tod_read.return_MIN
+    // tod = tod_read()
+    lda.z tod_read.return_HOURS
+    // tod_str(tod)
+    sty.z tod_str.tod_TENTHS
+    stx.z tod_str.tod_SEC
+    ldy.z tod_MIN
+    tax
+    jsr tod_str
+    // printf("\ntime: %s",tod_str(tod))
+    lda #<str2
+    sta.z printf_str.str
+    lda #>str2
+    sta.z printf_str.str+1
+    jsr printf_str
+    // printf("\ntime: %s",tod_str(tod))
+    jsr printf_string
     // }
     rts
     str: .text " - n queens problem using backtracking -"
     .byte 0
-    str1: .text @"\nNumber of queens:"
+    str1: .text @"\nnumber of queens:"
     .byte 0
+    str2: .text @"\ntime: "
+    .byte 0
+}
+// Print a string value using a specific format
+// Handles justification and min length 
+printf_string: {
+    // printf_str(str)
+    lda #<tod_buffer
+    sta.z printf_str.str
+    lda #>tod_buffer
+    sta.z printf_str.str+1
+    jsr printf_str
+    // }
+    rts
+}
+// Print a zero-terminated string
+// Handles escape codes such as newline
+// printf_str(byte* zp($d) str)
+printf_str: {
+    .label str = $d
+  __b2:
+    // ch = *str++
+    ldy #0
+    lda (str),y
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    // if(ch==0)
+    cmp #0
+    bne __b3
+    // }
+    rts
+  __b3:
+    // if(ch=='\n')
+    cmp #'\n'
+    beq __b4
+    // printf_char(ch)
+    jsr printf_char
+    jmp __b2
+  __b4:
+    // printf_ln()
+    jsr printf_ln
+    jmp __b2
+}
+// Print a newline
+printf_ln: {
+    .label __0 = $13
+    .label __1 = $13
+    // printf_cursor_ptr - printf_cursor_x
+    sec
+    lda.z __0
+    sbc.z printf_cursor_x
+    sta.z __0
+    bcs !+
+    dec.z __0+1
+  !:
+    // printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
+    lda #$28
+    clc
+    adc.z __1
+    sta.z __1
+    bcc !+
+    inc.z __1+1
+  !:
+    // printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
+    // printf_cursor_x = 0
+    lda #0
+    sta.z printf_cursor_x
+    // printf_cursor_y++;
+    inc.z printf_cursor_y
+    // printf_scroll()
+    jsr printf_scroll
+    // }
+    rts
+}
+// Scroll the entire screen if the cursor is on the last line
+printf_scroll: {
+    .label __4 = $13
+    // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
+    lda #$19
+    cmp.z printf_cursor_y
+    bne __breturn
+    // memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
+    jsr memcpy
+    // memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
+    ldx #' '
+    lda #<$400+$28*$19-$28
+    sta.z memset.str
+    lda #>$400+$28*$19-$28
+    sta.z memset.str+1
+    lda #<$28
+    sta.z memset.num
+    lda #>$28
+    sta.z memset.num+1
+    jsr memset
+    // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
+    lda.z __4
+    sec
+    sbc #<$28
+    sta.z __4
+    lda.z __4+1
+    sbc #>$28
+    sta.z __4+1
+    // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
+    // printf_cursor_y--;
+    dec.z printf_cursor_y
+  __breturn:
+    // }
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($21) str, byte register(X) c, word zp($f) num)
+memset: {
+    .label end = $f
+    .label dst = $21
+    .label num = $f
+    .label str = $21
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
+  !:
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+  __breturn:
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
+}
+// Copy block of memory (forwards)
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+memcpy: {
+    .label destination = $400
+    .label source = $400+$28
+    .const num = $28*$19-$28
+    .label src_end = source+num
+    .label dst = $21
+    .label src = $f
+    lda #<destination
+    sta.z dst
+    lda #>destination
+    sta.z dst+1
+    lda #<source
+    sta.z src
+    lda #>source
+    sta.z src+1
+  __b1:
+    // while(src!=src_end)
+    lda.z src+1
+    cmp #>src_end
+    bne __b2
+    lda.z src
+    cmp #<src_end
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *dst++ = *src++
+    ldy #0
+    lda (src),y
+    sta (dst),y
+    // *dst++ = *src++;
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    inc.z src
+    bne !+
+    inc.z src+1
+  !:
+    jmp __b1
+}
+// Print a single char
+// If the end of the screen is reached scroll it up one char and place the cursor at the
+// printf_char(byte register(A) ch)
+printf_char: {
+    // *(printf_cursor_ptr++) = ch
+    ldy #0
+    sta (printf_cursor_ptr),y
+    // *(printf_cursor_ptr++) = ch;
+    inc.z printf_cursor_ptr
+    bne !+
+    inc.z printf_cursor_ptr+1
+  !:
+    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
+    inc.z printf_cursor_x
+    lda #$28
+    cmp.z printf_cursor_x
+    bne __breturn
+    // printf_cursor_x = 0
+    lda #0
+    sta.z printf_cursor_x
+    // ++printf_cursor_y;
+    inc.z printf_cursor_y
+    // printf_scroll()
+    jsr printf_scroll
+  __breturn:
+    // }
+    rts
+}
+// Convert time of day to a human-readable string "hh:mm:ss:10"
+// tod_str(byte zp($19) tod_TENTHS, byte zp($1a) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
+tod_str: {
+    .label tod_TENTHS = $19
+    .label tod_SEC = $1a
+    // tod.HOURS>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // '0'+(tod.HOURS>>4)
+    clc
+    adc #'0'
+    // tod_buffer[0] = '0'+(tod.HOURS>>4)
+    sta tod_buffer
+    // tod.HOURS&0x0f
+    txa
+    and #$f
+    // '0'+(tod.HOURS&0x0f)
+    clc
+    adc #'0'
+    // tod_buffer[1] = '0'+(tod.HOURS&0x0f)
+    sta tod_buffer+1
+    // tod.MIN>>4
+    tya
+    lsr
+    lsr
+    lsr
+    lsr
+    // '0'+(tod.MIN>>4)
+    clc
+    adc #'0'
+    // tod_buffer[3] = '0'+(tod.MIN>>4)
+    sta tod_buffer+3
+    // tod.MIN&0x0f
+    tya
+    and #$f
+    // '0'+(tod.MIN&0x0f)
+    clc
+    adc #'0'
+    // tod_buffer[4] = '0'+(tod.MIN&0x0f)
+    sta tod_buffer+4
+    // tod.SEC>>4
+    lda.z tod_SEC
+    lsr
+    lsr
+    lsr
+    lsr
+    // '0'+(tod.SEC>>4)
+    clc
+    adc #'0'
+    // tod_buffer[6] = '0'+(tod.SEC>>4)
+    sta tod_buffer+6
+    // tod.SEC&0x0f
+    lda #$f
+    and.z tod_SEC
+    // '0'+(tod.SEC&0x0f)
+    clc
+    adc #'0'
+    // tod_buffer[7] = '0'+(tod.SEC&0x0f)
+    sta tod_buffer+7
+    // tod.TENTHS>>4
+    lda.z tod_TENTHS
+    lsr
+    lsr
+    lsr
+    lsr
+    // '0'+(tod.TENTHS>>4)
+    clc
+    adc #'0'
+    // tod_buffer[9] = '0'+(tod.TENTHS>>4)
+    sta tod_buffer+9
+    // tod.TENTHS&0x0f
+    lda #$f
+    and.z tod_TENTHS
+    // '0'+(tod.TENTHS&0x0f)
+    clc
+    adc #'0'
+    // tod_buffer[10] = '0'+(tod.TENTHS&0x0f)
+    sta tod_buffer+$a
+    // }
+    rts
+}
+// Read time of day
+tod_read: {
+    .label return_HOURS = $18
+    .label return_MIN = $17
+    // hours = CIA1->TOD_HOURS
+    // Reading sequence is important. TOD latches on reading hours until 10ths is read.
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
+    sta.z return_HOURS
+    // mins = CIA1->TOD_MIN
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN
+    // secs = CIA1->TOD_SEC
+    ldx CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC
+    // tenths = CIA1->TOD_10THS
+    ldy CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS
+    // }
+    rts
 }
 // Generates all valid placements of queens on a NxN board without recursion
 // Works exactly like the recursive solution by generating all legal placements af a queen for a specific row taking into consideration the queens already placed on the rows below 
@@ -63,7 +428,7 @@ main: {
 // When all columns on a row is exhausted move back down to the lower level and move forward one position until we are done with the last position on the first row
 queens: {
     // The current row where the queen is moving
-    .label row = $12
+    .label row = $c
     lda #<0
     sta.z count
     sta.z count+1
@@ -88,22 +453,27 @@ queens: {
     jsr legal
     // legal(row, board[row])
     // if(legal(row, board[row]))
-    // check if the current position on row 1-row is legal  
     cmp #0
-    bne __b4
-    jmp __b2
-  __b4:
+    beq __b2
     // if(row==QUEENS)
     // position is legal - move up to the next row
     lda #8
     cmp.z row
-    beq __b5
+    beq __b4
     // row++;
     inc.z row
     jmp __b2
-  __b5:
+  __b4:
+    // ++count;
+    inc.z count
+    bne !+
+    inc.z count+1
+    bne !+
+    inc.z count+2
+    bne !+
+    inc.z count+3
+  !:
     // print()
-    // We have a complete legal board - print it!
     jsr print
     jmp __b2
   __b3:
@@ -123,29 +493,20 @@ queens: {
     // }
     rts
 }
-// Print the board with a legal placement. Also increments the solution count.
+// Print the board with a legal placement.
 print: {
-    .label i = $1b
-    .label i1 = $21
-    .label j = 6
-    // printf("\n#%lu:\n ",++count);
-    inc.z count
-    bne !+
-    inc.z count+1
-    bne !+
-    inc.z count+2
-    bne !+
-    inc.z count+3
-  !:
-    // printf("\n#%lu:\n ",++count)
+    .label i = $b
+    .label i1 = $15
+    .label j = $16
+    // printf("\n#%lu:\n ",count)
     lda #<str
     sta.z printf_str.str
     lda #>str
     sta.z printf_str.str+1
     jsr printf_str
-    // printf("\n#%lu:\n ",++count)
+    // printf("\n#%lu:\n ",count)
     jsr printf_ulong
-    // printf("\n#%lu:\n ",++count)
+    // printf("\n#%lu:\n ",count)
     lda #<str1
     sta.z printf_str.str
     lda #>str1
@@ -259,15 +620,15 @@ printf_uchar: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($d) buffer_sign, byte* zp($13) buffer_digits, byte register(X) format_min_length, byte zp($b) format_justify_left, byte zp($c) format_zero_padding, byte zp($1c) format_upper_case)
+// printf_number_buffer(byte zp($1c) buffer_sign, byte* zp($d) buffer_digits, byte register(X) format_min_length, byte zp($16) format_justify_left, byte zp(6) format_zero_padding, byte zp($17) format_upper_case)
 printf_number_buffer: {
-    .label __19 = $22
-    .label buffer_sign = $d
-    .label padding = 7
-    .label format_zero_padding = $c
-    .label format_justify_left = $b
-    .label buffer_digits = $13
-    .label format_upper_case = $1c
+    .label __19 = $21
+    .label buffer_sign = $1c
+    .label padding = $18
+    .label format_zero_padding = 6
+    .label format_justify_left = $16
+    .label buffer_digits = $d
+    .label format_upper_case = $17
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -376,11 +737,11 @@ printf_number_buffer: {
     rts
 }
 // Print a padding char a number of times
-// printf_padding(byte zp(9) pad, byte zp(8) length)
+// printf_padding(byte zp($1a) pad, byte zp($19) length)
 printf_padding: {
-    .label i = $a
-    .label length = 8
-    .label pad = 9
+    .label i = $1b
+    .label length = $19
+    .label pad = $1a
     lda #0
     sta.z i
   __b1:
@@ -398,222 +759,11 @@ printf_padding: {
     inc.z i
     jmp __b1
 }
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte register(A) ch)
-printf_char: {
-    // *(printf_cursor_ptr++) = ch
-    ldy #0
-    sta (printf_cursor_ptr),y
-    // *(printf_cursor_ptr++) = ch;
-    inc.z printf_cursor_ptr
-    bne !+
-    inc.z printf_cursor_ptr+1
-  !:
-    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
-    inc.z printf_cursor_x
-    lda #$28
-    cmp.z printf_cursor_x
-    bne __breturn
-    // printf_cursor_x = 0
-    lda #0
-    sta.z printf_cursor_x
-    // ++printf_cursor_y;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
-  __breturn:
-    // }
-    rts
-}
-// Scroll the entire screen if the cursor is on the last line
-printf_scroll: {
-    .label __4 = $19
-    // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
-    lda #$19
-    cmp.z printf_cursor_y
-    bne __breturn
-    // memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
-    jsr memcpy
-    // memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
-    ldx #' '
-    lda #<$400+$28*$19-$28
-    sta.z memset.str
-    lda #>$400+$28*$19-$28
-    sta.z memset.str+1
-    lda #<$28
-    sta.z memset.num
-    lda #>$28
-    sta.z memset.num+1
-    jsr memset
-    // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    lda.z __4
-    sec
-    sbc #<$28
-    sta.z __4
-    lda.z __4+1
-    sbc #>$28
-    sta.z __4+1
-    // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    // printf_cursor_y--;
-    dec.z printf_cursor_y
-  __breturn:
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($22) str, byte register(X) c, word zp($15) num)
-memset: {
-    .label end = $15
-    .label dst = $22
-    .label num = $15
-    .label str = $22
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
-    // end = (char*)str + num
-    lda.z end
-    clc
-    adc.z str
-    sta.z end
-    lda.z end+1
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-  __breturn:
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
-// Copy block of memory (forwards)
-// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-memcpy: {
-    .label destination = $400
-    .label source = $400+$28
-    .const num = $28*$19-$28
-    .label src_end = source+num
-    .label dst = $22
-    .label src = $15
-    lda #<destination
-    sta.z dst
-    lda #>destination
-    sta.z dst+1
-    lda #<source
-    sta.z src
-    lda #>source
-    sta.z src+1
-  __b1:
-    // while(src!=src_end)
-    lda.z src+1
-    cmp #>src_end
-    bne __b2
-    lda.z src
-    cmp #<src_end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst++ = *src++
-    ldy #0
-    lda (src),y
-    sta (dst),y
-    // *dst++ = *src++;
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    inc.z src
-    bne !+
-    inc.z src+1
-  !:
-    jmp __b1
-}
-// Print a zero-terminated string
-// Handles escape codes such as newline
-// printf_str(byte* zp($13) str)
-printf_str: {
-    .label str = $13
-  __b2:
-    // ch = *str++
-    ldy #0
-    lda (str),y
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    // if(ch==0)
-    cmp #0
-    bne __b3
-    // }
-    rts
-  __b3:
-    // if(ch=='\n')
-    cmp #'\n'
-    beq __b4
-    // printf_char(ch)
-    jsr printf_char
-    jmp __b2
-  __b4:
-    // printf_ln()
-    jsr printf_ln
-    jmp __b2
-}
-// Print a newline
-printf_ln: {
-    .label __0 = $19
-    .label __1 = $19
-    // printf_cursor_ptr - printf_cursor_x
-    sec
-    lda.z __0
-    sbc.z printf_cursor_x
-    sta.z __0
-    bcs !+
-    dec.z __0+1
-  !:
-    // printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
-    lda #$28
-    clc
-    adc.z __1
-    sta.z __1
-    bcc !+
-    inc.z __1+1
-  !:
-    // printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
-    // printf_cursor_x = 0
-    lda #0
-    sta.z printf_cursor_x
-    // printf_cursor_y++;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
-    // }
-    rts
-}
 // Converts a string to uppercase.
-// strupr(byte* zp($15) str)
+// strupr(byte* zp($f) str)
 strupr: {
-    .label src = $15
-    .label str = $15
+    .label src = $f
+    .label str = $f
   __b1:
     // while(*src)
     ldy #0
@@ -657,11 +807,11 @@ toupper: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($15) str)
+// strlen(byte* zp($f) str)
 strlen: {
-    .label len = $22
-    .label str = $15
-    .label return = $22
+    .label len = $21
+    .label str = $f
+    .label return = $21
     lda #<0
     sta.z len
     sta.z len+1
@@ -691,12 +841,12 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($13) buffer)
+// uctoa(byte register(X) value, byte* zp($d) buffer)
 uctoa: {
     .label digit_value = $1c
-    .label buffer = $13
-    .label digit = $b
-    .label started = $c
+    .label buffer = $d
+    .label digit = $16
+    .label started = 6
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -761,9 +911,9 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($13) buffer, byte register(X) value, byte zp($1c) sub)
+// uctoa_append(byte* zp($d) buffer, byte register(X) value, byte zp($1c) sub)
 uctoa_append: {
-    .label buffer = $13
+    .label buffer = $d
     .label sub = $1c
     ldy #0
   __b1:
@@ -833,13 +983,13 @@ printf_ulong: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($e) value, byte* zp($22) buffer)
+// ultoa(dword zp(7) value, byte* zp($21) buffer)
 ultoa: {
     .const max_digits = $a
     .label digit_value = $1d
-    .label buffer = $22
-    .label digit = $d
-    .label value = $e
+    .label buffer = $21
+    .label digit = $1c
+    .label value = 7
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -927,12 +1077,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($22) buffer, dword zp($e) value, dword zp($1d) sub)
+// ultoa_append(byte* zp($21) buffer, dword zp(7) value, dword zp($1d) sub)
 ultoa_append: {
-    .label buffer = $22
-    .label value = $e
+    .label buffer = $21
+    .label value = 7
     .label sub = $1d
-    .label return = $e
+    .label return = 7
     ldx #0
   __b1:
     // while (value >= sub)
@@ -980,11 +1130,11 @@ ultoa_append: {
 // Checks is a placement of the queen on the board is legal.
 // Checks the passed (row, column) against all queens placed on the board on lower rows.
 // If no conflict for desired position returns 1 otherwise returns 0
-// legal(byte zp($12) row, byte zp($1b) column)
+// legal(byte zp($c) row, byte zp($1b) column)
 legal: {
-    .label __3 = $21
-    .label row = $12
+    .label row = $c
     .label column = $1b
+    .label diff1_return = $b
     ldy #1
   __b1:
     // row-1
@@ -1007,43 +1157,73 @@ legal: {
     beq __b4
     // diff(board[i],column)
     lda board,y
-    ldx.z column
-    jsr diff
-    // diff(board[i],column)
-    sta.z __3
-    // diff(i,row)
+    // if(a<b)
+    cmp.z column
+    bcc diff1___b1
+    // return a-b;
+    sec
+    sbc.z column
+    sta.z diff1_return
+  diff2:
+    // if(a<b)
+    cpy.z row
+    bcc diff2___b1
+    // return a-b;
     tya
-    ldx.z row
-    jsr diff
-    // diff(i,row)
+    sec
+    sbc.z row
+  __b5:
     // if(diff(board[i],column)==diff(i,row))
-    cmp.z __3
+    cmp.z diff1_return
     bne __b3
     jmp __b4
   __b3:
     // for(char i=1;i<=row-1;++i)
     iny
     jmp __b1
-}
-// Find the absolute difference between two unsigned chars
-// diff(byte register(A) a, byte register(X) b)
-diff: {
-    // if(a<b)
-    stx.z $ff
-    cmp.z $ff
-    bcc __b1
-    // return a-b;
-    stx.z $ff
-    sec
-    sbc.z $ff
-    // }
-    rts
-  __b1:
+  diff2___b1:
     // return b-a;
-    sta.z $ff
-    txa
+    tya
+    eor #$ff
     sec
-    sbc.z $ff
+    adc.z row
+    jmp __b5
+  diff1___b1:
+    eor #$ff
+    sec
+    adc.z column
+    sta.z diff1_return
+    jmp diff2
+}
+// Initialize time-of-day clock
+// This uses the MOS6526 CIA#1
+// tod_init(byte zp($15) tod_TENTHS, byte zp($16) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
+tod_init: {
+    .label tod_TENTHS = $15
+    .label tod_SEC = $16
+    // CIA1->TIMER_A_CONTROL |= 0x80
+    // Set 50hz (this assumes PAL!) (bit7=1)
+    lda #$80
+    ora CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA1->TIMER_B_CONTROL &= 0x7f
+    // Writing TOD clock (bit7=0)
+    lda #$7f
+    and CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA1->TOD_HOURS = tod.HOURS
+    // Reset TOD clock
+    // Writing sequence is important. TOD stops when hours is written and starts when 10ths is written.
+    sty CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
+    // CIA1->TOD_MIN = tod.MIN
+    stx CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN
+    // CIA1->TOD_SEC = tod.SEC
+    lda.z tod_SEC
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC
+    // CIA1->TOD_10THS = tod.TENTHS
+    lda.z tod_TENTHS
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS
+    // }
     rts
 }
 // Print an unsigned int using a specific format
@@ -1084,13 +1264,13 @@ printf_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($13) value, byte* zp($15) buffer)
+// utoa(word zp($d) value, byte* zp($f) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $22
-    .label buffer = $15
-    .label digit = $12
-    .label value = $13
+    .label digit_value = $21
+    .label buffer = $f
+    .label digit = $c
+    .label value = $d
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1168,12 +1348,12 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($15) buffer, word zp($13) value, word zp($22) sub)
+// utoa_append(byte* zp($f) buffer, word zp($d) value, word zp($21) sub)
 utoa_append: {
-    .label buffer = $15
-    .label value = $13
-    .label sub = $22
-    .label return = $13
+    .label buffer = $f
+    .label value = $d
+    .label sub = $21
+    .label return = $d
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1238,7 +1418,12 @@ printf_cls: {
   RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
   // Values of decimal digits
   RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
+  // The buffer used by tod_str()
+  tod_buffer: .text "00:00:00:00"
+  .byte 0
   // The board. board[i] holds the column position of the queen on row i. 
   board: .fill $14, 0
   // Buffer used for stringified number being printed
   printf_buffer: .fill SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER, 0
+  // Time of Day 00:00:00:00
+  TOD_ZERO: .byte 0, 0, 0, 0

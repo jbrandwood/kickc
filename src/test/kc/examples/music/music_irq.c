@@ -21,7 +21,7 @@ void main() {
         jsr music.init
     }
     // Disable CIA 1 Timer IRQ
-    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $fd
     *VIC_CONTROL &=$7f;
     *RASTER = $fd;

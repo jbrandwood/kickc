@@ -10,8 +10,8 @@
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
@@ -20,6 +20,7 @@
   .label VIC_BASE = $d000
   .const VIC_SIZE = $30
   .const IRQ_CHANGE_NEXT = $7f
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label irq_idx = 2
 __bbegin:
   // irq_idx = 0
@@ -30,10 +31,10 @@ __bbegin:
 main: {
     // asm
     sei
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=$7f
     // Set raster line to $60
     lda #$7f

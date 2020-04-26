@@ -52,8 +52,8 @@ void menu() {
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_CSEL;
@@ -199,8 +199,8 @@ void mode_stdchar() {
     dtv_control = 0;
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_CSEL;
@@ -250,8 +250,8 @@ void mode_ecmchar() {
     dtv_control = 0;
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3;
     *VIC_CONTROL2 = VIC_CSEL;
@@ -306,8 +306,8 @@ void mode_mcchar() {
     dtv_control = 0;
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_CSEL|VIC_MCM;
@@ -352,8 +352,8 @@ void mode_stdbitmap() {
     dtv_control = 0;
     *DTV_CONTROL = 0;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)BITMAP/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)BITMAP/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_BMM|VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_CSEL;
@@ -408,8 +408,8 @@ void mode_hicolstdchar() {
     dtv_control = DTV_HIGHCOLOR;
     *DTV_CONTROL = DTV_HIGHCOLOR;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_CSEL;
@@ -461,8 +461,8 @@ void mode_hicolecmchar() {
     dtv_control = DTV_HIGHCOLOR;
     *DTV_CONTROL = DTV_HIGHCOLOR;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3;
     *VIC_CONTROL2 = VIC_CSEL;
@@ -517,8 +517,8 @@ void mode_hicolmcchar() {
     dtv_control = DTV_HIGHCOLOR;
     *DTV_CONTROL = DTV_HIGHCOLOR;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000); // Set VIC Bank
     // VIC Graphics Mode
     *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
     *VIC_CONTROL2 = VIC_CSEL|VIC_MCM;

@@ -118,11 +118,11 @@ int main (void)
     makechar();
     start();
 
-    block = *CIA2_PORT_A;
+    block = CIA2->PORT_A;
     char tmp;
     tmp = block & 0xFC;
     tmp |= (char)((((unsigned int)SCREEN1) >> 14) ^ 0x03);
-    *CIA2_PORT_A = tmp;
+    CIA2->PORT_A = tmp;
     v = *VIC_MEMORY;
 
     /* Run the demo until a key was hit */
@@ -140,7 +140,7 @@ int main (void)
     }
 
     *VIC_MEMORY = v;
-    *CIA2_PORT_A = block;
+    CIA2->PORT_A = block;
 
     /* Reset screen colors */
     end();

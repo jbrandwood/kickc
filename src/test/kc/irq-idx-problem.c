@@ -6,7 +6,7 @@ byte* const SCREEN  = $0400;
 void main() {
     asm { sei }
     // Disable CIA 1 Timer IRQ
-    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $60
     *VIC_CONTROL &=$7f;
     *RASTER = $60;

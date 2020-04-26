@@ -5,16 +5,13 @@
   .const KEY_SPACE = $3c
   .label RASTER = $d012
   .label BGCOL = $d021
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
-  // CIA #1 Port A data direction register.
-  .label CIA1_PORT_A_DDR = $dc02
-  // CIA #1 Port B data direction register.
-  .label CIA1_PORT_B_DDR = $dc03
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   .const GREEN = 5
   .const BLUE = 6
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
 main: {
     // keyboard_init()
     jsr keyboard_init
@@ -59,25 +56,25 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // *CIA1_PORT_A_DDR = $ff
+    // CIA1->PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode
     lda #$ff
-    sta CIA1_PORT_A_DDR
-    // *CIA1_PORT_B_DDR = $00
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA1->PORT_B_DDR = $00
     // Keyboard Matrix Columns Read Mode
     lda #0
-    sta CIA1_PORT_B_DDR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
     // }
     rts
 }

@@ -20,10 +20,8 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
-  // CIA #2 Port A data direction register.
-  .label CIA2_PORT_A_DDR = $dd02
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
@@ -45,6 +43,7 @@
   .label DTV_PLANEB_MODULO_HI = $d048
   // Plane with all pixels
   .label CHUNKY = $8000
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
 main: {
     // asm
     sei
@@ -90,14 +89,14 @@ main: {
     sta DTV_PLANEB_MODULO_LO
     // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHUNKY/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHUNKY/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4)
     // Set VIC Bank
     // VIC memory

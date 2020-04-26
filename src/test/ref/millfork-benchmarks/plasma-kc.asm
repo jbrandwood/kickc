@@ -2,8 +2,8 @@
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label VIC_MEMORY = $d018
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   .label SCREEN1 = $e000
   .label SCREEN2 = $e400
   .label CHARSET = $e800
@@ -38,14 +38,14 @@ main: {
     jsr makechar
     // start()
     jsr start
-    // block = *CIA2_PORT_A
-    lda CIA2_PORT_A
+    // block = CIA2->PORT_A
+    lda CIA2
     sta.z block
     // tmp = block & 0xFC
     lda #$fc
     and.z block
-    // *CIA2_PORT_A = tmp
-    sta CIA2_PORT_A
+    // CIA2->PORT_A = tmp
+    sta CIA2
     // v = *VIC_MEMORY
     lda VIC_MEMORY
     sta.z v
@@ -65,9 +65,9 @@ main: {
     // *VIC_MEMORY = v
     lda.z v
     sta VIC_MEMORY
-    // *CIA2_PORT_A = block
+    // CIA2->PORT_A = block
     lda.z block
-    sta CIA2_PORT_A
+    sta CIA2
     // end()
     /* Reset screen colors */
     jsr end

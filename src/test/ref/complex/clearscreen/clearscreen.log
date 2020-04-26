@@ -60,6 +60,8 @@ Adding value simple copy *((byte*)(const struct ProcessingSprite*) PROCESSING+(c
 Adding value simple copy *((byte*)(const struct ProcessingSprite*) PROCESSING+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL + (byte~) startProcessing::$22) ← (byte) startProcessing::spriteCol
 Adding value simple copy *((byte*)(const struct ProcessingSprite*) PROCESSING+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_STATUS + (byte~) startProcessing::$22) ← (const byte) STATUS_NEW
 Adding value simple copy *((byte**)(const struct ProcessingSprite*) PROCESSING+(const byte) OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR + (byte~) startProcessing::$22) ← (byte*) startProcessing::screenPtr
+Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
+Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
 Replacing struct member reference (struct ProcessingChar) main::center.dist with member unwinding reference (byte) main::center_dist
 Replacing struct member reference (struct ProcessingChar) getCharToProcess::closest.dist with member unwinding reference (byte) getCharToProcess::closest_dist
 Replacing struct member reference (struct ProcessingChar) getCharToProcess::closest.dist with member unwinding reference (byte) getCharToProcess::closest_dist
@@ -96,6 +98,7 @@ Replacing struct member reference *((struct ProcessingSprite*) processChars::pro
 Replacing struct member reference *((struct ProcessingSprite*) processChars::processing).y with member unwinding reference *((word*~) processChars::$54)
 Replacing struct member reference *((struct ProcessingSprite*) processChars::processing).vy with member unwinding reference *((word*~) processChars::$55)
 Replacing struct member reference *((struct ProcessingSprite*) processChars::processing).y with member unwinding reference *((word*~) processChars::$56)
+Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA1).INTERRUPT with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Eliminating unused variable with no statement (struct ProcessingChar~) main::$5
 Unwinding list assignment { (byte~) main::$5_x, (byte~) main::$5_y, (byte~) main::$5_dist } ← { (byte) getCharToProcess::return_x, (byte) getCharToProcess::return_y, (byte) getCharToProcess::return_dist }
@@ -1033,7 +1036,7 @@ setupRasterIrq: scope:[setupRasterIrq]  from main::@11
   asm { sei  }
   *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
   *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
-  *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   (bool~) setupRasterIrq::$0 ← (word) setupRasterIrq::raster#1 < (number) $100
   if((bool~) setupRasterIrq::$0) goto setupRasterIrq::@1
   to:setupRasterIrq::@3
@@ -1164,7 +1167,7 @@ SYMBOL TABLE SSA
 (const nomodify byte) BORDER_YPOS_BOTTOM = (byte) $fa
 (const nomodify byte) BORDER_YPOS_TOP = (byte) $32
 (const nomodify byte*) CHARGEN = (byte*)(number) $d000
-(const nomodify byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) COLS = (byte*)(number) $d800
 (const word*) CORDIC_ATAN2_ANGLES_16[(const nomodify byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
@@ -1178,8 +1181,23 @@ SYMBOL TABLE SSA
 (const nomodify byte) IRQ_RASTER = (byte) 1
 (const nomodify byte*) IRQ_STATUS = (byte*)(number) $d019
 (const nomodify byte) LIGHT_BLUE = (byte) $e
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
 (const nomodify byte) NOT_FOUND = (byte) $ff
 (const nomodify byte) NUM_PROCESSING = (byte) 8
+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL = (byte) $a
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID = (byte) 8
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR = (byte) 9
@@ -2225,7 +2243,7 @@ Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant pointer cast (byte*) 56333
+Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
 Simplifying constant pointer cast (void()**) 65534
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
@@ -3489,7 +3507,7 @@ setupRasterIrq: scope:[setupRasterIrq]  from main::@10
   asm { sei  }
   [138] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
   [139] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
-  [140] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  [140] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   to:setupRasterIrq::@1
 setupRasterIrq::@1: scope:[setupRasterIrq]  from setupRasterIrq
   [141] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
@@ -3807,6 +3825,20 @@ irqTop::@return: scope:[irqTop]  from irqTop::@1
 
 
 VARIABLE REGISTER WEIGHTS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
 (byte) ProcessingChar::dist
 (byte) ProcessingChar::x
 (byte) ProcessingChar::y
@@ -4538,8 +4570,8 @@ Target platform is c64basic / MOS6502X
   .const IRQ_RASTER = 1
   // Color Ram
   .label COLS = $d800
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
@@ -4571,6 +4603,7 @@ Target platform is c64basic / MOS6502X
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
@@ -5529,10 +5562,10 @@ setupRasterIrq: {
     // [139] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [140] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [140] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     jmp __b1
     // setupRasterIrq::@1
   __b1:
@@ -6808,7 +6841,7 @@ Statement [130] (byte*~) getCharToProcess::$9 ← (byte*)(void*) SCREEN_COPY#0 +
 Statement [131] *((byte*~) getCharToProcess::$9 + (byte) getCharToProcess::return_x#1) ← (byte) ' ' [ SCREEN_COPY#0 SCREEN_DIST#0 getCharToProcess::return_x#1 getCharToProcess::return_y#1 getCharToProcess::return_dist#1 ] ( main:7::getCharToProcess:28 [ SCREEN_COPY#0 SCREEN_DIST#0 getCharToProcess::return_x#1 getCharToProcess::return_y#1 getCharToProcess::return_dist#1 ] { { getCharToProcess::return_x#0 = getCharToProcess::return_x#1 } { getCharToProcess::return_y#0 = getCharToProcess::return_y#1 } { getCharToProcess::return_dist#0 = getCharToProcess::return_dist#1 } }  ) always clobbers reg byte a 
 Statement [138] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [139] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
-Statement [140] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
+Statement [140] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [141] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [142] *((const nomodify byte*) RASTER) ← <(const nomodify byte) RASTER_IRQ_TOP [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [143] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
@@ -7017,7 +7050,7 @@ Statement [130] (byte*~) getCharToProcess::$9 ← (byte*)(void*) SCREEN_COPY#0 +
 Statement [131] *((byte*~) getCharToProcess::$9 + (byte) getCharToProcess::return_x#1) ← (byte) ' ' [ SCREEN_COPY#0 SCREEN_DIST#0 getCharToProcess::return_x#1 getCharToProcess::return_y#1 getCharToProcess::return_dist#1 ] ( main:7::getCharToProcess:28 [ SCREEN_COPY#0 SCREEN_DIST#0 getCharToProcess::return_x#1 getCharToProcess::return_y#1 getCharToProcess::return_dist#1 ] { { getCharToProcess::return_x#0 = getCharToProcess::return_x#1 } { getCharToProcess::return_y#0 = getCharToProcess::return_y#1 } { getCharToProcess::return_dist#0 = getCharToProcess::return_dist#1 } }  ) always clobbers reg byte a 
 Statement [138] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [139] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
-Statement [140] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
+Statement [140] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [141] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [142] *((const nomodify byte*) RASTER) ← <(const nomodify byte) RASTER_IRQ_TOP [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [143] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:7::setupRasterIrq:26 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
@@ -7264,6 +7297,7 @@ Uplift Scope [main] 302.5: zp[2]:4 [ main::dst#2 main::dst#0 main::dst#1 ] 235.6
 Uplift Scope [] 16.25: zp[2]:48 [ heap_head#5 heap_head#1 ] 0.03: zp[2]:54 [ SCREEN_DIST#0 ] 0.03: zp[2]:52 [ SCREEN_COPY#0 ] 
 Uplift Scope [malloc] 4.4: zp[2]:156 [ malloc::mem#0 ] 
 Uplift Scope [RADIX] 
+Uplift Scope [MOS6526_CIA] 
 Uplift Scope [ProcessingChar] 
 Uplift Scope [ProcessingSprite] 
 Uplift Scope [ProcessingSprite::$0] 
@@ -7285,6 +7319,7 @@ Limited combination testing to 100 combinations of 65536 possible.
 Uplifting [] best 1263507 combination zp[2]:48 [ heap_head#5 heap_head#1 ] zp[2]:54 [ SCREEN_DIST#0 ] zp[2]:52 [ SCREEN_COPY#0 ] 
 Uplifting [malloc] best 1263507 combination zp[2]:156 [ malloc::mem#0 ] 
 Uplifting [RADIX] best 1263507 combination 
+Uplifting [MOS6526_CIA] best 1263507 combination 
 Uplifting [ProcessingChar] best 1263507 combination 
 Uplifting [ProcessingSprite] best 1263507 combination 
 Uplifting [ProcessingSprite::$0] best 1263507 combination 
@@ -7521,8 +7556,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const IRQ_RASTER = 1
   // Color Ram
   .label COLS = $d800
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
@@ -7554,6 +7589,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
@@ -8383,10 +8419,10 @@ setupRasterIrq: {
     // [139] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [140] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [140] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     jmp __b1
     // setupRasterIrq::@1
   __b1:
@@ -9709,23 +9745,23 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Fixing long branch [452] bne __b2 to beq
-Fixing long branch [867] beq __b12 to bne
-Fixing long branch [1210] bne __b1 to beq
-Fixing long branch [230] bne __b3 to beq
-Fixing long branch [236] beq __b8 to bne
-Fixing long branch [497] beq __b11 to bne
-Fixing long branch [767] bpl __b1 to bmi
-Fixing long branch [779] bpl __b4 to bmi
-Fixing long branch [1024] beq __b2 to bne
-Fixing long branch [1084] bne __b4 to beq
-Fixing long branch [1118] bcc __b6 to bcs
-Fixing long branch [1125] bcc __b6 to bcs
-Fixing long branch [1132] bcc __b6 to bcs
-Fixing long branch [1139] bcc __b6 to bcs
-Fixing long branch [1147] bcc __b6 to bcs
-Fixing long branch [1154] bcc __b6 to bcs
-Fixing long branch [1162] bcc __b6 to bcs
+Fixing long branch [453] bne __b2 to beq
+Fixing long branch [868] beq __b12 to bne
+Fixing long branch [1211] bne __b1 to beq
+Fixing long branch [231] bne __b3 to beq
+Fixing long branch [237] beq __b8 to bne
+Fixing long branch [498] beq __b11 to bne
+Fixing long branch [768] bpl __b1 to bmi
+Fixing long branch [780] bpl __b4 to bmi
+Fixing long branch [1025] beq __b2 to bne
+Fixing long branch [1085] bne __b4 to beq
+Fixing long branch [1119] bcc __b6 to bcs
+Fixing long branch [1126] bcc __b6 to bcs
+Fixing long branch [1133] bcc __b6 to bcs
+Fixing long branch [1140] bcc __b6 to bcs
+Fixing long branch [1148] bcc __b6 to bcs
+Fixing long branch [1155] bcc __b6 to bcs
+Fixing long branch [1163] bcc __b6 to bcs
 
 FINAL SYMBOL TABLE
 (const struct ProcessingSprite) $2 = { x: (word) 0, y: (word) 0, vx: (word) 0, vy: (word) 0, id: (byte) 0, ptr: (byte) 0, col: (byte) 0, status: (const byte) STATUS_FREE, screenPtr: (byte*) 0 }
@@ -9740,7 +9776,7 @@ FINAL SYMBOL TABLE
 (const nomodify byte) BORDER_YPOS_BOTTOM = (byte) $fa
 (const nomodify byte) BORDER_YPOS_TOP = (byte) $32
 (const nomodify byte*) CHARGEN = (byte*) 53248
-(const nomodify byte*) CIA1_INTERRUPT = (byte*) 56333
+(const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) COLS = (byte*) 55296
 (const word*) CORDIC_ATAN2_ANGLES_16[(const nomodify byte) CORDIC_ITERATIONS_16]  = kickasm {{ .for (var i=0; i<CORDIC_ITERATIONS_16; i++)
@@ -9753,8 +9789,23 @@ FINAL SYMBOL TABLE
 (const nomodify byte) IRQ_RASTER = (byte) 1
 (const nomodify byte*) IRQ_STATUS = (byte*) 53273
 (const nomodify byte) LIGHT_BLUE = (byte) $e
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
 (const nomodify byte) NOT_FOUND = (byte) $ff
 (const nomodify byte) NUM_PROCESSING = (byte) 8
+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_COL = (byte) $a
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_ID = (byte) 8
 (const byte) OFFSET_STRUCT_PROCESSINGSPRITE_PTR = (byte) 9
@@ -10327,8 +10378,8 @@ Score: 1113354
   .const IRQ_RASTER = 1
   // Color Ram
   .label COLS = $d800
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
@@ -10360,6 +10411,7 @@ Score: 1113354
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
@@ -11177,11 +11229,11 @@ setupRasterIrq: {
     // [139] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [140] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // [140] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // setupRasterIrq::@1
     // *VIC_CONTROL &=0x7f
     // [141] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 

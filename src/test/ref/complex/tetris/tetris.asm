@@ -41,16 +41,12 @@
   .const IRQ_RASTER = 1
   // Color Ram
   .label COLS = $d800
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
-  // CIA#1 Interrupt Status & Control Register
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // CIA#1 Interrupt for reading in ASM
   .label CIA1_INTERRUPT = $dc0d
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
-  // CIA #2 Port A data direction register.
-  .label CIA2_PORT_A_DDR = $dd02
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
@@ -113,6 +109,9 @@
   .const COLLISION_LEFT = 4
   // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label render_screen_showing = $26
   .label score_bcd = $27
@@ -1501,11 +1500,11 @@ keyboard_event_scan: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts
@@ -1625,10 +1624,10 @@ sprites_irq_init: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=0x7f
     // Set raster line
     lda #$7f
@@ -1696,12 +1695,12 @@ render_init: {
     // Initialize the screen line pointers;
     .label li_1 = $22
     .label li_2 = $30
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = toDd00(gfx)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = toDd00(gfx)
     lda #vicSelectGfxBank1_toDd001_return
-    sta CIA2_PORT_A
+    sta CIA2
     // *D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3
     // Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3

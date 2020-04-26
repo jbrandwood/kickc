@@ -9,12 +9,8 @@
   .label SPRITES_ENABLE = $d015
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
-  // CIA #2 Timer A+B Value (32-bit)
-  .label CIA2_TIMER_AB = $dd04
-  // CIA #2 Timer A Control Register
-  .label CIA2_TIMER_A_CONTROL = $dd0e
-  // CIA #2 Timer B Control Register
-  .label CIA2_TIMER_B_CONTROL = $dd0f
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
@@ -24,6 +20,10 @@
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
+  // CIA#2 timer A&B as one single 32-bit value
+  .label CIA2_TIMER_AB = $dd04
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
   .label SCREEN = $400
   .label COS = SIN+$40
   // A single sprite
@@ -422,13 +422,13 @@ mulf8u_prepare: {
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-    // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
-    sta CIA2_TIMER_A_CONTROL
-    // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2_TIMER_B_CONTROL
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
     // *CIA2_TIMER_AB = 0xffffffff
     lda #<$ffffffff
     sta CIA2_TIMER_AB
@@ -438,12 +438,12 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-    // *CIA2_TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2_TIMER_B_CONTROL
-    // *CIA2_TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
     lda #CIA_TIMER_CONTROL_START
-    sta CIA2_TIMER_A_CONTROL
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }

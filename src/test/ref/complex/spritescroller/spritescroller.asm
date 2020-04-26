@@ -24,8 +24,8 @@
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
@@ -38,6 +38,7 @@
   .label SCREEN = $400
   // The high-value table
   .label XMOVEMENT_HI = XMOVEMENT+$100
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
   .const toSpritePtr1_return = SPRITES/$40
@@ -138,10 +139,10 @@ main: {
     // asm
     // Enable the plex IRQ
     sei
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=0x7f
     // Set raster line to 0x00
     lda #$7f

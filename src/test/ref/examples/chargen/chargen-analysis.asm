@@ -6,10 +6,8 @@
   .label PROCPORT = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   .const KEY_F7 = 3
   .const KEY_F1 = 4
   .const KEY_F3 = 5
@@ -65,6 +63,7 @@
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label SCREEN = $400
 main: {
     .label sc = 2
@@ -403,11 +402,11 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts

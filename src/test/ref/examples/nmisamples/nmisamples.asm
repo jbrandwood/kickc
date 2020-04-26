@@ -5,12 +5,10 @@
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label BORDERCOL = $d020
-  // CIA #2 Timer A Value (16-bit)
-  .label CIA2_TIMER_A = $dd04
-  // CIA #2 Interrupt Status & Control Register
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // CIA#2 Interrupt for reading in ASM
   .label CIA2_INTERRUPT = $dd0d
-  // CIA #2 Timer A Control Register
-  .label CIA2_TIMER_A_CONTROL = $dd0e
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves NMI interrupts
@@ -18,6 +16,9 @@
   // The SID volume
   .label SID_VOLUME = $d418
   .const SAMPLE_SIZE = $6100
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .label sample = 2
 __bbegin:
   // sample = SAMPLE
@@ -40,26 +41,26 @@ main: {
     sta $d40b
     sta $d412
     sei
-    // *CIA2_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA2_INTERRUPT
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *KERNEL_NMI = &nmi
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
-    // *CIA2_TIMER_A = 0x88
+    // CIA2->TIMER_A = 0x88
     lda #0
-    sta CIA2_TIMER_A+1
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
     lda #<$88
-    sta CIA2_TIMER_A
-    // *CIA2_INTERRUPT = 0x81
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A
+    // CIA2->INTERRUPT = 0x81
     // speed
     lda #$81
-    sta CIA2_INTERRUPT
-    // *CIA2_TIMER_A_CONTROL = 0x01
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // CIA2->TIMER_A_CONTROL = 0x01
     lda #1
-    sta CIA2_TIMER_A_CONTROL
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // asm
     cli
     // }

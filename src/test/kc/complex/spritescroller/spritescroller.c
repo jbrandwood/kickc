@@ -69,7 +69,7 @@ void main() {
     // Enable the plex IRQ
     asm { sei }
     // Disable CIA 1 Timer IRQ
-    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to 0x00
     *VIC_CONTROL &=0x7f;
     *RASTER = 0x28;

@@ -13,10 +13,8 @@
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
@@ -27,6 +25,7 @@
   .label SCREEN = $400
   // The number of BOBs to render
   .const NUM_BOBS = $10
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label COS = SIN+$40
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
@@ -99,11 +98,11 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts

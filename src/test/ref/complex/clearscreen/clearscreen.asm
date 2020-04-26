@@ -41,8 +41,8 @@
   .const IRQ_RASTER = 1
   // Color Ram
   .label COLS = $d800
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
@@ -74,6 +74,7 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_COL = $a
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
@@ -656,10 +657,10 @@ setupRasterIrq: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=0x7f
     lda #$7f
     and VIC_CONTROL

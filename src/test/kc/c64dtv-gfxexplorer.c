@@ -352,8 +352,8 @@ void gfx_mode() {
     *DTV_PLANEB_MODULO_HI = 0;
 
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000); // Set VIC Bank
     // VIC memory
     *VIC_MEMORY = (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4);
 
@@ -644,8 +644,8 @@ void form_mode() {
     *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400));
     *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400));
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000); // Set VIC Bank
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Mode

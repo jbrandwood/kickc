@@ -4,8 +4,8 @@
 #include <c64.h>
 char* const SCREEN = 0x0400;
 void main() {
-    (*CIA2_PORT_B) &= 0x7f;
+    (CIA2->PORT_B) &= 0x7f;
     asm { lda #0 }
-    char port4Value = *CIA2_PORT_B;
+    char port4Value = CIA2->PORT_B;
     *SCREEN = port4Value;
 }

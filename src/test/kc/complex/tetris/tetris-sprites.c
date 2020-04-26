@@ -46,6 +46,7 @@ volatile char irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3;
 // Counting the 10 IRQs
 volatile char irq_cnt = 0;
 
+
 // Setup the IRQ
 void sprites_irq_init() {
     asm { sei }
@@ -57,7 +58,7 @@ void sprites_irq_init() {
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
     // Disable CIA 1 Timer IRQ
-    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line
     *VIC_CONTROL &=0x7f;
     *RASTER = IRQ_RASTER_FIRST;

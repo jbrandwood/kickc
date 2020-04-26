@@ -30,14 +30,10 @@
   .label VIC_MEMORY = $d018
   // Color Ram
   .label COLS = $d800
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
-  // CIA #2 Port A data direction register.
-  .label CIA2_PORT_A_DDR = $dd02
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
@@ -96,6 +92,8 @@
   .const KEY_1 = $38
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label print_char_cursor = 6
   .label print_line_cursor = 8
 main: {
@@ -137,14 +135,14 @@ menu: {
     // *DTV_CONTROL = 0
     // DTV Graphics Mode
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
@@ -625,11 +623,11 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(Y) rowid)
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,y
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts
@@ -1478,14 +1476,14 @@ mode_hicolmcchar: {
     // *DTV_CONTROL = DTV_HIGHCOLOR
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
@@ -1615,14 +1613,14 @@ mode_hicolecmchar: {
     // *DTV_CONTROL = DTV_HIGHCOLOR
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3
     // Set VIC Bank
     // VIC Graphics Mode
@@ -1751,14 +1749,14 @@ mode_hicolstdchar: {
     // *DTV_CONTROL = DTV_HIGHCOLOR
     lda #DTV_HIGHCOLOR
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
@@ -1868,14 +1866,14 @@ mode_stdbitmap: {
     sta DTV_GRAPHICS_VIC_BANK
     // *DTV_CONTROL = 0
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)BITMAP/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)BITMAP/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^BITMAP/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_BMM|VIC_DEN|VIC_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
@@ -2462,14 +2460,14 @@ mode_mcchar: {
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = 0
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
@@ -2604,14 +2602,14 @@ mode_ecmchar: {
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = 0
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3
     // Set VIC Bank
     // VIC Graphics Mode
@@ -2744,14 +2742,14 @@ mode_stdchar: {
     sta DTV_COLOR_BANK_HI
     // *DTV_CONTROL = 0
     sta DTV_CONTROL
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode

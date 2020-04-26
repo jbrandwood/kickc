@@ -25,8 +25,8 @@
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
@@ -34,6 +34,7 @@
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label BITMAP = $2000
   .label SCREEN = $400
   .label frame_cnt = 8
@@ -176,10 +177,10 @@ init_irq: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL |=$80
     // Set raster line to $100
     lda #$80

@@ -32,18 +32,10 @@
   .label VIC_MEMORY = $d018
   // Color Ram
   .label COLS = $d800
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
-  // CIA #1 Port A data direction register.
-  .label CIA1_PORT_A_DDR = $dc02
-  // CIA #1 Port B data direction register.
-  .label CIA1_PORT_B_DDR = $dc03
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
-  // CIA #2 Port A data direction register.
-  .label CIA2_PORT_A_DDR = $dd02
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
@@ -163,6 +155,9 @@
   .label form_vic_bg3_lo = form_fields_val+$23
   // The number of frames to use for a full blink cycle
   .const FORM_CURSOR_BLINK = $28
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   // Number of form fields
   .const form_fields_cnt = $24
   .label print_line_cursor = 7
@@ -457,14 +452,14 @@ gfx_mode: {
     // *DTV_PLANEB_MODULO_HI = 0
     lda #0
     sta DTV_PLANEB_MODULO_HI
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000)
     // Set VIC Bank bits to output - all others to input
     lda #3^VIC_SCREEN0/$4000
-    sta CIA2_PORT_A
+    sta CIA2
     // get_vic_screen(*form_vic_screen)
     lda form_vic_screen
     jsr get_vic_screen
@@ -820,11 +815,11 @@ keyboard_event_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts
@@ -1167,13 +1162,13 @@ form_mode: {
     // *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400))
     lda #0
     sta DTV_COLOR_BANK_HI
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     // VIC Graphics Bank
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000)
     // Set VIC Bank bits to output - all others to input
-    sta CIA2_PORT_A
+    sta CIA2
     // *DTV_CONTROL = 0
     // Set VIC Bank
     // DTV Graphics Mode
@@ -3146,14 +3141,14 @@ gfx_init_screen0: {
 }
 // Initialize keyboard reading by setting CIA#$ Data Direction Registers
 keyboard_init: {
-    // *CIA1_PORT_A_DDR = $ff
+    // CIA1->PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode
     lda #$ff
-    sta CIA1_PORT_A_DDR
-    // *CIA1_PORT_B_DDR = $00
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA1->PORT_B_DDR = $00
     // Keyboard Matrix Columns Read Mode
     lda #0
-    sta CIA1_PORT_B_DDR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
     // }
     rts
 }

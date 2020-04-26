@@ -11,13 +11,14 @@
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label MUSIC = $1000
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // kickasm
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")
@@ -28,10 +29,10 @@ main: {
     // asm
     sei
     jsr music.init
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=$7f
     // Set raster line to $fd
     lda #$7f

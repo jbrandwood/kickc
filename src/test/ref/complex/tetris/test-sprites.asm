@@ -27,12 +27,12 @@
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // CIA#1 Interrupt for reading in ASM
   .label CIA1_INTERRUPT = $dc0d
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
-  // CIA #2 Port A data direction register.
-  .label CIA2_PORT_A_DDR = $dd02
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
@@ -55,6 +55,8 @@
   .const SPRITES_FIRST_YPOS = $31
   // The line of the first IRQ
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label SIN_SPRITE = $2800
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label render_screen_showing = 5
@@ -94,12 +96,12 @@ main: {
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
     .label xpos = 3
     .label ypos = 2
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = toDd00(gfx)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = toDd00(gfx)
     lda #vicSelectGfxBank1_toDd001_return
-    sta CIA2_PORT_A
+    sta CIA2
     // *D018 = toD018(PLAYFIELD_SCREEN_1, PLAYFIELD_CHARSET)
     lda #toD0181_return
     sta D018
@@ -202,10 +204,10 @@ sprites_irq_init: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=0x7f
     // Set raster line
     lda #$7f

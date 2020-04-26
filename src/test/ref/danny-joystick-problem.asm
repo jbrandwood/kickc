@@ -3,18 +3,19 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // CIA#2 Port B: RS-232
-  .label CIA2_PORT_B = $dd01
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   .label SCREEN = $400
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
 main: {
-    // (*CIA2_PORT_B) &= 0x7f
+    // (CIA2->PORT_B) &= 0x7f
     lda #$7f
-    and CIA2_PORT_B
-    sta CIA2_PORT_B
+    and CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // asm
     lda #0
-    // port4Value = *CIA2_PORT_B
-    lda CIA2_PORT_B
+    // port4Value = CIA2->PORT_B
+    lda CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // *SCREEN = port4Value
     sta SCREEN
     // }

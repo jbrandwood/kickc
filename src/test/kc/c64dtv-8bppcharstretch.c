@@ -33,8 +33,8 @@ void main() {
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;
     // VIC Graphics Bank
-    *CIA2_PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    *CIA2_PORT_A = %00000011 ^ (byte)((word)SCREEN/$4000); // Set VIC Bank
+    CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
+    CIA2->PORT_A = %00000011 ^ (byte)((word)SCREEN/$4000); // Set VIC Bank
     // VIC memory
     *VIC_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((>(((word)SCREEN)&$3fff))/4);
 

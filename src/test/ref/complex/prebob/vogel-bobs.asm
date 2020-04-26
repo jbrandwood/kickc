@@ -5,14 +5,10 @@
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label D018 = $d018
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
-  // CIA #2 Port A data direction register.
-  .label CIA2_PORT_A_DDR = $dd02
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   .const KEY_SPACE = $3c
   // The BASIC screen
   .label SCREEN_BASIC = $400
@@ -31,6 +27,8 @@
   // The number of BOBs to render
   .const NUM_BOBS = $14
   .const SIZEOF_POINTER = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label COS = SIN+$40
   // BOB charset ID of the next glyph to be added
   .label bob_charset_next_id = 9
@@ -62,12 +60,12 @@ main: {
     jsr prepareBobs
     // renderBobInit()
     jsr renderBobInit
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = toDd00(gfx)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = toDd00(gfx)
     lda #vicSelectGfxBank1_toDd001_return
-    sta CIA2_PORT_A
+    sta CIA2
     // *D018 = toD018(BOB_SCREEN, BOB_CHARSET)
     lda #toD0181_return
     sta D018
@@ -187,12 +185,12 @@ main: {
     // while(keyboard_key_pressed(KEY_SPACE))
     cmp #0
     bne __b6
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = toDd00(gfx)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = toDd00(gfx)
     lda #vicSelectGfxBank2_toDd001_return
-    sta CIA2_PORT_A
+    sta CIA2
     // *D018 = toD018(SCREEN_BASIC, CHARSET_BASIC)
     lda #toD0182_return
     sta D018
@@ -219,11 +217,11 @@ keyboard_key_pressed: {
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts

@@ -81,65 +81,51 @@ const char IRQ_LIGHTPEN = %00001000;
 // Color Ram
 char*  const COLS = $d800;
 
-// CIA#1 Port A: keyboard matrix columns and joystick #2
-char*  const CIA1_PORT_A = $dc00;
-// CIA#1 Port B: keyboard matrix rows and joystick #1.
-char*  const CIA1_PORT_B = $dc01;
-// CIA #1 Port A data direction register.
-char*  const CIA1_PORT_A_DDR = $dc02;
-// CIA #1 Port B data direction register.
-char*  const CIA1_PORT_B_DDR = $dc03;
-// CIA #1 Timer A Value
-unsigned int* const CIA1_TIMER_A = $dc04;
-// CIA #1 Timer B Value
-unsigned int* const CIA1_TIMER_B = $dc06;
-// CIA #1 Time-of-day real-time-clock tenth seconds (BCD)
-char*  const CIA1_TOD_10THS = $dc08;
-// CIA #1 Time-of-day real-time-clock seconds (BCD)
-char*  const CIA1_TOD_SEC = $dc09;
-// CIA #1 Time-of-day real-time-clock minutes (BCD)
-char*  const CIA1_TOD_MIN = $dc0a;
-// CIA #1 Time-of-day real-time-clock hours (BCD)
-char*  const CIA1_TOD_HOURS = $dc0b;
-// CIA #1 Serial Shift Register
-char*  const CIA1_SERIAL_SHIFT_OUT = $dc0c;
-// CIA#1 Interrupt Status & Control Register
-char*  const CIA1_INTERRUPT = $dc0d;
-// CIA#1 Timer A Control Register
-char*  const CIA1_TIMER_A_CONTROL = $dc0e;
-// CIA#1 Timer B Control Register
-char*  const CIA1_TIMER_B_CONTROL = $dc0f;
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+struct MOS6526_CIA {
+    // Port A
+    char PORT_A;
+    // Port B
+    char PORT_B;
+    // Port A data direction register.
+    char PORT_A_DDR;
+    // Port B data direction register.
+    char PORT_B_DDR;
+    // Timer A Value
+    unsigned int TIMER_A;
+    // Timer B Value
+    unsigned int TIMER_B;
+    // Time-of-day real-time-clock tenth seconds (BCD)
+    char TOD_10THS;
+    // Time-of-day real-time-clock seconds (BCD)
+    char TOD_SEC;
+    // Time-of-day real-time-clock minutes (BCD)
+    char TOD_MIN;
+    // Time-of-day real-time-clock hours (BCD)
+    char TOD_HOURS;
+    // Serial Shift Register
+    char SERIAL_DATA;
+    // Interrupt Status & Control Register
+    char INTERRUPT;
+    // Timer A Control Register
+    char TIMER_A_CONTROL;
+    // Timer B Control Register
+    char TIMER_B_CONTROL;
+};
 
-// CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-char*  const CIA2_PORT_A = $dd00;
-// CIA#2 Port B: RS-232
-char*  const CIA2_PORT_B = $dd01;
-// CIA #2 Port A data direction register.
-char*  const CIA2_PORT_A_DDR = $dd02;
-// CIA #2 Port B data direction register.
-char*  const CIA2_PORT_B_DDR = $dd03;
-// CIA #2 Timer A+B Value (32-bit)
-unsigned long* const CIA2_TIMER_AB = $dd04;
-// CIA #2 Timer A Value (16-bit)
-unsigned int* const CIA2_TIMER_A = $dd04;
-// CIA #2 Timer B Value (16-bit)
-unsigned int* const CIA2_TIMER_B = $dd06;
-// CIA #2 Time-of-day real-time-clock tenth seconds (BCD)
-char*  const CIA2_TOD_10THS = $dd08;
-// CIA #2 Time-of-day real-time-clock seconds (BCD)
-char*  const CIA2_TOD_SEC = $dd09;
-// CIA #2 Time-of-day real-time-clock minutes (BCD)
-char*  const CIA2_TOD_MIN = $dd0a;
-// CIA #2 Time-of-day real-time-clock hours (BCD)
-char*  const CIA2_TOD_HOURS = $dd0b;
-// CIA #2 Serial Shift Register
-char*  const CIA2_SERIAL_SHIFT_OUT = $dd0c;
-// CIA #2 Interrupt Status & Control Register
-char*  const CIA2_INTERRUPT = $dd0d;
-// CIA #2 Timer A Control Register
-char*  const CIA2_TIMER_A_CONTROL = $dd0e;
-// CIA #2 Timer B Control Register
-char*  const CIA2_TIMER_B_CONTROL = $dd0f;
+// The CIA#1: keyboard matrix, joystick #1/#2
+struct MOS6526_CIA * const CIA1 = 0xdc00;
+
+// The CIA#2: Serial bus, RS-232, VIC memory bank
+struct MOS6526_CIA * const CIA2 = 0xdd00;
+
+// CIA#1 Interrupt for reading in ASM
+char * const CIA1_INTERRUPT = 0xdc0d;
+// CIA#2 Interrupt for reading in ASM
+char * const CIA2_INTERRUPT = 0xdd0d;
+// CIA#2 timer A&B as one single 32-bit value
+unsigned long* const CIA2_TIMER_AB = 0xdd04;
 
 // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
 const char CIA_INTERRUPT_CLEAR = $7f;

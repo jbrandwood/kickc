@@ -14,12 +14,11 @@
   .const KEY_SPACE = $3c
   .label BORDERCOL = $d020
   .label BGCOL = $d021
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CIA1_PORT_B = $dc01
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   .const RED = 2
   .const GREEN = 5
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label SCREEN = $400
 main: {
     // *BORDERCOL = GREEN
@@ -106,11 +105,11 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // *CIA1_PORT_A = keyboard_matrix_row_bitmask[rowid]
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
     lda keyboard_matrix_row_bitmask,x
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // }
     rts

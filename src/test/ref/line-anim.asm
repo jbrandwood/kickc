@@ -17,14 +17,13 @@
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label D018 = $d018
-  // CIA#2 Port A: Serial bus, RS-232, VIC memory bank
-  .label CIA2_PORT_A = $dd00
-  // CIA #2 Port A data direction register.
-  .label CIA2_PORT_A_DDR = $dd02
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   // The number of points
   .const SIZE = 4
   // The delay between pixels
   .const DELAY = 8
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .label BITMAP = $a000
   .label SCREEN = $8800
 main: {
@@ -44,12 +43,12 @@ main: {
     // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011
-    // *CIA2_PORT_A_DDR = %00000011
+    // CIA2->PORT_A_DDR = %00000011
     lda #3
-    sta CIA2_PORT_A_DDR
-    // *CIA2_PORT_A = toDd00(gfx)
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = toDd00(gfx)
     lda #vicSelectGfxBank1_toDd001_return
-    sta CIA2_PORT_A
+    sta CIA2
     // *D018 =  toD018(SCREEN, BITMAP)
     lda #toD0181_return
     sta D018

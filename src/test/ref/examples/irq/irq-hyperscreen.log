@@ -1,5 +1,8 @@
 Resolved forward reference irq_bottom_1 to interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 Resolved forward reference irq_bottom_2 to interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
+Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
+Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
+Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA1).INTERRUPT with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -10,7 +13,7 @@ CONTROL FLOW GRAPH SSA
 main: scope:[main]  from @1
   *((const nomodify byte*) GHOST_BYTE) ← (number) 0
   asm { sei  }
-  *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
   *((const nomodify byte*) RASTER) ← (number) $fa
   *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
@@ -59,13 +62,28 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (const nomodify byte*) BORDERCOL = (byte*)(number) $d020
-(const nomodify byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
+(const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) GHOST_BYTE = (byte*)(number) $3fff
 (const nomodify byte*) IRQ_ENABLE = (byte*)(number) $d01a
 (const nomodify byte) IRQ_RASTER = (byte) 1
 (const nomodify byte*) IRQ_STATUS = (byte*)(number) $d019
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const nomodify byte*) RASTER = (byte*)(number) $d012
 (const nomodify byte) RED = (byte) 2
 (const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
@@ -96,7 +114,7 @@ Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53273
 Simplifying constant pointer cast (byte*) 53274
-Simplifying constant pointer cast (byte*) 56333
+Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 16383
 Simplifying constant integer cast 0
@@ -143,7 +161,7 @@ FINAL CONTROL FLOW GRAPH
 main: scope:[main]  from @1
   [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0
   asm { sei  }
-  [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
   [8] *((const nomodify byte*) RASTER) ← (byte) $fa
   [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
@@ -182,6 +200,20 @@ irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
 
 
 VARIABLE REGISTER WEIGHTS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 (void()) main()
@@ -208,8 +240,8 @@ Target platform is c64basic / MOS6502X
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
@@ -217,6 +249,7 @@ Target platform is c64basic / MOS6502X
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -238,10 +271,10 @@ main: {
     sta GHOST_BYTE
     // asm { sei  }
     sei
-    // [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
@@ -340,7 +373,7 @@ irq_bottom_1: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((const nomodify byte*) RASTER) ← (byte) $fa [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
@@ -359,11 +392,13 @@ Statement [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEY
 Statement [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
+Uplift Scope [MOS6526_CIA] 
 Uplift Scope [main] 
 Uplift Scope [irq_bottom_1] 
 Uplift Scope [irq_bottom_2] 
 Uplift Scope [] 
 
+Uplifting [MOS6526_CIA] best 175 combination 
 Uplifting [main] best 175 combination 
 Uplifting [irq_bottom_1] best 175 combination 
 Uplifting [irq_bottom_2] best 175 combination 
@@ -387,8 +422,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
@@ -396,6 +431,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -417,10 +453,10 @@ main: {
     sta GHOST_BYTE
     // asm { sei  }
     sei
-    // [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
@@ -544,13 +580,28 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const nomodify byte*) BORDERCOL = (byte*) 53280
-(const nomodify byte*) CIA1_INTERRUPT = (byte*) 56333
+(const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) GHOST_BYTE = (byte*) 16383
 (const nomodify byte*) IRQ_ENABLE = (byte*) 53274
 (const nomodify byte) IRQ_RASTER = (byte) 1
 (const nomodify byte*) IRQ_STATUS = (byte*) 53273
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const nomodify byte*) RASTER = (byte*) 53266
 (const nomodify byte) RED = (byte) 2
 (const nomodify byte*) VIC_CONTROL = (byte*) 53265
@@ -585,8 +636,8 @@ Score: 154
   .label IRQ_ENABLE = $d01a
   // Bits for the IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // CIA#1 Interrupt Status & Control Register
-  .label CIA1_INTERRUPT = $dc0d
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
@@ -594,6 +645,7 @@ Score: 154
   .const WHITE = 1
   .const RED = 2
   .label GHOST_BYTE = $3fff
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -609,11 +661,11 @@ main: {
     // asm
     // asm { sei  }
     sei
-    // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [6] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
-    sta CIA1_INTERRUPT
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=$7f
     // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa

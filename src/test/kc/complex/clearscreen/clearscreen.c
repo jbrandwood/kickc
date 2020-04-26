@@ -288,7 +288,7 @@ void setupRasterIrq(unsigned int raster, void()* irqRoutine) {
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
     // Disable CIA 1 Timer IRQ
-    *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR;
+    CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     if(raster<0x100) {
         *VIC_CONTROL &=0x7f;
     } else {

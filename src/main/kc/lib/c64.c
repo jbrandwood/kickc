@@ -22,6 +22,6 @@ inline char toSpritePtr(char*  sprite) {
 
 // Select a specific VIC graphics bank by setting the CIA 2 port A ($dd00) as needed
 inline void vicSelectGfxBank(char*  gfx) {
-    *CIA2_PORT_A_DDR = %00000011;
-    *CIA2_PORT_A = toDd00(gfx);
+    CIA2->PORT_A_DDR = %00000011;
+    CIA2->PORT_A = toDd00(gfx);
 }

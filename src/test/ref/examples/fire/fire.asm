@@ -63,8 +63,14 @@ main: {
     sta.z fillscreen.screen+1
     ldx #YELLOW
     jsr fillscreen
-    // sid_rnd_init()
-    jsr sid_rnd_init
+    // SID->CH3_FREQ = 0xffff
+    lda #<$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
+    lda #>$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
+    lda #SID_CONTROL_NOISE
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // makecharset(CHARSET)
     jsr makecharset
   __b1:
@@ -126,15 +132,15 @@ fire: {
     // for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer)
     lda.z buffer_1+1
     cmp #>BUFFER+$19*$28
-    bne __b7
+    bne sid_rnd1
     lda.z buffer_1
     cmp #<BUFFER+$19*$28
-    bne __b7
+    bne sid_rnd1
     // }
     rts
-  __b7:
-    // sid_rnd()
-    jsr sid_rnd
+  sid_rnd1:
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     // (sid_rnd())/$10
     lsr
     lsr
@@ -200,14 +206,6 @@ fire: {
     inc.z buffer+1
   !:
     jmp __b1
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    // return SID->CH3_OSC;
-    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
-    // }
-    rts
 }
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
 makecharset: {
@@ -370,19 +368,6 @@ makecharset: {
   !:
     jmp __b1
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
-}
-// Initialize SID voice 3 for random number generation
-sid_rnd_init: {
-    // SID->CH3_FREQ = 0xffff
-    lda #<$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
-    lda #>$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
-    // SID->CH3_CONTROL = SID_CONTROL_NOISE
-    lda #SID_CONTROL_NOISE
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
-    // }
-    rts
 }
 // Fill a screen (1000 chars) with a specific char
 // fillscreen(byte* zp($b) screen, byte register(X) fill)

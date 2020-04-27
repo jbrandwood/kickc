@@ -260,8 +260,14 @@ make_plasma_charset: {
     .label i = 6
     .label c = 9
     .label __16 = $1e
-    // sid_rnd_init()
-    jsr sid_rnd_init
+    // SID->CH3_FREQ = 0xffff
+    lda #<$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
+    lda #>$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
+    lda #SID_CONTROL_NOISE
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // print_cls()
     jsr print_cls
     lda #<print_line_cursor
@@ -301,10 +307,10 @@ make_plasma_charset: {
     and.z c
     // if ((c & 0x07) == 0)
     cmp #0
-    bne __b11
+    bne __b10
     // print_char('.')
     jsr print_char
-  __b11:
+  __b10:
     // for (unsigned int c = 0; c < 0x100; ++c)
     inc.z c
     bne !+
@@ -317,7 +323,7 @@ make_plasma_charset: {
   __b5:
     // for (char ii = 0; ii < 8; ++ii)
     cpx #8
-    bcc __b6
+    bcc sid_rnd1
     // c*8
     lda.z c
     asl
@@ -351,33 +357,25 @@ make_plasma_charset: {
     // for ( char i = 0; i < 8; ++i)
     inc.z i
     jmp __b3
-  __b6:
-    // sid_rnd()
-    jsr sid_rnd
+  sid_rnd1:
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     // sid_rnd() & 0xFF
     and #$ff
     sta.z __7
     // if ((sid_rnd() & 0xFF) > s)
     lda.z s
     cmp.z __7
-    bcs __b8
+    bcs __b7
     // b |= bittab[ii]
     tya
     ora bittab,x
     tay
-  __b8:
+  __b7:
     // for (char ii = 0; ii < 8; ++ii)
     inx
     jmp __b5
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    // return SID->CH3_OSC;
-    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
-    // }
-    rts
 }
 // Print a single char
 print_char: {
@@ -403,19 +401,6 @@ print_cls: {
     lda #>print_line_cursor
     sta.z memset.str+1
     jsr memset
-    // }
-    rts
-}
-// Initialize SID voice 3 for random number generation
-sid_rnd_init: {
-    // SID->CH3_FREQ = 0xffff
-    lda #<$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
-    lda #>$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
-    // SID->CH3_CONTROL = SID_CONTROL_NOISE
-    lda #SID_CONTROL_NOISE
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // }
     rts
 }

@@ -197,8 +197,14 @@ __bbegin:
   jsr main
   rts
 main: {
-    // sid_rnd_init()
-    jsr sid_rnd_init
+    // SID->CH3_FREQ = 0xffff
+    lda #<$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
+    lda #>$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
+    lda #SID_CONTROL_NOISE
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // asm
     sei
     // render_init()
@@ -1068,24 +1074,16 @@ play_spawn_current: {
     // while(piece_idx==7)
     lda #7
     cmp.z piece_idx
-    beq __b3
+    beq sid_rnd1
     // }
     rts
-  __b3:
-    // sid_rnd()
-    jsr sid_rnd
+  sid_rnd1:
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     // piece_idx = sid_rnd()&7
     and #7
     sta.z piece_idx
     jmp __b2
-}
-// Get a random number from the SID voice 3,
-// Must be initialized with sid_rnd_init()
-sid_rnd: {
-    // return SID->CH3_OSC;
-    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
-    // }
-    rts
 }
 // Update the score based on the number of lines removed
 // play_update_score(byte register(X) removed)
@@ -1896,19 +1894,6 @@ render_screen_original: {
     lda #$19
     cmp.z y
     bne __b1
-    // }
-    rts
-}
-// Initialize SID voice 3 for random number generation
-sid_rnd_init: {
-    // SID->CH3_FREQ = 0xffff
-    lda #<$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
-    lda #>$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
-    // SID->CH3_CONTROL = SID_CONTROL_NOISE
-    lda #SID_CONTROL_NOISE
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // }
     rts
 }

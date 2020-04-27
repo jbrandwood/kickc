@@ -67,6 +67,11 @@ public class CompileLog {
     */
    private boolean verboseCreateSsa = false;
 
+   /**
+    * Output information about struct unwinding
+    */
+   private boolean verboseStructUnwind = false;
+
    /** Should comments be output as part of the intermediate SSA prints. */
    private boolean verboseComments = false;
 
@@ -141,6 +146,19 @@ public class CompileLog {
 
    public CompileLog verboseStatementSequence() {
       setVerboseStatementSequence(true);
+      return this;
+   }
+
+   public boolean isVerboseStructUnwind() {
+      return verboseStructUnwind;
+   }
+
+   public void setVerboseStructUnwind(boolean verboseStructUnwind) {
+      this.verboseStructUnwind = verboseStructUnwind;
+   }
+
+   public CompileLog verboseStructUnwind() {
+      setVerboseStructUnwind(true);
       return this;
    }
 

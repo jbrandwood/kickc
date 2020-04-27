@@ -6,22 +6,24 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const BLUE = 6
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   .label SCREEN1 = $2800
   .label SCREEN2 = $2c00
   .label CHARSET = $2000
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   .label print_line_cursor = $400
   .label print_char_cursor = $b
   // Plasma state variables
@@ -344,8 +346,8 @@ makecharset: {
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-    // return *SID_VOICE3_OSC;
-    lda SID_VOICE3_OSC
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     // }
     rts
 }
@@ -406,14 +408,14 @@ memset: {
 }
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // *SID_VOICE3_FREQ = $ffff
+    // SID->CH3_FREQ = 0xffff
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // *SID_VOICE3_CONTROL = SID_CONTROL_NOISE
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // }
     rts
 }

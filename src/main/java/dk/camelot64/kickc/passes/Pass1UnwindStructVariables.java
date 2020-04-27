@@ -8,9 +8,10 @@ import dk.camelot64.kickc.model.symbols.StructDefinition;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 
-/** Create unwindings for all unwinding struct variables. The unwinding is a conversion to one variable per member.
+/**
+ * Create unwindings for all unwinding struct variables. The unwinding is a conversion to one variable per member.
  * The unwindings are stored in {@link Program#getStructVariableMemberUnwinding()}
- * */
+ */
 public class Pass1UnwindStructVariables extends Pass1Base {
 
    public Pass1UnwindStructVariables(Program program) {
@@ -49,9 +50,11 @@ public class Pass1UnwindStructVariables extends Pass1Base {
                      Variable memberVariable = Variable.createStructMemberUnwound(variable, member, isParameter);
                      scope.add(memberVariable);
                      variableUnwinding.setMemberUnwinding(member.getLocalName(), memberVariable.getRef());
-                     getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
+                     if(getLog().isVerboseStructUnwind())
+                        getLog().append("Created struct value member variable " + memberVariable.toString(getProgram()));
                   }
-                  getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));
+                  if(getLog().isVerboseStructUnwind())
+                     getLog().append("Converted struct value to member variables " + variable.toString(getProgram()));
                   modified = true;
                }
             }

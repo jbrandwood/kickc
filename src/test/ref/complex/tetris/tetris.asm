@@ -4,6 +4,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -47,8 +51,8 @@
   .label CIA2 = $dd00
   // CIA#1 Interrupt for reading in ASM
   .label CIA1_INTERRUPT = $dc0d
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // The colors of the C64
@@ -73,11 +77,6 @@
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   // Address of the first screen
   .label PLAYFIELD_SCREEN_1 = $400
   // Address of the second screen
@@ -110,6 +109,9 @@
   // Right side collision (cell beyond the right side of the playfield)
   .const COLLISION_RIGHT = 8
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
@@ -1066,16 +1068,24 @@ play_spawn_current: {
     // while(piece_idx==7)
     lda #7
     cmp.z piece_idx
-    beq sid_rnd1
+    beq __b3
     // }
     rts
-  sid_rnd1:
-    // return *SID_VOICE3_OSC;
-    lda SID_VOICE3_OSC
+  __b3:
+    // sid_rnd()
+    jsr sid_rnd
     // piece_idx = sid_rnd()&7
     and #7
     sta.z piece_idx
     jmp __b2
+}
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
+sid_rnd: {
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
+    // }
+    rts
 }
 // Update the score based on the number of lines removed
 // play_update_score(byte register(X) removed)
@@ -1891,14 +1901,14 @@ render_screen_original: {
 }
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // *SID_VOICE3_FREQ = 0xffff
+    // SID->CH3_FREQ = 0xffff
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // *SID_VOICE3_CONTROL = SID_CONTROL_NOISE
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // }
     rts
 }

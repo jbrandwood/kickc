@@ -6,7 +6,6 @@
 
 #include <c64.h>
 #include <print.h>
-#include "sid.c"
 
 char* const SCREEN1 = 0x2800;
 char* const SCREEN2 = 0x2c00;

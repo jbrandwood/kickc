@@ -74,7 +74,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
                   if(structValueSource != null) {
                      final ValueSource memberUnwinding = structValueSource.getMemberUnwinding(structMemberRef.getMemberName(), getProgram(), getScope(), currentStmt, stmtIt, currentBlock);
                      RValue memberSimpleValue = memberUnwinding.getSimpleValue(getScope());
-                     getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + memberSimpleValue.toString(getProgram()));
+                     if(getLog().isVerboseStructUnwind())
+                        getLog().append("Replacing struct member reference " + structMemberRef.toString(getProgram()) + " with member unwinding reference " + memberSimpleValue.toString(getProgram()));
                      programValue.set(memberSimpleValue);
                      modified.set(true);
                   }
@@ -95,7 +96,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
       RValue unwoundLValue = unwindValue(valueSource, call, stmtIt, currentBlock);
       if(unwoundLValue != null && !call.getlValue().equals(unwoundLValue)) {
          call.setlValue((LValue) unwoundLValue);
-         getLog().append("Converted procedure call LValue to member unwinding " + call.toString(getProgram(), false));
+         if(getLog().isVerboseStructUnwind())
+            getLog().append("Converted procedure call LValue to member unwinding " + call.toString(getProgram(), false));
          lvalUnwound = true;
       }
 
@@ -122,13 +124,15 @@ public class Pass1UnwindStructValues extends Pass1Base {
 
       if(anyParameterUnwound) {
          call.setParameters(unwoundParameters);
-         getLog().append("Converted call struct value parameter to member unwinding " + call.toString(getProgram(), false));
+         if(getLog().isVerboseStructUnwind())
+            getLog().append("Converted call struct value parameter to member unwinding " + call.toString(getProgram(), false));
       }
       return (anyParameterUnwound || lvalUnwound);
    }
 
    /**
     * Unwind an LVa.lue to a ValueList if it is unwindable.
+    *
     * @param value The value to unwind
     * @param statement The current statement
     * @param stmtIt Statement iterator
@@ -136,7 +140,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @return The unwound ValueList. null if the value is not unwindable.
     */
    private RValue unwindValue(ValueSource lValueSource, Statement statement, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
-      if(lValueSource==null) {
+      if(lValueSource == null) {
          return null;
       } else if(lValueSource.isSimple()) {
          return lValueSource.getSimpleValue(getScope());
@@ -164,7 +168,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
       RValue unwoundValue = unwindValue(valueSource, statementReturn, stmtIt, currentBlock);
       if(unwoundValue != null && !statementReturn.getValue().equals(unwoundValue)) {
          statementReturn.setValue(unwoundValue);
-         getLog().append("Converted procedure struct return value to member unwinding " + statementReturn.toString(getProgram(), false));
+         if(getLog().isVerboseStructUnwind())
+            getLog().append("Converted procedure struct return value to member unwinding " + statementReturn.toString(getProgram(), false));
          unwound = true;
       }
       return unwound;
@@ -194,7 +199,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
          }
          if(procedureUnwound) {
             procedure.setParameterNames(unwoundParameterNames);
-            getLog().append("Converted procedure struct value parameter to member unwinding " + procedure.toString(getProgram()));
+            if(getLog().isVerboseStructUnwind())
+               getLog().append("Converted procedure struct value parameter to member unwinding " + procedure.toString(getProgram()));
             modified = true;
          }
       }
@@ -252,7 +258,8 @@ public class Pass1UnwindStructValues extends Pass1Base {
          Statement copyStmt = new StatementAssignment(lValueRef, rValueRef, initialAssignment, currentStmt.getSource(), Comment.NO_COMMENTS);
          stmtIt.add(copyStmt);
          stmtIt.next();
-         getLog().append("Adding value simple copy " + copyStmt.toString(getProgram(), false));
+         if(getLog().isVerboseStructUnwind())
+            getLog().append("Adding value simple copy " + copyStmt.toString(getProgram(), false));
          return true;
       } else if(lValueSource.isBulkCopyable() && rValueSource.isBulkCopyable()) {
          // Use bulk unwinding for a struct member that is an array
@@ -267,10 +274,12 @@ public class Pass1UnwindStructValues extends Pass1Base {
          Statement copyStmt = new StatementAssignment(lValueMemberVarRef, rValueBulkUnwinding, initialAssignment, currentStmt.getSource(), Comment.NO_COMMENTS);
          stmtIt.add(copyStmt);
          stmtIt.next();
-         getLog().append("Adding value bulk copy " + copyStmt.toString(getProgram(), false));
+         if(getLog().isVerboseStructUnwind())
+            getLog().append("Adding value bulk copy " + copyStmt.toString(getProgram(), false));
          return true;
       } else if(lValueSource.isUnwindable() && rValueSource.isUnwindable()) {
-         getLog().append("Unwinding value copy " + currentStmt.toString(getProgram(), false));
+         if(getLog().isVerboseStructUnwind())
+            getLog().append("Unwinding value copy " + currentStmt.toString(getProgram(), false));
          for(String memberName : lValueSource.getMemberNames(getScope())) {
             ValueSource lValueSubSource = lValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, stmtIt, currentBlock);
             ValueSource rValueSubSource = rValueSource.getMemberUnwinding(memberName, getProgram(), getScope(), currentStmt, stmtIt, currentBlock);

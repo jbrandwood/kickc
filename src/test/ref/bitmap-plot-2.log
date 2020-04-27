@@ -2,9 +2,6 @@ Resolved forward reference frame_cnt to (volatile byte) frame_cnt
 Resolved forward reference frame_cnt to (volatile byte) frame_cnt
 Resolved forward reference frame_cnt to (volatile byte) frame_cnt
 Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA1).INTERRUPT with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$3 ← call toD018 (const byte*) SCREEN (const byte*) BITMAP 
 
@@ -1005,6 +1002,29 @@ SYMBOL TABLE SSA
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const nomodify dword) PI2_u4f28 = (dword) $6487ed51
 (const nomodify dword) PI_HALF_u4f28 = (dword) $1921fb54
@@ -3316,6 +3336,29 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) bitmap_clear((byte) bitmap_clear::bgcol , (byte) bitmap_clear::fgcol)
 (byte) bitmap_clear::bgcol
 (byte) bitmap_clear::col
@@ -3889,6 +3932,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -3914,8 +3959,6 @@ Target platform is c64basic / MOS6502X
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // The colors of the C64
@@ -6192,6 +6235,7 @@ Uplift Scope [div32u16u] 2,002: zp[2]:214 [ div32u16u::quotient_lo#0 ] 400.4: zp
 Uplift Scope [main] 372.11: zp[1]:8 [ main::r_add#10 main::r_add#12 main::r_add#1 ] 202: zp[2]:69 [ main::$26 ] 202: zp[2]:71 [ main::$30 ] 202: zp[4]:79 [ main::xpos#0 ] 202: zp[2]:85 [ main::$7 ] 202: zp[2]:89 [ main::$27 ] 202: zp[2]:91 [ main::$31 ] 202: zp[4]:99 [ main::ypos#0 ] 202: zp[2]:105 [ main::$11 ] 139.77: zp[2]:2 [ main::idx_x#11 main::idx_x#10 main::idx_x#1 ] 139.63: zp[2]:6 [ main::idx_y#3 main::idx_y#10 main::idx_y#1 ] 101: zp[2]:73 [ main::cos_x#0 ] 101: zp[2]:83 [ main::$28 ] 101: zp[2]:93 [ main::sin_y#0 ] 101: zp[2]:103 [ main::$29 ] 62.04: zp[2]:4 [ main::r#10 main::r#1 ] 50.5: zp[2]:107 [ main::y#0 ] 8.42: zp[2]:87 [ main::x#0 ] 
 Uplift Scope [] 2,200.4: zp[2]:222 [ rem16u#1 ] 3.82: zp[1]:68 [ frame_cnt ] 
 Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6581_SID] 
 Uplift Scope [bitmap_clear] 
 Uplift Scope [init_irq] 
 Uplift Scope [irq] 
@@ -6210,6 +6254,7 @@ Uplifting [div32u16u] best 26768 combination zp[2]:214 [ div32u16u::quotient_lo#
 Uplifting [main] best 26768 combination zp[1]:8 [ main::r_add#10 main::r_add#12 main::r_add#1 ] zp[2]:69 [ main::$26 ] zp[2]:71 [ main::$30 ] zp[4]:79 [ main::xpos#0 ] zp[2]:85 [ main::$7 ] zp[2]:89 [ main::$27 ] zp[2]:91 [ main::$31 ] zp[4]:99 [ main::ypos#0 ] zp[2]:105 [ main::$11 ] zp[2]:2 [ main::idx_x#11 main::idx_x#10 main::idx_x#1 ] zp[2]:6 [ main::idx_y#3 main::idx_y#10 main::idx_y#1 ] zp[2]:73 [ main::cos_x#0 ] zp[2]:83 [ main::$28 ] zp[2]:93 [ main::sin_y#0 ] zp[2]:103 [ main::$29 ] zp[2]:4 [ main::r#10 main::r#1 ] zp[2]:107 [ main::y#0 ] zp[2]:87 [ main::x#0 ] 
 Uplifting [] best 26768 combination zp[2]:222 [ rem16u#1 ] zp[1]:68 [ frame_cnt ] 
 Uplifting [MOS6526_CIA] best 26768 combination 
+Uplifting [MOS6581_SID] best 26768 combination 
 Uplifting [bitmap_clear] best 26768 combination 
 Uplifting [init_irq] best 26768 combination 
 Uplifting [irq] best 26768 combination 
@@ -6321,6 +6366,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -6346,8 +6393,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // The colors of the C64
@@ -8235,6 +8280,29 @@ FINAL SYMBOL TABLE
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const nomodify dword) PI2_u4f28 = (dword) $6487ed51
 (const nomodify dword) PI_HALF_u4f28 = (dword) $1921fb54
@@ -8647,6 +8715,8 @@ Score: 20833
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -8672,8 +8742,6 @@ Score: 20833
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // The colors of the C64

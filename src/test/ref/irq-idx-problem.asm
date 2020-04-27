@@ -2,6 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
   // VIC II IRQ Status Register
@@ -12,8 +14,6 @@
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label SCREEN = $400

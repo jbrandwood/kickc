@@ -1,5 +1,3 @@
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$5 ← call toD018 (const nomodify byte*) SCREEN1 (const nomodify byte*) CHARSET 
 Inlined call (byte~) main::$7 ← call toD018 (const nomodify byte*) SCREEN2 (const nomodify byte*) CHARSET 
@@ -7,6 +5,25 @@ Inlined call (byte~) main::$7 ← call toD018 (const nomodify byte*) SCREEN2 (co
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
+
+(void()) sid_rnd_init()
+sid_rnd_init: scope:[sid_rnd_init]  from make_plasma_charset
+  *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (number) $ffff
+  *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
+  to:sid_rnd_init::@return
+sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
+  return 
+  to:@return
+
+(byte()) sid_rnd()
+sid_rnd: scope:[sid_rnd]  from make_plasma_charset::@7
+  (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC)
+  to:sid_rnd::@return
+sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
+  (byte) sid_rnd::return#3 ← phi( sid_rnd/(byte) sid_rnd::return#0 )
+  (byte) sid_rnd::return#1 ← (byte) sid_rnd::return#3
+  return 
+  to:@return
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main::@7 print_cls
@@ -504,25 +521,6 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_line_cursor#8 ← phi( print_cls::@1/(byte*) print_line_cursor#1 )
   (byte*) print_line_cursor#2 ← (byte*) print_line_cursor#8
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#13
-  return 
-  to:@return
-
-(void()) sid_rnd_init()
-sid_rnd_init: scope:[sid_rnd_init]  from make_plasma_charset
-  *((const nomodify word*) SID_VOICE3_FREQ) ← (number) $ffff
-  *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
-  to:sid_rnd_init::@return
-sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
-  return 
-  to:@return
-
-(byte()) sid_rnd()
-sid_rnd: scope:[sid_rnd]  from make_plasma_charset::@7
-  (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC)
-  to:sid_rnd::@return
-sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
-  (byte) sid_rnd::return#3 ← phi( sid_rnd/(byte) sid_rnd::return#0 )
-  (byte) sid_rnd::return#1 ← (byte) sid_rnd::return#3
   return 
   to:@return
 @4: scope:[]  from @3
@@ -1430,6 +1428,29 @@ SYMBOL TABLE SSA
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (byte) NUM_SQUARES
 (byte) NUM_SQUARES#0
 (byte) NUM_SQUARES#1
@@ -1480,6 +1501,9 @@ SYMBOL TABLE SSA
 (byte) NUM_SQUARES#7
 (byte) NUM_SQUARES#8
 (byte) NUM_SQUARES#9
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -1527,10 +1551,8 @@ SYMBOL TABLE SSA
 (byte*) SCREEN_DIST#7
 (byte*) SCREEN_DIST#8
 (byte*) SCREEN_DIST#9
+(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*)(number) $d400
 (const nomodify byte) SID_CONTROL_NOISE = (byte) $80
-(const nomodify byte*) SID_VOICE3_CONTROL = (byte*)(number) $d412
-(const nomodify word*) SID_VOICE3_FREQ = (word*)(number) $d40e
-(const nomodify byte*) SID_VOICE3_OSC = (byte*)(number) $d41b
 (const to_nomodify byte*) SINTABLE[(number) $200]  = kickasm {{ .for(var i=0;i<$200;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
@@ -2661,6 +2683,7 @@ SYMBOL TABLE SSA
 Fixing inline constructor with init_angle_screen::$13 ← (byte)init_angle_screen::$4 w= (byte)0
 Fixing inline constructor with init_angle_screen::$14 ← (byte)init_angle_screen::$5 w= (byte)0
 Successful SSA optimization Pass2FixInlineConstructors
+Adding number conversion cast (unumber) $ffff in *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (number) $ffff
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) bsearch16u::$5 ← (byte) bsearch16u::num#3 > (number) 0
 Adding number conversion cast (unumber) 1 in (byte~) bsearch16u::$6 ← (byte) bsearch16u::num#4 >> (number) 1
@@ -2693,7 +2716,6 @@ Adding number conversion cast (snumber) 0 in (bool~) atan2_16::$13 ← (signed w
 Adding number conversion cast (unumber) $8000 in (number~) atan2_16::$12 ← (number) $8000 - (word) atan2_16::angle#9
 Adding number conversion cast (unumber) atan2_16::$12 in (number~) atan2_16::$12 ← (unumber)(number) $8000 - (word) atan2_16::angle#9
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) $ffff in *((const nomodify word*) SID_VOICE3_FREQ) ← (number) $ffff
 Adding number conversion cast (unumber) $3e8 in (word) malloc::size#1 ← (number) $3e8
 Adding number conversion cast (unumber) $3e8 in (word) malloc::size#2 ← (number) $3e8
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#1 ← (number) $3e8
@@ -2792,11 +2814,11 @@ Adding number conversion cast (unumber) 8 in (number~) make_plasma_charset::$10 
 Adding number conversion cast (unumber) make_plasma_charset::$10 in (number~) make_plasma_charset::$10 ← (word) make_plasma_charset::c#5 * (unumber)(number) 8
 Adding number conversion cast (unumber) make_plasma_charset::$11 in (number~) make_plasma_charset::$11 ← (unumber~) make_plasma_charset::$10 + (byte) make_plasma_charset::i#3
 Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (unumber)(number) $ffff
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (word*) SQUARES#1 ← (word*)(void*~) init_squares::$1
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast *((const nomodify word*) SID_VOICE3_FREQ) ← (unumber)(number) $ffff
 Inlining cast (word) malloc::size#1 ← (unumber)(number) $3e8
 Inlining cast (byte*) SCREEN_DIST#0 ← (byte*)(void*~) $0
 Inlining cast (word) malloc::size#2 ← (unumber)(number) $3e8
@@ -2806,13 +2828,12 @@ Inlining cast (byte) NUM_SQUARES#3 ← (unumber)(number) $30
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant pointer cast (word*) 54286
-Simplifying constant pointer cast (byte*) 54290
-Simplifying constant pointer cast (byte*) 54299
+Simplifying constant pointer cast (struct MOS6581_SID*) 54272
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 10240
 Simplifying constant pointer cast (byte*) 11264
 Simplifying constant pointer cast (byte*) 40960
+Simplifying constant integer cast $ffff
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -2841,7 +2862,6 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $8000
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3e8
-Simplifying constant integer cast $ffff
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e8
@@ -2889,6 +2909,7 @@ Simplifying constant integer cast 8
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $ffff
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
@@ -2916,7 +2937,6 @@ Finalized unsigned number type (byte) 1
 Finalized signed number type (signed byte) 0
 Finalized unsigned number type (word) $8000
 Finalized unsigned number type (word) $3e8
-Finalized unsigned number type (word) $ffff
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3e8
@@ -3002,16 +3022,17 @@ Inferred type updated to byte in (unumber~) make_plasma_charset::$12 ← (word) 
 Inferred type updated to byte in (unumber~) make_plasma_charset::$7 ← (byte~) make_plasma_charset::$6 & (byte) $ff
 Inferred type updated to word in (unumber~) make_plasma_charset::$10 ← (word) make_plasma_charset::c#5 * (byte) 8
 Inferred type updated to word in (unumber~) make_plasma_charset::$11 ← (word~) make_plasma_charset::$10 + (byte) make_plasma_charset::i#3
-Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [44] (bool~) bsearch16u::$10 ← (signed word) bsearch16u::result#0 != (signed byte) 0 from [43] (bool~) bsearch16u::$9 ← (signed word) bsearch16u::result#0 == (signed byte) 0
-Inversing boolean not [51] (bool~) bsearch16u::$12 ← (signed word) bsearch16u::result#1 <= (signed byte) 0 from [50] (bool~) bsearch16u::$11 ← (signed word) bsearch16u::result#1 > (signed byte) 0
-Inversing boolean not [147] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [146] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
-Inversing boolean not [156] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [155] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
-Inversing boolean not [167] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [166] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
-Inversing boolean not [191] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [190] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
+Inversing boolean not [9] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [8] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
+Inversing boolean not [51] (bool~) bsearch16u::$10 ← (signed word) bsearch16u::result#0 != (signed byte) 0 from [50] (bool~) bsearch16u::$9 ← (signed word) bsearch16u::result#0 == (signed byte) 0
+Inversing boolean not [58] (bool~) bsearch16u::$12 ← (signed word) bsearch16u::result#1 <= (signed byte) 0 from [57] (bool~) bsearch16u::$11 ← (signed word) bsearch16u::result#1 > (signed byte) 0
+Inversing boolean not [154] (bool~) atan2_16::$17 ← (signed word) atan2_16::yi#3 != (signed byte) 0 from [153] (bool~) atan2_16::$16 ← (signed word) atan2_16::yi#3 == (signed byte) 0
+Inversing boolean not [163] (bool~) atan2_16::$11 ← (signed word) atan2_16::x#4 >= (signed byte) 0 from [162] (bool~) atan2_16::$10 ← (signed word) atan2_16::x#4 < (signed byte) 0
+Inversing boolean not [174] (bool~) atan2_16::$19 ← (byte) 0 == (byte) atan2_16::shift#4 from [173] (bool~) atan2_16::$24 ← (byte) 0 != (byte) atan2_16::shift#4
+Inversing boolean not [198] (bool~) atan2_16::$14 ← (signed word) atan2_16::y#4 >= (signed byte) 0 from [197] (bool~) atan2_16::$13 ← (signed word) atan2_16::y#4 < (signed byte) 0
 Inversing boolean not [507] (bool~) make_plasma_charset::$14 ← (byte~) make_plasma_charset::$12 != (byte) 0 from [506] (bool~) make_plasma_charset::$13 ← (byte~) make_plasma_charset::$12 == (byte) 0
 Inversing boolean not [519] (bool~) make_plasma_charset::$9 ← (byte~) make_plasma_charset::$7 <= (byte) make_plasma_charset::s#1 from [518] (bool~) make_plasma_charset::$8 ← (byte~) make_plasma_charset::$7 > (byte) make_plasma_charset::s#1
 Successful SSA optimization Pass2UnaryNotSimplification
+Alias sid_rnd::return#0 = sid_rnd::return#3 sid_rnd::return#1 
 Alias memset::return#0 = memset::str#2 memset::return#4 memset::return#1 
 Alias memset::str#3 = memset::str#4 
 Alias memset::num#2 = memset::num#3 
@@ -3091,7 +3112,6 @@ Alias SQUARES#0 = SQUARES#47 SQUARES#45 SQUARES#42 SQUARES#37 SQUARES#34 SQUARES
 Alias print_line_cursor#0 = print_screen#0 print_char_cursor#0 print_line_cursor#34 print_char_cursor#41 print_screen#12 print_line_cursor#30 print_char_cursor#37 print_screen#11 print_line_cursor#27 print_char_cursor#35 print_screen#10 print_line_cursor#24 print_char_cursor#32 print_screen#9 print_line_cursor#18 print_char_cursor#25 print_screen#8 
 Alias print_char_cursor#1 = print_char_cursor#12 print_char_cursor#2 
 Alias print_line_cursor#1 = print_screen#2 print_screen#1 print_char_cursor#3 print_line_cursor#8 print_char_cursor#13 print_line_cursor#2 print_char_cursor#4 
-Alias sid_rnd::return#0 = sid_rnd::return#3 sid_rnd::return#1 
 Alias malloc::return#3 = malloc::return#7 
 Alias heap_head#16 = heap_head#5 
 Alias malloc::return#4 = malloc::return#8 
@@ -3398,22 +3418,22 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) print_line_cursor#12 (byte*) print_line_cursor#0
 Identical Phi Values (byte*) make_plasma_charset::charset#10 (byte*) make_plasma_charset::charset#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memset::$1 [2] if((word) memset::num#2<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) bsearch16u::$5 [22] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@5
-Simple Condition (bool~) bsearch16u::$10 [30] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@7
-Simple Condition (bool~) bsearch16u::$0 [32] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
-Simple Condition (bool~) bsearch16u::$12 [34] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@8
-Simple Condition (bool~) init_squares::$2 [59] if((byte) init_squares::i#2<(byte) NUM_SQUARES#3) goto init_squares::@2
-Simple Condition (bool~) atan2_16::$0 [84] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
-Simple Condition (bool~) atan2_16::$5 [88] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
-Simple Condition (bool~) atan2_16::$17 [95] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11
-Simple Condition (bool~) atan2_16::$11 [99] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
-Simple Condition (bool~) atan2_16::$18 [102] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14
-Simple Condition (bool~) atan2_16::$19 [107] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17
-Simple Condition (bool~) atan2_16::$20 [110] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18
-Simple Condition (bool~) atan2_16::$21 [124] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@10
-Simple Condition (bool~) atan2_16::$14 [127] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
+Simple Condition (bool~) memset::$1 [7] if((word) memset::num#2<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$3 [14] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
+Simple Condition (bool~) bsearch16u::$5 [27] if((byte) bsearch16u::num#3>(byte) 0) goto bsearch16u::@5
+Simple Condition (bool~) bsearch16u::$10 [35] if((signed word) bsearch16u::result#0!=(signed byte) 0) goto bsearch16u::@7
+Simple Condition (bool~) bsearch16u::$0 [37] if(*((word*) bsearch16u::items#2)<=(word) bsearch16u::key#0) goto bsearch16u::@1
+Simple Condition (bool~) bsearch16u::$12 [39] if((signed word) bsearch16u::result#0<=(signed byte) 0) goto bsearch16u::@8
+Simple Condition (bool~) init_squares::$2 [64] if((byte) init_squares::i#2<(byte) NUM_SQUARES#3) goto init_squares::@2
+Simple Condition (bool~) atan2_16::$0 [89] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@1
+Simple Condition (bool~) atan2_16::$5 [93] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@4
+Simple Condition (bool~) atan2_16::$17 [100] if((signed word) atan2_16::yi#3!=(signed byte) 0) goto atan2_16::@11
+Simple Condition (bool~) atan2_16::$11 [104] if((signed word) atan2_16::x#0>=(signed byte) 0) goto atan2_16::@7
+Simple Condition (bool~) atan2_16::$18 [107] if((byte) atan2_16::shift#2>=(byte) 2) goto atan2_16::@14
+Simple Condition (bool~) atan2_16::$19 [112] if((byte) 0==(byte) atan2_16::shift#2) goto atan2_16::@17
+Simple Condition (bool~) atan2_16::$20 [115] if((signed word) atan2_16::yi#3>=(signed byte) 0) goto atan2_16::@18
+Simple Condition (bool~) atan2_16::$21 [129] if((byte) atan2_16::i#1!=rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@10
+Simple Condition (bool~) atan2_16::$14 [132] if((signed word) atan2_16::y#0>=(signed byte) 0) goto atan2_16::@8
 Simple Condition (bool~) doplasma::$3 [221] if((byte) doplasma::x#1!=rangelast(0,$27)) goto doplasma::@2
 Simple Condition (bool~) doplasma::$4 [227] if((byte) doplasma::y#1!=rangelast(0,$19)) goto doplasma::@1
 Simple Condition (bool~) init_angle_screen::$2 [240] if((byte) init_angle_screen::x#2<=(byte) $13) goto init_angle_screen::@3
@@ -3428,10 +3448,10 @@ Simple Condition (bool~) make_plasma_charset::$14 [337] if((byte~) make_plasma_c
 Simple Condition (bool~) make_plasma_charset::$5 [340] if((byte) make_plasma_charset::ii#2<(byte) 8) goto make_plasma_charset::@7
 Simple Condition (bool~) make_plasma_charset::$9 [346] if((byte~) make_plasma_charset::$7<=(byte) make_plasma_charset::s#0) goto make_plasma_charset::@9
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [124] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@12
+Negating conditional jump and destination [129] if((byte) atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@12
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [39] (byte~) bsearch16u::$15 ← (byte) 1 * (const byte) SIZEOF_WORD
-Constant right-side identified [42] (byte~) bsearch16u::$16 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [44] (byte~) bsearch16u::$15 ← (byte) 1 * (const byte) SIZEOF_WORD
+Constant right-side identified [47] (byte~) bsearch16u::$16 ← (byte) 1 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) heap_head#0 = HEAP_TOP
 Constant (const byte) bsearch16u::$15 = 1*SIZEOF_WORD
@@ -3484,8 +3504,8 @@ Constant value identified (word)main::toD0182_gfx#0 in [200] (byte~) main::toD01
 Successful SSA optimization Pass2ConstantValues
 if() condition always true - replacing block destination [176] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [122] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
-Resolved ranged comparison value [124] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@12 to (const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
+Resolved ranged next value [127] atan2_16::i#1 ← ++ atan2_16::i#2 to ++
+Resolved ranged comparison value [129] if(atan2_16::i#1==rangelast(0,CORDIC_ITERATIONS_16-1)) goto atan2_16::@12 to (const nomodify byte) CORDIC_ITERATIONS_16-(byte) 1+(number) 1
 Resolved ranged next value [219] doplasma::x#1 ← ++ doplasma::x#2 to ++
 Resolved ranged comparison value [221] if(doplasma::x#1!=rangelast(0,$27)) goto doplasma::@2 to (number) $28
 Resolved ranged next value [225] doplasma::y#1 ← ++ doplasma::y#4 to ++
@@ -3498,7 +3518,7 @@ Rewriting conditional comparison [240] if((byte) init_angle_screen::x#2<=(byte) 
 Rewriting conditional comparison [291] if((byte) init_dist_screen::x#2<=(byte) $13) goto init_dist_screen::@6
 De-inlining pointer[w] to *(pointer+w)   [349] *((const byte*) make_plasma_charset::charset#0 + (word~) make_plasma_charset::$11) ← (byte) make_plasma_charset::b#2
 Successful SSA optimization Pass2DeInlineWordDerefIdx
-Eliminating unused variable (void*) memset::return#2 and assignment [104] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#2 and assignment [109] (void*) memset::return#2 ← (void*) memset::str#3
 Eliminating unused variable (void*) memset::return#3 and assignment [125] (void*) memset::return#3 ← (void*) memset::str#3
 Eliminating unused constant (const byte) NUM_SQUARES#0
 Eliminating unused constant (const word*) SQUARES#0
@@ -3537,7 +3557,7 @@ Finalized unsigned number type (byte) $d
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $d
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [34] (word) malloc::size#0 ← (const byte) NUM_SQUARES#3 * (const byte) SIZEOF_WORD
+Constant right-side identified [39] (word) malloc::size#0 ← (const byte) NUM_SQUARES#3 * (const byte) SIZEOF_WORD
 Constant right-side identified [126] (word~) main::toD0181_$0 ← (const word) main::toD0181_$7 & (word) $3fff
 Constant right-side identified [129] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
 Constant right-side identified [135] (word~) main::toD0182_$0 ← (const word) main::toD0182_$7 & (word) $3fff
@@ -3575,29 +3595,29 @@ Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::toD0181_return#0 = main::toD0181_$2|main::toD0181_$5
 Constant (const byte) main::toD0182_return#0 = main::toD0182_$2|main::toD0182_$5
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [2] (byte*~) memset::$4 ← (byte*)(void*) memset::str#3 keeping memset::str#3
-Inlining Noop Cast [4] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
-Inlining Noop Cast [13] (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0 keeping malloc::mem#0
-Inlining Noop Cast [20] (signed word~) bsearch16u::$17 ← (signed word)(word) bsearch16u::key#0 keeping bsearch16u::key#0
-Inlining Noop Cast [21] (signed word~) bsearch16u::$18 ← (signed word)*((word*) bsearch16u::pivot#0) keeping *(bsearch16u::pivot#0)
+Inlining Noop Cast [7] (byte*~) memset::$4 ← (byte*)(void*) memset::str#3 keeping memset::str#3
+Inlining Noop Cast [9] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
+Inlining Noop Cast [18] (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0 keeping malloc::mem#0
+Inlining Noop Cast [25] (signed word~) bsearch16u::$17 ← (signed word)(word) bsearch16u::key#0 keeping bsearch16u::key#0
+Inlining Noop Cast [26] (signed word~) bsearch16u::$18 ← (signed word)*((word*) bsearch16u::pivot#0) keeping *(bsearch16u::pivot#0)
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [35] (void*) malloc::return#2 ← (void*)(byte*) malloc::mem#0 keeping malloc::mem#0
+Inlining Noop Cast [40] (void*) malloc::return#2 ← (void*)(byte*) malloc::mem#0 keeping malloc::mem#0
 Inlining Noop Cast [110] (void*) malloc::return#3 ← (void*)(byte*) malloc::mem#0 keeping malloc::mem#0
 Inlining Noop Cast [114] (void*) malloc::return#4 ← (void*)(byte*) malloc::mem#0 keeping malloc::mem#0
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [37] (word*) SQUARES#1 ← (word*)(void*~) init_squares::$1 keeping SQUARES#1
+Inlining Noop Cast [42] (word*) SQUARES#1 ← (word*)(void*~) init_squares::$1 keeping SQUARES#1
 Inlining Noop Cast [112] (byte*) SCREEN_DIST#0 ← (byte*)(void*~) $0 keeping SCREEN_DIST#0
 Inlining Noop Cast [116] (byte*) SCREEN_ANGLE#0 ← (byte*)(void*~) $1 keeping SCREEN_ANGLE#0
 Inlining Noop Cast [155] (signed word) init_angle_screen::xw#0 ← (signed word)(word~) init_angle_screen::$13 keeping init_angle_screen::xw#0
 Inlining Noop Cast [158] (signed word) init_angle_screen::yw#0 ← (signed word)(word~) init_angle_screen::$14 keeping init_angle_screen::yw#0
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [18] (byte~) bsearch16u::$14 ← (byte~) bsearch16u::$6 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [43] (byte~) init_squares::$3 ← (byte) init_squares::i#2 * (byte) 2
-Rewriting multiplication to use shift [49] (byte~) sqr::$0 ← (byte) sqr::val#2 * (const byte) SIZEOF_WORD
-Rewriting division to use shift [58] (word~) sqrt::$1 ← (word~) sqrt::$2 / (const byte) SIZEOF_WORD
-Rewriting division to use shift [70] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 / (byte) 2
-Rewriting multiplication to use shift [84] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [88] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [23] (byte~) bsearch16u::$14 ← (byte~) bsearch16u::$6 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [48] (byte~) init_squares::$3 ← (byte) init_squares::i#2 * (byte) 2
+Rewriting multiplication to use shift [54] (byte~) sqr::$0 ← (byte) sqr::val#2 * (const byte) SIZEOF_WORD
+Rewriting division to use shift [63] (word~) sqrt::$1 ← (word~) sqrt::$2 / (const byte) SIZEOF_WORD
+Rewriting division to use shift [75] (word) atan2_16::angle#1 ← (word) atan2_16::angle#6 / (byte) 2
+Rewriting multiplication to use shift [89] (byte~) atan2_16::$22 ← (byte) atan2_16::i#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [93] (byte~) atan2_16::$23 ← (byte) atan2_16::i#2 * (const byte) SIZEOF_WORD
 Rewriting multiplication to use shift [152] (byte~) init_angle_screen::$3 ← (byte) init_angle_screen::x#2 * (byte) 2
 Rewriting multiplication to use shift [156] (byte~) init_angle_screen::$5 ← (byte) init_angle_screen::y#5 * (byte) 2
 Rewriting multiplication to use shift [183] (byte) init_dist_screen::y2#0 ← (byte) init_dist_screen::y#10 * (byte) 2
@@ -3690,7 +3710,7 @@ Constant inlined heap_head#0 = (const byte*) HEAP_TOP
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (word) memset::num#2 (word) $3e8
 Successful SSA optimization Pass2IdenticalPhiElimination
-if() condition always false - eliminating [1] if((word) $3e8<=(byte) 0) goto memset::@1
+if() condition always false - eliminating [6] if((word) $3e8<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Added new block during phi lifting bsearch16u::@11(between bsearch16u::@7 and bsearch16u::@8)
 Added new block during phi lifting atan2_16::@22(between atan2_16::@19 and atan2_16::@10)
@@ -4101,7 +4121,7 @@ make_plasma_charset::@8: scope:[make_plasma_charset]  from make_plasma_charset::
 
 (byte()) sid_rnd()
 sid_rnd: scope:[sid_rnd]  from make_plasma_charset::@6
-  [85] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC)
+  [85] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC)
   to:sid_rnd::@return
 sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
   [86] return 
@@ -4127,8 +4147,8 @@ print_cls::@return: scope:[print_cls]  from print_cls
 
 (void()) sid_rnd_init()
 sid_rnd_init: scope:[sid_rnd_init]  from make_plasma_charset
-  [93] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff
-  [94] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
+  [93] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff
+  [94] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
   to:sid_rnd_init::@return
 sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
   [95] return 
@@ -4486,6 +4506,29 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (byte) NUM_SQUARES
 (byte*) SCREEN_ANGLE
 (void*) SCREEN_ANGLE#0 0.05405405405405406
@@ -5099,25 +5142,27 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   // Plasma charset
   .label CHARSET = $2000
   // Plasma screen 1
   .label SCREEN1 = $2800
   // Plasma screen 2
   .label SCREEN2 = $2c00
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label print_line_cursor = $400
@@ -5724,8 +5769,8 @@ make_plasma_charset: {
 sid_rnd: {
     .label return = $5c
     .label return_1 = $59
-    // [85] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC) -- vbuz1=_deref_pbuc1 
-    lda SID_VOICE3_OSC
+    // [85] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC) -- vbuz1=_deref_pbuc1 
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     sta.z return
     jmp __breturn
     // sid_rnd::@return
@@ -5776,14 +5821,14 @@ print_cls: {
   // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // [93] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // [93] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // [94] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // [94] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     jmp __breturn
     // sid_rnd_init::@return
   __breturn:
@@ -6999,8 +7044,8 @@ Removing always clobbered register reg byte y as potential for zp[1]:21 [ make_p
 Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const to_nomodify byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ make_plasma_charset::ii#2 make_plasma_charset::ii#1 ]
 Statement [87] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:7::make_plasma_charset:14::print_char:66 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [93] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
-Statement [94] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
+Statement [93] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
+Statement [94] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
 Statement [96] (byte*) init_angle_screen::screen_topline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c [ init_angle_screen::screen#0 init_angle_screen::screen_topline#0 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 init_angle_screen::screen_topline#0 ] { }  ) always clobbers reg byte a 
 Statement [97] (byte*) init_angle_screen::screen_bottomline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c [ init_angle_screen::screen_topline#0 init_angle_screen::screen_bottomline#0 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen_topline#0 init_angle_screen::screen_bottomline#0 ] { }  ) always clobbers reg byte a 
 Statement [101] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 [ init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] { }  ) always clobbers reg byte a 
@@ -7138,8 +7183,8 @@ Statement [73] (byte*~) make_plasma_charset::$16 ← (const nomodify byte*) CHAR
 Statement [74] *((byte*~) make_plasma_charset::$16) ← (byte) make_plasma_charset::b#2 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const to_nomodify byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] { }  ) always clobbers reg byte a 
 Statement [87] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:7::make_plasma_charset:14::print_char:66 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [93] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
-Statement [94] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
+Statement [93] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
+Statement [94] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
 Statement [96] (byte*) init_angle_screen::screen_topline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c [ init_angle_screen::screen#0 init_angle_screen::screen_topline#0 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 init_angle_screen::screen_topline#0 ] { }  ) always clobbers reg byte a 
 Statement [97] (byte*) init_angle_screen::screen_bottomline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c [ init_angle_screen::screen_topline#0 init_angle_screen::screen_bottomline#0 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen_topline#0 init_angle_screen::screen_bottomline#0 ] { }  ) always clobbers reg byte a 
 Statement [101] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 [ init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] { }  ) always clobbers reg byte a 
@@ -7262,8 +7307,8 @@ Statement [73] (byte*~) make_plasma_charset::$16 ← (const nomodify byte*) CHAR
 Statement [74] *((byte*~) make_plasma_charset::$16) ← (byte) make_plasma_charset::b#2 [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [82] (byte) make_plasma_charset::b#1 ← (byte) make_plasma_charset::b#2 | *((const to_nomodify byte*) make_plasma_charset::bittab + (byte) make_plasma_charset::ii#2) [ make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] ( main:7::make_plasma_charset:14 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 make_plasma_charset::s#0 make_plasma_charset::i#2 make_plasma_charset::ii#2 make_plasma_charset::b#1 ] { }  ) always clobbers reg byte a 
 Statement [87] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:7::make_plasma_charset:14::print_char:66 [ SCREEN_DIST#0 SCREEN_ANGLE#0 make_plasma_charset::c#2 print_char_cursor#18 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [93] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
-Statement [94] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
+Statement [93] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
+Statement [94] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:7::make_plasma_charset:14::sid_rnd_init:53 [ SCREEN_DIST#0 SCREEN_ANGLE#0 ] { }  ) always clobbers reg byte a 
 Statement [96] (byte*) init_angle_screen::screen_topline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c [ init_angle_screen::screen#0 init_angle_screen::screen_topline#0 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen#0 init_angle_screen::screen_topline#0 ] { }  ) always clobbers reg byte a 
 Statement [97] (byte*) init_angle_screen::screen_bottomline#0 ← (byte*) init_angle_screen::screen#0 + (word)(number) $28*(number) $c [ init_angle_screen::screen_topline#0 init_angle_screen::screen_bottomline#0 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::screen_topline#0 init_angle_screen::screen_bottomline#0 ] { }  ) always clobbers reg byte a 
 Statement [101] (byte*) init_angle_screen::screen_topline#1 ← (byte*) init_angle_screen::screen_topline#6 - (byte) $28 [ init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] ( main:7::init_angle_screen:12 [ SCREEN_DIST#0 SCREEN_ANGLE#0 init_angle_screen::y#5 init_angle_screen::screen_bottomline#6 init_angle_screen::screen_topline#1 ] { }  ) always clobbers reg byte a 
@@ -7474,10 +7519,11 @@ Uplift Scope [init_squares] 25,716.86: zp[1]:58 [ init_squares::i#2 init_squares
 Uplift Scope [] 12,104.4: zp[2]:63 [ heap_head#12 heap_head#1 ] 6,015.14: zp[2]:19 [ print_char_cursor#18 print_char_cursor#30 print_char_cursor#1 ] 381.02: zp[1]:3 [ sin_offset_y#10 sin_offset_y#14 sin_offset_y#12 ] 372.42: zp[1]:2 [ sin_offset_x#10 sin_offset_x#14 sin_offset_x#12 ] 16.15: zp[2]:152 [ SQUARES#1 ] 0.05: zp[2]:69 [ SCREEN_ANGLE#0 ] 0.05: zp[2]:67 [ SCREEN_DIST#0 ] 
 Uplift Scope [malloc] 10,001: zp[2]:65 [ malloc::size#3 ] 3,333.67: zp[2]:156 [ malloc::mem#0 ] 
 Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6581_SID] 
+Uplift Scope [sid_rnd_init] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_char] 
 Uplift Scope [print_cls] 
-Uplift Scope [sid_rnd_init] 
 Uplift Scope [main] 
 
 Uplifting [bsearch16u] best 1510221 combination reg byte x [ bsearch16u::num#5 bsearch16u::num#1 bsearch16u::num#3 bsearch16u::num#0 ] zp[2]:54 [ bsearch16u::return#1 bsearch16u::return#2 bsearch16u::items#2 bsearch16u::items#1 bsearch16u::items#8 bsearch16u::$2 bsearch16u::return#7 bsearch16u::items#0 ] reg byte a [ bsearch16u::$6 ] reg byte a [ bsearch16u::$14 ] zp[2]:147 [ bsearch16u::result#0 ] zp[2]:145 [ bsearch16u::pivot#0 ] zp[2]:134 [ bsearch16u::return#3 ] zp[2]:132 [ bsearch16u::key#0 ] 
@@ -7498,10 +7544,11 @@ Uplifting [init_squares] best 1346862 combination reg byte x [ init_squares::i#2
 Uplifting [] best 1346862 combination zp[2]:63 [ heap_head#12 heap_head#1 ] zp[2]:19 [ print_char_cursor#18 print_char_cursor#30 print_char_cursor#1 ] zp[1]:3 [ sin_offset_y#10 sin_offset_y#14 sin_offset_y#12 ] zp[1]:2 [ sin_offset_x#10 sin_offset_x#14 sin_offset_x#12 ] zp[2]:152 [ SQUARES#1 ] zp[2]:69 [ SCREEN_ANGLE#0 ] zp[2]:67 [ SCREEN_DIST#0 ] 
 Uplifting [malloc] best 1346862 combination zp[2]:65 [ malloc::size#3 ] zp[2]:156 [ malloc::mem#0 ] 
 Uplifting [MOS6526_CIA] best 1346862 combination 
+Uplifting [MOS6581_SID] best 1346862 combination 
+Uplifting [sid_rnd_init] best 1346862 combination 
 Uplifting [RADIX] best 1346862 combination 
 Uplifting [print_char] best 1346862 combination 
 Uplifting [print_cls] best 1346862 combination 
-Uplifting [sid_rnd_init] best 1346862 combination 
 Uplifting [main] best 1346862 combination 
 Attempting to uplift remaining variables inzp[1]:91 [ make_plasma_charset::$7 ]
 Uplifting [make_plasma_charset] best 1346862 combination zp[1]:91 [ make_plasma_charset::$7 ] 
@@ -7617,25 +7664,27 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   // Plasma charset
   .label CHARSET = $2000
   // Plasma screen 1
   .label SCREEN1 = $2800
   // Plasma screen 2
   .label SCREEN2 = $2c00
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label print_line_cursor = $400
@@ -8212,8 +8261,8 @@ make_plasma_charset: {
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-    // [85] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC) -- vbuaa=_deref_pbuc1 
-    lda SID_VOICE3_OSC
+    // [85] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC) -- vbuaa=_deref_pbuc1 
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     jmp __breturn
     // sid_rnd::@return
   __breturn:
@@ -8262,14 +8311,14 @@ print_cls: {
   // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // [93] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // [93] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // [94] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // [94] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     jmp __breturn
     // sid_rnd_init::@return
   __breturn:
@@ -9584,9 +9633,9 @@ Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Fixing long branch [581] beq __b12 to bne
-Fixing long branch [475] bpl __b1 to bmi
-Fixing long branch [487] bpl __b4 to bmi
+Fixing long branch [583] beq __b12 to bne
+Fixing long branch [477] bpl __b1 to bmi
+Fixing long branch [489] bpl __b4 to bmi
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -9618,8 +9667,34 @@ FINAL SYMBOL TABLE
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (byte) NUM_SQUARES
 (const byte) NUM_SQUARES#3 NUM_SQUARES = (byte) $30
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
@@ -9630,10 +9705,8 @@ FINAL SYMBOL TABLE
 (void*) SCREEN_ANGLE#0 SCREEN_ANGLE zp[2]:18 0.05405405405405406
 (byte*) SCREEN_DIST
 (void*) SCREEN_DIST#0 SCREEN_DIST zp[2]:16 0.05128205128205128
+(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*) 54272
 (const nomodify byte) SID_CONTROL_NOISE = (byte) $80
-(const nomodify byte*) SID_VOICE3_CONTROL = (byte*) 54290
-(const nomodify word*) SID_VOICE3_FREQ = (word*) 54286
-(const nomodify byte*) SID_VOICE3_OSC = (byte*) 54299
 (const to_nomodify byte*) SINTABLE[(number) $200]  = kickasm {{ .for(var i=0;i<$200;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
@@ -10095,25 +10168,27 @@ Score: 1210189
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   // Plasma charset
   .label CHARSET = $2000
   // Plasma screen 1
   .label SCREEN1 = $2800
   // Plasma screen 2
   .label SCREEN2 = $2c00
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label print_line_cursor = $400
@@ -10642,9 +10717,9 @@ make_plasma_charset: {
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-    // return *SID_VOICE3_OSC;
-    // [85] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC) -- vbuaa=_deref_pbuc1 
-    lda SID_VOICE3_OSC
+    // return SID->CH3_OSC;
+    // [85] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC) -- vbuaa=_deref_pbuc1 
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     // sid_rnd::@return
     // }
     // [86] return 
@@ -10692,16 +10767,16 @@ print_cls: {
   // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // *SID_VOICE3_FREQ = $ffff
-    // [93] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // SID->CH3_FREQ = 0xffff
+    // [93] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // *SID_VOICE3_CONTROL = SID_CONTROL_NOISE
-    // [94] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
+    // [94] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // sid_rnd_init::@return
     // }
     // [95] return 

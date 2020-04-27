@@ -1,7 +1,4 @@
 Resolved forward reference plex_irq to interrupt(KERNEL_MIN)(void()) plex_irq()
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA1).INTERRUPT with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call call plexSetScreen (byte*) plexInit::screen 
 Inlined call call plexFreePrepare 
@@ -392,6 +389,29 @@ SYMBOL TABLE SSA
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const nomodify byte) PLEX_COUNT = (byte) $20
 (const byte*) PLEX_FREE_YPOS[(number) 8]  = { fill( 8, 0) }
@@ -1317,6 +1337,29 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (byte*) PLEX_SCREEN_PTR
 (volatile bool) framedone loadstore 1222.8888888888887
 (void()) init()
@@ -1502,6 +1545,8 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -1521,8 +1566,6 @@ Target platform is c64basic / MOS6502X
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .const WHITE = 1
@@ -2466,6 +2509,7 @@ Uplift Scope [] 1,222.89: zp[1]:17 [ framedone ] 325.22: zp[1]:14 [ plex_sprite_
 Uplift Scope [plexShowSprite] 202: zp[1]:26 [ plexShowSprite::plexFreeAdd1_$0 ] 202: zp[1]:27 [ plexShowSprite::plexFreeAdd1_$1 ] 202: zp[1]:28 [ plexShowSprite::plexFreeAdd1_$2 ] 202: zp[1]:29 [ plexShowSprite::xpos_idx#0 ] 202: zp[1]:31 [ plexShowSprite::$2 ] 202: zp[1]:32 [ plexShowSprite::$3 ] 202: zp[1]:33 [ plexShowSprite::$9 ] 202: zp[1]:34 [ plexShowSprite::$5 ] 202: zp[1]:35 [ plexShowSprite::$6 ] 151.5: zp[1]:25 [ plexShowSprite::plexFreeAdd1_ypos#0 ] 101: zp[1]:30 [ plexShowSprite::$11 ] 25.25: zp[1]:24 [ plexShowSprite::plex_sprite_idx2#0 ] 
 Uplift Scope [plex_irq] 11: zp[1]:23 [ plex_irq::$4 ] 4: zp[1]:22 [ plex_irq::plexFreeNextYpos1_return#0 ] 
 Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6581_SID] 
 Uplift Scope [main] 
 
 Uplifting [plexSort] best 60245 combination reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ] reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ] zp[1]:20 [ plexSort::s#2 ] zp[1]:5 [ plexSort::m#2 plexSort::m#1 ] zp[1]:19 [ plexSort::nxt_y#0 ] zp[1]:18 [ plexSort::nxt_idx#0 ] 
@@ -2480,6 +2524,7 @@ Uplifting [plexShowSprite] best 57935 combination reg byte a [ plexShowSprite::p
 Limited combination testing to 10 combinations of 1572864 possible.
 Uplifting [plex_irq] best 57872 combination zp[1]:23 [ plex_irq::$4 ] reg byte x [ plex_irq::plexFreeNextYpos1_return#0 ] 
 Uplifting [MOS6526_CIA] best 57872 combination 
+Uplifting [MOS6581_SID] best 57872 combination 
 Uplifting [main] best 57872 combination 
 Attempting to uplift remaining variables inzp[1]:20 [ plexSort::s#2 ]
 Uplifting [plexSort] best 57272 combination reg byte x [ plexSort::s#2 ] 
@@ -2545,6 +2590,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -2564,8 +2611,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .const WHITE = 1
@@ -3374,6 +3419,29 @@ FINAL SYMBOL TABLE
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const nomodify byte) PLEX_COUNT = (byte) $20
 (const byte*) PLEX_FREE_YPOS[(number) 8]  = { fill( 8, 0) }
@@ -3562,6 +3630,8 @@ Score: 43606
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -3581,8 +3651,6 @@ Score: 43606
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .const WHITE = 1

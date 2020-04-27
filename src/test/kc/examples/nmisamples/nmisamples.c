@@ -35,7 +35,7 @@ void main() {
 interrupt(hardware_all) void nmi() {
     (*BORDERCOL)++;
     asm { lda CIA2_INTERRUPT }
-    *SID_VOLUME = *sample & $0f;
+    SID->VOLUME_FILTER_MODE = *sample & $0f;
     *KERNEL_NMI = &nmi2;
     (*BORDERCOL)--;
 }
@@ -43,7 +43,7 @@ interrupt(hardware_all) void nmi() {
 interrupt(hardware_all) void nmi2() {
     (*BORDERCOL)++;
     asm { lda CIA2_INTERRUPT }
-    *SID_VOLUME = *sample >> 4;
+    SID->VOLUME_FILTER_MODE = *sample >> 4;
     sample++;
     if (>sample == >(SAMPLE+$6100)) {
         sample = SAMPLE;

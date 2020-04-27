@@ -4,21 +4,22 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label BORDERCOL = $d020
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 Interrupt for reading in ASM
   .label CIA2_INTERRUPT = $dd0d
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
-  // The SID volume
-  .label SID_VOLUME = $d418
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
   .label sample = 2
 __bbegin:
   // sample = SAMPLE
@@ -81,8 +82,8 @@ nmi2: {
     lsr
     lsr
     lsr
-    // *SID_VOLUME = *sample >> 4
-    sta SID_VOLUME
+    // SID->VOLUME_FILTER_MODE = *sample >> 4
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // sample++;
     inc.z sample
     bne !+
@@ -127,8 +128,8 @@ nmi: {
     lda #$f
     ldy #0
     and (sample),y
-    // *SID_VOLUME = *sample & $0f
-    sta SID_VOLUME
+    // SID->VOLUME_FILTER_MODE = *sample & $0f
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // *KERNEL_NMI = &nmi2
     lda #<nmi2
     sta KERNEL_NMI

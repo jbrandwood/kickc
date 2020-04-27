@@ -1,10 +1,4 @@
 Resolved forward reference SPRITE to (byte*) SPRITE
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_A_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_B_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_B_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_A_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call call mulf8s_prepare (signed byte) mulf8s::a 
 Inlined call call mulf8s_prepare (signed byte) anim::cos_a 
@@ -610,6 +604,29 @@ SYMBOL TABLE SSA
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = (byte) $f
 (const byte) RADIX::BINARY = (number) 2
@@ -1919,6 +1936,29 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) anim()
 (signed word~) anim::$10 20002.0
 (signed word~) anim::$11 20002.0
@@ -2256,6 +2296,10 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -2267,10 +2311,6 @@ Target platform is c64basic / MOS6502X
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
-  // Timer Control - Start/stop timer (0:stop, 1: start)
-  .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
-  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
@@ -3628,6 +3668,7 @@ Uplift Scope [print_ulong_at] 7,001: zp[4]:76 [ print_ulong_at::dw#0 ]
 Uplift Scope [clock] 3,667.33: zp[4]:82 [ clock::return#0 ] 2,002: zp[4]:64 [ clock::return#2 ] 
 Uplift Scope [init] 2,836.17: zp[1]:19 [ init::i#2 init::i#1 ] 
 Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6581_SID] 
 Uplift Scope [clock_start] 
 Uplift Scope [RADIX] 
 Uplift Scope [main] 
@@ -3648,6 +3689,7 @@ Uplifting [print_ulong_at] best 44325 combination zp[4]:76 [ print_ulong_at::dw#
 Uplifting [clock] best 44325 combination zp[4]:82 [ clock::return#0 ] zp[4]:64 [ clock::return#2 ] 
 Uplifting [init] best 44175 combination reg byte x [ init::i#2 init::i#1 ] 
 Uplifting [MOS6526_CIA] best 44175 combination 
+Uplifting [MOS6581_SID] best 44175 combination 
 Uplifting [clock_start] best 44175 combination 
 Uplifting [RADIX] best 44175 combination 
 Uplifting [main] best 44175 combination 
@@ -3723,6 +3765,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -3734,10 +3780,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
-  // Timer Control - Start/stop timer (0:stop, 1: start)
-  .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
-  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
@@ -4862,6 +4904,29 @@ FINAL SYMBOL TABLE
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = (byte) $f
 (const byte) RADIX::BINARY = (number) 2
@@ -5137,6 +5202,10 @@ Score: 30994
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -5148,10 +5217,6 @@ Score: 30994
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
-  // Timer Control - Start/stop timer (0:stop, 1: start)
-  .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
-  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.

@@ -2,25 +2,27 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   // Plasma charset
   .label CHARSET = $2000
   // Plasma screen 1
   .label SCREEN1 = $2800
   // Plasma screen 2
   .label SCREEN2 = $2c00
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label print_line_cursor = $400
@@ -372,8 +374,8 @@ make_plasma_charset: {
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-    // return *SID_VOICE3_OSC;
-    lda SID_VOICE3_OSC
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     // }
     rts
 }
@@ -406,14 +408,14 @@ print_cls: {
 }
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // *SID_VOICE3_FREQ = $ffff
+    // SID->CH3_FREQ = 0xffff
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // *SID_VOICE3_CONTROL = SID_CONTROL_NOISE
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // }
     rts
 }

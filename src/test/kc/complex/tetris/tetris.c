@@ -4,7 +4,6 @@
 
 #include <c64.h>
 #include <keyboard.h>
-#include "sid.c"
 #include "tetris-data.c"
 #include "tetris-render.c"
 #include "tetris-sprites.c"

@@ -8,7 +8,6 @@
 
 #include <c64.h>
 #include <print.h>
-#include "sid.c"
 
 unsigned char* const SCREEN1 = $2800;
 unsigned char* const CHARSET = $2000;

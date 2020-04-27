@@ -6,8 +6,6 @@
 #include <sqr.h>
 #include <atan2.h>
 #include <print.h>
-#include "sid.c"
-
 
 const char align(0x100) SINTABLE[0x200] = kickasm {{
     .for(var i=0;i<$200;i++)

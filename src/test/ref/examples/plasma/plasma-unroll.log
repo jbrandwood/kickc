@@ -1,11 +1,28 @@
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$1 ← call toD018 (const nomodify byte*) SCREEN1 (const nomodify byte*) CHARSET 
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   to:@1
+
+(void()) sid_rnd_init()
+sid_rnd_init: scope:[sid_rnd_init]  from makecharset
+  *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (number) $ffff
+  *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
+  to:sid_rnd_init::@return
+sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
+  return 
+  to:@return
+
+(byte()) sid_rnd()
+sid_rnd: scope:[sid_rnd]  from makecharset::@7
+  (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC)
+  to:sid_rnd::@return
+sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
+  (byte) sid_rnd::return#3 ← phi( sid_rnd/(byte) sid_rnd::return#0 )
+  (byte) sid_rnd::return#1 ← (byte) sid_rnd::return#3
+  return 
+  to:@return
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from print_cls
@@ -88,25 +105,6 @@ print_cls::@return: scope:[print_cls]  from print_cls::@1
   (byte*) print_line_cursor#8 ← phi( print_cls::@1/(byte*) print_line_cursor#1 )
   (byte*) print_line_cursor#2 ← (byte*) print_line_cursor#8
   (byte*) print_char_cursor#4 ← (byte*) print_char_cursor#13
-  return 
-  to:@return
-
-(void()) sid_rnd_init()
-sid_rnd_init: scope:[sid_rnd_init]  from makecharset
-  *((const nomodify word*) SID_VOICE3_FREQ) ← (number) $ffff
-  *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
-  to:sid_rnd_init::@return
-sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
-  return 
-  to:@return
-
-(byte()) sid_rnd()
-sid_rnd: scope:[sid_rnd]  from makecharset::@7
-  (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC)
-  to:sid_rnd::@return
-sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
-  (byte) sid_rnd::return#3 ← phi( sid_rnd/(byte) sid_rnd::return#0 )
-  (byte) sid_rnd::return#1 ← (byte) sid_rnd::return#3
   return 
   to:@return
 
@@ -646,15 +644,39 @@ SYMBOL TABLE SSA
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (const nomodify byte*) SCREEN1 = (byte*)(number) $2800
+(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*)(number) $d400
 (const nomodify byte) SID_CONTROL_NOISE = (byte) $80
-(const nomodify byte*) SID_VOICE3_CONTROL = (byte*)(number) $d412
-(const nomodify word*) SID_VOICE3_FREQ = (word*)(number) $d40e
-(const nomodify byte*) SID_VOICE3_OSC = (byte*)(number) $d41b
 (const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(toRadians(360*i/256)))
  }}
@@ -1186,9 +1208,9 @@ SYMBOL TABLE SSA
 (void()) sid_rnd_init()
 (label) sid_rnd_init::@return
 
+Adding number conversion cast (unumber) $ffff in *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (number) $ffff
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#0 ← (number) $3e8
-Adding number conversion cast (unumber) $ffff in *((const nomodify word*) SID_VOICE3_FREQ) ← (number) $ffff
 Adding number conversion cast (unumber) $3e8 in (byte*) main::col#1 ← (byte*) main::col#2 + rangenext(COLS,COLS+$3e8)
 Adding number conversion cast (unumber) $3fff in (number~) main::toD0181_$0 ← (word~) main::toD0181_$7 & (number) $3fff
 Adding number conversion cast (unumber) main::toD0181_$0 in (number~) main::toD0181_$0 ← (word~) main::toD0181_$7 & (unumber)(number) $3fff
@@ -1226,23 +1248,21 @@ Adding number conversion cast (unumber) 8 in (number~) makecharset::$10 ← (wor
 Adding number conversion cast (unumber) makecharset::$10 in (number~) makecharset::$10 ← (word) makecharset::c#5 * (unumber)(number) 8
 Adding number conversion cast (unumber) makecharset::$11 in (number~) makecharset::$11 ← (unumber~) makecharset::$10 + (byte) makecharset::i#3
 Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (unumber)(number) $ffff
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
-Inlining cast *((const nomodify word*) SID_VOICE3_FREQ) ← (unumber)(number) $ffff
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant pointer cast (word*) 54286
-Simplifying constant pointer cast (byte*) 54290
-Simplifying constant pointer cast (byte*) 54299
+Simplifying constant pointer cast (struct MOS6581_SID*) 54272
 Simplifying constant pointer cast (byte*) 10240
 Simplifying constant pointer cast (byte*) 8192
+Simplifying constant integer cast $ffff
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3e8
-Simplifying constant integer cast $ffff
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -1269,9 +1289,9 @@ Simplifying constant integer cast 8
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (word) $ffff
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e8
-Finalized unsigned number type (word) $ffff
 Finalized unsigned number type (word) $3e8
 Finalized unsigned number type (word) $3fff
 Finalized unsigned number type (byte) 4
@@ -1309,10 +1329,11 @@ Inferred type updated to byte in (unumber~) makecharset::$12 ← (word) makechar
 Inferred type updated to byte in (unumber~) makecharset::$7 ← (byte~) makecharset::$6 & (byte) $ff
 Inferred type updated to word in (unumber~) makecharset::$10 ← (word) makecharset::c#5 * (byte) 8
 Inferred type updated to word in (unumber~) makecharset::$11 ← (word~) makecharset::$10 + (byte) makecharset::i#3
-Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
+Inversing boolean not [9] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [8] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
 Inversing boolean not [188] (bool~) makecharset::$14 ← (byte~) makecharset::$12 != (byte) 0 from [187] (bool~) makecharset::$13 ← (byte~) makecharset::$12 == (byte) 0
 Inversing boolean not [200] (bool~) makecharset::$9 ← (byte~) makecharset::$7 <= (byte) makecharset::s#1 from [199] (bool~) makecharset::$8 ← (byte~) makecharset::$7 > (byte) makecharset::s#1
 Successful SSA optimization Pass2UnaryNotSimplification
+Alias sid_rnd::return#0 = sid_rnd::return#3 sid_rnd::return#1 
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
 Alias memset::num#1 = memset::num#2 
@@ -1325,7 +1346,6 @@ Alias memset::str#4 = memset::str#5
 Alias print_line_cursor#0 = print_screen#0 print_char_cursor#0 print_line_cursor#24 print_char_cursor#32 print_screen#9 print_line_cursor#18 print_char_cursor#25 print_screen#8 
 Alias print_char_cursor#1 = print_char_cursor#12 print_char_cursor#2 
 Alias print_line_cursor#1 = print_screen#2 print_screen#1 print_char_cursor#3 print_line_cursor#8 print_char_cursor#13 print_line_cursor#2 print_char_cursor#4 
-Alias sid_rnd::return#0 = sid_rnd::return#3 sid_rnd::return#1 
 Alias print_line_cursor#14 = print_line_cursor#19 
 Alias print_char_cursor#21 = print_char_cursor#26 
 Alias print_screen#5 = print_screen#6 
@@ -1515,8 +1535,8 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte*) print_line_cursor#12 (byte*) print_line_cursor#0
 Identical Phi Values (byte*) makecharset::charset#10 (byte*) makecharset::charset#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
+Simple Condition (bool~) memset::$1 [7] if((word) memset::num#0<=(byte) 0) goto memset::@1
+Simple Condition (bool~) memset::$3 [14] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
 Simple Condition (bool~) main::$2 [39] if((byte*) main::col#1!=rangelast(COLS,COLS+$3e8)) goto main::@1
 Simple Condition (bool~) doplasma::$0 [71] if((byte) doplasma::i#2<(byte) $19) goto doplasma::@2
 Simple Condition (bool~) doplasma::$3 [85] if((byte) doplasma::i1#2<(byte) $28) goto doplasma::@5
@@ -1560,7 +1580,7 @@ Constant (const void*) memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant value identified (word)main::toD0181_gfx#0 in [49] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always false - eliminating [2] if((const word) memset::num#0<=(byte) 0) goto memset::@1
+if() condition always false - eliminating [7] if((const word) memset::num#0<=(byte) 0) goto memset::@1
 if() condition always true - replacing block destination [55] if(true) goto main::@4
 Successful SSA optimization Pass2ConstantIfs
 Resolved ranged next value [37] main::col#1 ← ++ main::col#2 to ++
@@ -1578,7 +1598,7 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
+Constant right-side identified [5] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Constant right-side identified [24] (word~) main::toD0181_$0 ← (const word) main::toD0181_$7 & (word) $3fff
 Constant right-side identified [27] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -2756,7 +2776,7 @@ makecharset::@8: scope:[makecharset]  from makecharset::@13 makecharset::@9
 
 (byte()) sid_rnd()
 sid_rnd: scope:[sid_rnd]  from makecharset::@6
-  [130] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC)
+  [130] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC)
   to:sid_rnd::@return
 sid_rnd::@return: scope:[sid_rnd]  from sid_rnd
   [131] return 
@@ -2798,8 +2818,8 @@ memset::@2: scope:[memset]  from memset::@1
 
 (void()) sid_rnd_init()
 sid_rnd_init: scope:[sid_rnd_init]  from makecharset
-  [144] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff
-  [145] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
+  [144] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff
+  [145] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE
   to:sid_rnd_init::@return
 sid_rnd_init::@return: scope:[sid_rnd_init]  from sid_rnd_init
   [146] return 
@@ -2821,6 +2841,29 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (byte) c1A
 (byte) c1A#1 161.76923076923077
 (byte) c1A#3 15.971014492753623
@@ -3142,21 +3185,23 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const BLUE = 6
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   .label SCREEN1 = $2800
   .label CHARSET = $2000
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   .label print_line_cursor = $400
   .label print_char_cursor = $12
   // Plasma state variables
@@ -4003,8 +4048,8 @@ makecharset: {
 sid_rnd: {
     .label return = $42
     .label return_1 = $3f
-    // [130] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC) -- vbuz1=_deref_pbuc1 
-    lda SID_VOICE3_OSC
+    // [130] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC) -- vbuz1=_deref_pbuc1 
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     sta.z return
     jmp __breturn
     // sid_rnd::@return
@@ -4093,14 +4138,14 @@ memset: {
   // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // [144] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // [144] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // [145] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // [145] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     jmp __breturn
     // sid_rnd_init::@return
   __breturn:
@@ -4184,8 +4229,8 @@ Removing always clobbered register reg byte a as potential for zp[1]:21 [ makech
 Statement [132] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:2::makecharset:12::print_char:111 [ makecharset::c#2 print_char_cursor#18 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [140] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::makecharset:12::print_cls:100::memset:136 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [142] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::makecharset:12::print_cls:100::memset:136 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [144] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
-Statement [145] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
+Statement [144] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
+Statement [145] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((byte*) main::col#2) ← (const nomodify byte) BLACK [ main::col#2 ] ( main:2 [ main::col#2 ] { }  ) always clobbers reg byte a reg byte y 
@@ -4236,8 +4281,8 @@ Statement [127] (byte) makecharset::b#1 ← (byte) makecharset::b#2 | *((const t
 Statement [132] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:2::makecharset:12::print_char:111 [ makecharset::c#2 print_char_cursor#18 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [140] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::makecharset:12::print_cls:100::memset:136 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [142] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::makecharset:12::print_cls:100::memset:136 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [144] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
-Statement [145] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
+Statement [144] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
+Statement [145] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:2::makecharset:12::sid_rnd_init:98 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::col#2 main::col#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ c1A#1 c1A#3 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ c1B#1 c1B#3 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -4305,10 +4350,11 @@ Uplift Scope [memset] 333,336.67: zp[2]:23 [ memset::dst#2 memset::dst#1 ]
 Uplift Scope [] 6,015.14: zp[2]:18 [ print_char_cursor#18 print_char_cursor#30 print_char_cursor#1 ] 177.74: zp[1]:4 [ c1A#1 c1A#3 ] 166.42: zp[1]:5 [ c1B#1 c1B#3 ] 106.62: zp[1]:6 [ c2A#1 c2A#3 ] 103.45: zp[1]:7 [ c2B#1 c2B#3 ] 
 Uplift Scope [main] 303: zp[2]:2 [ main::col#2 main::col#1 ] 
 Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6581_SID] 
+Uplift Scope [sid_rnd_init] 
 Uplift Scope [RADIX] 
 Uplift Scope [print_char] 
 Uplift Scope [print_cls] 
-Uplift Scope [sid_rnd_init] 
 
 Uplifting [makecharset] best 168084 combination reg byte y [ makecharset::b#2 makecharset::b#6 makecharset::b#1 ] reg byte x [ makecharset::ii#2 makecharset::ii#1 ] reg byte a [ makecharset::$6 ] zp[1]:65 [ makecharset::$7 ] zp[1]:20 [ makecharset::i#2 makecharset::i#1 ] zp[2]:57 [ makecharset::$10 ] zp[2]:59 [ makecharset::$11 ] zp[2]:61 [ makecharset::$16 ] zp[1]:55 [ makecharset::s#0 ] zp[2]:16 [ makecharset::c#2 makecharset::c#1 ] zp[1]:54 [ makecharset::$3 ] zp[1]:56 [ makecharset::$12 ] 
 Limited combination testing to 100 combinations of 9216 possible.
@@ -4317,10 +4363,11 @@ Uplifting [memset] best 159081 combination zp[2]:23 [ memset::dst#2 memset::dst#
 Uplifting [] best 159081 combination zp[2]:18 [ print_char_cursor#18 print_char_cursor#30 print_char_cursor#1 ] zp[1]:4 [ c1A#1 c1A#3 ] zp[1]:5 [ c1B#1 c1B#3 ] zp[1]:6 [ c2A#1 c2A#3 ] zp[1]:7 [ c2B#1 c2B#3 ] 
 Uplifting [main] best 159081 combination zp[2]:2 [ main::col#2 main::col#1 ] 
 Uplifting [MOS6526_CIA] best 159081 combination 
+Uplifting [MOS6581_SID] best 159081 combination 
+Uplifting [sid_rnd_init] best 159081 combination 
 Uplifting [RADIX] best 159081 combination 
 Uplifting [print_char] best 159081 combination 
 Uplifting [print_cls] best 159081 combination 
-Uplifting [sid_rnd_init] best 159081 combination 
 Attempting to uplift remaining variables inzp[1]:11 [ doplasma::yprev#2 doplasma::yprev#4 ]
 Uplifting [doplasma] best 158581 combination reg byte x [ doplasma::yprev#2 doplasma::yprev#4 ] 
 Attempting to uplift remaining variables inzp[1]:12 [ doplasma::i1#2 doplasma::i1#1 ]
@@ -4449,21 +4496,23 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const BLUE = 6
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   .label SCREEN1 = $2800
   .label CHARSET = $2000
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   .label print_line_cursor = $400
   .label print_char_cursor = $b
   // Plasma state variables
@@ -5151,8 +5200,8 @@ makecharset: {
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-    // [130] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC) -- vbuaa=_deref_pbuc1 
-    lda SID_VOICE3_OSC
+    // [130] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC) -- vbuaa=_deref_pbuc1 
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     jmp __breturn
     // sid_rnd::@return
   __breturn:
@@ -5240,14 +5289,14 @@ memset: {
   // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // [144] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // [144] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // [145] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // [145] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     jmp __breturn
     // sid_rnd_init::@return
   __breturn:
@@ -5425,8 +5474,8 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [90] bcc __b2 to bcs
-Fixing long branch [108] bcc __b5 to bcs
+Fixing long branch [92] bcc __b2 to bcs
+Fixing long branch [110] bcc __b5 to bcs
 
 FINAL SYMBOL TABLE
 (label) @1
@@ -5453,15 +5502,39 @@ FINAL SYMBOL TABLE
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (const nomodify byte*) SCREEN1 = (byte*) 10240
+(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*) 54272
 (const nomodify byte) SID_CONTROL_NOISE = (byte) $80
-(const nomodify byte*) SID_VOICE3_CONTROL = (byte*) 54290
-(const nomodify word*) SID_VOICE3_FREQ = (word*) 54286
-(const nomodify byte*) SID_VOICE3_OSC = (byte*) 54299
 (const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(toRadians(360*i/256)))
  }}
@@ -5735,21 +5808,23 @@ Score: 97666
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const BLUE = 6
-  // SID registers for random number generation
-  .label SID_VOICE3_FREQ = $d40e
-  .label SID_VOICE3_CONTROL = $d412
-  .const SID_CONTROL_NOISE = $80
-  .label SID_VOICE3_OSC = $d41b
   .label SCREEN1 = $2800
   .label CHARSET = $2000
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
   .label print_line_cursor = $400
   .label print_char_cursor = $b
   // Plasma state variables
@@ -6413,9 +6488,9 @@ makecharset: {
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 sid_rnd: {
-    // return *SID_VOICE3_OSC;
-    // [130] (byte) sid_rnd::return#0 ← *((const nomodify byte*) SID_VOICE3_OSC) -- vbuaa=_deref_pbuc1 
-    lda SID_VOICE3_OSC
+    // return SID->CH3_OSC;
+    // [130] (byte) sid_rnd::return#0 ← *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC) -- vbuaa=_deref_pbuc1 
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
     // sid_rnd::@return
     // }
     // [131] return 
@@ -6501,16 +6576,16 @@ memset: {
   // sid_rnd_init
 // Initialize SID voice 3 for random number generation
 sid_rnd_init: {
-    // *SID_VOICE3_FREQ = $ffff
-    // [144] *((const nomodify word*) SID_VOICE3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
+    // SID->CH3_FREQ = 0xffff
+    // [144] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff -- _deref_pwuc1=vwuc2 
     lda #<$ffff
-    sta SID_VOICE3_FREQ
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
     lda #>$ffff
-    sta SID_VOICE3_FREQ+1
-    // *SID_VOICE3_CONTROL = SID_CONTROL_NOISE
-    // [145] *((const nomodify byte*) SID_VOICE3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
+    // [145] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE -- _deref_pbuc1=vbuc2 
     lda #SID_CONTROL_NOISE
-    sta SID_VOICE3_CONTROL
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // sid_rnd_init::@return
     // }
     // [146] return 

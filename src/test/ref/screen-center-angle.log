@@ -1,11 +1,5 @@
 Resolved forward reference FONT_HEX_PROTO to (const byte*) FONT_HEX_PROTO
 Resolved forward reference FONT_HEX_PROTO to (const byte*) FONT_HEX_PROTO
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_A_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_B_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_B_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_A_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$1 ← call toD018 (const nomodify byte*) SCREEN (const nomodify byte*) CHARSET 
 Inlined call (byte~) main::$7 ← call toD018 (const byte*) main::BASE_SCREEN (const byte*) main::BASE_CHARSET 
@@ -597,6 +591,29 @@ SYMBOL TABLE SSA
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = (byte) $f
 (const byte) RADIX::BINARY = (number) 2
@@ -2055,6 +2072,29 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (word()) atan2_16((signed word) atan2_16::x , (signed word) atan2_16::y)
 (signed word~) atan2_16::$2 200002.0
 (byte~) atan2_16::$22 2.00000002E8
@@ -2388,15 +2428,15 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label D018 = $d018
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
-  // Timer Control - Start/stop timer (0:stop, 1: start)
-  .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
-  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
@@ -3690,6 +3730,7 @@ Uplift Scope [clock] 37.33: zp[4]:61 [ clock::return#0 ] 22: zp[4]:43 [ clock::r
 Uplift Scope [main] 22: zp[4]:47 [ main::$4 ] 22: zp[4]:51 [ main::cyclecount#0 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6581_SID] 
 Uplift Scope [clock_start] 
 Uplift Scope [] 
 
@@ -3707,6 +3748,7 @@ Uplifting [clock] best 1139156 combination zp[4]:61 [ clock::return#0 ] zp[4]:43
 Uplifting [main] best 1139156 combination zp[4]:47 [ main::$4 ] zp[4]:51 [ main::cyclecount#0 ] 
 Uplifting [RADIX] best 1139156 combination 
 Uplifting [MOS6526_CIA] best 1139156 combination 
+Uplifting [MOS6581_SID] best 1139156 combination 
 Uplifting [clock_start] best 1139156 combination 
 Uplifting [] best 1139156 combination 
 Attempting to uplift remaining variables inzp[1]:42 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
@@ -3781,15 +3823,15 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label D018 = $d018
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
-  // Timer Control - Start/stop timer (0:stop, 1: start)
-  .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
-  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
@@ -4945,6 +4987,29 @@ FINAL SYMBOL TABLE
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = (byte) $f
 (const byte) RADIX::BINARY = (number) 2
@@ -5213,15 +5278,15 @@ Score: 1044967
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Timer Control - Start/stop timer (0:stop, 1: start)
+  .const CIA_TIMER_CONTROL_START = 1
+  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
+  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label D018 = $d018
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
-  // Timer Control - Start/stop timer (0:stop, 1: start)
-  .const CIA_TIMER_CONTROL_START = 1
-  // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
-  .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.

@@ -1,11 +1,5 @@
 Resolved forward reference nmi to interrupt(HARDWARE_ALL)(void()) nmi()
 Resolved forward reference nmi2 to interrupt(HARDWARE_ALL)(void()) nmi2()
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A_DDR with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).PORT_A with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).INTERRUPT with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_A with member unwinding reference *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).INTERRUPT with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT)
-Replacing struct member reference *((const nomodify struct MOS6526_CIA*) CIA2).TIMER_A_CONTROL with member unwinding reference *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL)
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -35,7 +29,7 @@ nmi: scope:[nmi]  from
   *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
   (number~) nmi::$1 ← *((volatile byte*) sample) & (number) $f
-  *((const nomodify byte*) SID_VOLUME) ← (number~) nmi::$1
+  *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (number~) nmi::$1
   *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2()
   *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
   to:nmi::@return
@@ -48,7 +42,7 @@ nmi2: scope:[nmi2]  from
   *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
   (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (number) 4
-  *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi2::$1
+  *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1
   (volatile byte*) sample ← ++ (volatile byte*) sample
   (byte~) nmi2::$2 ← > (volatile byte*) sample
   (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(number) $6100
@@ -97,12 +91,36 @@ SYMBOL TABLE SSA
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A = (byte) 4
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = (byte) $18
 (const byte*) SAMPLE[(const nomodify word) SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
 (const nomodify word) SAMPLE_SIZE = (word) $6100
-(const nomodify byte*) SID_VOLUME = (byte*)(number) $d418
+(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*)(number) $d400
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmi()
@@ -133,8 +151,8 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (struct MOS6526_CIA*) 56576
 Simplifying constant pointer cast (byte*) 56589
+Simplifying constant pointer cast (struct MOS6581_SID*) 54272
 Simplifying constant pointer cast (void()**) 792
-Simplifying constant pointer cast (byte*) 54296
 Simplifying constant integer cast $88
 Simplifying constant integer cast $81
 Simplifying constant integer cast 1
@@ -202,7 +220,7 @@ nmi2: scope:[nmi2]  from
   [14] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
   [16] (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (byte) 4
-  [17] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi2::$1
+  [17] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1
   [18] (volatile byte*) sample ← ++ (volatile byte*) sample
   [19] (byte~) nmi2::$2 ← > (volatile byte*) sample
   [20] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
@@ -223,7 +241,7 @@ nmi: scope:[nmi]  from
   [25] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
   asm { ldaCIA2_INTERRUPT  }
   [27] (byte~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f
-  [28] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi::$1
+  [28] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1
   [29] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2()
   [30] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
   to:nmi::@return
@@ -247,6 +265,29 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
 interrupt(HARDWARE_ALL)(void()) nmi()
 (byte~) nmi::$1 4.0
@@ -281,21 +322,22 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label BORDERCOL = $d020
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 Interrupt for reading in ASM
   .label CIA2_INTERRUPT = $dd0d
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
-  // The SID volume
-  .label SID_VOLUME = $d418
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
   .label sample = 2
   // @begin
 __bbegin:
@@ -382,9 +424,9 @@ nmi2: {
     lsr
     lsr
     sta.z __1
-    // [17] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuz1 
+    // [17] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
-    sta SID_VOLUME
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // [18] (volatile byte*) sample ← ++ (volatile byte*) sample -- pbuz1=_inc_pbuz1 
     inc.z sample
     bne !+
@@ -443,9 +485,9 @@ nmi: {
     ldy #0
     and (sample),y
     sta.z __1
-    // [28] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuz1 
+    // [28] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
-    sta SID_VOLUME
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // [29] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
     lda #<nmi2
     sta KERNEL_NMI
@@ -496,12 +538,14 @@ Uplift Scope [nmi2] 4: zp[1]:4 [ nmi2::$1 ] 4: zp[1]:5 [ nmi2::$2 ]
 Uplift Scope [nmi] 4: zp[1]:6 [ nmi::$1 ] 
 Uplift Scope [] 2: zp[2]:2 [ sample ] 
 Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6581_SID] 
 Uplift Scope [main] 
 
 Uplifting [nmi2] best 534 combination reg byte a [ nmi2::$1 ] reg byte a [ nmi2::$2 ] 
 Uplifting [nmi] best 528 combination reg byte a [ nmi::$1 ] 
 Uplifting [] best 528 combination zp[2]:2 [ sample ] 
 Uplifting [MOS6526_CIA] best 528 combination 
+Uplifting [MOS6581_SID] best 528 combination 
 Uplifting [main] best 528 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -514,21 +558,22 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label BORDERCOL = $d020
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 Interrupt for reading in ASM
   .label CIA2_INTERRUPT = $dd0d
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
-  // The SID volume
-  .label SID_VOLUME = $d418
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
   .label sample = 2
   // @begin
 __bbegin:
@@ -612,8 +657,8 @@ nmi2: {
     lsr
     lsr
     lsr
-    // [17] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
-    sta SID_VOLUME
+    // [17] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // [18] (volatile byte*) sample ← ++ (volatile byte*) sample -- pbuz1=_inc_pbuz1 
     inc.z sample
     bne !+
@@ -668,8 +713,8 @@ nmi: {
     lda #$f
     ldy #0
     and (sample),y
-    // [28] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
-    sta SID_VOLUME
+    // [28] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // [29] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
     lda #<nmi2
     sta KERNEL_NMI
@@ -741,12 +786,36 @@ FINAL SYMBOL TABLE
 (byte) MOS6526_CIA::TOD_HOURS
 (byte) MOS6526_CIA::TOD_MIN
 (byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A = (byte) 4
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = (byte) $18
 (const byte*) SAMPLE[(const nomodify word) SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
 (const nomodify word) SAMPLE_SIZE = (word) $6100
-(const nomodify byte*) SID_VOLUME = (byte*) 54296
+(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*) 54272
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmi()
@@ -778,21 +847,22 @@ Score: 483
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label BORDERCOL = $d020
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 Interrupt for reading in ASM
   .label CIA2_INTERRUPT = $dd0d
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
+  // The SID MOD 6581/8580
+  .label SID = $d400
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
-  // The SID volume
-  .label SID_VOLUME = $d418
   .const SAMPLE_SIZE = $6100
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
   .label sample = 2
   // @begin
 __bbegin:
@@ -879,9 +949,9 @@ nmi2: {
     lsr
     lsr
     lsr
-    // *SID_VOLUME = *sample >> 4
-    // [17] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
-    sta SID_VOLUME
+    // SID->VOLUME_FILTER_MODE = *sample >> 4
+    // [17] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // sample++;
     // [18] (volatile byte*) sample ← ++ (volatile byte*) sample -- pbuz1=_inc_pbuz1 
     inc.z sample
@@ -941,9 +1011,9 @@ nmi: {
     lda #$f
     ldy #0
     and (sample),y
-    // *SID_VOLUME = *sample & $0f
-    // [28] *((const nomodify byte*) SID_VOLUME) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
-    sta SID_VOLUME
+    // SID->VOLUME_FILTER_MODE = *sample & $0f
+    // [28] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
+    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // *KERNEL_NMI = &nmi2
     // [29] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_pptc1=pprc2 
     lda #<nmi2

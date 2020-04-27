@@ -25,3 +25,16 @@ inline void vicSelectGfxBank(char*  gfx) {
     CIA2->PORT_A_DDR = %00000011;
     CIA2->PORT_A = toDd00(gfx);
 }
+
+// Initialize SID voice 3 for random number generation
+inline void sid_rnd_init() {
+	SID->CH3_FREQ = 0xffff;
+	SID->CH3_CONTROL = SID_CONTROL_NOISE;
+}
+
+// Get a random number from the SID voice 3,
+// Must be initialized with sid_rnd_init()
+inline char sid_rnd() {
+	return SID->CH3_OSC;
+}
+

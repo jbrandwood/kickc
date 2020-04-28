@@ -166,6 +166,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPostIncrementProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("post-increment-problem-2.c");
+   }
+
+   @Test
    public void testPostIncrementProblem() throws IOException, URISyntaxException {
       compileAndCompare("post-increment-problem.c");
    }

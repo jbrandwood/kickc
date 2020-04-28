@@ -6,6 +6,8 @@ import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeInference;
 
+import java.util.Objects;
+
 /** A constant defined by a binary operator applied to two constants */
 public class ConstantBinary implements ConstantValue {
 
@@ -74,4 +76,18 @@ public class ConstantBinary implements ConstantValue {
       return toString(null);
    }
 
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      ConstantBinary that = (ConstantBinary) o;
+      return left.equals(that.left) &&
+            operator.equals(that.operator) &&
+            right.equals(that.right);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(left, operator, right);
+   }
 }

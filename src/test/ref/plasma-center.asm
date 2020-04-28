@@ -2,13 +2,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
-  .label D018 = $d018
+  // The SID MOS 6581/8580
+  .label SID = $d400
   // Color Ram
   .label COLS = $d800
-  // The SID MOD 6581/8580
-  .label SID = $d400
   // The colors of the C64
   .const BLACK = 0
   .const SIZEOF_WORD = 2

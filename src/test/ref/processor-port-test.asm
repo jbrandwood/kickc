@@ -9,15 +9,15 @@
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // RAM in all three areas $A000, $D000, $E000
+  // RAM in all three areas 0xA000, 0xD000, 0xE000
   .const PROCPORT_RAM_ALL = 0
-  // RAM in $A000, $E000 I/O in $D000
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // RAM in $A000, $E000 CHAR ROM in $D000
+  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
-  // RAM in $A000, I/O in $D000, KERNEL in $E000
+  // RAM in 0xA000, I/O in 0xD000, KERNEL in 0xE000
   .const PROCPORT_KERNEL_IO = 6
-  // BASIC in $A000, I/O in $D000, KERNEL in $E000
+  // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
   .const PROCPORT_BASIC_KERNEL_IO = 7
   .label BASIC_ROM = $a000
   .label KERNAL_ROM = $e000

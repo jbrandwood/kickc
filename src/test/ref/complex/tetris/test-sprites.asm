@@ -3,14 +3,6 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
-  .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
-  // RAM in $A000, $E000 I/O in $D000
-  .const PROCPORT_RAM_IO = 5
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
@@ -27,8 +19,16 @@
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the IRQ Status/Enable Registers
+  // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  .const PROCPORT_RAM_IO = 5
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The CIA#2: Serial bus, RS-232, VIC memory bank

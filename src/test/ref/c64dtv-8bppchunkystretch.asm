@@ -2,14 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
-  .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
-  // RAM in $A000, $E000 I/O in $D000
-  .const PROCPORT_RAM_IO = 5
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
@@ -20,6 +12,14 @@
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label VIC_MEMORY = $d018
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  .const PROCPORT_RAM_IO = 5
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // Feature enables or disables the extra C64 DTV features

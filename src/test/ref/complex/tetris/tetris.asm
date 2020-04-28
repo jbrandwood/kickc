@@ -6,16 +6,6 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // SID Channel Control Register Noise Waveform
-  .const SID_CONTROL_NOISE = $80
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
-  .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
-  // RAM in $A000, $E000 I/O in $D000
-  .const PROCPORT_RAM_IO = 5
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
@@ -41,8 +31,20 @@
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the IRQ Status/Enable Registers
+  // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // SID Channel Control Register Noise Waveform
+  .const SID_CONTROL_NOISE = $80
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  .const PROCPORT_RAM_IO = 5
+  // The SID MOS 6581/8580
+  .label SID = $d400
   // Color Ram
   .label COLS = $d800
   // The CIA#1: keyboard matrix, joystick #1/#2
@@ -51,8 +53,6 @@
   .label CIA2 = $dd00
   // CIA#1 Interrupt for reading in ASM
   .label CIA1_INTERRUPT = $dc0d
-  // The SID MOD 6581/8580
-  .label SID = $d400
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   // The colors of the C64

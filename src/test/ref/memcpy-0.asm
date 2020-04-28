@@ -2,15 +2,15 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label D018 = $d018
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // RAM in $A000, $E000 CHAR ROM in $D000
+  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
-  // BASIC in $A000, I/O in $D000, KERNEL in $E000
+  // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
   .const PROCPORT_BASIC_KERNEL_IO = 7
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
-  .label D018 = $d018
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400

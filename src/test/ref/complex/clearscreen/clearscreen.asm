@@ -6,18 +6,6 @@
   .const CORDIC_ITERATIONS_16 = $f
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
-  .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
-  // RAM in $A000, $E000 I/O in $D000
-  .const PROCPORT_RAM_IO = 5
-  // RAM in $A000, $E000 CHAR ROM in $D000
-  .const PROCPORT_RAM_CHARROM = 1
-  // The address of the CHARGEN character set
-  .label CHARGEN = $d000
   // Positions of the border (in sprite positions)
   .const BORDER_XPOS_LEFT = $18
   .const BORDER_XPOS_RIGHT = $158
@@ -39,8 +27,20 @@
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the IRQ Status/Enable Registers
+  // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  .const PROCPORT_RAM_IO = 5
+  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
+  .const PROCPORT_RAM_CHARROM = 1
+  // The address of the CHARGEN character set
+  .label CHARGEN = $d000
   // Color Ram
   .label COLS = $d800
   // The CIA#1: keyboard matrix, joystick #1/#2

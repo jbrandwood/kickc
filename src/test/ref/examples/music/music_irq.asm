@@ -11,7 +11,7 @@
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the IRQ Status/Enable Registers
+  // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00

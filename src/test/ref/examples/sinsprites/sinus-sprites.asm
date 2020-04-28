@@ -1,10 +1,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
-  // The address of the CHARGEN character set
-  .label CHARGEN = $d000
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -14,6 +10,10 @@
   .label SPRITES_EXPAND_X = $d01d
   .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // The address of the CHARGEN character set
+  .label CHARGEN = $d000
   // Color Ram
   .label COLS = $d800
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM

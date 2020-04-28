@@ -7,12 +7,12 @@
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   .label BORDERCOL = $d020
+  // The SID MOS 6581/8580
+  .label SID = $d400
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 Interrupt for reading in ASM
   .label CIA2_INTERRUPT = $dd0d
-  // The SID MOD 6581/8580
-  .label SID = $d400
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .const SAMPLE_SIZE = $6100

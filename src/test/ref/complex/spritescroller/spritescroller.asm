@@ -4,14 +4,6 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
-  // RAM in $A000, $E000 CHAR ROM in $D000
-  .const PROCPORT_RAM_CHARROM = 1
-  // BASIC in $A000, I/O in $D000, KERNEL in $E000
-  .const PROCPORT_BASIC_KERNEL_IO = 7
-  // The address of the CHARGEN character set
-  .label CHARGEN = $d000
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -24,8 +16,16 @@
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the IRQ Status/Enable Registers
+  // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
+  .const PROCPORT_RAM_CHARROM = 1
+  // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
+  .const PROCPORT_BASIC_KERNEL_IO = 7
+  // The address of the CHARGEN character set
+  .label CHARGEN = $d000
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts

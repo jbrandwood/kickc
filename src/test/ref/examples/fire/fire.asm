@@ -168,8 +168,8 @@ fire: {
   __b2:
     // buffer[40-1] + buffer[40-1]
     ldy #$28-1
-    clc
     lda (buffer),y
+    clc
     adc (buffer),y
     // buffer[40-1] + buffer[40-1] + buffer[40]
     ldy #$28

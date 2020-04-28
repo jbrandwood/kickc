@@ -21,10 +21,7 @@ main: {
     // print_ln()
     jsr print_ln
     // txt[1]++;
-    lda txt+1
-    clc
-    adc #1
-    sta txt+1
+    inc txt+1
     // for ( byte i: 0..10)
     inx
     cpx #$b

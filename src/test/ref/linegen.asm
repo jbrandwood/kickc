@@ -377,10 +377,6 @@ lin16u_gen: {
     sbc.z min+1
     sta.z ampl+1
     // divr16u(ampl, length-1, 0)
-    lda #<$14-1
-    sta.z divr16u.divisor
-    lda #>$14-1
-    sta.z divr16u.divisor+1
     lda #<0
     sta.z divr16u.rem
     sta.z divr16u.rem+1
@@ -392,10 +388,6 @@ lin16u_gen: {
     lda.z divr16u.return+1
     sta.z stepi+1
     // divr16u(0, length-1, rem16u)
-    lda #<$14-1
-    sta.z divr16u.divisor
-    lda #>$14-1
-    sta.z divr16u.divisor+1
     lda #<0
     sta.z divr16u.dividend
     sta.z divr16u.dividend+1
@@ -480,13 +472,12 @@ lin16u_gen: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp(7) dividend, word zp($1d) divisor, word zp($13) rem)
+// divr16u(word zp(7) dividend, word zp($13) rem)
 divr16u: {
     .label rem = $13
     .label dividend = 7
     .label quotient = $15
     .label return = $15
-    .label divisor = $1d
     ldx #0
     txa
     sta.z quotient
@@ -515,11 +506,11 @@ divr16u: {
     rol.z quotient+1
     // if(rem>=divisor)
     lda.z rem+1
-    cmp.z divisor+1
+    cmp #>$14-1
     bcc __b3
     bne !+
     lda.z rem
-    cmp.z divisor
+    cmp #<$14-1
     bcc __b3
   !:
     // quotient++;
@@ -530,10 +521,10 @@ divr16u: {
     // rem = rem - divisor
     lda.z rem
     sec
-    sbc.z divisor
+    sbc #<$14-1
     sta.z rem
     lda.z rem+1
-    sbc.z divisor+1
+    sbc #>$14-1
     sta.z rem+1
   __b3:
     // for( char i : 0..15)

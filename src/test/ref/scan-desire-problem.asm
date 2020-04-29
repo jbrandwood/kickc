@@ -3,6 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SPRITES_XMSB = $d010
+  .label SPRITES_COLS = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
@@ -12,7 +13,6 @@
   .label BGCOL2 = $d022
   .label BGCOL3 = $d023
   .label BGCOL4 = $d024
-  .label SPRITES_COLS = $d027
   .label D018 = $d018
   // The colors of the C64
   .const BLACK = 0

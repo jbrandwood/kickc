@@ -7,12 +7,12 @@
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label RASTER = $d012
+  .label SPRITES_COLS = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
-  .label SPRITES_COLS = $d027
+  .label RASTER = $d012
   .label VIC_CONTROL = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register

@@ -4,11 +4,11 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
+  .label SPRITES_COLS = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_EXPAND_X = $d01d
-  .label SPRITES_COLS = $d027
+  .label RASTER = $d012
   .const WHITE = 1
   .label SCREEN = $400
   .label SPRITES_PTR = SCREEN+$3f8

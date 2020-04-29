@@ -7,9 +7,9 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
   .label SPRITES_COLS = $d027
+  .label SPRITES_ENABLE = $d015
+  .label RASTER = $d012
   .label VIC_CONTROL = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register

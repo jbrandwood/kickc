@@ -2,13 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL1 = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
-  .label BGCOL4 = $d024
   .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_BMM = $20
@@ -30,6 +23,8 @@
   .const PROCPORT_RAM_CHARROM = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The CIA#1: keyboard matrix, joystick #1/#2
@@ -158,6 +153,15 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3 = $24
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
+  .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   // Number of form fields
   .const form_fields_cnt = $24
   .label print_line_cursor = 7
@@ -536,10 +540,10 @@ gfx_mode: {
     lda #$19
     cmp.z cy
     bne __b19
-    // *BORDERCOL = 0
+    // VICII->BORDER_COLOR = 0
     // Background colors
     lda #0
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // *form_vic_bg0_hi*$10
     lda form_vic_bg0_hi
     asl
@@ -548,8 +552,8 @@ gfx_mode: {
     asl
     // *form_vic_bg0_hi*$10|*form_vic_bg0_lo
     ora form_vic_bg0_lo
-    // *BGCOL1 = *form_vic_bg0_hi*$10|*form_vic_bg0_lo
-    sta BGCOL1
+    // VICII->BG_COLOR = *form_vic_bg0_hi*$10|*form_vic_bg0_lo
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // *form_vic_bg1_hi*$10
     lda form_vic_bg1_hi
     asl
@@ -558,8 +562,8 @@ gfx_mode: {
     asl
     // *form_vic_bg1_hi*$10|*form_vic_bg1_lo
     ora form_vic_bg1_lo
-    // *BGCOL2 = *form_vic_bg1_hi*$10|*form_vic_bg1_lo
-    sta BGCOL2
+    // VICII->BG_COLOR1 = *form_vic_bg1_hi*$10|*form_vic_bg1_lo
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
     // *form_vic_bg2_hi*$10
     lda form_vic_bg2_hi
     asl
@@ -568,8 +572,8 @@ gfx_mode: {
     asl
     // *form_vic_bg2_hi*$10|*form_vic_bg2_lo
     ora form_vic_bg2_lo
-    // *BGCOL3 = *form_vic_bg2_hi*$10|*form_vic_bg2_lo
-    sta BGCOL3
+    // VICII->BG_COLOR2 = *form_vic_bg2_hi*$10|*form_vic_bg2_lo
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
     // *form_vic_bg3_hi*$10
     lda form_vic_bg3_hi
     asl
@@ -578,8 +582,8 @@ gfx_mode: {
     asl
     // *form_vic_bg3_hi*$10|*form_vic_bg3_lo
     ora form_vic_bg3_lo
-    // *BGCOL4 = *form_vic_bg3_hi*$10|*form_vic_bg3_lo
-    sta BGCOL4
+    // VICII->BG_COLOR3 = *form_vic_bg3_hi*$10|*form_vic_bg3_lo
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3
     // if(*form_dtv_palet==0)
     // DTV Palette
     lda form_dtv_palet
@@ -596,9 +600,9 @@ gfx_mode: {
     cpx #$10
     bne __b23
   __b25:
-    // while(*RASTER!=$ff)
+    // while(VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b25
     // keyboard_event_scan()
     jsr keyboard_event_scan
@@ -1164,17 +1168,17 @@ form_mode: {
     // DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
+    // VICII->CONTROL1 = VIC_DEN|VIC_RSEL|3
     // VIC Graphics Mode
     lda #VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->CONTROL2 = VIC_CSEL
     lda #VIC_CSEL
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400))
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
+    // VICII->MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
     // *DTV_PLANEA_START_LO = < FORM_SCREEN
     // DTV Plane A to FORM_SCREEN also
     lda #0
@@ -1195,21 +1199,21 @@ form_mode: {
     inx
     cpx #$10
     bne __b1
-    // *BGCOL = 0
+    // VICII->BG_COLOR = 0
     // Screen colors
     lda #0
-    sta BGCOL
-    // *BORDERCOL = 0
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // VICII->BORDER_COLOR = 0
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // preset_current = *form_preset
     lda form_fields_val
     sta.z preset_current
   __b2:
   // Let the user change values in the form
   __b4:
-    // while(*RASTER!=$ff)
+    // while(VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b4
     // form_control()
     jsr form_control

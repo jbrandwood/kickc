@@ -59,15 +59,17 @@ const char BORDER_YPOS_BOTTOM=250;
 // The offset of the sprite pointers from the screen start address
 const unsigned int SPRITE_PTRS = $3f8;
 
-char*  const SPRITES_XPOS = $d000;
-char*  const SPRITES_YPOS = $d001;
-char*  const SPRITES_XMSB = $d010;
-char*  const RASTER = $d012;
+char * const SPRITES_XPOS = $d000;
+char * const SPRITES_YPOS = $d001;
+char * const SPRITES_XMSB = $d010;
+char * const SPRITES_COLS = $d027;
 char*  const SPRITES_ENABLE = $d015;
 char*  const SPRITES_EXPAND_Y = $d017;
 char*  const SPRITES_PRIORITY = $d01b;
 char*  const SPRITES_MC = $d01c;
 char*  const SPRITES_EXPAND_X = $d01d;
+
+char*  const RASTER = $d012;
 char*  const BORDERCOL = $d020;
 char*  const BGCOL = $d021;
 char*  const BGCOL1 = $d021;
@@ -76,11 +78,9 @@ char*  const BGCOL3 = $d023;
 char*  const BGCOL4 = $d024;
 char*  const SPRITES_MC1 = $d025;
 char*  const SPRITES_MC2 = $d026;
-char*  const SPRITES_COLS = $d027;
 
 char*  const VIC_CONTROL = $d011;
 char*  const D011 = $d011;
-
 const char VIC_RST8 = %10000000;
 const char VIC_ECM =  %01000000;
 const char VIC_BMM =  %00100000;
@@ -89,12 +89,11 @@ const char VIC_RSEL = %00001000;
 
 char*  const VIC_CONTROL2 = $d016;
 char*  const D016 = $d016;
-
 const char VIC_MCM =  %00010000;
 const char VIC_CSEL = %00001000;
 
-char*  const D018 = $d018;
 char*  const VIC_MEMORY = $d018;
+char*  const D018 = $d018;
 
 // VIC II IRQ Status Register
 char*  const IRQ_STATUS = $d019;

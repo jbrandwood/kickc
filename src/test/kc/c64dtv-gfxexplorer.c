@@ -367,11 +367,11 @@ void gfx_mode() {
     }
 
     // Background colors
-    *BORDERCOL = 0;
-    *BGCOL1 = *form_vic_bg0_hi*$10|*form_vic_bg0_lo;
-    *BGCOL2 = *form_vic_bg1_hi*$10|*form_vic_bg1_lo;
-    *BGCOL3 = *form_vic_bg2_hi*$10|*form_vic_bg2_lo;
-    *BGCOL4 = *form_vic_bg3_hi*$10|*form_vic_bg3_lo;
+    VICII->BORDER_COLOR = 0;
+    VICII->BG_COLOR = *form_vic_bg0_hi*$10|*form_vic_bg0_lo;
+    VICII->BG_COLOR1 = *form_vic_bg1_hi*$10|*form_vic_bg1_lo;
+    VICII->BG_COLOR2 = *form_vic_bg2_hi*$10|*form_vic_bg2_lo;
+    VICII->BG_COLOR3 = *form_vic_bg3_hi*$10|*form_vic_bg3_lo;
 
     // DTV Palette
     if(*form_dtv_palet==0) {
@@ -388,7 +388,7 @@ void gfx_mode() {
 
     // Wait for the user to press space
     while(true) {
-        while(*RASTER!=$ff) {}
+        while(VICII->RASTER!=$ff) {}
         keyboard_event_scan();
         byte keyboard_event = keyboard_event_get();
         if(keyboard_event==KEY_SPACE) {
@@ -649,10 +649,10 @@ void form_mode() {
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Mode
-    *VIC_CONTROL = VIC_DEN|VIC_RSEL|3;
-    *VIC_CONTROL2 = VIC_CSEL;
+    VICII->CONTROL1 = VIC_DEN|VIC_RSEL|3;
+    VICII->CONTROL2 = VIC_CSEL;
     // VIC Memory Pointers
-    *VIC_MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400));
+    VICII->MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400));
     // DTV Plane A to FORM_SCREEN also
     *DTV_PLANEA_START_LO = < FORM_SCREEN;
     *DTV_PLANEA_START_MI = > FORM_SCREEN;
@@ -662,14 +662,14 @@ void form_mode() {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
     }
     // Screen colors
-    *BGCOL = 0;
-    *BORDERCOL = 0;
+    VICII->BG_COLOR = 0;
+    VICII->BORDER_COLOR = 0;
 
     byte preset_current = *form_preset;
 
     // Let the user change values in the form
     while(true) {
-        while(*RASTER!=$ff) {}
+        while(VICII->RASTER!=$ff) {}
         if(form_control()!=0) {
             // Space pressed - change to GFX mode
             return;

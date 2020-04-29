@@ -7,10 +7,10 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  .label SPRITES_ENABLE = $d015
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
   .label D011 = $d011
   .const VIC_DEN = $10

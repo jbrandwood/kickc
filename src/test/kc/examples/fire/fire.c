@@ -13,8 +13,8 @@ unsigned char* CHARSET = 0x3000;
 
 void main() {
     asm { sei }
-    *BORDERCOL = BLACK;
-    *BGCOL = BLACK;
+    VICII->BORDER_COLOR = BLACK;
+    VICII->BG_COLOR = BLACK;
     fillscreen(BUFFER, 00);
     fillscreen(SCREEN1, 00);
     fillscreen(SCREEN2, 00);

@@ -1,22 +1,18 @@
 // An 8x8 char letter scroller
+#include <c64.h>
 
-char* PROCPORT = $01;
-char* CHARGEN = $d000;
 char* SCREEN = $0400;
-char* RASTER = $d012;
-char* BGCOL = $d020;
-char* SCROLL = $d016;
 char* TEXT = "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     ";
 
 void main() {
     fillscreen(SCREEN, $20);
     do {
         // Wait for raster
-        do {} while(*RASTER!=$fe);
-        do {} while(*RASTER!=$ff);
-        ++*BGCOL;
+        do {} while(VICII->RASTER!=$fe);
+        do {} while(VICII->RASTER!=$ff);
+        ++VICII->BG_COLOR;
         scroll_soft();
-        --*BGCOL;
+        --VICII->BG_COLOR;
     } while(true);
 }
 
@@ -27,7 +23,7 @@ void scroll_soft() {
         scroll = 7;
         scroll_bit();
     }
-    *SCROLL = scroll;
+    VICII->CONTROL2 = scroll;
 }
 
 // Scroll the next bit from the current char onto the screen - trigger next char if needed

@@ -2,7 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BGCOL = $d021
   .label D011 = $d011
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -18,6 +17,8 @@
   .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .const WHITE = 1
@@ -30,6 +31,7 @@
   .const SIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN = $400
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
@@ -71,8 +73,8 @@ main: {
     // render_sine()
     jsr render_sine
   __b1:
-    // (*BGCOL)++;
-    inc BGCOL
+    // (VICII->BG_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1
 }
 render_sine: {

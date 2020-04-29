@@ -34,10 +34,6 @@ main: {
     sta.z memset.str
     lda #>SCREEN
     sta.z memset.str+1
-    lda #<$28*$19
-    sta.z memset.num
-    lda #>$28*$19
-    sta.z memset.num+1
     jsr memset
     // memset(COLS, WHITE, 40*25)
     ldx #WHITE
@@ -45,10 +41,6 @@ main: {
     sta.z memset.str
     lda #>COLS
     sta.z memset.str+1
-    lda #<$28*$19
-    sta.z memset.num
-    lda #>$28*$19
-    sta.z memset.num+1
     jsr memset
     lda #<SCREEN+$28
     sta.z sc
@@ -98,25 +90,18 @@ main: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(8) str, byte register(X) c, word zp(6) num)
+// memset(void* zp(6) str, byte register(X) c)
 memset: {
-    .label end = 6
-    .label dst = 8
-    .label num = 6
-    .label str = 8
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
+    .label end = 8
+    .label dst = 6
+    .label str = 6
     // end = (char*)str + num
-    lda.z end
+    lda.z str
     clc
-    adc.z str
+    adc #<$28*$19
     sta.z end
-    lda.z end+1
-    adc.z str+1
+    lda.z str+1
+    adc #>$28*$19
     sta.z end+1
   __b2:
     // for(char* dst = str; dst!=end; dst++)
@@ -126,7 +111,6 @@ memset: {
     lda.z dst
     cmp.z end
     bne __b3
-  __breturn:
     // }
     rts
   __b3:

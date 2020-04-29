@@ -1,22 +1,24 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D011 = $d011
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .label VIC_MEMORY = $d018
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label SCREEN = $400
   .label BITMAP = $2000
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const lines_cnt = 8
 main: {
-    // *BORDERCOL = 0
+    // VICII->BORDER_COLOR = 0
     lda #0
-    sta BORDERCOL
-    // *BGCOL = 0
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR = 0
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011

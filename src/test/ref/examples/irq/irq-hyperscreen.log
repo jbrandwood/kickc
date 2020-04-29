@@ -11,9 +11,9 @@ main: scope:[main]  from @1
   *((const nomodify byte*) GHOST_BYTE) ← (number) 0
   asm { sei  }
   *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
-  *((const nomodify byte*) RASTER) ← (number) $fa
-  *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (number) $7f
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (number) $fa
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
   asm { cli  }
   to:main::@return
@@ -23,12 +23,12 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
-  *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $ff^(const nomodify byte) VIC_RSEL
-  *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  *((const nomodify byte*) RASTER) ← (number) $fd
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (number) $ff^(const nomodify byte) VIC_RSEL
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (number) $fd
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED
   to:irq_bottom_1::@return
 irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
   return 
@@ -36,12 +36,12 @@ irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
-  *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL
-  *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  *((const nomodify byte*) RASTER) ← (number) $fa
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | (const nomodify byte) VIC_RSEL
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (number) $fa
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED
   to:irq_bottom_2::@return
 irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
   return 
@@ -58,13 +58,10 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) GHOST_BYTE = (byte*)(number) $3fff
-(const nomodify byte*) IRQ_ENABLE = (byte*)(number) $d01a
 (const nomodify byte) IRQ_RASTER = (byte) 1
-(const nomodify byte*) IRQ_STATUS = (byte*)(number) $d019
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
@@ -151,9 +148,13 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
-(const nomodify byte*) RASTER = (byte*)(number) $d012
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = (byte) $11
+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = (byte) $1a
+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = (byte) $19
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
 (const nomodify byte) RED = (byte) 2
-(const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (const nomodify byte) VIC_RSEL = (byte) 8
 (const nomodify byte) WHITE = (byte) 1
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
@@ -164,23 +165,19 @@ interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 (label) main::@return
 
 Adding number conversion cast (unumber) 0 in *((const nomodify byte*) GHOST_BYTE) ← (number) 0
-Adding number conversion cast (unumber) $7f in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $fa in *((const nomodify byte*) RASTER) ← (number) $fa
-Adding number conversion cast (unumber) $ff^VIC_RSEL in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $ff^(const nomodify byte) VIC_RSEL
-Adding number conversion cast (unumber) $ff in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (unumber)(number) $ff^(const nomodify byte) VIC_RSEL
-Adding number conversion cast (unumber) $fd in *((const nomodify byte*) RASTER) ← (number) $fd
-Adding number conversion cast (unumber) $fa in *((const nomodify byte*) RASTER) ← (number) $fa
+Adding number conversion cast (unumber) $7f in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (number) $7f
+Adding number conversion cast (unumber) $fa in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (number) $fa
+Adding number conversion cast (unumber) $ff^VIC_RSEL in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (number) $ff^(const nomodify byte) VIC_RSEL
+Adding number conversion cast (unumber) $ff in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (unumber)(number) $ff^(const nomodify byte) VIC_RSEL
+Adding number conversion cast (unumber) $fd in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (number) $fd
+Adding number conversion cast (unumber) $fa in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (number) $fa
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((const nomodify byte*) GHOST_BYTE) ← (unumber)(number) 0
-Inlining cast *((const nomodify byte*) RASTER) ← (unumber)(number) $fa
-Inlining cast *((const nomodify byte*) RASTER) ← (unumber)(number) $fd
-Inlining cast *((const nomodify byte*) RASTER) ← (unumber)(number) $fa
+Inlining cast *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (unumber)(number) $fa
+Inlining cast *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (unumber)(number) $fd
+Inlining cast *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (unumber)(number) $fa
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53265
-Simplifying constant pointer cast (byte*) 53273
-Simplifying constant pointer cast (byte*) 53274
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 16383
@@ -229,9 +226,9 @@ main: scope:[main]  from @1
   [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0
   asm { sei  }
   [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
-  [8] *((const nomodify byte*) RASTER) ← (byte) $fa
-  [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
+  [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f
+  [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa
+  [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
   [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
   asm { cli  }
   to:main::@return
@@ -241,12 +238,12 @@ main::@return: scope:[main]  from main
 
 interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
-  [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
-  [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL
-  [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  [16] *((const nomodify byte*) RASTER) ← (byte) $fa
+  [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
+  [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | (const nomodify byte) VIC_RSEL
+  [15] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa
   [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1()
-  [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
+  [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED
   to:irq_bottom_2::@return
 irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
   [19] return 
@@ -254,12 +251,12 @@ irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
 
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
-  [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
-  [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL
-  [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  [23] *((const nomodify byte*) RASTER) ← (byte) $fd
+  [20] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
+  [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $ff^(const nomodify byte) VIC_RSEL
+  [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  [23] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fd
   [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
-  [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
+  [25] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED
   to:irq_bottom_1::@return
 irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
   [26] return 
@@ -369,16 +366,11 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
-  // VIC II IRQ Status Register
-  .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
-  .label IRQ_ENABLE = $d01a
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
@@ -387,6 +379,11 @@ Target platform is c64basic / MOS6502X
   .const RED = 2
   .label GHOST_BYTE = $3fff
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -412,18 +409,18 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // [8] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
-    sta RASTER
-    // [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
-    sta IRQ_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
@@ -442,30 +439,30 @@ main: {
 // Interrupt Routine 2
 irq_bottom_2: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
-    ora VIC_CONTROL
-    sta VIC_CONTROL
-    // [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    ora VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // [15] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [16] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-    // [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // irq_bottom_2::@return
   __breturn:
@@ -476,30 +473,30 @@ irq_bottom_2: {
 // Interrupt Routine 1
 irq_bottom_1: {
     // entry interrupt(KERNEL_MIN)
-    // [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [20] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [23] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // [23] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-    // [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [25] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // irq_bottom_1::@return
   __breturn:
@@ -511,22 +508,22 @@ irq_bottom_1: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const nomodify byte*) GHOST_BYTE) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) RASTER) ← (byte) $fa [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify byte*) RASTER) ← (byte) $fa [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | (const nomodify byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [15] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [23] *((const nomodify byte*) RASTER) ← (byte) $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [20] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $ff^(const nomodify byte) VIC_RSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [23] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [25] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [MOS6526_CIA] 
@@ -555,16 +552,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
-  // VIC II IRQ Status Register
-  .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
-  .label IRQ_ENABLE = $d01a
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
@@ -573,6 +565,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const RED = 2
   .label GHOST_BYTE = $3fff
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -598,18 +595,18 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // [8] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
-    sta RASTER
-    // [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
-    sta IRQ_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq_bottom_1
@@ -628,30 +625,30 @@ main: {
 // Interrupt Routine 2
 irq_bottom_2: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
-    ora VIC_CONTROL
-    sta VIC_CONTROL
-    // [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    ora VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // [15] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [16] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-    // [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // irq_bottom_2::@return
   __breturn:
@@ -662,30 +659,30 @@ irq_bottom_2: {
 // Interrupt Routine 1
 irq_bottom_1: {
     // entry interrupt(KERNEL_MIN)
-    // [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [20] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [23] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // [23] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-    // [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [25] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // irq_bottom_1::@return
   __breturn:
@@ -720,13 +717,10 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*) 53280
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) GHOST_BYTE = (byte*) 16383
-(const nomodify byte*) IRQ_ENABLE = (byte*) 53274
 (const nomodify byte) IRQ_RASTER = (byte) 1
-(const nomodify byte*) IRQ_STATUS = (byte*) 53273
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
@@ -813,9 +807,13 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
-(const nomodify byte*) RASTER = (byte*) 53266
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = (byte) $11
+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = (byte) $1a
+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = (byte) $19
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
 (const nomodify byte) RED = (byte) 2
-(const nomodify byte*) VIC_CONTROL = (byte*) 53265
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (const nomodify byte) VIC_RSEL = (byte) 8
 (const nomodify byte) WHITE = (byte) 1
 interrupt(KERNEL_MIN)(void()) irq_bottom_1()
@@ -839,16 +837,11 @@ Score: 154
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
-  // VIC II IRQ Status Register
-  .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
-  .label IRQ_ENABLE = $d01a
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
@@ -857,6 +850,11 @@ Score: 154
   .const RED = 2
   .label GHOST_BYTE = $3fff
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -877,21 +875,21 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=$7f
-    // [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // VICII->CONTROL1 &=$7f
+    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $fa
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = $fa
-    // [8] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->RASTER = $fa
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     lda #$fa
-    sta RASTER
-    // *IRQ_ENABLE = IRQ_RASTER
-    // [9] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // VICII->IRQ_ENABLE = IRQ_RASTER
+    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
-    sta IRQ_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // *KERNEL_IRQ = &irq_bottom_1
     // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
@@ -911,36 +909,36 @@ main: {
 // Interrupt Routine 2
 irq_bottom_2: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // *BORDERCOL = WHITE
-    // [13] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = WHITE
+    // [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // *VIC_CONTROL |= VIC_RSEL
-    // [14] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->CONTROL1 |= VIC_RSEL
+    // [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | (const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
-    ora VIC_CONTROL
-    sta VIC_CONTROL
-    // *IRQ_STATUS = IRQ_RASTER
-    // [15] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    ora VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->IRQ_STATUS = IRQ_RASTER
+    // [15] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // *RASTER = $fa
-    // [16] *((const nomodify byte*) RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // VICII->RASTER = $fa
+    // [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fa -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 1 at line $fa
     lda #$fa
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // *KERNEL_IRQ = &irq_bottom_1
     // [17] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-    // *BORDERCOL = RED
-    // [18] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = RED
+    // [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_bottom_2::@return
     // }
     // [19] return  - exit interrupt(KERNEL_KEYBOARD)
@@ -950,36 +948,36 @@ irq_bottom_2: {
 // Interrupt Routine 1
 irq_bottom_1: {
     // entry interrupt(KERNEL_MIN)
-    // *BORDERCOL = WHITE
-    // [20] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = WHITE
+    // [20] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // *VIC_CONTROL &= ($ff^VIC_RSEL)
-    // [21] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->CONTROL1 &= ($ff^VIC_RSEL)
+    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $ff^(const nomodify byte) VIC_RSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *IRQ_STATUS = IRQ_RASTER
-    // [22] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->IRQ_STATUS = IRQ_RASTER
+    // [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // *RASTER = $fd
-    // [23] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // VICII->RASTER = $fd
+    // [23] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     // Trigger IRQ 2 at line $fd
     lda #$fd
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // *KERNEL_IRQ = &irq_bottom_2
     // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2() -- _deref_pptc1=pprc2 
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-    // *BORDERCOL = RED
-    // [25] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = RED
+    // [25] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_bottom_1::@return
     // }
     // [26] return  - exit interrupt(KERNEL_MIN)

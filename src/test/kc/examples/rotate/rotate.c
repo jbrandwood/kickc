@@ -25,7 +25,7 @@ void main() {
 
 void init() {
     mulf_init();	
-    *SPRITES_ENABLE = %11111111;	
+    VICII->SPRITES_ENABLE = %11111111;
     char* sprites_ptr = SCREEN+$3f8;
     for(char i: 0..7) {
     	sprites_ptr[i] = (char)(SPRITE/$40);
@@ -40,8 +40,8 @@ signed char ys[8] = { -70,   0,  70, -70,  70, -70,   0,  70};
 void anim() {
 	char angle = 0;
 	while(true) {
-		while(*RASTER!=$ff) {}
-        (*BORDERCOL)++;
+		while(VICII->RASTER!=$ff) {}
+        (VICII->BORDER_COLOR)++;
         clock_start();
         signed char cos_a = (signed char) COS[angle]; // signed fixed[0.7]
         signed char sin_a = (signed char) SIN[angle]; // signed fixed[0.7]
@@ -65,13 +65,13 @@ void anim() {
        	    SPRITES_XPOS[i2] = <xpos;
        	    SPRITES_YPOS[i2] = ypos;
         }
-        *SPRITES_XMSB = sprite_msb;
+        VICII->SPRITES_XMSB = sprite_msb;
 		angle++;
         // Calculate the cycle count - 0x12 is the base usage of start/read
         unsigned long cyclecount = clock()-CLOCKS_PER_INIT;
         // Print cycle count
         print_ulong_at(cyclecount, SCREEN);
-		*BORDERCOL = LIGHT_BLUE;	
+		VICII->BORDER_COLOR = LIGHT_BLUE;
 	}
 }
 

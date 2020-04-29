@@ -5,19 +5,21 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
   .label D011 = $d011
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000
@@ -65,12 +67,12 @@ loop: {
     lda #0
     sta.z sin_idx
   __b2:
-    // while(*RASTER!=$ff)
+    // while(VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     ldx.z sin_idx
     ldy #0
   __b4:
@@ -86,13 +88,13 @@ loop: {
     bne __b4
     // sin_idx +=1
     inc.z sin_idx
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // plexSort()
     jsr plexSort
-    // *BORDERCOL = BLACK
+    // VICII->BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
   __b6:
     // *D011&VIC_RST8
     lda #VIC_RST8
@@ -104,20 +106,20 @@ loop: {
     sta.z ss
   // Show the sprites
   __b7:
-    // *BORDERCOL = BLACK
+    // VICII->BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // return PLEX_FREE_YPOS[plex_free_next];
     ldy.z plex_free_next
     lda PLEX_FREE_YPOS,y
     sta.z plexFreeNextYpos1_return
   __b8:
-    // while(*RASTER<rasterY)
-    lda RASTER
+    // while(VICII->RASTER<rasterY)
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     cmp.z plexFreeNextYpos1_return
     bcc __b8
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // plexShowSprite()
     jsr plexShowSprite
     // for( char ss: 0..PLEX_COUNT-1)
@@ -125,9 +127,9 @@ loop: {
     lda #PLEX_COUNT-1+1
     cmp.z ss
     bne __b7
-    // *BORDERCOL = BLACK
+    // VICII->BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b2
 }
 // Show the next sprite.
@@ -332,10 +334,10 @@ init: {
     inx
     cpx #PLEX_COUNT-1+1
     bne __b1
-    // *SPRITES_ENABLE = $ff
+    // VICII->SPRITES_ENABLE = $ff
     // Enable & initialize sprites
     lda #$ff
-    sta SPRITES_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     ldx #0
   __b3:
     // SPRITES_COLS[ss] = GREEN

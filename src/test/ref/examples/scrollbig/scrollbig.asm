@@ -2,12 +2,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+  // The address of the CHARGEN character set
   .label CHARGEN = $d000
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
   .label SCREEN = $400
-  .label RASTER = $d012
-  .label BGCOL = $d020
-  .label SCROLL = $d016
   .label current_bit = 2
   // Scroll the next bit from the current char onto the screen - trigger next char if needed
   .label current_chargen = 3
@@ -28,21 +32,21 @@ main: {
     ldx #7
   // Wait for raster
   __b1:
-    // while(*RASTER!=$fe)
+    // while(VICII->RASTER!=$fe)
     lda #$fe
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
   __b2:
-    // while(*RASTER!=$ff)
+    // while(VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
-    // ++*BGCOL;
-    inc BGCOL
+    // ++VICII->BG_COLOR;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // scroll_soft()
     jsr scroll_soft
-    // --*BGCOL;
-    dec BGCOL
+    // --VICII->BG_COLOR;
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1
 }
 scroll_soft: {
@@ -54,8 +58,8 @@ scroll_soft: {
     jsr scroll_bit
     ldx #7
   __b1:
-    // *SCROLL = scroll
-    stx SCROLL
+    // VICII->CONTROL2 = scroll
+    stx VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     // }
     rts
 }

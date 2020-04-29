@@ -28,11 +28,11 @@ void main() {
     // Load sprite file into memory
     char status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE);
     if(status!=0xff) {
-        *BORDERCOL = 0x02;
+        VICII->BORDER_COLOR = 0x02;
         error(status);
     }
     // Show the loaded sprite on screen
-    *SPRITES_ENABLE = %00000001;
+    VICII->SPRITES_ENABLE = %00000001;
     SPRITES_PTR[0] = toSpritePtr(LOAD_SPRITE);
     SPRITES_COLS[0] = GREEN;
     SPRITES_XPOS[0] = 0x15;

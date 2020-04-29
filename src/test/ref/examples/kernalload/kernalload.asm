@@ -19,14 +19,16 @@
   .const SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .const GREEN = 5
   // Address to load to
   .label LOAD_SPRITE = $3000
   .label SCREEN = $400
   .label SPRITES_PTR = SCREEN+SPRITE_PTRS
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
 __bbegin:
 .segment Code
 main: {
@@ -39,17 +41,17 @@ main: {
     // if(status!=0xff)
     cpx #$ff
     beq __b1
-    // *BORDERCOL = 0x02
+    // VICII->BORDER_COLOR = 0x02
     lda #2
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // error(status)
     txa
     jsr error
   __b1:
-    // *SPRITES_ENABLE = %00000001
+    // VICII->SPRITES_ENABLE = %00000001
     // Show the loaded sprite on screen
     lda #1
-    sta SPRITES_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     // SPRITES_PTR[0] = toSpritePtr(LOAD_SPRITE)
     lda #toSpritePtr1_return
     sta SPRITES_PTR

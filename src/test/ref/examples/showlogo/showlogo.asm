@@ -1,36 +1,38 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
   .label D016 = $d016
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   .label D018 = $d018
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
   .const DARK_GREY = $b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
   .label SCREEN = $400
   .label LOGO = $2000
   // kickasm
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
-    // *BORDERCOL = WHITE
+    // VICII->BORDER_COLOR = WHITE
     lda #WHITE
-    sta BORDERCOL
-    // *BGCOL2 = DARK_GREY
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR1 = DARK_GREY
     lda #DARK_GREY
-    sta BGCOL2
-    // *BGCOL = *BGCOL2 = DARK_GREY
-    sta BGCOL
-    // *BGCOL3 = BLACK
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
+    // VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // VICII->BG_COLOR2 = BLACK
     lda #BLACK
-    sta BGCOL3
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
     // *D018 = toD018(SCREEN, LOGO)
     lda #toD0181_return
     sta D018
@@ -43,10 +45,6 @@ main: {
     sta.z memset.str
     lda #>SCREEN
     sta.z memset.str+1
-    lda #<$28*$19
-    sta.z memset.num
-    lda #>$28*$19
-    sta.z memset.num+1
     jsr memset
     // memset(COLS, WHITE|8, 40*25)
     ldx #WHITE|8
@@ -54,10 +52,6 @@ main: {
     sta.z memset.str
     lda #>COLS
     sta.z memset.str+1
-    lda #<$28*$19
-    sta.z memset.num
-    lda #>$28*$19
-    sta.z memset.num+1
     jsr memset
     ldx #0
   __b1:
@@ -76,25 +70,18 @@ main: {
     jmp __b2
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c, word zp(2) num)
+// memset(void* zp(2) str, byte register(X) c)
 memset: {
-    .label end = 2
-    .label dst = 4
-    .label num = 2
-    .label str = 4
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
+    .label end = 4
+    .label dst = 2
+    .label str = 2
     // end = (char*)str + num
-    lda.z end
+    lda.z str
     clc
-    adc.z str
+    adc #<$28*$19
     sta.z end
-    lda.z end+1
-    adc.z str+1
+    lda.z str+1
+    adc #>$28*$19
     sta.z end+1
   __b2:
     // for(char* dst = str; dst!=end; dst++)
@@ -104,7 +91,6 @@ memset: {
     lda.z dst
     cmp.z end
     bne __b3
-  __breturn:
     // }
     rts
   __b3:

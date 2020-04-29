@@ -1,7 +1,6 @@
+#include <c64.h>
+
 char* const SCREEN = $0400;
-char* const RASTER = $d012;
-char* const BGCOL = $d020;
-char* const SCROLL = $d016;
 const char TEXT[] = "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     ";
 
 void main() {
@@ -11,9 +10,9 @@ void main() {
     char* const line = SCREEN+40;
     do {
         // Wait for raster
-        do {} while(*RASTER!=$fe);
-        do {} while(*RASTER!=$ff);
-        ++*BGCOL;
+        do {} while(VICII->RASTER!=$fe);
+        do {} while(VICII->RASTER!=$ff);
+        ++VICII->BG_COLOR;
         // Soft scroll
         if(--scroll==$ff) {
             scroll = 7;
@@ -30,8 +29,8 @@ void main() {
             line[39] = c;
             nxt++;
         }
-        *SCROLL = scroll;
-        --*BGCOL;
+        VICII->CONTROL2 = scroll;
+        --VICII->BG_COLOR;
     } while(true);
 }
 

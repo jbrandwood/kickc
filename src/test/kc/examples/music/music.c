@@ -20,10 +20,10 @@ void main() {
     asm {  jsr music.init }
     do {
         // Wait for the RASTER
-        do {} while (*RASTER != $fd);
-        (*BORDERCOL)++;
+        do {} while (VICII->RASTER != $fd);
+        (VICII->BORDER_COLOR)++;
         // Play the music
         asm { jsr music.play }
-        (*BORDERCOL)--;
+        (VICII->BORDER_COLOR)--;
     } while (true);
 }

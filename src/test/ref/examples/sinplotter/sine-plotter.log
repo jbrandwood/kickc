@@ -786,7 +786,7 @@ main::@2: scope:[main]  from main::@1
   (word) rem16u#28 ← phi( main::@1/(word) rem16u#24 )
   (byte*) bitmap_screen#18 ← phi( main::@1/(byte*) bitmap_screen#13 )
   (byte*) bitmap_gfx#19 ← phi( main::@1/(byte*) bitmap_gfx#14 )
-  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   (word) rem16u#18 ← phi( main::@1/(word) rem16u#24 )
@@ -925,7 +925,6 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
 (const byte*) BITMAP = (byte*)(number) $2000
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*)(number) $dd00
@@ -1018,6 +1017,7 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A = (byte) 0
 (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = (byte) 2
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
 (const nomodify dword) PI2_u4f28 = (dword) $6487ed51
 (const nomodify dword) PI_HALF_u4f28 = (dword) $1921fb54
 (const nomodify dword) PI_u4f28 = (dword) $3243f6a9
@@ -1028,6 +1028,7 @@ SYMBOL TABLE SSA
 (const byte*) SCREEN = (byte*)(number) $400
 (const nomodify word) SIN_SIZE = (word) $200
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (const nomodify byte) VIC_BMM = (byte) $20
 (const nomodify byte) VIC_CSEL = (byte) 8
 (const nomodify byte) VIC_DEN = (byte) $10
@@ -1914,12 +1915,12 @@ Inlining cast (signed word) sin16s_gen2::min#0 ← (snumber)(number) -$140
 Inlining cast (signed word) sin16s_gen2::max#0 ← (snumber)(number) $140
 Inlining cast (word) render_sine::xpos#2 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53265
 Simplifying constant pointer cast (byte*) 53270
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant pointer cast (byte*) 1
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (struct MOS6526_CIA*) 56576
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
@@ -2798,7 +2799,7 @@ main::@6: scope:[main]  from main::@5
   [20] call render_sine 
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@6
-  [21] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR)
   to:main::@1
 
 (void()) render_sine()
@@ -3828,7 +3829,6 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BGCOL = $d021
   .label D011 = $d011
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -3844,6 +3844,8 @@ Target platform is c64basic / MOS6502X
   .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .const WHITE = 1
@@ -3856,6 +3858,7 @@ Target platform is c64basic / MOS6502X
   .const SIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN = $400
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
@@ -3959,8 +3962,8 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [21] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1
 }
   // render_sine
@@ -5991,7 +5994,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BGCOL = $d021
   .label D011 = $d011
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -6007,6 +6009,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .const WHITE = 1
@@ -6019,6 +6023,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN = $400
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
@@ -6122,8 +6127,8 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [21] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1
 }
   // render_sine
@@ -7719,7 +7724,6 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
 (const byte*) BITMAP = (byte*) 8192
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*) 56576
 (const nomodify byte*) D011 = (byte*) 53265
@@ -7810,6 +7814,7 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = (byte) 2
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
 (const nomodify dword) PI2_u4f28 = (dword) $6487ed51
 (const nomodify dword) PI_HALF_u4f28 = (dword) $1921fb54
 (const nomodify dword) PI_u4f28 = (dword) $3243f6a9
@@ -7820,6 +7825,7 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN = (byte*) 1024
 (const nomodify word) SIN_SIZE = (word) $200
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (const nomodify byte) VIC_BMM = (byte) $20
 (const nomodify byte) VIC_CSEL = (byte) 8
 (const nomodify byte) VIC_DEN = (byte) $10
@@ -8214,7 +8220,6 @@ Score: 25034
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BGCOL = $d021
   .label D011 = $d011
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -8230,6 +8235,8 @@ Score: 25034
   .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .const WHITE = 1
@@ -8242,6 +8249,7 @@ Score: 25034
   .const SIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN = $400
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
@@ -8321,9 +8329,9 @@ main: {
     jsr render_sine
     // main::@1
   __b1:
-    // (*BGCOL)++;
-    // [21] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // (VICII->BG_COLOR)++;
+    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1
 }
   // render_sine

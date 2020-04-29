@@ -55,15 +55,15 @@ signed char sz = 0;
 
 void anim() {
 	while(true) {
-		while(*RASTER!=$ff) {}
-		while(*RASTER!=$fe) {}
-		while(*RASTER!=$fd) {}		
-        (*BORDERCOL)++; 
+		while(VICII->RASTER!=$ff) {}
+		while(VICII->RASTER!=$fe) {}
+		while(VICII->RASTER!=$fd) {}
+        (VICII->BORDER_COLOR)++;
     	//calculate_matrix_16(sx,sy,sz);
     	calculate_matrix(sx,sy,sz);
     	store_matrix();
         for(char i: 0..7) {
-            (*BORDERCOL)++;
+            (VICII->BORDER_COLOR)++;
             rotate_matrix(xs[i], ys[i], zs[i]);
             xrs[i] = *xr;
             yrs[i] = *yr;
@@ -75,9 +75,9 @@ void anim() {
        	    SPRITES_XPOS[i2] = $80+(char)((*xp));
        	    SPRITES_YPOS[i2] = $80+(char)((*yp));
     	}
-        *BORDERCOL = LIGHT_GREY;
+        VICII->BORDER_COLOR = LIGHT_GREY;
         debug_print();
-        *BORDERCOL = LIGHT_BLUE;
+        VICII->BORDER_COLOR = LIGHT_BLUE;
         // Increment angles        
     	sx +=2;
 	  	sy -=3;
@@ -157,7 +157,7 @@ void debug_print() {
 // Initialize sprites
 void sprites_init() {
 	char* SCREEN = $400;
-    *SPRITES_ENABLE = %11111111;
+    VICII->SPRITES_ENABLE = %11111111;
     char* sprites_ptr = SCREEN+$3f8;
     for(char i: 0..7) {
     	sprites_ptr[i] = (char)(SPRITE/$40);

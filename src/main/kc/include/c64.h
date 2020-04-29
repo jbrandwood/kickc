@@ -87,6 +87,3 @@ void sid_rnd_init();
 // Get a random number from the SID voice 3,
 // Must be initialized with sid_rnd_init()
 char sid_rnd();
-
-
-

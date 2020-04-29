@@ -5,8 +5,8 @@ void main() {
         sei
     }
     do {
-        do {} while (*RASTER!=$a);
-        do {} while (*RASTER!=$b);
+        do {} while (VICII->RASTER!=$a);
+        do {} while (VICII->RASTER!=$b);
         raster();
     } while (true);
 }
@@ -39,8 +39,8 @@ void raster() {
     char i = 0;
     char col = rastercols[i];
     do {
-       *BGCOL = col;
-       *BORDERCOL = col;
+       VICII->BG_COLOR = col;
+       VICII->BORDER_COLOR = col;
        col  = rastercols[++i];
        asm {
             nop

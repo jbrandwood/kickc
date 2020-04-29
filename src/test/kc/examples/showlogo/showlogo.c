@@ -13,9 +13,9 @@ kickasm(resource "logo.png", pc LOGO, bytes 6*40*8 ) {{
 }}
 
 void main() {
-    *BORDERCOL = WHITE;
-    *BGCOL = *BGCOL2 = DARK_GREY;
-    *BGCOL3 = BLACK;
+    VICII->BORDER_COLOR = WHITE;
+    VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY;
+    VICII->BG_COLOR2 = BLACK;
     *D018 = toD018(SCREEN, LOGO);
     *D016 = VIC_MCM | VIC_CSEL;
     memset(SCREEN, BLACK, 40*25);

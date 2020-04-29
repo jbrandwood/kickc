@@ -11,8 +11,8 @@ CONTROL FLOW GRAPH SSA
 (void()) main()
 main: scope:[main]  from @1
   asm { sei  }
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLACK
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLACK
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLACK
   (byte*) fillscreen::screen#0 ← (const byte*) BUFFER
   (byte) fillscreen::fill#0 ← (number) 0
   call fillscreen 
@@ -360,9 +360,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
 (const byte*) BUFFER = (byte*)(number) $4000
 (const byte*) CHARSET = (byte*)(number) $3000
 (const nomodify byte*) COLS = (byte*)(number) $d800
@@ -451,6 +449,8 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
@@ -458,6 +458,7 @@ SYMBOL TABLE SSA
 (const byte*) SCREEN2 = (byte*)(number) $3c00
 (const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*)(number) $d400
 (const nomodify byte) SID_CONTROL_NOISE = (byte) $80
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (const nomodify byte) YELLOW = (byte) 7
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (bool~) fillscreen::$0
@@ -794,10 +795,9 @@ Inlining cast *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFF
 Inlining cast *((byte*) makecharset::font#3) ← (unumber)(number) 0
 Inlining cast *((byte*) makecharset::font1#3) ← (unumber)(number) $ff
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (struct MOS6581_SID*) 54272
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 14336
 Simplifying constant pointer cast (byte*) 15360
@@ -1240,8 +1240,8 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   asm { sei  }
-  [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLACK
-  [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLACK
+  [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLACK
   [7] call fillscreen 
   to:main::@5
 main::@5: scope:[main]  from main
@@ -1682,13 +1682,13 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -1697,6 +1697,8 @@ Target platform is c64basic / MOS6502X
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
   .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN1 = $3800
   .label SCREEN2 = $3c00
   .label BUFFER = $4000
@@ -1721,12 +1723,12 @@ main: {
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BORDERCOL
-    // [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // [7] call fillscreen 
     // [83] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
@@ -2333,8 +2335,8 @@ fillscreen: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [14] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [15] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [21] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
@@ -2383,8 +2385,8 @@ Statement [85] *((byte*) fillscreen::screen#5) ← (byte) fillscreen::fill#5 [ f
 Removing always clobbered register reg byte y as potential for zp[1]:22 [ fillscreen::fill#5 ]
 Statement [88] if((word) fillscreen::i#1!=(word) $3e8) goto fillscreen::@1 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] ( main:2::fillscreen:7 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] { }  main:2::fillscreen:9 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] { }  main:2::fillscreen:11 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] { }  main:2::fillscreen:13 [ fillscreen::fill#5 fillscreen::screen#4 fillscreen::i#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ fillscreen::fill#5 ]
-Statement [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLACK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [14] *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (word) $ffff [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [15] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL) ← (const nomodify byte) SID_CONTROL_NOISE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [21] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
@@ -2515,13 +2517,13 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -2530,6 +2532,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
   .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN1 = $3800
   .label SCREEN2 = $3c00
   .label BUFFER = $4000
@@ -2554,12 +2558,12 @@ main: {
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BORDERCOL
-    // [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // [7] call fillscreen 
     // [83] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
@@ -3236,18 +3240,16 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [194] bne __b2 to beq
-Fixing long branch [199] bne __b2 to beq
-Fixing long branch [209] bne __b4 to beq
-Fixing long branch [214] bne __b4 to beq
+Fixing long branch [196] bne __b2 to beq
+Fixing long branch [201] bne __b2 to beq
+Fixing long branch [211] bne __b4 to beq
+Fixing long branch [216] bne __b4 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*) 53280
 (const byte*) BUFFER = (byte*) 16384
 (const byte*) CHARSET = (byte*) 12288
 (const nomodify byte*) COLS = (byte*) 55296
@@ -3336,6 +3338,8 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
@@ -3343,6 +3347,7 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN2 = (byte*) 15360
 (const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*) 54272
 (const nomodify byte) SID_CONTROL_NOISE = (byte) $80
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (const nomodify byte) YELLOW = (byte) 7
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (label) fillscreen::@1
@@ -3495,13 +3500,13 @@ Score: 102503
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -3510,6 +3515,8 @@ Score: 102503
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
   .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN1 = $3800
   .label SCREEN2 = $3c00
   .label BUFFER = $4000
@@ -3527,13 +3534,13 @@ main: {
     // asm
     // asm { sei  }
     sei
-    // *BORDERCOL = BLACK
-    // [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = BLACK
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BORDERCOL
-    // *BGCOL = BLACK
-    // [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR = BLACK
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // fillscreen(BUFFER, 00)
     // [7] call fillscreen 
     // [83] phi from main to fillscreen [phi:main->fillscreen]

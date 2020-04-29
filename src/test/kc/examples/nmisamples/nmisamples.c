@@ -33,15 +33,15 @@ void main() {
 }
 
 interrupt(hardware_all) void nmi() {
-    (*BORDERCOL)++;
+    (VICII->BORDER_COLOR)++;
     asm { lda CIA2_INTERRUPT }
     SID->VOLUME_FILTER_MODE = *sample & $0f;
     *KERNEL_NMI = &nmi2;
-    (*BORDERCOL)--;
+    (VICII->BORDER_COLOR)--;
 }
 
 interrupt(hardware_all) void nmi2() {
-    (*BORDERCOL)++;
+    (VICII->BORDER_COLOR)++;
     asm { lda CIA2_INTERRUPT }
     SID->VOLUME_FILTER_MODE = *sample >> 4;
     sample++;
@@ -49,5 +49,5 @@ interrupt(hardware_all) void nmi2() {
         sample = SAMPLE;
     }
     *KERNEL_NMI = &nmi;
-    (*BORDERCOL)--;
+    (VICII->BORDER_COLOR)--;
 }

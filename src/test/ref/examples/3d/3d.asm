@@ -7,13 +7,15 @@
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
   // The rotated point - updated by calling rotate_matrix()
   .label xr = $f0
   .label yr = $f1
@@ -65,22 +67,22 @@ anim: {
     sta.z sy
     sta.z sx
   __b2:
-    // while(*RASTER!=$ff)
+    // while(VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
   __b3:
-    // while(*RASTER!=$fe)
+    // while(VICII->RASTER!=$fe)
     lda #$fe
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b3
   __b4:
-    // while(*RASTER!=$fd)
+    // while(VICII->RASTER!=$fd)
     lda #$fd
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b4
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // calculate_matrix(sx,sy,sz)
     ldx.z sx
     //calculate_matrix_16(sx,sy,sz);
@@ -90,8 +92,8 @@ anim: {
     lda #0
     sta.z i
   __b6:
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // rotate_matrix(xs[i], ys[i], zs[i])
     ldy.z i
     ldx xs,y
@@ -140,14 +142,14 @@ anim: {
     lda #8
     cmp.z i
     bne __b6
-    // *BORDERCOL = LIGHT_GREY
+    // VICII->BORDER_COLOR = LIGHT_GREY
     lda #LIGHT_GREY
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // debug_print()
     jsr debug_print
-    // *BORDERCOL = LIGHT_BLUE
+    // VICII->BORDER_COLOR = LIGHT_BLUE
     lda #LIGHT_BLUE
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // sx +=2
     // Increment angles        
     inc.z sx
@@ -1199,9 +1201,9 @@ memset: {
 sprites_init: {
     .label SCREEN = $400
     .label sprites_ptr = SCREEN+$3f8
-    // *SPRITES_ENABLE = %11111111
+    // VICII->SPRITES_ENABLE = %11111111
     lda #$ff
-    sta SPRITES_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     ldx #0
   __b1:
     // sprites_ptr[i] = (char)(SPRITE/$40)

@@ -1,14 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
   .label D016 = $d016
   .const VIC_MCM = $10
   .label D018 = $d018
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -23,6 +20,11 @@
   .const PI_HALF_u4f28 = $1921fb54
   .const XSIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .label SCREEN = $400
   .label LOGO = $2000
   // Remainder after unsigned 16-bit division
@@ -33,17 +35,17 @@ main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // asm
     sei
-    // *BORDERCOL = WHITE
+    // VICII->BORDER_COLOR = WHITE
     lda #WHITE
-    sta BORDERCOL
-    // *BGCOL2 = DARK_GREY
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR1 = DARK_GREY
     lda #DARK_GREY
-    sta BGCOL2
-    // *BGCOL = *BGCOL2 = DARK_GREY
-    sta BGCOL
-    // *BGCOL3 = BLACK
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
+    // VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // VICII->BG_COLOR2 = BLACK
     lda #BLACK
-    sta BGCOL3
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
     // *D018 = toD018(SCREEN, LOGO)
     lda #toD0181_return
     sta D018
@@ -90,12 +92,12 @@ loop: {
   __b1:
   // Wait for the raster to reach the bottom of the screen
   __b2:
-    // while(*RASTER!=$ff)
+    // while(VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // xsin+xsin_idx
     lda.z xsin_idx
     asl
@@ -136,8 +138,8 @@ loop: {
     sta.z xsin_idx
     sta.z xsin_idx+1
   __b4:
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (VICII->BORDER_COLOR)--;
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
 // render_logo(signed word zp($18) xpos)

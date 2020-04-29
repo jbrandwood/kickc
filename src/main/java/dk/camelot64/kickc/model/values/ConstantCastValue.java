@@ -6,6 +6,8 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 
+import java.util.Objects;
+
 /** A Cast of a constant that requires no actual operation.
  * The types have the same size and the code will execute as if the value already had the type cast to.
  * Examples: byte to/from signed byte, word to/from sighed word.
@@ -60,5 +62,19 @@ public class ConstantCastValue implements ConstantValue {
    @Override
    public String toString() {
       return toString(null);
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      ConstantCastValue that = (ConstantCastValue) o;
+      return toType.equals(that.toType) &&
+            value.equals(that.value);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(toType, value);
    }
 }

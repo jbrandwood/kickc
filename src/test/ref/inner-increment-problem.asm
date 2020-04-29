@@ -19,17 +19,9 @@ main: {
     lda (screen),y
     asl
     tax
-    lda (screen),y
-    asl
-    tay
-    clc
-    lda CHAR_COUNTS,x
-    adc #1
-    sta CHAR_COUNTS,y
+    inc CHAR_COUNTS,x
     bne !+
-    lda CHAR_COUNTS+1,x
-    adc #0
-    sta CHAR_COUNTS+1,y
+    inc CHAR_COUNTS+1,x
   !:
     inc.z screen
     bne !+

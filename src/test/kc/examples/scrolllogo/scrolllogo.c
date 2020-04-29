@@ -18,9 +18,9 @@ signed int align($100) xsin[XSIN_SIZE];
 
 void main() {
     asm { sei }
-    *BORDERCOL = WHITE;
-    *BGCOL = *BGCOL2 = DARK_GREY;
-    *BGCOL3 = BLACK;
+    VICII->BORDER_COLOR = WHITE;
+    VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY;
+    VICII->BG_COLOR2 = BLACK;
     *D018 = toD018(SCREEN, LOGO);
     *D016 = VIC_MCM;
     memset(SCREEN, BLACK, 1000);
@@ -37,14 +37,14 @@ unsigned int xsin_idx = 0;
 void loop() {
     while(true) {
         // Wait for the raster to reach the bottom of the screen
-        while(*RASTER!=$ff) {}
-        (*BORDERCOL)++;
+        while(VICII->RASTER!=$ff) {}
+        (VICII->BORDER_COLOR)++;
         signed int xpos = *(xsin+xsin_idx);
         render_logo(xpos);
         if(++xsin_idx==XSIN_SIZE) {
             xsin_idx = 0;
         }
-        (*BORDERCOL)--;
+        (VICII->BORDER_COLOR)--;
     }
 }
 

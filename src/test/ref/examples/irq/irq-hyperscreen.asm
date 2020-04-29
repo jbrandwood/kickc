@@ -4,16 +4,11 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label VIC_CONTROL = $d011
   .const VIC_RSEL = 8
-  // VIC II IRQ Status Register
-  .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
-  .label IRQ_ENABLE = $d01a
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
@@ -22,6 +17,11 @@
   .const RED = 2
   .label GHOST_BYTE = $3fff
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
 main: {
     // *GHOST_BYTE = 0
     lda #0
@@ -32,18 +32,18 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=$7f
+    // VICII->CONTROL1 &=$7f
     // Set raster line to $fa
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = $fa
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->RASTER = $fa
     lda #$fa
-    sta RASTER
-    // *IRQ_ENABLE = IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // VICII->IRQ_ENABLE = IRQ_RASTER
     // Enable Raster Interrupt
     lda #IRQ_RASTER
-    sta IRQ_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // *KERNEL_IRQ = &irq_bottom_1
     // Set the IRQ routine
     lda #<irq_bottom_1
@@ -57,59 +57,59 @@ main: {
 }
 // Interrupt Routine 2
 irq_bottom_2: {
-    // *BORDERCOL = WHITE
+    // VICII->BORDER_COLOR = WHITE
     lda #WHITE
-    sta BORDERCOL
-    // *VIC_CONTROL |= VIC_RSEL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->CONTROL1 |= VIC_RSEL
     // Set screen height back to 25 lines (preparing for the next screen)
     lda #VIC_RSEL
-    ora VIC_CONTROL
-    sta VIC_CONTROL
-    // *IRQ_STATUS = IRQ_RASTER
+    ora VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // *RASTER = $fa
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // VICII->RASTER = $fa
     // Trigger IRQ 1 at line $fa
     lda #$fa
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // *KERNEL_IRQ = &irq_bottom_1
     lda #<irq_bottom_1
     sta KERNEL_IRQ
     lda #>irq_bottom_1
     sta KERNEL_IRQ+1
-    // *BORDERCOL = RED
+    // VICII->BORDER_COLOR = RED
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
     jmp $ea31
 }
 // Interrupt Routine 1
 irq_bottom_1: {
-    // *BORDERCOL = WHITE
+    // VICII->BORDER_COLOR = WHITE
     lda #WHITE
-    sta BORDERCOL
-    // *VIC_CONTROL &= ($ff^VIC_RSEL)
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->CONTROL1 &= ($ff^VIC_RSEL)
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     lda #$ff^VIC_RSEL
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *IRQ_STATUS = IRQ_RASTER
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // *RASTER = $fd
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // VICII->RASTER = $fd
     // Trigger IRQ 2 at line $fd
     lda #$fd
-    sta RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // *KERNEL_IRQ = &irq_bottom_2
     lda #<irq_bottom_2
     sta KERNEL_IRQ
     lda #>irq_bottom_2
     sta KERNEL_IRQ+1
-    // *BORDERCOL = RED
+    // VICII->BORDER_COLOR = RED
     lda #RED
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
     jmp $ea81
 }

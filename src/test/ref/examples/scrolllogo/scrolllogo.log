@@ -537,10 +537,10 @@ main: scope:[main]  from @4
   (word) xsin_idx#26 ← phi( @4/(word) xsin_idx#16 )
   (word) rem16u#37 ← phi( @4/(word) rem16u#25 )
   asm { sei  }
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
-  *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY
-  *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2)
-  *((const nomodify byte*) BGCOL3) ← (const nomodify byte) BLACK
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1)
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK
   (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
   (byte*) main::toD0181_gfx#0 ← (const byte*) LOGO
   to:main::toD0181
@@ -643,12 +643,12 @@ loop::@1: scope:[loop]  from loop loop::@5
   to:loop::@return
 loop::@2: scope:[loop]  from loop::@1 loop::@2
   (word) xsin_idx#14 ← phi( loop::@1/(word) xsin_idx#15 loop::@2/(word) xsin_idx#14 )
-  (bool~) loop::$0 ← *((const nomodify byte*) RASTER) != (number) $ff
+  (bool~) loop::$0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $ff
   if((bool~) loop::$0) goto loop::@2
   to:loop::@3
 loop::@3: scope:[loop]  from loop::@2
   (word) xsin_idx#9 ← phi( loop::@2/(word) xsin_idx#14 )
-  *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   (word~) loop::$7 ← (word) xsin_idx#9 * (const byte) SIZEOF_SIGNED_WORD
   (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7
   (signed word) loop::xpos#0 ← *((signed word*~) loop::$2)
@@ -664,7 +664,7 @@ loop::@6: scope:[loop]  from loop::@3
   to:loop::@4
 loop::@5: scope:[loop]  from loop::@4 loop::@6
   (word) xsin_idx#19 ← phi( loop::@4/(word) xsin_idx#4 loop::@6/(word) xsin_idx#3 )
-  *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:loop::@1
 loop::@4: scope:[loop]  from loop::@6
   (word) xsin_idx#4 ← (number) 0
@@ -839,11 +839,7 @@ SYMBOL TABLE SSA
 (label) @5
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
-(const nomodify byte*) BGCOL2 = (byte*)(number) $d022
-(const nomodify byte*) BGCOL3 = (byte*)(number) $d023
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
 (const nomodify byte*) COLS = (byte*)(number) $d800
 (const nomodify byte*) D016 = (byte*)(number) $d016
 (const nomodify byte*) D018 = (byte*)(number) $d018
@@ -933,12 +929,17 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = (byte) $22
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = (byte) $23
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
 (const nomodify dword) PI2_u4f28 = (dword) $6487ed51
 (const nomodify dword) PI_HALF_u4f28 = (dword) $1921fb54
 (const nomodify dword) PI_u4f28 = (dword) $3243f6a9
-(const nomodify byte*) RASTER = (byte*)(number) $d012
 (const byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (const nomodify byte) VIC_MCM = (byte) $10
 (const nomodify byte) WHITE = (byte) 1
 (const nomodify word) XSIN_SIZE = (word) $200
@@ -1676,7 +1677,7 @@ Adding number conversion cast (unumber) 8 in (byte) memset::c#1 ← ((unumber)) 
 Adding number conversion cast (unumber) $3e8 in (word) memset::num#1 ← (number) $3e8
 Adding number conversion cast (snumber) -$140 in (signed word) sin16s_gen2::min#0 ← (number) -$140
 Adding number conversion cast (snumber) $140 in (signed word) sin16s_gen2::max#0 ← (number) $140
-Adding number conversion cast (unumber) $ff in (bool~) loop::$0 ← *((const nomodify byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $ff in (bool~) loop::$0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $ff
 Adding number conversion cast (unumber) 0 in (word) xsin_idx#4 ← (number) 0
 Adding number conversion cast (unumber) 7 in (number~) render_logo::$0 ← (byte~) render_logo::$25 & (number) 7
 Adding number conversion cast (unumber) render_logo::$0 in (number~) render_logo::$0 ← (byte~) render_logo::$25 & (unumber)(number) 7
@@ -1736,13 +1737,9 @@ Inlining cast (byte) render_logo::line#5 ← (unumber)(number) 0
 Inlining cast (byte) render_logo::line#7 ← (unumber)(number) 0
 Inlining cast *((byte*~) render_logo::$23 + (byte) render_logo::screen_idx#16) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53281
-Simplifying constant pointer cast (byte*) 53282
-Simplifying constant pointer cast (byte*) 53283
 Simplifying constant pointer cast (byte*) 53270
 Simplifying constant pointer cast (byte*) 53272
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 8192
@@ -2094,7 +2091,7 @@ Simple Condition (bool~) sin16s::$15 [155] if((byte) sin16s::isUpper#2==(byte) 0
 Simple Condition (bool~) memset::$1 [171] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$3 [178] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
 Simple Condition (bool~) main::$5 [216] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
-Simple Condition (bool~) loop::$0 [232] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@2
+Simple Condition (bool~) loop::$0 [232] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto loop::@2
 Simple Condition (bool~) loop::$5 [241] if((word) xsin_idx#3!=(const nomodify word) XSIN_SIZE) goto loop::@5
 Simple Condition (bool~) render_logo::$3 [257] if((signed word) render_logo::xpos#0<(signed byte) 0) goto render_logo::@1
 Simple Condition (bool~) render_logo::$4 [265] if((byte) render_logo::screen_idx#18!=(byte) render_logo::logo_start#0) goto render_logo::@4
@@ -3165,10 +3162,10 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @2
   asm { sei  }
-  [6] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE
-  [7] *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY
-  [8] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2)
-  [9] *((const nomodify byte*) BGCOL3) ← (const nomodify byte) BLACK
+  [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
+  [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY
+  [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1)
+  [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK
   to:main::toD0181
 main::toD0181: scope:[main]  from main
   [10] phi()
@@ -3208,10 +3205,10 @@ loop::@1: scope:[loop]  from loop loop::@4
   [26] (word) xsin_idx#11 ← phi( loop/(word) 0 loop::@4/(word) xsin_idx#19 )
   to:loop::@2
 loop::@2: scope:[loop]  from loop::@1 loop::@2
-  [27] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@2
+  [27] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto loop::@2
   to:loop::@3
 loop::@3: scope:[loop]  from loop::@2
-  [28] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  [28] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1
   [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7
   [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2)
@@ -3227,7 +3224,7 @@ loop::@6: scope:[loop]  from loop::@5
   to:loop::@4
 loop::@4: scope:[loop]  from loop::@5 loop::@6
   [37] (word) xsin_idx#19 ← phi( loop::@5/(byte) 0 loop::@6/(word) xsin_idx#3 )
-  [38] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
+  [38] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:loop::@1
 
 (void()) render_logo((signed word) render_logo::xpos)
@@ -4202,14 +4199,11 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
   .label D016 = $d016
   .const VIC_MCM = $10
   .label D018 = $d018
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -4224,6 +4218,11 @@ Target platform is c64basic / MOS6502X
   .const PI_HALF_u4f28 = $1921fb54
   .const XSIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .label SCREEN = $400
   .label LOGO = $2000
   // Remainder after unsigned 16-bit division
@@ -4253,18 +4252,18 @@ main: {
     .label ch = 2
     // asm { sei  }
     sei
-    // [6] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // [7] *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
-    sta BGCOL2
-    // [8] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2) -- _deref_pbuc1=_deref_pbuc2 
-    lda BGCOL2
-    sta BGCOL
-    // [9] *((const nomodify byte*) BGCOL3) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL3
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
     // [10] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
@@ -4373,15 +4372,15 @@ loop: {
   // Wait for the raster to reach the bottom of the screen
     // loop::@2
   __b2:
-    // [27] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [27] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     jmp __b3
     // loop::@3
   __b3:
-    // [28] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [28] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z xsin_idx
     asl
@@ -4445,8 +4444,8 @@ loop: {
     jmp __b4
     // loop::@4
   __b4:
-    // [38] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BORDERCOL
+    // [38] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [26] phi from loop::@4 to loop::@1 [phi:loop::@4->loop::@1]
   __b1_from___b4:
     // [26] phi (word) xsin_idx#11 = (word) xsin_idx#19 [phi:loop::@4->loop::@1#0] -- register_copy 
@@ -5905,13 +5904,13 @@ memset: {
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) BGCOL3) ← (const nomodify byte) BLACK [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [11] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [12] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [27] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] { }  ) always clobbers reg byte a 
+Statement [27] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] { }  ) always clobbers reg byte a 
 Statement [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$7 ] ( main:3::loop:23 [ xsin_idx#11 loop::$7 ] { { render_logo::xpos#0 = loop::xpos#0 } }  ) always clobbers reg byte a 
 Statement [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] { { render_logo::xpos#0 = loop::xpos#0 } }  ) always clobbers reg byte a 
 Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] { { render_logo::xpos#0 = loop::xpos#0 } }  ) always clobbers reg byte a reg byte y 
@@ -6017,13 +6016,13 @@ Statement [217] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset:
 Statement [219] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::memset:13 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::memset:15 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [221] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::memset:13 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::memset:15 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:54 [ memset::c#4 ]
-Statement [6] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) BGCOL3) ← (const nomodify byte) BLACK [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [11] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [12] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [27] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] { }  ) always clobbers reg byte a 
+Statement [27] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto loop::@2 [ xsin_idx#11 ] ( main:3::loop:23 [ xsin_idx#11 ] { }  ) always clobbers reg byte a 
 Statement [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 [ xsin_idx#11 loop::$7 ] ( main:3::loop:23 [ xsin_idx#11 loop::$7 ] { { render_logo::xpos#0 = loop::xpos#0 } }  ) always clobbers reg byte a 
 Statement [30] (signed word*~) loop::$2 ← (const signed word*) xsin + (word~) loop::$7 [ xsin_idx#11 loop::$2 ] ( main:3::loop:23 [ xsin_idx#11 loop::$2 ] { { render_logo::xpos#0 = loop::xpos#0 } }  ) always clobbers reg byte a 
 Statement [31] (signed word) loop::xpos#0 ← *((signed word*~) loop::$2) [ xsin_idx#11 loop::xpos#0 ] ( main:3::loop:23 [ xsin_idx#11 loop::xpos#0 ] { { render_logo::xpos#0 = loop::xpos#0 } }  ) always clobbers reg byte a reg byte y 
@@ -6349,14 +6348,11 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
   .label D016 = $d016
   .const VIC_MCM = $10
   .label D018 = $d018
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -6371,6 +6367,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PI_HALF_u4f28 = $1921fb54
   .const XSIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .label SCREEN = $400
   .label LOGO = $2000
   // Remainder after unsigned 16-bit division
@@ -6399,18 +6400,18 @@ main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // asm { sei  }
     sei
-    // [6] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // [7] *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
-    sta BGCOL2
-    // [8] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2) -- _deref_pbuc1=_deref_pbuc2 
-    lda BGCOL2
-    sta BGCOL
-    // [9] *((const nomodify byte*) BGCOL3) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL3
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
     // [10] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
@@ -6514,15 +6515,15 @@ loop: {
   // Wait for the raster to reach the bottom of the screen
     // loop::@2
   __b2:
-    // [27] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [27] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     jmp __b3
     // loop::@3
   __b3:
-    // [28] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [28] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z xsin_idx
     asl
@@ -6584,8 +6585,8 @@ loop: {
     jmp __b4
     // loop::@4
   __b4:
-    // [38] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BORDERCOL
+    // [38] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [26] phi from loop::@4 to loop::@1 [phi:loop::@4->loop::@1]
   __b1_from___b4:
     // [26] phi (word) xsin_idx#11 = (word) xsin_idx#19 [phi:loop::@4->loop::@1#0] -- register_copy 
@@ -7865,7 +7866,7 @@ Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda BGCOL2
+Removing instruction lda VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
 Removing instruction lda #>0
 Removing instruction lda #>0
 Removing instruction lda #>0
@@ -8052,11 +8053,7 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
-(const nomodify byte*) BGCOL2 = (byte*) 53282
-(const nomodify byte*) BGCOL3 = (byte*) 53283
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*) 53280
 (const nomodify byte*) COLS = (byte*) 55296
 (const nomodify byte*) D016 = (byte*) 53270
 (const nomodify byte*) D018 = (byte*) 53272
@@ -8146,12 +8143,17 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = (byte) $22
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = (byte) $23
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
 (const nomodify dword) PI2_u4f28 = (dword) $6487ed51
 (const nomodify dword) PI_HALF_u4f28 = (dword) $1921fb54
 (const nomodify dword) PI_u4f28 = (dword) $3243f6a9
-(const nomodify byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 1024
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (const nomodify byte) VIC_MCM = (byte) $10
 (const nomodify byte) WHITE = (byte) 1
 (const nomodify word) XSIN_SIZE = (word) $200
@@ -8524,14 +8526,11 @@ Score: 46731
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
   .label D016 = $d016
   .const VIC_MCM = $10
   .label D018 = $d018
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -8546,6 +8545,11 @@ Score: 46731
   .const PI_HALF_u4f28 = $1921fb54
   .const XSIN_SIZE = $200
   .const SIZEOF_SIGNED_WORD = 2
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .label SCREEN = $400
   .label LOGO = $2000
   // Remainder after unsigned 16-bit division
@@ -8566,21 +8570,21 @@ main: {
     // asm
     // asm { sei  }
     sei
-    // *BORDERCOL = WHITE
-    // [6] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = WHITE
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BORDERCOL
-    // *BGCOL2 = DARK_GREY
-    // [7] *((const nomodify byte*) BGCOL2) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR1 = DARK_GREY
+    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
-    sta BGCOL2
-    // *BGCOL = *BGCOL2 = DARK_GREY
-    // [8] *((const nomodify byte*) BGCOL) ← *((const nomodify byte*) BGCOL2) -- _deref_pbuc1=_deref_pbuc2 
-    sta BGCOL
-    // *BGCOL3 = BLACK
-    // [9] *((const nomodify byte*) BGCOL3) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
+    // VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // VICII->BG_COLOR2 = BLACK
+    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL3
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
     // [10] phi from main to main::toD0181 [phi:main->main::toD0181]
     // main::toD0181
     // main::@3
@@ -8665,15 +8669,15 @@ loop: {
   // Wait for the raster to reach the bottom of the screen
     // loop::@2
   __b2:
-    // while(*RASTER!=$ff)
-    // [27] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while(VICII->RASTER!=$ff)
+    // [27] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto loop::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     // loop::@3
-    // (*BORDERCOL)++;
-    // [28] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    // [28] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // xsin+xsin_idx
     // [29] (word~) loop::$7 ← (word) xsin_idx#11 << (byte) 1 -- vwuz1=vwuz2_rol_1 
     lda.z xsin_idx
@@ -8729,9 +8733,9 @@ loop: {
     // [37] phi (word) xsin_idx#19 = (word) xsin_idx#3 [phi:loop::@6->loop::@4#0] -- register_copy 
     // loop::@4
   __b4:
-    // (*BORDERCOL)--;
-    // [38] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BORDERCOL
+    // (VICII->BORDER_COLOR)--;
+    // [38] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [26] phi from loop::@4 to loop::@1 [phi:loop::@4->loop::@1]
     // [26] phi (word) xsin_idx#11 = (word) xsin_idx#19 [phi:loop::@4->loop::@1#0] -- register_copy 
     jmp __b1

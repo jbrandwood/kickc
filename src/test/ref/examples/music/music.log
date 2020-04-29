@@ -15,13 +15,13 @@ main: scope:[main]  from @2
   asm { jsrmusic.init  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  (bool~) main::$0 ← *((const nomodify byte*) RASTER) != (number) $fd
+  (bool~) main::$0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $fd
   if((bool~) main::$0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { jsrmusic.play  }
-  *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   if(true) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@2
@@ -40,7 +40,6 @@ SYMBOL TABLE SSA
 (label) @3
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -126,23 +125,24 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const nomodify byte*) MUSIC = (byte*)(number) $1000
-(const nomodify byte*) RASTER = (byte*)(number) $d012
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (void()) main()
 (bool~) main::$0
 (label) main::@1
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((const nomodify byte*) RASTER) != (number) $fd
+Adding number conversion cast (unumber) $fd in (bool~) main::$0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $fd
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 4096
 Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [4] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1
+Simple Condition (bool~) main::$0 [4] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fd) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [8] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
@@ -184,12 +184,12 @@ main: scope:[main]  from @2
   asm { jsrmusic.init  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1
+  [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fd) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { jsrmusic.play  }
-  [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL)
+  [10] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:main::@1
 
 
@@ -292,9 +292,11 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label MUSIC = $1000
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // @begin
 __bbegin:
   jmp __b1
@@ -328,20 +330,20 @@ main: {
   // Wait for the RASTER
     // main::@1
   __b1:
-    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
-    // [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BORDERCOL
+    // [10] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
   // File Data
@@ -351,7 +353,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { jsrmusic.init  } always clobbers reg byte a reg byte x reg byte y 
-Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fd) goto main::@1 [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
 Statement asm { jsrmusic.play  } always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -375,9 +377,11 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label MUSIC = $1000
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // @begin
 __bbegin:
   jmp __b1
@@ -411,20 +415,20 @@ main: {
   // Wait for the RASTER
     // main::@1
   __b1:
-    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
-    // [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BORDERCOL
+    // [10] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
   // File Data
@@ -458,7 +462,6 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*) 53280
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -544,7 +547,9 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const nomodify byte*) MUSIC = (byte*) 4096
-(const nomodify byte*) RASTER = (byte*) 53266
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -561,9 +566,11 @@ Score: 3882
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label MUSIC = $1000
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // @begin
   // @1
   // kickasm
@@ -588,22 +595,22 @@ main: {
   // Wait for the RASTER
     // main::@1
   __b1:
-    // while (*RASTER != $fd)
-    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while (VICII->RASTER != $fd)
+    // [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fd) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fd
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     // main::@2
-    // (*BORDERCOL)++;
-    // [8] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm
     // asm { jsrmusic.play  }
     // Play the music
     jsr music.play
-    // (*BORDERCOL)--;
-    // [10] *((const nomodify byte*) BORDERCOL) ← -- *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BORDERCOL
+    // (VICII->BORDER_COLOR)--;
+    // [10] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
   // File Data

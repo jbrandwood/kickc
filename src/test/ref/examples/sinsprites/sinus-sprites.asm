@@ -3,17 +3,13 @@
 .pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label SPRITES_EXPAND_Y = $d017
-  .label SPRITES_EXPAND_X = $d01d
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
@@ -23,6 +19,12 @@
   .const sinlen_y = $c5
   .label sprites = $2000
   .label SCREEN = $400
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X = $1d
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y = $17
   // Current index within the progress cursor (0-7)
   .label progress_idx = 4
   // Current position of the progress cursor
@@ -36,9 +38,9 @@ main: {
     sta.z sin_idx_y
     sta.z sin_idx_x
   __b1:
-    // while (*RASTER!=$ff)
+    // while (VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     // anim()
     jsr anim
@@ -52,8 +54,8 @@ anim: {
     .label x_msb = $a
     .label j2 = $b
     .label j = 8
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // xidx = sin_idx_x
     lda.z sin_idx_x
     sta.z xidx
@@ -126,9 +128,9 @@ anim: {
     lda #7
     cmp.z j
     bne __b3
-    // *SPRITES_XMSB = x_msb
+    // VICII->SPRITES_XMSB = x_msb
     lda.z x_msb
-    sta SPRITES_XMSB
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB
     // if(++sin_idx_x>=sinlen_x)
     inc.z sin_idx_x
     lda.z sin_idx_x
@@ -145,8 +147,8 @@ anim: {
     lda #0
     sta.z sin_idx_y
   __b2:
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (VICII->BORDER_COLOR)--;
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
     rts
 }
@@ -746,13 +748,13 @@ place_sprites: {
     .label col = $f
     .label j2 = $c
     .label j = $a
-    // *SPRITES_ENABLE = %01111111
+    // VICII->SPRITES_ENABLE = %01111111
     lda #$7f
-    sta SPRITES_ENABLE
-    // *SPRITES_EXPAND_X = %01111111
-    sta SPRITES_EXPAND_X
-    // *SPRITES_EXPAND_Y = %01111111
-    sta SPRITES_EXPAND_Y
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
+    // VICII->SPRITES_EXPAND_X = %01111111
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X
+    // VICII->SPRITES_EXPAND_Y = %01111111
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y
     lda #5
     sta.z col
     lda #0

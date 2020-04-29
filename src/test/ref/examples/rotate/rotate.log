@@ -307,7 +307,7 @@ init: scope:[init]  from main
   call mulf_init 
   to:init::@2
 init::@2: scope:[init]  from init
-  *((const nomodify byte*) SPRITES_ENABLE) ← (number) $ff
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (number) $ff
   (byte*~) init::$1 ← (const byte*) SCREEN + (number) $3f8
   (byte*) init::sprites_ptr#0 ← (byte*~) init::$1
   (byte) init::i#0 ← (byte) 0
@@ -336,12 +336,12 @@ anim::@1: scope:[anim]  from anim anim::@18
   to:anim::@return
 anim::@2: scope:[anim]  from anim::@1 anim::@2
   (byte) anim::angle#6 ← phi( anim::@1/(byte) anim::angle#9 anim::@2/(byte) anim::angle#6 )
-  (bool~) anim::$0 ← *((const nomodify byte*) RASTER) != (number) $ff
+  (bool~) anim::$0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $ff
   if((bool~) anim::$0) goto anim::@2
   to:anim::@3
 anim::@3: scope:[anim]  from anim::@2
   (byte) anim::angle#4 ← phi( anim::@2/(byte) anim::angle#6 )
-  *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   call clock_start 
   to:anim::@10
 anim::@10: scope:[anim]  from anim::@3
@@ -539,7 +539,7 @@ anim::@6: scope:[anim]  from anim::@16
 anim::@7: scope:[anim]  from anim::@5
   (byte) anim::angle#3 ← phi( anim::@5/(byte) anim::angle#5 )
   (byte) anim::sprite_msb#5 ← phi( anim::@5/(byte) anim::sprite_msb#7 )
-  *((const nomodify byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) ← (byte) anim::sprite_msb#5
   (byte) anim::angle#1 ← ++ (byte) anim::angle#3
   call clock 
   (dword) clock::return#2 ← (dword) clock::return#1
@@ -556,7 +556,7 @@ anim::@17: scope:[anim]  from anim::@7
   to:anim::@18
 anim::@18: scope:[anim]  from anim::@17
   (byte) anim::angle#11 ← phi( anim::@17/(byte) anim::angle#14 )
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE
   to:anim::@1
 anim::@return: scope:[anim]  from anim::@1
   return 
@@ -578,7 +578,6 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*)(number) $dd00
 (const nomodify dword*) CIA2_TIMER_AB = (dword*)(number) $dd04
 (const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES = (byte) 0
@@ -676,21 +675,23 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = (byte) $f
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = (byte) $15
+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = (byte) $10
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const nomodify byte*) RASTER = (byte*)(number) $d012
 (const byte*) SCREEN = (byte*)(number) $400
 (const byte*) SIN[(number) $140]  = kickasm {{ .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
  }}
 (const byte*) SPRITE = (byte*)(number) $3000
 (const nomodify byte*) SPRITES_COLS = (byte*)(number) $d027
-(const nomodify byte*) SPRITES_ENABLE = (byte*)(number) $d015
-(const nomodify byte*) SPRITES_XMSB = (byte*)(number) $d010
 (const nomodify byte*) SPRITES_XPOS = (byte*)(number) $d000
 (const nomodify byte*) SPRITES_YPOS = (byte*)(number) $d001
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (void()) anim()
 (bool~) anim::$0
 (number~) anim::$10
@@ -1160,10 +1161,10 @@ Adding number conversion cast (unumber) 4 in (byte~) print_uchar_at::$0 ← (byt
 Adding number conversion cast (unumber) $f in (number~) print_uchar_at::$2 ← (byte) print_uchar_at::b#3 & (number) $f
 Adding number conversion cast (unumber) print_uchar_at::$2 in (number~) print_uchar_at::$2 ← (byte) print_uchar_at::b#3 & (unumber)(number) $f
 Adding number conversion cast (unumber) 1 in (byte*~) print_uchar_at::$3 ← (byte*) print_uchar_at::at#3 + (number) 1
-Adding number conversion cast (unumber) $ff in *((const nomodify byte*) SPRITES_ENABLE) ← (number) $ff
+Adding number conversion cast (unumber) $ff in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (number) $ff
 Adding number conversion cast (unumber) $3f8 in (byte*~) init::$1 ← (const byte*) SCREEN + (number) $3f8
 Adding number conversion cast (unumber) $40 in (byte*~) init::$2 ← (const byte*) SPRITE / (number) $40
-Adding number conversion cast (unumber) $ff in (bool~) anim::$0 ← *((const nomodify byte*) RASTER) != (number) $ff
+Adding number conversion cast (unumber) $ff in (bool~) anim::$0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $ff
 Adding number conversion cast (snumber) 2 in (number~) anim::$5 ← (signed word~) anim::$4 * (number) 2
 Adding number conversion cast (snumber) anim::$5 in (number~) anim::$5 ← (signed word~) anim::$4 * (snumber)(number) 2
 Adding number conversion cast (snumber) 2 in (number~) anim::$7 ← (signed word~) anim::$6 * (number) 2
@@ -1189,15 +1190,12 @@ Adding number conversion cast (unumber) $80 in (byte) anim::sprite_msb#2 ← (by
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) mulf_init::dir#1 ← (unumber)(number) 1
 Inlining cast *((const nomodify dword*) CIA2_TIMER_AB) ← (unumber)(number) $ffffffff
-Inlining cast *((const nomodify byte*) SPRITES_ENABLE) ← (unumber)(number) $ff
+Inlining cast *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (unumber)(number) $ff
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant pointer cast (byte*) 53249
-Simplifying constant pointer cast (byte*) 53264
-Simplifying constant pointer cast (byte*) 53266
-Simplifying constant pointer cast (byte*) 53269
-Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53287
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (struct MOS6526_CIA*) 56576
 Simplifying constant pointer cast (dword*) 56580
 Simplifying constant pointer cast (byte*) 253
@@ -1398,7 +1396,7 @@ Simple Condition (bool~) mulf_init::$10 [34] if((byte) mulf_init::x_255#1!=(byte
 Simple Condition (bool~) mulf8s_prepared::$2 [56] if(*((const nomodify signed byte*) mulf8s_prepared::memA)>=(signed byte) 0) goto mulf8s_prepared::@1
 Simple Condition (bool~) mulf8s_prepared::$4 [59] if((signed byte) mulf8s_prepared::b#4>=(signed byte) 0) goto mulf8s_prepared::@2
 Simple Condition (bool~) init::$3 [122] if((byte) init::i#1!=rangelast(0,7)) goto init::@1
-Simple Condition (bool~) anim::$0 [129] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2
+Simple Condition (bool~) anim::$0 [129] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2
 Simple Condition (bool~) anim::$19 [172] if((byte~) anim::$17==(byte) 0) goto anim::@5
 Simple Condition (bool~) anim::$25 [183] if((byte) anim::i#1!=rangelast(0,7)) goto anim::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -1671,10 +1669,10 @@ anim::@1: scope:[anim]  from anim anim::@15
   [10] (byte) anim::angle#9 ← phi( anim/(byte) 0 anim::@15/(byte) anim::angle#1 )
   to:anim::@2
 anim::@2: scope:[anim]  from anim::@1 anim::@2
-  [11] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2
+  [11] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2
   to:anim::@3
 anim::@3: scope:[anim]  from anim::@2
-  [12] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  [12] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [13] call clock_start 
   to:anim::@4
 anim::@4: scope:[anim]  from anim::@3 anim::@5
@@ -1741,7 +1739,7 @@ anim::@5: scope:[anim]  from anim::@13 anim::@6
   [53] if((byte) anim::i#1!=(byte) 8) goto anim::@4
   to:anim::@7
 anim::@7: scope:[anim]  from anim::@5
-  [54] *((const nomodify byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5
+  [54] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) ← (byte) anim::sprite_msb#5
   [55] (byte) anim::angle#1 ← ++ (byte) anim::angle#9
   [56] call clock 
   [57] (dword) clock::return#2 ← (dword) clock::return#0
@@ -1753,7 +1751,7 @@ anim::@14: scope:[anim]  from anim::@7
   [61] call print_ulong_at 
   to:anim::@15
 anim::@15: scope:[anim]  from anim::@14
-  [62] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE
+  [62] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE
   to:anim::@1
 
 (void()) print_ulong_at((dword) print_ulong_at::dw , (byte*) print_ulong_at::at)
@@ -1893,7 +1891,7 @@ init: scope:[init]  from main
   [122] call mulf_init 
   to:init::@2
 init::@2: scope:[init]  from init
-  [123] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff
+  [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff
   to:init::@1
 init::@1: scope:[init]  from init::@1 init::@2
   [124] (byte) init::i#2 ← phi( init::@1/(byte) init::i#1 init::@2/(byte) 0 )
@@ -2396,11 +2394,9 @@ Target platform is c64basic / MOS6502X
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
@@ -2412,6 +2408,10 @@ Target platform is c64basic / MOS6502X
   .const CLOCKS_PER_INIT = $12
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SCREEN = $400
   .label COS = SIN+$40
   // A single sprite
@@ -2491,15 +2491,15 @@ anim: {
     jmp __b2
     // anim::@2
   __b2:
-    // [11] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [11] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     jmp __b3
     // anim::@3
   __b3:
-    // [12] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [12] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [13] call clock_start 
     jsr clock_start
     // [14] phi from anim::@3 to anim::@4 [phi:anim::@3->anim::@4]
@@ -2736,9 +2736,9 @@ anim: {
     jmp __b7
     // anim::@7
   __b7:
-    // [54] *((const nomodify byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
+    // [54] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
     lda.z sprite_msb
-    sta SPRITES_XMSB
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB
     // [55] (byte) anim::angle#1 ← ++ (byte) anim::angle#9 -- vbuz1=_inc_vbuz1 
     inc.z angle
     // [56] call clock 
@@ -2793,9 +2793,9 @@ anim: {
     jmp __b15
     // anim::@15
   __b15:
-    // [62] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
+    // [62] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
     lda #LIGHT_BLUE
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [10] phi from anim::@15 to anim::@1 [phi:anim::@15->anim::@1]
   __b1_from___b15:
     // [10] phi (byte) anim::angle#9 = (byte) anim::angle#1 [phi:anim::@15->anim::@1#0] -- register_copy 
@@ -3183,9 +3183,9 @@ init: {
     jmp __b2
     // init::@2
   __b2:
-    // [123] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     lda #$ff
-    sta SPRITES_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     // [124] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
   __b1_from___b2:
     // [124] phi (byte) init::i#2 = (byte) 0 [phi:init::@2->init::@1#0] -- vbuz1=vbuc1 
@@ -3478,7 +3478,7 @@ SIN:
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp[1]:60 [ anim::$21 ] has ALU potential.
-Statement [11] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
+Statement [11] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ anim::angle#9 anim::angle#1 ]
 Statement [21] (signed word~) anim::$4 ← (signed word)(word) mulf8s_prepared::m#4 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::$4 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 anim::$4 ] { { mulf8s_prepared::b#1 = mulf8s_prepared::b#4 anim::y#0 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ anim::i#10 anim::i#1 ]
@@ -3506,7 +3506,7 @@ Statement [57] (dword) clock::return#2 ← (dword) clock::return#0 [ anim::angle
 Statement [58] (dword~) anim::$26 ← (dword) clock::return#2 [ anim::angle#1 anim::$26 ] ( main:2::anim:7 [ anim::angle#1 anim::$26 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [59] (dword) anim::cyclecount#0 ← (dword~) anim::$26 - (const nomodify dword) CLOCKS_PER_INIT [ anim::angle#1 anim::cyclecount#0 ] ( main:2::anim:7 [ anim::angle#1 anim::cyclecount#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [60] (dword) print_ulong_at::dw#0 ← (dword) anim::cyclecount#0 [ anim::angle#1 print_ulong_at::dw#0 ] ( main:2::anim:7 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [62] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE [ anim::angle#1 ] ( main:2::anim:7 [ anim::angle#1 ] { }  ) always clobbers reg byte a 
+Statement [62] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE [ anim::angle#1 ] ( main:2::anim:7 [ anim::angle#1 ] { }  ) always clobbers reg byte a 
 Statement [63] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( main:2::anim:7::print_ulong_at:61 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement [65] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( main:2::anim:7::print_ulong_at:61 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement [70] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( main:2::anim:7::print_ulong_at:61::print_uint_at:64 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  main:2::anim:7::print_ulong_at:61::print_uint_at:66 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
@@ -3539,7 +3539,7 @@ Statement [116] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) 
 Statement [117] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [118] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
-Statement [123] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ init::i#2 init::i#1 ]
 Statement [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
@@ -3562,7 +3562,7 @@ Removing always clobbered register reg byte y as potential for zp[1]:22 [ mulf_i
 Removing always clobbered register reg byte y as potential for zp[1]:25 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
 Statement [155] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] { }  ) always clobbers reg byte y 
 Statement [157] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] { }  ) always clobbers reg byte a 
-Statement [11] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
+Statement [11] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [17] (byte) mulf8u_prepare::a#3 ← (byte)(signed byte)*((const byte*) COS + (byte) anim::angle#9) [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8u_prepare::a#3 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8u_prepare::a#3 ] { { mulf8u_prepare::a#2 = mulf8u_prepare::a#3 } }  ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ anim::i#10 anim::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ anim::sprite_msb#10 anim::sprite_msb#5 anim::sprite_msb#1 anim::sprite_msb#2 ]
@@ -3584,12 +3584,12 @@ Statement [44] (byte) anim::sprite_msb#2 ← (byte) anim::sprite_msb#1 | (byte) 
 Statement [48] (byte) anim::i2#0 ← (byte) anim::i#10 << (byte) 1 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 anim::xpos#0 anim::ypos#0 anim::i2#0 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 anim::xpos#0 anim::ypos#0 anim::i2#0 ] { }  ) always clobbers reg byte a 
 Statement [51] *((const nomodify byte*) SPRITES_YPOS + (byte) anim::i2#0) ← (byte) anim::ypos#0 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 ] { }  ) always clobbers reg byte a 
 Statement [53] if((byte) anim::i#1!=(byte) 8) goto anim::@4 [ anim::angle#9 anim::i#1 anim::sprite_msb#5 ] ( main:2::anim:7 [ anim::angle#9 anim::i#1 anim::sprite_msb#5 ] { }  ) always clobbers reg byte a 
-Statement [54] *((const nomodify byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [54] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) ← (byte) anim::sprite_msb#5 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [57] (dword) clock::return#2 ← (dword) clock::return#0 [ anim::angle#1 clock::return#2 ] ( main:2::anim:7 [ anim::angle#1 clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [58] (dword~) anim::$26 ← (dword) clock::return#2 [ anim::angle#1 anim::$26 ] ( main:2::anim:7 [ anim::angle#1 anim::$26 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [59] (dword) anim::cyclecount#0 ← (dword~) anim::$26 - (const nomodify dword) CLOCKS_PER_INIT [ anim::angle#1 anim::cyclecount#0 ] ( main:2::anim:7 [ anim::angle#1 anim::cyclecount#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [60] (dword) print_ulong_at::dw#0 ← (dword) anim::cyclecount#0 [ anim::angle#1 print_ulong_at::dw#0 ] ( main:2::anim:7 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [62] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE [ anim::angle#1 ] ( main:2::anim:7 [ anim::angle#1 ] { }  ) always clobbers reg byte a 
+Statement [62] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE [ anim::angle#1 ] ( main:2::anim:7 [ anim::angle#1 ] { }  ) always clobbers reg byte a 
 Statement [63] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( main:2::anim:7::print_ulong_at:61 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement [65] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( main:2::anim:7::print_ulong_at:61 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement [70] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( main:2::anim:7::print_ulong_at:61::print_uint_at:64 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  main:2::anim:7::print_ulong_at:61::print_uint_at:66 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
@@ -3613,7 +3613,7 @@ Statement [116] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) 
 Statement [117] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [118] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
-Statement [123] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] { }  ) always clobbers reg byte a 
@@ -3627,7 +3627,7 @@ Statement [147] (byte~) mulf_init::$1 ← (byte) mulf_init::c#1 & (byte) 1 [ mul
 Statement [153] *((byte*) mulf_init::sqr1_lo#2) ← (byte~) mulf_init::$4 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] { }  ) always clobbers reg byte y 
 Statement [155] *((byte*) mulf_init::sqr1_hi#2) ← (byte~) mulf_init::$5 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::sqr1_hi#2 mulf_init::c#1 mulf_init::x_2#2 mulf_init::sqr#3 ] { }  ) always clobbers reg byte y 
 Statement [157] (word) mulf_init::sqr#1 ← (word) mulf_init::sqr#3 + (byte) mulf_init::x_2#2 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::c#1 mulf_init::sqr#1 mulf_init::sqr1_hi#1 mulf_init::x_2#2 ] { }  ) always clobbers reg byte a 
-Statement [11] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
+Statement [11] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [15] (signed byte) anim::x#0 ← *((const signed byte*) xs + (byte) anim::i#10) [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [16] (signed byte) anim::y#0 ← *((const signed byte*) ys + (byte) anim::i#10) [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [17] (byte) mulf8u_prepare::a#3 ← (byte)(signed byte)*((const byte*) COS + (byte) anim::angle#9) [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8u_prepare::a#3 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#10 anim::x#0 anim::y#0 mulf8u_prepare::a#3 ] { { mulf8u_prepare::a#2 = mulf8u_prepare::a#3 } }  ) always clobbers reg byte y 
@@ -3647,12 +3647,12 @@ Statement [44] (byte) anim::sprite_msb#2 ← (byte) anim::sprite_msb#1 | (byte) 
 Statement [48] (byte) anim::i2#0 ← (byte) anim::i#10 << (byte) 1 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 anim::xpos#0 anim::ypos#0 anim::i2#0 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 anim::xpos#0 anim::ypos#0 anim::i2#0 ] { }  ) always clobbers reg byte a 
 Statement [51] *((const nomodify byte*) SPRITES_YPOS + (byte) anim::i2#0) ← (byte) anim::ypos#0 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 ] ( main:2::anim:7 [ anim::angle#9 anim::i#10 anim::sprite_msb#5 ] { }  ) always clobbers reg byte a 
 Statement [53] if((byte) anim::i#1!=(byte) 8) goto anim::@4 [ anim::angle#9 anim::i#1 anim::sprite_msb#5 ] ( main:2::anim:7 [ anim::angle#9 anim::i#1 anim::sprite_msb#5 ] { }  ) always clobbers reg byte a 
-Statement [54] *((const nomodify byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [54] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) ← (byte) anim::sprite_msb#5 [ anim::angle#9 ] ( main:2::anim:7 [ anim::angle#9 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [57] (dword) clock::return#2 ← (dword) clock::return#0 [ anim::angle#1 clock::return#2 ] ( main:2::anim:7 [ anim::angle#1 clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
 Statement [58] (dword~) anim::$26 ← (dword) clock::return#2 [ anim::angle#1 anim::$26 ] ( main:2::anim:7 [ anim::angle#1 anim::$26 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [59] (dword) anim::cyclecount#0 ← (dword~) anim::$26 - (const nomodify dword) CLOCKS_PER_INIT [ anim::angle#1 anim::cyclecount#0 ] ( main:2::anim:7 [ anim::angle#1 anim::cyclecount#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
 Statement [60] (dword) print_ulong_at::dw#0 ← (dword) anim::cyclecount#0 [ anim::angle#1 print_ulong_at::dw#0 ] ( main:2::anim:7 [ anim::angle#1 print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [62] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE [ anim::angle#1 ] ( main:2::anim:7 [ anim::angle#1 ] { }  ) always clobbers reg byte a 
+Statement [62] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE [ anim::angle#1 ] ( main:2::anim:7 [ anim::angle#1 ] { }  ) always clobbers reg byte a 
 Statement [63] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( main:2::anim:7::print_ulong_at:61 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement [65] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( main:2::anim:7::print_ulong_at:61 [ anim::angle#1 print_uint_at::w#1 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
 Statement [70] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( main:2::anim:7::print_ulong_at:61::print_uint_at:64 [ anim::angle#1 print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  main:2::anim:7::print_ulong_at:61::print_uint_at:66 [ anim::angle#1 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = anim::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
@@ -3676,7 +3676,7 @@ Statement [116] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) 
 Statement [117] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [118] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
-Statement [123] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] { }  ) always clobbers reg byte a 
@@ -3867,11 +3867,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
@@ -3883,6 +3881,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const CLOCKS_PER_INIT = $12
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SCREEN = $400
   .label COS = SIN+$40
   // A single sprite
@@ -3954,15 +3956,15 @@ anim: {
     jmp __b2
     // anim::@2
   __b2:
-    // [11] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [11] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     jmp __b3
     // anim::@3
   __b3:
-    // [12] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [12] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [13] call clock_start 
     jsr clock_start
     // [14] phi from anim::@3 to anim::@4 [phi:anim::@3->anim::@4]
@@ -4160,9 +4162,9 @@ anim: {
     jmp __b7
     // anim::@7
   __b7:
-    // [54] *((const nomodify byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
+    // [54] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
     lda.z sprite_msb
-    sta SPRITES_XMSB
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB
     // [55] (byte) anim::angle#1 ← ++ (byte) anim::angle#9 -- vbuz1=_inc_vbuz1 
     inc.z angle
     // [56] call clock 
@@ -4193,9 +4195,9 @@ anim: {
     jmp __b15
     // anim::@15
   __b15:
-    // [62] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
+    // [62] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
     lda #LIGHT_BLUE
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [10] phi from anim::@15 to anim::@1 [phi:anim::@15->anim::@1]
   __b1_from___b15:
     // [10] phi (byte) anim::angle#9 = (byte) anim::angle#1 [phi:anim::@15->anim::@1#0] -- register_copy 
@@ -4543,9 +4545,9 @@ init: {
     jmp __b2
     // init::@2
   __b2:
-    // [123] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     lda #$ff
-    sta SPRITES_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     // [124] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
   __b1_from___b2:
     // [124] phi (byte) init::i#2 = (byte) 0 [phi:init::@2->init::@1#0] -- vbuxx=vbuc1 
@@ -4971,13 +4973,12 @@ Removing instruction jmp __b8
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __bbegin:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [151] bne __b4 to beq
+Fixing long branch [153] bne __b4 to beq
 
 FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*) 53280
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*) 56576
 (const nomodify dword*) CIA2_TIMER_AB = (dword*) 56580
 (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (byte) $40
@@ -5072,21 +5073,23 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = (byte) $f
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = (byte) $15
+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = (byte) $10
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
-(const nomodify byte*) RASTER = (byte*) 53266
 (const byte*) SCREEN = (byte*) 1024
 (const byte*) SIN[(number) $140]  = kickasm {{ .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
  }}
 (const byte*) SPRITE = (byte*) 12288
 (const nomodify byte*) SPRITES_COLS = (byte*) 53287
-(const nomodify byte*) SPRITES_ENABLE = (byte*) 53269
-(const nomodify byte*) SPRITES_XMSB = (byte*) 53264
 (const nomodify byte*) SPRITES_XPOS = (byte*) 53248
 (const nomodify byte*) SPRITES_YPOS = (byte*) 53249
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (void()) anim()
 (signed word~) anim::$10 zp[2]:3 20002.0
 (signed word~) anim::$11 zp[2]:3 20002.0
@@ -5351,11 +5354,9 @@ Score: 30994
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
@@ -5367,6 +5368,10 @@ Score: 30994
   .const CLOCKS_PER_INIT = $12
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SCREEN = $400
   .label COS = SIN+$40
   // A single sprite
@@ -5425,15 +5430,15 @@ anim: {
     // anim::@1
     // anim::@2
   __b2:
-    // while(*RASTER!=$ff)
-    // [11] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // while(VICII->RASTER!=$ff)
+    // [11] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     // anim::@3
-    // (*BORDERCOL)++;
-    // [12] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    // [12] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // clock_start()
     // [13] call clock_start 
     jsr clock_start
@@ -5629,10 +5634,10 @@ anim: {
     jmp __b4
   !__b4:
     // anim::@7
-    // *SPRITES_XMSB = sprite_msb
-    // [54] *((const nomodify byte*) SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
+    // VICII->SPRITES_XMSB = sprite_msb
+    // [54] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB) ← (byte) anim::sprite_msb#5 -- _deref_pbuc1=vbuz1 
     lda.z sprite_msb
-    sta SPRITES_XMSB
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB
     // angle++;
     // [55] (byte) anim::angle#1 ← ++ (byte) anim::angle#9 -- vbuz1=_inc_vbuz1 
     inc.z angle
@@ -5663,10 +5668,10 @@ anim: {
     // Print cycle count
     jsr print_ulong_at
     // anim::@15
-    // *BORDERCOL = LIGHT_BLUE
-    // [62] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = LIGHT_BLUE
+    // [62] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) LIGHT_BLUE -- _deref_pbuc1=vbuc2 
     lda #LIGHT_BLUE
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [10] phi from anim::@15 to anim::@1 [phi:anim::@15->anim::@1]
     // [10] phi (byte) anim::angle#9 = (byte) anim::angle#1 [phi:anim::@15->anim::@1#0] -- register_copy 
     jmp __b2
@@ -6005,10 +6010,10 @@ init: {
     // [130] phi from init to mulf_init [phi:init->mulf_init]
     jsr mulf_init
     // init::@2
-    // *SPRITES_ENABLE = %11111111
-    // [123] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // VICII->SPRITES_ENABLE = %11111111
+    // [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff -- _deref_pbuc1=vbuc2 
     lda #$ff
-    sta SPRITES_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     // [124] phi from init::@2 to init::@1 [phi:init::@2->init::@1]
     // [124] phi (byte) init::i#2 = (byte) 0 [phi:init::@2->init::@1#0] -- vbuxx=vbuc1 
     ldx #0

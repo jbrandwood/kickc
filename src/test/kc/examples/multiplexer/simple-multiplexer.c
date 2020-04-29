@@ -40,7 +40,7 @@ void init() {
         xp += 9;
     }
     // Enable & initialize sprites
-    *SPRITES_ENABLE = $ff;
+    VICII->SPRITES_ENABLE = $ff;
     for(char ss: 0..7) {
         SPRITES_COLS[ss] = GREEN;
     }
@@ -51,9 +51,9 @@ void loop() {
     // The current index into the y-sinus
     char sin_idx = 0;
     while(true) {
-        while(*RASTER!=$ff) {}
+        while(VICII->RASTER!=$ff) {}
         // Assign sinus positions
-        (*BORDERCOL)++;
+        (VICII->BORDER_COLOR)++;
         char y_idx = sin_idx;
         for(char sy: 0..PLEX_COUNT-1) {
             PLEX_YPOS[sy] = YSIN[y_idx];
@@ -61,18 +61,18 @@ void loop() {
         }
         sin_idx +=1;
         // Sort the sprites by y-position
-        (*BORDERCOL)++;
+        (VICII->BORDER_COLOR)++;
         plexSort();
-        *BORDERCOL = BLACK;
+        VICII->BORDER_COLOR = BLACK;
         while((*D011&VIC_RST8)!=0) {}
         // Show the sprites
         for( char ss: 0..PLEX_COUNT-1) {
-            *BORDERCOL = BLACK;
+            VICII->BORDER_COLOR = BLACK;
             char rasterY = plexFreeNextYpos();
-            while(*RASTER<rasterY) {}
-            (*BORDERCOL)++;
+            while(VICII->RASTER<rasterY) {}
+            (VICII->BORDER_COLOR)++;
             plexShowSprite();
         }
-        *BORDERCOL = BLACK;
+        VICII->BORDER_COLOR = BLACK;
     }
 }

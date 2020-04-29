@@ -12,7 +12,7 @@ char* const SCREEN = $400;
 void main() {
     init();
     do {
-        do { } while (*RASTER!=$ff);
+        do { } while (VICII->RASTER!=$ff);
         anim();
     } while(true);
 }
@@ -67,7 +67,7 @@ char sin_idx_x = 0;
 char sin_idx_y = 0;
 
 void anim() {
-    (*BORDERCOL)++;
+    (VICII->BORDER_COLOR)++;
     char xidx = sin_idx_x;
     char yidx = sin_idx_y;
     char j2 = 12;
@@ -87,7 +87,7 @@ void anim() {
         }
         j2 = j2-2;
     }
-    *SPRITES_XMSB = x_msb;
+    VICII->SPRITES_XMSB = x_msb;
 
     // Increment sin indices
     if(++sin_idx_x>=sinlen_x) {
@@ -96,13 +96,13 @@ void anim() {
     if(++sin_idx_y>=sinlen_y) {
         sin_idx_y = 0;
     }
-    (*BORDERCOL)--;
+    (VICII->BORDER_COLOR)--;
 }
 
 void place_sprites() {
-    *SPRITES_ENABLE = %01111111;
-    *SPRITES_EXPAND_X = %01111111;
-    *SPRITES_EXPAND_Y = %01111111;
+    VICII->SPRITES_ENABLE = %01111111;
+    VICII->SPRITES_EXPAND_X = %01111111;
+    VICII->SPRITES_EXPAND_Y = %01111111;
     char* sprites_ptr = SCREEN+$3f8;
     char spr_id = (char)((unsigned int)sprites/$40);
     char spr_x = 60;

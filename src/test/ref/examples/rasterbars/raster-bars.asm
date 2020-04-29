@@ -1,21 +1,23 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
 main: {
     // asm
     sei
   __b1:
-    // while (*RASTER!=$a)
+    // while (VICII->RASTER!=$a)
     lda #$a
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
   __b2:
-    // while (*RASTER!=$b)
+    // while (VICII->RASTER!=$b)
     lda #$b
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     // raster()
     jsr raster
@@ -46,10 +48,10 @@ raster: {
     lda rastercols
     ldx #0
   __b1:
-    // *BGCOL = col
-    sta BGCOL
-    // *BORDERCOL = col
-    sta BORDERCOL
+    // VICII->BG_COLOR = col
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // VICII->BORDER_COLOR = col
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // col  = rastercols[++i];
     inx
     // col  = rastercols[++i]

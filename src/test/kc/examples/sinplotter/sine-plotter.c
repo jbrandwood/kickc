@@ -33,7 +33,7 @@ void main() {
     sin16s_gen2(sin, SIN_SIZE, -320, 320);
     render_sine();
     while(true) {
-        (*BGCOL)++;
+        (VICII->BG_COLOR)++;
     }
 }
 

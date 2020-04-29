@@ -8,11 +8,9 @@
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_XMSB = $d010
-  .label RASTER = $d012
-  .label SPRITES_ENABLE = $d015
-  .label BORDERCOL = $d020
   .label SPRITES_COLS = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
@@ -24,6 +22,10 @@
   .const CLOCKS_PER_INIT = $12
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SCREEN = $400
   .label COS = SIN+$40
   // A single sprite
@@ -61,12 +63,12 @@ anim: {
     lda #0
     sta.z angle
   __b2:
-    // while(*RASTER!=$ff)
+    // while(VICII->RASTER!=$ff)
     lda #$ff
-    cmp RASTER
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // clock_start()
     jsr clock_start
     lda #0
@@ -191,9 +193,9 @@ anim: {
     beq !__b4+
     jmp __b4
   !__b4:
-    // *SPRITES_XMSB = sprite_msb
+    // VICII->SPRITES_XMSB = sprite_msb
     lda.z sprite_msb
-    sta SPRITES_XMSB
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB
     // angle++;
     inc.z angle
     // clock()
@@ -215,9 +217,9 @@ anim: {
     // print_ulong_at(cyclecount, SCREEN)
     // Print cycle count
     jsr print_ulong_at
-    // *BORDERCOL = LIGHT_BLUE
+    // VICII->BORDER_COLOR = LIGHT_BLUE
     lda #LIGHT_BLUE
-    sta BORDERCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b2
 }
 // Print a unsigned long as HEX at a specific position
@@ -451,9 +453,9 @@ init: {
     .label sprites_ptr = SCREEN+$3f8
     // mulf_init()
     jsr mulf_init
-    // *SPRITES_ENABLE = %11111111
+    // VICII->SPRITES_ENABLE = %11111111
     lda #$ff
-    sta SPRITES_ENABLE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     ldx #0
   __b1:
     // sprites_ptr[i] = (char)(SPRITE/$40)

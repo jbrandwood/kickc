@@ -19,8 +19,8 @@ const unsigned char align(0x100) SINTABLE[0x100] = kickasm {{
 
 void main() {
     asm { sei }
-    *BORDERCOL = BLUE;
-    *BGCOL = BLUE;
+    VICII->BORDER_COLOR = BLUE;
+    VICII->BG_COLOR = BLUE;
     for(unsigned char* col : COLS..COLS+1000) *col = BLACK;
     makecharset(CHARSET);
     *D018 = toD018(SCREEN1, CHARSET);

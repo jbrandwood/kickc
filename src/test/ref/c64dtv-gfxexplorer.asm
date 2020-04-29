@@ -903,59 +903,59 @@ get_plane: {
     .label return = 9
     // if(idx==0)
     cmp #0
-    beq __b2
+    beq __b1
     // if(idx==1)
     cmp #1
+    bne !__b6+
+    jmp __b6
+  !__b6:
+    // if(idx==2)
+    cmp #2
     bne !__b7+
     jmp __b7
   !__b7:
-    // if(idx==2)
-    cmp #2
+    // if(idx==3)
+    cmp #3
     bne !__b8+
     jmp __b8
   !__b8:
-    // if(idx==3)
-    cmp #3
+    // if(idx==4)
+    cmp #4
     bne !__b9+
     jmp __b9
   !__b9:
-    // if(idx==4)
-    cmp #4
+    // if(idx==5)
+    cmp #5
     bne !__b10+
     jmp __b10
   !__b10:
-    // if(idx==5)
-    cmp #5
+    // if(idx==6)
+    cmp #6
     bne !__b11+
     jmp __b11
   !__b11:
-    // if(idx==6)
-    cmp #6
+    // if(idx==7)
+    cmp #7
     bne !__b12+
     jmp __b12
   !__b12:
-    // if(idx==7)
-    cmp #7
+    // if(idx==8)
+    cmp #8
     bne !__b13+
     jmp __b13
   !__b13:
-    // if(idx==8)
-    cmp #8
-    bne !__b14+
-    jmp __b14
-  !__b14:
     // if(idx==9)
     cmp #9
-    beq __b3
+    beq __b2
     // if(idx==10)
     cmp #$a
-    beq __b4
+    beq __b3
     // if(idx==11)
     cmp #$b
-    beq __b5
+    beq __b4
     // if(idx==12)
     cmp #$c
-    beq __b6
+    beq __b5
     // if(idx==13)
     cmp #$d
     bne __b1
@@ -979,16 +979,6 @@ get_plane: {
     sta.z return+3
     rts
   __b2:
-    lda #<VIC_SCREEN0
-    sta.z return
-    lda #>VIC_SCREEN0
-    sta.z return+1
-    lda #<VIC_SCREEN0>>$10
-    sta.z return+2
-    lda #>VIC_SCREEN0>>$10
-    sta.z return+3
-    rts
-  __b3:
     lda #<PLANE_HORISONTAL2
     sta.z return
     lda #>PLANE_HORISONTAL2
@@ -998,7 +988,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL2>>$10
     sta.z return+3
     rts
-  __b4:
+  __b3:
     lda #<PLANE_VERTICAL2
     sta.z return
     lda #>PLANE_VERTICAL2
@@ -1008,7 +998,7 @@ get_plane: {
     lda #>PLANE_VERTICAL2>>$10
     sta.z return+3
     rts
-  __b5:
+  __b4:
     lda #<PLANE_CHARSET8
     sta.z return
     lda #>PLANE_CHARSET8
@@ -1018,7 +1008,7 @@ get_plane: {
     lda #>PLANE_CHARSET8>>$10
     sta.z return+3
     rts
-  __b6:
+  __b5:
     lda #<PLANE_BLANK
     sta.z return
     lda #>PLANE_BLANK
@@ -1028,7 +1018,7 @@ get_plane: {
     lda #>PLANE_BLANK>>$10
     sta.z return+3
     rts
-  __b7:
+  __b6:
     lda #<VIC_SCREEN1
     sta.z return
     lda #>VIC_SCREEN1
@@ -1038,7 +1028,7 @@ get_plane: {
     lda #>VIC_SCREEN1>>$10
     sta.z return+3
     rts
-  __b8:
+  __b7:
     lda #<VIC_SCREEN2
     sta.z return
     lda #>VIC_SCREEN2
@@ -1048,7 +1038,7 @@ get_plane: {
     lda #>VIC_SCREEN2>>$10
     sta.z return+3
     rts
-  __b9:
+  __b8:
     lda #<VIC_SCREEN3
     sta.z return
     lda #>VIC_SCREEN3
@@ -1058,7 +1048,7 @@ get_plane: {
     lda #>VIC_SCREEN3>>$10
     sta.z return+3
     rts
-  __b10:
+  __b9:
     lda #<VIC_BITMAP
     sta.z return
     lda #>VIC_BITMAP
@@ -1068,7 +1058,7 @@ get_plane: {
     lda #>VIC_BITMAP>>$10
     sta.z return+3
     rts
-  __b11:
+  __b10:
     lda #<VIC_CHARSET_ROM
     sta.z return
     lda #>VIC_CHARSET_ROM
@@ -1078,7 +1068,7 @@ get_plane: {
     lda #>VIC_CHARSET_ROM>>$10
     sta.z return+3
     rts
-  __b12:
+  __b11:
     lda #<PLANE_8BPP_CHUNKY
     sta.z return
     lda #>PLANE_8BPP_CHUNKY
@@ -1088,7 +1078,7 @@ get_plane: {
     lda #>PLANE_8BPP_CHUNKY>>$10
     sta.z return+3
     rts
-  __b13:
+  __b12:
     lda #<PLANE_HORISONTAL
     sta.z return
     lda #>PLANE_HORISONTAL
@@ -1098,7 +1088,7 @@ get_plane: {
     lda #>PLANE_HORISONTAL>>$10
     sta.z return+3
     rts
-  __b14:
+  __b13:
     lda #<PLANE_VERTICAL
     sta.z return
     lda #>PLANE_VERTICAL

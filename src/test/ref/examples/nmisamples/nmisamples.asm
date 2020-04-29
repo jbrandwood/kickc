@@ -6,9 +6,10 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .label BORDERCOL = $d020
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 Interrupt for reading in ASM
@@ -19,6 +20,7 @@
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
   .label sample = 2
 __bbegin:
@@ -71,8 +73,8 @@ nmi2: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm
     lda CIA2_INTERRUPT
     // *sample >> 4
@@ -105,8 +107,8 @@ nmi2: {
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (VICII->BORDER_COLOR)--;
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
   rega:
     lda #00
@@ -120,8 +122,8 @@ nmi: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm
     lda CIA2_INTERRUPT
     // *sample & $0f
@@ -135,8 +137,8 @@ nmi: {
     sta KERNEL_NMI
     lda #>nmi2
     sta KERNEL_NMI+1
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (VICII->BORDER_COLOR)--;
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
   rega:
     lda #00

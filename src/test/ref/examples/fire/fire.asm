@@ -6,13 +6,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -21,6 +21,8 @@
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
   .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label SCREEN1 = $3800
   .label SCREEN2 = $3c00
   .label BUFFER = $4000
@@ -30,11 +32,11 @@ main: {
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
     // asm
     sei
-    // *BORDERCOL = BLACK
+    // VICII->BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
-    // *BGCOL = BLACK
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR = BLACK
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // fillscreen(BUFFER, 00)
     lda #<BUFFER
     sta.z fillscreen.screen

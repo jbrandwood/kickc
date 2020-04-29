@@ -88,7 +88,6 @@ public class ConstantSymbolPointer implements ConstantValue {
 
    @Override
    public int hashCode() {
-
       return Objects.hash(toSymbol);
    }
 }

@@ -102,8 +102,8 @@ main: scope:[main]  from @3
   (byte*) print_char_cursor#32 ← phi( @3/(byte*) print_char_cursor#25 )
   (byte*) print_line_cursor#24 ← phi( @3/(byte*) print_line_cursor#18 )
   asm { sei  }
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLUE
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLUE
   (byte*) main::col#0 ← (const nomodify byte*) COLS
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -671,10 +671,8 @@ SYMBOL TABLE SSA
 (label) @4
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte) BLUE = (byte) 6
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
 (const nomodify byte*) CHARSET = (byte*)(number) $2000
 (const nomodify byte*) COLS = (byte*)(number) $d800
 (const nomodify byte*) D018 = (byte*)(number) $d018
@@ -762,6 +760,8 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
@@ -776,6 +776,7 @@ SYMBOL TABLE SSA
 (const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (byte) c1A
 (byte) c1A#0
 (byte) c1A#1
@@ -1406,10 +1407,9 @@ Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast (word) memset::num#0 ← (unumber)(number) $3e8
 Inlining cast *((word*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ) ← (unumber)(number) $ffff
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 53280
-Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (struct MOS6581_SID*) 54272
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 10240
 Simplifying constant pointer cast (byte*) 11264
@@ -1999,8 +1999,8 @@ FINAL CONTROL FLOW GRAPH
 (void()) main()
 main: scope:[main]  from @1
   asm { sei  }
-  [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE
-  [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE
+  [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLUE
+  [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLUE
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [7] (byte*) main::col#2 ← phi( main/(const nomodify byte*) COLS main::@1/(byte*) main::col#1 )
@@ -2506,13 +2506,13 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -2524,6 +2524,8 @@ Target platform is c64basic / MOS6502X
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
   .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label print_line_cursor = $400
   .label print_char_cursor = $14
   // Plasma state variables
@@ -2552,12 +2554,12 @@ main: {
     .label col = 2
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BORDERCOL
-    // [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // [7] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [7] phi (byte*) main::col#2 = (const nomodify byte*) COLS [phi:main->main::@1#0] -- pbuz1=pbuc1 
@@ -3184,8 +3186,8 @@ SINTABLE:
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((byte*) main::col#2) ← (const nomodify byte) BLACK [ main::col#2 ] ( main:2 [ main::col#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if((byte*) main::col#1!=(const nomodify byte*) COLS+(word) $3e8+(byte) 1) goto main::@1 [ main::col#1 ] ( main:2 [ main::col#1 ] { }  ) always clobbers reg byte a 
 Statement [17] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ c1A#4 c1B#4 c2A#4 c2B#4 ] ( main:2 [ c1A#4 c1B#4 c2A#4 c2B#4 ] { { c1A#10 = c1A#4 } { c1B#10 = c1B#4 } { c2A#24 = c2A#4 } { c2B#24 = c2B#4 } }  ) always clobbers reg byte a 
@@ -3231,8 +3233,8 @@ Removing always clobbered register reg byte a as potential for zp[1]:23 [ makech
 Statement [85] *((byte*) print_char_cursor#18) ← (const byte) print_char::ch#0 [ print_char_cursor#18 ] ( main:2::makecharset:12::print_char:69 [ makecharset::c#2 print_char_cursor#18 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [93] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::makecharset:12::print_cls:58::memset:89 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
 Statement [95] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::makecharset:12::print_cls:58::memset:89 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((byte*) main::col#2) ← (const nomodify byte) BLACK [ main::col#2 ] ( main:2 [ main::col#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if((byte*) main::col#1!=(const nomodify byte*) COLS+(word) $3e8+(byte) 1) goto main::@1 [ main::col#1 ] ( main:2 [ main::col#1 ] { }  ) always clobbers reg byte a 
 Statement [17] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ c1A#4 c1B#4 c2A#4 c2B#4 ] ( main:2 [ c1A#4 c1B#4 c2A#4 c2B#4 ] { { c1A#10 = c1A#4 } { c1B#10 = c1B#4 } { c2A#24 = c2A#4 } { c2B#24 = c2B#4 } }  ) always clobbers reg byte a 
@@ -3386,13 +3388,13 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -3404,6 +3406,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
   .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label print_line_cursor = $400
   .label print_char_cursor = $b
   // Plasma state variables
@@ -3432,12 +3436,12 @@ main: {
     .label col = $b
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BORDERCOL
-    // [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // [7] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     // [7] phi (byte*) main::col#2 = (const nomodify byte*) COLS [phi:main->main::@1#0] -- pbuz1=pbuc1 
@@ -4153,10 +4157,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte) BLUE = (byte) 6
-(const nomodify byte*) BORDERCOL = (byte*) 53280
 (const nomodify byte*) CHARSET = (byte*) 8192
 (const nomodify byte*) COLS = (byte*) 55296
 (const nomodify byte*) D018 = (byte*) 53272
@@ -4244,6 +4246,8 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = (byte) $12
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = (byte) $e
 (const byte) OFFSET_STRUCT_MOS6581_SID_CH3_OSC = (byte) $1b
@@ -4258,6 +4262,7 @@ FINAL SYMBOL TABLE
 (const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (byte) c1A
 (byte) c1A#10 c1A zp[1]:2 220.39999999999998
 (byte) c1A#14 c1A zp[1]:2 101.0
@@ -4453,13 +4458,13 @@ Score: 95730
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
   .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The SID MOS 6581/8580
   .label SID = $d400
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Color Ram
   .label COLS = $d800
   // The colors of the C64
@@ -4471,6 +4476,8 @@ Score: 95730
   .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
   .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
   .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label print_line_cursor = $400
   .label print_char_cursor = $b
   // Plasma state variables
@@ -4492,13 +4499,13 @@ main: {
     // asm
     // asm { sei  }
     sei
-    // *BORDERCOL = BLUE
-    // [5] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    // VICII->BORDER_COLOR = BLUE
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BORDERCOL
-    // *BGCOL = BLUE
-    // [6] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
-    sta BGCOL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR = BLUE
+    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // [7] phi from main to main::@1 [phi:main->main::@1]
     // [7] phi (byte*) main::col#2 = (const nomodify byte*) COLS [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<COLS

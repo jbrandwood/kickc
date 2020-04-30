@@ -2318,26 +2318,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String op = ((TerminalNode) ctx.getChild(0)).getSymbol().getText();
       Operator operator = Operators.getUnary(op);
       // Special handling of negative literal number
-      if(child instanceof ConstantInteger && operator.equals(Operators.NEG)) {
+      if(operator.equals(Operators.ADDRESS_OF)) {
+         ConstantValue constantAddressOf = constantifyAddressOf(child, new StatementSource(ctx));
+         if(constantAddressOf != null)
+            return constantAddressOf;
+      }
+      if(operator.equals(Operators.NEG) && child instanceof ConstantInteger) {
          return new ConstantInteger(-((ConstantInteger) child).getInteger(), ((ConstantInteger) child).getType());
-      } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof SymbolRef) {
-         return new ConstantSymbolPointer((SymbolRef) child);
-      } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof PointerDereferenceIndexed && ((PointerDereferenceIndexed) child).getPointer() instanceof ConstantValue && ((PointerDereferenceIndexed) child).getIndex() instanceof ConstantValue) {
-         PointerDereferenceIndexed pointerDeref = (PointerDereferenceIndexed) child;
-         return new ConstantBinary((ConstantValue) pointerDeref.getPointer(), Operators.PLUS, (ConstantValue) pointerDeref.getIndex());
-      } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof StructMemberRef && ((StructMemberRef) child).getStruct() instanceof PointerDereferenceSimple && ((PointerDereferenceSimple) ((StructMemberRef) child).getStruct()).getPointer() instanceof ConstantValue) {
-         final ConstantValue structPointer = (ConstantValue) ((PointerDereferenceSimple) ((StructMemberRef) child).getStruct()).getPointer();
-         final RValue structValue  = ((StructMemberRef) child).getStruct();
-         final SymbolTypeStruct structType = (SymbolTypeStruct) SymbolTypeInference.inferType(program.getScope(), structValue);
-         StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
-         final String memberName = ((StructMemberRef) child).getMemberName();
-         final Variable member = structDefinition.getMember(memberName);
-         if(member==null) {
-            throw new CompileError("Unknown struct member "+memberName+" in struct "+structType.getTypeName(), new StatementSource(ctx));
-         }
-         final ConstantRef memberOffset = SizeOfConstants.getStructMemberOffsetConstant(program.getScope(), structDefinition, memberName);
-         final SymbolType memberType = member.getType();
-         return new ConstantCastValue(new SymbolTypePointer(memberType), new ConstantBinary(new ConstantCastValue(new SymbolTypePointer(SymbolType.BYTE), structPointer), Operators.PLUS, memberOffset));
       } else if(child instanceof ConstantValue) {
          return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {
@@ -2348,6 +2335,44 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          consumeExpr(child);
          return tmpVarRef;
       }
+   }
+
+   /**
+    * Try to constantify an RValue that is affected by the address-of operator.
+    * @param child The sub expression of the address-of operator
+    * @param source The statement source (used for errors)
+    * @return The constant value of the pointer, if it can be constantified. Null otherwise.
+    */
+   private ConstantValue constantifyAddressOf(RValue child, StatementSource source) {
+      if(child instanceof SymbolRef) {
+         return new ConstantSymbolPointer((SymbolRef) child);
+      } else if(child instanceof PointerDereferenceIndexed && ((PointerDereferenceIndexed) child).getPointer() instanceof ConstantValue && ((PointerDereferenceIndexed) child).getIndex() instanceof ConstantValue) {
+         PointerDereferenceIndexed pointerDeref = (PointerDereferenceIndexed) child;
+         return new ConstantBinary((ConstantValue) pointerDeref.getPointer(), Operators.PLUS, (ConstantValue) pointerDeref.getIndex());
+      } else if(child instanceof StructMemberRef && ((StructMemberRef) child).getStruct() instanceof PointerDereferenceSimple && ((PointerDereferenceSimple) ((StructMemberRef) child).getStruct()).getPointer() instanceof ConstantValue) {
+         final StructMemberRef structMemberRef = (StructMemberRef) child;
+         final ConstantValue structPointer = (ConstantValue) ((PointerDereferenceSimple) structMemberRef.getStruct()).getPointer();
+         final SymbolTypeStruct structType = (SymbolTypeStruct) SymbolTypeInference.inferType(program.getScope(), structMemberRef.getStruct());
+         StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
+         final Variable member = structDefinition.getMember(structMemberRef.getMemberName());
+         if(member == null) {
+            throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName(), source);
+         }
+         final ConstantRef memberOffset = SizeOfConstants.getStructMemberOffsetConstant(program.getScope(), structDefinition, structMemberRef.getMemberName());
+         return new ConstantCastValue(new SymbolTypePointer(member.getType()), new ConstantBinary(new ConstantCastValue(new SymbolTypePointer(SymbolType.BYTE), structPointer), Operators.PLUS, memberOffset));
+      } else if(child instanceof StructMemberRef && ((StructMemberRef) child).getStruct() instanceof SymbolRef) {
+         final StructMemberRef structMemberRef = (StructMemberRef) child;
+         final ConstantValue structPointer = new ConstantSymbolPointer((SymbolRef) structMemberRef.getStruct());
+         final SymbolTypeStruct structType = (SymbolTypeStruct) SymbolTypeInference.inferType(program.getScope(), structMemberRef.getStruct());
+         StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
+         final Variable member = structDefinition.getMember(structMemberRef.getMemberName());
+         if(member == null) {
+            throw new CompileError("Unknown struct member " + structMemberRef.getMemberName() + " in struct " + structType.getTypeName(), source);
+         }
+         final ConstantRef memberOffset = SizeOfConstants.getStructMemberOffsetConstant(program.getScope(), structDefinition, structMemberRef.getMemberName());
+         return new ConstantCastValue(new SymbolTypePointer(member.getType()), new ConstantBinary(new ConstantCastValue(new SymbolTypePointer(SymbolType.BYTE), structPointer), Operators.PLUS, memberOffset));
+      }
+      return null;
    }
 
    @Override

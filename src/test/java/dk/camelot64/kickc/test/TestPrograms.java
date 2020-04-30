@@ -41,8 +41,13 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStructPointerToMember2() throws IOException, URISyntaxException {
+      compileAndCompare("struct-pointer-to-member-2.c");
+   }
+
+   @Test
    public void testStructPointerToMember() throws IOException, URISyntaxException {
-      compileAndCompare("struct-pointer-to-member.c", log());
+      compileAndCompare("struct-pointer-to-member.c");
    }
 
    @Test

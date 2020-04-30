@@ -7,25 +7,25 @@
   .const CIA_TIMER_CONTROL_START = 1
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
-  .label D018 = $d018
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
-  .label CIA2 = $dd00
-  // CIA#2 timer A&B as one single 32-bit value
-  .label CIA2_TIMER_AB = $dd04
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
   // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
   .const CLOCKS_PER_INIT = $12
-  .label CHARSET = $2000
-  .label SCREEN = $2800
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
   .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
+  .label D018 = $d018
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // CIA#2 timer A&B as one single 32-bit value
+  .label CIA2_TIMER_AB = $dd04
+  .label CHARSET = $2000
+  .label SCREEN = $2800
 main: {
-    .label BASE_SCREEN = $400
-    .label BASE_CHARSET = $1000
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
+    .label BASE_SCREEN = $400
+    .label BASE_CHARSET = $1000
     .label __4 = $12
     .label cyclecount = $12
     // init_font_hex(CHARSET)

@@ -2,22 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label D018 = $d018
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
-  .label CIA2 = $dd00
   .const KEY_SPACE = $3c
-  // The BASIC screen
-  .label BASIC_SCREEN = $400
-  // The BASIC charset
-  .label BASIC_CHARSET = $1000
-  // The BOB screen
-  .label BOB_SCREEN = $2800
-  // The BOB charset
-  .label BOB_CHARSET = $2000
   // The number of different X-shifts
   .const BOB_SHIFTS_X = 4
   // The number of different Y-shifts
@@ -29,6 +14,21 @@
   .const SIZEOF_POINTER = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label D018 = $d018
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // The BASIC screen
+  .label BASIC_SCREEN = $400
+  // The BASIC charset
+  .label BASIC_CHARSET = $1000
+  // The BOB screen
+  .label BOB_SCREEN = $2800
+  // The BOB charset
+  .label BOB_CHARSET = $2000
   // BOB charset ID of the next glyph to be added
   .label bob_charset_next_id = $11
   // Current index within the progress cursor (0-7)
@@ -422,9 +422,9 @@ renderBobCleanup: {
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
-    .label str = BOB_SCREEN
     .const c = 0
     .const num = $3e8
+    .label str = BOB_SCREEN
     .label end = str+num
     .label dst = $19
     lda #<str

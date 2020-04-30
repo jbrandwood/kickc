@@ -7,21 +7,21 @@
   .const VIC_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // The VIC-II MOS 6567/6569
-  .label VICII = $d000
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
-  // The vector used when the KERNAL serves IRQ interrupts
-  .label KERNEL_IRQ = $314
   .const WHITE = 1
   .const RED = 2
-  .label GHOST_BYTE = $3fff
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The vector used when the KERNAL serves IRQ interrupts
+  .label KERNEL_IRQ = $314
+  .label GHOST_BYTE = $3fff
 main: {
     // *GHOST_BYTE = 0
     lda #0

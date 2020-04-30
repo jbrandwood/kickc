@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const STACK_BASE = $103
+  .label SCREEN = $400
 main: {
     .label __0 = 2
     // plus(0x1234, 0x2345)

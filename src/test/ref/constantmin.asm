@@ -1,10 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const STAR = $51
-  .label VIC = $d000
   .const RED = 2
+  .label SCREEN = $400
+  .label VIC = $d000
 main: {
     // *SCREEN = STAR
     lda #STAR

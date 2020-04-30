@@ -3,10 +3,10 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label SCREEN = $400
     .const p_x = $a
     .const p_y = $a
     .const c_radius = $c
+    .label SCREEN = $400
     // SCREEN[0] = c.center.x
     lda #p_x
     sta SCREEN

@@ -4,6 +4,16 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  // Bits for the VICII IRQ Status/Enable Registers
+  .const IRQ_RASTER = 1
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  .const PROCPORT_RAM_IO = 5
+  // The colors of the C64
+  .const BLACK = 0
+  .const WHITE = 1
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label BGCOL = $d021
@@ -12,24 +22,14 @@
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the VICII IRQ Status/Enable Registers
-  .const IRQ_RASTER = 1
   // Processor port data direction register
   .label PROCPORT_DDR = 0
-  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
-  .const PROCPORT_DDR_MEMORY_MASK = 7
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // RAM in 0xA000, 0xE000 I/O in 0xD000
-  .const PROCPORT_RAM_IO = 5
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  // The colors of the C64
-  .const BLACK = 0
-  .const WHITE = 1
-  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
 main: {
     // asm
     sei

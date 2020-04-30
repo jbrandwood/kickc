@@ -2,16 +2,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const IRQ_RASTER = 1
+  .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .const IRQ_RASTER = 1
   .label BGCOL = $d020
   .label FGCOL = $d021
   .label CIA1_INTERRUPT = $dc0d
-  .const CIA_INTERRUPT_CLEAR = $7f
 main: {
     .label k = 4
     .label j = 3

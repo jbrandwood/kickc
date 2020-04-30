@@ -12,8 +12,8 @@
   .label SCREEN = $2800
   .label print_char_cursor = 8
 main: {
-    .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
+    .label col00 = COLS+$c*$28+$13
     .label __4 = $a
     .label xw = $17
     .label yw = $19

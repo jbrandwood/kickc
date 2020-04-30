@@ -8,25 +8,25 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label D018 = $d018
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
+  // The colors of the C64
+  .const BLACK = 0
+  .const BLUE = 6
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
+  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .label D018 = $d018
   // The SID MOS 6581/8580
   .label SID = $d400
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Color Ram
   .label COLS = $d800
-  // The colors of the C64
-  .const BLACK = 0
-  .const BLUE = 6
   .label SCREEN1 = $2800
   .label CHARSET = $2000
-  .const OFFSET_STRUCT_MOS6581_SID_CH3_FREQ = $e
-  .const OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL = $12
-  .const OFFSET_STRUCT_MOS6581_SID_CH3_OSC = $1b
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .label print_line_cursor = $400
   .label print_char_cursor = $b
   // Plasma state variables

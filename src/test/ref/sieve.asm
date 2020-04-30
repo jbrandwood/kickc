@@ -14,17 +14,17 @@
   .const CIA_TIMER_CONTROL_START = 1
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
   .const CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = $40
+  .const COUNT = $4000
+  /* Up to what number? */
+  .const SQRT_COUNT = $80
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
   .label D018 = $d018
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
-  .const COUNT = $4000
-  /* Up to what number? */
-  .const SQRT_COUNT = $80
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
   /* Sqrt of COUNT */
   .label sieve = $1000
   // Remainder after unsigned 16-bit division
@@ -33,8 +33,8 @@
   .label print_line_cursor = $c
   .label print_char_cursor_1 = $c
 main: {
-    .label toD0181_gfx = $1800
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
+    .label toD0181_gfx = $1800
     .label __10 = $f
     .label __12 = $17
     .label cyclecount = $f

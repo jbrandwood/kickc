@@ -1,17 +1,17 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BITMAP = $2000
-  .label D011 = $d011
   .const BMM = $20
   .const DEN = $10
   .const RSEL = 8
+  .const plots_cnt = 8
+  .label BITMAP = $2000
+  .label D011 = $d011
   .label RASTER = $d012
   .label D018 = $d018
   .label BGCOL = $d020
   .label FGCOL = $d021
   .label SCREEN = $400
-  .const plots_cnt = 8
 main: {
     // *BGCOL = 0
     lda #0

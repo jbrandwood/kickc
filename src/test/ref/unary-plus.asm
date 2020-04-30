@@ -4,10 +4,10 @@
 .pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
 main: {
-    .label SCREEN = $400
-    .label SCREEN2 = $428
     .const i = 3
     .const j = 3
+    .label SCREEN = $400
+    .label SCREEN2 = $428
     // SCREEN[0] = i
     lda #i
     sta SCREEN

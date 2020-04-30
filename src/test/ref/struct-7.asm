@@ -3,13 +3,13 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label SCREEN = $400
     .const t_c1_radius = 3
     .const t_c2_radius = 6
     .const t_c1_center_x = 1
     .const t_c1_center_y = 2
     .const t_c2_center_x = 4
     .const t_c2_center_y = 5
+    .label SCREEN = $400
     // SCREEN[0] = t.c1.center.x
     lda #t_c1_center_x
     sta SCREEN

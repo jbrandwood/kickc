@@ -3,11 +3,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // The colors of the C64
+  .const BLACK = 0
   .label BGCOL = $d021
   // Color Ram
   .label COLS = $d800
-  // The colors of the C64
-  .const BLACK = 0
   .label SCREEN = $400
 main: {
     // *BGCOL = BLACK

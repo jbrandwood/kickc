@@ -1,10 +1,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const COUNT = $4000
   /* Up to what number? */
   .const SQRT_COUNT = $80
+  .label SCREEN = $400
   /* Sqrt of COUNT */
   .label sieve = $1000
   .label print_char_cursor = $a
@@ -201,8 +201,8 @@ print_uchar: {
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
-    .label str = sieve
     .const c = 0
+    .label str = sieve
     .label end = str+COUNT
     .label dst = $c
     lda #<str

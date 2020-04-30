@@ -2,18 +2,12 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // The text screen address
-  .label CONIO_SCREEN_TEXT = $400
-  // The color screen address
-  .label CONIO_SCREEN_COLORS = $d800
   // The screen width
   .const CONIO_WIDTH = $28
   // The screen height
   .const CONIO_HEIGHT = $19
   // The default text color
   .const CONIO_TEXTCOLOR_DEFAULT = $e
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
   .const OFFSET_STRUCT_TIME_OF_DAY_MIN = 2
   .const OFFSET_STRUCT_TIME_OF_DAY_HOURS = 3
@@ -23,6 +17,12 @@
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_MIN = $a
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_SEC = 9
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_10THS = 8
+  // The text screen address
+  .label CONIO_SCREEN_TEXT = $400
+  // The color screen address
+  .label CONIO_SCREEN_COLORS = $d800
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   // The current cursor y-position
   .label conio_cursor_y = 4
   // The current cursor address

@@ -2,6 +2,18 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  .const VIC_RST8 = $80
+  .const VIC_DEN = $10
+  .const VIC_RSEL = 8
+  // The colors of the C64
+  .const BLACK = 0
+  .const GREEN = 5
+  // The number of sprites in the multiplexer
+  .const PLEX_COUNT = $20
+  .const KEY_SPACE = $3c
+  // The number of BOBs to render
+  .const NUM_BOBS = $10
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -10,22 +22,10 @@
   .label RASTER = $d012
   .label BORDERCOL = $d020
   .label D011 = $d011
-  .const VIC_RST8 = $80
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The colors of the C64
-  .const BLACK = 0
-  .const GREEN = 5
-  // The number of sprites in the multiplexer
-  .const PLEX_COUNT = $20
-  .const KEY_SPACE = $3c
   // The BASIC screen
   .label SCREEN = $400
-  // The number of BOBs to render
-  .const NUM_BOBS = $10
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label COS = SIN+$40
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
@@ -587,9 +587,9 @@ init: {
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
-    .label str = SCREEN
     .const c = ' '
     .const num = $3e8
+    .label str = SCREEN
     .label end = str+num
     .label dst = 5
     lda #<str

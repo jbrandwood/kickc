@@ -13034,25 +13034,82 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label VIC_CONTROL2 = $d016
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
-  .label VIC_MEMORY = $d018
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
+  .const DTV_FEATURE_ENABLE = 1
+  .const DTV_LINEAR = 1
+  .const DTV_BORDER_OFF = 2
+  .const DTV_HIGHCOLOR = 4
+  .const DTV_OVERSCAN = 8
+  .const DTV_COLORRAM_OFF = $10
+  .const DTV_CHUNKY = $40
+  .const DTV_COLOR_BANK_DEFAULT = $1d800
+  .const KEY_CRSR_RIGHT = 2
+  .const KEY_CRSR_DOWN = 7
+  .const KEY_LSHIFT = $f
+  .const KEY_RSHIFT = $34
+  .const KEY_CTRL = $3a
+  .const KEY_SPACE = $3c
+  .const KEY_COMMODORE = $3d
+  // Left shift is pressed
+  .const KEY_MODIFIER_LSHIFT = 1
+  // Right shift is pressed
+  .const KEY_MODIFIER_RSHIFT = 2
+  // CTRL is pressed
+  .const KEY_MODIFIER_CTRL = 4
+  // Commodore is pressed
+  .const KEY_MODIFIER_COMMODORE = 8
+  // Any shift is pressed
+  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
+  // 8BPP Chunky Bitmap (contains 8bpp pixels)
+  .const PLANE_8BPP_CHUNKY = $20000
+  // Plane with horisontal stripes
+  .const PLANE_HORISONTAL = $30000
+  // Plane with vertical stripes
+  .const PLANE_VERTICAL = $32000
+  // Plane with horisontal stripes every 2 pixels
+  .const PLANE_HORISONTAL2 = $34000
+  // Plane with vertical stripes every 2 pixels
+  .const PLANE_VERTICAL2 = $36000
+  // Plane with blank pixels
+  .const PLANE_BLANK = $38000
+  // Plane with all pixels
+  .const PLANE_FULL = $3a000
+  // Plane with all pixels
+  .const PLANE_CHARSET8 = $3c000
+  // The number of frames to use for a full blink cycle
+  .const FORM_CURSOR_BLINK = $28
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3 = $24
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
+  .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
+  // Number of form fields
+  .const form_fields_cnt = $24
+  .label VIC_CONTROL = $d011
+  .label VIC_CONTROL2 = $d016
+  .label VIC_MEMORY = $d018
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
   // The VIC-II MOS 6567/6569
@@ -13065,15 +13122,8 @@ Target platform is c64basic / MOS6502X
   .label CIA2 = $dd00
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
-  .const DTV_FEATURE_ENABLE = 1
   // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
-  .const DTV_LINEAR = 1
-  .const DTV_BORDER_OFF = 2
-  .const DTV_HIGHCOLOR = 4
-  .const DTV_OVERSCAN = 8
-  .const DTV_COLORRAM_OFF = $10
-  .const DTV_CHUNKY = $40
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
   // Linear Graphics Plane A Counter Control
@@ -13094,27 +13144,9 @@ Target platform is c64basic / MOS6502X
   // Memory address of Color RAM is ColorBank*$400
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
-  .const DTV_COLOR_BANK_DEFAULT = $1d800
   // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
   // Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
-  .const KEY_CRSR_RIGHT = 2
-  .const KEY_CRSR_DOWN = 7
-  .const KEY_LSHIFT = $f
-  .const KEY_RSHIFT = $34
-  .const KEY_CTRL = $3a
-  .const KEY_SPACE = $3c
-  .const KEY_COMMODORE = $3d
-  // Left shift is pressed
-  .const KEY_MODIFIER_LSHIFT = 1
-  // Right shift is pressed
-  .const KEY_MODIFIER_RSHIFT = 2
-  // CTRL is pressed
-  .const KEY_MODIFIER_CTRL = 4
-  // Commodore is pressed
-  .const KEY_MODIFIER_COMMODORE = 8
-  // Any shift is pressed
-  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
   // VIC Screens
   .label VIC_SCREEN0 = $4000
   .label VIC_SCREEN1 = $4400
@@ -13125,22 +13157,6 @@ Target platform is c64basic / MOS6502X
   .label VIC_CHARSET_ROM = $5800
   // VIC Bitmap
   .label VIC_BITMAP = $6000
-  // 8BPP Chunky Bitmap (contains 8bpp pixels)
-  .const PLANE_8BPP_CHUNKY = $20000
-  // Plane with horisontal stripes
-  .const PLANE_HORISONTAL = $30000
-  // Plane with vertical stripes
-  .const PLANE_VERTICAL = $32000
-  // Plane with horisontal stripes every 2 pixels
-  .const PLANE_HORISONTAL2 = $34000
-  // Plane with vertical stripes every 2 pixels
-  .const PLANE_VERTICAL2 = $36000
-  // Plane with blank pixels
-  .const PLANE_BLANK = $38000
-  // Plane with all pixels
-  .const PLANE_FULL = $3a000
-  // Plane with all pixels
-  .const PLANE_CHARSET8 = $3c000
   // Screen containing the FORM
   .label FORM_SCREEN = $400
   // Charset used for the FORM
@@ -13180,22 +13196,6 @@ Target platform is c64basic / MOS6502X
   .label form_vic_bg2_lo = form_fields_val+$21
   .label form_vic_bg3_hi = form_fields_val+$22
   .label form_vic_bg3_lo = form_fields_val+$23
-  // The number of frames to use for a full blink cycle
-  .const FORM_CURSOR_BLINK = $28
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3 = $24
-  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
-  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
-  .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
-  // Number of form fields
-  .const form_fields_cnt = $24
   .label print_line_cursor = $36
   // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = $12
@@ -20337,25 +20337,82 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label VIC_CONTROL2 = $d016
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
-  .label VIC_MEMORY = $d018
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
+  .const DTV_FEATURE_ENABLE = 1
+  .const DTV_LINEAR = 1
+  .const DTV_BORDER_OFF = 2
+  .const DTV_HIGHCOLOR = 4
+  .const DTV_OVERSCAN = 8
+  .const DTV_COLORRAM_OFF = $10
+  .const DTV_CHUNKY = $40
+  .const DTV_COLOR_BANK_DEFAULT = $1d800
+  .const KEY_CRSR_RIGHT = 2
+  .const KEY_CRSR_DOWN = 7
+  .const KEY_LSHIFT = $f
+  .const KEY_RSHIFT = $34
+  .const KEY_CTRL = $3a
+  .const KEY_SPACE = $3c
+  .const KEY_COMMODORE = $3d
+  // Left shift is pressed
+  .const KEY_MODIFIER_LSHIFT = 1
+  // Right shift is pressed
+  .const KEY_MODIFIER_RSHIFT = 2
+  // CTRL is pressed
+  .const KEY_MODIFIER_CTRL = 4
+  // Commodore is pressed
+  .const KEY_MODIFIER_COMMODORE = 8
+  // Any shift is pressed
+  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
+  // 8BPP Chunky Bitmap (contains 8bpp pixels)
+  .const PLANE_8BPP_CHUNKY = $20000
+  // Plane with horisontal stripes
+  .const PLANE_HORISONTAL = $30000
+  // Plane with vertical stripes
+  .const PLANE_VERTICAL = $32000
+  // Plane with horisontal stripes every 2 pixels
+  .const PLANE_HORISONTAL2 = $34000
+  // Plane with vertical stripes every 2 pixels
+  .const PLANE_VERTICAL2 = $36000
+  // Plane with blank pixels
+  .const PLANE_BLANK = $38000
+  // Plane with all pixels
+  .const PLANE_FULL = $3a000
+  // Plane with all pixels
+  .const PLANE_CHARSET8 = $3c000
+  // The number of frames to use for a full blink cycle
+  .const FORM_CURSOR_BLINK = $28
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3 = $24
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
+  .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
+  // Number of form fields
+  .const form_fields_cnt = $24
+  .label VIC_CONTROL = $d011
+  .label VIC_CONTROL2 = $d016
+  .label VIC_MEMORY = $d018
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
   // The VIC-II MOS 6567/6569
@@ -20368,15 +20425,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA2 = $dd00
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
-  .const DTV_FEATURE_ENABLE = 1
   // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
-  .const DTV_LINEAR = 1
-  .const DTV_BORDER_OFF = 2
-  .const DTV_HIGHCOLOR = 4
-  .const DTV_OVERSCAN = 8
-  .const DTV_COLORRAM_OFF = $10
-  .const DTV_CHUNKY = $40
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
   // Linear Graphics Plane A Counter Control
@@ -20397,27 +20447,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Memory address of Color RAM is ColorBank*$400
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
-  .const DTV_COLOR_BANK_DEFAULT = $1d800
   // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
   // Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
-  .const KEY_CRSR_RIGHT = 2
-  .const KEY_CRSR_DOWN = 7
-  .const KEY_LSHIFT = $f
-  .const KEY_RSHIFT = $34
-  .const KEY_CTRL = $3a
-  .const KEY_SPACE = $3c
-  .const KEY_COMMODORE = $3d
-  // Left shift is pressed
-  .const KEY_MODIFIER_LSHIFT = 1
-  // Right shift is pressed
-  .const KEY_MODIFIER_RSHIFT = 2
-  // CTRL is pressed
-  .const KEY_MODIFIER_CTRL = 4
-  // Commodore is pressed
-  .const KEY_MODIFIER_COMMODORE = 8
-  // Any shift is pressed
-  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
   // VIC Screens
   .label VIC_SCREEN0 = $4000
   .label VIC_SCREEN1 = $4400
@@ -20428,22 +20460,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label VIC_CHARSET_ROM = $5800
   // VIC Bitmap
   .label VIC_BITMAP = $6000
-  // 8BPP Chunky Bitmap (contains 8bpp pixels)
-  .const PLANE_8BPP_CHUNKY = $20000
-  // Plane with horisontal stripes
-  .const PLANE_HORISONTAL = $30000
-  // Plane with vertical stripes
-  .const PLANE_VERTICAL = $32000
-  // Plane with horisontal stripes every 2 pixels
-  .const PLANE_HORISONTAL2 = $34000
-  // Plane with vertical stripes every 2 pixels
-  .const PLANE_VERTICAL2 = $36000
-  // Plane with blank pixels
-  .const PLANE_BLANK = $38000
-  // Plane with all pixels
-  .const PLANE_FULL = $3a000
-  // Plane with all pixels
-  .const PLANE_CHARSET8 = $3c000
   // Screen containing the FORM
   .label FORM_SCREEN = $400
   // Charset used for the FORM
@@ -20483,22 +20499,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label form_vic_bg2_lo = form_fields_val+$21
   .label form_vic_bg3_hi = form_fields_val+$22
   .label form_vic_bg3_lo = form_fields_val+$23
-  // The number of frames to use for a full blink cycle
-  .const FORM_CURSOR_BLINK = $28
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3 = $24
-  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
-  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
-  .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
-  // Number of form fields
-  .const form_fields_cnt = $24
   .label print_line_cursor = 7
   // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = 2
@@ -28202,25 +28202,82 @@ Score: 10118890
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label VIC_CONTROL2 = $d016
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
-  .label VIC_MEMORY = $d018
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
+  .const DTV_FEATURE_ENABLE = 1
+  .const DTV_LINEAR = 1
+  .const DTV_BORDER_OFF = 2
+  .const DTV_HIGHCOLOR = 4
+  .const DTV_OVERSCAN = 8
+  .const DTV_COLORRAM_OFF = $10
+  .const DTV_CHUNKY = $40
+  .const DTV_COLOR_BANK_DEFAULT = $1d800
+  .const KEY_CRSR_RIGHT = 2
+  .const KEY_CRSR_DOWN = 7
+  .const KEY_LSHIFT = $f
+  .const KEY_RSHIFT = $34
+  .const KEY_CTRL = $3a
+  .const KEY_SPACE = $3c
+  .const KEY_COMMODORE = $3d
+  // Left shift is pressed
+  .const KEY_MODIFIER_LSHIFT = 1
+  // Right shift is pressed
+  .const KEY_MODIFIER_RSHIFT = 2
+  // CTRL is pressed
+  .const KEY_MODIFIER_CTRL = 4
+  // Commodore is pressed
+  .const KEY_MODIFIER_COMMODORE = 8
+  // Any shift is pressed
+  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
+  // 8BPP Chunky Bitmap (contains 8bpp pixels)
+  .const PLANE_8BPP_CHUNKY = $20000
+  // Plane with horisontal stripes
+  .const PLANE_HORISONTAL = $30000
+  // Plane with vertical stripes
+  .const PLANE_VERTICAL = $32000
+  // Plane with horisontal stripes every 2 pixels
+  .const PLANE_HORISONTAL2 = $34000
+  // Plane with vertical stripes every 2 pixels
+  .const PLANE_VERTICAL2 = $36000
+  // Plane with blank pixels
+  .const PLANE_BLANK = $38000
+  // Plane with all pixels
+  .const PLANE_FULL = $3a000
+  // Plane with all pixels
+  .const PLANE_CHARSET8 = $3c000
+  // The number of frames to use for a full blink cycle
+  .const FORM_CURSOR_BLINK = $28
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3 = $24
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
+  .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
+  // Number of form fields
+  .const form_fields_cnt = $24
+  .label VIC_CONTROL = $d011
+  .label VIC_CONTROL2 = $d016
+  .label VIC_MEMORY = $d018
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
   // The VIC-II MOS 6567/6569
@@ -28233,15 +28290,8 @@ Score: 10118890
   .label CIA2 = $dd00
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
-  .const DTV_FEATURE_ENABLE = 1
   // Controls the graphics modes of the C64 DTV
   .label DTV_CONTROL = $d03c
-  .const DTV_LINEAR = 1
-  .const DTV_BORDER_OFF = 2
-  .const DTV_HIGHCOLOR = 4
-  .const DTV_OVERSCAN = 8
-  .const DTV_COLORRAM_OFF = $10
-  .const DTV_CHUNKY = $40
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
   // Linear Graphics Plane A Counter Control
@@ -28262,27 +28312,9 @@ Score: 10118890
   // Memory address of Color RAM is ColorBank*$400
   .label DTV_COLOR_BANK_LO = $d036
   .label DTV_COLOR_BANK_HI = $d037
-  .const DTV_COLOR_BANK_DEFAULT = $1d800
   // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
   // Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
-  .const KEY_CRSR_RIGHT = 2
-  .const KEY_CRSR_DOWN = 7
-  .const KEY_LSHIFT = $f
-  .const KEY_RSHIFT = $34
-  .const KEY_CTRL = $3a
-  .const KEY_SPACE = $3c
-  .const KEY_COMMODORE = $3d
-  // Left shift is pressed
-  .const KEY_MODIFIER_LSHIFT = 1
-  // Right shift is pressed
-  .const KEY_MODIFIER_RSHIFT = 2
-  // CTRL is pressed
-  .const KEY_MODIFIER_CTRL = 4
-  // Commodore is pressed
-  .const KEY_MODIFIER_COMMODORE = 8
-  // Any shift is pressed
-  .const KEY_MODIFIER_SHIFT = KEY_MODIFIER_LSHIFT|KEY_MODIFIER_RSHIFT
   // VIC Screens
   .label VIC_SCREEN0 = $4000
   .label VIC_SCREEN1 = $4400
@@ -28293,22 +28325,6 @@ Score: 10118890
   .label VIC_CHARSET_ROM = $5800
   // VIC Bitmap
   .label VIC_BITMAP = $6000
-  // 8BPP Chunky Bitmap (contains 8bpp pixels)
-  .const PLANE_8BPP_CHUNKY = $20000
-  // Plane with horisontal stripes
-  .const PLANE_HORISONTAL = $30000
-  // Plane with vertical stripes
-  .const PLANE_VERTICAL = $32000
-  // Plane with horisontal stripes every 2 pixels
-  .const PLANE_HORISONTAL2 = $34000
-  // Plane with vertical stripes every 2 pixels
-  .const PLANE_VERTICAL2 = $36000
-  // Plane with blank pixels
-  .const PLANE_BLANK = $38000
-  // Plane with all pixels
-  .const PLANE_FULL = $3a000
-  // Plane with all pixels
-  .const PLANE_CHARSET8 = $3c000
   // Screen containing the FORM
   .label FORM_SCREEN = $400
   // Charset used for the FORM
@@ -28348,22 +28364,6 @@ Score: 10118890
   .label form_vic_bg2_lo = form_fields_val+$21
   .label form_vic_bg3_hi = form_fields_val+$22
   .label form_vic_bg3_lo = form_fields_val+$23
-  // The number of frames to use for a full blink cycle
-  .const FORM_CURSOR_BLINK = $28
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3 = $24
-  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
-  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
-  .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
-  // Number of form fields
-  .const form_fields_cnt = $24
   .label print_line_cursor = 7
   // Keyboard event buffer size. The number of events currently in the event buffer
   .label keyboard_events_size = 2

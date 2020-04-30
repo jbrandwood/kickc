@@ -6,6 +6,12 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  .const SAMPLE_SIZE = $6100
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
+  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
   // The SID MOS 6581/8580
   .label SID = $d400
   // The VIC-II MOS 6567/6569
@@ -16,12 +22,6 @@
   .label CIA2_INTERRUPT = $dd0d
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
-  .const SAMPLE_SIZE = $6100
-  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
   .label sample = 2
 __bbegin:
   // sample = SAMPLE

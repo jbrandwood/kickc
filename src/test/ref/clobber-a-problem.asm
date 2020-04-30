@@ -1,11 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  .const DARK_GREY = $b
+  .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label BORDERCOL = $d020
   .label RASTER = $d012
-  .const DARK_GREY = $b
-  .const BLACK = 0
   .label irq_raster_next = 2
 __bbegin:
   // irq_raster_next = 0

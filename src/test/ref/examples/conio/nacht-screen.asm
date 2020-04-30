@@ -20,6 +20,12 @@
   .const CH_LTEE = $6b
   // The right T character
   .const CH_RTEE = $73
+  // The screen width
+  .const CONIO_WIDTH = $28
+  // The screen height
+  .const CONIO_HEIGHT = $19
+  .const COLOR_GRAY3 = $f
+  .const COLOR_BLACK = 0
   // The text screen address
   .label CONIO_SCREEN_TEXT = $400
   // The color screen address
@@ -32,12 +38,6 @@
   .label CONIO_CIA1_PORT_A = $dc00
   // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CONIO_CIA1_PORT_B = $dc01
-  // The screen width
-  .const CONIO_WIDTH = $28
-  // The screen height
-  .const CONIO_HEIGHT = $19
-  .const COLOR_GRAY3 = $f
-  .const COLOR_BLACK = 0
   .label VIC_MEMORY = $d018
   .label XSize = $f
   .label YSize = $10

@@ -2,25 +2,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label D011 = $d011
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label D016 = $d016
   .const VIC_CSEL = 8
-  .label D018 = $d018
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The VIC-II MOS 6567/6569
-  .label VICII = $d000
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
-  .label CIA2 = $dd00
   .const WHITE = 1
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
@@ -32,6 +21,17 @@
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .label D011 = $d011
+  .label D016 = $d016
+  .label D018 = $d018
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
   .label SCREEN = $400
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division

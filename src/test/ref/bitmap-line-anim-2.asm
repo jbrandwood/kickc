@@ -3,15 +3,15 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label D011 = $d011
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label VIC_MEMORY = $d018
   .const WHITE = 1
   .const PURPLE = 4
+  .label BORDERCOL = $d020
+  .label BGCOL = $d021
+  .label D011 = $d011
+  .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
   .label next = 2

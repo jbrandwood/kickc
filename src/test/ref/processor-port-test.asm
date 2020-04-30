@@ -3,12 +3,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in all three areas 0xA000, 0xD000, 0xE000
   .const PROCPORT_RAM_ALL = 0
   // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -19,6 +15,10 @@
   .const PROCPORT_KERNEL_IO = 6
   // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
   .const PROCPORT_BASIC_KERNEL_IO = 7
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
   .label BASIC_ROM = $a000
   .label KERNAL_ROM = $e000
   .label IO_RAM = $d000

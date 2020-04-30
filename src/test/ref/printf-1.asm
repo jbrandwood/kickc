@@ -266,9 +266,9 @@ memset: {
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 memcpy: {
+    .const num = $28*$19-$28
     .label destination = $400
     .label source = $400+$28
-    .const num = $28*$19-$28
     .label src_end = source+num
     .label dst = $b
     .label src = 9

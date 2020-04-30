@@ -12,13 +12,13 @@
   .const KEY_C = $14
   .const KEY_I = $21
   .const KEY_SPACE = $3c
+  .const RED = 2
+  .const GREEN = 5
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label BORDERCOL = $d020
   .label BGCOL = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .const RED = 2
-  .const GREEN = 5
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label SCREEN = $400
 main: {
     // *BORDERCOL = GREEN

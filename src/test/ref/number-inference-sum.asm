@@ -4,12 +4,12 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label screen = $400
-    .label bgcol = $d020
     .const RED = 2
     .const b1 = $fa
     .const b2 = b1+$fa
     .const w = b2+1
+    .label screen = $400
+    .label bgcol = $d020
     // screen[0] = w
     lda #<w
     sta screen

@@ -1,11 +1,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // The VIC-II MOS 6567/6569
-  .label VICII = $d000
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
 main: {
     // asm
     sei

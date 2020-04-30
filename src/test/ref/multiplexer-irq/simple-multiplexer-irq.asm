@@ -4,6 +4,16 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  .const VIC_DEN = $10
+  .const VIC_RSEL = 8
+  // Bits for the VICII IRQ Status/Enable Registers
+  .const IRQ_RASTER = 1
+  .const WHITE = 1
+  .const RED = 2
+  .const GREEN = 5
+  // The number of sprites in the multiplexer
+  .const PLEX_COUNT = $20
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -13,24 +23,14 @@
   .label BORDERCOL = $d020
   .label VIC_CONTROL = $d011
   .label D011 = $d011
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the VICII IRQ Status/Enable Registers
-  .const IRQ_RASTER = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-  // The number of sprites in the multiplexer
-  .const PLEX_COUNT = $20
-  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
   .label plex_show_idx = 6

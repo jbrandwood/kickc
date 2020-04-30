@@ -8,53 +8,17 @@
   .const CIA_INTERRUPT_CLEAR = $7f
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
-  .label SPRITES_XPOS = $d000
-  .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
-  .label SPRITES_ENABLE = $d015
-  .label SPRITES_EXPAND_Y = $d017
-  .label SPRITES_MC = $d01c
-  .label SPRITES_EXPAND_X = $d01d
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL1 = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
-  .label BGCOL4 = $d024
-  .label VIC_CONTROL = $d011
-  .label D011 = $d011
   .const VIC_ECM = $40
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label D018 = $d018
-  // VIC II IRQ Status Register
-  .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
-  .label IRQ_ENABLE = $d01a
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The SID MOS 6581/8580
-  .label SID = $d400
-  // Color Ram
-  .label COLS = $d800
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
-  .label CIA2 = $dd00
-  // CIA#1 Interrupt for reading in ASM
-  .label CIA1_INTERRUPT = $dc0d
-  // The vector used when the HARDWARE serves IRQ interrupts
-  .label HARDWARE_IRQ = $fffe
   // The colors of the C64
   .const BLACK = 0
   .const RED = 2
@@ -77,18 +41,6 @@
   .const KEY_CTRL = $3a
   .const KEY_SPACE = $3c
   .const KEY_COMMODORE = $3d
-  // Address of the first screen
-  .label PLAYFIELD_SCREEN_1 = $400
-  // Address of the second screen
-  .label PLAYFIELD_SCREEN_2 = $2c00
-  // Screen Sprite pointers on screen 1
-  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
-  // Screen Sprite pointers on screen 2
-  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  // Address of the sprites covering the playfield
-  .label PLAYFIELD_SPRITES = $3000
-  // Address of the charset
-  .label PLAYFIELD_CHARSET = $2800
   // The size of the playfield
   .const PLAYFIELD_LINES = $16
   .const PLAYFIELD_COLS = $a
@@ -115,6 +67,54 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_COLS = $d027
+  .label SPRITES_ENABLE = $d015
+  .label SPRITES_EXPAND_Y = $d017
+  .label SPRITES_MC = $d01c
+  .label SPRITES_EXPAND_X = $d01d
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label BGCOL1 = $d021
+  .label BGCOL2 = $d022
+  .label BGCOL3 = $d023
+  .label BGCOL4 = $d024
+  .label VIC_CONTROL = $d011
+  .label D011 = $d011
+  .label D018 = $d018
+  // VIC II IRQ Status Register
+  .label IRQ_STATUS = $d019
+  // VIC II IRQ Enable Register
+  .label IRQ_ENABLE = $d01a
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // The SID MOS 6581/8580
+  .label SID = $d400
+  // Color Ram
+  .label COLS = $d800
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // CIA#1 Interrupt for reading in ASM
+  .label CIA1_INTERRUPT = $dc0d
+  // The vector used when the HARDWARE serves IRQ interrupts
+  .label HARDWARE_IRQ = $fffe
+  // Address of the first screen
+  .label PLAYFIELD_SCREEN_1 = $400
+  // Address of the second screen
+  .label PLAYFIELD_SCREEN_2 = $2c00
+  // Screen Sprite pointers on screen 1
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  // Screen Sprite pointers on screen 2
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  // Address of the sprites covering the playfield
+  .label PLAYFIELD_SPRITES = $3000
+  // Address of the charset
+  .label PLAYFIELD_CHARSET = $2800
   .label render_screen_showing = $26
   .label score_bcd = $27
   .label irq_raster_next = $2b
@@ -341,10 +341,10 @@ render_screen_swap: {
 }
 // Show the current score
 render_score: {
-    .label score_bytes = score_bcd
     .const score_offset = $28*5+$1c
     .const lines_offset = $28*1+$16
     .const level_offset = $28*$13+$1f
+    .label score_bytes = score_bcd
     .label screen = 7
     // if(render_screen_render==0)
     lda.z render_screen_render

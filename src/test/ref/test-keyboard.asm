@@ -52,12 +52,12 @@
   .const KEY_2 = $3b
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
-  .label RASTER = $d012
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .label RASTER = $d012
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
 main: {
     .label sc = 2
     .label screen = 5

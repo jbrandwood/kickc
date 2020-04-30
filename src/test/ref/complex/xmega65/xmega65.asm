@@ -8,15 +8,15 @@
 .segmentdef Data [startAfter="Code", min=$8200, max=$bdff]
 .segmentdef Stack [min=$be00, max=$beff, fill]
 .segmentdef Zeropage [min=$bf00, max=$bfff, fill]
+  .const BLACK = 0
+  .const WHITE = 1
+  .const JMP = $4c
+  .const NOP = $ea
   .label RASTER = $d012
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BGCOL = $d021
   .label COLS = $d800
-  .const BLACK = 0
-  .const WHITE = 1
-  .const JMP = $4c
-  .const NOP = $ea
 __bbegin:
 .segment Code
 main: {

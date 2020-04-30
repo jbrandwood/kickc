@@ -2,11 +2,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label MUSIC = $1000
-  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // kickasm
   // Load the SID
   .const music = LoadSid("toiletrensdyr.sid")

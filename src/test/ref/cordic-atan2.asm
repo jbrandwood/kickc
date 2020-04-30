@@ -3,16 +3,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // The number of iterations performed during 8-bit CORDIC atan2 calculation
+  .const CORDIC_ITERATIONS_8 = 8
   .label D018 = $d018
   // Color Ram
   .label COLS = $d800
-  // The number of iterations performed during 8-bit CORDIC atan2 calculation
-  .const CORDIC_ITERATIONS_8 = 8
   .label CHARSET = $2000
   .label SCREEN = $2800
 main: {
-    .label col00 = COLS+$c*$28+$13
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
+    .label col00 = COLS+$c*$28+$13
     .label screen = 4
     .label x = 3
     .label y = 2

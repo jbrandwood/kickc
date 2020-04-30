@@ -13,45 +13,15 @@
   .const BORDER_YPOS_BOTTOM = $fa
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
-  .label SPRITES_XPOS = $d000
-  .label SPRITES_YPOS = $d001
-  .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
-  .label SPRITES_ENABLE = $d015
-  .label SPRITES_EXPAND_Y = $d017
-  .label SPRITES_MC = $d01c
-  .label SPRITES_EXPAND_X = $d01d
-  .label RASTER = $d012
-  .label VIC_CONTROL = $d011
-  // VIC II IRQ Status Register
-  .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
-  .label IRQ_ENABLE = $d01a
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
-  // The address of the CHARGEN character set
-  .label CHARGEN = $d000
-  // Color Ram
-  .label COLS = $d800
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
-  // The vector used when the HARDWARE serves IRQ interrupts
-  .label HARDWARE_IRQ = $fffe
   .const LIGHT_BLUE = $e
-  // Address of the screen
-  .label SCREEN = $400
-  // Sprite data for the animating sprites
-  .label SPRITE_DATA = $2000
   // Max number of chars processed at once
   .const NUM_PROCESSING = 8
   // Distance value meaning not found
@@ -75,6 +45,36 @@
   .const OFFSET_STRUCT_PROCESSINGSPRITE_STATUS = $b
   .const OFFSET_STRUCT_PROCESSINGSPRITE_SCREENPTR = $c
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_XMSB = $d010
+  .label SPRITES_COLS = $d027
+  .label SPRITES_ENABLE = $d015
+  .label SPRITES_EXPAND_Y = $d017
+  .label SPRITES_MC = $d01c
+  .label SPRITES_EXPAND_X = $d01d
+  .label RASTER = $d012
+  .label VIC_CONTROL = $d011
+  // VIC II IRQ Status Register
+  .label IRQ_STATUS = $d019
+  // VIC II IRQ Enable Register
+  .label IRQ_ENABLE = $d01a
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // The address of the CHARGEN character set
+  .label CHARGEN = $d000
+  // Color Ram
+  .label COLS = $d800
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The vector used when the HARDWARE serves IRQ interrupts
+  .label HARDWARE_IRQ = $fffe
+  // Address of the screen
+  .label SCREEN = $400
+  // Sprite data for the animating sprites
+  .label SPRITE_DATA = $2000
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()

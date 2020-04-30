@@ -2,8 +2,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label SCREEN = $400
     .const a = $ee6b2800
+    .label SCREEN = $400
     .label b = 2
     ldx #0
   __b1:

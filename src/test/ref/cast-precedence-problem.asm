@@ -3,14 +3,14 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label SCREEN = $400
     .const min = $a
     .const max = $c8
-    .label BGCOL = $d021
     .const sumw = min+max
     .const sumb = min+max
     .const midw = (sumw>>1)+1
     .const midb = (sumb>>1)+1
+    .label SCREEN = $400
+    .label BGCOL = $d021
     // SCREEN[0] = midw
     lda #midw
     sta SCREEN

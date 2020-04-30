@@ -2,15 +2,15 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
-  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
-  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
   .label SCREEN = $400
   .label current_bit = 2
   // Scroll the next bit from the current char onto the screen - trigger next char if needed

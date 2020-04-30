@@ -1,9 +1,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BGCOL = $d021
   .const GREEN = 5
   .const RED = 2
+  .label BGCOL = $d021
   .label print_char_cursor = 2
   .label print_line_cursor = 4
 main: {

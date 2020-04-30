@@ -2,8 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const OFFSET_STRUCT_SETTING_BUF = 1
+  .label SCREEN = $400
 main: {
     ldx #0
   __b1:

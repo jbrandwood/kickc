@@ -2,7 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const SIZEOF_BYTE = 1
   .const SIZEOF_SIGNED_BYTE = 1
   .const SIZEOF_BOOL = 1
@@ -11,6 +10,7 @@
   .const SIZEOF_POINTER = 2
   .const SIZEOF_DWORD = 4
   .const SIZEOF_SIGNED_DWORD = 4
+  .label SCREEN = $400
 main: {
     // SCREEN[idx++] = '0'+sizeof(void)
     lda #'0'

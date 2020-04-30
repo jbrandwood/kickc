@@ -2,16 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label SPRITES_XPOS = $d000
-  .label SPRITES_YPOS = $d001
-  .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
-  .label D011 = $d011
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  // The VIC-II MOS 6567/6569
-  .label VICII = $d000
   // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
@@ -20,6 +13,13 @@
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_XMSB = $d010
+  .label SPRITES_COLS = $d027
+  .label D011 = $d011
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // Location of screen & sprites
   .label SCREEN = $400
   .label SPRITE = $2000

@@ -2,10 +2,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label screen1 = $400
-  .label cols = $d800
   .const GREEN = 5
   .const RED = 2
+  .label screen1 = $400
+  .label cols = $d800
   .label screen2 = screen1+$28
 main: {
     // test(i++, a)

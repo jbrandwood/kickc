@@ -2,11 +2,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const SIZEOF_STRUCT_VECTOR = 4
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_VECTOR_Q = 2
   .const OFFSET_STRUCT_POINT_Y = 1
+  .label SCREEN = $400
 main: {
     .label v = 2
     .label p1 = 6

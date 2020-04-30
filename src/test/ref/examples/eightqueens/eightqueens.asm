@@ -6,8 +6,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
   .const OFFSET_STRUCT_TIME_OF_DAY_MIN = 2
@@ -19,6 +17,8 @@
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_SEC = 9
   .const OFFSET_STRUCT_MOS6526_CIA_TOD_10THS = 8
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   .label printf_cursor_x = $12
   .label printf_cursor_y = $13
   .label printf_cursor_ptr = $14
@@ -255,9 +255,9 @@ memset: {
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 memcpy: {
+    .const num = $28*$19-$28
     .label destination = $400
     .label source = $400+$28
-    .const num = $28*$19-$28
     .label src_end = source+num
     .label dst = $21
     .label src = $10
@@ -1230,11 +1230,11 @@ tod_init: {
 }
 // Print an unsigned int using a specific format
 printf_uint: {
-    .label uvalue = 8
     .const format_min_length = 0
     .const format_justify_left = 0
     .const format_zero_padding = 0
     .const format_upper_case = 0
+    .label uvalue = 8
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0

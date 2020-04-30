@@ -2,36 +2,37 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label VIC_CONTROL2 = $d016
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
-  .label VIC_MEMORY = $d018
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
-  .label CIA2 = $dd00
-  // Feature enables or disables the extra C64 DTV features
-  .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  // Controls the graphics modes of the C64 DTV
-  .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_HIGHCOLOR = 4
   .const DTV_COLORRAM_OFF = $10
   .const DTV_BADLINE_OFF = $20
   .const DTV_CHUNKY = $40
+  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label VIC_CONTROL = $d011
+  .label VIC_CONTROL2 = $d016
+  .label VIC_MEMORY = $d018
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // Feature enables or disables the extra C64 DTV features
+  .label DTV_FEATURE = $d03f
+  // Controls the graphics modes of the C64 DTV
+  .label DTV_CONTROL = $d03c
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
   // Linear Graphics Plane B Counter Control
@@ -43,7 +44,6 @@
   .label DTV_PLANEB_MODULO_HI = $d048
   // Plane with all pixels
   .label CHUNKY = $8000
-  .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
 main: {
     // asm
     sei

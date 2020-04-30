@@ -171,9 +171,9 @@ memset: {
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 memcpy: {
+    .const num = $28*$19-$28
     .label destination = $400
     .label source = $400+$28
-    .const num = $28*$19-$28
     .label src_end = source+num
     .label dst = 7
     .label src = 5
@@ -213,11 +213,11 @@ memcpy: {
 }
 // Print an unsigned int using a specific format
 printf_uint: {
-    .label uvalue = $d80
     .const format_min_length = $a
     .const format_justify_left = 1
     .const format_zero_padding = 0
     .const format_upper_case = 1
+    .label uvalue = $d80
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0

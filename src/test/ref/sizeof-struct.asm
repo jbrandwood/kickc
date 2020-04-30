@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const SIZEOF_STRUCT_POINT = 2
   .const SIZEOF_STRUCT_CIRCLE = 3
+  .label SCREEN = $400
 main: {
     // Struct Arrays
     .const NUM_POINTS = 4

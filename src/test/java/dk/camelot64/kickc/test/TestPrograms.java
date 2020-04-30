@@ -41,6 +41,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStructPointerToMember() throws IOException, URISyntaxException {
+      compileAndCompare("struct-pointer-to-member.c", log());
+   }
+
+   @Test
+   public void testSizeOfInConstPointer() throws IOException, URISyntaxException {
+      compileAndCompare("sizeof-in-const-pointer.c");
+   }
+
+   @Test
    public void testTod1() throws IOException, URISyntaxException {
       compileAndCompare("tod-1.c");
    }

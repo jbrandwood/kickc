@@ -3,10 +3,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_VECTOR_P2 = 2
+  .label SCREEN = $400
   .label idx = 3
 __bbegin:
   // idx = 0

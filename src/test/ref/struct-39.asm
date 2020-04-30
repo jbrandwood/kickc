@@ -4,10 +4,10 @@
 .pc = $80d "Program"
   .const MOVE_TO = 0
   .const SPLINE_TO = 1
-  .label SCREEN = $400
   .const OFFSET_STRUCT_SEGMENT_TO = 1
   .const SIZEOF_STRUCT_VECTOR = 4
   .const OFFSET_STRUCT_VECTOR_Y = 2
+  .label SCREEN = $400
 main: {
     .label to = 4
     .label j = 3

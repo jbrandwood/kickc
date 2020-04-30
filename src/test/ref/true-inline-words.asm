@@ -4,11 +4,11 @@
 main: {
     // constant byte array
     .const b = 4
+    .const w = b*$100
+    .const w2 = 1*$100+1+w
     // Test the result
     .label pos = $501
     .label bgcol = $d021
-    .const w = b*$100
-    .const w2 = 1*$100+1+w
     // constant inline words inside expression
     .label sc = w2
     // *sc = bs[1]

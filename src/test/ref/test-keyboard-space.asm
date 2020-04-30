@@ -3,15 +3,15 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const KEY_SPACE = $3c
-  .label RASTER = $d012
-  .label BGCOL = $d021
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
   .const GREEN = 5
   .const BLUE = 6
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .label RASTER = $d012
+  .label BGCOL = $d021
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
 main: {
     // keyboard_init()
     jsr keyboard_init

@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const RATE = $32
   .label RASTER = $d012
   .label SCREEN = $400
-  .const RATE = $32
 main: {
     ldx #0
     ldy #RATE

@@ -29,10 +29,10 @@ __bbegin:
   jsr main
   rts
 main: {
+    .const ui = $162e
     .label sc = -$c
     .label uc = $22
     .label si = -$4d2
-    .const ui = $162e
     .label sl = -$1e240
     .label ul = $8aa52
     .label c = $17
@@ -345,9 +345,9 @@ memset: {
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 memcpy: {
+    .const num = $28*$19-$28
     .label destination = $400
     .label source = $400+$28
-    .const num = $28*$19-$28
     .label src_end = source+num
     .label dst = 9
     .label src = $11

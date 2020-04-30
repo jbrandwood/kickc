@@ -1,14 +1,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label D016 = $d016
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
-  .label D018 = $d018
-  // The VIC-II MOS 6567/6569
-  .label VICII = $d000
-  // Color Ram
-  .label COLS = $d800
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
@@ -17,6 +11,12 @@
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1 = $22
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2 = $23
+  .label D016 = $d016
+  .label D018 = $d018
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  // Color Ram
+  .label COLS = $d800
   .label SCREEN = $400
   .label LOGO = $2000
   // kickasm

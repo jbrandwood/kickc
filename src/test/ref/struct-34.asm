@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const point_x = 2
   .const point_y = 3
+  .label SCREEN = $400
 main: {
     // SCREEN[0] = point.x
     lda #point_x

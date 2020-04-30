@@ -8,10 +8,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.*;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.types.SymbolTypeConversion;
-import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.types.SymbolTypeProcedure;
+import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -2328,6 +2325,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof PointerDereferenceIndexed && ((PointerDereferenceIndexed) child).getPointer() instanceof ConstantValue && ((PointerDereferenceIndexed) child).getIndex() instanceof ConstantValue) {
          PointerDereferenceIndexed pointerDeref = (PointerDereferenceIndexed) child;
          return new ConstantBinary((ConstantValue) pointerDeref.getPointer(), Operators.PLUS, (ConstantValue) pointerDeref.getIndex());
+      } else if(operator.equals(Operators.ADDRESS_OF) && child instanceof StructMemberRef && ((StructMemberRef) child).getStruct() instanceof PointerDereferenceSimple && ((PointerDereferenceSimple) ((StructMemberRef) child).getStruct()).getPointer() instanceof ConstantValue) {
+         final ConstantValue structPointer = (ConstantValue) ((PointerDereferenceSimple) ((StructMemberRef) child).getStruct()).getPointer();
+         final RValue structValue  = ((StructMemberRef) child).getStruct();
+         final SymbolTypeStruct structType = (SymbolTypeStruct) SymbolTypeInference.inferType(program.getScope(), structValue);
+         StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
+         final String memberName = ((StructMemberRef) child).getMemberName();
+         final ConstantRef memberOffset = SizeOfConstants.getStructMemberOffsetConstant(program.getScope(), structDefinition, memberName);
+         final SymbolType memberType = structDefinition.getMember(memberName).getType();
+         return new ConstantCastValue(new SymbolTypePointer(memberType), new ConstantBinary(new ConstantCastValue(new SymbolTypePointer(SymbolType.BYTE), structPointer), Operators.PLUS, memberOffset));
       } else if(child instanceof ConstantValue) {
          return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);
       } else {

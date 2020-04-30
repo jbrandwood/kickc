@@ -3,8 +3,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const STACK_BASE = $103
+  .label SCREEN = $400
   .label idx = 4
 __bbegin:
   // idx = 0

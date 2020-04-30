@@ -2,6 +2,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  // The colors of the C64
+  .const BLACK = 0
+  .const WHITE = 1
+  .const RED = 2
+  .const GREEN = 5
+  .const BLUE = 6
+  .const YELLOW = 7
   .label SPRITES_XMSB = $d010
   .label SPRITES_COLS = $d027
   .label SPRITES_ENABLE = $d015
@@ -14,13 +21,6 @@
   .label BGCOL3 = $d023
   .label BGCOL4 = $d024
   .label D018 = $d018
-  // The colors of the C64
-  .const BLACK = 0
-  .const WHITE = 1
-  .const RED = 2
-  .const GREEN = 5
-  .const BLUE = 6
-  .const YELLOW = 7
   .label screen = $400
   .label charset = $2000
   .label tileset = $2800

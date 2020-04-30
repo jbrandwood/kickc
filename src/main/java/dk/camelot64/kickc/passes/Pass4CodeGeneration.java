@@ -410,33 +410,50 @@ public class Pass4CodeGeneration {
       Set<String> added = new LinkedHashSet<>();
       Collection<Variable> scopeConstants = scope.getAllConstants(false);
 
-      // Add all constants without data
+      // First add all constants without data that can become constants in KickAsm
       for(Variable constantVar : scopeConstants) {
          if(!hasData(constantVar)) {
             String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
             if(asmName != null && !added.contains(asmName)) {
-               added.add(asmName);
-               // Add any comments
-               generateComments(asm, constantVar.getComments());
-               // Ensure encoding is good
-               ensureEncoding(asm, constantVar.getInitValue());
-               // Find the constant value calculation
-               String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getInitValue(), 99, scopeRef);
+               if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
+                  // Use label for integers referenced in other scope - to allow cross-scope referencing
+                  if(!useLabelForConst(scopeRef, constantVar)) {
+                     // Use constant for constant integers not referenced outside scope
+                     added.add(asmName);
+                     // Find the constant value calculation
+                     String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getInitValue(), 99, scopeRef);
+                     addConstant(asmName, constantVar, asmConstant, asm);
+                  }
+               } else if(!(constantVar.getType() instanceof SymbolTypePointer)) {
+                  // Use constant otherwise
+                  added.add(asmName);
+                  // Find the constant value calculation
+                  String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getInitValue(), 99, scopeRef);
+                  addConstant(asmName, constantVar, asmConstant, asm);
+               }
+            }
+         }
+      }
+
+      // Add constants without data that must be labels in KickAsm
+      for(Variable constantVar : scopeConstants) {
+         if(!hasData(constantVar)) {
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            if(asmName != null && !added.contains(asmName)) {
                if(constantVar.getType() instanceof SymbolTypePointer) {
                   // Must use a label for pointers
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
+                  added.add(asmName);
+                  String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getInitValue(), 99, scopeRef);
+                  addConstantLabelDecl(asmName, constantVar, asmConstant, asm);
                } else if(SymbolType.isInteger(constantVar.getType()) && constantVar.getRef().getScopeDepth() > 0) {
                   // Use label for integers referenced in other scope - to allow cross-scope referencing
                   if(useLabelForConst(scopeRef, constantVar)) {
                      // Use label for integers referenced in other scope - to allow cross-scope referencing
-                     asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
-                  } else {
-                     // Use constant for constant integers not referenced outside scope
-                     asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
+                     added.add(asmName);
+                     // Add any comments
+                     String asmConstant = AsmFormat.getAsmConstant(program, constantVar.getInitValue(), 99, scopeRef);
+                     addConstantLabelDecl(asmName, constantVar, asmConstant, asm);
                   }
-               } else {
-                  // Use constant otherwise
-                  asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
                }
             }
          }
@@ -451,25 +468,38 @@ public class Pass4CodeGeneration {
                Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
                String asmName = scopeVar.getAsmName();
                if(asmName != null && !added.contains(asmName)) {
-                  // Add any comments
-                  generateComments(asm, scopeVar.getComments());
-                  // Add the label declaration
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(registerZp.getZp()));
                   added.add(asmName);
+                  addConstantLabelDecl(asmName, scopeVar, AsmFormat.getAsmNumber(registerZp.getZp()), asm);
                }
             } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType()) && ((Registers.RegisterMainMem) register).getAddress() != null) {
                String asmName = scopeVar.getAsmName();
                if(asmName != null && !added.contains(asmName)) {
-                  // Add any comments
-                  generateComments(asm, scopeVar.getComments());
+                  added.add(asmName);
                   // Add the label declaration
                   Long address = ((Registers.RegisterMainMem) register).getAddress();
-                  asm.addLabelDecl(AsmFormat.asmFix(asmName), AsmFormat.getAsmNumber(address));
-                  added.add(asmName);
+                  addConstantLabelDecl(asmName, scopeVar, AsmFormat.getAsmNumber(address), asm);
                }
             }
          }
       }
+
+   }
+
+   private void addConstant(String asmName, Variable constantVar, String asmConstant, AsmProgram asm) {
+      // Add any comments
+      generateComments(asm, constantVar.getComments());
+      // Ensure encoding is good
+      ensureEncoding(asm, constantVar.getInitValue());
+      asm.addConstant(AsmFormat.asmFix(asmName), asmConstant);
+   }
+
+   private void addConstantLabelDecl(String asmName, Variable variable, String asmConstant, AsmProgram asm) {
+      // Add any comments
+      generateComments(asm, variable.getComments());
+      // Ensure encoding is good
+      ensureEncoding(asm, variable.getInitValue());
+      // Find the constant value calculation
+      asm.addLabelDecl(AsmFormat.asmFix(asmName), asmConstant);
    }
 
    /**
@@ -662,23 +692,6 @@ public class Pass4CodeGeneration {
                dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
             }
             dataNumElements = stringValue.getStringLength();
-            
-            /*
-            try {
-               ConstantLiteral literal = value.calculateLiteral(getScope());
-               if(literal instanceof ConstantString) {
-                  // Ensure encoding is good
-                  String asmConstant = AsmFormat.getAsmConstant(program, literal, 99, scopeRef);
-                  dataChunk.addDataString(asmConstant, getEncoding(literal));
-                  if(((ConstantString) literal).isZeroTerminated()) {
-                     dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
-                  }
-                  dataNumElements = ((ConstantString) literal).getStringLength();
-               }
-            } catch(ConstantNotLiteral e) {
-               // can't calculate literal value, so it is not data - just return
-            }
-             */
          } else {
             // Assume we have a ConstantArrayList
             ConstantArrayList constantArrayList = (ConstantArrayList) value;

@@ -2,13 +2,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label D018 = $d018
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
   // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
   .const PROCPORT_BASIC_KERNEL_IO = 7
+  .label D018 = $d018
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
   .label SCREEN = $400
@@ -155,8 +155,8 @@ show: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(byte register(X) c)
 memset: {
-    .label str = SCREEN
     .const num = $400
+    .label str = SCREEN
     .label end = str+num
     .label dst = $d
     lda #<str

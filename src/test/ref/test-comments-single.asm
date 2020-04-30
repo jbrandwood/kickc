@@ -3,10 +3,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // The C64 screen
-  .label SCREEN = $400
   // One of the bytes used for addition
   .const a = 'a'
+  // The C64 screen
+  .label SCREEN = $400
 // The program entry point
 main: {
     ldx #0

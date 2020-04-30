@@ -2,11 +2,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
-  .label COLORS = $d800
   .const FILL = $e6
   // The total number of voronoi points
   .const numpoints = 6
+  .label SCREEN = $400
+  .label COLORS = $d800
 main: {
     // initscreen()
     jsr initscreen

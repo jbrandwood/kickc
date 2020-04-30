@@ -2,78 +2,31 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL1 = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
-  .label BGCOL4 = $d024
-  .label VIC_CONTROL = $d011
   .const VIC_ECM = $40
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
-  .label VIC_CONTROL2 = $d016
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
-  .label VIC_MEMORY = $d018
-  // Processor port data direction register
-  .label PROCPORT_DDR = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
-  // Color Ram
-  .label COLS = $d800
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
-  .label CIA2 = $dd00
   // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
   .const BLUE = 6
   .const LIGHT_GREEN = $d
-  // Feature enables or disables the extra C64 DTV features
-  .label DTV_FEATURE = $d03f
   .const DTV_FEATURE_ENABLE = 1
-  // Controls the graphics modes of the C64 DTV
-  .label DTV_CONTROL = $d03c
   .const DTV_LINEAR = 1
   .const DTV_BORDER_OFF = 2
   .const DTV_HIGHCOLOR = 4
   .const DTV_OVERSCAN = 8
   .const DTV_COLORRAM_OFF = $10
   .const DTV_CHUNKY = $40
-  // Defines colors for the 16 first colors ($00-$0f)
-  .label DTV_PALETTE = $d200
-  // Linear Graphics Plane A Counter Control
-  .label DTV_PLANEA_START_LO = $d03a
-  .label DTV_PLANEA_START_MI = $d03b
-  .label DTV_PLANEA_START_HI = $d045
-  .label DTV_PLANEA_STEP = $d046
-  .label DTV_PLANEA_MODULO_LO = $d038
-  .label DTV_PLANEA_MODULO_HI = $d039
-  // Linear Graphics Plane B Counter Control
-  .label DTV_PLANEB_START_LO = $d049
-  .label DTV_PLANEB_START_MI = $d04a
-  .label DTV_PLANEB_START_HI = $d04b
-  .label DTV_PLANEB_STEP = $d04c
-  .label DTV_PLANEB_MODULO_LO = $d047
-  .label DTV_PLANEB_MODULO_HI = $d048
-  // Select memory bank where color data is fetched from (bits 11:0)
-  // Memory address of Color RAM is ColorBank*$400
-  .label DTV_COLOR_BANK_LO = $d036
-  .label DTV_COLOR_BANK_HI = $d037
   .const DTV_COLOR_BANK_DEFAULT = $1d800
-  // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
-  // Memory address of VIC Graphics is GraphicsBank*$10000
-  .label DTV_GRAPHICS_VIC_BANK = $d03d
   .const KEY_3 = 8
   .const KEY_A = $a
   .const KEY_4 = $b
@@ -94,6 +47,53 @@
   .const KEY_SPACE = $3c
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  .label BGCOL = $d021
+  .label BGCOL1 = $d021
+  .label BGCOL2 = $d022
+  .label BGCOL3 = $d023
+  .label BGCOL4 = $d024
+  .label VIC_CONTROL = $d011
+  .label VIC_CONTROL2 = $d016
+  .label VIC_MEMORY = $d018
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // Color Ram
+  .label COLS = $d800
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The CIA#2: Serial bus, RS-232, VIC memory bank
+  .label CIA2 = $dd00
+  // Feature enables or disables the extra C64 DTV features
+  .label DTV_FEATURE = $d03f
+  // Controls the graphics modes of the C64 DTV
+  .label DTV_CONTROL = $d03c
+  // Defines colors for the 16 first colors ($00-$0f)
+  .label DTV_PALETTE = $d200
+  // Linear Graphics Plane A Counter Control
+  .label DTV_PLANEA_START_LO = $d03a
+  .label DTV_PLANEA_START_MI = $d03b
+  .label DTV_PLANEA_START_HI = $d045
+  .label DTV_PLANEA_STEP = $d046
+  .label DTV_PLANEA_MODULO_LO = $d038
+  .label DTV_PLANEA_MODULO_HI = $d039
+  // Linear Graphics Plane B Counter Control
+  .label DTV_PLANEB_START_LO = $d049
+  .label DTV_PLANEB_START_MI = $d04a
+  .label DTV_PLANEB_START_HI = $d04b
+  .label DTV_PLANEB_STEP = $d04c
+  .label DTV_PLANEB_MODULO_LO = $d047
+  .label DTV_PLANEB_MODULO_HI = $d048
+  // Select memory bank where color data is fetched from (bits 11:0)
+  // Memory address of Color RAM is ColorBank*$400
+  .label DTV_COLOR_BANK_LO = $d036
+  .label DTV_COLOR_BANK_HI = $d037
+  // Selects memory bank for normal VIC color mode and lower data for high color modes. (bits 5:0)
+  // Memory address of VIC Graphics is GraphicsBank*$10000
+  .label DTV_GRAPHICS_VIC_BANK = $d03d
   .label print_char_cursor = 6
   .label print_line_cursor = 8
 main: {
@@ -1852,9 +1852,9 @@ mode_hicolstdchar: {
 //  - 0: 4bpp CharData[3:0]
 //  - 1: 4bpp CharData[7:4]
 mode_stdbitmap: {
+    .const lines_cnt = 9
     .label SCREEN = $4000
     .label BITMAP = $6000
-    .const lines_cnt = 9
     .label col2 = $11
     // Bitmap Colors
     .label ch = 4

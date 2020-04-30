@@ -5,17 +5,18 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SPRITES_XPOS = $d000
-  .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
-  // The VIC-II MOS 6567/6569
-  .label VICII = $d000
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const sz = 0
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_COLS = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   // The rotated point - updated by calling rotate_matrix()
   .label xr = $f0
   .label yr = $f1
@@ -28,7 +29,6 @@
   .label psp1 = $f6
   .label psp2 = $f8
   .label SCREEN = $400
-  .const sz = 0
   // A single sprite
   .label SPRITE = $3000
   .label COSH = SINH+$40

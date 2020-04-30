@@ -4,14 +4,14 @@
 .pc = $80d "Program"
   .const RED = 2
   .const GREEN = 5
-  .label SCREEN = $400
-  .label COLS = $d800
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_WORD = 3
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_DWORD = 5
   .const TYPEID_SIGNED_DWORD = 6
+  .label SCREEN = $400
+  .label COLS = $d800
   .label idx = 4
 main: {
     .label s = 2

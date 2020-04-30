@@ -2,9 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const SIZEOF_STRUCT_PERSON = 5
   .const OFFSET_STRUCT_PERSON_INITIALS = 1
+  .label SCREEN = $400
 main: {
     .label person = persons+SIZEOF_STRUCT_PERSON
     // print_person(person)

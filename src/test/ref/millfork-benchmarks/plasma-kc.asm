@@ -1,14 +1,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
+  .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
+  .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
   .label VIC_MEMORY = $d018
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .label SCREEN1 = $e000
   .label SCREEN2 = $e400
   .label CHARSET = $e800
-  .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
-  .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
   .label last_time = $a
   .label rand_seed = $c
   .label print_line_cursor = 4

@@ -3,9 +3,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label SCREEN = $400
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
+  .label SCREEN = $400
   .label current = 2
 __bbegin:
   // current = 48

@@ -3,25 +3,25 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label RASTER = $d012
-  .label BORDERCOL = $d020
-  // Color Ram
-  .label COLS = $d800
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
-  // Screen containing angle to center
-  .label SCREEN_FILL = $400
   // Char to fill with
   .const FILL_CHAR = '*'
   // The number of buckets in our bucket sort
   .const NUM_BUCKETS = $30
   .const SIZEOF_BYTE = 1
   .const SIZEOF_POINTER = 2
-  // Top of the heap used by malloc()
-  .label HEAP_TOP = $a000
   // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
+  .label RASTER = $d012
+  .label BORDERCOL = $d020
+  // Color Ram
+  .label COLS = $d800
+  // Screen containing angle to center
+  .label SCREEN_FILL = $400
+  // Top of the heap used by malloc()
+  .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 4
   // Squares for each char value SQUARES[i] = i*i

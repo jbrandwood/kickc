@@ -2,11 +2,11 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const BLACK = 0
+  .const WHITE = 1
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label BGCOL = $d021
-  .const BLACK = 0
-  .const WHITE = 1
 main: {
     // kickasm
     sei

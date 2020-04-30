@@ -2,12 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // Processor Port Register controlling RAM/ROM configuration and the datasette
-  .label PROCPORT = 1
-  // The address of the CHARGEN character set
-  .label CHARGEN = $d000
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
   .const KEY_F7 = 3
   .const KEY_F1 = 4
   .const KEY_F3 = 5
@@ -64,6 +58,12 @@
   .const KEY_SPACE = $3c
   .const KEY_Q = $3e
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
+  // The address of the CHARGEN character set
+  .label CHARGEN = $d000
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   .label SCREEN = $400
 main: {
     .label sc = 2

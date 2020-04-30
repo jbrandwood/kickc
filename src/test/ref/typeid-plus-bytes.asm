@@ -2,10 +2,10 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label SCREEN = $400
-  .label SSCREEN = $400
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
+  .label SCREEN = $400
+  .label SSCREEN = $400
 main: {
     // testUnsigned()
     jsr testUnsigned

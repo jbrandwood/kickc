@@ -21,8 +21,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const KEY_SPACE = $3c
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
   // The size of a file ENTRY
   .const SIZEOF_ENTRY = $12
   // The maximal number of files
@@ -30,6 +28,8 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
   .label print_line_cursor = $c
   .label print_char_cursor = 2
   .label print_line_cursor_1 = 4

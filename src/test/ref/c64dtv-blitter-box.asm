@@ -2,9 +2,27 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const DTV_FEATURE_ENABLE = 1
+  // Bit[0] Force Start Strobe when set
+  .const DTV_BLIT_FORCE_START = 1
+  // Bit[1] Source A Direction Positive when set
+  .const DTV_BLIT_SRCA_FWD = 2
+  // Bit[2] Source B Direction Positive when set
+  .const DTV_BLIT_SRCB_FWD = 4
+  // Bit[3] Destination Direction Positive when set
+  .const DTV_BLIT_DEST_FWD = 8
+  // No transparancy
+  // Bit[2]==Bit[1]==0: write in any case
+  .const DTV_BLIT_TRANSPARANCY_NONE = 0
+  .const DTV_BLIT_ADD = $30
+  // Bit[0] Clear Blitter IRQ
+  .const DTV_BLIT_CLEAR_IRQ = 1
+  // Bit[3] Destination Continue
+  .const DTV_BLIT_DEST_CONT = 8
+  // Bit[0] Busy when set (When reading)
+  .const DTV_BLIT_STATUS_BUSY = 1
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
-  .const DTV_FEATURE_ENABLE = 1
   // Blitter Source A Start
   .label DTV_BLITTER_SRCA_LO = $d320
   .label DTV_BLITTER_SRCA_MI = $d321
@@ -46,28 +64,10 @@
   .label DTV_BLITTER_LEN_HI = $d339
   // Blitter Control
   .label DTV_BLITTER_CONTROL = $d33a
-  // Bit[0] Force Start Strobe when set
-  .const DTV_BLIT_FORCE_START = 1
-  // Bit[1] Source A Direction Positive when set
-  .const DTV_BLIT_SRCA_FWD = 2
-  // Bit[2] Source B Direction Positive when set
-  .const DTV_BLIT_SRCB_FWD = 4
-  // Bit[3] Destination Direction Positive when set
-  .const DTV_BLIT_DEST_FWD = 8
   // Blitter Transparency
   .label DTV_BLITTER_TRANSPARANCY = $d33b
-  // No transparancy
-  // Bit[2]==Bit[1]==0: write in any case
-  .const DTV_BLIT_TRANSPARANCY_NONE = 0
-  .const DTV_BLIT_ADD = $30
   // Blitter Control 2
   .label DTV_BLITTER_CONTROL2 = $d33f
-  // Bit[0] Clear Blitter IRQ
-  .const DTV_BLIT_CLEAR_IRQ = 1
-  // Bit[3] Destination Continue
-  .const DTV_BLIT_DEST_CONT = 8
-  // Bit[0] Busy when set (When reading)
-  .const DTV_BLIT_STATUS_BUSY = 1
   .label SCREEN = $400
   // Controls the ALU operation
   .label DTV_BLITTER_ALU = $d33e

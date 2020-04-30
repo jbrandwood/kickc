@@ -1,6 +1,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .const sinlen_x = $dd
+  .const sinlen_y = $c5
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X = $1d
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y = $17
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_COLS = $d027
@@ -15,16 +23,8 @@
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
-  .const sinlen_x = $dd
-  .const sinlen_y = $c5
   .label sprites = $2000
   .label SCREEN = $400
-  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
-  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
-  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X = $1d
-  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y = $17
   // Current index within the progress cursor (0-7)
   .label progress_idx = 4
   // Current position of the progress cursor

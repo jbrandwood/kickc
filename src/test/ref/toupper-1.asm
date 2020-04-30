@@ -2,16 +2,16 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // The text screen address
-  .label CONIO_SCREEN_TEXT = $400
-  // The color screen address
-  .label CONIO_SCREEN_COLORS = $d800
   // The screen width
   .const CONIO_WIDTH = $28
   // The screen height
   .const CONIO_HEIGHT = $19
   // The default text color
   .const CONIO_TEXTCOLOR_DEFAULT = $e
+  // The text screen address
+  .label CONIO_SCREEN_TEXT = $400
+  // The color screen address
+  .label CONIO_SCREEN_COLORS = $d800
   // The current cursor x-position
   .label conio_cursor_x = 7
   // The current cursor y-position

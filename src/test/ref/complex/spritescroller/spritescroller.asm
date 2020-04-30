@@ -4,6 +4,17 @@
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
+  // Bits for the VICII IRQ Status/Enable Registers
+  .const IRQ_RASTER = 1
+  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
+  .const PROCPORT_RAM_CHARROM = 1
+  // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
+  .const PROCPORT_BASIC_KERNEL_IO = 7
+  .const WHITE = 1
+  // The number of sprites in the multiplexer
+  .const PLEX_COUNT = $20
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+  .const toSpritePtr1_return = SPRITES/$40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -16,32 +27,21 @@
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
   .label IRQ_ENABLE = $d01a
-  // Bits for the VICII IRQ Status/Enable Registers
-  .const IRQ_RASTER = 1
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
-  .const PROCPORT_RAM_CHARROM = 1
-  // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
-  .const PROCPORT_BASIC_KERNEL_IO = 7
   // The address of the CHARGEN character set
   .label CHARGEN = $d000
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
-  .const WHITE = 1
-  // The number of sprites in the multiplexer
-  .const PLEX_COUNT = $20
   .label CHARSET_DEFAULT = $1000
   .label SPRITES = $3000
   .label SCREEN = $400
   // The high-value table
   .label XMOVEMENT_HI = XMOVEMENT+$100
-  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = $400+$3f8
-  .const toSpritePtr1_return = SPRITES/$40
   .label plex_show_idx = $d
   .label plex_sprite_idx = $e
   .label plex_sprite_msb = $f

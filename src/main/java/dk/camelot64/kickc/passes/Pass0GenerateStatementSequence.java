@@ -2331,8 +2331,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          final SymbolTypeStruct structType = (SymbolTypeStruct) SymbolTypeInference.inferType(program.getScope(), structValue);
          StructDefinition structDefinition = structType.getStructDefinition(program.getScope());
          final String memberName = ((StructMemberRef) child).getMemberName();
+         final Variable member = structDefinition.getMember(memberName);
+         if(member==null) {
+            throw new CompileError("Unknown struct member "+memberName+" in struct "+structType.getTypeName(), new StatementSource(ctx));
+         }
          final ConstantRef memberOffset = SizeOfConstants.getStructMemberOffsetConstant(program.getScope(), structDefinition, memberName);
-         final SymbolType memberType = structDefinition.getMember(memberName).getType();
+         final SymbolType memberType = member.getType();
          return new ConstantCastValue(new SymbolTypePointer(memberType), new ConstantBinary(new ConstantCastValue(new SymbolTypePointer(SymbolType.BYTE), structPointer), Operators.PLUS, memberOffset));
       } else if(child instanceof ConstantValue) {
          return new ConstantUnary((OperatorUnary) operator, (ConstantValue) child);

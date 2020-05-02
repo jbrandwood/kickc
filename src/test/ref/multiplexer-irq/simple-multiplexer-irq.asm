@@ -17,10 +17,10 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label VIC_CONTROL = $d011
   .label D011 = $d011
   // VIC II IRQ Status Register
@@ -82,9 +82,9 @@ loop: {
     bne __b3
     jmp __b2
   __b3:
-    // *BORDERCOL = RED
+    // *BORDER_COLOR = RED
     lda #RED
-    sta BORDERCOL
+    sta BORDER_COLOR
     ldx.z sin_idx
     ldy #0
   __b4:
@@ -100,13 +100,13 @@ loop: {
     bne __b4
     // sin_idx +=1
     inc.z sin_idx
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // plexSort()
     jsr plexSort
-    // *BORDERCOL = GREEN
+    // *BORDER_COLOR = GREEN
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // framedone = false
     lda #0
     sta.z framedone
@@ -234,9 +234,9 @@ init: {
     sta SPRITES_ENABLE
     ldx #0
   __b3:
-    // SPRITES_COLS[ss] = GREEN
+    // SPRITES_COLOR[ss] = GREEN
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char ss: 0..7)
     inx
     cpx #8
@@ -287,9 +287,9 @@ plex_irq: {
     .label __4 = $d
     // asm
     sei
-    // *BORDERCOL = WHITE
+    // *BORDER_COLOR = WHITE
     lda #WHITE
-    sta BORDERCOL
+    sta BORDER_COLOR
   __b3:
     // plexShowSprite()
     jsr plexShowSprite
@@ -322,9 +322,9 @@ plex_irq: {
     lda #1
     sta.z framedone
   __b2:
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     lda #0
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm
     cli
     // }

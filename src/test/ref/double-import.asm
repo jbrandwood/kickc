@@ -2,11 +2,11 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const RED = 2
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
 main: {
-    // *BGCOL = RED
+    // *BG_COLOR = RED
     lda #RED
-    sta BGCOL
+    sta BG_COLOR
     // }
     rts
 }

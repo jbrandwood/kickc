@@ -3,15 +3,15 @@
 .pc = $80d "Program"
   .const GREEN = 5
   .const RED = 2
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label print_char_cursor = 2
   .label print_line_cursor = 4
 main: {
     // print_cls()
     jsr print_cls
-    // *BGCOL = GREEN
+    // *BG_COLOR = GREEN
     lda #GREEN
-    sta BGCOL
+    sta BG_COLOR
     // test_bytes()
     jsr test_bytes
     // test_sbytes()
@@ -112,9 +112,9 @@ assert_sbyte: {
     // }
     rts
   __b1:
-    // *BGCOL = RED
+    // *BG_COLOR = RED
     lda #RED
-    sta BGCOL
+    sta BG_COLOR
     // print_str("fail!")
     lda #<str1
     sta.z print_str.str
@@ -264,9 +264,9 @@ assert_byte: {
     // }
     rts
   __b1:
-    // *BGCOL = RED
+    // *BG_COLOR = RED
     lda #RED
-    sta BGCOL
+    sta BG_COLOR
     // print_str("fail!")
     lda #<str1
     sta.z print_str.str

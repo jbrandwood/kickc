@@ -5,7 +5,7 @@
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
   .const BLUE = 6
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label D011 = $d011
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
@@ -34,9 +34,9 @@ main: {
     lda #>SCREEN
     sta.z fill.addr+1
     jsr fill
-    // *BORDERCOL = BLUE
+    // *BORDER_COLOR = BLUE
     lda #BLUE
-    sta BORDERCOL
+    sta BORDER_COLOR
     // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011

@@ -961,7 +961,7 @@ sprites_init::@1: scope:[sprites_init]  from sprites_init sprites_init::@1
   (byte*) sprites_init::sprites_ptr#1 ← phi( sprites_init/(byte*) sprites_init::sprites_ptr#0 sprites_init::@1/(byte*) sprites_init::sprites_ptr#1 )
   (byte*~) sprites_init::$1 ← (const byte*) SPRITE / (number) $40
   *((byte*) sprites_init::sprites_ptr#1 + (byte) sprites_init::i#2) ← (byte)(byte*~) sprites_init::$1
-  *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN
+  *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN
   (byte) sprites_init::i#1 ← (byte) sprites_init::i#2 + rangenext(0,7)
   (bool~) sprites_init::$2 ← (byte) sprites_init::i#1 != rangelast(0,7)
   if((bool~) sprites_init::$2) goto sprites_init::@1
@@ -1212,7 +1212,7 @@ SYMBOL TABLE SSA
     }
  }}
 (const byte*) SPRITE = (byte*)(number) $3000
-(const nomodify byte*) SPRITES_COLS = (byte*)(number) $d027
+(const nomodify byte*) SPRITES_COLOR = (byte*)(number) $d027
 (const nomodify byte*) SPRITES_XPOS = (byte*)(number) $d000
 (const nomodify byte*) SPRITES_YPOS = (byte*)(number) $d001
 (const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
@@ -3743,7 +3743,7 @@ sprites_init: scope:[sprites_init]  from main
 sprites_init::@1: scope:[sprites_init]  from sprites_init sprites_init::@1
   [260] (byte) sprites_init::i#2 ← phi( sprites_init/(byte) 0 sprites_init::@1/(byte) sprites_init::i#1 )
   [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40
-  [262] *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN
+  [262] *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN
   [263] (byte) sprites_init::i#1 ← ++ (byte) sprites_init::i#2
   [264] if((byte) sprites_init::i#1!=(byte) 8) goto sprites_init::@1
   to:sprites_init::@return
@@ -4351,7 +4351,7 @@ Target platform is c64basic / MOS6502X
   .const sz = 0
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The rotated point - updated by calling rotate_matrix()
@@ -6265,10 +6265,10 @@ sprites_init: {
     lda #SPRITE/$40
     ldy.z i
     sta sprites_ptr,y
-    // [262] *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [262] *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #GREEN
     ldy.z i
-    sta SPRITES_COLS,y
+    sta SPRITES_COLOR,y
     // [263] (byte) sprites_init::i#1 ← ++ (byte) sprites_init::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [264] if((byte) sprites_init::i#1!=(byte) 8) goto sprites_init::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -6505,7 +6505,7 @@ Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::
 Statement [259] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ sprites_init::i#2 sprites_init::i#1 ]
-Statement [262] *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
+Statement [262] *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [6] *((const word*) psp1) ← (word)(const byte*) mulf_sqr1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] *((const word*) psp2) ← (word)(const byte*) mulf_sqr2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [14] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 [ sx#10 sy#10 ] ( main:2::anim:10 [ sx#10 sy#10 ] { }  ) always clobbers reg byte a 
@@ -6613,7 +6613,7 @@ Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto mems
 Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [259] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
-Statement [262] *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
+Statement [262] *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [6] *((const word*) psp1) ← (word)(const byte*) mulf_sqr1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] *((const word*) psp2) ← (word)(const byte*) mulf_sqr2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [14] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto anim::@2 [ sx#10 sy#10 ] ( main:2::anim:10 [ sx#10 sy#10 ] { }  ) always clobbers reg byte a 
@@ -6724,7 +6724,7 @@ Statement [255] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto mems
 Statement [257] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::debug_print_init:8::print_cls:182::memset:251 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [259] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::sprites_init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
-Statement [262] *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
+Statement [262] *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN [ sprites_init::i#2 ] ( main:2::sprites_init:5 [ sprites_init::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ sx#10 sx#3 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ sy#10 sy#3 ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ anim::i#2 anim::i#1 ] : zp[1]:4 , 
@@ -7017,7 +7017,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const sz = 0
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The rotated point - updated by calling rotate_matrix()
@@ -8759,9 +8759,9 @@ sprites_init: {
     // [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta sprites_ptr,x
-    // [262] *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [262] *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // [263] (byte) sprites_init::i#1 ← ++ (byte) sprites_init::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [264] if((byte) sprites_init::i#1!=(byte) 8) goto sprites_init::@1 -- vbuxx_neq_vbuc1_then_la1 
@@ -9258,7 +9258,7 @@ FINAL SYMBOL TABLE
     }
  }}
 (const byte*) SPRITE = (byte*) 12288
-(const nomodify byte*) SPRITES_COLS = (byte*) 53287
+(const nomodify byte*) SPRITES_COLOR = (byte*) 53287
 (const nomodify byte*) SPRITES_XPOS = (byte*) 53248
 (const nomodify byte*) SPRITES_YPOS = (byte*) 53249
 (const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
@@ -9746,7 +9746,7 @@ Score: 67977
   .const sz = 0
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The rotated point - updated by calling rotate_matrix()
@@ -11437,10 +11437,10 @@ sprites_init: {
     // [261] *((const byte*) sprites_init::sprites_ptr#0 + (byte) sprites_init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta sprites_ptr,x
-    // SPRITES_COLS[i] = GREEN
-    // [262] *((const nomodify byte*) SPRITES_COLS + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
+    // SPRITES_COLOR[i] = GREEN
+    // [262] *((const nomodify byte*) SPRITES_COLOR + (byte) sprites_init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char i: 0..7)
     // [263] (byte) sprites_init::i#1 ← ++ (byte) sprites_init::i#2 -- vbuxx=_inc_vbuxx 
     inx

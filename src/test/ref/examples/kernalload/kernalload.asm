@@ -22,7 +22,7 @@
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Address to load to
@@ -55,9 +55,9 @@ main: {
     // SPRITES_PTR[0] = toSpritePtr(LOAD_SPRITE)
     lda #toSpritePtr1_return
     sta SPRITES_PTR
-    // SPRITES_COLS[0] = GREEN
+    // SPRITES_COLOR[0] = GREEN
     lda #GREEN
-    sta SPRITES_COLS
+    sta SPRITES_COLOR
     // SPRITES_XPOS[0] = 0x15
     lda #$15
     sta SPRITES_XPOS

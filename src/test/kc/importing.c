@@ -3,5 +3,5 @@
 void main() {
     byte* screen = $0400;
     *screen = 1;
-    *BGCOL = RED;
+    *BG_COLOR = RED;
 }

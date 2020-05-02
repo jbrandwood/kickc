@@ -7,7 +7,7 @@ byte* const VIC_CONTROL = $d011;
 byte* const IRQ_STATUS = $d019;
 byte* const IRQ_ENABLE = $d01a;
 const byte IRQ_RASTER = %00000001;
-byte* const BGCOL = $d020;
+byte* const BG_COLOR = $d020;
 
 byte* const CIA1_INTERRUPT = $dc0d;
 const byte CIA_INTERRUPT_CLEAR = $7f;
@@ -34,10 +34,10 @@ void main() {
 volatile bool framedone = false;
 
 interrupt(kernel_min) void irq() {
-    (*BGCOL)++;
+    (*BG_COLOR)++;
     *IRQ_STATUS = IRQ_RASTER;
     if (*RASTER>50) {
         framedone = false;
     }
-    (*BGCOL)--;
+    (*BG_COLOR)--;
 }

@@ -2,7 +2,7 @@
 
 unsigned char * const control = 0xd011;
 unsigned char * const raster = 0xd012;
-unsigned char * const bordercol = 0xd020;
+unsigned char * const BORDER_COLOR = 0xd020;
 
 void main() {
     asm { sei }
@@ -12,15 +12,15 @@ void main() {
             unsigned char rst = (*control&0x80)|(*raster>>1);
         } while (rst!=0x30);
         unsigned char *screen = 0x0400;
-        *bordercol = 1;
+        *BORDER_COLOR = 1;
         unsigned char time_start = *raster;
-        utoa16w(00000, screen); (*bordercol)++; screen += 40;
-        utoa16w(01234, screen); (*bordercol)++; screen += 40;
-        utoa16w(05678, screen); (*bordercol)++; screen += 40;
-        utoa16w(09999, screen); (*bordercol)++; screen += 40;
+        utoa16w(00000, screen); (*BORDER_COLOR)++; screen += 40;
+        utoa16w(01234, screen); (*BORDER_COLOR)++; screen += 40;
+        utoa16w(05678, screen); (*BORDER_COLOR)++; screen += 40;
+        utoa16w(09999, screen); (*BORDER_COLOR)++; screen += 40;
         utoa16w(58888, screen);
         unsigned char time_end = *raster;
-        *bordercol = 0;
+        *BORDER_COLOR = 0;
         unsigned char time = time_end - time_start;
         utoa10w((unsigned int)time, screen+80);
         byte msg[] = "raster lines";

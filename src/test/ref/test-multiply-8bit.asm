@@ -2,13 +2,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label print_line_cursor = 2
   .label print_char_cursor = 4
 main: {
-    // *BGCOL = 5
+    // *BG_COLOR = 5
     lda #5
-    sta BGCOL
+    sta BG_COLOR
     // print_cls()
     jsr print_cls
     // mulf_init()
@@ -104,9 +104,9 @@ mul8s_compare: {
     // if(ok==0)
     cpx #0
     bne __b8
-    // *BGCOL = 2
+    // *BG_COLOR = 2
     lda #2
-    sta BGCOL
+    sta BG_COLOR
     // mul8s_error(a,b, ms, mn, mf)
     ldx.z a
     jsr mul8s_error
@@ -641,9 +641,9 @@ mul8u_compare: {
     // if(ok==0)
     cpx #0
     bne __b5
-    // *BGCOL = 2
+    // *BG_COLOR = 2
     lda #2
-    sta BGCOL
+    sta BG_COLOR
     // mul8u_error(a,b, ms, mn, mf)
     ldx.z a
     jsr mul8u_error
@@ -837,9 +837,9 @@ mulf_tables_cmp: {
     lda (kc_sqr),y
     cmp (asm_sqr),y
     beq __b4
-    // *BGCOL = 2
+    // *BG_COLOR = 2
     lda #2
-    sta BGCOL
+    sta BG_COLOR
     // print_str("multiply table mismatch at ")
     lda #<$400
     sta.z print_char_cursor

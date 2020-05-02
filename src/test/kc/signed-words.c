@@ -19,7 +19,7 @@ void init() {
     *SPRITES_EXPAND_Y = 0;
     SPRITES_XPOS[0] = 100;
     SPRITES_YPOS[0] = 100;
-    SPRITES_COLS[0] = WHITE;
+    SPRITES_COLOR[0] = WHITE;
     SPRITES_PTR[0] = (byte)(SPRITE/$40);
     for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ ) {
         *sc = ' ';

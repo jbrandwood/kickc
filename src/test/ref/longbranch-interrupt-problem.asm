@@ -3,7 +3,7 @@
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label col = 2
 __bbegin:
   // col = 0
@@ -30,9 +30,9 @@ main: {
 irq: {
     // asm
     lda $dc0d
-    // *BGCOL = col
+    // *BG_COLOR = col
     lda.z col
-    sta BGCOL
+    sta BG_COLOR
     // if(col!=0)
     lda.z col
     cmp #0

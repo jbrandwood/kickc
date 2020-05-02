@@ -2,13 +2,13 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label print_line_cursor = 2
   .label print_char_cursor = 8
 main: {
-    // *BGCOL = 5
+    // *BG_COLOR = 5
     lda #5
-    sta BGCOL
+    sta BG_COLOR
     // print_cls()
     jsr print_cls
     // mulf_init()
@@ -114,9 +114,9 @@ mul16s_compare: {
     // if(ok==0)
     cpx #0
     bne __b5
-    // *BGCOL = 2
+    // *BG_COLOR = 2
     lda #2
-    sta BGCOL
+    sta BG_COLOR
     // mul16s_error(a,b, ms, mn, mf)
     jsr mul16s_error
     // }
@@ -956,9 +956,9 @@ mul16u_compare: {
     // if(ok==0)
     cpx #0
     bne __b5
-    // *BGCOL = 2
+    // *BG_COLOR = 2
     lda #2
-    sta BGCOL
+    sta BG_COLOR
     // mul16u_error(a,b, ms, mn, mf)
     lda.z a
     sta.z mul16u_error.a

@@ -5,7 +5,7 @@
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
 // Setup the IRQ routine
@@ -24,12 +24,12 @@ main: {
 }
 // The Interrupt Handler
 irq: {
-    // *BGCOL = WHITE
+    // *BG_COLOR = WHITE
     lda #WHITE
-    sta BGCOL
-    // *BGCOL = BLACK
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // }
     jmp $ea31
 }

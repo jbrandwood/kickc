@@ -5,14 +5,14 @@
 .pc = $80d "Program"
   // The colors of the C64
   .const BLACK = 0
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
 main: {
-    // *BGCOL = BLACK
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // memcpy(SCREEN, MEDUSA_SCREEN, 1000)
     lda #<SCREEN
     sta.z memcpy.destination

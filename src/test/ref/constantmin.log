@@ -3,14 +3,14 @@ CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
   (byte*~) $0 ← (const byte*) VIC + (number) $10*(number) 2
   (byte*~) $1 ← (byte*~) $0 + (number) 1
-  (byte*) BGCOL#0 ← (byte*~) $1
+  (byte*) BG_COLOR#0 ← (byte*~) $1
   to:@1
 
 (void()) main()
 main: scope:[main]  from @1
-  (byte*) BGCOL#1 ← phi( @1/(byte*) BGCOL#2 )
+  (byte*) BG_COLOR#1 ← phi( @1/(byte*) BG_COLOR#2 )
   *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR
-  *((byte*) BGCOL#1) ← (const byte) RED
+  *((byte*) BG_COLOR#1) ← (const byte) RED
   (byte) main::i#0 ← (byte) $28
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -24,7 +24,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 @1: scope:[]  from @begin
-  (byte*) BGCOL#2 ← phi( @begin/(byte*) BGCOL#0 )
+  (byte*) BG_COLOR#2 ← phi( @begin/(byte*) BG_COLOR#0 )
   call main 
   to:@2
 @2: scope:[]  from @1
@@ -38,10 +38,10 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(byte*) BGCOL
-(byte*) BGCOL#0
-(byte*) BGCOL#1
-(byte*) BGCOL#2
+(byte*) BG_COLOR
+(byte*) BG_COLOR#0
+(byte*) BG_COLOR#1
+(byte*) BG_COLOR#2
 (const byte) RED = (byte) 2
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (const nomodify byte) STAR = (byte) $51
@@ -71,9 +71,9 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias BGCOL#0 = $1 BGCOL#2 
+Alias BG_COLOR#0 = $1 BG_COLOR#2 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) BGCOL#1 (byte*) BGCOL#0
+Identical Phi Values (byte*) BG_COLOR#1 (byte*) BG_COLOR#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) main::$0 [10] if((byte) main::i#1!=rangelast($28,$4f)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -84,9 +84,9 @@ Constant (const byte) main::i#0 = $28
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [8] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [10] if(main::i#1!=rangelast($28,$4f)) goto main::@1 to (number) $50
-Converting *(pointer+n) to pointer[n] [4] *((byte*) BGCOL#0) ← (const byte) RED  -- *($0 + 1)
+Converting *(pointer+n) to pointer[n] [4] *((byte*) BG_COLOR#0) ← (const byte) RED  -- *($0 + 1)
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable (byte*) BGCOL#0 and assignment [0] (byte*) BGCOL#0 ← (const byte*) $0 + (byte) 1
+Eliminating unused variable (byte*) BG_COLOR#0 and assignment [0] (byte*) BG_COLOR#0 ← (const byte*) $0 + (byte) 1
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) $50 in if((byte) main::i#1!=(number) $50) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -145,7 +145,7 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BGCOL
+(byte*) BG_COLOR
 (void()) main()
 (byte) main::i
 (byte) main::i#1 151.5
@@ -327,7 +327,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(byte*) BGCOL
+(byte*) BG_COLOR
 (const byte) RED = (byte) 2
 (const nomodify byte*) SCREEN = (byte*) 1024
 (const nomodify byte) STAR = (byte) $51
@@ -367,7 +367,7 @@ main: {
     // [4] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR -- _deref_pbuc1=vbuc2 
     lda #STAR
     sta SCREEN
-    // *BGCOL = RED
+    // *BG_COLOR = RED
     // [5] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta VIC+$10*2+1

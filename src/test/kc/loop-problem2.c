@@ -1,4 +1,4 @@
-byte* const BORDERCOL = $d020;
+byte* const BORDER_COLOR = $d020;
 byte* const SCREEN = $0400;
 
 void main() {
@@ -14,11 +14,11 @@ void print_cls() {
 
 void mode_ctrl() {
     while(true) {
-        byte before = *BORDERCOL;
+        byte before = *BORDER_COLOR;
         if(before==$ff) {
-            *BORDERCOL = 2;
+            *BORDER_COLOR = 2;
         } else {
-            *BORDERCOL = 3;
+            *BORDER_COLOR = 3;
         }
     }
 }

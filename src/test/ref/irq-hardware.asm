@@ -15,7 +15,7 @@
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label CIA1_INTERRUPT = $dc0d
   // Processor port data direction register
@@ -67,12 +67,12 @@ irq: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // *BGCOL = WHITE
+    // *BG_COLOR = WHITE
     lda #WHITE
-    sta BGCOL
-    // *BGCOL = BLACK
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER

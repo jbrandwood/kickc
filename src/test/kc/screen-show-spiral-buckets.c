@@ -42,7 +42,7 @@ void main() {
     byte bucket_idx = 0;
     while(true) {
         do { } while (*RASTER!=0xff);
-        (*BORDERCOL)++;
+        (*BORDER_COLOR)++;
         word* bucket = BUCKETS[bucket_idx];
         byte bucket_size = BUCKET_SIZES[bucket_idx];
         if(bucket_size>0) {
@@ -65,7 +65,7 @@ void main() {
                 // Found something to fill!
                 byte* fill = SCREEN_FILL+min_offset;
                 *fill = FILL_CHAR;
-                (*BORDERCOL)--;
+                (*BORDER_COLOR)--;
                 continue;
             }
         }
@@ -73,10 +73,10 @@ void main() {
         bucket_idx++;
         if(bucket_idx==NUM_BUCKETS) {
             // All buckets complete - exit loop!
-            (*BORDERCOL)--;
+            (*BORDER_COLOR)--;
             break;
         }
-        (*BORDERCOL)--;
+        (*BORDER_COLOR)--;
     }
     while(true)
         (*(COLS+999))++;

@@ -4,7 +4,7 @@
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
 __bbegin:
@@ -25,9 +25,9 @@ main: {
 irq: {
     sta rega+1
     stx regx+1
-    // *BORDERCOL = DARK_GREY
+    // *BORDER_COLOR = DARK_GREY
     lda #DARK_GREY
-    sta BORDERCOL
+    sta BORDER_COLOR
     // irq_raster_next += 21
     lax.z irq_raster_next
     axs #-[$15]
@@ -45,9 +45,9 @@ irq: {
   __b1:
     // *RASTER = raster_next
     stx RASTER
-    // *BORDERCOL = BLACK
+    // *BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
+    sta BORDER_COLOR
     // }
   rega:
     lda #00

@@ -18,7 +18,7 @@ char MEDUSA_COLORS[] = kickasm(resource "medusac.prg" ) {{
 byte* SCREEN = 0x0400;
 
 void main() {
-    *BGCOL = BLACK;
+    *BG_COLOR = BLACK;
     memcpy(SCREEN, MEDUSA_SCREEN, 1000);
     memcpy(COLS, MEDUSA_COLORS, 1000);
     while(true) {

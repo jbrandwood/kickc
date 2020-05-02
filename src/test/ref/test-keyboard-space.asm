@@ -9,7 +9,7 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
 main: {
@@ -26,14 +26,14 @@ main: {
     // if(keyboard_key_pressed(KEY_SPACE)!=0)
     cmp #0
     bne __b4
-    // *BGCOL = BLUE
+    // *BG_COLOR = BLUE
     lda #BLUE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
   __b4:
-    // *BGCOL = GREEN
+    // *BG_COLOR = GREEN
     lda #GREEN
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly

@@ -317,7 +317,7 @@ init::@1: scope:[init]  from init::@1 init::@2
   (byte*) init::sprites_ptr#1 ← phi( init::@1/(byte*) init::sprites_ptr#1 init::@2/(byte*) init::sprites_ptr#0 )
   (byte*~) init::$2 ← (const byte*) SPRITE / (number) $40
   *((byte*) init::sprites_ptr#1 + (byte) init::i#2) ← (byte)(byte*~) init::$2
-  *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN
+  *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN
   (byte) init::i#1 ← (byte) init::i#2 + rangenext(0,7)
   (bool~) init::$3 ← (byte) init::i#1 != rangelast(0,7)
   if((bool~) init::$3) goto init::@1
@@ -688,7 +688,7 @@ SYMBOL TABLE SSA
         .byte >round($7fff*sin(i*2*PI/256))
  }}
 (const byte*) SPRITE = (byte*)(number) $3000
-(const nomodify byte*) SPRITES_COLS = (byte*)(number) $d027
+(const nomodify byte*) SPRITES_COLOR = (byte*)(number) $d027
 (const nomodify byte*) SPRITES_XPOS = (byte*)(number) $d000
 (const nomodify byte*) SPRITES_YPOS = (byte*)(number) $d001
 (const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
@@ -1896,7 +1896,7 @@ init::@2: scope:[init]  from init
 init::@1: scope:[init]  from init::@1 init::@2
   [124] (byte) init::i#2 ← phi( init::@1/(byte) init::i#1 init::@2/(byte) 0 )
   [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40
-  [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN
+  [126] *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN
   [127] (byte) init::i#1 ← ++ (byte) init::i#2
   [128] if((byte) init::i#1!=(byte) 8) goto init::@1
   to:init::@return
@@ -2405,7 +2405,7 @@ Target platform is c64basic / MOS6502X
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
@@ -3202,10 +3202,10 @@ init: {
     lda #SPRITE/$40
     ldy.z i
     sta sprites_ptr,y
-    // [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [126] *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #GREEN
     ldy.z i
-    sta SPRITES_COLS,y
+    sta SPRITES_COLOR,y
     // [127] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [128] if((byte) init::i#1!=(byte) 8) goto init::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -3542,7 +3542,7 @@ Statement [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) 
 Statement [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ init::i#2 init::i#1 ]
-Statement [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
+Statement [126] *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ mulf_init::c#2 mulf_init::c#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:25 [ mulf_init::x_2#3 mulf_init::x_2#2 mulf_init::x_2#1 ]
@@ -3615,7 +3615,7 @@ Statement [118] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) 
 Statement [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
-Statement [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
+Statement [126] *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] { }  ) always clobbers reg byte a 
 Statement [134] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] { }  ) always clobbers reg byte a 
 Statement [135] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100) [ ] ( main:2::init:5::mulf_init:122 [ ] { }  ) always clobbers reg byte a 
@@ -3678,7 +3678,7 @@ Statement [118] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) 
 Statement [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::anim:7::clock_start:13 [ anim::angle#9 ] { }  ) always clobbers reg byte a 
 Statement [123] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) ← (byte) $ff [ ] ( main:2::init:5 [ ] { }  ) always clobbers reg byte a 
 Statement [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
-Statement [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
+Statement [126] *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN [ init::i#2 ] ( main:2::init:5 [ init::i#2 ] { }  ) always clobbers reg byte a 
 Statement [132] if((byte*) mulf_init::sqr1_lo#2!=(const byte*) mulf_sqr1_lo+(word) $200) goto mulf_init::@2 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr1_lo#2 mulf_init::c#2 mulf_init::sqr#4 mulf_init::sqr1_hi#2 mulf_init::x_2#3 ] { }  ) always clobbers reg byte a 
 Statement [134] if((byte*) mulf_init::sqr2_lo#2!=(const byte*) mulf_sqr2_lo+(word) $1ff) goto mulf_init::@6 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] ( main:2::init:5::mulf_init:122 [ mulf_init::sqr2_lo#2 mulf_init::x_255#2 mulf_init::sqr2_hi#2 mulf_init::dir#2 ] { }  ) always clobbers reg byte a 
 Statement [135] *((const byte*) mulf_sqr2_lo+(word) $1ff) ← *((const byte*) mulf_sqr1_lo+(word) $100) [ ] ( main:2::init:5::mulf_init:122 [ ] { }  ) always clobbers reg byte a 
@@ -3878,7 +3878,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
@@ -4562,9 +4562,9 @@ init: {
     // [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta sprites_ptr,x
-    // [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [126] *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // [127] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [128] if((byte) init::i#1!=(byte) 8) goto init::@1 -- vbuxx_neq_vbuc1_then_la1 
@@ -5086,7 +5086,7 @@ FINAL SYMBOL TABLE
         .byte >round($7fff*sin(i*2*PI/256))
  }}
 (const byte*) SPRITE = (byte*) 12288
-(const nomodify byte*) SPRITES_COLS = (byte*) 53287
+(const nomodify byte*) SPRITES_COLOR = (byte*) 53287
 (const nomodify byte*) SPRITES_XPOS = (byte*) 53248
 (const nomodify byte*) SPRITES_YPOS = (byte*) 53249
 (const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
@@ -5365,7 +5365,7 @@ Score: 30994
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
@@ -6025,10 +6025,10 @@ init: {
     // [125] *((const byte*) init::sprites_ptr#0 + (byte) init::i#2) ← (byte)(const byte*) SPRITE/(byte) $40 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #SPRITE/$40
     sta sprites_ptr,x
-    // SPRITES_COLS[i] = GREEN
-    // [126] *((const nomodify byte*) SPRITES_COLS + (byte) init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
+    // SPRITES_COLOR[i] = GREEN
+    // [126] *((const nomodify byte*) SPRITES_COLOR + (byte) init::i#2) ← (const nomodify byte) GREEN -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char i: 0..7)
     // [127] (byte) init::i#1 ← ++ (byte) init::i#2 -- vbuxx=_inc_vbuxx 
     inx

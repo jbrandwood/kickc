@@ -48,12 +48,11 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
-  .label BGCOL1 = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
-  .label BGCOL4 = $d024
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
+  .label BG_COLOR1 = $d022
+  .label BG_COLOR2 = $d023
+  .label BG_COLOR3 = $d024
   .label VIC_CONTROL = $d011
   .label VIC_CONTROL2 = $d016
   .label VIC_MEMORY = $d018
@@ -182,12 +181,12 @@ menu: {
     beq !__b3+
     jmp __b3
   !__b3:
-    // *BGCOL = 0
+    // *BG_COLOR = 0
     // Screen colors
     lda #0
-    sta BGCOL
-    // *BORDERCOL = 0
-    sta BORDERCOL
+    sta BG_COLOR
+    // *BORDER_COLOR = 0
+    sta BORDER_COLOR
     // print_set_screen(SCREEN)
   // Display menu Text
     jsr print_set_screen
@@ -382,9 +381,9 @@ mode_8bppchunkybmm: {
     sta DTV_PLANEB_MODULO_LO
     // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
-    // *BORDERCOL = $00
+    // *BORDER_COLOR = $00
     // Border color
-    sta BORDERCOL
+    sta BORDER_COLOR
     tax
   // DTV Palette - Grey Tones
   __b1:
@@ -586,9 +585,9 @@ mode_ctrl: {
     // *DTV_CONTROL = ctrl
     txa
     sta DTV_CONTROL
-    // *BORDERCOL = ctrl
+    // *BORDER_COLOR = ctrl
     txa
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
 }
 // Determines whether a specific key is currently pressed by accessing the matrix directly
@@ -716,9 +715,9 @@ mode_8bpppixelcell: {
     sta DTV_PLANEB_MODULO_LO
     // *DTV_PLANEB_MODULO_HI = 0
     sta DTV_PLANEB_MODULO_HI
-    // *BORDERCOL = $00
+    // *BORDER_COLOR = $00
     // Border color
-    sta BORDERCOL
+    sta BORDER_COLOR
     tax
   // DTV Palette - Grey Tones
   __b1:
@@ -926,10 +925,10 @@ mode_sixsfred: {
     inx
     cpx #$10
     bne __b1
-    // *BORDERCOL = $00
+    // *BORDER_COLOR = $00
     // Screen colors
     lda #0
-    sta BORDERCOL
+    sta BORDER_COLOR
     lda #<COLORS
     sta.z col
     lda #>COLORS
@@ -1035,10 +1034,10 @@ mode_sixsfred: {
 // Resolution: 320x200
 // Linear Adressing
 // GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
-// - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+// - Plane A = 0 Plane B = 0: 8bpp BG_COLORor0[7:0]
 // - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
 // - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
-// - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
+// - Plane A = 1 Plane B = 1: 8bpp BG_COLORor1[7:0]
 mode_twoplanebitmap: {
     .label PLANEA = $4000
     .label PLANEB = $6000
@@ -1116,17 +1115,17 @@ mode_twoplanebitmap: {
     inx
     cpx #$10
     bne __b1
-    // *BORDERCOL = $00
+    // *BORDER_COLOR = $00
     // Screen colors
     lda #0
-    sta BORDERCOL
-    // *BGCOL1 = $70
+    sta BORDER_COLOR
+    // *BG_COLOR = $70
     lda #$70
-    sta BGCOL1
-    // *BGCOL2 = $d4
+    sta BG_COLOR
+    // *BG_COLOR1 = $d4
     // Color for bits 00
     lda #$d4
-    sta BGCOL2
+    sta BG_COLOR1
     lda #<COLORS
     sta.z col
     lda #>COLORS
@@ -1328,10 +1327,10 @@ mode_sixsfred2: {
     inx
     cpx #$10
     bne __b1
-    // *BORDERCOL = $00
+    // *BORDER_COLOR = $00
     // Screen colors
     lda #0
-    sta BORDERCOL
+    sta BORDER_COLOR
     lda #<COLORS
     sta.z col
     lda #>COLORS
@@ -1445,12 +1444,12 @@ mode_sixsfred2: {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 //GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
-// - 0: 8bpp BgColor0[7:0]
+// - 0: 8bpp BG_COLORor0[7:0]
 // - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
 //GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
-// - 00: 8bpp BgColor0[7:0]
-// - 01: 8bpp BgColor1[7:0]
-// - 10: 8bpp BgColor2[7:0]
+// - 00: 8bpp BG_COLORor0[7:0]
+// - 01: 8bpp BG_COLORor1[7:0]
+// - 10: 8bpp BG_COLORor2[7:0]
 // - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 mode_hicolmcchar: {
     .label SCREEN = $8000
@@ -1506,19 +1505,19 @@ mode_hicolmcchar: {
     inx
     cpx #$10
     bne __b1
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     // Screen colors
     lda #0
-    sta BORDERCOL
-    // *BGCOL1 = $50
+    sta BORDER_COLOR
+    // *BG_COLOR = $50
     lda #$50
-    sta BGCOL1
-    // *BGCOL2 = $54
+    sta BG_COLOR
+    // *BG_COLOR1 = $54
     lda #$54
-    sta BGCOL2
-    // *BGCOL3 = $58
+    sta BG_COLOR1
+    // *BG_COLOR2 = $58
     lda #$58
-    sta BGCOL3
+    sta BG_COLOR2
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -1584,10 +1583,10 @@ mode_hicolmcchar: {
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
 // GfxData Pixel Shifter (1)
 //  - 0: 8bpp Background Color
-//    - CharData[7:6] 00: 8bpp BgColor0[7:0]
-//    - CharData[7:6] 01: 8bpp BgColor1[7:0]
-//    - CharData[7:6] 10: 8bpp BgColor2[7:0]
-//    - CharData[7:6] 11: 8bpp BgColor3[7:0]
+//    - CharData[7:6] 00: 8bpp BG_COLORor0[7:0]
+//    - CharData[7:6] 01: 8bpp BG_COLORor1[7:0]
+//    - CharData[7:6] 10: 8bpp BG_COLORor2[7:0]
+//    - CharData[7:6] 11: 8bpp BG_COLORor3[7:0]
 //  - 1: 8bpp ColorData[7:0]
 mode_hicolecmchar: {
     .label SCREEN = $8000
@@ -1643,22 +1642,22 @@ mode_hicolecmchar: {
     inx
     cpx #$10
     bne __b1
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     // Screen colors
     lda #0
-    sta BORDERCOL
-    // *BGCOL1 = $50
+    sta BORDER_COLOR
+    // *BG_COLOR = $50
     lda #$50
-    sta BGCOL1
-    // *BGCOL2 = $54
+    sta BG_COLOR
+    // *BG_COLOR1 = $54
     lda #$54
-    sta BGCOL2
-    // *BGCOL3 = $58
+    sta BG_COLOR1
+    // *BG_COLOR2 = $58
     lda #$58
-    sta BGCOL3
-    // *BGCOL4 = $5c
+    sta BG_COLOR2
+    // *BG_COLOR3 = $5c
     lda #$5c
-    sta BGCOL4
+    sta BG_COLOR3
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -1723,7 +1722,7 @@ mode_hicolecmchar: {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 // Pixel Shifter (1)
-//  - 0: 8bpp BgColor0[7:0]
+//  - 0: 8bpp BG_COLORor0[7:0]
 //  - 1: 8bpp ColorData[7:0]
 mode_hicolstdchar: {
     .label SCREEN = $8000
@@ -1779,12 +1778,12 @@ mode_hicolstdchar: {
     inx
     cpx #$10
     bne __b1
-    // *BGCOL = 0
+    // *BG_COLOR = 0
     // Screen colors
     lda #0
-    sta BGCOL
-    // *BORDERCOL = 0
-    sta BORDERCOL
+    sta BG_COLOR
+    // *BORDER_COLOR = 0
+    sta BORDER_COLOR
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -1896,12 +1895,12 @@ mode_stdbitmap: {
     inx
     cpx #$10
     bne __b1
-    // *BGCOL = BLACK
+    // *BG_COLOR = BLACK
     // Screen colors
     lda #BLACK
-    sta BGCOL
-    // *BORDERCOL = BLACK
-    sta BORDERCOL
+    sta BG_COLOR
+    // *BORDER_COLOR = BLACK
+    sta BORDER_COLOR
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -2430,12 +2429,12 @@ bitmap_init: {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 // GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
-//  - 0: 4bpp BgColor0[3:0]
+//  - 0: 4bpp BG_COLORor0[3:0]
 //  - 1: 4bpp ColorData[2:0]
 // GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
-//  - 00: 4bpp BgColor0[3:0]
-//  - 01: 4bpp BgColor1[3:0]
-//  - 10: 4bpp BgColor2[3:0]
+//  - 00: 4bpp BG_COLORor0[3:0]
+//  - 01: 4bpp BG_COLORor1[3:0]
+//  - 10: 4bpp BG_COLORor2[3:0]
 //  - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 mode_mcchar: {
     .label SCREEN = $8000
@@ -2490,19 +2489,19 @@ mode_mcchar: {
     inx
     cpx #$10
     bne __b1
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     // Screen colors
     lda #0
-    sta BORDERCOL
-    // *BGCOL1 = BLACK
+    sta BORDER_COLOR
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL1
-    // *BGCOL2 = GREEN
+    sta BG_COLOR
+    // *BG_COLOR1 = GREEN
     lda #GREEN
-    sta BGCOL2
-    // *BGCOL3 = BLUE
+    sta BG_COLOR1
+    // *BG_COLOR2 = BLUE
     lda #BLUE
-    sta BGCOL3
+    sta BG_COLOR2
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -2574,10 +2573,10 @@ mode_mcchar: {
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
 // GfxData Pixel Shifter (1)
 //  - 0: 4bpp Background Color
-//    - CharData[7:6] 00: 4bpp BgColor0[3:0]
-//    - CharData[7:6] 01: 4bpp BgColor1[3:0]
-//    - CharData[7:6] 10: 4bpp BgColor2[3:0]
-//    - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//    - CharData[7:6] 00: 4bpp BG_COLORor0[3:0]
+//    - CharData[7:6] 01: 4bpp BG_COLORor1[3:0]
+//    - CharData[7:6] 10: 4bpp BG_COLORor2[3:0]
+//    - CharData[7:6] 11: 4bpp BG_COLORor3[3:0]
 //  - 1: 4bpp ColorData[3:0]
 mode_ecmchar: {
     .label SCREEN = $8000
@@ -2632,21 +2631,21 @@ mode_ecmchar: {
     inx
     cpx #$10
     bne __b1
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     // Screen colors
     lda #0
-    sta BORDERCOL
-    // *BGCOL1 = 0
-    sta BGCOL1
-    // *BGCOL2 = 2
+    sta BORDER_COLOR
+    // *BG_COLOR = 0
+    sta BG_COLOR
+    // *BG_COLOR1 = 2
     lda #2
-    sta BGCOL2
-    // *BGCOL3 = 5
+    sta BG_COLOR1
+    // *BG_COLOR2 = 5
     lda #5
-    sta BGCOL3
-    // *BGCOL4 = 6
+    sta BG_COLOR2
+    // *BG_COLOR3 = 6
     lda #6
-    sta BGCOL4
+    sta BG_COLOR3
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN
@@ -2717,7 +2716,7 @@ mode_ecmchar: {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 // Pixel Shifter (1)
-// - 0: 4bpp BgColor0[3:0]
+// - 0: 4bpp BG_COLORor0[3:0]
 // - 1: 4bpp ColorData[3:0]
 mode_stdchar: {
     .label SCREEN = $8000
@@ -2772,12 +2771,12 @@ mode_stdchar: {
     inx
     cpx #$10
     bne __b1
-    // *BGCOL = 0
+    // *BG_COLOR = 0
     // Screen colors
     lda #0
-    sta BGCOL
-    // *BORDERCOL = 0
-    sta BORDERCOL
+    sta BG_COLOR
+    // *BORDER_COLOR = 0
+    sta BORDER_COLOR
     lda #<SCREEN
     sta.z ch
     lda #>SCREEN

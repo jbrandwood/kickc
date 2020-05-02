@@ -15,7 +15,7 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label RASTER = $d012
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label D018 = $d018
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
@@ -90,9 +90,9 @@ main: {
     lda RASTER
     cmp #$f8
     bcc __b2
-    // *BORDERCOL = 0xf
+    // *BORDER_COLOR = 0xf
     lda #$f
-    sta BORDERCOL
+    sta BORDER_COLOR
     // renderBobCleanup()
     jsr renderBobCleanup
     lda.z origX
@@ -120,10 +120,10 @@ main: {
     sta.z y_1+1
     ldx #0
   __b5:
-    // *BORDERCOL = 1
+    // *BORDER_COLOR = 1
     //kickasm {{ .break }}
     lda #1
-    sta BORDERCOL
+    sta BORDER_COLOR
     // renderBob(>x, >y)
     lda.z x_1+1
     sta.z renderBob.xpos
@@ -146,9 +146,9 @@ main: {
     lda.z y_1+1
     adc.z rowOffsetY+1
     sta.z y_1+1
-    // *BORDERCOL = 2
+    // *BORDER_COLOR = 2
     lda #2
-    sta BORDERCOL
+    sta BORDER_COLOR
     // for(char row: 0..4)
     inx
     cpx #5
@@ -190,9 +190,9 @@ main: {
     lda.z rowOffsetY+1
     adc #>$80
     sta.z rowOffsetY+1
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     lda #0
-    sta BORDERCOL
+    sta BORDER_COLOR
     // keyboard_key_pressed(KEY_SPACE)
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_SPACE)

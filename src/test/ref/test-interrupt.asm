@@ -2,7 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label FGCOL = $d021
 main: {
     // *KERNEL_IRQ = &irq
@@ -16,8 +16,8 @@ main: {
     jmp __b1
 }
 irq: {
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // asm
     lda $dc0d
     // }

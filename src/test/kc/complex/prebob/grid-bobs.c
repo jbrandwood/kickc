@@ -70,7 +70,7 @@ void main() {
 	// Render Grid of BOBs
 	while(true) {
         do { } while (*RASTER<$f8);
-        *BORDERCOL = 0xf;
+        *BORDER_COLOR = 0xf;
         renderBobCleanup();
         int rowX = origX;
         int rowY = origY;
@@ -79,18 +79,18 @@ void main() {
             int y = rowY;
             for(char row: 0..4) {
                 //kickasm {{ .break }}
-                *BORDERCOL = 1;
+                *BORDER_COLOR = 1;
                 renderBob(>x, >y);
                 x += rowOffsetX;
                 y += rowOffsetY;
-                *BORDERCOL = 2;
+                *BORDER_COLOR = 2;
             }
             rowX += colOffsetX;
             rowY += colOffsetY;
         }
         origX += 0x0100;
         rowOffsetY += 0x0080;
-        *BORDERCOL = 0;
+        *BORDER_COLOR = 0;
 	    if(keyboard_key_pressed(KEY_SPACE)) {
 	        break;
 	    }

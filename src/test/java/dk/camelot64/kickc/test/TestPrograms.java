@@ -40,6 +40,23 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   /* TODO: Add support for var*var
+   @Test
+   public void testMultiply3() throws IOException, URISyntaxException {
+      compileAndCompare("multiply-3.c");
+   }
+    */
+
+   @Test
+   public void testMultiply2() throws IOException, URISyntaxException {
+      compileAndCompare("multiply-2.c");
+   }
+
+   @Test
+   public void testMultiply1() throws IOException, URISyntaxException {
+      compileAndCompare("multiply-1.c");
+   }
+
    @Test
    public void testStructPointerToMember2() throws IOException, URISyntaxException {
       compileAndCompare("struct-pointer-to-member-2.c");

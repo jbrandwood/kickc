@@ -3,10 +3,10 @@
 byte* TABLE = $2000;
 
 void main() {
-    byte* BORDERCOL = $d020;
+    byte* BORDER_COLOR = $d020;
     byte i=0;
     while(true) {
-        *BORDERCOL = TABLE[i++];
+        *BORDER_COLOR = TABLE[i++];
     }
 }
 

@@ -158,7 +158,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
          }
       }
 
-      // Convert callprepare(xxx,yyy,) stackpush(type)=xxx, ...;
+      // Convert callprepare(xxx,yyy,) to stackpush(type)=xxx, ...;
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();
          while(stmtIt.hasNext()) {
@@ -258,7 +258,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
    }
 
    /**
-    * Generate stack push stackpull(type)=xxx assignments
+    * Generate stack push stackpush(type)=xxx assignments
     *
     * @param value The value to push
     * @param symbolType The type of the value

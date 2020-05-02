@@ -10,10 +10,10 @@ void main() {
     byte sumb = min+max;
     byte midb = (sumb>>1)+1;
     SCREEN[1] = midb;
-    byte* BGCOL = $d021;
+    byte* BG_COLOR = $d021;
     if(SCREEN[0]==SCREEN[1]) {
-        *BGCOL = 5;
+        *BG_COLOR = 5;
     } else {
-        *BGCOL = 2;
+        *BG_COLOR = 2;
     }
 }

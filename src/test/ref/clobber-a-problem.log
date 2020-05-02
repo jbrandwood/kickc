@@ -17,7 +17,7 @@ main::@return: scope:[main]  from main
 
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
-  *((const byte*) BORDERCOL) ← (const byte) DARK_GREY
+  *((const byte*) BORDER_COLOR) ← (const byte) DARK_GREY
   (volatile byte) irq_raster_next ← (volatile byte) irq_raster_next + (number) $15
   (byte) irq::raster_next#0 ← (volatile byte) irq_raster_next
   (number~) irq::$0 ← (byte) irq::raster_next#0 & (number) 7
@@ -28,7 +28,7 @@ irq: scope:[irq]  from
 irq::@1: scope:[irq]  from irq irq::@2
   (byte) irq::raster_next#2 ← phi( irq/(byte) irq::raster_next#0 irq::@2/(byte) irq::raster_next#1 )
   *((const byte*) RASTER) ← (byte) irq::raster_next#2
-  *((const byte*) BORDERCOL) ← (const byte) BLACK
+  *((const byte*) BORDER_COLOR) ← (const byte) BLACK
   to:irq::@return
 irq::@2: scope:[irq]  from irq
   (byte) irq::raster_next#3 ← phi( irq/(byte) irq::raster_next#0 )
@@ -51,7 +51,7 @@ SYMBOL TABLE SSA
 (label) @begin
 (label) @end
 (const byte) BLACK = (byte) 0
-(const byte*) BORDERCOL = (byte*)(number) $d020
+(const byte*) BORDER_COLOR = (byte*)(number) $d020
 (const byte) DARK_GREY = (byte) $b
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 (const byte*) RASTER = (byte*)(number) $d012
@@ -139,7 +139,7 @@ main::@return: scope:[main]  from main
 
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
-  [7] *((const byte*) BORDERCOL) ← (const byte) DARK_GREY
+  [7] *((const byte*) BORDER_COLOR) ← (const byte) DARK_GREY
   [8] (volatile byte) irq_raster_next ← (volatile byte) irq_raster_next + (byte) $15
   [9] (byte) irq::raster_next#0 ← (volatile byte) irq_raster_next
   [10] (byte~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7
@@ -151,7 +151,7 @@ irq::@2: scope:[irq]  from irq
 irq::@1: scope:[irq]  from irq irq::@2
   [13] (byte) irq::raster_next#2 ← phi( irq/(byte) irq::raster_next#0 irq::@2/(byte) irq::raster_next#1 )
   [14] *((const byte*) RASTER) ← (byte) irq::raster_next#2
-  [15] *((const byte*) BORDERCOL) ← (const byte) BLACK
+  [15] *((const byte*) BORDER_COLOR) ← (const byte) BLACK
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1
   [16] return 
@@ -191,7 +191,7 @@ Target platform is c64basic / MOS6502X
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 3
   // @begin
@@ -235,9 +235,9 @@ irq: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [7] *((const byte*) BORDERCOL) ← (const byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) BORDER_COLOR) ← (const byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
-    sta BORDERCOL
+    sta BORDER_COLOR
     // [8] (volatile byte) irq_raster_next ← (volatile byte) irq_raster_next + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
     axs #-[$15]
@@ -269,9 +269,9 @@ irq: {
     // [14] *((const byte*) RASTER) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuz1 
     lda.z raster_next
     sta RASTER
-    // [15] *((const byte*) BORDERCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) BORDER_COLOR) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __breturn
     // irq::@return
   __breturn:
@@ -289,9 +289,9 @@ irq: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (volatile byte) irq_raster_next ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const byte*) BORDERCOL) ← (const byte) DARK_GREY [ irq_raster_next ] (  [ irq_raster_next ] { }  ) always clobbers reg byte a 
+Statement [7] *((const byte*) BORDER_COLOR) ← (const byte) DARK_GREY [ irq_raster_next ] (  [ irq_raster_next ] { }  ) always clobbers reg byte a 
 Statement [8] (volatile byte) irq_raster_next ← (volatile byte) irq_raster_next + (byte) $15 [ irq_raster_next ] (  [ irq_raster_next ] { }  ) always clobbers reg byte a reg byte x 
-Statement [15] *((const byte*) BORDERCOL) ← (const byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [15] *((const byte*) BORDER_COLOR) ← (const byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [16] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ irq_raster_next ] : zp[1]:3 , 
@@ -323,7 +323,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
   // @begin
@@ -364,9 +364,9 @@ irq: {
     // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
-    // [7] *((const byte*) BORDERCOL) ← (const byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    // [7] *((const byte*) BORDER_COLOR) ← (const byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
-    sta BORDERCOL
+    sta BORDER_COLOR
     // [8] (volatile byte) irq_raster_next ← (volatile byte) irq_raster_next + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
     axs #-[$15]
@@ -394,9 +394,9 @@ irq: {
   __b1:
     // [14] *((const byte*) RASTER) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-    // [15] *((const byte*) BORDERCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [15] *((const byte*) BORDER_COLOR) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __breturn
     // irq::@return
   __breturn:
@@ -442,7 +442,7 @@ FINAL SYMBOL TABLE
 (label) @begin
 (label) @end
 (const byte) BLACK = (byte) 0
-(const byte*) BORDERCOL = (byte*) 53280
+(const byte*) BORDER_COLOR = (byte*) 53280
 (const byte) DARK_GREY = (byte) $b
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
 (const byte*) RASTER = (byte*) 53266
@@ -476,7 +476,7 @@ Score: 159
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
   // @begin
@@ -511,10 +511,10 @@ irq: {
     // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
     stx regx+1
-    // *BORDERCOL = DARK_GREY
-    // [7] *((const byte*) BORDERCOL) ← (const byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    // *BORDER_COLOR = DARK_GREY
+    // [7] *((const byte*) BORDER_COLOR) ← (const byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
-    sta BORDERCOL
+    sta BORDER_COLOR
     // irq_raster_next += 21
     // [8] (volatile byte) irq_raster_next ← (volatile byte) irq_raster_next + (byte) $15 -- vbuz1=vbuz1_plus_vbuc1 
     lax.z irq_raster_next
@@ -542,10 +542,10 @@ irq: {
     // *RASTER = raster_next
     // [14] *((const byte*) RASTER) ← (byte) irq::raster_next#2 -- _deref_pbuc1=vbuxx 
     stx RASTER
-    // *BORDERCOL = BLACK
-    // [15] *((const byte*) BORDERCOL) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
+    // *BORDER_COLOR = BLACK
+    // [15] *((const byte*) BORDER_COLOR) ← (const byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BORDERCOL
+    sta BORDER_COLOR
     // irq::@return
     // }
     // [16] return  - exit interrupt(HARDWARE_CLOBBER)

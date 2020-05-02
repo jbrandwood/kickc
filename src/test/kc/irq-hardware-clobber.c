@@ -10,7 +10,7 @@ const byte IRQ_RASTER = %00000001;
 const byte IRQ_COLLISION_BG = %00000010;
 const byte IRQ_COLLISION_SPRITE = %00000100;
 const byte IRQ_LIGHTPEN = %00001000;
-byte* const BGCOL = $d020;
+byte* const BG_COLOR = $d020;
 byte* const FGCOL = $d021;
 const byte WHITE = 1;
 const byte BLACK = 0;
@@ -51,8 +51,8 @@ void main() {
 
 // Interrupt Routine
 interrupt(hardware_clobber) void irq() {
-    *BGCOL = WHITE;
-    *BGCOL = BLACK;
+    *BG_COLOR = WHITE;
+    *BG_COLOR = BLACK;
     // Acknowledge the IRQ
     *IRQ_STATUS = IRQ_RASTER;
 }

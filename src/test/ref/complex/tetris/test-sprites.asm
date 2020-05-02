@@ -22,7 +22,7 @@
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
@@ -130,8 +130,8 @@ main: {
     tya
     sec
     sbc #3
-    // SPRITES_COLS[s] = s-3
-    sta SPRITES_COLS,y
+    // SPRITES_COLOR[s] = s-3
+    sta SPRITES_COLOR,y
     // PLAYFIELD_SPRITE_PTRS_1[s] = toSpritePtr(SIN_SPRITE)
     lda #toSpritePtr1_return
     sta PLAYFIELD_SPRITE_PTRS_1,y
@@ -255,9 +255,9 @@ sprites_init: {
     // SPRITES_XPOS[s2] = xpos
     lda.z xpos
     sta SPRITES_XPOS,x
-    // SPRITES_COLS[s] = BLACK
+    // SPRITES_COLOR[s] = BLACK
     lda #BLACK
-    sta SPRITES_COLS,y
+    sta SPRITES_COLOR,y
     // xpos = xpos+24
     lax.z xpos
     axs #-[$18]
@@ -278,7 +278,7 @@ sprites_irq: {
     sta rega+1
     stx regx+1
     // asm
-    //(*BGCOL)++;
+    //(*BG_COLOR)++;
     // Clear decimal flag (because it is used by the score algorithm)
     cld
     // ypos = irq_sprite_ypos

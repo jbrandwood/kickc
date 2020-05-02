@@ -7,6 +7,6 @@
 void main() {
     dword result = mul16u(4,123);
     word kaputt = <result;
-    *BORDERCOL = <kaputt;
-    *BGCOL = >kaputt;
+    *BORDER_COLOR = <kaputt;
+    *BG_COLOR = >kaputt;
 }

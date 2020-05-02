@@ -47,7 +47,7 @@ void main() {
     }
     while(true) {
         while(*RASTER!=$ff) {}
-        (*BORDERCOL)++;
+        (*BORDER_COLOR)++;
     }
 }
 

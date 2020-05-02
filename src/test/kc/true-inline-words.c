@@ -9,11 +9,11 @@ void main() {
 
     // Test the result
     byte* pos = $501;
-    byte* bgcol = $d021;
+    byte* BG_COLOR = $d021;
     if(*pos=='m') {
-        *bgcol = 5;
+        *BG_COLOR = 5;
     } else {
-        *bgcol = 2;
+        *BG_COLOR = 2;
     }
 }
 

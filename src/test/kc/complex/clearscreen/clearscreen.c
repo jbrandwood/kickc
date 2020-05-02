@@ -181,7 +181,7 @@ void processChars() {
                 // Enable the sprite
                 *SPRITES_ENABLE |= bitmask;
                 // Set the sprite color
-                SPRITES_COLS[processing->id] = processing->col;
+                SPRITES_COLOR[processing->id] = processing->col;
                 // Set sprite pointer
                 *(SCREEN+SPRITE_PTRS+processing->id) = processing->ptr;
                 // Set status
@@ -274,7 +274,7 @@ void initSprites() {
     for( char* sp = SPRITE_DATA; sp<SPRITE_DATA+NUM_PROCESSING*64; sp++) *sp = 0;
     // Initialize sprite registers
     for( char i: 0..7) {
-        SPRITES_COLS[i] = LIGHT_BLUE;
+        SPRITES_COLOR[i] = LIGHT_BLUE;
     }
     *SPRITES_MC = 0;
     *SPRITES_EXPAND_X = 0;
@@ -308,11 +308,11 @@ const char RASTER_IRQ_TOP = 0x30;
 interrupt(hardware_all) void irqTop() {
     if(DEBUG) {
         for( char i: 0..4) {}
-        *BORDERCOL = WHITE;
-        *BGCOL = WHITE;
+        *BORDER_COLOR = WHITE;
+        *BG_COLOR = WHITE;
         for( char i: 0..7) {}
-        *BORDERCOL = LIGHT_BLUE;
-        *BGCOL = BLUE;
+        *BORDER_COLOR = LIGHT_BLUE;
+        *BG_COLOR = BLUE;
     }
 
     // Trigger IRQ at the middle of the screen
@@ -328,13 +328,13 @@ const char RASTER_IRQ_MIDDLE = 0xff;
 interrupt(hardware_all) void irqBottom() {
     if(DEBUG) {
         for( char i: 0..4) {}
-        *BORDERCOL = WHITE;
-        *BGCOL = WHITE;
+        *BORDER_COLOR = WHITE;
+        *BG_COLOR = WHITE;
     }
     processChars();
     if(DEBUG) {
-        *BORDERCOL = LIGHT_BLUE;
-        *BGCOL = BLUE;
+        *BORDER_COLOR = LIGHT_BLUE;
+        *BG_COLOR = BLUE;
     }
 
     // Trigger IRQ at the top of the screen

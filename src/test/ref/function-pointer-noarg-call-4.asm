@@ -14,9 +14,9 @@ main: {
     jmp __b2
 }
 fn1: {
-    .label BORDERCOL = $d020
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // }
     rts
 }

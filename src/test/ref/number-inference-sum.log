@@ -16,7 +16,7 @@ main: scope:[main]  from @1
   if((bool~) main::$3) goto main::@return
   to:main::@1
 main::@1: scope:[main]  from main
-  *((const nomodify byte*) main::bgcol) ← (const nomodify byte) main::RED
+  *((const nomodify byte*) main::BG_COLOR) ← (const nomodify byte) main::RED
   to:main::@return
 main::@return: scope:[main]  from main main::@1
   return 
@@ -42,11 +42,11 @@ SYMBOL TABLE SSA
 (number~) main::$4
 (label) main::@1
 (label) main::@return
+(const nomodify byte*) main::BG_COLOR = (byte*)(number) $d020
 (const nomodify byte) main::RED = (byte) 2
 (const byte) main::b1 = (byte) $fa
 (byte) main::b2
 (byte) main::b2#0
-(const nomodify byte*) main::bgcol = (byte*)(number) $d020
 (const nomodify word*) main::screen = (word*)(number) $400
 (word) main::w
 (word) main::w#0
@@ -130,7 +130,7 @@ main: scope:[main]  from @1
   [4] *((const nomodify word*) main::screen) ← (const word) main::w#0
   to:main::@1
 main::@1: scope:[main]  from main
-  [5] *((const nomodify byte*) main::bgcol) ← (const nomodify byte) main::RED
+  [5] *((const nomodify byte*) main::BG_COLOR) ← (const nomodify byte) main::RED
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
@@ -176,7 +176,7 @@ main: {
     .const b2 = b1+$fa
     .const w = b2+1
     .label screen = $400
-    .label bgcol = $d020
+    .label BG_COLOR = $d020
     // [4] *((const nomodify word*) main::screen) ← (const word) main::w#0 -- _deref_pwuc1=vwuc2 
     lda #<w
     sta screen
@@ -185,9 +185,9 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] *((const nomodify byte*) main::bgcol) ← (const nomodify byte) main::RED -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::BG_COLOR) ← (const nomodify byte) main::RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta bgcol
+    sta BG_COLOR
     jmp __breturn
     // main::@return
   __breturn:
@@ -198,7 +198,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((const nomodify word*) main::screen) ← (const word) main::w#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) main::bgcol) ← (const nomodify byte) main::RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) main::BG_COLOR) ← (const nomodify byte) main::RED [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -237,7 +237,7 @@ main: {
     .const b2 = b1+$fa
     .const w = b2+1
     .label screen = $400
-    .label bgcol = $d020
+    .label BG_COLOR = $d020
     // [4] *((const nomodify word*) main::screen) ← (const word) main::w#0 -- _deref_pwuc1=vwuc2 
     lda #<w
     sta screen
@@ -246,9 +246,9 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] *((const nomodify byte*) main::bgcol) ← (const nomodify byte) main::RED -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) main::BG_COLOR) ← (const nomodify byte) main::RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta bgcol
+    sta BG_COLOR
     jmp __breturn
     // main::@return
   __breturn:
@@ -284,11 +284,11 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@1
 (label) main::@return
+(const nomodify byte*) main::BG_COLOR = (byte*) 53280
 (const nomodify byte) main::RED = (byte) 2
 (const byte) main::b1 = (byte) $fa
 (byte) main::b2
 (const byte) main::b2#0 b2 = (const byte) main::b1+(byte) $fa
-(const nomodify byte*) main::bgcol = (byte*) 53280
 (const nomodify word*) main::screen = (word*) 1024
 (word) main::w
 (const word) main::w#0 w = (const byte) main::b2#0+(byte) 1
@@ -319,7 +319,7 @@ main: {
     .const b2 = b1+$fa
     .const w = b2+1
     .label screen = $400
-    .label bgcol = $d020
+    .label BG_COLOR = $d020
     // screen[0] = w
     // [4] *((const nomodify word*) main::screen) ← (const word) main::w#0 -- _deref_pwuc1=vwuc2 
     lda #<w
@@ -327,10 +327,10 @@ main: {
     lda #>w
     sta screen+1
     // main::@1
-    // *bgcol = RED
-    // [5] *((const nomodify byte*) main::bgcol) ← (const nomodify byte) main::RED -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = RED
+    // [5] *((const nomodify byte*) main::BG_COLOR) ← (const nomodify byte) main::RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta bgcol
+    sta BG_COLOR
     // main::@return
     // }
     // [6] return 

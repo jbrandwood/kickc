@@ -4,7 +4,7 @@
 .pc = $80d "Program"
   .label control = $d011
   .label raster = $d012
-  .label bordercol = $d020
+  .label BORDER_COLOR = $d020
 main: {
     .label __1 = 6
     .label time_start = 7
@@ -25,9 +25,9 @@ main: {
     // while (rst!=0x30)
     cmp #$30
     bne __b1
-    // *bordercol = 1
+    // *BORDER_COLOR = 1
     lda #1
-    sta bordercol
+    sta BORDER_COLOR
     // time_start = *raster
     lda raster
     sta.z time_start
@@ -40,8 +40,8 @@ main: {
     sta.z utoa16w.value
     sta.z utoa16w.value+1
     jsr utoa16w
-    // (*bordercol)++;
-    inc bordercol
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // utoa16w(01234, screen)
     lda #<$400+$28
     sta.z utoa16w.dst
@@ -52,8 +52,8 @@ main: {
     lda #>$4d2
     sta.z utoa16w.value+1
     jsr utoa16w
-    // (*bordercol)++;
-    inc bordercol
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // utoa16w(05678, screen)
     lda #<$400+$28+$28
     sta.z utoa16w.dst
@@ -64,8 +64,8 @@ main: {
     lda #>$162e
     sta.z utoa16w.value+1
     jsr utoa16w
-    // (*bordercol)++;
-    inc bordercol
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // utoa16w(09999, screen)
     lda #<$400+$28+$28+$28
     sta.z utoa16w.dst
@@ -76,8 +76,8 @@ main: {
     lda #>$270f
     sta.z utoa16w.value+1
     jsr utoa16w
-    // (*bordercol)++;
-    inc bordercol
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // utoa16w(58888, screen)
     lda #<$400+$28+$28+$28+$28
     sta.z utoa16w.dst
@@ -90,9 +90,9 @@ main: {
     jsr utoa16w
     // time_end = *raster
     ldx raster
-    // *bordercol = 0
+    // *BORDER_COLOR = 0
     lda #0
-    sta bordercol
+    sta BORDER_COLOR
     // time = time_end - time_start
     txa
     sec

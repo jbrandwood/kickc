@@ -15,11 +15,11 @@ void main() {
 }
 
 void fn1() {
-    byte* const BORDERCOL = $d020;
-    (*BORDERCOL)++;
+    byte* const BORDER_COLOR = $d020;
+    (*BORDER_COLOR)++;
 }
 
 void fn2() {
-    byte* const BGCOL = $d021;
-    (*BGCOL)++;
+    byte* const BG_COLOR = $d021;
+    (*BG_COLOR)++;
 }

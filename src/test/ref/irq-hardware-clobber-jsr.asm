@@ -15,8 +15,8 @@
   .const WHITE = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -65,8 +65,8 @@ main: {
     // asm
     cli
   __b1:
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     jmp __b1
 }
 // Interrupt Routine
@@ -80,12 +80,12 @@ irq: {
     rti
 }
 do_irq: {
-    // *BGCOL = WHITE
+    // *BG_COLOR = WHITE
     lda #WHITE
-    sta BGCOL
-    // *BGCOL = BLACK
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER

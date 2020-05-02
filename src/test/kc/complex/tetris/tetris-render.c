@@ -51,11 +51,11 @@ void render_init() {
 	vicSelectGfxBank(PLAYFIELD_CHARSET);
 	// Enable Extended Background Color Mode
 	*D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
-	*BORDERCOL = BLACK;
-	*BGCOL1 = BLACK;
-	*BGCOL2 = PIECES_COLORS_1[0];
-	*BGCOL3 = PIECES_COLORS_2[0];
-	*BGCOL4 = GREY;
+	*BORDER_COLOR = BLACK;
+	*BG_COLOR = BLACK;
+	*BG_COLOR1 = PIECES_COLORS_1[0];
+	*BG_COLOR2 = PIECES_COLORS_2[0];
+	*BG_COLOR3 = GREY;
 
     // Setup chars on the screens
 	render_screen_original(PLAYFIELD_SCREEN_1);
@@ -85,8 +85,8 @@ void render_show() {
         d018val = toD018(PLAYFIELD_SCREEN_2, PLAYFIELD_CHARSET);
     }
 	*D018 = d018val;
-	*BGCOL2 = PIECES_COLORS_1[level];
-	*BGCOL3 = PIECES_COLORS_2[level];
+	*BG_COLOR1 = PIECES_COLORS_1[level];
+	*BG_COLOR2 = PIECES_COLORS_2[level];
 	render_screen_showing = render_screen_show;
 }
 

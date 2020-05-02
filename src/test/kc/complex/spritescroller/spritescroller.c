@@ -58,7 +58,7 @@ void main() {
     // Enable & initialize sprites
     *SPRITES_ENABLE = 0xff;
     for(char s: 0..7) {
-        SPRITES_COLS[s] = WHITE;
+        SPRITES_COLOR[s] = WHITE;
     }
 
     // Move the sprites
@@ -86,12 +86,12 @@ void main() {
         while(!frame_done) {
         }
         frame_done = false;
-        //*BORDERCOL = RED;
+        //*BORDER_COLOR = RED;
         // Move the sprites
         plex_move();
         // Sort the sprites by y-position
         plexSort();
-        //*BORDERCOL = BLACK;
+        //*BORDER_COLOR = BLACK;
     }
 }
 
@@ -138,7 +138,7 @@ volatile bool frame_done = false;
 // Show sprites from the multiplexer, rescheduling the IRQ as many times as needed
 interrupt(kernel_min) void plex_irq() {
     asm { sei }
-    //*BORDERCOL = WHITE;
+    //*BORDER_COLOR = WHITE;
     // Show sprites until finding one that should not be shown until a few raster lines later
     char rasterY;
     do {
@@ -157,7 +157,7 @@ interrupt(kernel_min) void plex_irq() {
     }
     // Acknowledge the IRQ
     *IRQ_STATUS = IRQ_RASTER;
-    //*BORDERCOL = 0;
+    //*BORDER_COLOR = 0;
     asm { cli }
 }
 

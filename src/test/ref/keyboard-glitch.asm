@@ -2,7 +2,7 @@
 // The glitch is caused by the "normal" C64 interrupt occuring just as the keyboard is read.
 // Press "I" to disable interrupts (red border)
 // Press "E" to enable interrupts (green border)
-// Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
+// Press "C" to enter pressed state (increaded BG_COLOR) - and "SPACE" to leave presssed state again.
 // Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
 // but never when they are disabled (red border)
 .pc = $801 "Basic"
@@ -15,15 +15,15 @@
   .const RED = 2
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
 main: {
-    // *BORDERCOL = GREEN
+    // *BORDER_COLOR = GREEN
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
   __b1:
     // menu()
     jsr menu
@@ -50,9 +50,9 @@ menu: {
     // if(keyboard_key_pressed(KEY_I)!=0)
     cmp #0
     beq __b3
-    // *BORDERCOL = RED
+    // *BORDER_COLOR = RED
     lda #RED
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm
     sei
     rts
@@ -64,9 +64,9 @@ menu: {
     // if(keyboard_key_pressed(KEY_E)!=0)
     cmp #0
     beq __b4
-    // *BORDERCOL = GREEN
+    // *BORDER_COLOR = GREEN
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm
     cli
     rts
@@ -115,8 +115,8 @@ keyboard_matrix_read: {
     rts
 }
 pressed: {
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
   __b1:
     // keyboard_key_pressed(KEY_SPACE)
     ldx #KEY_SPACE

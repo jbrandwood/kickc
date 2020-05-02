@@ -17,7 +17,7 @@ void main() {
     *HARDWARE_IRQ = &irq;
     asm { cli }
     while(true) {
-        (*BORDERCOL)++;
+        (*BORDER_COLOR)++;
     }
 }
 
@@ -27,8 +27,8 @@ interrupt(hardware_clobber) void irq() {
 }
 
 void do_irq() {
-    *BGCOL = WHITE;
-    *BGCOL = BLACK;
+    *BG_COLOR = WHITE;
+    *BG_COLOR = BLACK;
     // Acknowledge the IRQ
     *IRQ_STATUS = IRQ_RASTER;
 }

@@ -15,7 +15,7 @@
   .label RASTER = $d012
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label COLS = $d800
 __bbegin:
 .segment Code
@@ -64,14 +64,14 @@ main: {
     lda #$42
     cmp RASTER
     beq __b4
-    // *BGCOL = BLACK
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
   __b4:
-    // *BGCOL = WHITE
+    // *BG_COLOR = WHITE
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
   __b2:
     // *sc++ = *msg++

@@ -1,7 +1,7 @@
 // Tests that long branch fixing works with interrupt exits (to $ea81)
 
 void()** const  KERNEL_IRQ = $0314;
-byte* const BGCOL = $d020;
+byte* const BG_COLOR = $d020;
 volatile byte col = 0;
 
 void main() {
@@ -17,7 +17,7 @@ interrupt(kernel_min) void irq() {
     asm {
         lda $dc0d
     }
-    *BGCOL = col;
+    *BG_COLOR = col;
     if(col!=0) {
         col++;
     }

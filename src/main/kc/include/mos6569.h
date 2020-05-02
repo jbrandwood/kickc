@@ -62,7 +62,7 @@ const unsigned int SPRITE_PTRS = $3f8;
 char * const SPRITES_XPOS = $d000;
 char * const SPRITES_YPOS = $d001;
 char * const SPRITES_XMSB = $d010;
-char * const SPRITES_COLS = $d027;
+char * const SPRITES_COLOR = $d027;
 char*  const SPRITES_ENABLE = $d015;
 char*  const SPRITES_EXPAND_Y = $d017;
 char*  const SPRITES_PRIORITY = $d01b;
@@ -70,12 +70,12 @@ char*  const SPRITES_MC = $d01c;
 char*  const SPRITES_EXPAND_X = $d01d;
 
 char*  const RASTER = $d012;
-char*  const BORDERCOL = $d020;
-char*  const BGCOL = $d021;
-char*  const BGCOL1 = $d021;
-char*  const BGCOL2 = $d022;
-char*  const BGCOL3 = $d023;
-char*  const BGCOL4 = $d024;
+char*  const BORDER_COLOR = $d020;
+char*  const BG_COLOR = $d021;
+char*  const BG_COLOR0 = $d021;
+char*  const BG_COLOR1 = $d022;
+char*  const BG_COLOR2 = $d023;
+char*  const BG_COLOR3 = $d024;
 char*  const SPRITES_MC1 = $d025;
 char*  const SPRITES_MC2 = $d026;
 

@@ -76,10 +76,10 @@ main::@7: scope:[main]  from main::@3
   if((bool~) main::$3) goto main::@5
   to:main::@4
 main::@5: scope:[main]  from main::@7
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) GREEN
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) GREEN
   to:main::@1
 main::@4: scope:[main]  from main::@7
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLUE
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -96,7 +96,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte) BLUE = (byte) 6
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) GREEN = (byte) 5
@@ -368,10 +368,10 @@ main::@5: scope:[main]  from main::@2
   [11] if((byte~) main::$2!=(byte) 0) goto main::@4
   to:main::@3
 main::@3: scope:[main]  from main::@5
-  [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE
+  [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLUE
   to:main::@1
 main::@4: scope:[main]  from main::@5
-  [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) GREEN
+  [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) GREEN
   to:main::@1
 
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
@@ -547,7 +547,7 @@ Target platform is c64basic / MOS6502X
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // @begin
@@ -603,15 +603,15 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
     // main::@4
   __b4:
-    // [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
 }
   // keyboard_key_pressed
@@ -693,8 +693,8 @@ keyboard_init: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [6] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLUE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [20] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask+(const byte) keyboard_key_pressed::rowidx#0) [ ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [21] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::keyboard_key_pressed:8::keyboard_matrix_read:15 [ keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [23] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff [ ] ( main:2::keyboard_init:5 [ ] { }  ) always clobbers reg byte a 
@@ -740,7 +740,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // @begin
@@ -790,15 +790,15 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
     // main::@4
   __b4:
-    // [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
 }
   // keyboard_key_pressed
@@ -904,7 +904,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte) BLUE = (byte) 6
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) GREEN = (byte) 5
@@ -1053,7 +1053,7 @@ Score: 1141
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR = 3
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   // @begin
@@ -1090,17 +1090,17 @@ main: {
     cmp #0
     bne __b4
     // main::@3
-    // *BGCOL = BLUE
-    // [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = BLUE
+    // [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
     lda #BLUE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
     // main::@4
   __b4:
-    // *BGCOL = GREEN
-    // [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = GREEN
+    // [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
 }
   // keyboard_key_pressed

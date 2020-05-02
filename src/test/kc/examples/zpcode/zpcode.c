@@ -5,7 +5,7 @@
 #pragma link("zpcode.ld")
 
 char* RASTER = 0xd012;
-char* BGCOL = 0xd020;
+char* BG_COLOR = 0xd020;
 
 void main() {
     asm { sei }
@@ -20,14 +20,14 @@ void main() {
         loop();
         // Call code on zeropage
         zpLoop();
-        *BGCOL = 0;
+        *BG_COLOR = 0;
     }
 }
 
 // Code in "normal" memory
 void loop() {
     for(char i:0..100) {
-        (*BGCOL)--;
+        (*BG_COLOR)--;
     }
 }
 
@@ -41,6 +41,6 @@ char zpCodeData[] = kickasm {{
 #pragma code_seg(ZpCode)
 void zpLoop() {
     for(char i:0..100) {
-        (*BGCOL)++;
+        (*BG_COLOR)++;
     }
 }

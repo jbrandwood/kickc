@@ -41,7 +41,7 @@ void main() {
         if(r>=512*12+256) break;
     }
     while(true)
-        (*BORDERCOL)++;
+        (*BORDER_COLOR)++;
 }
 
 // Counts frames - updated by the IRQ
@@ -67,9 +67,9 @@ void init_irq() {
 
 // Interrupt Routine counting frames
 interrupt(hardware_clobber) void irq() {
-    *BGCOL = WHITE;
+    *BG_COLOR = WHITE;
     if(frame_cnt) frame_cnt++;
-    *BGCOL = BLACK;
+    *BG_COLOR = BLACK;
     // Acknowledge the IRQ
     *IRQ_STATUS = IRQ_RASTER;
 }

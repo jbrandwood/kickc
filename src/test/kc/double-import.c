@@ -2,5 +2,5 @@
 #include "imported.c"
 
 void main() {
-    *BGCOL = RED;
+    *BG_COLOR = RED;
 }

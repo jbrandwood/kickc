@@ -5,16 +5,16 @@
   .const OFFSET_STRUCT_SCREEN_COLORS_BG0 = 1
   .const SIZEOF_STRUCT_SCREEN_COLORS = 5
   // The border color
-  .label BORDERCOL = COLORS
+  .label BORDER_COLOR = COLORS
   // The background color
-  .label BGCOL = COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
+  .label BG_COLOR = COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
 main: {
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     lda #0
-    sta BORDERCOL
-    // *BGCOL = 6
+    sta BORDER_COLOR
+    // *BG_COLOR = 6
     lda #6
-    sta BGCOL
+    sta BG_COLOR
     // }
     rts
 }

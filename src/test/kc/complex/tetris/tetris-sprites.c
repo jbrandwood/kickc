@@ -28,7 +28,7 @@ void sprites_init() {
     for(char s:0..3) {
     	char s2 = s*2;
 		SPRITES_XPOS[s2] = xpos;
-		SPRITES_COLS[s] = BLACK;
+		SPRITES_COLOR[s] = BLACK;
 		xpos = xpos+24;
     }
 }
@@ -74,7 +74,7 @@ void sprites_irq_init() {
 // Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 interrupt(hardware_clobber) void sprites_irq() {
-    //(*BGCOL)++;
+    //(*BG_COLOR)++;
     // Clear decimal flag (because it is used by the score algorithm)
     asm { cld }
     // Place the sprites
@@ -125,5 +125,5 @@ interrupt(hardware_clobber) void sprites_irq() {
     // Acknowledge the IRQ and setup the next one
     *IRQ_STATUS = IRQ_RASTER;
 
-    //(*BGCOL)--;
+    //(*BG_COLOR)--;
 }

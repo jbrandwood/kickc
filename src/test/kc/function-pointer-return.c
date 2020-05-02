@@ -18,13 +18,13 @@ void main() {
 }
 
 byte fn1() {
-    byte* const BORDERCOL = $d020;
-    (*BORDERCOL)++;
-    return *BORDERCOL;
+    byte* const BORDER_COLOR = $d020;
+    (*BORDER_COLOR)++;
+    return *BORDER_COLOR;
 }
 
 byte fn2() {
-    byte* const BGCOL = $d021;
-    (*BGCOL)++;
-    return *BGCOL;
+    byte* const BG_COLOR = $d021;
+    (*BG_COLOR)++;
+    return *BG_COLOR;
 }

@@ -1,2 +1,2 @@
-byte * const BGCOL = $d021;
+byte * const BG_COLOR = $d021;
 const byte RED = 2;

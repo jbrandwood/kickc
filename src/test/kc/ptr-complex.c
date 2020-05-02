@@ -28,8 +28,8 @@ void main() {
     --*(byte*)($d000+$21);
 
     // Increment on a const named pointer
-    byte* BGCOL = $d020;
-    ++*BGCOL;
+    byte* BG_COLOR = $d020;
+    ++*BG_COLOR;
 
 
 }

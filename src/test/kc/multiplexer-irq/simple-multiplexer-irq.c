@@ -36,7 +36,7 @@ void init() {
     // Enable & initialize sprites
     *SPRITES_ENABLE = 0xff;
     for(char ss: 0..7) {
-        SPRITES_COLS[ss] = GREEN;
+        SPRITES_COLOR[ss] = GREEN;
     }
     // enable the interrupt
     asm { sei }
@@ -53,7 +53,7 @@ volatile bool framedone = true;
 
 interrupt(kernel_min) void plex_irq() {
     asm { sei }
-    *BORDERCOL = WHITE;
+    *BORDER_COLOR = WHITE;
     char rasterY;
     do {
         plexShowSprite();
@@ -66,7 +66,7 @@ interrupt(kernel_min) void plex_irq() {
         *RASTER = 0x0;
         framedone = true;
     }
-    *BORDERCOL = 0; 
+    *BORDER_COLOR = 0;
     asm { cli }
 }
 
@@ -76,7 +76,7 @@ void loop() {
     char sin_idx = 0;
     while(true) {
         while(!framedone) { }
-        *BORDERCOL = RED;
+        *BORDER_COLOR = RED;
         // Assign sinus positions
         char y_idx = sin_idx;
         for(char sy: 0..PLEX_COUNT-1) {
@@ -85,9 +85,9 @@ void loop() {
         }
         sin_idx +=1;
         // Sort the sprites by y-position
-        (*BORDERCOL)++;
+        (*BORDER_COLOR)++;
         plexSort();
-        *BORDERCOL = GREEN;
+        *BORDER_COLOR = GREEN;
         framedone = false;
 
     }

@@ -25,7 +25,7 @@ void main() {
 	while(true) {
 		// Wait for a frame to pass
 		while(*RASTER!=0xff) {}
-		//*BORDERCOL = render_screen_show/0x10;
+		//*BORDER_COLOR = render_screen_show/0x10;
 		// Update D018 to show the selected screen
         render_show();
 		// Scan keyboard events
@@ -36,7 +36,7 @@ void main() {
 		    render = play_movement(key_event);
 		} else {
 		    while(true) {
-		        (*BORDERCOL)++;
+		        (*BORDER_COLOR)++;
 		    }
 		}
 		if(render!=0) {
@@ -46,6 +46,6 @@ void main() {
 			render_score();
 			render_screen_swap();
 		}
-		//*BORDERCOL = 0;
+		//*BORDER_COLOR = 0;
 	}
 }

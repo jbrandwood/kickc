@@ -66,8 +66,8 @@ void menu() {
     // Char Colors
     for(byte* c=COLS;c!=COLS+1000;c++) *c=LIGHT_GREEN;
     // Screen colors
-    *BGCOL = 0;
-    *BORDERCOL = 0;
+    *BG_COLOR = 0;
+    *BORDER_COLOR = 0;
     // Display menu Text
     print_set_screen(SCREEN);
     print_cls();
@@ -173,7 +173,7 @@ void mode_ctrl() {
         if(ctrl != dtv_control) {
             dtv_control = ctrl;
             *DTV_CONTROL = ctrl;
-            *BORDERCOL = ctrl;
+            *BORDER_COLOR = ctrl;
         }
     }
 }
@@ -184,7 +184,7 @@ void mode_ctrl() {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 // Pixel Shifter (1)
-// - 0: 4bpp BgColor0[3:0]
+// - 0: 4bpp BG_COLORor0[3:0]
 // - 1: 4bpp ColorData[3:0]
 void mode_stdchar() {
     byte* const SCREEN = $8000;
@@ -211,8 +211,8 @@ void mode_stdchar() {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
     }
     // Screen colors
-    *BGCOL = 0;
-    *BORDERCOL = 0;
+    *BG_COLOR = 0;
+    *BORDER_COLOR = 0;
     // Char Colors and screen chars
     byte* col=COLORS;
     byte* ch=SCREEN;
@@ -232,10 +232,10 @@ void mode_stdchar() {
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] ) 
 // GfxData Pixel Shifter (1)
 //  - 0: 4bpp Background Color
-//    - CharData[7:6] 00: 4bpp BgColor0[3:0]
-//    - CharData[7:6] 01: 4bpp BgColor1[3:0]
-//    - CharData[7:6] 10: 4bpp BgColor2[3:0]
-//    - CharData[7:6] 11: 4bpp BgColor3[3:0]
+//    - CharData[7:6] 00: 4bpp BG_COLORor0[3:0]
+//    - CharData[7:6] 01: 4bpp BG_COLORor1[3:0]
+//    - CharData[7:6] 10: 4bpp BG_COLORor2[3:0]
+//    - CharData[7:6] 11: 4bpp BG_COLORor3[3:0]
 //  - 1: 4bpp ColorData[3:0]
 void mode_ecmchar() {
     byte* const SCREEN = $8000;
@@ -262,11 +262,11 @@ void mode_ecmchar() {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
     }
     // Screen colors
-    *BORDERCOL = 0;
-    *BGCOL1 = 0;
-    *BGCOL2 = 2;
-    *BGCOL3 = 5;
-    *BGCOL4 = 6;
+    *BORDER_COLOR = 0;
+    *BG_COLOR = 0;
+    *BG_COLOR1 = 2;
+    *BG_COLOR2 = 5;
+    *BG_COLOR3 = 6;
     // Char Colors and screen chars
     byte* col=COLORS;
     byte* ch=SCREEN;
@@ -286,12 +286,12 @@ void mode_ecmchar() {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 // GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
-//  - 0: 4bpp BgColor0[3:0]
+//  - 0: 4bpp BG_COLORor0[3:0]
 //  - 1: 4bpp ColorData[2:0]
 // GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
-//  - 00: 4bpp BgColor0[3:0]
-//  - 01: 4bpp BgColor1[3:0]
-//  - 10: 4bpp BgColor2[3:0]
+//  - 00: 4bpp BG_COLORor0[3:0]
+//  - 01: 4bpp BG_COLORor1[3:0]
+//  - 10: 4bpp BG_COLORor2[3:0]
 //  - 11: 4bpp ColorData[2:0]// Standard Character Mode (LINEAR/HICOL/CHUNK/COLDIS/ECM/MCM/BMM = 0)
 void mode_mcchar() {
     byte* const SCREEN = $8000;
@@ -318,10 +318,10 @@ void mode_mcchar() {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
     }
     // Screen colors
-    *BORDERCOL = 0;
-    *BGCOL1 = BLACK;
-    *BGCOL2 = GREEN;
-    *BGCOL3 = BLUE;
+    *BORDER_COLOR = 0;
+    *BG_COLOR = BLACK;
+    *BG_COLOR1 = GREEN;
+    *BG_COLOR2 = BLUE;
     // Char Colors and screen chars
     byte* col=COLORS;
     byte* ch=SCREEN;
@@ -364,8 +364,8 @@ void mode_stdbitmap() {
         DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i];
     }
     // Screen colors
-    *BGCOL = BLACK;
-    *BORDERCOL = BLACK;
+    *BG_COLOR = BLACK;
+    *BORDER_COLOR = BLACK;
     // Bitmap Colors
     byte* ch=SCREEN;
     for(byte cy: 0..24 ) {
@@ -393,7 +393,7 @@ void mode_stdbitmap() {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 // Pixel Shifter (1)
-//  - 0: 8bpp BgColor0[7:0]
+//  - 0: 8bpp BG_COLORor0[7:0]
 //  - 1: 8bpp ColorData[7:0]
 void mode_hicolstdchar() {
     byte* const SCREEN = $8000;
@@ -420,8 +420,8 @@ void mode_hicolstdchar() {
          DTV_PALETTE[i] = i;
      }
     // Screen colors
-    *BGCOL = 0;
-    *BORDERCOL = 0;
+    *BG_COLOR = 0;
+    *BORDER_COLOR = 0;
     // Char Colors and screen chars
     byte* col=COLORS;
     byte* ch=SCREEN;
@@ -443,10 +443,10 @@ void mode_hicolstdchar() {
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & "00" & CharData[5:0] & RowCounter[2:0] )
 // GfxData Pixel Shifter (1)
 //  - 0: 8bpp Background Color
-//    - CharData[7:6] 00: 8bpp BgColor0[7:0]
-//    - CharData[7:6] 01: 8bpp BgColor1[7:0]
-//    - CharData[7:6] 10: 8bpp BgColor2[7:0]
-//    - CharData[7:6] 11: 8bpp BgColor3[7:0]
+//    - CharData[7:6] 00: 8bpp BG_COLORor0[7:0]
+//    - CharData[7:6] 01: 8bpp BG_COLORor1[7:0]
+//    - CharData[7:6] 10: 8bpp BG_COLORor2[7:0]
+//    - CharData[7:6] 11: 8bpp BG_COLORor3[7:0]
 //  - 1: 8bpp ColorData[7:0]
 void mode_hicolecmchar() {
     byte* const SCREEN = $8000;
@@ -473,11 +473,11 @@ void mode_hicolecmchar() {
          DTV_PALETTE[i] = i;
      }
     // Screen colors
-    *BORDERCOL = 0;
-    *BGCOL1 = $50;
-    *BGCOL2 = $54;
-    *BGCOL3 = $58;
-    *BGCOL4 = $5c;
+    *BORDER_COLOR = 0;
+    *BG_COLOR = $50;
+    *BG_COLOR1 = $54;
+    *BG_COLOR2 = $58;
+    *BG_COLOR3 = $5c;
     // Char Colors and screen chars
     byte* col=COLORS;
     byte* ch=SCREEN;
@@ -497,12 +497,12 @@ void mode_hicolecmchar() {
 // Normal VIC Adressing:
 // VicGfxData[16]: ( VicBank[1:0] & CharBase[2:0] & CharData[7:0] & RowCounter[2:0] )
 //GfxData Pixel Shifter (1) if ColorData[3:3] = 0:
-// - 0: 8bpp BgColor0[7:0]
+// - 0: 8bpp BG_COLORor0[7:0]
 // - 1: 8bpp ColorData[7:4] "0" & Color[2:0]
 //GfxData Pixel Shifter (2) if ColorData[3:3] = 1:
-// - 00: 8bpp BgColor0[7:0]
-// - 01: 8bpp BgColor1[7:0]
-// - 10: 8bpp BgColor2[7:0]
+// - 00: 8bpp BG_COLORor0[7:0]
+// - 01: 8bpp BG_COLORor1[7:0]
+// - 10: 8bpp BG_COLORor2[7:0]
 // - 11: 8bpp ColorData[7:4] "0" & Color[2:0]
 void mode_hicolmcchar() {
     byte* const SCREEN = $8000;
@@ -529,10 +529,10 @@ void mode_hicolmcchar() {
          DTV_PALETTE[i] = i;
      }
     // Screen colors
-    *BORDERCOL = 0;
-    *BGCOL1 = $50;
-    *BGCOL2 = $54;
-    *BGCOL3 = $58;
+    *BORDER_COLOR = 0;
+    *BG_COLOR = $50;
+    *BG_COLOR1 = $54;
+    *BG_COLOR2 = $58;
     // Char Colors and screen chars
     byte* col=COLORS;
     byte* ch=SCREEN;
@@ -552,10 +552,10 @@ void mode_hicolmcchar() {
 // Resolution: 320x200
 // Linear Adressing
 // GfxData/PlaneA Pixel Shifter (1), CharData/PlaneB Pixel Shifter (1):
-// - Plane A = 0 Plane B = 0: 8bpp BgColor0[7:0]
+// - Plane A = 0 Plane B = 0: 8bpp BG_COLORor0[7:0]
 // - Plane A = 0 Plane B = 1: 8bpp "0000" & ColorData[7:4]
 // - Plane A = 1 Plane B = 0: 8bpp "0000" & ColorData[3:0]
-// - Plane A = 1 Plane B = 1: 8bpp BgColor1[7:0]
+// - Plane A = 1 Plane B = 1: 8bpp BG_COLORor1[7:0]
 void mode_twoplanebitmap() {
     byte* const PLANEA = $4000;
     byte* const PLANEB = $6000;
@@ -588,9 +588,9 @@ void mode_twoplanebitmap() {
         DTV_PALETTE[i] = i;
     }
     // Screen colors
-    *BORDERCOL = $00;
-    *BGCOL1 = $70; // Color for bits 00
-    *BGCOL2 = $d4; // Color for bits 11
+    *BORDER_COLOR = $00;
+    *BG_COLOR = $70; // Color for bits 00
+    *BG_COLOR1 = $d4; // Color for bits 11
     // Colors for bits 01 / 10
     byte* col=COLORS;
     for(byte cy: 0..24 ) {
@@ -658,7 +658,7 @@ void mode_sixsfred() {
         DTV_PALETTE[i] = i;
     }
     // Screen colors
-    *BORDERCOL = $00;
+    *BORDER_COLOR = $00;
     // Colors for high 4 bits of 8bpp
     byte* col=COLORS;
     for(byte cy: 0..24 ) {
@@ -724,7 +724,7 @@ void mode_sixsfred2() {
         DTV_PALETTE[i] = i;
     }
     // Screen colors
-    *BORDERCOL = $00;
+    *BORDER_COLOR = $00;
     // Colors for high 4 bits of 8bpp
     byte* col=COLORS;
     for(byte cy: 0..24 ) {
@@ -788,7 +788,7 @@ void mode_8bpppixelcell() {
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;
     // Border color
-    *BORDERCOL = $00;
+    *BORDER_COLOR = $00;
     // DTV Palette - Grey Tones
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = i;
@@ -849,7 +849,7 @@ void mode_8bppchunkybmm() {
     *DTV_PLANEB_MODULO_LO = 0;
     *DTV_PLANEB_MODULO_HI = 0;
     // Border color
-    *BORDERCOL = $00;
+    *BORDER_COLOR = $00;
     // DTV Palette - Grey Tones
     for(byte i : 0..$f) {
         DTV_PALETTE[i] = i;

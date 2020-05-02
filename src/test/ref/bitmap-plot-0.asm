@@ -19,7 +19,7 @@
   .const WHITE = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   .label D011 = $d011
   .label D018 = $d018
@@ -340,9 +340,9 @@ bitmap_init: {
 // Interrupt Routine counting frames
 irq: {
     sta rega+1
-    // *BGCOL = WHITE
+    // *BG_COLOR = WHITE
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     // if(frame_cnt)
     lda #0
     cmp.z frame_cnt
@@ -350,9 +350,9 @@ irq: {
     // frame_cnt++;
     inc.z frame_cnt
   __b1:
-    // *BGCOL = BLACK
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER

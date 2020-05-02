@@ -1,4 +1,4 @@
 #include "bgblacklib.c"
 void main() {
-	*BGCOL = BLACK;
+	*BG_COLOR = BLACK;
 }

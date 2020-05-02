@@ -12,7 +12,7 @@ void()* getfn(byte b) {
 }
 
 void fn1() {
-    byte* const BORDERCOL = $d020;
-    (*BORDERCOL)++;
+    byte* const BORDER_COLOR = $d020;
+    (*BORDER_COLOR)++;
 }
 

@@ -9,7 +9,7 @@ byte* D016 = $d016;
   byte MCM =  %00010000;
   byte CSEL = %00001000;
 byte* D018 = $d018;
-byte* BGCOL = $d020;
+byte* BG_COLOR = $d020;
 byte* FGCOL = $d021;
 
 byte* COLS = $d800;
@@ -19,7 +19,7 @@ byte* SCREEN = $400;
 byte* const BITMAP = $2000;
 
 void main() {
-    *BGCOL = 0;
+    *BG_COLOR = 0;
     *FGCOL = 0;
     *D011 = BMM|DEN|RSEL|3;
     *D018 = (byte)(((word)SCREEN/$40)|((word)BITMAP/$400));
@@ -27,9 +27,9 @@ void main() {
     init_plot_tables();
     do {
         do {} while (*RASTER!=$ff);
-        (*BGCOL)++;
+        (*BG_COLOR)++;
         plots();
-        (*BGCOL)--;
+        (*BG_COLOR)--;
     } while (true);
 }
 

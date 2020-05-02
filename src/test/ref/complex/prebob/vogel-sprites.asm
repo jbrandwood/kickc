@@ -17,10 +17,10 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label D011 = $d011
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
@@ -129,9 +129,9 @@ loop: {
     lda RASTER
     cmp #$d8
     bcc __b2
-    // *BORDERCOL = 0xf
+    // *BORDER_COLOR = 0xf
     lda #$f
-    sta BORDERCOL
+    sta BORDER_COLOR
     lda.z angle
     sta.z a
     lda #0
@@ -139,10 +139,10 @@ loop: {
     lda #$1e
     sta.z r
   __b4:
-    // *BORDERCOL = 6
+    // *BORDER_COLOR = 6
     //kickasm {{ .break }}
     lda #6
-    sta BORDERCOL
+    sta BORDER_COLOR
     // mulf8s(r, COS[a])
     lda.z r
     ldy.z a
@@ -202,18 +202,18 @@ loop: {
     lda #NUM_BOBS-1+1
     cmp.z i
     bne __b4
-    // *BORDERCOL = 3
+    // *BORDER_COLOR = 3
     lda #3
-    sta BORDERCOL
+    sta BORDER_COLOR
     // plexSort()
     jsr plexSort
     // angle += 3
     lax.z angle
     axs #-[3]
     stx.z angle
-    // *BORDERCOL = BLACK
+    // *BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
+    sta BORDER_COLOR
   // Sort the sprites by y-position
   __b6:
     // *D011&VIC_RST8
@@ -226,9 +226,9 @@ loop: {
     sta.z i1
   // Show the sprites
   __b7:
-    // *BORDERCOL = BLACK
+    // *BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
+    sta BORDER_COLOR
     // return PLEX_FREE_YPOS[plex_free_next];
     ldy.z plex_free_next
     lda PLEX_FREE_YPOS,y
@@ -238,8 +238,8 @@ loop: {
     lda RASTER
     cmp.z plexFreeNextYpos1_return
     bcc __b8
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // plexShowSprite()
     jsr plexShowSprite
     // for( char i: 0..PLEX_COUNT-1)
@@ -247,9 +247,9 @@ loop: {
     lda #PLEX_COUNT-1+1
     cmp.z i1
     bne __b7
-    // *BORDERCOL = BLACK
+    // *BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
+    sta BORDER_COLOR
     // keyboard_key_pressed(KEY_SPACE)
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_SPACE)
@@ -570,9 +570,9 @@ init: {
     sta SPRITES_ENABLE
     ldx #0
   __b3:
-    // SPRITES_COLS[i] = GREEN
+    // SPRITES_COLOR[i] = GREEN
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char i: 0..7)
     inx
     cpx #8

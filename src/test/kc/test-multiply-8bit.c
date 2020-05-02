@@ -3,10 +3,10 @@
 #include <multiply.h>
 #include <fastmultiply.h>
 
-byte* BGCOL = $d021;
+byte* BG_COLOR = $d021;
 
 void main() {
-    *BGCOL = 5;
+    *BG_COLOR = 5;
     print_cls();
     mulf_init();
     mulf_init_asm();
@@ -109,7 +109,7 @@ void mulf_tables_cmp() {
     byte* asm_sqr = mula_sqr1_lo;
     for( byte* kc_sqr=mulf_sqr1_lo; kc_sqr<mulf_sqr1_lo+512*4; kc_sqr++) {
         if(*kc_sqr != *asm_sqr) {
-            *BGCOL = 2;
+            *BG_COLOR = 2;
             print_str("multiply table mismatch at ");
             print_uint((word)asm_sqr);
             print_str(" / ");
@@ -137,7 +137,7 @@ void mul8u_compare() {
                 ok = 0;
             }
             if(ok==0) {
-                *BGCOL = 2;
+                *BG_COLOR = 2;
                 mul8u_error(a,b, ms, mn, mf);
                 return;
             }
@@ -176,7 +176,7 @@ void mul8s_compare() {
                 ok = 0;
             }
             if(ok==0) {
-                *BGCOL = 2;
+                *BG_COLOR = 2;
                 mul8s_error(a,b, ms, mn, mf);
                 return;
             }

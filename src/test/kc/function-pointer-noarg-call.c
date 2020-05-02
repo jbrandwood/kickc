@@ -1,8 +1,8 @@
 // Tests creating, assigning and calling pointers to non-args no-return functions
 
 void fn1() {
-    byte* const BORDERCOL = $d020;
-    (*BORDERCOL)++;
+    byte* const BORDER_COLOR = $d020;
+    (*BORDER_COLOR)++;
 }
 
 void main() {

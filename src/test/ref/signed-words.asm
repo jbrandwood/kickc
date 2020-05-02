@@ -6,7 +6,7 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_EXPAND_X = $d01d
@@ -202,9 +202,9 @@ init: {
     sta SPRITES_XPOS
     // SPRITES_YPOS[0] = 100
     sta SPRITES_YPOS
-    // SPRITES_COLS[0] = WHITE
+    // SPRITES_COLOR[0] = WHITE
     lda #WHITE
-    sta SPRITES_COLS
+    sta SPRITES_COLOR
     // SPRITES_PTR[0] = (byte)(SPRITE/$40)
     lda #SPRITE/$40
     sta SPRITES_PTR

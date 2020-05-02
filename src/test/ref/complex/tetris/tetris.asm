@@ -69,17 +69,17 @@
   .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL1 = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
-  .label BGCOL4 = $d024
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
+  .label BG_COLOR1 = $d022
+  .label BG_COLOR2 = $d023
+  .label BG_COLOR3 = $d024
   .label VIC_CONTROL = $d011
   .label D011 = $d011
   .label D018 = $d018
@@ -273,7 +273,7 @@ main: {
     cmp RASTER
     bne __b2
     // render_show()
-    //*BORDERCOL = render_screen_show/0x10;
+    //*BORDER_COLOR = render_screen_show/0x10;
     // Update D018 to show the selected screen
     jsr render_show
     // keyboard_event_scan()
@@ -288,8 +288,8 @@ main: {
     cmp #0
     beq __b4
   __b5:
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     jmp __b5
   __b4:
     // play_movement(key_event)
@@ -1529,13 +1529,13 @@ render_show: {
   __b1:
     // *D018 = d018val
     sta D018
-    // *BGCOL2 = PIECES_COLORS_1[level]
+    // *BG_COLOR1 = PIECES_COLORS_1[level]
     ldy.z level
     lda PIECES_COLORS_1,y
-    sta BGCOL2
-    // *BGCOL3 = PIECES_COLORS_2[level]
+    sta BG_COLOR1
+    // *BG_COLOR2 = PIECES_COLORS_2[level]
     lda PIECES_COLORS_2,y
-    sta BGCOL3
+    sta BG_COLOR2
     // render_screen_showing = render_screen_show
     lda.z render_screen_show
     sta.z render_screen_showing
@@ -1683,9 +1683,9 @@ sprites_init: {
     // SPRITES_XPOS[s2] = xpos
     lda.z xpos
     sta SPRITES_XPOS,x
-    // SPRITES_COLS[s] = BLACK
+    // SPRITES_COLOR[s] = BLACK
     lda #BLACK
-    sta SPRITES_COLS,y
+    sta SPRITES_COLOR,y
     // xpos = xpos+24
     lax.z xpos
     axs #-[$18]
@@ -1713,20 +1713,20 @@ render_init: {
     // Enable Extended Background Color Mode
     lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
     sta D011
-    // *BORDERCOL = BLACK
+    // *BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
-    // *BGCOL1 = BLACK
-    sta BGCOL1
-    // *BGCOL2 = PIECES_COLORS_1[0]
+    sta BORDER_COLOR
+    // *BG_COLOR = BLACK
+    sta BG_COLOR
+    // *BG_COLOR1 = PIECES_COLORS_1[0]
     lda PIECES_COLORS_1
-    sta BGCOL2
-    // *BGCOL3 = PIECES_COLORS_2[0]
+    sta BG_COLOR1
+    // *BG_COLOR2 = PIECES_COLORS_2[0]
     lda PIECES_COLORS_2
-    sta BGCOL3
-    // *BGCOL4 = GREY
+    sta BG_COLOR2
+    // *BG_COLOR3 = GREY
     lda #GREY
-    sta BGCOL4
+    sta BG_COLOR3
     // render_screen_original(PLAYFIELD_SCREEN_1)
   // Setup chars on the screens
     lda #<PLAYFIELD_SCREEN_1
@@ -1906,7 +1906,7 @@ sprites_irq: {
     sta rega+1
     stx regx+1
     // asm
-    //(*BGCOL)++;
+    //(*BG_COLOR)++;
     // Clear decimal flag (because it is used by the score algorithm)
     cld
     // ypos = irq_sprite_ypos

@@ -10,7 +10,7 @@ main: {
     .const midw = (sumw>>1)+1
     .const midb = (sumb>>1)+1
     .label SCREEN = $400
-    .label BGCOL = $d021
+    .label BG_COLOR = $d021
     // SCREEN[0] = midw
     lda #midw
     sta SCREEN
@@ -21,14 +21,14 @@ main: {
     lda SCREEN
     cmp SCREEN+1
     beq __b1
-    // *BGCOL = 2
+    // *BG_COLOR = 2
     lda #2
-    sta BGCOL
+    sta BG_COLOR
     // }
     rts
   __b1:
-    // *BGCOL = 5
+    // *BG_COLOR = 5
     lda #5
-    sta BGCOL
+    sta BG_COLOR
     rts
 }

@@ -18,13 +18,13 @@ main::@2: scope:[main]  from main::@1 main::@2
   if((bool~) main::$0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((const nomodify byte*) BGCOL) ← (number) 0
+  *((const nomodify byte*) BG_COLOR) ← (number) 0
   (byte) main::r#0 ← (byte) $31
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@4
   (byte) main::r#2 ← phi( main::@3/(byte) main::r#0 main::@4/(byte) main::r#1 )
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
   (byte) main::r#1 ← (byte) main::r#2 + rangenext($31,$ff)
   (bool~) main::$2 ← (byte) main::r#1 != rangelast($31,$ff)
   if((bool~) main::$2) goto main::@4
@@ -55,7 +55,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte) DTV_BADLINE_OFF = (byte) $20
 (const nomodify byte) DTV_BORDER_OFF = (byte) 2
 (const nomodify byte*) DTV_CONTROL = (byte*)(number) $d03c
@@ -170,9 +170,9 @@ SYMBOL TABLE SSA
 (byte) main::r#2
 
 Adding number conversion cast (unumber) $40 in (bool~) main::$0 ← *((const nomodify byte*) RASTER) != (number) $40
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) BG_COLOR) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) BG_COLOR) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53281
@@ -263,12 +263,12 @@ main::@1: scope:[main]  from main main::@1 main::@4
   [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((const nomodify byte*) BGCOL) ← (byte) 0
+  [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
   [9] (byte) main::r#2 ← phi( main::@2/(byte) $31 main::@3/(byte) main::r#1 )
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-  [11] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
   [12] (byte) main::r#1 ← ++ (byte) main::r#2
   [13] if((byte) main::r#1!=(byte) 0) goto main::@3
   to:main::@4
@@ -397,7 +397,7 @@ Target platform is c64basic / MOS6502X
   .const DTV_HIGHCOLOR = 4
   .const DTV_BADLINE_OFF = $20
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   // Controls the graphics modes of the C64 DTV
@@ -440,10 +440,10 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const nomodify byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
@@ -482,8 +482,8 @@ main: {
     nop
     nop
     nop
-    // [11] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuz1=_inc_vbuz1 
     inc.z r
     // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
@@ -525,13 +525,13 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::c#2 main::c#1 ]
 Statement [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::r#2 main::r#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::c#2 main::c#1 ] : zp[1]:3 , reg byte x , reg byte y , 
@@ -562,7 +562,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const DTV_HIGHCOLOR = 4
   .const DTV_BADLINE_OFF = $20
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   // Controls the graphics modes of the C64 DTV
@@ -603,10 +603,10 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const nomodify byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
@@ -644,8 +644,8 @@ main: {
     nop
     nop
     nop
-    // [11] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
     inx
     // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
@@ -712,7 +712,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte) DTV_BADLINE_OFF = (byte) $20
 (const nomodify byte) DTV_BORDER_OFF = (byte) 2
 (const nomodify byte*) DTV_CONTROL = (byte*) 53308
@@ -837,7 +837,7 @@ Score: 10174
   .const DTV_HIGHCOLOR = 4
   .const DTV_BADLINE_OFF = $20
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   // Controls the graphics modes of the C64 DTV
@@ -871,11 +871,11 @@ main: {
     cmp RASTER
     bne __b1
     // main::@2
-    // *BGCOL = 0
-    // [8] *((const nomodify byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = 0
+    // [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     ldx #$31
@@ -910,9 +910,9 @@ main: {
     nop
     nop
     nop
-    // (*BGCOL)++;
-    // [11] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // (*BG_COLOR)++;
+    // [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // for (byte r : $31..$ff)
     // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
     inx

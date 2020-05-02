@@ -3,12 +3,12 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
 main: {
   __b1:
-    // ++*BGCOL;
-    inc BGCOL
-    // (*BGCOL)--;
-    dec BGCOL
+    // ++*BG_COLOR;
+    inc BG_COLOR
+    // (*BG_COLOR)--;
+    dec BG_COLOR
     jmp __b1
 }

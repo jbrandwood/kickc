@@ -32,11 +32,11 @@ void init() {
 		lda #$5b   // as there are more than 256 rasterlines, the topmost bit of $d011 serves as
 		sta $d011  // the 8th bit for the rasterline we want our irq to be triggered.
 	}
-	*BORDERCOL = BLACK;
-	*BGCOL1 = BLACK;
-	*BGCOL2 = RED;
-	*BGCOL3 = BLUE;
-	*BGCOL4 = GREEN;
+	*BORDER_COLOR = BLACK;
+	*BG_COLOR = BLACK;
+	*BG_COLOR1 = RED;
+	*BG_COLOR2 = BLUE;
+	*BG_COLOR3 = GREEN;
 } 
 
 void init_sprites() {
@@ -44,7 +44,7 @@ void init_sprites() {
 	*SPRITES_EXPAND_X = 0;
 	*SPRITES_EXPAND_Y = 0;
 	*SPRITES_XMSB = 0;
-	*SPRITES_COLS = WHITE;
+	*SPRITES_COLOR = WHITE;
 	*SPRITES_MC = 0;
 }
 

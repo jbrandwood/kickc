@@ -2,7 +2,7 @@
 
 // The vector used when the KERNAL serves IRQ interrupts
 void()** const  KERNEL_IRQ = $0314;
-byte* const BGCOL = $d021;
+byte* const BG_COLOR = $d021;
 const byte BLACK = $0;
 const byte WHITE = $1;
 
@@ -21,8 +21,8 @@ void main() {
 
 // The Interrupt Handler
 interrupt(kernel_keyboard) void irq() {
-    *BGCOL = WHITE;
-    *BGCOL = BLACK;
+    *BG_COLOR = WHITE;
+    *BG_COLOR = BLACK;
 }
 
 

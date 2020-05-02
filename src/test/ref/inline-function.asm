@@ -5,7 +5,7 @@
 .pc = $80d "Program"
   .label RASTER = $d012
   .label D018 = $d018
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label screen = $400
   .label charset1 = $1000
   .label charset2 = $1800
@@ -22,9 +22,9 @@ main: {
     // *D018 = toD018(screen, charset1)
     lda #toD0181_return
     sta D018
-    // *BGCOL = $6
+    // *BG_COLOR = $6
     lda #6
-    sta BGCOL
+    sta BG_COLOR
   __b2:
     // while(*RASTER!=$62)
     lda #$62
@@ -33,8 +33,8 @@ main: {
     // *D018 = toD018(screen, charset2)
     lda #toD0182_return
     sta D018
-    // *BGCOL = $b
+    // *BG_COLOR = $b
     lda #$b
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
 }

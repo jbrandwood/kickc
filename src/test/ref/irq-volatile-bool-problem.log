@@ -31,14 +31,14 @@ main::@return: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
   *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   (bool~) irq::$1 ← *((const nomodify byte*) RASTER) > (number) $32
   (bool~) irq::$2 ← ! (bool~) irq::$1
   if((bool~) irq::$2) goto irq::@1
   to:irq::@2
 irq::@1: scope:[irq]  from irq irq::@2
-  *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL)
+  *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR)
   to:irq::@return
 irq::@2: scope:[irq]  from irq
   to:irq::@1
@@ -57,7 +57,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d020
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d020
 (const nomodify byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) IRQ_ENABLE = (byte*)(number) $d01a
@@ -175,7 +175,7 @@ main::@2: scope:[main]  from main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  [13] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
   [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   [15] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1
   to:irq::@2
@@ -183,7 +183,7 @@ irq::@2: scope:[irq]  from irq
   [16] phi()
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@2
-  [17] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL)
+  [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1
   [18] return 
@@ -214,7 +214,7 @@ Target platform is c64basic / MOS6502X
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
   // @begin
 __bbegin:
@@ -275,8 +275,8 @@ main: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [13] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -292,8 +292,8 @@ irq: {
     jmp __b1
     // irq::@1
   __b1:
-    // [17] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     jmp __breturn
     // irq::@return
   __breturn:
@@ -337,7 +337,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
   // @begin
 __bbegin:
@@ -398,8 +398,8 @@ main: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [13] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
@@ -415,8 +415,8 @@ irq: {
     jmp __b1
     // irq::@1
   __b1:
-    // [17] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     jmp __breturn
     // irq::@return
   __breturn:
@@ -458,7 +458,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53280
+(const nomodify byte*) BG_COLOR = (byte*) 53280
 (const nomodify byte*) CIA1_INTERRUPT = (byte*) 56333
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) IRQ_ENABLE = (byte*) 53274
@@ -495,7 +495,7 @@ Score: 951
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -552,9 +552,9 @@ main: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // (*BGCOL)++;
-    // [13] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // (*BG_COLOR)++;
+    // [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     // [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
@@ -566,9 +566,9 @@ irq: {
     // [16] phi from irq to irq::@2 [phi:irq->irq::@2]
     // irq::@2
     // irq::@1
-    // (*BGCOL)--;
-    // [17] *((const nomodify byte*) BGCOL) ← -- *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // (*BG_COLOR)--;
+    // [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     // irq::@return
     // }
     // [18] return  - exit interrupt(KERNEL_MIN)

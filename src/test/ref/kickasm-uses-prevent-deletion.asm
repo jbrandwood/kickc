@@ -6,7 +6,7 @@
   .const WHITE = 1
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
 main: {
     // kickasm
     sei
@@ -21,12 +21,12 @@ main: {
 }
 // The Interrupt Handler
 irq: {
-    // *BGCOL = WHITE
+    // *BG_COLOR = WHITE
     lda #WHITE
-    sta BGCOL
-    // *BGCOL = BLACK
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // }
     jmp $ea31
 }

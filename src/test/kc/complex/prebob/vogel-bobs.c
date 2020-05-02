@@ -80,22 +80,22 @@ void main() {
 	char angle = 0;
 	while(true) {
         do { } while (*RASTER<$f8);
-        *BORDERCOL = 0xf;
+        *BORDER_COLOR = 0xf;
         renderBobCleanup();
 	    signed char r = 30;
         char a = angle;
         for(char i: 0..NUM_BOBS-1) {
             //kickasm {{ .break }}
-            *BORDERCOL = 1;
+            *BORDER_COLOR = 1;
             int x = mulf8s(r, COS[a]) + 75*0x100;
             int y = mulf8s(r, SIN[a])*2 + 90*0x100;
-            *BORDERCOL = 2;
+            *BORDER_COLOR = 2;
             a += 98;
             r += 3;
             renderBob(>x, >y);
         }
         angle += 3;
-        *BORDERCOL = 0;
+        *BORDER_COLOR = 0;
 	    if(keyboard_key_pressed(KEY_SPACE)) {
 	        break;
 	    }

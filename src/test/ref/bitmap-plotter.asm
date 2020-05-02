@@ -9,13 +9,13 @@
   .label D011 = $d011
   .label RASTER = $d012
   .label D018 = $d018
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label SCREEN = $400
 main: {
-    // *BGCOL = 0
+    // *BG_COLOR = 0
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     // *FGCOL = 0
     sta FGCOL
     // *D011 = BMM|DEN|RSEL|3
@@ -33,12 +33,12 @@ main: {
     lda #$ff
     cmp RASTER
     bne __b1
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // plots()
     jsr plots
-    // (*BGCOL)--;
-    dec BGCOL
+    // (*BG_COLOR)--;
+    dec BG_COLOR
     jmp __b1
 }
 plots: {

@@ -91,10 +91,10 @@ main::@4: scope:[main]  from main::@3
   if((bool~) main::$4) goto main::@5
   to:main::@6
 main::@5: scope:[main]  from main::@4
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
   to:main::@3
 main::@6: scope:[main]  from main::@4
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
   to:main::@3
 main::@return: scope:[main]  from main::@3
   return 
@@ -127,7 +127,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) COLS = (byte*)(number) $d800
 (const nomodify byte) JMP = (byte) $4c
@@ -394,10 +394,10 @@ main::@7: scope:[main]  from main::@3
   [11] if(*((const nomodify byte*) RASTER)==(byte) $42) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@7
-  [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
   to:main::@3
 main::@4: scope:[main]  from main::@3 main::@7
-  [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
+  [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
   to:main::@3
 main::@2: scope:[main]  from main::@1
   [14] *((byte*) main::sc#2) ← *((byte*) main::msg#2)
@@ -513,7 +513,7 @@ Target platform is custom / MOS6502X
   .label RASTER = $d012
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label COLS = $d800
   // @begin
 __bbegin:
@@ -606,15 +606,15 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@4
   __b4:
-    // [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@2
   __b2:
@@ -737,8 +737,8 @@ Statement [4] *((const nomodify byte*) VIC_MEMORY) ← (byte) $14 [ ] (  [ ] { }
 Statement [9] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 [ main::msg#2 main::sc#2 ] (  [ main::msg#2 main::sc#2 ] { }  main:2 [ main::msg#2 main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if(*((const nomodify byte*) RASTER)==(byte) $36) goto main::@4 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [11] if(*((const nomodify byte*) RASTER)==(byte) $42) goto main::@4 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [14] *((byte*) main::sc#2) ← *((byte*) main::msg#2) [ main::msg#2 main::sc#2 ] (  [ main::msg#2 main::sc#2 ] { }  main:2 [ main::msg#2 main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [18] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 [ memset::str#3 memset::c#4 memset::end#0 ] ( memset:5 [ memset::str#3 memset::c#4 memset::end#0 ] { }  main:2::memset:5 [ memset::str#3 memset::c#4 memset::end#0 ] { }  memset:7 [ memset::str#3 memset::c#4 memset::end#0 ] { }  main:2::memset:7 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ memset::c#4 ]
@@ -752,8 +752,8 @@ Statement [4] *((const nomodify byte*) VIC_MEMORY) ← (byte) $14 [ ] (  [ ] { }
 Statement [9] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 [ main::msg#2 main::sc#2 ] (  [ main::msg#2 main::sc#2 ] { }  main:2 [ main::msg#2 main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [10] if(*((const nomodify byte*) RASTER)==(byte) $36) goto main::@4 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [11] if(*((const nomodify byte*) RASTER)==(byte) $42) goto main::@4 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [14] *((byte*) main::sc#2) ← *((byte*) main::msg#2) [ main::msg#2 main::sc#2 ] (  [ main::msg#2 main::sc#2 ] { }  main:2 [ main::msg#2 main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [18] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 [ memset::str#3 memset::c#4 memset::end#0 ] ( memset:5 [ memset::str#3 memset::c#4 memset::end#0 ] { }  main:2::memset:5 [ memset::str#3 memset::c#4 memset::end#0 ] { }  memset:7 [ memset::str#3 memset::c#4 memset::end#0 ] { }  main:2::memset:7 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
 Statement [19] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( memset:5 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  main:2::memset:5 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  memset:7 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  main:2::memset:7 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
@@ -806,7 +806,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label RASTER = $d012
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label COLS = $d800
   // @begin
 __bbegin:
@@ -897,15 +897,15 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@4
   __b4:
-    // [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@2
   __b2:
@@ -1062,7 +1062,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) COLS = (byte*) 55296
 (const nomodify byte) JMP = (byte) $4c
@@ -1143,7 +1143,7 @@ Score: 1600
   .label RASTER = $d012
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label COLS = $d800
   // @begin
 __bbegin:
@@ -1220,17 +1220,17 @@ main: {
     cmp RASTER
     beq __b4
     // main::@5
-    // *BGCOL = BLACK
-    // [12] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = BLACK
+    // [12] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@4
   __b4:
-    // *BGCOL = WHITE
-    // [13] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = WHITE
+    // [13] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@2
   __b2:

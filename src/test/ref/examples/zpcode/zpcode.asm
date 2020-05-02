@@ -13,7 +13,7 @@
 
 
   .label RASTER = $d012
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
 __bbegin:
 .segment Code
 main: {
@@ -37,9 +37,9 @@ main: {
     // zpLoop()
   // Call code on zeropage
     jsr zpLoop
-    // *BGCOL = 0
+    // *BG_COLOR = 0
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
   __b2:
     // zpCode[i] = zpCodeData[i]
@@ -53,8 +53,8 @@ main: {
 zpLoop: {
     ldx #0
   __b1:
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // for(char i:0..100)
     inx
     cpx #$65
@@ -67,8 +67,8 @@ zpLoop: {
 loop: {
     ldx #0
   __b1:
-    // (*BGCOL)--;
-    dec BGCOL
+    // (*BG_COLOR)--;
+    dec BG_COLOR
     // for(char i:0..100)
     inx
     cpx #$65

@@ -11,6 +11,6 @@ void main() {
 
 // The Interrupt Handler
 interrupt(kernel_keyboard) void irq() {
-    *BGCOL = WHITE;
-    *BGCOL = BLACK;
+    *BG_COLOR = WHITE;
+    *BG_COLOR = BLACK;
 }

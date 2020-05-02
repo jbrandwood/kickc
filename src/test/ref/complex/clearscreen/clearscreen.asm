@@ -48,7 +48,7 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
@@ -704,9 +704,9 @@ initSprites: {
     ldx #0
   // Initialize sprite registers
   __b3:
-    // SPRITES_COLS[i] = LIGHT_BLUE
+    // SPRITES_COLOR[i] = LIGHT_BLUE
     lda #LIGHT_BLUE
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for( char i: 0..7)
     inx
     cpx #8
@@ -1191,7 +1191,7 @@ processChars: {
     lda SPRITES_ENABLE
     ora.z bitmask
     sta SPRITES_ENABLE
-    // SPRITES_COLS[processing->id] = processing->col
+    // SPRITES_COLOR[processing->id] = processing->col
     // Set the sprite color
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_COL
     lda (processing),y
@@ -1200,7 +1200,7 @@ processChars: {
     lda (processing),y
     tay
     pla
-    sta SPRITES_COLS,y
+    sta SPRITES_COLOR,y
     // *(SCREEN+SPRITE_PTRS+processing->id) = processing->ptr
     // Set sprite pointer
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_PTR

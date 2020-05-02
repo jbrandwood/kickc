@@ -15,7 +15,7 @@
 .segment Code
 
 
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label SCREEN = $400
 __bbegin:
 .segment Code
@@ -30,12 +30,12 @@ main: {
     cpx #0
     bne __b1
   __b2:
-    // fillscreen(*BGCOL)
-    lda BGCOL
+    // fillscreen(*BG_COLOR)
+    lda BG_COLOR
     sta.z fillscreen.c
     jsr fillscreen
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     jmp __b2
 }
 .segment CodeHigh

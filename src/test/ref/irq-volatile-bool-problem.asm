@@ -10,7 +10,7 @@
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
 main: {
     // asm
@@ -47,16 +47,16 @@ main: {
     jmp __b1
 }
 irq: {
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // if (*RASTER>50)
     lda RASTER
     cmp #$32+1
-    // (*BGCOL)--;
-    dec BGCOL
+    // (*BG_COLOR)--;
+    dec BG_COLOR
     // }
     jmp $ea81
 }

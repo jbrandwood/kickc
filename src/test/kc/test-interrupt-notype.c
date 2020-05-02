@@ -1,5 +1,5 @@
 void()** const  KERNEL_IRQ = $0314;
-byte* const BGCOL = $d020;
+byte* const BG_COLOR = $d020;
 byte* const FGCOL = $d021;
 
 void main() {
@@ -10,7 +10,7 @@ void main() {
 }
 
 interrupt void irq() {
-    (*BGCOL)++;
+    (*BG_COLOR)++;
     asm {
         lda $dc0d
     }

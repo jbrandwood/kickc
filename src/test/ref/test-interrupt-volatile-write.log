@@ -27,7 +27,7 @@ main::@return: scope:[main]  from main::@1
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  *((const nomodify byte*) BGCOL) ← (volatile byte) col
+  *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
   (bool~) irq::$0 ← (volatile byte) col != (number) 0
   if((bool~) irq::$0) goto irq::@1
   to:irq::@2
@@ -52,7 +52,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d020
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d020
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 (volatile byte) col loadstore
 interrupt(KERNEL_MIN)(void()) irq()
@@ -146,7 +146,7 @@ main::@2: scope:[main]  from main::@1
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  [8] *((const nomodify byte*) BGCOL) ← (volatile byte) col
+  [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
   [9] if((volatile byte) col!=(byte) 0) goto irq::@1
   to:irq::@2
 irq::@2: scope:[irq]  from irq
@@ -182,7 +182,7 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label col = 2
   // @begin
 __bbegin:
@@ -228,9 +228,9 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [8] *((const nomodify byte*) BGCOL) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
-    sta BGCOL
+    sta BG_COLOR
     // [9] if((volatile byte) col!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda.z col
     cmp #0
@@ -262,7 +262,7 @@ Statement [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)
 Statement [5] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 [ col ] ( main:2 [ col ] { }  ) always clobbers reg byte a 
 Statement [6] (volatile byte) col ← (byte) 0 [ col ] ( main:2 [ col ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BGCOL) ← (volatile byte) col [ col ] (  [ col ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col [ col ] (  [ col ] { }  ) always clobbers reg byte a 
 Statement [9] if((volatile byte) col!=(byte) 0) goto irq::@1 [ col ] (  [ col ] { }  ) always clobbers reg byte a 
 Statement [10] (volatile byte) col ← (volatile byte) col + (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ col ] : zp[1]:2 , 
@@ -288,7 +288,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label col = 2
   // @begin
 __bbegin:
@@ -334,9 +334,9 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [8] *((const nomodify byte*) BGCOL) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
-    sta BGCOL
+    sta BG_COLOR
     // [9] if((volatile byte) col!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda.z col
     cmp #0
@@ -391,7 +391,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53280
+(const nomodify byte*) BG_COLOR = (byte*) 53280
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
 (volatile byte) col loadstore zp[1]:2 139.5
 interrupt(KERNEL_MIN)(void()) irq()
@@ -417,7 +417,7 @@ Score: 895
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label col = 2
   // @begin
 __bbegin:
@@ -460,10 +460,10 @@ irq: {
     // asm
     // asm { lda$dc0d  }
     lda $dc0d
-    // *BGCOL = col
-    // [8] *((const nomodify byte*) BGCOL) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // *BG_COLOR = col
+    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
-    sta BGCOL
+    sta BG_COLOR
     // if(col!=0)
     // [9] if((volatile byte) col!=(byte) 0) goto irq::@1 -- vbuz1_neq_0_then_la1 
     lda.z col

@@ -5,7 +5,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const byte*) BGCOL) ← (number) 0
+  *((const byte*) BG_COLOR) ← (number) 0
   *((const byte*) FGCOL) ← (number) 0
   (byte~) main::$0 ← (const byte) BMM | (const byte) DEN
   (byte~) main::$1 ← (byte~) main::$0 | (const byte) RSEL
@@ -27,11 +27,11 @@ main::@1: scope:[main]  from main::@1 main::@4 main::@5
   if((bool~) main::$7) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
   call plots 
   to:main::@5
 main::@5: scope:[main]  from main::@2
-  *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
+  *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
   if(true) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@5
@@ -191,7 +191,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d020
+(const byte*) BG_COLOR = (byte*)(number) $d020
 (const nomodify byte*) BITMAP = (byte*)(number) $2000
 (const byte) BMM = (byte) $20
 (const byte*) D011 = (byte*)(number) $d011
@@ -327,7 +327,7 @@ SYMBOL TABLE SSA
 (const byte*) plots_x[]  = { (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28, (byte) $a, (byte) $28 }
 (const byte*) plots_y[]  = { (byte) $a, (byte) $28, (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28 }
 
-Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) BG_COLOR) ← (number) 0
 Adding number conversion cast (unumber) 0 in *((const byte*) FGCOL) ← (number) 0
 Adding number conversion cast (unumber) 3 in (number~) main::$2 ← (byte~) main::$1 | (number) 3
 Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte~) main::$1 | (unumber)(number) 3
@@ -355,7 +355,7 @@ Adding number conversion cast (unumber) 0 in *((byte*) init_screen::b#3) ← (nu
 Adding number conversion cast (unumber) $400 in (byte*~) init_screen::$1 ← (const byte*) SCREEN + (number) $400
 Adding number conversion cast (unumber) $14 in *((byte*) init_screen::c#3) ← (number) $14
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const byte*) BG_COLOR) ← (unumber)(number) 0
 Inlining cast *((const byte*) FGCOL) ← (unumber)(number) 0
 Inlining cast (byte) init_plot_tables::bits#2 ← (unumber)(number) $80
 Inlining cast *((byte*) init_screen::b#3) ← (unumber)(number) 0
@@ -596,7 +596,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const byte*) BGCOL) ← (byte) 0
+  [4] *((const byte*) BG_COLOR) ← (byte) 0
   [5] *((const byte*) FGCOL) ← (byte) 0
   [6] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3
   [7] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400
@@ -610,11 +610,11 @@ main::@1: scope:[main]  from main::@1 main::@3 main::@4
   [11] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [12] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  [12] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
   [13] call plots 
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [14] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
+  [14] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
   to:main::@1
 
 (void()) plots()
@@ -868,7 +868,7 @@ Target platform is c64basic / MOS6502X
   .label D011 = $d011
   .label RASTER = $d012
   .label D018 = $d018
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label SCREEN = $400
   // @begin
@@ -887,9 +887,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     // [5] *((const byte*) FGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta FGCOL
@@ -922,8 +922,8 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [12] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [12] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [13] call plots 
     // [15] phi from main::@2 to plots [phi:main::@2->plots]
   plots_from___b2:
@@ -931,8 +931,8 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [14] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // [14] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     jmp __b1
 }
   // plots
@@ -1283,7 +1283,7 @@ init_screen: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp[1]:31 [ init_plot_tables::$6 ] has ALU potential.
-Statement [4] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const byte*) FGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
@@ -1307,7 +1307,7 @@ Statement [62] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word)
 Statement [64] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@4 [ init_screen::c#2 ] ( main:2::init_screen:8 [ init_screen::c#2 ] { }  ) always clobbers reg byte a 
 Statement [66] *((byte*) init_screen::c#2) ← (byte) $14 [ init_screen::c#2 ] ( main:2::init_screen:8 [ init_screen::c#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [68] *((byte*) init_screen::b#2) ← (byte) 0 [ init_screen::b#2 ] ( main:2::init_screen:8 [ init_screen::b#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [4] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const byte*) FGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
@@ -1408,7 +1408,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label D011 = $d011
   .label RASTER = $d012
   .label D018 = $d018
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label SCREEN = $400
   // @begin
@@ -1427,9 +1427,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     // [5] *((const byte*) FGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta FGCOL
@@ -1462,8 +1462,8 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [12] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [12] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [13] call plots 
     // [15] phi from main::@2 to plots [phi:main::@2->plots]
   plots_from___b2:
@@ -1471,8 +1471,8 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [14] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // [14] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     jmp __b1
 }
   // plots
@@ -1851,7 +1851,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53280
+(const byte*) BG_COLOR = (byte*) 53280
 (const nomodify byte*) BITMAP = (byte*) 8192
 (const byte) BMM = (byte) $20
 (const byte*) D011 = (byte*) 53265
@@ -1977,7 +1977,7 @@ Score: 6531
   .label D011 = $d011
   .label RASTER = $d012
   .label D018 = $d018
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label SCREEN = $400
   // @begin
@@ -1988,10 +1988,10 @@ Score: 6531
   // @end
   // main
 main: {
-    // *BGCOL = 0
-    // [4] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = 0
+    // [4] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     // *FGCOL = 0
     // [5] *((const byte*) FGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     sta FGCOL
@@ -2021,17 +2021,17 @@ main: {
     cmp RASTER
     bne __b1
     // main::@2
-    // (*BGCOL)++;
-    // [12] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // (*BG_COLOR)++;
+    // [12] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // plots()
     // [13] call plots 
     // [15] phi from main::@2 to plots [phi:main::@2->plots]
     jsr plots
     // main::@4
-    // (*BGCOL)--;
-    // [14] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // (*BG_COLOR)--;
+    // [14] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     jmp __b1
 }
   // plots

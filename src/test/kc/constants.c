@@ -1,11 +1,11 @@
 #include <print.h>
-byte* const BGCOL = $d021;
+byte* const BG_COLOR = $d021;
 const byte GREEN = 5;
 const byte RED = 2 ;
 
 void main() {
     print_cls();
-    *BGCOL = GREEN;
+    *BG_COLOR = GREEN;
     test_bytes();
     test_sbytes();
 }
@@ -24,7 +24,7 @@ void assert_byte(byte* msg, byte b, byte c) {
     print_str(msg);
     print_str(" ");
     if(b!=c) {
-        *BGCOL = RED;
+        *BG_COLOR = RED;
         print_str("fail!");
     } else {
         print_str("ok");
@@ -50,7 +50,7 @@ void assert_sbyte(byte* msg, signed byte b, signed byte c) {
     print_str(msg);
     print_str(" ");
     if(b!=c) {
-        *BGCOL = RED;
+        *BG_COLOR = RED;
         print_str("fail!");
     } else {
         print_str("ok");

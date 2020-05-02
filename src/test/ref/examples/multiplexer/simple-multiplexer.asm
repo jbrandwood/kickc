@@ -16,7 +16,7 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label D011 = $d011
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
@@ -340,9 +340,9 @@ init: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
     ldx #0
   __b3:
-    // SPRITES_COLS[ss] = GREEN
+    // SPRITES_COLOR[ss] = GREEN
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char ss: 0..7)
     inx
     cpx #8

@@ -35,7 +35,7 @@ main::@6: scope:[main]  from main::@5
   call zpLoop 
   to:main::@7
 main::@7: scope:[main]  from main::@6
-  *((const byte*) BGCOL) ← (number) 0
+  *((const byte*) BG_COLOR) ← (number) 0
   to:main::@3
 main::@return: scope:[main]  from main::@3
   return 
@@ -47,7 +47,7 @@ loop: scope:[loop]  from main::@5
   to:loop::@1
 loop::@1: scope:[loop]  from loop loop::@1
   (byte) loop::i#2 ← phi( loop/(byte) loop::i#0 loop::@1/(byte) loop::i#1 )
-  *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
+  *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
   (byte) loop::i#1 ← (byte) loop::i#2 + rangenext(0,$64)
   (bool~) loop::$1 ← (byte) loop::i#1 != rangelast(0,$64)
   if((bool~) loop::$1) goto loop::@1
@@ -62,7 +62,7 @@ zpLoop: scope:[zpLoop]  from main::@6
   to:zpLoop::@1
 zpLoop::@1: scope:[zpLoop]  from zpLoop zpLoop::@1
   (byte) zpLoop::i#2 ← phi( zpLoop/(byte) zpLoop::i#0 zpLoop::@1/(byte) zpLoop::i#1 )
-  *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
   (byte) zpLoop::i#1 ← (byte) zpLoop::i#2 + rangenext(0,$64)
   (bool~) zpLoop::$1 ← (byte) zpLoop::i#1 != rangelast(0,$64)
   if((bool~) zpLoop::$1) goto zpLoop::@1
@@ -82,7 +82,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*)(number) $d020
+(const byte*) BG_COLOR = (byte*)(number) $d020
 (const byte*) RASTER = (byte*)(number) $d012
 (void()) loop()
 (bool~) loop::$1
@@ -122,9 +122,9 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $14 in (bool~) main::$0 ← (byte) main::i#2 < (number) $14
 Adding number conversion cast (unumber) $ff in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) 0 in *((const byte*) BGCOL) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) BG_COLOR) ← (number) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) BGCOL) ← (unumber)(number) 0
+Inlining cast *((const byte*) BG_COLOR) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
@@ -238,7 +238,7 @@ main::@5: scope:[main]  from main::@4
   [11] call zpLoop 
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [12] *((const byte*) BGCOL) ← (byte) 0
+  [12] *((const byte*) BG_COLOR) ← (byte) 0
   to:main::@3
 main::@2: scope:[main]  from main::@1
   [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2)
@@ -251,7 +251,7 @@ zpLoop: scope:[zpLoop]  from main::@5
   to:zpLoop::@1
 zpLoop::@1: scope:[zpLoop]  from zpLoop zpLoop::@1
   [16] (byte) zpLoop::i#2 ← phi( zpLoop/(byte) 0 zpLoop::@1/(byte) zpLoop::i#1 )
-  [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL)
+  [17] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
   [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2
   [19] if((byte) zpLoop::i#1!=(byte) $65) goto zpLoop::@1
   to:zpLoop::@return
@@ -265,7 +265,7 @@ loop: scope:[loop]  from main::@4
   to:loop::@1
 loop::@1: scope:[loop]  from loop loop::@1
   [22] (byte) loop::i#2 ← phi( loop/(byte) 0 loop::@1/(byte) loop::i#1 )
-  [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL)
+  [23] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
   [24] (byte) loop::i#1 ← ++ (byte) loop::i#2
   [25] if((byte) loop::i#1!=(byte) $65) goto loop::@1
   to:loop::@return
@@ -320,7 +320,7 @@ Target platform is custom / MOS6502X
 
   // Global Constants & labels
   .label RASTER = $d012
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -385,9 +385,9 @@ main: {
     jmp __b6
     // main::@6
   __b6:
-    // [12] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@2
   __b2:
@@ -418,8 +418,8 @@ zpLoop: {
     jmp __b1
     // zpLoop::@1
   __b1:
-    // [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [17] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [19] if((byte) zpLoop::i#1!=(byte) $65) goto zpLoop::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -449,8 +449,8 @@ loop: {
     jmp __b1
     // loop::@1
   __b1:
-    // [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // [23] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     // [24] (byte) loop::i#1 ← ++ (byte) loop::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [25] if((byte) loop::i#1!=(byte) $65) goto loop::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -472,11 +472,11 @@ zpCodeData:
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *((const byte*) BGCOL) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [13] *((const byte*) main::zpCode + (byte) main::i#2) ← *((const byte*) zpCodeData + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ zpLoop::i#2 zpLoop::i#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
@@ -512,7 +512,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 
   // Global Constants & labels
   .label RASTER = $d012
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -574,9 +574,9 @@ main: {
     jmp __b6
     // main::@6
   __b6:
-    // [12] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@2
   __b2:
@@ -604,8 +604,8 @@ zpLoop: {
     jmp __b1
     // zpLoop::@1
   __b1:
-    // [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [17] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [19] if((byte) zpLoop::i#1!=(byte) $65) goto zpLoop::@1 -- vbuxx_neq_vbuc1_then_la1 
@@ -632,8 +632,8 @@ loop: {
     jmp __b1
     // loop::@1
   __b1:
-    // [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // [23] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     // [24] (byte) loop::i#1 ← ++ (byte) loop::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [25] if((byte) loop::i#1!=(byte) $65) goto loop::@1 -- vbuxx_neq_vbuc1_then_la1 
@@ -698,7 +698,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const byte*) BGCOL = (byte*) 53280
+(const byte*) BG_COLOR = (byte*) 53280
 (const byte*) RASTER = (byte*) 53266
 (void()) loop()
 (label) loop::@1
@@ -752,7 +752,7 @@ Score: 4076
 
   // Global Constants & labels
   .label RASTER = $d012
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -799,10 +799,10 @@ main: {
     // [15] phi from main::@5 to zpLoop [phi:main::@5->zpLoop]
     jsr zpLoop
     // main::@6
-    // *BGCOL = 0
-    // [12] *((const byte*) BGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = 0
+    // [12] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     jmp __b3
     // main::@2
   __b2:
@@ -827,9 +827,9 @@ zpLoop: {
     // [16] phi (byte) zpLoop::i#2 = (byte) zpLoop::i#1 [phi:zpLoop::@1->zpLoop::@1#0] -- register_copy 
     // zpLoop::@1
   __b1:
-    // (*BGCOL)++;
-    // [17] *((const byte*) BGCOL) ← ++ *((const byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // (*BG_COLOR)++;
+    // [17] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // for(char i:0..100)
     // [18] (byte) zpLoop::i#1 ← ++ (byte) zpLoop::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -852,9 +852,9 @@ loop: {
     // [22] phi (byte) loop::i#2 = (byte) loop::i#1 [phi:loop::@1->loop::@1#0] -- register_copy 
     // loop::@1
   __b1:
-    // (*BGCOL)--;
-    // [23] *((const byte*) BGCOL) ← -- *((const byte*) BGCOL) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BGCOL
+    // (*BG_COLOR)--;
+    // [23] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
     // for(char i:0..100)
     // [24] (byte) loop::i#1 ← ++ (byte) loop::i#2 -- vbuxx=_inc_vbuxx 
     inx

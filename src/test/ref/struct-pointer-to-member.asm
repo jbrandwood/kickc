@@ -6,14 +6,14 @@
   // Commodore 64 processor port
   .label COLORS = $d020
   // The background color
-  .label BGCOL = COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
+  .label BG_COLOR = COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
 main: {
     // COLORS->BORDER = 0
     lda #0
     sta COLORS
-    // *BGCOL = 6
+    // *BG_COLOR = 6
     lda #6
-    sta BGCOL
+    sta BG_COLOR
     // }
     rts
 }

@@ -22,7 +22,7 @@ main::@return: scope:[main]  from main::@1
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  *((const nomodify byte*) BGCOL) ← (volatile byte) col
+  *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -39,7 +39,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d020
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d020
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 (volatile byte) col loadstore
 interrupt(KERNEL_MIN)(void()) irq()
@@ -93,7 +93,7 @@ main::@1: scope:[main]  from main main::@1
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  [7] *((const nomodify byte*) BGCOL) ← (volatile byte) col
+  [7] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [8] return 
@@ -120,7 +120,7 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label col = 2
   // @begin
 __bbegin:
@@ -158,9 +158,9 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [7] *((const nomodify byte*) BGCOL) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [7] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
-    sta BGCOL
+    sta BG_COLOR
     jmp __breturn
     // irq::@return
   __breturn:
@@ -173,7 +173,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] (volatile byte) col ← (byte) 0 [ col ] (  [ col ] { }  ) always clobbers reg byte a 
 Statement [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col ] ( main:2 [ col ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) BGCOL) ← (volatile byte) col [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ col ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -195,7 +195,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label col = 2
   // @begin
 __bbegin:
@@ -233,9 +233,9 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [7] *((const nomodify byte*) BGCOL) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [7] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
-    sta BGCOL
+    sta BG_COLOR
     jmp __breturn
     // irq::@return
   __breturn:
@@ -264,7 +264,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53280
+(const nomodify byte*) BG_COLOR = (byte*) 53280
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
 (volatile byte) col loadstore zp[1]:2 41.199999999999996
 interrupt(KERNEL_MIN)(void()) irq()
@@ -285,7 +285,7 @@ Score: 123
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label col = 2
   // @begin
 __bbegin:
@@ -321,10 +321,10 @@ irq: {
     // asm
     // asm { lda$dc0d  }
     lda $dc0d
-    // *BGCOL = col
-    // [7] *((const nomodify byte*) BGCOL) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // *BG_COLOR = col
+    // [7] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
-    sta BGCOL
+    sta BG_COLOR
     // irq::@return
     // }
     // [8] return  - exit interrupt(KERNEL_MIN)

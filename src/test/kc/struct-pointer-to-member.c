@@ -13,11 +13,11 @@ struct SCREEN_COLORS {
 struct SCREEN_COLORS* const COLORS = 0xd020;
 
 // The border color
-char * const BORDERCOL = &COLORS->BORDER;
+char * const BORDER_COLOR = &COLORS->BORDER;
 // The background color
-char * const BGCOL = &COLORS->BG0;
+char * const BG_COLOR = &COLORS->BG0;
 
 void main() {
     COLORS->BORDER = 0;
-    *BGCOL = 6;
+    *BG_COLOR = 6;
 }

@@ -4,7 +4,7 @@
 
 #pragma link("ataritempest.ld")
 
-char* const BGCOL = 0xc01a;
+char* const BG_COLOR = 0xc01a;
 
 #pragma data_seg(RomData)
 char MESSAGE[] = "hello world";
@@ -17,11 +17,11 @@ void entryPoint() {
 }
 
 void interrupt(HARDWARE_ALL) nmiHandler() {
-    (*BGCOL)++;
+    (*BG_COLOR)++;
 }
 
 void main() {
-    (*BGCOL)++;
+    (*BG_COLOR)++;
 }
 
 #pragma data_seg(Vectors)

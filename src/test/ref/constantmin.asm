@@ -9,7 +9,7 @@ main: {
     // *SCREEN = STAR
     lda #STAR
     sta SCREEN
-    // *BGCOL = RED
+    // *BG_COLOR = RED
     lda #RED
     sta VIC+$10*2+1
     ldx #$28

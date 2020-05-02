@@ -13,10 +13,10 @@ void main() {
         while(*RASTER!=$40) { }
 
         // Create rasterbars
-        *BGCOL = 0;
+        *BG_COLOR = 0;
         for (byte r : $31..$ff) {
             asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
-            (*BGCOL)++;
+            (*BG_COLOR)++;
         }
 
         // Rotate palette

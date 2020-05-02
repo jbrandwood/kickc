@@ -10,7 +10,7 @@
 char* const RASTER = 0xd012;
 char* const VIC_MEMORY = 0xd018;
 char* const SCREEN = 0x0400;
-char* const BGCOL = 0xd021;
+char* const BG_COLOR = 0xd021;
 char* const COLS = 0xd800;
 const char BLACK = 0;
 const char WHITE = 1;
@@ -32,9 +32,9 @@ void main() {
     // Loop forever with 2 bars
     while(true) {
         if(*RASTER==54 || *RASTER==66) {
-            *BGCOL = WHITE;
+            *BG_COLOR = WHITE;
         } else {
-            *BGCOL = BLACK;
+            *BG_COLOR = BLACK;
         }
     }
 }

@@ -6,7 +6,7 @@ byte* const VIC_CONTROL = $d011;
 byte* const IRQ_STATUS = $d019;
 byte* const IRQ_ENABLE = $d01a;
 const byte IRQ_RASTER = %00000001;
-byte* const BGCOL = $d020;
+byte* const BG_COLOR = $d020;
 byte* const FGCOL = $d021;
 
 byte* const CIA1_INTERRUPT = $dc0d;
@@ -36,7 +36,7 @@ void main() {
 }
 
 interrupt(kernel_min) void irq() {
-    (*BGCOL)++;
+    (*BG_COLOR)++;
     for( byte i: 0..10 )
         for( byte j: 0..10 )
             for( byte k: 0..10 ) {
@@ -44,19 +44,19 @@ interrupt(kernel_min) void irq() {
                 sub_irq();
             }
     *IRQ_STATUS = IRQ_RASTER;
-    (*BGCOL)--;
+    (*BG_COLOR)--;
 }
 
 void sub_main() {
     for( byte i: 0..10 )
         for( byte j: 0..10 )
             for( byte k: 0..10 )
-                *BGCOL = i+j+k;
+                *BG_COLOR = i+j+k;
 }
 
 void sub_irq() {
     for( byte i: 0..10 )
         for( byte j: 0..10 )
             for( byte k: 0..10 )
-                *BGCOL = i+j+k;
+                *BG_COLOR = i+j+k;
 }

@@ -18,7 +18,7 @@
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -116,9 +116,9 @@ main: {
     sta SPRITES_ENABLE
     ldx #0
   __b4:
-    // SPRITES_COLS[s] = WHITE
+    // SPRITES_COLOR[s] = WHITE
     lda #WHITE
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char s: 0..7)
     inx
     cpx #8
@@ -177,7 +177,7 @@ main: {
     lda #0
     sta.z frame_done
     // plex_move()
-  //*BORDERCOL = RED;
+  //*BORDER_COLOR = RED;
   // Move the sprites
     jsr plex_move
     // plexSort()
@@ -715,7 +715,7 @@ plex_irq: {
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // asm
-    //*BORDERCOL = 0;
+    //*BORDER_COLOR = 0;
     cli
     // }
     jmp $ea81

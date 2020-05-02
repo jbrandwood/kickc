@@ -8,19 +8,19 @@
   .const VIC_RSEL = 8
   .const WHITE = 1
   .const PURPLE = 4
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label D011 = $d011
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
   .label next = 2
 main: {
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     lda #0
-    sta BORDERCOL
-    // *BGCOL = 0
-    sta BGCOL
+    sta BORDER_COLOR
+    // *BG_COLOR = 0
+    sta BG_COLOR
     // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
     lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
     sta D011

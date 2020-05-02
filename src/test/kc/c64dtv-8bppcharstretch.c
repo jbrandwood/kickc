@@ -60,14 +60,14 @@ void main() {
         }
 
         *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3;
-        *BORDERCOL = 0;
+        *BORDER_COLOR = 0;
         byte rst = $42;
         while(*RASTER!=rst) {}
         asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         do {
             rst = *RASTER;
             *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7);
-            *BORDERCOL = rst*$10;
+            *BORDER_COLOR = rst*$10;
             asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         } while (rst!=$f2);
     }

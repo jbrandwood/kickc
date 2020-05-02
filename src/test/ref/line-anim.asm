@@ -15,7 +15,7 @@
   .const DELAY = 8
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .label RASTER = $d012
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label D011 = $d011
   .label D018 = $d018
   // Processor port data direction register
@@ -84,8 +84,8 @@ main: {
     lda #$ff
     cmp RASTER
     bne __b2
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     jmp __b2
 }
 // Plot a single dot in the bitmap

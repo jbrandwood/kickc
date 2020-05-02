@@ -3,7 +3,7 @@ byte* const SCREEN = $0400;
 byte b=2/2;
 
 // unused vars
-byte* const BGCOL = $d021;
+byte* const BG_COLOR = $d021;
 byte msg[] = "hello world";
 byte arr[] = { 7, 8, 9};
 byte c=1;

@@ -6,15 +6,15 @@
 
 #pragma link("linking.ld")
 
-char* BGCOL = 0xd021;
+char* BG_COLOR = 0xd021;
 
 void main() {
     for(char i:0..255)
         base[i] = i;
 
     while(true) {
-        fillscreen(*BGCOL);
-        (*BGCOL)++;
+        fillscreen(*BG_COLOR);
+        (*BG_COLOR)++;
     }
 }
 

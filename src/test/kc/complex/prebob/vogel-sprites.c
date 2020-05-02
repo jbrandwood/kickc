@@ -51,7 +51,7 @@ void init() {
     // Enable & initialize sprites
     *SPRITES_ENABLE = 0xff;
     for(char i: 0..7) {
-        SPRITES_COLS[i] = GREEN;
+        SPRITES_COLOR[i] = GREEN;
     }
     mulf_init();
 	// Clear screen
@@ -70,12 +70,12 @@ void loop() {
 	char angle = 0;
     while(true) {
         do { } while (*RASTER<0xd8);
-        *BORDERCOL = 0xf;
+        *BORDER_COLOR = 0xf;
 	    signed char r = 30;
         char a = angle;
         for(char i: 0..NUM_BOBS-1) {
             //kickasm {{ .break }}
-            *BORDERCOL = 6;
+            *BORDER_COLOR = 6;
             int x = mulf8s(r, COS[a])*2 + 125*0x100;
             PLEX_XPOS[i] = >x;
             int y = mulf8s(r, SIN[a])*2 + 125*0x100;
@@ -83,21 +83,21 @@ void loop() {
             a += 98;
             r += 3;
         }
-        *BORDERCOL = 3;
+        *BORDER_COLOR = 3;
         plexSort();
         angle += 3;
-        *BORDERCOL = BLACK;
+        *BORDER_COLOR = BLACK;
         // Sort the sprites by y-position
         while((*D011&VIC_RST8)!=0) {}
         // Show the sprites
         for( char i: 0..PLEX_COUNT-1) {
-            *BORDERCOL = BLACK;
+            *BORDER_COLOR = BLACK;
             char rasterY = plexFreeNextYpos();
             while(*RASTER<rasterY) {}
-            (*BORDERCOL)++;
+            (*BORDER_COLOR)++;
             plexShowSprite();
         }
-        *BORDERCOL = BLACK;
+        *BORDER_COLOR = BLACK;
 	    if(keyboard_key_pressed(KEY_SPACE)) {
 	        break;
 	    }

@@ -34,7 +34,7 @@ void main() {
     // Show the loaded sprite on screen
     VICII->SPRITES_ENABLE = %00000001;
     SPRITES_PTR[0] = toSpritePtr(LOAD_SPRITE);
-    SPRITES_COLS[0] = GREEN;
+    SPRITES_COLOR[0] = GREEN;
     SPRITES_XPOS[0] = 0x15;
     SPRITES_YPOS[0] = 0x33;
 }

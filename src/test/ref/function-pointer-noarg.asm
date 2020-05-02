@@ -20,16 +20,16 @@ main: {
     rts
 }
 fn2: {
-    .label BGCOL = $d021
-    // (*BGCOL)++;
-    inc BGCOL
+    .label BG_COLOR = $d021
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // }
     rts
 }
 fn1: {
-    .label BORDERCOL = $d020
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // }
     rts
 }

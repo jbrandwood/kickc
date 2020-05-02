@@ -14,7 +14,7 @@ void main() {
 	*SPRITES_ENABLE = 1;
     SPRITES_XPOS[0] = 100;
 	SPRITES_YPOS[0] = 100;
-	SPRITES_COLS[0] = WHITE;
+	SPRITES_COLOR[0] = WHITE;
 	SPRITES[0] = toSpritePtr(SPRITE);
 	memset(SPRITE,0,64);
 	asm { jsr GENERATOR }

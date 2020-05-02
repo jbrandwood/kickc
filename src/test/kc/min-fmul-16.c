@@ -1,7 +1,7 @@
 #include <print.h>
 
 byte* RASTER = $d012;
-byte* BORDERCOL = $d020;
+byte* BORDER_COLOR = $d020;
 byte* SCREEN = $400;
 
 void main() {
@@ -11,9 +11,9 @@ void main() {
     asm { sei }
 	while(true) {
 	    while(*RASTER!=$ff) {}
-	    (*BORDERCOL)++;
+	    (*BORDER_COLOR)++;
 	    dword r = mulf16u(a, b);
-	    (*BORDERCOL)--;
+	    (*BORDER_COLOR)--;
 	    print_ulong(r);
 	    print_set_screen(SCREEN);
 	}

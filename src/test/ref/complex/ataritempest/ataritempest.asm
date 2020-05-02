@@ -9,12 +9,12 @@
 .segmentdef Vectors [start=$FFFA, min=$FFFA, max=$FFFF, fill]
 .segment Code
 init:
-  .label BGCOL = $c01a
+  .label BG_COLOR = $c01a
 __bbegin:
 .segment Code
 main: {
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // }
     rts
 }
@@ -22,8 +22,8 @@ nmiHandler: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // }
   rega:
     lda #00

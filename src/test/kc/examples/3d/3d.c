@@ -161,7 +161,7 @@ void sprites_init() {
     char* sprites_ptr = SCREEN+$3f8;
     for(char i: 0..7) {
     	sprites_ptr[i] = (char)(SPRITE/$40);
-        SPRITES_COLS[i] = GREEN; //8+i;
+        SPRITES_COLOR[i] = GREEN; //8+i;
     }
 }
 

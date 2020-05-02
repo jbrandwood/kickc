@@ -3,7 +3,7 @@
 
 void main() {
     word* const screen = 0x0400;
-    byte* const bgcol = 0xd020;
+    byte* const BG_COLOR = 0xd020;
     const byte RED = 2;
 
     byte b1 = 250;
@@ -11,6 +11,6 @@ void main() {
     word w = b2+1;
     screen[0] = w;
 
-    if((w)>255) *bgcol = RED;
+    if((w)>255) *BG_COLOR = RED;
 
 }

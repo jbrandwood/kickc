@@ -69,7 +69,6 @@ public class CallingConventionStack {
       return paramOffsetConstant.getConstantRef();
    }
 
-
    /**
     * Get the number of bytes that needed on the stack to pass parameters/return value to/from a procedure
     *

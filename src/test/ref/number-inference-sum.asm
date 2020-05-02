@@ -9,15 +9,15 @@ main: {
     .const b2 = b1+$fa
     .const w = b2+1
     .label screen = $400
-    .label bgcol = $d020
+    .label BG_COLOR = $d020
     // screen[0] = w
     lda #<w
     sta screen
     lda #>w
     sta screen+1
-    // *bgcol = RED
+    // *BG_COLOR = RED
     lda #RED
-    sta bgcol
+    sta BG_COLOR
     // }
     rts
 }

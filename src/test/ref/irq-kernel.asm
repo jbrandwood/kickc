@@ -11,7 +11,7 @@
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
 main: {
     // asm
@@ -45,12 +45,12 @@ main: {
 }
 // Interrupt Routine
 irq: {
-    // *BGCOL = WHITE
+    // *BG_COLOR = WHITE
     lda #WHITE
-    sta BGCOL
-    // *BGCOL = BLACK
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER

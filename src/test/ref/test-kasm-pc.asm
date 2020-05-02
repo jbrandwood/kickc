@@ -5,13 +5,13 @@
   .label TABLE = $2000
   // kickasm
 main: {
-    .label BORDERCOL = $d020
+    .label BORDER_COLOR = $d020
     ldx #0
   __b2:
-    // *BORDERCOL = TABLE[i++]
+    // *BORDER_COLOR = TABLE[i++]
     lda TABLE,x
-    sta BORDERCOL
-    // *BORDERCOL = TABLE[i++];
+    sta BORDER_COLOR
+    // *BORDER_COLOR = TABLE[i++];
     inx
     jmp __b2
 }

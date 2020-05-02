@@ -10,8 +10,8 @@ byte* const BITMAP = $2000;
 byte next=0;
 
 void main() {
-    *BORDERCOL = 0;
-    *BGCOL = 0;
+    *BORDER_COLOR = 0;
+    *BG_COLOR = 0;
     *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
     *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
     bitmap_init(BITMAP);

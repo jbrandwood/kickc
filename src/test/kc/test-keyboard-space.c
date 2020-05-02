@@ -6,9 +6,9 @@ void main() {
     while(true) {
         do {} while (*RASTER!=$ff);
         if(keyboard_key_pressed(KEY_SPACE)!=0) {
-            *BGCOL = GREEN;
+            *BG_COLOR = GREEN;
         } else {
-            *BGCOL = BLUE;
+            *BG_COLOR = BLUE;
         }
     }
 }

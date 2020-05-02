@@ -3,8 +3,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
 main: {
     .label result = 2
     .label kaputt = $a
@@ -19,12 +19,12 @@ main: {
     sta.z kaputt+1
     // <kaputt
     lda.z kaputt
-    // *BORDERCOL = <kaputt
-    sta BORDERCOL
+    // *BORDER_COLOR = <kaputt
+    sta BORDER_COLOR
     // >kaputt
     lda.z kaputt+1
-    // *BGCOL = >kaputt
-    sta BGCOL
+    // *BG_COLOR = >kaputt
+    sta BG_COLOR
     // }
     rts
 }

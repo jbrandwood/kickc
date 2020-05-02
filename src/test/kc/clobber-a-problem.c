@@ -1,5 +1,5 @@
 
-byte* BORDERCOL = $d020;
+byte* BORDER_COLOR = $d020;
 byte* RASTER = $d012;
 byte DARK_GREY = $b;
 byte BLACK = 0;
@@ -13,7 +13,7 @@ void main() {
 volatile byte irq_raster_next = 0;
 
 interrupt(hardware_clobber) void irq() {
-    *BORDERCOL = DARK_GREY;
+    *BORDER_COLOR = DARK_GREY;
  	irq_raster_next += 21;
     // Setup next interrupt
     byte raster_next = irq_raster_next;
@@ -21,5 +21,5 @@ interrupt(hardware_clobber) void irq() {
     	raster_next -=1;
     }
     *RASTER = raster_next;
-    *BORDERCOL = BLACK;
+    *BORDER_COLOR = BLACK;
 }

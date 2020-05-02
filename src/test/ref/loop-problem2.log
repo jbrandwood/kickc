@@ -41,15 +41,15 @@ mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@3 mode_ctrl::@4
   if(true) goto mode_ctrl::@2
   to:mode_ctrl::@return
 mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
-  (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDERCOL)
+  (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR)
   (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
   if((bool~) mode_ctrl::$0) goto mode_ctrl::@3
   to:mode_ctrl::@4
 mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((const nomodify byte*) BORDERCOL) ← (number) 2
+  *((const nomodify byte*) BORDER_COLOR) ← (number) 2
   to:mode_ctrl::@1
 mode_ctrl::@4: scope:[mode_ctrl]  from mode_ctrl::@2
-  *((const nomodify byte*) BORDERCOL) ← (number) 3
+  *((const nomodify byte*) BORDER_COLOR) ← (number) 3
   to:mode_ctrl::@1
 mode_ctrl::@return: scope:[mode_ctrl]  from mode_ctrl::@1
   return 
@@ -66,7 +66,7 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
+(const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) main()
 (label) main::@1
@@ -94,11 +94,11 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) $3e8 in (bool~) print_cls::$0 ← (byte*) print_cls::sc#2 != (const nomodify byte*) SCREEN+(number) $3e8
 Adding number conversion cast (unumber) $ff in (bool~) mode_ctrl::$0 ← (byte) mode_ctrl::before#0 == (number) $ff
-Adding number conversion cast (unumber) 2 in *((const nomodify byte*) BORDERCOL) ← (number) 2
-Adding number conversion cast (unumber) 3 in *((const nomodify byte*) BORDERCOL) ← (number) 3
+Adding number conversion cast (unumber) 2 in *((const nomodify byte*) BORDER_COLOR) ← (number) 2
+Adding number conversion cast (unumber) 3 in *((const nomodify byte*) BORDER_COLOR) ← (number) 3
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) BORDERCOL) ← (unumber)(number) 2
-Inlining cast *((const nomodify byte*) BORDERCOL) ← (unumber)(number) 3
+Inlining cast *((const nomodify byte*) BORDER_COLOR) ← (unumber)(number) 2
+Inlining cast *((const nomodify byte*) BORDER_COLOR) ← (unumber)(number) 3
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 1024
@@ -186,14 +186,14 @@ mode_ctrl: scope:[mode_ctrl]  from main::@1
   [9] phi()
   to:mode_ctrl::@1
 mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@2 mode_ctrl::@3
-  [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDERCOL)
+  [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR)
   [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2
   to:mode_ctrl::@3
 mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@1
-  [12] *((const nomodify byte*) BORDERCOL) ← (byte) 3
+  [12] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3
   to:mode_ctrl::@1
 mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
-  [13] *((const nomodify byte*) BORDERCOL) ← (byte) 2
+  [13] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2
   to:mode_ctrl::@1
 
 (void()) print_cls()
@@ -240,7 +240,7 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label SCREEN = $400
   // @begin
 __bbegin:
@@ -285,8 +285,8 @@ mode_ctrl: {
     jmp __b1
     // mode_ctrl::@1
   __b1:
-    // [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDERCOL) -- vbuz1=_deref_pbuc1 
-    lda BORDERCOL
+    // [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuz1=_deref_pbuc1 
+    lda BORDER_COLOR
     sta.z before
     // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
     lda #$ff
@@ -295,15 +295,15 @@ mode_ctrl: {
     jmp __b3
     // mode_ctrl::@3
   __b3:
-    // [12] *((const nomodify byte*) BORDERCOL) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
     // mode_ctrl::@2
   __b2:
-    // [13] *((const nomodify byte*) BORDERCOL) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
 }
   // print_cls
@@ -350,8 +350,8 @@ print_cls: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] *((const nomodify byte*) BORDERCOL) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify byte*) BORDERCOL) ← (byte) 2 [ ] ( main:2::mode_ctrl:7 [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 [ ] ( main:2::mode_ctrl:7 [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 [ ] ( main:2::mode_ctrl:7 [ ] { }  ) always clobbers reg byte a 
 Statement [16] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] { }  ) always clobbers reg byte a 
 Statement [18] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( main:2::print_cls:5 [ print_cls::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ print_cls::sc#2 print_cls::sc#1 ] : zp[2]:2 , 
@@ -375,7 +375,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label SCREEN = $400
   // @begin
 __bbegin:
@@ -419,23 +419,23 @@ mode_ctrl: {
     jmp __b1
     // mode_ctrl::@1
   __b1:
-    // [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDERCOL) -- vbuaa=_deref_pbuc1 
-    lda BORDERCOL
+    // [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuaa=_deref_pbuc1 
+    lda BORDER_COLOR
     // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
     beq __b2
     jmp __b3
     // mode_ctrl::@3
   __b3:
-    // [12] *((const nomodify byte*) BORDERCOL) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
     // mode_ctrl::@2
   __b2:
-    // [13] *((const nomodify byte*) BORDERCOL) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
 }
   // print_cls
@@ -517,7 +517,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BORDERCOL = (byte*) 53280
+(const nomodify byte*) BORDER_COLOR = (byte*) 53280
 (const nomodify byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
@@ -549,7 +549,7 @@ Score: 794
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label SCREEN = $400
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -579,25 +579,25 @@ main: {
 mode_ctrl: {
     // mode_ctrl::@1
   __b1:
-    // before = *BORDERCOL
-    // [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDERCOL) -- vbuaa=_deref_pbuc1 
-    lda BORDERCOL
+    // before = *BORDER_COLOR
+    // [10] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuaa=_deref_pbuc1 
+    lda BORDER_COLOR
     // if(before==$ff)
     // [11] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
     cmp #$ff
     beq __b2
     // mode_ctrl::@3
-    // *BORDERCOL = 3
-    // [12] *((const nomodify byte*) BORDERCOL) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // *BORDER_COLOR = 3
+    // [12] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
     // mode_ctrl::@2
   __b2:
-    // *BORDERCOL = 2
-    // [13] *((const nomodify byte*) BORDERCOL) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // *BORDER_COLOR = 2
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
 }
   // print_cls

@@ -11,7 +11,7 @@
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y = $17
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
   // The address of the CHARGEN character set
@@ -779,10 +779,10 @@ place_sprites: {
     // SPRITES_YPOS[j2] = 80
     lda #$50
     sta SPRITES_YPOS,y
-    // SPRITES_COLS[j] = col
+    // SPRITES_COLOR[j] = col
     lda.z col
     ldy.z j
-    sta SPRITES_COLS,y
+    sta SPRITES_COLOR,y
     // spr_x = spr_x + 32
     lax.z spr_x
     axs #-[$20]

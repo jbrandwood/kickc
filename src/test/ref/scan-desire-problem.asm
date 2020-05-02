@@ -10,16 +10,16 @@
   .const BLUE = 6
   .const YELLOW = 7
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label SPRITES_EXPAND_Y = $d017
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
-  .label BORDERCOL = $d020
-  .label BGCOL1 = $d021
-  .label BGCOL2 = $d022
-  .label BGCOL3 = $d023
-  .label BGCOL4 = $d024
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
+  .label BG_COLOR1 = $d022
+  .label BG_COLOR2 = $d023
+  .label BG_COLOR3 = $d024
   .label D018 = $d018
   .label screen = $400
   .label charset = $2000
@@ -263,20 +263,20 @@ init: {
     // asm
     lda #$5b
     sta $d011
-    // *BORDERCOL = BLACK
+    // *BORDER_COLOR = BLACK
     lda #BLACK
-    sta BORDERCOL
-    // *BGCOL1 = BLACK
-    sta BGCOL1
-    // *BGCOL2 = RED
+    sta BORDER_COLOR
+    // *BG_COLOR = BLACK
+    sta BG_COLOR
+    // *BG_COLOR1 = RED
     lda #RED
-    sta BGCOL2
-    // *BGCOL3 = BLUE
+    sta BG_COLOR1
+    // *BG_COLOR2 = BLUE
     lda #BLUE
-    sta BGCOL3
-    // *BGCOL4 = GREEN
+    sta BG_COLOR2
+    // *BG_COLOR3 = GREEN
     lda #GREEN
-    sta BGCOL4
+    sta BG_COLOR3
     // }
     rts
 }
@@ -328,9 +328,9 @@ init_sprites: {
     sta SPRITES_EXPAND_Y
     // *SPRITES_XMSB = 0
     sta SPRITES_XMSB
-    // *SPRITES_COLS = WHITE
+    // *SPRITES_COLOR = WHITE
     lda #WHITE
-    sta SPRITES_COLS
+    sta SPRITES_COLOR
     // *SPRITES_MC = 0
     lda #0
     sta SPRITES_MC

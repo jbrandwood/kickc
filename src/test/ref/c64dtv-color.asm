@@ -7,7 +7,7 @@
   .const DTV_HIGHCOLOR = 4
   .const DTV_BADLINE_OFF = $20
   .label RASTER = $d012
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   // Feature enables or disables the extra C64 DTV features
   .label DTV_FEATURE = $d03f
   // Controls the graphics modes of the C64 DTV
@@ -28,10 +28,10 @@ main: {
     lda #$40
     cmp RASTER
     bne __b1
-    // *BGCOL = 0
+    // *BG_COLOR = 0
     // Create rasterbars
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     ldx #$31
   __b3:
     // asm
@@ -60,8 +60,8 @@ main: {
     nop
     nop
     nop
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     // for (byte r : $31..$ff)
     inx
     cpx #0

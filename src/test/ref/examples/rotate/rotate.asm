@@ -19,7 +19,7 @@
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_XMSB = $10
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The CIA#2: Serial bus, RS-232, VIC memory bank
@@ -461,9 +461,9 @@ init: {
     // sprites_ptr[i] = (char)(SPRITE/$40)
     lda #SPRITE/$40
     sta sprites_ptr,x
-    // SPRITES_COLS[i] = GREEN
+    // SPRITES_COLOR[i] = GREEN
     lda #GREEN
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char i: 0..7)
     inx
     cpx #8

@@ -15,7 +15,7 @@
   // The number of squares to pre-calculate. Limits what values sqr() can calculate and the result of sqrt()
   .const NUM_SQUARES = $30
   .label RASTER = $d012
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   // Color Ram
   .label COLS = $d800
   // Screen containing angle to center
@@ -129,8 +129,8 @@ main: {
     lda #$ff
     cmp RASTER
     bne __b2
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // bucket = BUCKETS[bucket_idx]
     lda.z bucket_idx
     asl
@@ -178,8 +178,8 @@ main: {
     lda #FILL_CHAR
     ldy #0
     sta (fill1),y
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (*BORDER_COLOR)--;
+    dec BORDER_COLOR
     jmp __b2
   __b4:
     // bucket_idx++;
@@ -188,15 +188,15 @@ main: {
     lda #NUM_BUCKETS
     cmp.z bucket_idx
     bne __b12
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (*BORDER_COLOR)--;
+    dec BORDER_COLOR
   __b14:
     // (*(COLS+999))++;
     inc COLS+$3e7
     jmp __b14
   __b12:
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (*BORDER_COLOR)--;
+    dec BORDER_COLOR
     jmp __b2
   __b6:
     // offset = bucket[i]

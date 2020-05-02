@@ -27,7 +27,7 @@ void main() {
     	char s2 = s*2;
 		SPRITES_XPOS[s2] = xpos;
 		SPRITES_YPOS[s2] = ypos;
-		SPRITES_COLS[s] = s-3;
+		SPRITES_COLOR[s] = s-3;
 		PLAYFIELD_SPRITE_PTRS_1[s] = toSpritePtr(SIN_SPRITE);
 		xpos +=  24;
 		ypos +=  24;

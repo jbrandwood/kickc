@@ -10,7 +10,7 @@ void main() {
     fill(BITMAP,40*25*8,0);
     fill(SCREEN,40*25,$16);
 
-    *BORDERCOL = BLUE;
+    *BORDER_COLOR = BLUE;
     *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
     *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
 

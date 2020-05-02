@@ -2,7 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $2000 "Program"
-  .label BGCOL = $d021
+  .label BG_COLOR = $d021
   .label RASTER = $d012
 main: {
     // asm
@@ -12,9 +12,9 @@ main: {
     lda RASTER
     cmp #$1e
     bcc __b2
-    // *BGCOL = 0
+    // *BG_COLOR = 0
     lda #0
-    sta BGCOL
+    sta BG_COLOR
     jmp __b1
   __b2:
     // incScreen()
@@ -22,9 +22,9 @@ main: {
     jmp __b1
 }
 incScreen: {
-    // *BGCOL = *RASTER
+    // *BG_COLOR = *RASTER
     lda RASTER
-    sta BGCOL
+    sta BG_COLOR
     // }
     rts
 }

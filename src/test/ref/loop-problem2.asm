@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label SCREEN = $400
 main: {
     // print_cls()
@@ -13,19 +13,19 @@ main: {
 }
 mode_ctrl: {
   __b1:
-    // before = *BORDERCOL
-    lda BORDERCOL
+    // before = *BORDER_COLOR
+    lda BORDER_COLOR
     // if(before==$ff)
     cmp #$ff
     beq __b2
-    // *BORDERCOL = 3
+    // *BORDER_COLOR = 3
     lda #3
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
   __b2:
-    // *BORDERCOL = 2
+    // *BORDER_COLOR = 2
     lda #2
-    sta BORDERCOL
+    sta BORDER_COLOR
     jmp __b1
 }
 print_cls: {

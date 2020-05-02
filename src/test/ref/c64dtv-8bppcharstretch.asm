@@ -20,7 +20,7 @@
   .const DTV_CHUNKY = $40
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .label RASTER = $d012
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label VIC_CONTROL = $d011
   .label VIC_CONTROL2 = $d016
   .label VIC_MEMORY = $d018
@@ -181,9 +181,9 @@ main: {
     // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
     lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
     sta VIC_CONTROL
-    // *BORDERCOL = 0
+    // *BORDER_COLOR = 0
     lda #0
-    sta BORDERCOL
+    sta BORDER_COLOR
   __b3:
     // while(*RASTER!=rst)
     lda #$42
@@ -224,8 +224,8 @@ main: {
     asl
     asl
     asl
-    // *BORDERCOL = rst*$10
-    sta BORDERCOL
+    // *BORDER_COLOR = rst*$10
+    sta BORDER_COLOR
     // asm
     nop
     nop

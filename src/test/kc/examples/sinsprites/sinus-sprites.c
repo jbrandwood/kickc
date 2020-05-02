@@ -112,7 +112,7 @@ void place_sprites() {
         sprites_ptr[j] = spr_id++;
         SPRITES_XPOS[j2] = spr_x;
         SPRITES_YPOS[j2] = 80;
-        SPRITES_COLS[j] = col;
+        SPRITES_COLOR[j] = col;
         spr_x = spr_x + 32;
         col = col^($7^$5);
         j2++;

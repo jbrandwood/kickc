@@ -8,7 +8,7 @@ main: {
     .const w2 = 1*$100+1+w
     // Test the result
     .label pos = $501
-    .label bgcol = $d021
+    .label BG_COLOR = $d021
     // constant inline words inside expression
     .label sc = w2
     // *sc = bs[1]
@@ -19,15 +19,15 @@ main: {
     lda #'m'
     cmp pos
     beq __b1
-    // *bgcol = 2
+    // *BG_COLOR = 2
     lda #2
-    sta bgcol
+    sta BG_COLOR
     // }
     rts
   __b1:
-    // *bgcol = 5
+    // *BG_COLOR = 5
     lda #5
-    sta bgcol
+    sta BG_COLOR
     rts
     bs: .byte 'c', 'm'
 }

@@ -42,7 +42,7 @@ void init() {
     // Enable & initialize sprites
     VICII->SPRITES_ENABLE = $ff;
     for(char ss: 0..7) {
-        SPRITES_COLS[ss] = GREEN;
+        SPRITES_COLOR[ss] = GREEN;
     }
 }
 

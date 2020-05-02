@@ -2,7 +2,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label RASTER = $d012
-  .label BORDERCOL = $d020
+  .label BORDER_COLOR = $d020
   .label SCREEN = $400
   .label print_char_cursor = 2
 main: {
@@ -22,13 +22,13 @@ main: {
     lda #$ff
     cmp RASTER
     bne __b2
-    // (*BORDERCOL)++;
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
     // mulf16u(a, b)
     jsr mulf16u
     // r = mulf16u(a, b)
-    // (*BORDERCOL)--;
-    dec BORDERCOL
+    // (*BORDER_COLOR)--;
+    dec BORDER_COLOR
     // print_ulong(r)
     jsr print_ulong
     // print_set_screen(SCREEN)

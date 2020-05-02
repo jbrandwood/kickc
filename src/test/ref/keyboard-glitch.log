@@ -44,7 +44,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
 
 (void()) main()
 main: scope:[main]  from @1
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN
+  *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   if(true) goto main::@2
@@ -109,20 +109,20 @@ menu::@12: scope:[menu]  from menu::@4
   if((bool~) menu::$9) goto menu::@5
   to:menu::@8
 menu::@7: scope:[menu]  from menu::@10
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
+  *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED
   asm { sei  }
   to:menu::@return
 menu::@5: scope:[menu]  from menu::@12
   *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
   to:menu::@1
 menu::@8: scope:[menu]  from menu::@12
-  *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN
+  *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
   asm { cli  }
   to:menu::@return
 
 (void()) pressed()
 pressed: scope:[pressed]  from menu::@6
-  *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
   to:pressed::@1
 pressed::@1: scope:[pressed]  from pressed pressed::@3
   if(true) goto pressed::@2
@@ -154,8 +154,8 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
+(const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) GREEN = (byte) 5
 (const nomodify byte) KEY_C = (byte) $14
@@ -476,7 +476,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from @1
-  [4] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN
+  [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@1
   [5] phi()
@@ -513,7 +513,7 @@ menu::@9: scope:[menu]  from menu::@2
   [20] if((byte~) menu::$4==(byte) 0) goto menu::@3
   to:menu::@6
 menu::@6: scope:[menu]  from menu::@9
-  [21] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED
+  [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED
   asm { sei  }
   to:menu::@return
 menu::@3: scope:[menu]  from menu::@9
@@ -526,7 +526,7 @@ menu::@10: scope:[menu]  from menu::@3
   [27] if((byte~) menu::$7==(byte) 0) goto menu::@4
   to:menu::@7
 menu::@7: scope:[menu]  from menu::@10
-  [28] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN
+  [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
   asm { cli  }
   to:menu::@return
 menu::@4: scope:[menu]  from menu::@10
@@ -561,7 +561,7 @@ keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matri
 
 (void()) pressed()
 pressed: scope:[pressed]  from menu::@5
-  [43] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL)
+  [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
   to:pressed::@1
 pressed::@1: scope:[pressed]  from pressed pressed::@2
   [44] phi()
@@ -750,7 +750,7 @@ Target platform is c64basic / MOS6502X
 // The glitch is caused by the "normal" C64 interrupt occuring just as the keyboard is read.
 // Press "I" to disable interrupts (red border)
 // Press "E" to enable interrupts (green border)
-// Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
+// Press "C" to enter pressed state (increaded BG_COLOR) - and "SPACE" to leave presssed state again.
 // Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
 // but never when they are disabled (red border)
   // Upstart
@@ -765,8 +765,8 @@ Target platform is c64basic / MOS6502X
   .const RED = 2
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
@@ -786,9 +786,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   __b1_from_main:
   __b1_from___b1:
@@ -872,9 +872,9 @@ menu: {
     jmp __b6
     // menu::@6
   __b6:
-    // [21] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm { sei  }
     sei
     jmp __breturn
@@ -906,9 +906,9 @@ menu: {
     jmp __b7
     // menu::@7
   __b7:
-    // [28] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm { cli  }
     cli
     jmp __breturn
@@ -997,8 +997,8 @@ keyboard_matrix_read: {
   // pressed
 pressed: {
     .label __1 = $11
-    // [43] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
   __b1_from_pressed:
   __b1_from___b2:
@@ -1038,16 +1038,16 @@ pressed: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
 Statement [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::menu:6::keyboard_key_pressed:9 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ keyboard_key_pressed::colidx#0 ]
 Statement [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [4] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
 Statement [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::menu:6::keyboard_key_pressed:9 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
@@ -1108,7 +1108,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The glitch is caused by the "normal" C64 interrupt occuring just as the keyboard is read.
 // Press "I" to disable interrupts (red border)
 // Press "E" to enable interrupts (green border)
-// Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
+// Press "C" to enter pressed state (increaded BG_COLOR) - and "SPACE" to leave presssed state again.
 // Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
 // but never when they are disabled (red border)
   // Upstart
@@ -1123,8 +1123,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const RED = 2
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
@@ -1144,9 +1144,9 @@ __bend_from___b1:
 __bend:
   // main
 main: {
-    // [4] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   __b1_from_main:
   __b1_from___b1:
@@ -1215,9 +1215,9 @@ menu: {
     jmp __b6
     // menu::@6
   __b6:
-    // [21] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm { sei  }
     sei
     jmp __breturn
@@ -1243,9 +1243,9 @@ menu: {
     jmp __b7
     // menu::@7
   __b7:
-    // [28] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm { cli  }
     cli
     jmp __breturn
@@ -1310,8 +1310,8 @@ keyboard_matrix_read: {
 }
   // pressed
 pressed: {
-    // [43] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
   __b1_from_pressed:
   __b1_from___b2:
@@ -1413,8 +1413,8 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
-(const nomodify byte*) BORDERCOL = (byte*) 53280
+(const nomodify byte*) BG_COLOR = (byte*) 53281
+(const nomodify byte*) BORDER_COLOR = (byte*) 53280
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) GREEN = (byte) 5
 (const nomodify byte) KEY_C = (byte) $14
@@ -1583,7 +1583,7 @@ Score: 3151
 // The glitch is caused by the "normal" C64 interrupt occuring just as the keyboard is read.
 // Press "I" to disable interrupts (red border)
 // Press "E" to enable interrupts (green border)
-// Press "C" to enter pressed state (increaded bgcol) - and "SPACE" to leave presssed state again.
+// Press "C" to enter pressed state (increaded BG_COLOR) - and "SPACE" to leave presssed state again.
 // Holding SPACE will sometimes trigger the pressed state when normal interrupts are enabled (green border)
 // but never when they are disabled (red border)
   // Upstart
@@ -1598,8 +1598,8 @@ Score: 3151
   .const RED = 2
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
@@ -1611,10 +1611,10 @@ Score: 3151
   // @end
   // main
 main: {
-    // *BORDERCOL = GREEN
-    // [4] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // *BORDER_COLOR = GREEN
+    // [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
     // main::@1
   __b1:
@@ -1670,10 +1670,10 @@ menu: {
     cmp #0
     beq __b3
     // menu::@6
-    // *BORDERCOL = RED
-    // [21] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // *BORDER_COLOR = RED
+    // [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm
     // asm { sei  }
     sei
@@ -1696,10 +1696,10 @@ menu: {
     cmp #0
     beq __b4
     // menu::@7
-    // *BORDERCOL = GREEN
-    // [28] *((const nomodify byte*) BORDERCOL) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // *BORDER_COLOR = GREEN
+    // [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
-    sta BORDERCOL
+    sta BORDER_COLOR
     // asm
     // asm { cli  }
     cli
@@ -1768,9 +1768,9 @@ keyboard_matrix_read: {
 }
   // pressed
 pressed: {
-    // (*BGCOL)++;
-    // [43] *((const nomodify byte*) BGCOL) ← ++ *((const nomodify byte*) BGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BGCOL
+    // (*BG_COLOR)++;
+    // [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
     // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
     // pressed::@1
   __b1:

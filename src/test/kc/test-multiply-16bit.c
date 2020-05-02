@@ -3,10 +3,10 @@
 #include <multiply.h>
 #include <fastmultiply.h>
 
-byte* BGCOL = $d021;
+byte* BG_COLOR = $d021;
 
 void main() {
-    *BGCOL = 5;
+    *BG_COLOR = 5;
     print_cls();
     mulf_init();
     mul16u_compare();
@@ -61,7 +61,7 @@ void mul16u_compare() {
                 ok = 0;
             }
             if(ok==0) {
-                *BGCOL = 2;
+                *BG_COLOR = 2;
                 mul16u_error(a,b, ms, mn, mf);
                 return;
             }
@@ -106,7 +106,7 @@ void mul16s_compare() {
                 ok = 0;
             }
             if(ok==0) {
-                *BGCOL = 2;
+                *BG_COLOR = 2;
                 mul16s_error(a,b, ms, mn, mf);
                 return;
             }

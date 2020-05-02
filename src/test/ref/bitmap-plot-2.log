@@ -901,7 +901,7 @@ main::@10: scope:[main]  from main::@9
   (byte*) bitmap_screen#19 ← phi( main::@9/(byte*) bitmap_screen#13 )
   (byte*) bitmap_gfx#20 ← phi( main::@9/(byte*) bitmap_gfx#14 )
   (word) rem16u#28 ← phi( main::@9/(word) rem16u#24 )
-  *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
   to:main::@9
 main::@return: scope:[main]  from main::@9
   (byte*) bitmap_screen#9 ← phi( main::@9/(byte*) bitmap_screen#13 )
@@ -937,13 +937,13 @@ init_irq::@return: scope:[init_irq]  from init_irq
 
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
   (bool~) irq::$1 ← (number) 0 != (volatile byte) frame_cnt
   (bool~) irq::$0 ← ! (bool~) irq::$1
   if((bool~) irq::$0) goto irq::@1
   to:irq::@2
 irq::@1: scope:[irq]  from irq irq::@2
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
   *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   to:irq::@return
 irq::@2: scope:[irq]  from irq
@@ -976,10 +976,10 @@ SYMBOL TABLE SSA
 (label) @5
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const byte*) BITMAP = (byte*)(number) $2000
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
+(const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) D011 = (byte*)(number) $d011
@@ -2991,7 +2991,7 @@ main::@5: scope:[main]  from main::@15 main::@4 main::@6
   [55] if((signed word) main::r#1>=(signed word)(number) $200*(number) $c+(number) $100) goto main::@7
   to:main::@1
 main::@7: scope:[main]  from main::@5 main::@7
-  [56] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  [56] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
   to:main::@7
 
 (void()) bitmap_plot((word) bitmap_plot::x , (byte) bitmap_plot::y)
@@ -3353,14 +3353,14 @@ divr16u::@return: scope:[divr16u]  from divr16u::@6
 
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
-  [234] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
+  [234] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
   [235] if((byte) 0==(volatile byte) frame_cnt) goto irq::@1
   to:irq::@2
 irq::@2: scope:[irq]  from irq
   [236] (volatile byte) frame_cnt ← ++ (volatile byte) frame_cnt
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@2
-  [237] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  [237] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
   [238] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1
@@ -4049,8 +4049,8 @@ Target platform is c64basic / MOS6502X
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   .label D011 = $d011
   .label D018 = $d018
@@ -4491,8 +4491,8 @@ main: {
     jmp __b1
     // main::@7
   __b7:
-    // [56] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [56] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
     jmp __b7
 }
   // bitmap_plot
@@ -5897,9 +5897,9 @@ irq: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [234] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [234] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     // [235] if((byte) 0==(volatile byte) frame_cnt) goto irq::@1 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp.z frame_cnt
@@ -5912,9 +5912,9 @@ irq: {
     jmp __b1
     // irq::@1
   __b1:
-    // [237] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [237] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // [238] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
@@ -6077,9 +6077,9 @@ Removing always clobbered register reg byte a as potential for zp[1]:67 [ divr16
 Statement [226] if((word) divr16u::rem#6<(const word) sin16s_gen2::wavelength#0) goto divr16u::@3 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ( main:3::sin16s_gen2:6::div32u16u:139::divr16u:207 [ frame_cnt divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::return#0 = divr16u::return#2 } }  main:3::sin16s_gen2:6::div32u16u:139::divr16u:211 [ frame_cnt div32u16u::quotient_hi#0 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::rem#10 = divr16u::rem#4 rem16u#1 } { divr16u::return#0 = divr16u::return#3 } }  ) always clobbers reg byte a 
 Statement [228] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (const word) sin16s_gen2::wavelength#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:3::sin16s_gen2:6::div32u16u:139::divr16u:207 [ frame_cnt divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::return#0 = divr16u::return#2 } }  main:3::sin16s_gen2:6::div32u16u:139::divr16u:211 [ frame_cnt div32u16u::quotient_hi#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::rem#10 = divr16u::rem#4 rem16u#1 } { divr16u::return#0 = divr16u::return#3 } }  ) always clobbers reg byte a 
 Statement [232] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:3::sin16s_gen2:6::div32u16u:139::divr16u:207 [ frame_cnt divr16u::return#0 rem16u#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::return#0 = divr16u::return#2 } }  main:3::sin16s_gen2:6::div32u16u:139::divr16u:211 [ frame_cnt div32u16u::quotient_hi#0 divr16u::return#0 rem16u#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::rem#10 = divr16u::rem#4 rem16u#1 } { divr16u::return#0 = divr16u::return#3 } }  ) always clobbers reg byte a 
-Statement [234] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE [ frame_cnt ] (  [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [234] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ frame_cnt ] (  [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [235] if((byte) 0==(volatile byte) frame_cnt) goto irq::@1 [ frame_cnt ] (  [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [237] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [237] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [238] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [239] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement [1] (volatile byte) frame_cnt ← (byte) 1 [ frame_cnt ] (  [ frame_cnt ] { }  ) always clobbers reg byte a 
@@ -6209,9 +6209,9 @@ Statement [222] (word) divr16u::rem#1 ← (word) divr16u::rem#0 | (byte) 1 [ div
 Statement [226] if((word) divr16u::rem#6<(const word) sin16s_gen2::wavelength#0) goto divr16u::@3 [ divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] ( main:3::sin16s_gen2:6::div32u16u:139::divr16u:207 [ frame_cnt divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::return#0 = divr16u::return#2 } }  main:3::sin16s_gen2:6::div32u16u:139::divr16u:211 [ frame_cnt div32u16u::quotient_hi#0 divr16u::i#2 divr16u::dividend#0 divr16u::rem#6 divr16u::quotient#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::rem#10 = divr16u::rem#4 rem16u#1 } { divr16u::return#0 = divr16u::return#3 } }  ) always clobbers reg byte a 
 Statement [228] (word) divr16u::rem#2 ← (word) divr16u::rem#6 - (const word) sin16s_gen2::wavelength#0 [ divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] ( main:3::sin16s_gen2:6::div32u16u:139::divr16u:207 [ frame_cnt divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::return#0 = divr16u::return#2 } }  main:3::sin16s_gen2:6::div32u16u:139::divr16u:211 [ frame_cnt div32u16u::quotient_hi#0 divr16u::i#2 divr16u::dividend#0 divr16u::quotient#2 divr16u::rem#2 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::rem#10 = divr16u::rem#4 rem16u#1 } { divr16u::return#0 = divr16u::return#3 } }  ) always clobbers reg byte a 
 Statement [232] (word) rem16u#1 ← (word) divr16u::rem#11 [ divr16u::return#0 rem16u#1 ] ( main:3::sin16s_gen2:6::div32u16u:139::divr16u:207 [ frame_cnt divr16u::return#0 rem16u#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::return#0 = divr16u::return#2 } }  main:3::sin16s_gen2:6::div32u16u:139::divr16u:211 [ frame_cnt div32u16u::quotient_hi#0 divr16u::return#0 rem16u#1 ] { { div32u16u::return#0 = div32u16u::return#2 } { divr16u::rem#10 = divr16u::rem#4 rem16u#1 } { divr16u::return#0 = divr16u::return#3 } }  ) always clobbers reg byte a 
-Statement [234] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE [ frame_cnt ] (  [ frame_cnt ] { }  ) always clobbers reg byte a 
+Statement [234] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ frame_cnt ] (  [ frame_cnt ] { }  ) always clobbers reg byte a 
 Statement [235] if((byte) 0==(volatile byte) frame_cnt) goto irq::@1 [ frame_cnt ] (  [ frame_cnt ] { }  ) always clobbers reg byte a 
-Statement [237] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [237] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [238] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [239] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[2]:2 [ main::idx_x#11 main::idx_x#10 main::idx_x#1 ] : zp[2]:2 , 
@@ -6485,8 +6485,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   .label D011 = $d011
   .label D018 = $d018
@@ -6872,8 +6872,8 @@ main: {
     jmp __b1
     // main::@7
   __b7:
-    // [56] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [56] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
     jmp __b7
 }
   // bitmap_plot
@@ -8040,9 +8040,9 @@ divr16u: {
 irq: {
     // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
-    // [234] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [234] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     // [235] if((byte) 0==(volatile byte) frame_cnt) goto irq::@1 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp.z frame_cnt
@@ -8055,9 +8055,9 @@ irq: {
     jmp __b1
     // irq::@1
   __b1:
-    // [237] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [237] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // [238] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
@@ -8350,10 +8350,10 @@ FINAL SYMBOL TABLE
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte*) BG_COLOR = (byte*) 53281
 (const byte*) BITMAP = (byte*) 8192
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*) 53280
+(const nomodify byte*) BORDER_COLOR = (byte*) 53280
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify byte*) D011 = (byte*) 53265
@@ -8881,8 +8881,8 @@ Score: 20833
   .const SIZEOF_SIGNED_WORD = 2
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   .label D011 = $d011
   .label D018 = $d018
@@ -9234,9 +9234,9 @@ main: {
     jmp __b2
     // main::@7
   __b7:
-    // (*BORDERCOL)++;
-    // [56] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    // [56] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
     jmp __b7
 }
   // bitmap_plot
@@ -10379,10 +10379,10 @@ divr16u: {
 irq: {
     // entry interrupt(HARDWARE_CLOBBER)
     sta rega+1
-    // *BGCOL = WHITE
-    // [234] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = WHITE
+    // [234] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
+    sta BG_COLOR
     // if(frame_cnt)
     // [235] if((byte) 0==(volatile byte) frame_cnt) goto irq::@1 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
@@ -10394,10 +10394,10 @@ irq: {
     inc.z frame_cnt
     // irq::@1
   __b1:
-    // *BGCOL = BLACK
-    // [237] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = BLACK
+    // [237] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     // [238] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ

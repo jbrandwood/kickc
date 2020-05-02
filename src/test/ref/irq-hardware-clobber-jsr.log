@@ -21,7 +21,7 @@ main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
@@ -39,8 +39,8 @@ irq::@return: scope:[irq]  from irq::@1
 
 (void()) do_irq()
 do_irq: scope:[do_irq]  from irq
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
-  *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
+  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
   *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   to:do_irq::@return
 do_irq::@return: scope:[do_irq]  from do_irq
@@ -58,9 +58,9 @@ SYMBOL TABLE SSA
 (label) @2
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*)(number) $d021
+(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*)(number) $d020
+(const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify void()**) HARDWARE_IRQ = (void()**)(number) $fffe
@@ -240,7 +240,7 @@ main: scope:[main]  from @1
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [13] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL)
+  [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
   to:main::@1
 
 interrupt(HARDWARE_CLOBBER)(void()) irq()
@@ -254,8 +254,8 @@ irq::@return: scope:[irq]  from irq
 
 (void()) do_irq()
 do_irq: scope:[do_irq]  from irq
-  [17] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE
-  [18] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK
+  [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
+  [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
   [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   to:do_irq::@return
 do_irq::@return: scope:[do_irq]  from do_irq
@@ -377,8 +377,8 @@ Target platform is c64basic / MOS6502X
   .const WHITE = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -444,8 +444,8 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [13] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
     jmp __b1
 }
   // irq
@@ -471,12 +471,12 @@ irq: {
 }
   // do_irq
 do_irq: {
-    // [17] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
-    // [18] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta BG_COLOR
+    // [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
@@ -498,8 +498,8 @@ Statement [9] *((const nomodify byte*) RASTER) ← (byte) 0 [ ] ( main:2 [ ] { }
 Statement [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [16] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [17] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
-Statement [18] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
+Statement [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
+Statement [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
 Statement [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -547,8 +547,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const WHITE = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -614,8 +614,8 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [13] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
     jmp __b1
 }
   // irq
@@ -635,12 +635,12 @@ irq: {
 }
   // do_irq
 do_irq: {
-    // [17] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
-    // [18] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta BG_COLOR
+    // [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
@@ -678,9 +678,9 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(const nomodify byte*) BGCOL = (byte*) 53281
+(const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte) BLACK = (byte) 0
-(const nomodify byte*) BORDERCOL = (byte*) 53280
+(const nomodify byte*) BORDER_COLOR = (byte*) 53280
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const nomodify void()**) HARDWARE_IRQ = (void()**) 65534
@@ -811,8 +811,8 @@ Score: 224
   .const WHITE = 1
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label BORDERCOL = $d020
-  .label BGCOL = $d021
+  .label BORDER_COLOR = $d020
+  .label BG_COLOR = $d021
   .label VIC_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -878,9 +878,9 @@ main: {
     cli
     // main::@1
   __b1:
-    // (*BORDERCOL)++;
-    // [13] *((const nomodify byte*) BORDERCOL) ← ++ *((const nomodify byte*) BORDERCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDERCOL
+    // (*BORDER_COLOR)++;
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
     jmp __b1
 }
   // irq
@@ -900,14 +900,14 @@ irq: {
 }
   // do_irq
 do_irq: {
-    // *BGCOL = WHITE
-    // [17] *((const nomodify byte*) BGCOL) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // *BG_COLOR = WHITE
+    // [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
-    sta BGCOL
-    // *BGCOL = BLACK
-    // [18] *((const nomodify byte*) BGCOL) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
+    // [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
-    sta BGCOL
+    sta BG_COLOR
     // *IRQ_STATUS = IRQ_RASTER
     // [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ

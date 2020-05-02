@@ -9,7 +9,7 @@
   .label VIC_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
-  .label BGCOL = $d020
+  .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label CIA1_INTERRUPT = $dc0d
 main: {
@@ -95,8 +95,8 @@ sub_main: {
     sty.z $ff
     clc
     adc.z $ff
-    // *BGCOL = i+j+k
-    sta BGCOL
+    // *BG_COLOR = i+j+k
+    sta BG_COLOR
     // for( byte k: 0..10 )
     iny
     cpy #$b
@@ -117,8 +117,8 @@ irq: {
     .label k = 8
     .label j = 7
     .label i = 6
-    // (*BGCOL)++;
-    inc BGCOL
+    // (*BG_COLOR)++;
+    inc BG_COLOR
     lda #0
     sta.z i
   __b1:
@@ -155,8 +155,8 @@ irq: {
     // *IRQ_STATUS = IRQ_RASTER
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // (*BGCOL)--;
-    dec BGCOL
+    // (*BG_COLOR)--;
+    dec BG_COLOR
     // }
     jmp $ea81
 }
@@ -177,8 +177,8 @@ sub_irq: {
     sty.z $ff
     clc
     adc.z $ff
-    // *BGCOL = i+j+k
-    sta BGCOL
+    // *BG_COLOR = i+j+k
+    sta BG_COLOR
     // for( byte k: 0..10 )
     iny
     cpy #$b

@@ -322,7 +322,7 @@ main::@4: scope:[main]  from main::@3 main::@4
   (byte) y_sin_idx#19 ← phi( main::@3/(byte) y_sin_idx#26 main::@4/(byte) y_sin_idx#19 )
   (byte*) scroll_text_next#21 ← phi( main::@3/(byte*) scroll_text_next#28 main::@4/(byte*) scroll_text_next#21 )
   (byte) main::s1#2 ← phi( main::@3/(byte) main::s1#0 main::@4/(byte) main::s1#1 )
-  *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE
+  *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE
   (byte) main::s1#1 ← (byte) main::s1#2 + rangenext(0,7)
   (bool~) main::$8 ← (byte) main::s1#1 != rangelast(0,7)
   if((bool~) main::$8) goto main::@4
@@ -1038,7 +1038,7 @@ SYMBOL TABLE SSA
 (const byte*) SCROLL_TEXT[]  = (byte*) "camelot presents a spanking new contribution to the always hungry c64 scene. in this time of the corona virus we have chosen to direct our efforts towards the safe haven of coding, pixeling and composing for our beloved old breadbin.      "
 (const byte) SIZEOF_WORD = (byte) 2
 (const nomodify byte*) SPRITES = (byte*)(number) $3000
-(const nomodify byte*) SPRITES_COLS = (byte*)(number) $d027
+(const nomodify byte*) SPRITES_COLOR = (byte*)(number) $d027
 (const nomodify byte*) SPRITES_ENABLE = (byte*)(number) $d015
 (const nomodify byte*) SPRITES_XMSB = (byte*)(number) $d010
 (const nomodify byte*) SPRITES_XPOS = (byte*)(number) $d000
@@ -2728,7 +2728,7 @@ main::@3: scope:[main]  from main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@4
   [23] (byte) main::s1#2 ← phi( main::@3/(byte) 0 main::@4/(byte) main::s1#1 )
-  [24] *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE
+  [24] *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE
   [25] (byte) main::s1#1 ← ++ (byte) main::s1#2
   [26] if((byte) main::s1#1!=(byte) 8) goto main::@4
   to:main::@5
@@ -3586,7 +3586,7 @@ Target platform is c64basic / MOS6502X
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -3757,10 +3757,10 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [24] *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [24] *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #WHITE
     ldy.z s1
-    sta SPRITES_COLS,y
+    sta SPRITES_COLOR,y
     // [25] (byte) main::s1#1 ← ++ (byte) main::s1#2 -- vbuz1=_inc_vbuz1 
     inc.z s1
     // [26] if((byte) main::s1#1!=(byte) 8) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
@@ -3846,7 +3846,7 @@ main: {
     lda #0
     sta.z frame_done
     // [41] call plex_move 
-  //*BORDERCOL = RED;
+  //*BORDER_COLOR = RED;
   // Move the sprites
     // [75] phi from main::@7 to plex_move [phi:main::@7->plex_move]
   plex_move_from___b7:
@@ -4774,7 +4774,7 @@ plex_irq: {
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // asm { cli  }
-    //*BORDERCOL = 0;
+    //*BORDER_COLOR = 0;
     cli
     jmp __breturn
     // plex_irq::@return
@@ -4965,7 +4965,7 @@ Statement [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROC
 Statement [13] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
 Statement [19] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
 Statement [22] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
-Statement [24] *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE [ frame_done main::s1#2 ] ( main:8 [ frame_done main::s1#2 ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE [ frame_done main::s1#2 ] ( main:8 [ frame_done main::s1#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::s1#2 main::s1#1 ]
 Statement [32] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] ( main:8 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ y_sin_idx#10 y_sin_idx#12 ]
@@ -5090,7 +5090,7 @@ Statement [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROC
 Statement [13] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
 Statement [19] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
 Statement [22] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
-Statement [24] *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE [ frame_done main::s1#2 ] ( main:8 [ frame_done main::s1#2 ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE [ frame_done main::s1#2 ] ( main:8 [ frame_done main::s1#2 ] { }  ) always clobbers reg byte a 
 Statement [32] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] ( main:8 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] { }  ) always clobbers reg byte a 
 Statement [33] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] ( main:8 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] { }  ) always clobbers reg byte a 
 Statement [34] *((const nomodify byte*) RASTER) ← (byte) $28 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] ( main:8 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] { }  ) always clobbers reg byte a 
@@ -5182,7 +5182,7 @@ Statement [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROC
 Statement [13] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
 Statement [19] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
 Statement [22] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) $ff [ frame_done ] ( main:8 [ frame_done ] { }  ) always clobbers reg byte a 
-Statement [24] *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE [ frame_done main::s1#2 ] ( main:8 [ frame_done main::s1#2 ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE [ frame_done main::s1#2 ] ( main:8 [ frame_done main::s1#2 ] { }  ) always clobbers reg byte a 
 Statement [32] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] ( main:8 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] { }  ) always clobbers reg byte a 
 Statement [33] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] ( main:8 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] { }  ) always clobbers reg byte a 
 Statement [34] *((const nomodify byte*) RASTER) ← (byte) $28 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] ( main:8 [ frame_done y_sin_idx#12 x_movement_idx#12 scroll_text_next#13 ] { }  ) always clobbers reg byte a 
@@ -5497,7 +5497,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -5663,9 +5663,9 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [24] *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [24] *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #WHITE
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // [25] (byte) main::s1#1 ← ++ (byte) main::s1#2 -- vbuxx=_inc_vbuxx 
     inx
     // [26] if((byte) main::s1#1!=(byte) 8) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
@@ -5750,7 +5750,7 @@ main: {
     lda #0
     sta.z frame_done
     // [41] call plex_move 
-  //*BORDERCOL = RED;
+  //*BORDER_COLOR = RED;
   // Move the sprites
     // [75] phi from main::@7 to plex_move [phi:main::@7->plex_move]
   plex_move_from___b7:
@@ -6601,7 +6601,7 @@ plex_irq: {
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // asm { cli  }
-    //*BORDERCOL = 0;
+    //*BORDER_COLOR = 0;
     cli
     jmp __breturn
     // plex_irq::@return
@@ -7103,7 +7103,7 @@ FINAL SYMBOL TABLE
 (const nomodify byte*) SCREEN = (byte*) 1024
 (const byte*) SCROLL_TEXT[]  = (byte*) "camelot presents a spanking new contribution to the always hungry c64 scene. in this time of the corona virus we have chosen to direct our efforts towards the safe haven of coding, pixeling and composing for our beloved old breadbin.      "
 (const nomodify byte*) SPRITES = (byte*) 12288
-(const nomodify byte*) SPRITES_COLS = (byte*) 53287
+(const nomodify byte*) SPRITES_COLOR = (byte*) 53287
 (const nomodify byte*) SPRITES_ENABLE = (byte*) 53269
 (const nomodify byte*) SPRITES_XMSB = (byte*) 53264
 (const nomodify byte*) SPRITES_XPOS = (byte*) 53248
@@ -7445,7 +7445,7 @@ Score: 159127
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  .label SPRITES_COLS = $d027
+  .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label VIC_CONTROL = $d011
@@ -7589,10 +7589,10 @@ main: {
     // [23] phi (byte) main::s1#2 = (byte) main::s1#1 [phi:main::@4->main::@4#0] -- register_copy 
     // main::@4
   __b4:
-    // SPRITES_COLS[s] = WHITE
-    // [24] *((const nomodify byte*) SPRITES_COLS + (byte) main::s1#2) ← (const nomodify byte) WHITE -- pbuc1_derefidx_vbuxx=vbuc2 
+    // SPRITES_COLOR[s] = WHITE
+    // [24] *((const nomodify byte*) SPRITES_COLOR + (byte) main::s1#2) ← (const nomodify byte) WHITE -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #WHITE
-    sta SPRITES_COLS,x
+    sta SPRITES_COLOR,x
     // for(char s: 0..7)
     // [25] (byte) main::s1#1 ← ++ (byte) main::s1#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -7678,7 +7678,7 @@ main: {
     sta.z frame_done
     // plex_move()
     // [41] call plex_move 
-  //*BORDERCOL = RED;
+  //*BORDER_COLOR = RED;
   // Move the sprites
     // [75] phi from main::@7 to plex_move [phi:main::@7->plex_move]
     // [75] phi (byte*) scroll_text_next#25 = (byte*) scroll_text_next#13 [phi:main::@7->plex_move#0] -- register_copy 
@@ -8490,7 +8490,7 @@ plex_irq: {
     sta IRQ_STATUS
     // asm
     // asm { cli  }
-    //*BORDERCOL = 0;
+    //*BORDER_COLOR = 0;
     cli
     // plex_irq::@return
     // }

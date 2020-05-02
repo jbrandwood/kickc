@@ -6,7 +6,7 @@ main: {
     // RValue pointer expression (constant)
     .label screen = $400
     // Increment on a const named pointer
-    .label BGCOL = $d020
+    .label BG_COLOR = $d020
     .label sc2 = screen+$51
     ldx #0
   // RValue pointer expression (variable)
@@ -39,8 +39,8 @@ main: {
     inc $d020
     // --*(byte*)($d000+$21);
     dec $d000+$21
-    // ++*BGCOL;
-    inc BGCOL
+    // ++*BG_COLOR;
+    inc BG_COLOR
     // }
     rts
 }

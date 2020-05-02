@@ -3,7 +3,7 @@
 
 byte* RASTER = $d012;
 byte* D018 = $d018;
-byte* BGCOL = $d021;
+byte* BG_COLOR = $d021;
 
 byte* screen = $0400;
 byte* charset1 = $1000;
@@ -14,10 +14,10 @@ void main() {
     while(true) {
         while(*RASTER!=$ff) {}
         *D018 = toD018(screen, charset1);
-        *BGCOL = $6;
+        *BG_COLOR = $6;
         while(*RASTER!=$62) {}
         *D018 = toD018(screen, charset2);
-        *BGCOL = $b;
+        *BG_COLOR = $b;
     }
 }
 

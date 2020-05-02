@@ -5,14 +5,14 @@
 
 void main() {
 
-    printf_cls();
+    clrscr();
 
     printf_string( "cml", { 10, 0 } );
-    printf_ln();
+    cputln();
     printf_string( "rules", { 10, 0 } );
-    printf_ln();
+    cputln();
     
     printf_string( "cml", { 10, 1 } );
-    printf_ln();
+    cputln();
     printf_string( "rules", { 10, 1 } );
 }

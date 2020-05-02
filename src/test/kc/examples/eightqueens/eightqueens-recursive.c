@@ -17,12 +17,12 @@ char board[20];
 unsigned long count = 0; 
 
 void main() {
-  printf_cls();
+  clrscr();
   printf(" - n queens problem using backtracking -");
   printf("\nnumber of queens:%u",QUEENS);
   tod_init(TOD_ZERO);
   queen(1);
-  printf("\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()));
+  printf("\n\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()));
 }
  
 // Generates all valid placements of queens on a NxN board recursively
@@ -90,6 +90,7 @@ char diff(char a, char b) {
 
 // Print the board with a legal placement. Also increments the solution count.
 void print() {
+  gotoxy(0,5);
   printf("\n#%lu:\n ",count);
   for(char i=1;i<=QUEENS;++i)
     printf("%x",i);

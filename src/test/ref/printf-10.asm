@@ -11,18 +11,18 @@ main: {
     lda #>$400
     sta.z screen+1
     lda #<str
-    sta.z printf_str.str
+    sta.z cputs.str
     lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z cputs.str+1
+    jsr cputs
     // printf("Hello, I am %s. who are you?", name)
     jsr printf_string
     // printf("Hello, I am %s. who are you?", name)
     lda #<str1
-    sta.z printf_str.str
+    sta.z cputs.str
     lda #>str1
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z cputs.str+1
+    jsr cputs
     // }
     rts
     name: .text "Jesper"
@@ -32,8 +32,8 @@ main: {
     str1: .text ". who are you?"
     .byte 0
 }
-// printf_str(byte* zp(4) str)
-printf_str: {
+// cputs(byte* zp(4) str)
+cputs: {
     .label str = 4
   __b1:
     // while(*str)
@@ -62,12 +62,12 @@ printf_str: {
 // Print a string value using a specific format
 // Handles justification and min length
 printf_string: {
-    // printf_str(str)
+    // cputs(str)
     lda #<main.name
-    sta.z printf_str.str
+    sta.z cputs.str
     lda #>main.name
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z cputs.str+1
+    jsr cputs
     // }
     rts
 }

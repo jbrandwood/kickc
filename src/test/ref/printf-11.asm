@@ -12,18 +12,18 @@ main: {
     lda #>$400
     sta.z screen+1
     lda #<str
-    sta.z printf_str.str
+    sta.z cputs.str
     lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z cputs.str+1
+    jsr cputs
     // printf("Commodore is %x cool", pct)
     jsr printf_uint
     // printf("Commodore is %x cool", pct)
     lda #<str1
-    sta.z printf_str.str
+    sta.z cputs.str
     lda #>str1
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z cputs.str+1
+    jsr cputs
     // }
     rts
     str: .text "Commodore is "
@@ -31,8 +31,8 @@ main: {
     str1: .text " cool"
     .byte 0
 }
-// printf_str(byte* zp(2) str)
-printf_str: {
+// cputs(byte* zp(2) str)
+cputs: {
     .label str = 2
   __b1:
     // while(*str)

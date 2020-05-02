@@ -55,6 +55,8 @@ void MakeNiceScreen (void)
     unsigned char I;
     unsigned char X;
 
+    // disable scrolling
+    scroll(0);
     /* Clear the screen hide the cursor, set colors */
     textcolor (COLOR_GRAY3);
     bordercolor (COLOR_BLACK);

@@ -7,39 +7,69 @@
   .const OCTAL = 8
   .const DECIMAL = $a
   .const HEXADECIMAL = $10
+  // The default text color
+  .const CONIO_TEXTCOLOR_DEFAULT = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  .label printf_cursor_x = $10
-  .label printf_cursor_y = $11
-  .label printf_cursor_ptr = $12
+  // The screen width
+  // The screen height
+  // The screen bytes
+  // The text screen address
+  .label CONIO_SCREEN_TEXT = $400
+  // The color screen address
+  .label CONIO_SCREEN_COLORS = $d800
+  .label conio_cursor_x = $10
+  .label conio_cursor_y = $11
+  .label conio_cursor_text = $12
+  .label conio_cursor_color = $14
 __bbegin:
-  // printf_cursor_x = 0
-  // X-position of cursor
+  // conio_cursor_x = 0
+  // The current cursor x-position
   lda #0
-  sta.z printf_cursor_x
-  // printf_cursor_y = 0
-  // Y-position of cursor
-  sta.z printf_cursor_y
-  // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
-  // Pointer to cursor address
-  lda #<$400
-  sta.z printf_cursor_ptr
-  lda #>$400
-  sta.z printf_cursor_ptr+1
+  sta.z conio_cursor_x
+  // conio_cursor_y = 0
+  // The current cursor y-position
+  sta.z conio_cursor_y
+  // conio_cursor_text = CONIO_SCREEN_TEXT
+  // The current cursor address
+  lda #<CONIO_SCREEN_TEXT
+  sta.z conio_cursor_text
+  lda #>CONIO_SCREEN_TEXT
+  sta.z conio_cursor_text+1
+  // conio_cursor_color = CONIO_SCREEN_COLORS
+  // The current cursor address
+  lda #<CONIO_SCREEN_COLORS
+  sta.z conio_cursor_color
+  lda #>CONIO_SCREEN_COLORS
+  sta.z conio_cursor_color+1
   jsr main
   rts
 main: {
-    // printf_cls()
-    jsr printf_cls
+    // clrscr()
+    jsr clrscr
     // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
     lda #'%'
-    jsr printf_char
+    jsr cputc
+    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<s
+    sta.z cputs.s
+    lda #>s
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
     lda #<str
-    sta.z printf_str.str
+    sta.z printf_string.str
     lda #>str
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z printf_string.str+1
+    lda #0
+    sta.z printf_string.format_justify_left
+    jsr printf_string
+    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
     lda #<str1
     sta.z printf_string.str
@@ -49,11 +79,25 @@ main: {
     sta.z printf_string.format_justify_left
     jsr printf_string
     // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
+    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
     lda #<str2
-    sta.z printf_str.str
+    sta.z printf_string.str
     lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z printf_string.str+1
+    lda #0
+    sta.z printf_string.format_justify_left
+    jsr printf_string
+    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
     lda #<str3
     sta.z printf_string.str
@@ -63,48 +107,34 @@ main: {
     sta.z printf_string.format_justify_left
     jsr printf_string
     // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str5
-    sta.z printf_string.str
-    lda #>str5
-    sta.z printf_string.str+1
-    lda #0
-    sta.z printf_string.format_justify_left
-    jsr printf_string
-    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str7
-    sta.z printf_string.str
-    lda #>str7
-    sta.z printf_string.str+1
-    lda #0
-    sta.z printf_string.format_justify_left
-    jsr printf_string
-    // printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str9
-    sta.z printf_str.str
-    lda #>str9
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s5
+    sta.z cputs.s
+    lda #>s5
+    sta.z cputs.s+1
+    jsr cputs
+    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<str
+    sta.z printf_string.str
+    lda #>str
+    sta.z printf_string.str+1
+    lda #1
+    sta.z printf_string.format_justify_left
+    jsr printf_string
+    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
     lda #<str1
     sta.z printf_string.str
@@ -114,11 +144,25 @@ main: {
     sta.z printf_string.format_justify_left
     jsr printf_string
     // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
+    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
     lda #<str2
-    sta.z printf_str.str
+    sta.z printf_string.str
     lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z printf_string.str+1
+    lda #1
+    sta.z printf_string.format_justify_left
+    jsr printf_string
+    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
     lda #<str3
     sta.z printf_string.str
@@ -128,48 +172,20 @@ main: {
     sta.z printf_string.format_justify_left
     jsr printf_string
     // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str5
-    sta.z printf_string.str
-    lda #>str5
-    sta.z printf_string.str+1
-    lda #1
-    sta.z printf_string.format_justify_left
-    jsr printf_string
-    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
-    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str7
-    sta.z printf_string.str
-    lda #>str7
-    sta.z printf_string.str+1
-    lda #1
-    sta.z printf_string.format_justify_left
-    jsr printf_string
-    // printf("%%-3s '%-3s' '%-3s' '%-3s' '%-3s'\n", "x", "xx", "xxx", "xxxx")
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str18
-    sta.z printf_str.str
-    lda #>str18
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s10
+    sta.z cputs.s
+    lda #>s10
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -181,11 +197,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -197,11 +213,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -213,11 +229,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -229,20 +245,20 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%3d  '%3d' '%3d' '%3d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
-    lda #<str23
-    sta.z printf_str.str
-    lda #>str23
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s15
+    sta.z cputs.s
+    lda #>s15
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -255,11 +271,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -272,11 +288,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -289,11 +305,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -306,20 +322,20 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%-3d '%-3d' '%-3d' '%-3d' '%-3d'\n", -2, -22, -222, -2222)
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
-    lda #<str28
-    sta.z printf_str.str
-    lda #>str28
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s20
+    sta.z cputs.s
+    lda #>s20
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -331,11 +347,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -347,11 +363,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -363,11 +379,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -379,20 +395,20 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%+3d  '%+3d' '%+3d' '%+3d' '%+3d'\n", 3, -44, 555, -6666)
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str33
-    sta.z printf_str.str
-    lda #>str33
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s25
+    sta.z cputs.s
+    lda #>s25
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
     lda #1
     sta.z printf_sint.format_zero_padding
@@ -405,11 +421,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
     lda #1
     sta.z printf_sint.format_zero_padding
@@ -422,11 +438,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
     lda #1
     sta.z printf_sint.format_zero_padding
@@ -439,11 +455,11 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_sint.format_zero_padding
@@ -455,20 +471,20 @@ main: {
     sta.z printf_sint.value+1
     jsr printf_sint
     // printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111)
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
-    lda #<str38
-    sta.z printf_str.str
-    lda #>str38
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s30
+    sta.z cputs.s
+    lda #>s30
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -479,11 +495,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -494,11 +510,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -509,11 +525,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -524,20 +540,20 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111)
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
-    lda #<str43
-    sta.z printf_str.str
-    lda #>str43
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s35
+    sta.z cputs.s
+    lda #>s35
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -548,11 +564,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -563,11 +579,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -578,11 +594,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
     lda #0
     sta.z printf_uint.format_upper_case
@@ -593,20 +609,20 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111)
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
     lda #'%'
-    jsr printf_char
+    jsr cputc
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
-    lda #<str48
-    sta.z printf_str.str
-    lda #>str48
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s40
+    sta.z cputs.s
+    lda #>s40
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
     lda #1
     sta.z printf_uint.format_upper_case
@@ -616,11 +632,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
     lda #1
     sta.z printf_uint.format_upper_case
@@ -631,11 +647,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
     lda #1
     sta.z printf_uint.format_upper_case
@@ -646,11 +662,11 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
-    lda #<str2
-    sta.z printf_str.str
-    lda #>str2
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s1
+    sta.z cputs.s
+    lda #>s1
+    sta.z cputs.s+1
+    jsr cputs
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
     lda #1
     sta.z printf_uint.format_upper_case
@@ -661,87 +677,125 @@ main: {
     sta.z printf_uint.uvalue+1
     jsr printf_uint
     // printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111)
-    lda #<str8
-    sta.z printf_str.str
-    lda #>str8
-    sta.z printf_str.str+1
-    jsr printf_str
+    lda #<s4
+    sta.z cputs.s
+    lda #>s4
+    sta.z cputs.s+1
+    jsr cputs
     // }
     rts
-    str: .text "3s  '"
+    s: .text "3s  '"
     .byte 0
-    str1: .text "x"
+    str: .text "x"
     .byte 0
-    str2: .text "' '"
+    s1: .text "' '"
     .byte 0
-    str3: .text "xx"
+    str1: .text "xx"
     .byte 0
-    str5: .text "xxx"
+    str2: .text "xxx"
     .byte 0
-    str7: .text "xxxx"
+    str3: .text "xxxx"
     .byte 0
-    str8: .text @"'\n"
+    s4: .text @"'\n"
     .byte 0
-    str9: .text "-3s '"
+    s5: .text "-3s '"
     .byte 0
-    str18: .text "3d  '"
+    s10: .text "3d  '"
     .byte 0
-    str23: .text "-3d '"
+    s15: .text "-3d '"
     .byte 0
-    str28: .text "+3d  '"
+    s20: .text "+3d  '"
     .byte 0
-    str33: .text "03d '"
+    s25: .text "03d '"
     .byte 0
-    str38: .text "o   '"
+    s30: .text "o   '"
     .byte 0
-    str43: .text "x   '"
+    s35: .text "x   '"
     .byte 0
-    str48: .text "X   '"
+    s40: .text "X   '"
     .byte 0
 }
-// Print a zero-terminated string
-// Handles escape codes such as newline
-// printf_str(byte* zp(2) str)
-printf_str: {
-    .label str = 2
-  __b2:
-    // ch = *str++
+// Output a NUL-terminated string at the current cursor position
+// cputs(byte* zp(2) s)
+cputs: {
+    .label s = 2
+  __b1:
+    // c=*s++
     ldy #0
-    lda (str),y
-    inc.z str
+    lda (s),y
+    // while(c=*s++)
+    inc.z s
     bne !+
-    inc.z str+1
+    inc.z s+1
   !:
-    // if(ch==0)
     cmp #0
-    bne __b3
+    bne __b2
     // }
     rts
-  __b3:
-    // if(ch=='\n')
+  __b2:
+    // cputc(c)
+    jsr cputc
+    jmp __b1
+}
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// cputc(byte register(A) c)
+cputc: {
+    // if(c=='\n')
     cmp #'\n'
-    beq __b4
-    // printf_char(ch)
-    jsr printf_char
-    jmp __b2
-  __b4:
-    // printf_ln()
-    jsr printf_ln
-    jmp __b2
+    beq __b1
+    // *conio_cursor_text++ = c
+    ldy #0
+    sta (conio_cursor_text),y
+    // *conio_cursor_text++ = c;
+    inc.z conio_cursor_text
+    bne !+
+    inc.z conio_cursor_text+1
+  !:
+    // *conio_cursor_color++ = conio_textcolor
+    lda #CONIO_TEXTCOLOR_DEFAULT
+    ldy #0
+    sta (conio_cursor_color),y
+    // *conio_cursor_color++ = conio_textcolor;
+    inc.z conio_cursor_color
+    bne !+
+    inc.z conio_cursor_color+1
+  !:
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$28
+    cmp.z conio_cursor_x
+    bne __breturn
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // ++conio_cursor_y;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
 }
 // Print a newline
-printf_ln: {
+cputln: {
     .label __0 = $12
     .label __1 = $12
-    // printf_cursor_ptr - printf_cursor_x
+    .label __2 = $14
+    .label __3 = $14
+    // conio_cursor_text - conio_cursor_x
     sec
     lda.z __0
-    sbc.z printf_cursor_x
+    sbc.z conio_cursor_x
     sta.z __0
     bcs !+
     dec.z __0+1
   !:
-    // printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
+    // conio_cursor_text - conio_cursor_x + CONIO_WIDTH
     lda #$28
     clc
     adc.z __1
@@ -749,71 +803,112 @@ printf_ln: {
     bcc !+
     inc.z __1+1
   !:
-    // printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
-    // printf_cursor_x = 0
+    // conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH
+    // conio_cursor_color - conio_cursor_x
+    sec
+    lda.z __2
+    sbc.z conio_cursor_x
+    sta.z __2
+    bcs !+
+    dec.z __2+1
+  !:
+    // conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z __3
+    sta.z __3
+    bcc !+
+    inc.z __3+1
+  !:
+    // conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    // conio_cursor_x = 0
     lda #0
-    sta.z printf_cursor_x
-    // printf_cursor_y++;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
+    sta.z conio_cursor_x
+    // conio_cursor_y++;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
     // }
     rts
 }
-// Scroll the entire screen if the cursor is on the last line
-printf_scroll: {
-    .label __4 = $12
-    // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
+// Scroll the entire screen if the cursor is beyond the last line
+cscroll: {
+    .label __7 = $12
+    .label __8 = $14
+    // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
-    cmp.z printf_cursor_y
+    cmp.z conio_cursor_y
     bne __breturn
-    // memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
+    // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<CONIO_SCREEN_TEXT
+    sta.z memcpy.destination
+    lda #>CONIO_SCREEN_TEXT
+    sta.z memcpy.destination+1
+    lda #<CONIO_SCREEN_TEXT+$28
+    sta.z memcpy.source
+    lda #>CONIO_SCREEN_TEXT+$28
+    sta.z memcpy.source+1
     jsr memcpy
-    // memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
+    // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<CONIO_SCREEN_COLORS
+    sta.z memcpy.destination
+    lda #>CONIO_SCREEN_COLORS
+    sta.z memcpy.destination+1
+    lda #<CONIO_SCREEN_COLORS+$28
+    sta.z memcpy.source
+    lda #>CONIO_SCREEN_COLORS+$28
+    sta.z memcpy.source+1
+    jsr memcpy
+    // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
     ldx #' '
-    lda #<$400+$28*$19-$28
+    lda #<CONIO_SCREEN_TEXT+$19*$28-$28
     sta.z memset.str
-    lda #>$400+$28*$19-$28
+    lda #>CONIO_SCREEN_TEXT+$19*$28-$28
     sta.z memset.str+1
-    lda #<$28
-    sta.z memset.num
-    lda #>$28
-    sta.z memset.num+1
     jsr memset
-    // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    lda.z __4
+    // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
+    ldx #CONIO_TEXTCOLOR_DEFAULT
+    lda #<CONIO_SCREEN_COLORS+$19*$28-$28
+    sta.z memset.str
+    lda #>CONIO_SCREEN_COLORS+$19*$28-$28
+    sta.z memset.str+1
+    jsr memset
+    // conio_cursor_text-CONIO_WIDTH
+    lda.z __7
     sec
     sbc #<$28
-    sta.z __4
-    lda.z __4+1
+    sta.z __7
+    lda.z __7+1
     sbc #>$28
-    sta.z __4+1
-    // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    // printf_cursor_y--;
-    dec.z printf_cursor_y
+    sta.z __7+1
+    // conio_cursor_text = conio_cursor_text-CONIO_WIDTH
+    // conio_cursor_color-CONIO_WIDTH
+    lda.z __8
+    sec
+    sbc #<$28
+    sta.z __8
+    lda.z __8+1
+    sbc #>$28
+    sta.z __8+1
+    // conio_cursor_color = conio_cursor_color-CONIO_WIDTH
+    // conio_cursor_y--;
+    dec.z conio_cursor_y
   __breturn:
     // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(9) str, byte register(X) c, word zp($c) num)
+// memset(void* zp(9) str, byte register(X) c)
 memset: {
-    .label end = $c
+    .label end = $16
     .label dst = 9
-    .label num = $c
     .label str = 9
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
     // end = (char*)str + num
-    lda.z end
+    lda #$28
     clc
     adc.z str
     sta.z end
-    lda.z end+1
+    lda #0
     adc.z str+1
     sta.z end+1
   __b2:
@@ -824,7 +919,6 @@ memset: {
     lda.z dst
     cmp.z end
     bne __b3
-  __breturn:
     // }
     rts
   __b3:
@@ -841,28 +935,28 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// memcpy(void* zp($c) destination, void* zp(9) source)
 memcpy: {
-    .const num = $28*$19-$28
-    .label destination = $400
-    .label source = $400+$28
-    .label src_end = source+num
-    .label dst = 9
-    .label src = $c
-    lda #<destination
-    sta.z dst
-    lda #>destination
-    sta.z dst+1
-    lda #<source
-    sta.z src
-    lda #>source
-    sta.z src+1
+    .label src_end = $16
+    .label dst = $c
+    .label src = 9
+    .label source = 9
+    .label destination = $c
+    // src_end = (char*)source+num
+    lda.z source
+    clc
+    adc #<$19*$28-$28
+    sta.z src_end
+    lda.z source+1
+    adc #>$19*$28-$28
+    sta.z src_end+1
   __b1:
     // while(src!=src_end)
     lda.z src+1
-    cmp #>src_end
+    cmp.z src_end+1
     bne __b2
     lda.z src
-    cmp #<src_end
+    cmp.z src_end
     bne __b2
     // }
     rts
@@ -881,34 +975,6 @@ memcpy: {
     inc.z src+1
   !:
     jmp __b1
-}
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte register(A) ch)
-printf_char: {
-    // *(printf_cursor_ptr++) = ch
-    ldy #0
-    sta (printf_cursor_ptr),y
-    // *(printf_cursor_ptr++) = ch;
-    inc.z printf_cursor_ptr
-    bne !+
-    inc.z printf_cursor_ptr+1
-  !:
-    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
-    inc.z printf_cursor_x
-    lda #$28
-    cmp.z printf_cursor_x
-    bne __breturn
-    // printf_cursor_x = 0
-    lda #0
-    sta.z printf_cursor_x
-    // ++printf_cursor_y;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
-  __breturn:
-    // }
-    rts
 }
 // Print an unsigned int using a specific format
 // printf_uint(word zp(2) uvalue, byte zp($e) format_upper_case, byte register(X) format_radix)
@@ -938,7 +1004,7 @@ printf_uint: {
 // This handles minimum length, zero-filling, and left/right justification from the format
 // printf_number_buffer(byte zp($b) buffer_sign, byte zp(8) format_min_length, byte zp($f) format_justify_left, byte zp(4) format_zero_padding, byte zp($e) format_upper_case)
 printf_number_buffer: {
-    .label __19 = 9
+    .label __19 = $c
     .label buffer_sign = $b
     .label format_justify_left = $f
     .label format_zero_padding = 4
@@ -1001,9 +1067,9 @@ printf_number_buffer: {
     lda #0
     cmp.z buffer_sign
     beq __b3
-    // printf_char(buffer.sign)
+    // cputc(buffer.sign)
     lda.z buffer_sign
-    jsr printf_char
+    jsr cputc
   __b3:
     // if(format.zero_padding && padding)
     lda #0
@@ -1027,12 +1093,12 @@ printf_number_buffer: {
     // strupr(buffer.digits)
     jsr strupr
   __b5:
-    // printf_str(buffer.digits)
+    // cputs(buffer.digits)
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z printf_str.str
+    sta.z cputs.s
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    sta.z printf_str.str+1
-    jsr printf_str
+    sta.z cputs.s+1
+    jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
     lda #0
     cmp.z format_justify_left
@@ -1069,9 +1135,9 @@ printf_padding: {
     // }
     rts
   __b2:
-    // printf_char(pad)
+    // cputc(pad)
     lda.z pad
-    jsr printf_char
+    jsr cputc
     // for(char i=0;i<length; i++)
     inc.z i
     jmp __b1
@@ -1127,11 +1193,11 @@ toupper: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($c) str)
+// strlen(byte* zp(9) str)
 strlen: {
-    .label len = 9
-    .label str = $c
-    .label return = 9
+    .label len = $c
+    .label str = 9
+    .label return = $c
     lda #<0
     sta.z len
     sta.z len+1
@@ -1163,7 +1229,7 @@ strlen: {
 // - radix : The radix to convert the number to (from the enum RADIX)
 // utoa(word zp(2) value, byte* zp($c) buffer, byte register(X) radix)
 utoa: {
-    .label digit_value = $14
+    .label digit_value = $16
     .label buffer = $c
     .label digit = $b
     .label value = 2
@@ -1304,11 +1370,11 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($c) buffer, word zp(2) value, word zp($14) sub)
+// utoa_append(byte* zp($c) buffer, word zp(2) value, word zp($16) sub)
 utoa_append: {
     .label buffer = $c
     .label value = 2
-    .label sub = $14
+    .label sub = $16
     .label return = 2
     ldx #0
   __b1:
@@ -1392,7 +1458,7 @@ printf_sint: {
 // Handles justification and min length 
 // printf_string(byte* zp(2) str, byte zp($e) format_justify_left)
 printf_string: {
-    .label __9 = 9
+    .label __9 = $c
     .label padding = $f
     .label format_justify_left = $e
     .label str = 2
@@ -1431,8 +1497,8 @@ printf_string: {
     sta.z printf_padding.pad
     jsr printf_padding
   __b2:
-    // printf_str(str)
-    jsr printf_str
+    // cputs(str)
+    jsr cputs
     // if(format.justify_left && padding)
     lda #0
     cmp.z format_justify_left
@@ -1451,31 +1517,75 @@ printf_string: {
     // }
     rts
 }
-// Clear the screen. Also resets current line/char cursor.
-printf_cls: {
-    // memset(PRINTF_SCREEN_ADDRESS, ' ', PRINTF_SCREEN_BYTES)
-    ldx #' '
-    lda #<$400
-    sta.z memset.str
-    lda #>$400
-    sta.z memset.str+1
-    lda #<$28*$19
-    sta.z memset.num
-    lda #>$28*$19
-    sta.z memset.num+1
-    jsr memset
-    // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
-    lda #<$400
-    sta.z printf_cursor_ptr
-    lda #>$400
-    sta.z printf_cursor_ptr+1
-    // printf_cursor_x = 0
+// clears the screen and moves the cursor to the upper left-hand corner of the screen.
+clrscr: {
+    .label line_text = $12
+    .label line_cols = $14
+    lda #<CONIO_SCREEN_COLORS
+    sta.z line_cols
+    lda #>CONIO_SCREEN_COLORS
+    sta.z line_cols+1
+    lda #<CONIO_SCREEN_TEXT
+    sta.z line_text
+    lda #>CONIO_SCREEN_TEXT
+    sta.z line_text+1
+    ldx #0
+  __b1:
+    // for( char l=0;l<CONIO_HEIGHT; l++ )
+    cpx #$19
+    bcc __b2
+    // conio_cursor_x = 0
     lda #0
-    sta.z printf_cursor_x
-    // printf_cursor_y = 0
-    sta.z printf_cursor_y
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_cursor_text = CONIO_SCREEN_TEXT
+    lda #<CONIO_SCREEN_TEXT
+    sta.z conio_cursor_text
+    lda #>CONIO_SCREEN_TEXT
+    sta.z conio_cursor_text+1
+    // conio_cursor_color = CONIO_SCREEN_COLORS
+    lda #<CONIO_SCREEN_COLORS
+    sta.z conio_cursor_color
+    lda #>CONIO_SCREEN_COLORS
+    sta.z conio_cursor_color+1
     // }
     rts
+  __b2:
+    ldy #0
+  __b3:
+    // for( char c=0;c<CONIO_WIDTH; c++ )
+    cpy #$28
+    bcc __b4
+    // line_text += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z line_text
+    sta.z line_text
+    bcc !+
+    inc.z line_text+1
+  !:
+    // line_cols += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z line_cols
+    sta.z line_cols
+    bcc !+
+    inc.z line_cols+1
+  !:
+    // for( char l=0;l<CONIO_HEIGHT; l++ )
+    inx
+    jmp __b1
+  __b4:
+    // line_text[c] = ' '
+    lda #' '
+    sta (line_text),y
+    // line_cols[c] = conio_textcolor
+    lda #CONIO_TEXTCOLOR_DEFAULT
+    sta (line_cols),y
+    // for( char c=0;c<CONIO_WIDTH; c++ )
+    iny
+    jmp __b3
 }
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"

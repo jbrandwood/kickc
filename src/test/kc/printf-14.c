@@ -4,7 +4,7 @@
 #include <printf.h>
 
 void main() {
-    printf_cls();
+    clrscr();
 
     char c = 7;
     printf("%u", c);

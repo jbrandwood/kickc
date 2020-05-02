@@ -26,8 +26,11 @@ char screensizex();
 // Return the current screen size Y height.
 char screensizey();
 
-// Output one character at the current cursor position
+// Output one character at the current cursor position. Scroll the screen if needed.
 void cputc(char c);
+
+// Move teh cursor to the start of the next line. Scroll the screen if needed.
+void cputln();
 
 // Move cursor and output one character
 // Same as "gotoxy (x, y); cputc (c);"

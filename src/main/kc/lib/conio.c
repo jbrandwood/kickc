@@ -3,7 +3,15 @@
 // See https://github.com/cc65/cc65/blob/master/include/conio.h
 //
 // Currently only the C64 platform is supported
+#include <string.h>
 #include <conio.h>
+
+// The screen width
+#define CONIO_WIDTH 40
+// The screen height
+#define CONIO_HEIGHT 25
+// The screen bytes
+#define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
 
 // The text screen address
 char * const CONIO_SCREEN_TEXT = 0x0400;
@@ -17,26 +25,25 @@ char * const CONIO_BORDERCOLOR = 0xd020;
 char* const CONIO_CIA1_PORT_A = 0xdc00;
 // CIA#1 Port B: keyboard matrix rows and joystick #1.
 char* const CONIO_CIA1_PORT_B = 0xdc01;
-// The screen width
-const char CONIO_WIDTH = 40;
-// The screen height
-const char CONIO_HEIGHT = 25;
 
 // The default text color
 const char CONIO_TEXTCOLOR_DEFAULT = 0xe;
 
 // The current cursor x-position
-char conio_cursor_x = 0;
+__ma char conio_cursor_x = 0;
 // The current cursor y-position
-char conio_cursor_y = 0;
+__ma char conio_cursor_y = 0;
 // The current cursor address
-char *conio_cursor_text = CONIO_SCREEN_TEXT;
+__ma char *conio_cursor_text = CONIO_SCREEN_TEXT;
 // The current cursor address
-char *conio_cursor_color = CONIO_SCREEN_COLORS;
+__ma char *conio_cursor_color = CONIO_SCREEN_COLORS;
 // The current text color
-char conio_textcolor = CONIO_TEXTCOLOR_DEFAULT;
+__ma char conio_textcolor = CONIO_TEXTCOLOR_DEFAULT;
 // Is a cursor whown when waiting for input (0: no, other: yes)
-char conio_display_cursor = 0;
+__ma char conio_display_cursor = 0;
+// Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
+// If disabled the cursor just moves back to (0,0) instead
+__ma char conio_scroll_enable = 1;
 
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 void clrscr(void) {
@@ -58,8 +65,8 @@ void clrscr(void) {
 
 // Set the cursor to the specified position
 void gotoxy(unsigned char x, unsigned char y) {
+    if(y>CONIO_HEIGHT) y = 0;
     if(x>=CONIO_WIDTH) x = 0;
-    if(y>=CONIO_HEIGHT) y = 0;
     conio_cursor_x = x;
     conio_cursor_y = y;
     unsigned int offset = (unsigned int)y*CONIO_WIDTH + x;
@@ -94,27 +101,45 @@ inline unsigned char wherey(void) {
 }
 
 // Output one character at the current cursor position
-// Moves the cursor forward
+// Moves the cursor forward. Scrolls the entire screen if needed
 void cputc(char c) {
     if(c=='\n') {
-        gotoxy(0, conio_cursor_y+1);
+        cputln();
     } else {
         *conio_cursor_text++ = c;
         *conio_cursor_color++ = conio_textcolor;
         if(++conio_cursor_x==CONIO_WIDTH) {
             conio_cursor_x = 0;
-            if(++conio_cursor_y==CONIO_HEIGHT) {
-                gotoxy(0,0);
-            }
+            ++conio_cursor_y;
+            cscroll();
         }
     }
 }
 
-// Move cursor and output one character
-// Same as "gotoxy (x, y); cputc (c);"
-void cputcxy(unsigned char x, unsigned char y, char c) {
-    gotoxy(x, y);
-    cputc(c);
+// Print a newline
+void cputln() {
+    conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH;
+    conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH;
+    conio_cursor_x = 0;
+    conio_cursor_y++;
+    cscroll();
+}
+
+// Scroll the entire screen if the cursor is beyond the last line
+void cscroll() {
+    if(conio_cursor_y==CONIO_HEIGHT) {
+        if(conio_scroll_enable) {
+            memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH);
+            memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH);
+            memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH);
+            memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH);
+            conio_cursor_text = conio_cursor_text-CONIO_WIDTH;
+            conio_cursor_color = conio_cursor_color-CONIO_WIDTH;
+            conio_cursor_y--;
+        } else {
+            gotoxy(0,0);
+        }
+    }
 }
 
 
@@ -123,6 +148,13 @@ void cputs(const char* s) {
     char c;
     while(c=*s++)
         cputc(c);
+}
+
+// Move cursor and output one character
+// Same as "gotoxy (x, y); cputc (c);"
+void cputcxy(unsigned char x, unsigned char y, char c) {
+    gotoxy(x, y);
+    cputc(c);
 }
 
 // Move cursor and output a NUL-terminated string
@@ -189,5 +221,14 @@ unsigned char kbhit (void) {
 unsigned char cursor(unsigned char onoff) {
     char old = conio_display_cursor;
     conio_display_cursor = onoff;
+    return old;
+}
+
+// If onoff is 1, scrolling is enabled when outputting past the end of the screen
+// If onoff is 1, scrolling is disabled and the cursor instead moves to (0,0)
+// The function returns the old scroll setting.
+unsigned char scroll(unsigned char onoff) {
+    char old = conio_scroll_enable;
+    conio_scroll_enable = onoff;
     return old;
 }

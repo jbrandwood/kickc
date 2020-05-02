@@ -1,18 +1,7 @@
+#include <conio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <printf.h>
-
-#define PRINTF_SCREEN_ADDRESS 0x0400
-#define PRINTF_SCREEN_WIDTH 40
-#define PRINTF_SCREEN_HEIGHT 25
-#define PRINTF_SCREEN_BYTES PRINTF_SCREEN_WIDTH*PRINTF_SCREEN_HEIGHT
-
-// X-position of cursor
-__ma char printf_cursor_x = 0;
-// Y-position of cursor
-__ma char printf_cursor_y = 0;
-// Pointer to cursor address
-__ma char* printf_cursor_ptr = PRINTF_SCREEN_ADDRESS;
 
 // Buffer used for stringified number being printed
 struct printf_buffer_number printf_buffer;
@@ -22,60 +11,10 @@ struct printf_buffer_number printf_buffer;
 // This implementation supports decimal, octal and hexadecimal radix. It supports min length, left/right justify, zero-padding and always-sign.
 __intrinsic void printf(char* format, ...);
 
-// Clear the screen. Also resets current line/char cursor.
-void printf_cls() {
-    memset(PRINTF_SCREEN_ADDRESS, ' ', PRINTF_SCREEN_BYTES);
-    printf_cursor_ptr = PRINTF_SCREEN_ADDRESS;
-    printf_cursor_x = 0;
-    printf_cursor_y = 0;
-}
-
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-void printf_char(char ch) {
-    *(printf_cursor_ptr++) = ch;
-    if(++printf_cursor_x==PRINTF_SCREEN_WIDTH) {
-        printf_cursor_x = 0;
-        ++printf_cursor_y;
-        printf_scroll();
-    }
-}
-
-// Print a newline
-void printf_ln() {
-    printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH;
-    printf_cursor_x = 0;
-    printf_cursor_y++;
-    printf_scroll();
-}
-
-// Scroll the entire screen if the cursor is on the last line
-void printf_scroll() {
-    if(printf_cursor_y==PRINTF_SCREEN_HEIGHT) {
-        memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH);
-        memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH);
-        printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH;
-        printf_cursor_y--;
-    }
-}
-
 // Print a padding char a number of times
 void printf_padding(char pad, char length) {
     for(char i=0;i<length; i++)
-        printf_char(pad);
-}
-
-// Print a zero-terminated string
-// Handles escape codes such as newline
-void printf_str(char* str) {
-    while(true) {
-        char ch = *str++;
-        if(ch==0) break;
-        if(ch=='\n')
-            printf_ln();
-        else
-            printf_char(ch);
-    }
+        cputc(pad);
 }
 
 // Print a signed long using a specific format
@@ -182,13 +121,13 @@ void printf_number_buffer(struct printf_buffer_number buffer, struct printf_form
     if(!format.justify_left && !format.zero_padding && padding)
         printf_padding(' ',(char)padding);
     if(buffer.sign)
-        printf_char(buffer.sign);
+        cputc(buffer.sign);
     if(format.zero_padding && padding)
         printf_padding('0',(char)padding);
     if(format.upper_case) {
         strupr(buffer.digits);
     }
-    printf_str(buffer.digits);
+    cputs(buffer.digits);
     if(format.justify_left && !format.zero_padding && padding)
         printf_padding(' ',(char)padding);
 }
@@ -204,7 +143,7 @@ void printf_string(char* str, struct printf_format_string format) {
     }
     if(!format.justify_left && padding)
         printf_padding(' ',(char)padding);
-    printf_str(str);
+    cputs(str);
     if(format.justify_left && padding)
         printf_padding(' ',(char)padding);
 }

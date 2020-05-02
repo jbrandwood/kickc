@@ -1,80 +1,134 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label printf_cursor_x = 8
-  .label printf_cursor_y = 9
-  .label printf_cursor_ptr = $a
+  // The default text color
+  .const CONIO_TEXTCOLOR_DEFAULT = $e
+  // The screen width
+  // The screen height
+  // The screen bytes
+  // The text screen address
+  .label CONIO_SCREEN_TEXT = $400
+  // The color screen address
+  .label CONIO_SCREEN_COLORS = $d800
+  .label conio_cursor_x = 6
+  .label conio_cursor_y = 7
+  .label conio_cursor_text = 8
+  .label conio_cursor_color = $a
 __bbegin:
-  // printf_cursor_x = 0
-  // X-position of cursor
+  // conio_cursor_x = 0
+  // The current cursor x-position
   lda #0
-  sta.z printf_cursor_x
-  // printf_cursor_y = 0
-  // Y-position of cursor
-  sta.z printf_cursor_y
-  // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
-  // Pointer to cursor address
-  lda #<$400
-  sta.z printf_cursor_ptr
-  lda #>$400
-  sta.z printf_cursor_ptr+1
+  sta.z conio_cursor_x
+  // conio_cursor_y = 0
+  // The current cursor y-position
+  sta.z conio_cursor_y
+  // conio_cursor_text = CONIO_SCREEN_TEXT
+  // The current cursor address
+  lda #<CONIO_SCREEN_TEXT
+  sta.z conio_cursor_text
+  lda #>CONIO_SCREEN_TEXT
+  sta.z conio_cursor_text+1
+  // conio_cursor_color = CONIO_SCREEN_COLORS
+  // The current cursor address
+  lda #<CONIO_SCREEN_COLORS
+  sta.z conio_cursor_color
+  lda #>CONIO_SCREEN_COLORS
+  sta.z conio_cursor_color+1
   jsr main
   rts
 main: {
     // printf("hello world!\n")
-    jsr printf_str
+    jsr cputs
     // }
     rts
-    str: .text @"hello world!\n"
+    s: .text @"hello world!\n"
     .byte 0
 }
-// Print a zero-terminated string
-// Handles escape codes such as newline
-// printf_str(byte* zp(2) str)
-printf_str: {
-    .label str = 2
-    lda #<main.str
-    sta.z str
-    lda #>main.str
-    sta.z str+1
-  __b2:
-    // ch = *str++
+// Output a NUL-terminated string at the current cursor position
+// cputs(byte* zp(2) s)
+cputs: {
+    .label s = 2
+    lda #<main.s
+    sta.z s
+    lda #>main.s
+    sta.z s+1
+  __b1:
+    // c=*s++
     ldy #0
-    lda (str),y
-    inc.z str
+    lda (s),y
+    // while(c=*s++)
+    inc.z s
     bne !+
-    inc.z str+1
+    inc.z s+1
   !:
-    // if(ch==0)
     cmp #0
-    bne __b3
+    bne __b2
     // }
     rts
-  __b3:
-    // if(ch=='\n')
+  __b2:
+    // cputc(c)
+    jsr cputc
+    jmp __b1
+}
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// cputc(byte register(A) c)
+cputc: {
+    // if(c=='\n')
     cmp #'\n'
-    beq __b4
-    // printf_char(ch)
-    jsr printf_char
-    jmp __b2
-  __b4:
-    // printf_ln()
-    jsr printf_ln
-    jmp __b2
+    beq __b1
+    // *conio_cursor_text++ = c
+    ldy #0
+    sta (conio_cursor_text),y
+    // *conio_cursor_text++ = c;
+    inc.z conio_cursor_text
+    bne !+
+    inc.z conio_cursor_text+1
+  !:
+    // *conio_cursor_color++ = conio_textcolor
+    lda #CONIO_TEXTCOLOR_DEFAULT
+    ldy #0
+    sta (conio_cursor_color),y
+    // *conio_cursor_color++ = conio_textcolor;
+    inc.z conio_cursor_color
+    bne !+
+    inc.z conio_cursor_color+1
+  !:
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
+    lda #$28
+    cmp.z conio_cursor_x
+    bne __breturn
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // ++conio_cursor_y;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
+  __breturn:
+    // }
+    rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
 }
 // Print a newline
-printf_ln: {
-    .label __0 = $a
-    .label __1 = $a
-    // printf_cursor_ptr - printf_cursor_x
+cputln: {
+    .label __0 = 8
+    .label __1 = 8
+    .label __2 = $a
+    .label __3 = $a
+    // conio_cursor_text - conio_cursor_x
     sec
     lda.z __0
-    sbc.z printf_cursor_x
+    sbc.z conio_cursor_x
     sta.z __0
     bcs !+
     dec.z __0+1
   !:
-    // printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
+    // conio_cursor_text - conio_cursor_x + CONIO_WIDTH
     lda #$28
     clc
     adc.z __1
@@ -82,67 +136,127 @@ printf_ln: {
     bcc !+
     inc.z __1+1
   !:
-    // printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
-    // printf_cursor_x = 0
+    // conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH
+    // conio_cursor_color - conio_cursor_x
+    sec
+    lda.z __2
+    sbc.z conio_cursor_x
+    sta.z __2
+    bcs !+
+    dec.z __2+1
+  !:
+    // conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z __3
+    sta.z __3
+    bcc !+
+    inc.z __3+1
+  !:
+    // conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    // conio_cursor_x = 0
     lda #0
-    sta.z printf_cursor_x
-    // printf_cursor_y++;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
+    sta.z conio_cursor_x
+    // conio_cursor_y++;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
     // }
     rts
 }
-// Scroll the entire screen if the cursor is on the last line
-printf_scroll: {
-    .label __4 = $a
-    // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
+// Scroll the entire screen if the cursor is beyond the last line
+cscroll: {
+    .label __7 = 8
+    .label __8 = $a
+    // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
-    cmp.z printf_cursor_y
+    cmp.z conio_cursor_y
     bne __breturn
-    // memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
+    // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<CONIO_SCREEN_TEXT
+    sta.z memcpy.destination
+    lda #>CONIO_SCREEN_TEXT
+    sta.z memcpy.destination+1
+    lda #<CONIO_SCREEN_TEXT+$28
+    sta.z memcpy.source
+    lda #>CONIO_SCREEN_TEXT+$28
+    sta.z memcpy.source+1
     jsr memcpy
-    // memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
+    // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<CONIO_SCREEN_COLORS
+    sta.z memcpy.destination
+    lda #>CONIO_SCREEN_COLORS
+    sta.z memcpy.destination+1
+    lda #<CONIO_SCREEN_COLORS+$28
+    sta.z memcpy.source
+    lda #>CONIO_SCREEN_COLORS+$28
+    sta.z memcpy.source+1
+    jsr memcpy
+    // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
+    ldx #' '
+    lda #<CONIO_SCREEN_TEXT+$19*$28-$28
+    sta.z memset.str
+    lda #>CONIO_SCREEN_TEXT+$19*$28-$28
+    sta.z memset.str+1
     jsr memset
-    // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    lda.z __4
+    // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
+    ldx #CONIO_TEXTCOLOR_DEFAULT
+    lda #<CONIO_SCREEN_COLORS+$19*$28-$28
+    sta.z memset.str
+    lda #>CONIO_SCREEN_COLORS+$19*$28-$28
+    sta.z memset.str+1
+    jsr memset
+    // conio_cursor_text-CONIO_WIDTH
+    lda.z __7
     sec
     sbc #<$28
-    sta.z __4
-    lda.z __4+1
+    sta.z __7
+    lda.z __7+1
     sbc #>$28
-    sta.z __4+1
-    // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    // printf_cursor_y--;
-    dec.z printf_cursor_y
+    sta.z __7+1
+    // conio_cursor_text = conio_cursor_text-CONIO_WIDTH
+    // conio_cursor_color-CONIO_WIDTH
+    lda.z __8
+    sec
+    sbc #<$28
+    sta.z __8
+    lda.z __8+1
+    sbc #>$28
+    sta.z __8+1
+    // conio_cursor_color = conio_cursor_color-CONIO_WIDTH
+    // conio_cursor_y--;
+    dec.z conio_cursor_y
   __breturn:
     // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(4) str, byte register(X) c)
 memset: {
-    .const c = ' '
-    .const num = $28
-    .label str = $400+$28*$19-$28
-    .label end = str+num
+    .label end = $c
     .label dst = 4
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
+    .label str = 4
+    // end = (char*)str + num
+    lda #$28
+    clc
+    adc.z str
+    sta.z end
+    lda #0
+    adc.z str+1
+    sta.z end+1
+  __b2:
     // for(char* dst = str; dst!=end; dst++)
     lda.z dst+1
-    cmp #>end
-    bne __b2
+    cmp.z end+1
+    bne __b3
     lda.z dst
-    cmp #<end
-    bne __b2
+    cmp.z end
+    bne __b3
     // }
     rts
-  __b2:
+  __b3:
     // *dst = c
-    lda #c
+    txa
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
@@ -150,32 +264,32 @@ memset: {
     bne !+
     inc.z dst+1
   !:
-    jmp __b1
+    jmp __b2
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// memcpy(void* zp($c) destination, void* zp(4) source)
 memcpy: {
-    .const num = $28*$19-$28
-    .label destination = $400
-    .label source = $400+$28
-    .label src_end = source+num
-    .label dst = 6
+    .label src_end = $e
+    .label dst = $c
     .label src = 4
-    lda #<destination
-    sta.z dst
-    lda #>destination
-    sta.z dst+1
-    lda #<source
-    sta.z src
-    lda #>source
-    sta.z src+1
+    .label source = 4
+    .label destination = $c
+    // src_end = (char*)source+num
+    lda.z source
+    clc
+    adc #<$19*$28-$28
+    sta.z src_end
+    lda.z source+1
+    adc #>$19*$28-$28
+    sta.z src_end+1
   __b1:
     // while(src!=src_end)
     lda.z src+1
-    cmp #>src_end
+    cmp.z src_end+1
     bne __b2
     lda.z src
-    cmp #<src_end
+    cmp.z src_end
     bne __b2
     // }
     rts
@@ -194,32 +308,4 @@ memcpy: {
     inc.z src+1
   !:
     jmp __b1
-}
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte register(A) ch)
-printf_char: {
-    // *(printf_cursor_ptr++) = ch
-    ldy #0
-    sta (printf_cursor_ptr),y
-    // *(printf_cursor_ptr++) = ch;
-    inc.z printf_cursor_ptr
-    bne !+
-    inc.z printf_cursor_ptr+1
-  !:
-    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
-    inc.z printf_cursor_x
-    lda #$28
-    cmp.z printf_cursor_x
-    bne __breturn
-    // printf_cursor_x = 0
-    lda #0
-    sta.z printf_cursor_x
-    // ++printf_cursor_y;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
-  __breturn:
-    // }
-    rts
 }

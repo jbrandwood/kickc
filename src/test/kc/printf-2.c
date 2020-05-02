@@ -5,15 +5,15 @@
 
 void main() {
 
-    printf_cls();
+    clrscr();
 
     printf_schar(-77, { 6, 0, 0, 0, 0, DECIMAL});
-    printf_ln();
+    cputln();
 
     printf_schar(99, {6, 0, 1, 1, 0, OCTAL});
-    printf_ln();
+    cputln();
 
     printf_uint(3456, {10, 1, 0, 0, 1, HEXADECIMAL});
-    printf_ln();
+    cputln();
 
 }

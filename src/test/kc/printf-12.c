@@ -4,7 +4,7 @@
 #include <printf.h>
 
 void main() {
-    printf_cls();
+    clrscr();
     char c = 'x';
     signed char sc = -12;
     unsigned char uc = 34;

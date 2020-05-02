@@ -6,7 +6,7 @@ __intrinsic void printf(char* format, ...);
 char * screen = 0x0400;
 char idx = 0;
 
-void printf_str(char* str) {
+void cputs(char* str) {
     while(*str) {
         *screen++ = *str++;
     }

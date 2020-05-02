@@ -4,7 +4,7 @@
 #include <printf.h>
 
 void main() {
-    printf_cls();
+    clrscr();
     printf("Lone 1\n");
     printf("Lone 2\n");
 }

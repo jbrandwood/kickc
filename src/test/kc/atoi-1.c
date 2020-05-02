@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 void main() {
-    printf_cls();
+    clrscr();
     printf("%d\n", atoi("1234"));
     printf("%d\n", atoi("-5678"));
 }

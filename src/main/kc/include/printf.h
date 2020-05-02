@@ -1,28 +1,14 @@
 // Functions for printing formatted strings
-// Supports many features supplied by printf()
-
 #include <stdlib.h>
+#include <conio.h>
 
 // Print a formatted string.
 // https://en.wikipedia.org/wiki/Printf_format_string
 // This implementation supports decimal, octal and hexadecimal radix. It supports min length, left/right justify, zero-padding and always-sign.
 void printf(char* format, ...);
 
-// Clear the screen. Also places cursor at the top left.
-void printf_cls();
-
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-void printf_char(char ch);
-
-// Print a newline
-void printf_ln();
-
 // Print a padding char a number of times
 void printf_padding(char pad, char length);
-
-// Print a zero-terminated string
-void printf_str(char* str);
 
 // Format specifying how to format a printed number
 struct printf_format_number {

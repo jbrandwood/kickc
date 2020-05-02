@@ -4,7 +4,7 @@
 #include <printf.h>
 
 void main() {
-    printf_cls();
+    clrscr();
 
     // fixed width - right justify
     printf("%%3s  '%3s' '%3s' '%3s' '%3s'\n", "x", "xx", "xxx", "xxxx");

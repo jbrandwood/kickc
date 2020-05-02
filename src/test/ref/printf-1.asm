@@ -3,28 +3,44 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  .label printf_cursor_x = $d
-  .label printf_cursor_y = $e
-  .label printf_cursor_ptr = $f
+  // The default text color
+  .const CONIO_TEXTCOLOR_DEFAULT = $e
+  // The screen width
+  // The screen height
+  // The screen bytes
+  // The text screen address
+  .label CONIO_SCREEN_TEXT = $400
+  // The color screen address
+  .label CONIO_SCREEN_COLORS = $d800
+  .label conio_cursor_x = $d
+  .label conio_cursor_y = $e
+  .label conio_cursor_text = $f
+  .label conio_cursor_color = $11
 __bbegin:
-  // printf_cursor_x = 0
-  // X-position of cursor
+  // conio_cursor_x = 0
+  // The current cursor x-position
   lda #0
-  sta.z printf_cursor_x
-  // printf_cursor_y = 0
-  // Y-position of cursor
-  sta.z printf_cursor_y
-  // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
-  // Pointer to cursor address
-  lda #<$400
-  sta.z printf_cursor_ptr
-  lda #>$400
-  sta.z printf_cursor_ptr+1
+  sta.z conio_cursor_x
+  // conio_cursor_y = 0
+  // The current cursor y-position
+  sta.z conio_cursor_y
+  // conio_cursor_text = CONIO_SCREEN_TEXT
+  // The current cursor address
+  lda #<CONIO_SCREEN_TEXT
+  sta.z conio_cursor_text
+  lda #>CONIO_SCREEN_TEXT
+  sta.z conio_cursor_text+1
+  // conio_cursor_color = CONIO_SCREEN_COLORS
+  // The current cursor address
+  lda #<CONIO_SCREEN_COLORS
+  sta.z conio_cursor_color
+  lda #>CONIO_SCREEN_COLORS
+  sta.z conio_cursor_color+1
   jsr main
   rts
 main: {
-    // printf_cls()
-    jsr printf_cls
+    // clrscr()
+    jsr clrscr
     // printf_string( "cml", { 10, 0 } )
     lda #<str
     sta.z printf_string.str
@@ -33,8 +49,8 @@ main: {
     lda #0
     sta.z printf_string.format_justify_left
     jsr printf_string
-    // printf_ln()
-    jsr printf_ln
+    // cputln()
+    jsr cputln
     // printf_string( "rules", { 10, 0 } )
     lda #<str1
     sta.z printf_string.str
@@ -43,8 +59,8 @@ main: {
     lda #0
     sta.z printf_string.format_justify_left
     jsr printf_string
-    // printf_ln()
-    jsr printf_ln
+    // cputln()
+    jsr cputln
     // printf_string( "cml", { 10, 1 } )
     lda #<str
     sta.z printf_string.str
@@ -53,8 +69,8 @@ main: {
     lda #1
     sta.z printf_string.format_justify_left
     jsr printf_string
-    // printf_ln()
-    jsr printf_ln
+    // cputln()
+    jsr cputln
     // printf_string( "rules", { 10, 1 } )
     lda #<str1
     sta.z printf_string.str
@@ -72,11 +88,11 @@ main: {
 }
 // Print a string value using a specific format
 // Handles justification and min length 
-// printf_string(byte* zp(3) str, byte zp(2) format_justify_left)
+// printf_string(byte* zp(9) str, byte zp(2) format_justify_left)
 printf_string: {
     .label __9 = $b
-    .label padding = 5
-    .label str = 3
+    .label padding = 3
+    .label str = 9
     .label format_justify_left = 2
     // strlen(str)
     lda.z str
@@ -113,8 +129,8 @@ printf_string: {
     sta.z printf_padding.pad
     jsr printf_padding
   __b2:
-    // printf_str(str)
-    jsr printf_str
+    // cputs(str)
+    jsr cputs
     // if(format.justify_left && padding)
     lda #0
     cmp.z format_justify_left
@@ -134,11 +150,11 @@ printf_string: {
     rts
 }
 // Print a padding char a number of times
-// printf_padding(byte zp(7) pad, byte zp(6) length)
+// printf_padding(byte zp(5) pad, byte zp(4) length)
 printf_padding: {
-    .label i = 8
-    .label length = 6
-    .label pad = 7
+    .label i = 6
+    .label length = 4
+    .label pad = 5
     lda #0
     sta.z i
   __b1:
@@ -149,95 +165,185 @@ printf_padding: {
     // }
     rts
   __b2:
-    // printf_char(pad)
+    // cputc(pad)
     lda.z pad
-    jsr printf_char
+    jsr cputc
     // for(char i=0;i<length; i++)
     inc.z i
     jmp __b1
 }
-// Print a single char
-// If the end of the screen is reached scroll it up one char and place the cursor at the
-// printf_char(byte register(A) ch)
-printf_char: {
-    // *(printf_cursor_ptr++) = ch
+// Output one character at the current cursor position
+// Moves the cursor forward. Scrolls the entire screen if needed
+// cputc(byte register(A) c)
+cputc: {
+    // if(c=='\n')
+    cmp #'\n'
+    beq __b1
+    // *conio_cursor_text++ = c
     ldy #0
-    sta (printf_cursor_ptr),y
-    // *(printf_cursor_ptr++) = ch;
-    inc.z printf_cursor_ptr
+    sta (conio_cursor_text),y
+    // *conio_cursor_text++ = c;
+    inc.z conio_cursor_text
     bne !+
-    inc.z printf_cursor_ptr+1
+    inc.z conio_cursor_text+1
   !:
-    // if(++printf_cursor_x==PRINTF_SCREEN_WIDTH)
-    inc.z printf_cursor_x
+    // *conio_cursor_color++ = conio_textcolor
+    lda #CONIO_TEXTCOLOR_DEFAULT
+    ldy #0
+    sta (conio_cursor_color),y
+    // *conio_cursor_color++ = conio_textcolor;
+    inc.z conio_cursor_color
+    bne !+
+    inc.z conio_cursor_color+1
+  !:
+    // if(++conio_cursor_x==CONIO_WIDTH)
+    inc.z conio_cursor_x
     lda #$28
-    cmp.z printf_cursor_x
+    cmp.z conio_cursor_x
     bne __breturn
-    // printf_cursor_x = 0
+    // conio_cursor_x = 0
     lda #0
-    sta.z printf_cursor_x
-    // ++printf_cursor_y;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
+    sta.z conio_cursor_x
+    // ++conio_cursor_y;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
   __breturn:
     // }
     rts
+  __b1:
+    // cputln()
+    jsr cputln
+    rts
 }
-// Scroll the entire screen if the cursor is on the last line
-printf_scroll: {
-    .label __4 = $f
-    // if(printf_cursor_y==PRINTF_SCREEN_HEIGHT)
+// Print a newline
+cputln: {
+    .label __0 = $f
+    .label __1 = $f
+    .label __2 = $11
+    .label __3 = $11
+    // conio_cursor_text - conio_cursor_x
+    sec
+    lda.z __0
+    sbc.z conio_cursor_x
+    sta.z __0
+    bcs !+
+    dec.z __0+1
+  !:
+    // conio_cursor_text - conio_cursor_x + CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z __1
+    sta.z __1
+    bcc !+
+    inc.z __1+1
+  !:
+    // conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH
+    // conio_cursor_color - conio_cursor_x
+    sec
+    lda.z __2
+    sbc.z conio_cursor_x
+    sta.z __2
+    bcs !+
+    dec.z __2+1
+  !:
+    // conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z __3
+    sta.z __3
+    bcc !+
+    inc.z __3+1
+  !:
+    // conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y++;
+    inc.z conio_cursor_y
+    // cscroll()
+    jsr cscroll
+    // }
+    rts
+}
+// Scroll the entire screen if the cursor is beyond the last line
+cscroll: {
+    .label __7 = $f
+    .label __8 = $11
+    // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
-    cmp.z printf_cursor_y
+    cmp.z conio_cursor_y
     bne __breturn
-    // memcpy(PRINTF_SCREEN_ADDRESS, PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_WIDTH, PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH)
+    // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<CONIO_SCREEN_TEXT
+    sta.z memcpy.destination
+    lda #>CONIO_SCREEN_TEXT
+    sta.z memcpy.destination+1
+    lda #<CONIO_SCREEN_TEXT+$28
+    sta.z memcpy.source
+    lda #>CONIO_SCREEN_TEXT+$28
+    sta.z memcpy.source+1
     jsr memcpy
-    // memset(PRINTF_SCREEN_ADDRESS+PRINTF_SCREEN_BYTES-PRINTF_SCREEN_WIDTH, ' ', PRINTF_SCREEN_WIDTH)
+    // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
+    lda #<CONIO_SCREEN_COLORS
+    sta.z memcpy.destination
+    lda #>CONIO_SCREEN_COLORS
+    sta.z memcpy.destination+1
+    lda #<CONIO_SCREEN_COLORS+$28
+    sta.z memcpy.source
+    lda #>CONIO_SCREEN_COLORS+$28
+    sta.z memcpy.source+1
+    jsr memcpy
+    // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
     ldx #' '
-    lda #<$400+$28*$19-$28
+    lda #<CONIO_SCREEN_TEXT+$19*$28-$28
     sta.z memset.str
-    lda #>$400+$28*$19-$28
+    lda #>CONIO_SCREEN_TEXT+$19*$28-$28
     sta.z memset.str+1
-    lda #<$28
-    sta.z memset.num
-    lda #>$28
-    sta.z memset.num+1
     jsr memset
-    // printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    lda.z __4
+    // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
+    ldx #CONIO_TEXTCOLOR_DEFAULT
+    lda #<CONIO_SCREEN_COLORS+$19*$28-$28
+    sta.z memset.str
+    lda #>CONIO_SCREEN_COLORS+$19*$28-$28
+    sta.z memset.str+1
+    jsr memset
+    // conio_cursor_text-CONIO_WIDTH
+    lda.z __7
     sec
     sbc #<$28
-    sta.z __4
-    lda.z __4+1
+    sta.z __7
+    lda.z __7+1
     sbc #>$28
-    sta.z __4+1
-    // printf_cursor_ptr = printf_cursor_ptr-PRINTF_SCREEN_WIDTH
-    // printf_cursor_y--;
-    dec.z printf_cursor_y
+    sta.z __7+1
+    // conio_cursor_text = conio_cursor_text-CONIO_WIDTH
+    // conio_cursor_color-CONIO_WIDTH
+    lda.z __8
+    sec
+    sbc #<$28
+    sta.z __8
+    lda.z __8+1
+    sbc #>$28
+    sta.z __8+1
+    // conio_cursor_color = conio_cursor_color-CONIO_WIDTH
+    // conio_cursor_y--;
+    dec.z conio_cursor_y
   __breturn:
     // }
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($b) str, byte register(X) c, word zp(9) num)
+// memset(void* zp($b) str, byte register(X) c)
 memset: {
-    .label end = 9
+    .label end = $13
     .label dst = $b
-    .label num = 9
     .label str = $b
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
     // end = (char*)str + num
-    lda.z end
+    lda #$28
     clc
     adc.z str
     sta.z end
-    lda.z end+1
+    lda #0
     adc.z str+1
     sta.z end+1
   __b2:
@@ -248,7 +354,6 @@ memset: {
     lda.z dst
     cmp.z end
     bne __b3
-  __breturn:
     // }
     rts
   __b3:
@@ -265,28 +370,28 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// memcpy(void* zp(7) destination, void* zp($b) source)
 memcpy: {
-    .const num = $28*$19-$28
-    .label destination = $400
-    .label source = $400+$28
-    .label src_end = source+num
-    .label dst = $b
-    .label src = 9
-    lda #<destination
-    sta.z dst
-    lda #>destination
-    sta.z dst+1
-    lda #<source
-    sta.z src
-    lda #>source
-    sta.z src+1
+    .label src_end = $13
+    .label dst = 7
+    .label src = $b
+    .label source = $b
+    .label destination = 7
+    // src_end = (char*)source+num
+    lda.z source
+    clc
+    adc #<$19*$28-$28
+    sta.z src_end
+    lda.z source+1
+    adc #>$19*$28-$28
+    sta.z src_end+1
   __b1:
     // while(src!=src_end)
     lda.z src+1
-    cmp #>src_end
+    cmp.z src_end+1
     bne __b2
     lda.z src
-    cmp #<src_end
+    cmp.z src_end
     bne __b2
     // }
     rts
@@ -306,72 +411,33 @@ memcpy: {
   !:
     jmp __b1
 }
-// Print a zero-terminated string
-// Handles escape codes such as newline
-// printf_str(byte* zp(3) str)
-printf_str: {
-    .label str = 3
-  __b2:
-    // ch = *str++
+// Output a NUL-terminated string at the current cursor position
+// cputs(byte* zp(9) s)
+cputs: {
+    .label s = 9
+  __b1:
+    // c=*s++
     ldy #0
-    lda (str),y
-    inc.z str
+    lda (s),y
+    // while(c=*s++)
+    inc.z s
     bne !+
-    inc.z str+1
+    inc.z s+1
   !:
-    // if(ch==0)
     cmp #0
-    bne __b3
+    bne __b2
     // }
     rts
-  __b3:
-    // if(ch=='\n')
-    cmp #'\n'
-    beq __b4
-    // printf_char(ch)
-    jsr printf_char
-    jmp __b2
-  __b4:
-    // printf_ln()
-    jsr printf_ln
-    jmp __b2
-}
-// Print a newline
-printf_ln: {
-    .label __0 = $f
-    .label __1 = $f
-    // printf_cursor_ptr - printf_cursor_x
-    sec
-    lda.z __0
-    sbc.z printf_cursor_x
-    sta.z __0
-    bcs !+
-    dec.z __0+1
-  !:
-    // printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
-    lda #$28
-    clc
-    adc.z __1
-    sta.z __1
-    bcc !+
-    inc.z __1+1
-  !:
-    // printf_cursor_ptr =  printf_cursor_ptr - printf_cursor_x + PRINTF_SCREEN_WIDTH
-    // printf_cursor_x = 0
-    lda #0
-    sta.z printf_cursor_x
-    // printf_cursor_y++;
-    inc.z printf_cursor_y
-    // printf_scroll()
-    jsr printf_scroll
-    // }
-    rts
+  __b2:
+    // cputc(c)
+    jsr cputc
+    jmp __b1
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(9) str)
+// strlen(byte* zp(7) str)
 strlen: {
     .label len = $b
-    .label str = 9
+    .label str = 7
     .label return = $b
     lda #<0
     sta.z len
@@ -397,29 +463,73 @@ strlen: {
   !:
     jmp __b1
 }
-// Clear the screen. Also resets current line/char cursor.
-printf_cls: {
-    // memset(PRINTF_SCREEN_ADDRESS, ' ', PRINTF_SCREEN_BYTES)
-    ldx #' '
-    lda #<$400
-    sta.z memset.str
-    lda #>$400
-    sta.z memset.str+1
-    lda #<$28*$19
-    sta.z memset.num
-    lda #>$28*$19
-    sta.z memset.num+1
-    jsr memset
-    // printf_cursor_ptr = PRINTF_SCREEN_ADDRESS
-    lda #<$400
-    sta.z printf_cursor_ptr
-    lda #>$400
-    sta.z printf_cursor_ptr+1
-    // printf_cursor_x = 0
+// clears the screen and moves the cursor to the upper left-hand corner of the screen.
+clrscr: {
+    .label line_text = 9
+    .label line_cols = $b
+    lda #<CONIO_SCREEN_COLORS
+    sta.z line_cols
+    lda #>CONIO_SCREEN_COLORS
+    sta.z line_cols+1
+    lda #<CONIO_SCREEN_TEXT
+    sta.z line_text
+    lda #>CONIO_SCREEN_TEXT
+    sta.z line_text+1
+    ldx #0
+  __b1:
+    // for( char l=0;l<CONIO_HEIGHT; l++ )
+    cpx #$19
+    bcc __b2
+    // conio_cursor_x = 0
     lda #0
-    sta.z printf_cursor_x
-    // printf_cursor_y = 0
-    sta.z printf_cursor_y
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_cursor_text = CONIO_SCREEN_TEXT
+    lda #<CONIO_SCREEN_TEXT
+    sta.z conio_cursor_text
+    lda #>CONIO_SCREEN_TEXT
+    sta.z conio_cursor_text+1
+    // conio_cursor_color = CONIO_SCREEN_COLORS
+    lda #<CONIO_SCREEN_COLORS
+    sta.z conio_cursor_color
+    lda #>CONIO_SCREEN_COLORS
+    sta.z conio_cursor_color+1
     // }
     rts
+  __b2:
+    ldy #0
+  __b3:
+    // for( char c=0;c<CONIO_WIDTH; c++ )
+    cpy #$28
+    bcc __b4
+    // line_text += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z line_text
+    sta.z line_text
+    bcc !+
+    inc.z line_text+1
+  !:
+    // line_cols += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z line_cols
+    sta.z line_cols
+    bcc !+
+    inc.z line_cols+1
+  !:
+    // for( char l=0;l<CONIO_HEIGHT; l++ )
+    inx
+    jmp __b1
+  __b4:
+    // line_text[c] = ' '
+    lda #' '
+    sta (line_text),y
+    // line_cols[c] = conio_textcolor
+    lda #CONIO_TEXTCOLOR_DEFAULT
+    sta (line_cols),y
+    // for( char c=0;c<CONIO_WIDTH; c++ )
+    iny
+    jmp __b3
 }

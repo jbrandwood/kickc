@@ -25,9 +25,9 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
    /** The printf procedure name. */
    public static final String INTRINSIC_PRINTF_NAME = "printf";
    /** The printf routine used to print a raw char */
-   private static final String PRINTF_CHAR = "printf_char";
+   private static final String PRINTF_CHAR = "cputc";
    /** The printf routine used to print a raw string */
-   private static final String PRINTF_STR = "printf_str";
+   private static final String PRINTF_STR = "cputs";
    /** The printf routine used to print formatted strings. */
    private static final String PRINTF_STRING = "printf_string";
    /** The printf routine used to print signed chars. */

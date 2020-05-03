@@ -62,7 +62,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
             if(statement instanceof StatementCall && ((StatementCall) statement).getProcedureName().equals(INTRINSIC_PRINTF_NAME)) {
                StatementCall printfCall = (StatementCall) statement;
                final List<RValue> parameters = printfCall.getParameters();
-               final RValue formatParameter = parameters.get(0);
+               final RValue formatParameter = getParameterValue(parameters, 0, printfCall);
                if(!(formatParameter instanceof ConstantValue))
                   throw new CompileError("Error! Only constant printf() format parameter supported!", statement);
                final ConstantLiteral formatLiteral = ((ConstantValue) formatParameter).calculateLiteral(getProgram().getScope());
@@ -138,7 +138,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(width, SymbolType.BYTE),
                                  new ConstantInteger(leftJustify, SymbolType.BYTE)
                            ));
-                     addPrintfCall(PRINTF_STRING, Arrays.asList(parameters.get(paramIdx), format_string_struct), stmtIt, printfCall);
+                     addPrintfCall(PRINTF_STRING, Arrays.asList(getParameterValue(parameters, paramIdx, printfCall), format_string_struct), stmtIt, printfCall);
                      paramIdx++;
                   } else if("diuxXo".contains(typeField)) {
                      // A formatted integer
@@ -174,7 +174,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
 
                      if(lengthField == null) {
                         // Check if the parameter type is 8-bit or 32-bit
-                        RValue paramValue = parameters.get(paramIdx);
+                        RValue paramValue = getParameterValue(parameters, paramIdx, printfCall);
                         SymbolType paramType = SymbolTypeInference.inferType(getScope(), paramValue);
                         if(SymbolType.BYTE.equals(paramType) || SymbolType.SBYTE.equals(paramType)) {
                            // Integer (8bit)
@@ -214,11 +214,11 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(upperCase, SymbolType.BYTE),
                                  radix
                            ));
-                     addPrintfCall(printf_number_procedure, Arrays.asList(parameters.get(paramIdx), format_number_struct), stmtIt, printfCall);
+                     addPrintfCall(printf_number_procedure, Arrays.asList(getParameterValue(parameters, paramIdx, printfCall), format_number_struct), stmtIt, printfCall);
                      paramIdx++;
                   } else if(typeField.equals("c")) {
                      // Print char
-                     addPrintfCall(PRINTF_CHAR, Arrays.asList(parameters.get(paramIdx)), stmtIt, printfCall);
+                     addPrintfCall(PRINTF_CHAR, Arrays.asList(getParameterValue(parameters, paramIdx, printfCall)), stmtIt, printfCall);
                      paramIdx++;
                   } else if(typeField.equals("p")) {
                      // Print a pointer
@@ -231,7 +231,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                                  new ConstantInteger(upperCase, SymbolType.BYTE),
                                  getScope().getLocalConstant(HEXADECIMAL).getRef()
                            ));
-                     addPrintfCall(PRINTF_UINT, Arrays.asList(new CastValue(SymbolType.WORD, parameters.get(paramIdx)), format_number_struct), stmtIt, printfCall);
+                     addPrintfCall(PRINTF_UINT, Arrays.asList(new CastValue(SymbolType.WORD, getParameterValue(parameters, paramIdx, printfCall)), format_number_struct), stmtIt, printfCall);
                      paramIdx++;
                   }
                }
@@ -243,6 +243,21 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
          }
       }
       return false;
+   }
+
+   /**
+    * Get a specific parameter value.
+    * @param parameters The list of parameters
+    * @param paramIdx The index of the parameter to get
+    * @param printfCall The printf call statement used for errors
+    * @return The parameter value.
+    *
+    * @throws CompileError if the parameter is not present
+    */
+   private RValue getParameterValue(List<RValue> parameters, int paramIdx, StatementCall printfCall) {
+      if(parameters.size()<=paramIdx)
+         throw new CompileError("Error! printf missing parameter with index "+paramIdx, printfCall);
+      return parameters.get(paramIdx);
    }
 
    /**

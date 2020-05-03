@@ -322,6 +322,7 @@ public class Compiler {
          getLog().append(program.getProcedureModifiedVars().toString(program));
       }
 
+      new Pass1CallVoidReturns(program).execute();
       new Pass1CallStack(program).execute();
       new Pass1CallPhiParameters(program).execute();
       //getLog().append("PROCEDURE PARAMETERS");

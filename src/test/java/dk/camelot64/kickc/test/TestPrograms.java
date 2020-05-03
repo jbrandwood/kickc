@@ -58,6 +58,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testDoubleCallProblem() throws IOException, URISyntaxException {
+      assertError("double-call-problem.c", "Error! Function clrscr does not return a value! ");
+   }
+
+   @Test
    public void testStructPointerToMember2() throws IOException, URISyntaxException {
       compileAndCompare("struct-pointer-to-member-2.c");
    }
@@ -95,6 +100,11 @@ public class TestPrograms {
    @Test
    public void testToUpper1() throws IOException, URISyntaxException {
       compileAndCompare("toupper-1.c");
+   }
+
+   @Test
+   public void testPrintfError6() throws IOException, URISyntaxException {
+      assertError("printf-error-6.c", "Error! printf missing parameter with index 1");
    }
 
    @Test

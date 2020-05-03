@@ -40,6 +40,28 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testPolygon() throws IOException, URISyntaxException {
+      compileAndCompare("complex/polygon/polygon.c");
+   }
+
+   @Test
+   public void testPrngXorshift() throws IOException, URISyntaxException {
+      compileAndCompare("prng-xorshift.c");
+   }
+
+   @Test
+   public void testStars2() throws IOException, URISyntaxException {
+      compileAndCompare("stars-2.c");
+   }
+
+   @Test
+   public void testStars1() throws IOException, URISyntaxException {
+      compileAndCompare("stars-1.c");
+   }
+
+
+
    /* TODO: Add support for var*var
    @Test
    public void testMultiply3() throws IOException, URISyntaxException {

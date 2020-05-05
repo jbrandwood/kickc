@@ -48,3 +48,11 @@ int abs(int x);
 // Returns the absolute value of long int x.
 long labs(long x);
 
+// The maximal random value
+#define RAND_MAX 65335
+
+// Returns a pseudo-random number in the range of 0 to RAND_MAX (65535)
+unsigned int rand();
+
+// Seeds the random number generator used by the function rand.
+void srand(unsigned int seed);

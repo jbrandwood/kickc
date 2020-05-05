@@ -476,12 +476,18 @@ gfx_mode: {
     and #>$3fff
     sta.z __47+1
     // ((word)get_vic_screen(*form_vic_screen)&$3fff)/$40
-    ldy #6
-  !:
-    lsr.z __48+1
-    ror.z __48
-    dey
-    bne !-
+    lda.z __48
+    asl
+    sta.z $ff
+    lda.z __48+1
+    rol
+    sta.z __48
+    lda #0
+    rol
+    sta.z __48+1
+    asl.z $ff
+    rol.z __48
+    rol.z __48+1
     // get_vic_charset(*form_vic_gfx)
     lda form_vic_gfx
     jsr get_vic_charset

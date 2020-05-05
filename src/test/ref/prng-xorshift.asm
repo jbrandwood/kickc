@@ -24,7 +24,7 @@
   .label conio_textcolor = $1c
   // The maximal random value
   // The random state variable
-  .label rand_state = $11
+  .label _rand_state = $11
 __bbegin:
   // conio_cursor_x = 0
   // The current cursor x-position
@@ -68,17 +68,17 @@ main: {
     lda #>s
     sta.z cputs.s+1
     jsr cputs
-    // rand()
+    // _rand()
     lda #<1
-    sta.z rand_state
+    sta.z _rand_state
     lda #>1
-    sta.z rand_state+1
-    jsr rand
-    // rand()
-    lda.z rand.return_1
-    sta.z rand.return
-    lda.z rand.return_1+1
-    sta.z rand.return+1
+    sta.z _rand_state+1
+    jsr _rand
+    // _rand()
+    lda.z _rand.return_1
+    sta.z _rand.return
+    lda.z _rand.return_1+1
+    sta.z _rand.return+1
     // textcolor(LIGHT_BLUE)
     lda #LIGHT_BLUE
     jsr textcolor
@@ -140,10 +140,10 @@ main: {
     lda #1
     sta.z row
   __b2:
-    // rand()
-    jsr rand
-    // rand()
-    // rnd = rand()
+    // _rand()
+    jsr _rand
+    // _rand()
+    // rnd = _rand()
     // while(rnd!=first)
     lda.z rnd+1
     cmp.z first+1
@@ -909,56 +909,56 @@ gotoxy: {
     rts
 }
 // Returns a pseudo-random number in the range of 0 to RAND_MAX (65535)
-rand: {
+_rand: {
     .label __0 = $23
     .label __1 = $27
     .label __2 = $25
     .label return = $1d
     .label return_1 = 8
-    // rand_state << 7
-    lda.z rand_state+1
+    // _rand_state << 7
+    lda.z _rand_state+1
     lsr
-    lda.z rand_state
+    lda.z _rand_state
     ror
     sta.z __0+1
     lda #0
     ror
     sta.z __0
-    // rand_state ^= rand_state << 7
-    lda.z rand_state
+    // _rand_state ^= _rand_state << 7
+    lda.z _rand_state
     eor.z __0
-    sta.z rand_state
-    lda.z rand_state+1
+    sta.z _rand_state
+    lda.z _rand_state+1
     eor.z __0+1
-    sta.z rand_state+1
-    // rand_state >> 9
+    sta.z _rand_state+1
+    // _rand_state >> 9
     lsr
     sta.z __1
     lda #0
     sta.z __1+1
-    // rand_state ^= rand_state >> 9
-    lda.z rand_state
+    // _rand_state ^= _rand_state >> 9
+    lda.z _rand_state
     eor.z __1
-    sta.z rand_state
-    lda.z rand_state+1
+    sta.z _rand_state
+    lda.z _rand_state+1
     eor.z __1+1
-    sta.z rand_state+1
-    // rand_state << 8
-    lda.z rand_state
+    sta.z _rand_state+1
+    // _rand_state << 8
+    lda.z _rand_state
     sta.z __2+1
     lda #0
     sta.z __2
-    // rand_state ^= rand_state << 8
-    lda.z rand_state
+    // _rand_state ^= _rand_state << 8
+    lda.z _rand_state
     eor.z __2
-    sta.z rand_state
-    lda.z rand_state+1
+    sta.z _rand_state
+    lda.z _rand_state+1
     eor.z __2+1
-    sta.z rand_state+1
-    // return rand_state;
-    lda.z rand_state
+    sta.z _rand_state+1
+    // return _rand_state;
+    lda.z _rand_state
     sta.z return_1
-    lda.z rand_state+1
+    lda.z _rand_state+1
     sta.z return_1+1
     // }
     rts

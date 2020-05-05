@@ -284,3 +284,22 @@ inline long labs(long x) {
     else
         return x;
 }
+
+// The random state variable
+unsigned int rand_state = 1;
+
+// Returns a pseudo-random number in the range of 0 to RAND_MAX (65535)
+// Uses an xorshift pseudorandom number generator that hits all different values
+// Information https://en.wikipedia.org/wiki/Xorshift
+// Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
+unsigned int rand() {
+    rand_state ^= rand_state << 7;
+    rand_state ^= rand_state >> 9;
+    rand_state ^= rand_state << 8;
+    return rand_state;
+}
+
+// Seeds the random number generator used by the function rand.
+void srand(unsigned int seed) {
+    rand_state = seed;
+}

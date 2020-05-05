@@ -9,7 +9,7 @@ void main() {
     clrscr();
     textcolor(WHITE);
     printf("generating unique randoms...");
-    unsigned int first = rand();
+    unsigned int first = _rand();
     unsigned long cnt = 0;
     textcolor(LIGHT_BLUE);
     char col = 3, row = 1;
@@ -26,7 +26,7 @@ void main() {
                     col = 3;
             }
         }
-        rnd = rand();    
+        rnd = _rand();
     } while(rnd!=first);
     gotoxy(28,0);
     printf("found %lu",cnt);
@@ -37,17 +37,17 @@ void main() {
 #define RAND_MAX 65335
 
 // The random state variable
-unsigned int rand_state = 1;
+unsigned int _rand_state = 1;
 
 // Returns a pseudo-random number in the range of 0 to RAND_MAX (65535)
-unsigned int rand() {
-    rand_state ^= rand_state << 7;
-    rand_state ^= rand_state >> 9;
-    rand_state ^= rand_state << 8;
-    return rand_state;
+unsigned int _rand() {
+    _rand_state ^= _rand_state << 7;
+    _rand_state ^= _rand_state >> 9;
+    _rand_state ^= _rand_state << 8;
+    return _rand_state;
 }
 
 // Seeds the random number generator used by the function rand.
-void srand(unsigned int seed) {
-    rand_state = seed;
+void _srand(unsigned int seed) {
+    _rand_state = seed;
 }

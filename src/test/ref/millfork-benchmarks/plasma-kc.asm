@@ -9,10 +9,11 @@
   .label SCREEN1 = $e000
   .label SCREEN2 = $e400
   .label CHARSET = $e800
-  .label last_time = $a
-  .label rand_seed = $c
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
+  .label last_time = $c
+  // The random state variable
+  .label rand_state = 9
+  .label print_line_cursor = 5
+  .label print_char_cursor = 7
   .label Ticks = $10
   .label Ticks_1 = $12
 __bbegin:
@@ -20,20 +21,12 @@ __bbegin:
   lda #<0
   sta.z last_time
   sta.z last_time+1
-  // rand_seed
-  sta.z rand_seed
-  sta.z rand_seed+1
   jsr main
   rts
 main: {
     .label block = $e
     .label v = $f
-    .label count = 4
-    // rand_seed = 6474
-    lda #<$194a
-    sta.z rand_seed
-    lda #>$194a
-    sta.z rand_seed+1
+    .label count = 5
     // makechar()
     jsr makechar
     // start()
@@ -102,17 +95,17 @@ main: {
     dec.z count
     jmp __b1
 }
-// doplasma(byte* zp(6) scrn)
+// doplasma(byte* zp(7) scrn)
 doplasma: {
     .const c2A = 0
     .const c2B = 0
-    .label c1a = 9
-    .label c1b = $14
-    .label ii = 8
-    .label c2a = 2
-    .label c2b = 3
-    .label i = $17
-    .label scrn = 6
+    .label c1a = $14
+    .label c1b = $19
+    .label ii = $b
+    .label c2a = 3
+    .label c2b = 4
+    .label i = 2
+    .label scrn = 7
     lda #0
     sta.z c1b
     sta.z c1a
@@ -325,24 +318,22 @@ start: {
     jsr $ffde
     sta LAST_TIME
     stx LAST_TIME+1
-    // rand_seed = 6474
-    lda #<$194a
-    sta.z rand_seed
-    lda #>$194a
-    sta.z rand_seed+1
     // }
     rts
 }
 makechar: {
-    .label __4 = $17
+    .label __3 = $17
+    .label __4 = $19
     .label __7 = $15
     .label __8 = $15
     .label s = $14
     .label c = $10
-    .label i = 8
-    .label b = 9
+    .label i = $b
     .label __10 = $15
-    lda #<0
+    lda #<1
+    sta.z rand_state
+    lda #>1
+    sta.z rand_state+1
     sta.z c
     sta.z c+1
   __b1:
@@ -377,12 +368,11 @@ makechar: {
   !:
     jmp __b1
   __b4:
-    lda #0
-    sta.z b
-    tay
+    ldy #0
+    ldx #0
   __b5:
     // for (ii = 0; ii < 8; ++ii)
-    cpy #8
+    cpx #8
     bcc __b6
     // c<<3
     lda.z c
@@ -411,7 +401,7 @@ makechar: {
     lda.z __10+1
     adc #>CHARSET
     sta.z __10+1
-    lda.z b
+    tya
     ldy #0
     sta (__10),y
     // for (i = 0; i < 8; ++i)
@@ -421,37 +411,76 @@ makechar: {
     // rand()
     jsr rand
     // rand() & 0xFF
-    and #$ff
+    lda #$ff
+    and.z __3
     sta.z __4
     // if ((rand() & 0xFF) > s)
     lda.z s
     cmp.z __4
     bcs __b8
     // b |= bittab[ii]
-    lda bittab,y
-    ora.z b
-    sta.z b
+    tya
+    ora bittab,x
+    tay
   __b8:
     // for (ii = 0; ii < 8; ++ii)
-    iny
+    inx
     jmp __b5
 }
+// Returns a pseudo-random number in the range of 0 to RAND_MAX (65535)
+// Uses an xorshift pseudorandom number generator that hits all different values
+// Information https://en.wikipedia.org/wiki/Xorshift
+// Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label RAND_SEED = rand_seed
-    // asm
-    ldx #8
-    lda RAND_SEED+0
-  __rand_loop:
-    asl
-    rol RAND_SEED+1
-    bcc __no_eor
-    eor #$2d
-  __no_eor:
-    dex
-    bne __rand_loop
-    sta RAND_SEED+0
-    // return (char)rand_seed;
-    lda.z rand_seed
+    .label __0 = $1a
+    .label __1 = $1c
+    .label __2 = $1e
+    .label return = $17
+    // rand_state << 7
+    lda.z rand_state+1
+    lsr
+    lda.z rand_state
+    ror
+    sta.z __0+1
+    lda #0
+    ror
+    sta.z __0
+    // rand_state ^= rand_state << 7
+    lda.z rand_state
+    eor.z __0
+    sta.z rand_state
+    lda.z rand_state+1
+    eor.z __0+1
+    sta.z rand_state+1
+    // rand_state >> 9
+    lsr
+    sta.z __1
+    lda #0
+    sta.z __1+1
+    // rand_state ^= rand_state >> 9
+    lda.z rand_state
+    eor.z __1
+    sta.z rand_state
+    lda.z rand_state+1
+    eor.z __1+1
+    sta.z rand_state+1
+    // rand_state << 8
+    lda.z rand_state
+    sta.z __2+1
+    lda #0
+    sta.z __2
+    // rand_state ^= rand_state << 8
+    lda.z rand_state
+    eor.z __2
+    sta.z rand_state
+    lda.z rand_state+1
+    eor.z __2+1
+    sta.z rand_state+1
+    // return rand_state;
+    lda.z rand_state
+    sta.z return
+    lda.z rand_state+1
+    sta.z return+1
     // }
     rts
 }

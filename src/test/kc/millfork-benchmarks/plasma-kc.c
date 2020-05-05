@@ -114,7 +114,6 @@ int main (void)
     char block;
     unsigned int count = 500;
     
-    rand_seed = 6474;
     makechar();
     start();
 

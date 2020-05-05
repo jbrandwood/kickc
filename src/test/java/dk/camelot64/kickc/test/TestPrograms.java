@@ -46,6 +46,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testRand1() throws IOException, URISyntaxException {
+      compileAndCompare("rand-1.c");
+   }
+
+   @Test
    public void testPrngXorshift() throws IOException, URISyntaxException {
       compileAndCompare("prng-xorshift.c");
    }

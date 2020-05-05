@@ -12,10 +12,10 @@
   .label CONIO_SCREEN_TEXT = $400
   // The color screen address
   .label CONIO_SCREEN_COLORS = $d800
-  .label conio_cursor_x = 8
-  .label conio_cursor_y = 9
-  .label conio_cursor_text = $a
-  .label conio_cursor_color = $c
+  .label conio_cursor_x = 6
+  .label conio_cursor_y = 7
+  .label conio_cursor_text = 8
+  .label conio_cursor_color = $a
 __bbegin:
   // conio_cursor_x = 0
   // The current cursor x-position
@@ -61,9 +61,9 @@ main: {
     .byte 0
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(4) s)
+// cputs(byte* zp(2) s)
 cputs: {
-    .label s = 4
+    .label s = 2
   __b1:
     // c=*s++
     ldy #0
@@ -128,44 +128,35 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __0 = $a
-    .label __1 = $a
-    .label __2 = $c
-    .label __3 = $c
-    // conio_cursor_text - conio_cursor_x
+    .label __1 = 8
+    .label __2 = $a
+    .label ln_offset = $c
+    // ln_offset = CONIO_WIDTH - conio_cursor_x
     sec
-    lda.z __0
-    sbc.z conio_cursor_x
-    sta.z __0
-    bcs !+
-    dec.z __0+1
-  !:
-    // conio_cursor_text - conio_cursor_x + CONIO_WIDTH
     lda #$28
+    sbc.z conio_cursor_x
+    sta.z ln_offset
+    lda #0
+    sbc #0
+    sta.z ln_offset+1
+    // conio_cursor_text  + ln_offset
+    lda.z __1
     clc
-    adc.z __1
+    adc.z ln_offset
     sta.z __1
-    bcc !+
-    inc.z __1+1
-  !:
-    // conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH
-    // conio_cursor_color - conio_cursor_x
-    sec
+    lda.z __1+1
+    adc.z ln_offset+1
+    sta.z __1+1
+    // conio_cursor_text =  conio_cursor_text  + ln_offset
+    // conio_cursor_color + ln_offset
     lda.z __2
-    sbc.z conio_cursor_x
-    sta.z __2
-    bcs !+
-    dec.z __2+1
-  !:
-    // conio_cursor_color - conio_cursor_x + CONIO_WIDTH
-    lda #$28
     clc
-    adc.z __3
-    sta.z __3
-    bcc !+
-    inc.z __3+1
-  !:
-    // conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    adc.z ln_offset
+    sta.z __2
+    lda.z __2+1
+    adc.z ln_offset+1
+    sta.z __2+1
+    // conio_cursor_color = conio_cursor_color + ln_offset
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
@@ -178,8 +169,8 @@ cputln: {
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
-    .label __7 = $a
-    .label __8 = $c
+    .label __7 = 8
+    .label __8 = $a
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
     cmp.z conio_cursor_y
@@ -243,11 +234,11 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(2) str, byte register(X) c)
+// memset(void* zp($c) str, byte register(X) c)
 memset: {
     .label end = $e
-    .label dst = 2
-    .label str = 2
+    .label dst = $c
+    .label str = $c
     // end = (char*)str + num
     lda #$28
     clc
@@ -280,13 +271,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(6) destination, void* zp(2) source)
+// memcpy(void* zp(4) destination, void* zp($c) source)
 memcpy: {
     .label src_end = $e
-    .label dst = 6
-    .label src = 2
-    .label source = 2
-    .label destination = 6
+    .label dst = 4
+    .label src = $c
+    .label source = $c
+    .label destination = 4
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -323,8 +314,8 @@ memcpy: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = 4
-    .label line_cols = 6
+    .label line_text = 2
+    .label line_cols = 4
     lda #<CONIO_SCREEN_COLORS
     sta.z line_cols
     lda #>CONIO_SCREEN_COLORS

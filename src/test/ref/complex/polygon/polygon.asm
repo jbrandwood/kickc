@@ -404,44 +404,35 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __0 = $15
     .label __1 = $15
     .label __2 = $17
-    .label __3 = $17
-    // conio_cursor_text - conio_cursor_x
+    .label ln_offset = $2b
+    // ln_offset = CONIO_WIDTH - conio_cursor_x
     sec
-    lda.z __0
-    sbc.z conio_cursor_x
-    sta.z __0
-    bcs !+
-    dec.z __0+1
-  !:
-    // conio_cursor_text - conio_cursor_x + CONIO_WIDTH
     lda #$28
+    sbc.z conio_cursor_x
+    sta.z ln_offset
+    lda #0
+    sbc #0
+    sta.z ln_offset+1
+    // conio_cursor_text  + ln_offset
+    lda.z __1
     clc
-    adc.z __1
+    adc.z ln_offset
     sta.z __1
-    bcc !+
-    inc.z __1+1
-  !:
-    // conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH
-    // conio_cursor_color - conio_cursor_x
-    sec
+    lda.z __1+1
+    adc.z ln_offset+1
+    sta.z __1+1
+    // conio_cursor_text =  conio_cursor_text  + ln_offset
+    // conio_cursor_color + ln_offset
     lda.z __2
-    sbc.z conio_cursor_x
-    sta.z __2
-    bcs !+
-    dec.z __2+1
-  !:
-    // conio_cursor_color - conio_cursor_x + CONIO_WIDTH
-    lda #$28
     clc
-    adc.z __3
-    sta.z __3
-    bcc !+
-    inc.z __3+1
-  !:
-    // conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    adc.z ln_offset
+    sta.z __2
+    lda.z __2+1
+    adc.z ln_offset+1
+    sta.z __2+1
+    // conio_cursor_color = conio_cursor_color + ln_offset
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
@@ -527,12 +518,12 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($25) str, byte register(X) c, word zp($2b) num)
+// memset(void* zp($2b) str, byte register(X) c, word zp($29) num)
 memset: {
-    .label end = $2b
-    .label dst = $25
-    .label str = $25
-    .label num = $2b
+    .label end = $29
+    .label dst = $2b
+    .label str = $2b
+    .label num = $29
     // if(num>0)
     lda.z num
     bne !+
@@ -572,13 +563,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($25) destination, void* zp($2b) source)
+// memcpy(void* zp($2b) destination, void* zp($29) source)
 memcpy: {
-    .label src_end = $29
-    .label dst = $25
-    .label src = $2b
-    .label source = $2b
-    .label destination = $25
+    .label src_end = $25
+    .label dst = $2b
+    .label src = $29
+    .label source = $29
+    .label destination = $2b
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -636,7 +627,7 @@ printf_uchar: {
 printf_number_buffer: {
     .const format_min_length = 2
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label __19 = $2b
+    .label __19 = $29
     .label padding = 8
     // strlen(buffer.digits)
     jsr strlen
@@ -712,9 +703,9 @@ printf_padding: {
 // Computes the length of the string str up to but not including the terminating null character.
 // strlen(byte* zp($27) str)
 strlen: {
-    .label len = $2b
+    .label len = $29
     .label str = $27
-    .label return = $2b
+    .label return = $29
     lda #<0
     sta.z len
     sta.z len+1
@@ -748,10 +739,10 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($2b) buffer)
+// uctoa(byte register(X) value, byte* zp($29) buffer)
 uctoa: {
     .label digit_value = $20
-    .label buffer = $2b
+    .label buffer = $29
     .label digit = 8
     .label started = 9
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -818,9 +809,9 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($2b) buffer, byte register(X) value, byte zp($20) sub)
+// uctoa_append(byte* zp($29) buffer, byte register(X) value, byte zp($20) sub)
 uctoa_append: {
-    .label buffer = $2b
+    .label buffer = $29
     .label sub = $20
     ldy #0
   __b1:
@@ -851,7 +842,7 @@ gotoxy: {
     .label __7 = $17
     .label __8 = $17
     .label offset = $17
-    .label __9 = $29
+    .label __9 = $2b
     .label __10 = $17
     // if(y>CONIO_HEIGHT)
     cmp #$19+1

@@ -206,7 +206,7 @@ printf_ulong: {
 // This handles minimum length, zero-filling, and left/right justification from the format
 // printf_number_buffer(byte zp($a) buffer_sign, byte register(X) format_min_length, byte zp($10) format_justify_left, byte zp($13) format_zero_padding, byte zp($b) format_upper_case)
 printf_number_buffer: {
-    .label __19 = $27
+    .label __19 = $25
     .label buffer_sign = $a
     .label padding = $c
     .label format_zero_padding = $13
@@ -384,44 +384,35 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __0 = $18
     .label __1 = $18
     .label __2 = $1a
-    .label __3 = $1a
-    // conio_cursor_text - conio_cursor_x
+    .label ln_offset = $27
+    // ln_offset = CONIO_WIDTH - conio_cursor_x
     sec
-    lda.z __0
-    sbc.z conio_cursor_x
-    sta.z __0
-    bcs !+
-    dec.z __0+1
-  !:
-    // conio_cursor_text - conio_cursor_x + CONIO_WIDTH
     lda #$28
+    sbc.z conio_cursor_x
+    sta.z ln_offset
+    lda #0
+    sbc #0
+    sta.z ln_offset+1
+    // conio_cursor_text  + ln_offset
+    lda.z __1
     clc
-    adc.z __1
+    adc.z ln_offset
     sta.z __1
-    bcc !+
-    inc.z __1+1
-  !:
-    // conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH
-    // conio_cursor_color - conio_cursor_x
-    sec
+    lda.z __1+1
+    adc.z ln_offset+1
+    sta.z __1+1
+    // conio_cursor_text =  conio_cursor_text  + ln_offset
+    // conio_cursor_color + ln_offset
     lda.z __2
-    sbc.z conio_cursor_x
-    sta.z __2
-    bcs !+
-    dec.z __2+1
-  !:
-    // conio_cursor_color - conio_cursor_x + CONIO_WIDTH
-    lda #$28
     clc
-    adc.z __3
-    sta.z __3
-    bcc !+
-    inc.z __3+1
-  !:
-    // conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    adc.z ln_offset
+    sta.z __2
+    lda.z __2+1
+    adc.z ln_offset+1
+    sta.z __2+1
+    // conio_cursor_color = conio_cursor_color + ln_offset
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
@@ -499,11 +490,11 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($27) str, byte register(X) c)
+// memset(void* zp($25) str, byte register(X) c)
 memset: {
-    .label end = $25
-    .label dst = $27
-    .label str = $27
+    .label end = $27
+    .label dst = $25
+    .label str = $25
     // end = (char*)str + num
     lda #$28
     clc
@@ -536,12 +527,12 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($14) destination, void* zp($27) source)
+// memcpy(void* zp($14) destination, void* zp($25) source)
 memcpy: {
-    .label src_end = $25
+    .label src_end = $27
     .label dst = $14
-    .label src = $27
-    .label source = $27
+    .label src = $25
+    .label source = $25
     .label destination = $14
     // src_end = (char*)source+num
     lda.z source
@@ -652,9 +643,9 @@ toupper: {
 // Computes the length of the string str up to but not including the terminating null character.
 // strlen(byte* zp($23) str)
 strlen: {
-    .label len = $27
+    .label len = $25
     .label str = $23
-    .label return = $27
+    .label return = $25
     lda #<0
     sta.z len
     sta.z len+1
@@ -688,11 +679,11 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp(2) value, byte* zp($27) buffer)
+// ultoa(dword zp(2) value, byte* zp($25) buffer)
 ultoa: {
     .const max_digits = $a
     .label digit_value = $1f
-    .label buffer = $27
+    .label buffer = $25
     .label digit = $10
     .label value = 2
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -782,9 +773,9 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($27) buffer, dword zp(2) value, dword zp($1f) sub)
+// ultoa_append(byte* zp($25) buffer, dword zp(2) value, dword zp($1f) sub)
 ultoa_append: {
-    .label buffer = $27
+    .label buffer = $25
     .label value = 2
     .label sub = $1f
     .label return = 2
@@ -848,7 +839,7 @@ gotoxy: {
     .label __7 = $1a
     .label __8 = $1a
     .label offset = $1a
-    .label __9 = $23
+    .label __9 = $27
     .label __10 = $1a
     // if(y>CONIO_HEIGHT)
     cmp #$19+1
@@ -923,8 +914,8 @@ gotoxy: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $23
-    .label __1 = $27
+    .label __0 = $27
+    .label __1 = $23
     .label __2 = $25
     .label return = 8
     .label return_1 = $1d

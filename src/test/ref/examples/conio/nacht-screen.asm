@@ -40,14 +40,14 @@
   // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CONIO_CIA1_PORT_B = $dc01
   .label VIC_MEMORY = $d018
-  .label conio_cursor_x = $b
-  .label conio_cursor_y = $c
-  .label conio_cursor_text = $d
-  .label conio_cursor_color = $f
-  .label conio_textcolor = $11
-  .label conio_scroll_enable = $12
-  .label XSize = $13
-  .label YSize = $14
+  .label conio_cursor_x = 9
+  .label conio_cursor_y = $a
+  .label conio_cursor_text = $b
+  .label conio_cursor_color = $d
+  .label conio_textcolor = $f
+  .label conio_scroll_enable = $10
+  .label XSize = $11
+  .label YSize = $12
 __bbegin:
   // conio_cursor_x = 0
   // The current cursor x-position
@@ -106,7 +106,7 @@ main: {
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
     .label line_text = 3
-    .label line_cols = 7
+    .label line_cols = 5
     lda #<CONIO_SCREEN_COLORS
     sta.z line_cols
     lda #>CONIO_SCREEN_COLORS
@@ -185,7 +185,7 @@ kbhit: {
     rts
 }
 MakeNiceScreen: {
-    .label __22 = 7
+    .label __22 = 5
     .label T = 3
     .label I = 2
     // scroll(0)
@@ -351,9 +351,9 @@ MakeNiceScreen: {
 }
 // Move cursor and output a NUL-terminated string
 // Same as "gotoxy (x, y); puts (s);"
-// cputsxy(byte register(X) x, byte register(A) y, byte* zp(7) s)
+// cputsxy(byte register(X) x, byte register(A) y, byte* zp(5) s)
 cputsxy: {
-    .label s = 7
+    .label s = 5
     // gotoxy(x, y)
     jsr gotoxy
     // cputs(s)
@@ -362,9 +362,9 @@ cputsxy: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(7) s)
+// cputs(byte* zp(5) s)
 cputs: {
-    .label s = 7
+    .label s = 5
   __b1:
     // c=*s++
     ldy #0
@@ -429,44 +429,35 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __0 = $d
-    .label __1 = $d
-    .label __2 = $f
-    .label __3 = $f
-    // conio_cursor_text - conio_cursor_x
+    .label __1 = $b
+    .label __2 = $d
+    .label ln_offset = $13
+    // ln_offset = CONIO_WIDTH - conio_cursor_x
     sec
-    lda.z __0
-    sbc.z conio_cursor_x
-    sta.z __0
-    bcs !+
-    dec.z __0+1
-  !:
-    // conio_cursor_text - conio_cursor_x + CONIO_WIDTH
     lda #$28
+    sbc.z conio_cursor_x
+    sta.z ln_offset
+    lda #0
+    sbc #0
+    sta.z ln_offset+1
+    // conio_cursor_text  + ln_offset
+    lda.z __1
     clc
-    adc.z __1
+    adc.z ln_offset
     sta.z __1
-    bcc !+
-    inc.z __1+1
-  !:
-    // conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH
-    // conio_cursor_color - conio_cursor_x
-    sec
+    lda.z __1+1
+    adc.z ln_offset+1
+    sta.z __1+1
+    // conio_cursor_text =  conio_cursor_text  + ln_offset
+    // conio_cursor_color + ln_offset
     lda.z __2
-    sbc.z conio_cursor_x
-    sta.z __2
-    bcs !+
-    dec.z __2+1
-  !:
-    // conio_cursor_color - conio_cursor_x + CONIO_WIDTH
-    lda #$28
     clc
-    adc.z __3
-    sta.z __3
-    bcc !+
-    inc.z __3+1
-  !:
-    // conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH
+    adc.z ln_offset
+    sta.z __2
+    lda.z __2+1
+    adc.z ln_offset+1
+    sta.z __2+1
+    // conio_cursor_color = conio_cursor_color + ln_offset
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
@@ -479,8 +470,8 @@ cputln: {
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
-    .label __7 = $d
-    .label __8 = $f
+    .label __7 = $b
+    .label __8 = $d
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
     cmp.z conio_cursor_y
@@ -554,11 +545,11 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($17) str, byte register(X) c)
+// memset(void* zp($13) str, byte register(X) c)
 memset: {
     .label end = $15
-    .label dst = $17
-    .label str = $17
+    .label dst = $13
+    .label str = $13
     // end = (char*)str + num
     lda #$28
     clc
@@ -591,13 +582,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(5) destination, void* zp($17) source)
+// memcpy(void* zp($17) destination, void* zp($13) source)
 memcpy: {
     .label src_end = $15
-    .label dst = 5
-    .label src = $17
-    .label source = $17
-    .label destination = 5
+    .label dst = $17
+    .label src = $13
+    .label source = $13
+    .label destination = $17
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -635,13 +626,13 @@ memcpy: {
 // Set the cursor to the specified position
 // gotoxy(byte register(X) x, byte register(A) y)
 gotoxy: {
-    .label __4 = $f
-    .label __6 = $d
-    .label __7 = $f
-    .label __8 = $f
-    .label offset = $f
+    .label __4 = $d
+    .label __6 = $b
+    .label __7 = $d
+    .label __8 = $d
+    .label offset = $d
     .label __9 = $17
-    .label __10 = $f
+    .label __10 = $d
     // if(y>CONIO_HEIGHT)
     cmp #$19+1
     bcc __b1
@@ -711,11 +702,11 @@ gotoxy: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(5) str)
+// strlen(byte* zp($17) str)
 strlen: {
-    .label len = 7
-    .label str = 5
-    .label return = 7
+    .label len = 5
+    .label str = $17
+    .label return = 5
     lda #<0
     sta.z len
     sta.z len+1
@@ -758,10 +749,10 @@ MakeTeeLine: {
     rts
 }
 // Output a horizontal line with the given length starting at the current cursor position.
-// chline(byte zp(9) length)
+// chline(byte zp(7) length)
 chline: {
-    .label i = $a
-    .label length = 9
+    .label i = 8
+    .label length = 7
     lda #0
     sta.z i
   __b1:
@@ -808,8 +799,8 @@ cvlinexy: {
 cvline: {
     .const length = $17
     .label x = $19
-    .label y = $a
-    .label i = 9
+    .label y = 8
+    .label i = 7
     // x = conio_cursor_x
     lda.z conio_cursor_x
     sta.z x

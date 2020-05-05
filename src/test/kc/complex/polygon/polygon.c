@@ -37,6 +37,8 @@ char align(0x100) SINTAB[0x140] = kickasm {{
 char* COSTAB = SINTAB+0x40;
 
 void main() {
+    // Clear the console
+    memset(CONSOLE, ' ', 40*25);
     // Clear the screen & canvasses
     memset(SCREEN, 0, 40*25);
     memset(COLS, BLACK, 40*25);

@@ -118,8 +118,9 @@ void cputc(char c) {
 
 // Print a newline
 void cputln() {
-    conio_cursor_text =  conio_cursor_text - conio_cursor_x + CONIO_WIDTH;
-    conio_cursor_color = conio_cursor_color - conio_cursor_x + CONIO_WIDTH;
+    unsigned int ln_offset = CONIO_WIDTH - conio_cursor_x;
+    conio_cursor_text =  conio_cursor_text  + ln_offset;
+    conio_cursor_color = conio_cursor_color + ln_offset;
     conio_cursor_x = 0;
     conio_cursor_y++;
     cscroll();

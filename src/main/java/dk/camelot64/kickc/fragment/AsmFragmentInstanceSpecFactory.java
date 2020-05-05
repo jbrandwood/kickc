@@ -170,7 +170,7 @@ public class AsmFragmentInstanceSpecFactory {
          signature.append("2");
       } else if(
             rValue2 instanceof ConstantInteger &&
-                  ((ConstantInteger) rValue2).getValue() <= 7 &&
+                  ((ConstantInteger) rValue2).getValue() <= 9 &&
                   operator != null &&
                   (operator.getOperator().equals(">>") || operator.getOperator().equals("<<"))) {
          signature.append(((ConstantInteger) rValue2).getValue());

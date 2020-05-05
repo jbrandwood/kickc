@@ -916,24 +916,14 @@ rand: {
     .label return = $1d
     .label return_1 = 8
     // rand_state << 7
-    lda.z rand_state
-    asl
-    sta.z __0
     lda.z rand_state+1
-    rol
+    lsr
+    lda.z rand_state
+    ror
     sta.z __0+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
-    asl.z __0
-    rol.z __0+1
+    lda #0
+    ror
+    sta.z __0
     // rand_state ^= rand_state << 7
     lda.z rand_state
     eor.z __0
@@ -942,19 +932,10 @@ rand: {
     eor.z __0+1
     sta.z rand_state+1
     // rand_state >> 9
-    ldy #9
-    lda.z rand_state
+    lsr
     sta.z __1
-    lda.z rand_state+1
+    lda #0
     sta.z __1+1
-    cpy #0
-    beq !e+
-  !:
-    lsr.z __1+1
-    ror.z __1
-    dey
-    bne !-
-  !e:
     // rand_state ^= rand_state >> 9
     lda.z rand_state
     eor.z __1

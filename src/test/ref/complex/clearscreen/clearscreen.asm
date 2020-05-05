@@ -318,18 +318,18 @@ startProcessing: {
     sta.z __24
     tya
     sta.z __24+1
-    asl.z __4
-    rol.z __4+1
-    asl.z __4
-    rol.z __4+1
-    asl.z __4
-    rol.z __4+1
-    asl.z __4
-    rol.z __4+1
-    asl.z __4
-    rol.z __4+1
-    asl.z __4
-    rol.z __4+1
+    lda.z __4+1
+    lsr
+    sta.z $ff
+    lda.z __4
+    ror
+    sta.z __4+1
+    tya
+    ror
+    sta.z __4
+    lsr.z $ff
+    ror.z __4+1
+    ror.z __4
     // spriteData = SPRITE_DATA+(unsigned int)spriteIdx*64
     clc
     lda.z spriteData

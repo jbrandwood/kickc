@@ -1,16 +1,12 @@
-lda {m2}+1
-lsr
-sta {m1}+1
 lda {m2}
-ror
+asl
+sta $ff
+lda {m2}+1
+rol
 sta {m1}
-lsr {m1}+1
-ror {m1}
-lsr {m1}+1
-ror {m1}
-lsr {m1}+1
-ror {m1}
-lsr {m1}+1
-ror {m1}
-lsr {m1}+1
-ror {m1}
+lda #0
+rol
+sta {m1}+1
+asl $ff
+rol {m1}
+rol {m1}+1

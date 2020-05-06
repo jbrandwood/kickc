@@ -41,6 +41,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCircleChars() throws IOException, URISyntaxException {
+      compileAndCompare("circlechars.c");
+   }
+
+   @Test
    public void testPolygon() throws IOException, URISyntaxException {
       compileAndCompare("complex/polygon/polygon.c");
    }

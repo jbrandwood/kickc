@@ -20,7 +20,7 @@ void main() {
     printf("%%03d '%03d' '%03d' '%03d' '%3d'\n", 1, 11, 111, 1111);
     // octal
     printf("%%o   '%o' '%o' '%o' '%o'\n", 1, 11, 111, 1111);
-    // hexadecimal
+    // hexadecimals
     printf("%%x   '%x' '%x' '%x' '%x'\n", 1, 11, 111, 1111);
     // hexadecimal upper-case
     printf("%%X   '%X' '%X' '%X' '%X'\n", 1, 11, 111, 1111);

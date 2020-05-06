@@ -124,6 +124,18 @@ main: {
     .label y1 = $1f
     // The current canvas being rendered to
     .label canvas = 6
+    // memset(CONSOLE, ' ', 40*25)
+  // Clear the console
+    ldx #' '
+    lda #<CONSOLE
+    sta.z memset.str
+    lda #>CONSOLE
+    sta.z memset.str+1
+    lda #<$28*$19
+    sta.z memset.num
+    lda #>$28*$19
+    sta.z memset.num+1
+    jsr memset
     // memset(SCREEN, 0, 40*25)
   // Clear the screen & canvasses
     ldx #0

@@ -7,7 +7,7 @@ Used for rendering lines into. Organized with linear addressed columns of 8 bits
 Used for filling & showing to the user. There are 2 screen buffers allowing for double buffering. 
 Memory organization is  be adapted to the specific display. This means the same line routines can be used for charsets, bitmaps, sprites etc. 
 
-### Algorithm
+### Algorithm                                                   
 
 1. Move points
 2. Clear line buffer 

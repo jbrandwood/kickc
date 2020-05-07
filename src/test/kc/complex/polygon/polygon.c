@@ -11,13 +11,15 @@
 #include <stdio.h>
 #include <conio.h>
 
-#define DEBUG
+#undef DEBUG
 
-// The screen matrix
-char* const SCREEN = 0x2c00;
-// The two charsets used for double buffering
+// The line buffer
+char* const LINE_BUFFER = 0x4000;
+// The two charsets used as screen buffers
 char* const CANVAS1 = 0x3000;
 char* const CANVAS2 = 0x3800;
+// The screen matrix
+char* const SCREEN = 0x2c00;
 
 // The screen console
 char* const CONSOLE = 0x0400;
@@ -36,10 +38,12 @@ char align(0x100) SINTAB[0x140] = kickasm {{
 }};
 char* COSTAB = SINTAB+0x40;
 
+void plot(char* canvas, char x, char y);
+
 void main() {
     // Clear the console
     memset(CONSOLE, ' ', 40*25);
-    // Clear the screen & canvasses
+    // Clear the screen
     memset(SCREEN, 0, 40*25);
     memset(COLS, BLACK, 40*25);
     // Setup 16x16 canvas for rendering
@@ -71,38 +75,39 @@ void main() {
 
     while(1) {
         clock_start();
-        // Clear canvas
-        memset(canvas, 0, 0x0800);
-        // Plot on canvas
+        // Clear line buffer
+        memset(LINE_BUFFER, 0, 0x0800);
+        // Plot in line buffer
         char x0 = COSTAB[p0_idx];
         char y0 = SINTAB[p0_idx];
         char x1 = COSTAB[p1_idx];
         char y1 = SINTAB[p1_idx];
-        line(canvas, x0, y0, x1, y1);
+        line(LINE_BUFFER, x0, y0, x1, y1);
         char x2 = COSTAB[p2_idx];
         char y2 = SINTAB[p2_idx];
-        line(canvas, x1, y1, x2, y2);
-        line(canvas, x2, y2, x0, y0);
+        line(LINE_BUFFER, x1, y1, x2, y2);
+        line(LINE_BUFFER, x2, y2, x0, y0);
         // Move idx
         p0_idx++;
         p1_idx++;
         p2_idx++;
         // Fill canvas
-        eorfill(canvas);
+        eorfill(LINE_BUFFER, canvas);
+        // Wait until the canvas on screen has been switched before starting work on the next frame
+        VICII->BORDER_COLOR = RED;
+        while(canvas_show_flag) {}
+        VICII->BORDER_COLOR = BLACK;
         // Swap canvas to show on screen (using XOR)
         canvas_show_memory ^= toD018(SCREEN,CANVAS1)^toD018(SCREEN,CANVAS2);
         // swap canvas being rendered to (using XOR)
         canvas ^= (CANVAS1^CANVAS2);
+        // Set flag used to signal when the canvas has been shown
+        canvas_show_flag = 1;
         // Read and display cycles
         clock_t cyclecount = clock()-CLOCKS_PER_INIT;
         gotoxy(0,24);        
-        //printf("frame: %02x cycles: %6lu", p0_idx, cyclecount);
-        printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1);
-        // Wait until the canvas on screen has been switched before starting work on the next frame
-        canvas_show_flag = 1;
-        VICII->BORDER_COLOR = RED;
-        while(canvas_show_flag) {}
-        VICII->BORDER_COLOR = BLACK;
+        printf("frame: %02x cycles: %6lu", p0_idx, cyclecount);
+        //printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1);
     }
 }
 
@@ -166,28 +171,10 @@ void line(char* canvas, char x1, char y1, char x2, char y2) {
         // If this line is pointing left then move it down one pixel to ensure the fill is stopped correctly
         y++; y2++;
     }
-    #ifdef DEBUG
-    gotoxy(0,0);
-    printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy);
-    char print_col = 0;
-    char print_row = 1;
-    #endif
-
     if(dx > dy) {
         // X is the driver - plot every X using bresenham
         char e = dx/2;
         do  {      
-            #ifdef DEBUG
-            if(print_col<40-8) { 
-                gotoxy(print_col, print_row);
-                printf("%02x %02x %02x",x,y,e);
-                if(++print_row==24) {
-                    print_row = 1;
-                    print_col +=9;
-                }
-            }
-            #endif
-
             plot(canvas, x, y);
             x += sx;
             e += dy;
@@ -200,16 +187,6 @@ void line(char* canvas, char x1, char y1, char x2, char y2) {
     } else {
         // Y is the driver - only plot one plot per X
         char e = dy/2;
-        #ifdef DEBUG
-        if(print_col<40-8) { 
-            gotoxy(print_col, print_row);
-            printf("%02x %02x %02x",x,y,e);
-            if(++print_row==24) {
-                print_row = 1;
-                print_col +=9;
-            }
-        }
-        #endif
         plot(canvas, x, y);
         do  {
             y += sy;
@@ -217,51 +194,37 @@ void line(char* canvas, char x1, char y1, char x2, char y2) {
             if(dy<e) {
                 x += sx;
                 e -= dy;
-                #ifdef DEBUG
-                if(print_col<40-8) { 
-                    gotoxy(print_col, print_row);
-                    printf("%02x %02x %02x",x,y,e);
-                    if(++print_row==24) {
-                        print_row = 1;
-                        print_col +=9;
-                    }
-                }
-                #endif
                 plot(canvas, x, y);
-            } else {
-                printf("*");
             }
         } while (y != y2);
-        #ifdef DEBUG
-        gotoxy(20,24);        
-        printf("(%02x,%02x)", x, y);
-        #endif
     }
 }
 
 // Column offsets
-unsigned int plot_column[] = { 0, 1*128, 2*128, 3*128, 4*128, 5*128, 6*128, 7*128, 8*128, 9*128, 10*128, 11*128, 12*128, 13*128, 14*128, 15*128 };
+unsigned int plot_column[16] = { 0, 1*128, 2*128, 3*128, 4*128, 5*128, 6*128, 7*128, 8*128, 9*128, 10*128, 11*128, 12*128, 13*128, 14*128, 15*128 };
 // The bits used for plotting a pixel
-char plot_bit[] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
+char plot_bit[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 
 // Plot a single point on the canvas
-inline void plot(char* canvas, char x, char y) {
+void plot(char* canvas, char x, char y) {
     // Find the canvas column
     char* column = canvas + plot_column[x/8];
     // Plot the bit
     column[y] |= plot_bit[x&7];
 }
 
-// EOR fill
-void eorfill(char* canvas) {
-    char* column = canvas;
+// EOR fill from the line buffer onto the canvas
+void eorfill(char* line_buffer, char* canvas) {
+    char* line_column = line_buffer;
+    char* fill_column = canvas;
     for(char x=0;x<16;x++) {
-        char eor = column[0];
+        char eor = line_column[0];
         for(char y=1;y<16*8;y++) {
-            eor ^= column[y];
-            column[y] = eor; 
+            eor ^= line_column[y];
+            fill_column[y] = eor;
         }
-        column += 16*8;
+        line_column += 16*8;
+        fill_column += 16*8;
     }
 }
 

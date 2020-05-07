@@ -19,6 +19,10 @@
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
+  .const RED = 2
+  // Clock cycles used to start & read the cycle clock by calling clock_start() and clock() once. Can be subtracted when calculating the number of cycles used by a routine.
+  // To make precise cycle measurements interrupts and the display must be disabled so neither steals any cycles from the code.
+  .const CLOCKS_PER_INIT = $12
   // The default text color
   .const CONIO_TEXTCOLOR_DEFAULT = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
@@ -57,23 +61,25 @@
   .label CONIO_CIA1_PORT_A = $dc00
   // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CONIO_CIA1_PORT_B = $dc01
-  // The screen matrix
-  .label SCREEN = $2c00
-  // The two charsets used for double buffering
+  // The line buffer
+  .label LINE_BUFFER = $4000
+  // The two charsets used as screen buffers
   .label CANVAS1 = $3000
   .label CANVAS2 = $3800
+  // The screen matrix
+  .label SCREEN = $2c00
   // The screen console
   .label CONSOLE = $400
   // The default charset address
   .label PETSCII = $1000
   .label COSTAB = SINTAB+$40
-  .label conio_cursor_x = $13
-  .label conio_cursor_y = $14
-  .label conio_cursor_text = $15
-  .label conio_cursor_color = $17
-  .label conio_textcolor = $19
-  .label canvas_show_memory = $1a
-  .label canvas_show_flag = $1b
+  .label conio_cursor_x = $1a
+  .label conio_cursor_y = $1b
+  .label conio_cursor_text = $1c
+  .label conio_cursor_color = $1e
+  .label conio_textcolor = $20
+  .label canvas_show_memory = $21
+  .label canvas_show_flag = $22
 __bbegin:
   // conio_cursor_x = 0
   // The current cursor x-position
@@ -110,20 +116,25 @@ __bbegin:
   jsr main
   rts
 main: {
-    .const p0_idx = $88
-    .const p1_idx = p0_idx+$f
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS1)/4&$f
     .const toD0182_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
+    .label __18 = $d
     .label cols = 2
     // Setup 16x16 canvas for rendering
     .label screen = 4
-    .label y = $13
-    .label x0 = $1c
-    .label y0 = $1d
-    .label x1 = $1e
-    .label y1 = $1f
+    .label y = $1a
+    .label x0 = $23
+    .label y0 = $24
+    .label x1 = $15
+    .label y1 = $25
+    .label x2 = $15
+    .label y2 = $26
+    .label p0_idx = 6
+    .label p1_idx = 7
+    .label p2_idx = 8
     // The current canvas being rendered to
-    .label canvas = 6
+    .label canvas = 9
+    .label cyclecount = $d
     // memset(CONSOLE, ' ', 40*25)
   // Clear the console
     ldx #' '
@@ -137,7 +148,7 @@ main: {
     sta.z memset.num+1
     jsr memset
     // memset(SCREEN, 0, 40*25)
-  // Clear the screen & canvasses
+  // Clear the screen
     ldx #0
     lda #<SCREEN
     sta.z memset.str
@@ -191,51 +202,98 @@ main: {
     sta.z canvas
     lda #>CANVAS1
     sta.z canvas+1
+    lda #$88+$aa
+    sta.z p2_idx
+    lda #$88+$f
+    sta.z p1_idx
+    lda #$88
+    sta.z p0_idx
   __b8:
     // clock_start()
     jsr clock_start
-    // memset(canvas, 0, 0x0800)
-    lda.z canvas
-    sta.z memset.str
-    lda.z canvas+1
-    sta.z memset.str+1
-  // Clear canvas
+    // memset(LINE_BUFFER, 0, 0x0800)
+  // Clear line buffer
     ldx #0
+    lda #<LINE_BUFFER
+    sta.z memset.str
+    lda #>LINE_BUFFER
+    sta.z memset.str+1
     lda #<$800
     sta.z memset.num
     lda #>$800
     sta.z memset.num+1
     jsr memset
     // x0 = COSTAB[p0_idx]
-    // Plot on canvas
-    lda COSTAB+p0_idx
+    // Plot in line buffer
+    ldy.z p0_idx
+    lda COSTAB,y
     sta.z x0
     // y0 = SINTAB[p0_idx]
-    lda SINTAB+p0_idx
+    lda SINTAB,y
     sta.z y0
     // x1 = COSTAB[p1_idx]
-    lda COSTAB+p1_idx
+    ldy.z p1_idx
+    lda COSTAB,y
     sta.z x1
     // y1 = SINTAB[p1_idx]
-    lda SINTAB+p1_idx
+    lda SINTAB,y
     sta.z y1
-    // line(canvas, x0, y0, x1, y1)
+    // line(LINE_BUFFER, x0, y0, x1, y1)
     lda.z x0
     sta.z line.x1
-    lda.z y0
-    sta.z line.y1
+    ldx.z y0
     lda.z y1
     sta.z line.y2
     jsr line
+    // x2 = COSTAB[p2_idx]
+    ldy.z p2_idx
+    lda COSTAB,y
+    sta.z x2
+    // y2 = SINTAB[p2_idx]
+    lda SINTAB,y
+    sta.z y2
+    // line(LINE_BUFFER, x1, y1, x2, y2)
+    lda.z x1
+    sta.z line.x1
+    ldx.z y1
+    lda.z y2
+    sta.z line.y2
+    jsr line
+    // line(LINE_BUFFER, x2, y2, x0, y0)
+    lda.z x2
+    sta.z line.x1
+    ldx.z y2
+    lda.z x0
+    sta.z line.x2
+    lda.z y0
+    sta.z line.y2
+    jsr line
+    // p0_idx++;
+    inc.z p0_idx
+    // p1_idx++;
+    inc.z p1_idx
+    // p2_idx++;
+    inc.z p2_idx
+    // eorfill(LINE_BUFFER, canvas)
+    lda.z canvas
+    sta.z eorfill.canvas
+    lda.z canvas+1
+    sta.z eorfill.canvas+1
+  // Fill canvas
+    jsr eorfill
+    // VICII->BORDER_COLOR = RED
+    // Wait until the canvas on screen has been switched before starting work on the next frame
+    lda #RED
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+  __b9:
+    // while(canvas_show_flag)
+    lda #0
+    cmp.z canvas_show_flag
+    bne __b9
+    // VICII->BORDER_COLOR = BLACK
+    lda #BLACK
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // canvas_show_memory ^= toD018(SCREEN,CANVAS1)^toD018(SCREEN,CANVAS2)
-    //line(canvas, x1, y1, x2, y2);
-    //line(canvas, x2, y2, x0, y0);
-    // Move idx
-    //p0_idx++;
-    //p1_idx++;
-    //p2_idx++;
-    // Fill canvas
-    //eorfill(canvas);
     // Swap canvas to show on screen (using XOR)
     lda #toD0181_return^toD0182_return
     eor.z canvas_show_memory
@@ -248,63 +306,45 @@ main: {
     lda #>CANVAS1^CANVAS2
     eor.z canvas+1
     sta.z canvas+1
+    // canvas_show_flag = 1
+    // Set flag used to signal when the canvas has been shown
+    lda #1
+    sta.z canvas_show_flag
     // clock()
     jsr clock
+    // cyclecount = clock()-CLOCKS_PER_INIT
+    lda.z cyclecount
+    sec
+    sbc #<CLOCKS_PER_INIT
+    sta.z cyclecount
+    lda.z cyclecount+1
+    sbc #>CLOCKS_PER_INIT
+    sta.z cyclecount+1
+    lda.z cyclecount+2
+    sbc #<CLOCKS_PER_INIT>>$10
+    sta.z cyclecount+2
+    lda.z cyclecount+3
+    sbc #>CLOCKS_PER_INIT>>$10
+    sta.z cyclecount+3
     // gotoxy(0,24)
-    ldx #0
-    lda #$18
     jsr gotoxy
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
+    // printf("frame: %02x cycles: %6lu", p0_idx, cyclecount)
     lda #<s
     sta.z cputs.s
     lda #>s
     sta.z cputs.s+1
     jsr cputs
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
-    ldx.z x0
+    // printf("frame: %02x cycles: %6lu", p0_idx, cyclecount)
+    ldx.z p0_idx
     jsr printf_uchar
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
+    // printf("frame: %02x cycles: %6lu", p0_idx, cyclecount)
     lda #<s1
     sta.z cputs.s
     lda #>s1
     sta.z cputs.s+1
     jsr cputs
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
-    ldx.z y0
-    jsr printf_uchar
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
-    lda #<s2
-    sta.z cputs.s
-    lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
-    ldx.z x1
-    jsr printf_uchar
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
-    lda #<s1
-    sta.z cputs.s
-    lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
-    ldx.z y1
-    jsr printf_uchar
-    // printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // canvas_show_flag = 1
-    // Wait until the canvas on screen has been switched before starting work on the next frame
-    lda #1
-    sta.z canvas_show_flag
-  __b9:
-    // while(canvas_show_flag)
-    lda #0
-    cmp.z canvas_show_flag
-    bne __b9
+    // printf("frame: %02x cycles: %6lu", p0_idx, cyclecount)
+    jsr printf_ulong
     jmp __b8
   __b2:
     ldx.z y
@@ -345,29 +385,175 @@ main: {
     // for(char x=0;x<16;x++)
     iny
     jmp __b4
-    s2: .text ")-("
+    s: .text "frame: "
+    .byte 0
+    s1: .text " cycles: "
     .byte 0
 }
-// Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($27) s)
-cputs: {
-    .label s = $27
-  __b1:
-    // c=*s++
-    ldy #0
-    lda (s),y
-    // while(c=*s++)
-    inc.z s
-    bne !+
-    inc.z s+1
-  !:
+// Print an unsigned int using a specific format
+// printf_ulong(dword zp($d) uvalue)
+printf_ulong: {
+    .const format_min_length = 6
+    .const format_justify_left = 0
+    .const format_zero_padding = 0
+    .const format_upper_case = 0
+    .label uvalue = $d
+    // printf_buffer.sign = format.sign_always?'+':0
+    // Handle any sign
+    lda #0
+    sta printf_buffer
+    // ultoa(uvalue, printf_buffer.digits, format.radix)
+  // Format number into buffer
+    jsr ultoa
+    // printf_number_buffer(printf_buffer, format)
+    lda printf_buffer
+    sta.z printf_number_buffer.buffer_sign
+  // Print using format
+    lda #format_upper_case
+    sta.z printf_number_buffer.format_upper_case
+    lda #format_zero_padding
+    sta.z printf_number_buffer.format_zero_padding
+    lda #format_justify_left
+    sta.z printf_number_buffer.format_justify_left
+    ldx #format_min_length
+    jsr printf_number_buffer
+    // }
+    rts
+}
+// Print the contents of the number buffer using a specific format.
+// This handles minimum length, zero-filling, and left/right justification from the format
+// printf_number_buffer(byte zp($25) buffer_sign, byte register(X) format_min_length, byte zp($23) format_justify_left, byte zp($24) format_zero_padding, byte zp($15) format_upper_case)
+printf_number_buffer: {
+    .label __19 = $13
+    .label buffer_sign = $25
+    .label padding = $16
+    .label format_zero_padding = $24
+    .label format_justify_left = $23
+    .label format_upper_case = $15
+    // if(format.min_length)
+    cpx #0
+    beq __b6
+    // strlen(buffer.digits)
+    jsr strlen
+    // strlen(buffer.digits)
+    // len = (signed char)strlen(buffer.digits)
+    // There is a minimum length - work out the padding
+    lda.z __19
+    tay
+    // if(buffer.sign)
+    lda #0
+    cmp.z buffer_sign
+    beq __b13
+    // len++;
+    iny
+  __b13:
+    // padding = (signed char)format.min_length - len
+    txa
+    sty.z $ff
+    sec
+    sbc.z $ff
+    sta.z padding
+    // if(padding<0)
     cmp #0
+    bpl __b1
+  __b6:
+    lda #0
+    sta.z padding
+  __b1:
+    // if(!format.justify_left && !format.zero_padding && padding)
+    lda #0
+    cmp.z format_justify_left
     bne __b2
+    cmp.z format_zero_padding
+    bne __b2
+    cmp.z padding
+    bne __b8
+    jmp __b2
+  __b8:
+    // printf_padding(' ',(char)padding)
+    lda.z padding
+    sta.z printf_padding.length
+    lda #' '
+    sta.z printf_padding.pad
+    jsr printf_padding
+  __b2:
+    // if(buffer.sign)
+    lda #0
+    cmp.z buffer_sign
+    beq __b3
+    // cputc(buffer.sign)
+    lda.z buffer_sign
+    jsr cputc
+  __b3:
+    // if(format.zero_padding && padding)
+    lda #0
+    cmp.z format_zero_padding
+    beq __b4
+    cmp.z padding
+    bne __b10
+    jmp __b4
+  __b10:
+    // printf_padding('0',(char)padding)
+    lda.z padding
+    sta.z printf_padding.length
+    lda #'0'
+    sta.z printf_padding.pad
+    jsr printf_padding
+  __b4:
+    // if(format.upper_case)
+    lda #0
+    cmp.z format_upper_case
+    beq __b5
+    // strupr(buffer.digits)
+    jsr strupr
+  __b5:
+    // cputs(buffer.digits)
+    lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    sta.z cputs.s
+    lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    sta.z cputs.s+1
+    jsr cputs
+    // if(format.justify_left && !format.zero_padding && padding)
+    lda #0
+    cmp.z format_justify_left
+    beq __breturn
+    cmp.z format_zero_padding
+    bne __breturn
+    cmp.z padding
+    bne __b12
+    rts
+  __b12:
+    // printf_padding(' ',(char)padding)
+    lda.z padding
+    sta.z printf_padding.length
+    lda #' '
+    sta.z printf_padding.pad
+    jsr printf_padding
+  __breturn:
+    // }
+    rts
+}
+// Print a padding char a number of times
+// printf_padding(byte zp($18) pad, byte zp($17) length)
+printf_padding: {
+    .label i = $19
+    .label length = $17
+    .label pad = $18
+    lda #0
+    sta.z i
+  __b1:
+    // for(char i=0;i<length; i++)
+    lda.z i
+    cmp.z length
+    bcc __b2
     // }
     rts
   __b2:
-    // cputc(c)
+    // cputc(pad)
+    lda.z pad
     jsr cputc
+    // for(char i=0;i<length; i++)
+    inc.z i
     jmp __b1
 }
 // Output one character at the current cursor position
@@ -416,9 +602,9 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __1 = $15
-    .label __2 = $17
-    .label ln_offset = $2b
+    .label __1 = $1c
+    .label __2 = $1e
+    .label ln_offset = $2f
     // ln_offset = CONIO_WIDTH - conio_cursor_x
     sec
     lda #$28
@@ -457,8 +643,8 @@ cputln: {
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
-    .label __7 = $15
-    .label __8 = $17
+    .label __7 = $1c
+    .label __8 = $1e
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
     cmp.z conio_cursor_y
@@ -530,12 +716,12 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($2b) str, byte register(X) c, word zp($29) num)
+// memset(void* zp($13) str, byte register(X) c, word zp($11) num)
 memset: {
-    .label end = $29
-    .label dst = $2b
-    .label str = $2b
-    .label num = $29
+    .label end = $11
+    .label dst = $13
+    .label num = $11
+    .label str = $13
     // if(num>0)
     lda.z num
     bne !+
@@ -575,13 +761,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($2b) destination, void* zp($29) source)
+// memcpy(void* zp($13) destination, void* zp($11) source)
 memcpy: {
-    .label src_end = $25
-    .label dst = $2b
-    .label src = $29
-    .label source = $29
-    .label destination = $2b
+    .label src_end = $2f
+    .label dst = $13
+    .label src = $11
+    .label source = $11
+    .label destination = $13
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -616,114 +802,90 @@ memcpy: {
   !:
     jmp __b1
 }
-// Print an unsigned char using a specific format
-// printf_uchar(byte register(X) uvalue)
-printf_uchar: {
-    // printf_buffer.sign = format.sign_always?'+':0
-    // Handle any sign
-    lda #0
-    sta printf_buffer
-    // uctoa(uvalue, printf_buffer.digits, format.radix)
-  // Format number into buffer
-    jsr uctoa
-    // printf_number_buffer(printf_buffer, format)
-    ldx printf_buffer
-  // Print using format
-    jsr printf_number_buffer
-    // }
-    rts
-}
-// Print the contents of the number buffer using a specific format.
-// This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte register(X) buffer_sign)
-printf_number_buffer: {
-    .const format_min_length = 2
-    .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label __19 = $29
-    .label padding = 8
-    // strlen(buffer.digits)
-    jsr strlen
-    // strlen(buffer.digits)
-    // len = (signed char)strlen(buffer.digits)
-    // There is a minimum length - work out the padding
-    lda.z __19
-    // if(buffer.sign)
-    cpx #0
-    beq __b8
-    // len++;
-    clc
-    adc #1
-  __b8:
-    // padding = (signed char)format.min_length - len
-    eor #$ff
-    clc
-    adc #format_min_length+1
-    sta.z padding
-    // if(padding<0)
-    cmp #0
-    bpl __b2
-    lda #0
-    sta.z padding
-  __b2:
-    // if(buffer.sign)
-    cpx #0
-    beq __b10
-    // cputc(buffer.sign)
-    txa
-    jsr cputc
-  __b10:
-    // if(format.zero_padding && padding)
-    lda #0
-    cmp.z padding
-    bne __b7
-    jmp __b3
-  __b7:
-    // printf_padding('0',(char)padding)
-    jsr printf_padding
-  __b3:
-    // cputs(buffer.digits)
-    lda #<buffer_digits
-    sta.z cputs.s
-    lda #>buffer_digits
-    sta.z cputs.s+1
-    jsr cputs
-    // }
-    rts
-}
-// Print a padding char a number of times
-// printf_padding(byte zp(8) length)
-printf_padding: {
-    .label i = 9
-    .label length = 8
-    lda #0
-    sta.z i
+// Output a NUL-terminated string at the current cursor position
+// cputs(byte* zp($b) s)
+cputs: {
+    .label s = $b
   __b1:
-    // for(char i=0;i<length; i++)
-    lda.z i
-    cmp.z length
-    bcc __b2
+    // c=*s++
+    ldy #0
+    lda (s),y
+    // while(c=*s++)
+    inc.z s
+    bne !+
+    inc.z s+1
+  !:
+    cmp #0
+    bne __b2
     // }
     rts
   __b2:
-    // cputc(pad)
-    lda #'0'
+    // cputc(c)
     jsr cputc
-    // for(char i=0;i<length; i++)
-    inc.z i
     jmp __b1
 }
+// Converts a string to uppercase.
+strupr: {
+    .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    .label src = $b
+    lda #<str
+    sta.z src
+    lda #>str
+    sta.z src+1
+  __b1:
+    // while(*src)
+    ldy #0
+    lda (src),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // toupper(*src)
+    ldy #0
+    lda (src),y
+    jsr toupper
+    // *src = toupper(*src)
+    ldy #0
+    sta (src),y
+    // src++;
+    inc.z src
+    bne !+
+    inc.z src+1
+  !:
+    jmp __b1
+}
+// Convert lowercase alphabet to uppercase
+// Returns uppercase equivalent to c, if such value exists, else c remains unchanged
+// toupper(byte register(A) ch)
+toupper: {
+    // if(ch>='a' && ch<='z')
+    cmp #'a'
+    bcc __breturn
+    cmp #'z'
+    bcc __b1
+    beq __b1
+    rts
+  __b1:
+    // return ch + ('A'-'a');
+    clc
+    adc #'A'-'a'
+  __breturn:
+    // }
+    rts
+}
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($27) str)
+// strlen(byte* zp($11) str)
 strlen: {
-    .label len = $29
-    .label str = $27
-    .label return = $29
+    .label len = $13
+    .label str = $11
+    .label return = $13
     lda #<0
     sta.z len
     sta.z len+1
-    lda #<printf_number_buffer.buffer_digits
+    lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z str
-    lda #>printf_number_buffer.buffer_digits
+    lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z str+1
   __b1:
     // while(*str)
@@ -751,12 +913,191 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($29) buffer)
+// ultoa(dword zp($d) value, byte* zp($11) buffer)
+ultoa: {
+    .const max_digits = $a
+    .label digit_value = $27
+    .label buffer = $11
+    .label digit = $23
+    .label value = $d
+    lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    sta.z buffer
+    lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
+    sta.z buffer+1
+    ldx #0
+    txa
+    sta.z digit
+  __b1:
+    // for( char digit=0; digit<max_digits-1; digit++ )
+    lda.z digit
+    cmp #max_digits-1
+    bcc __b2
+    // *buffer++ = DIGITS[(char)value]
+    lda.z value
+    tay
+    lda DIGITS,y
+    ldy #0
+    sta (buffer),y
+    // *buffer++ = DIGITS[(char)value];
+    inc.z buffer
+    bne !+
+    inc.z buffer+1
+  !:
+    // *buffer = 0
+    lda #0
+    tay
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit_value = digit_values[digit]
+    lda.z digit
+    asl
+    asl
+    tay
+    lda RADIX_DECIMAL_VALUES_LONG,y
+    sta.z digit_value
+    lda RADIX_DECIMAL_VALUES_LONG+1,y
+    sta.z digit_value+1
+    lda RADIX_DECIMAL_VALUES_LONG+2,y
+    sta.z digit_value+2
+    lda RADIX_DECIMAL_VALUES_LONG+3,y
+    sta.z digit_value+3
+    // if (started || value >= digit_value)
+    cpx #0
+    bne __b5
+    lda.z value+3
+    cmp.z digit_value+3
+    bcc !+
+    bne __b5
+    lda.z value+2
+    cmp.z digit_value+2
+    bcc !+
+    bne __b5
+    lda.z value+1
+    cmp.z digit_value+1
+    bcc !+
+    bne __b5
+    lda.z value
+    cmp.z digit_value
+    bcs __b5
+  !:
+  __b4:
+    // for( char digit=0; digit<max_digits-1; digit++ )
+    inc.z digit
+    jmp __b1
+  __b5:
+    // ultoa_append(buffer++, value, digit_value)
+    jsr ultoa_append
+    // ultoa_append(buffer++, value, digit_value)
+    // value = ultoa_append(buffer++, value, digit_value)
+    // value = ultoa_append(buffer++, value, digit_value);
+    inc.z buffer
+    bne !+
+    inc.z buffer+1
+  !:
+    ldx #1
+    jmp __b4
+}
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// ultoa_append(byte* zp($11) buffer, dword zp($d) value, dword zp($27) sub)
+ultoa_append: {
+    .label buffer = $11
+    .label value = $d
+    .label sub = $27
+    .label return = $d
+    ldx #0
+  __b1:
+    // while (value >= sub)
+    lda.z value+3
+    cmp.z sub+3
+    bcc !+
+    bne __b2
+    lda.z value+2
+    cmp.z sub+2
+    bcc !+
+    bne __b2
+    lda.z value+1
+    cmp.z sub+1
+    bcc !+
+    bne __b2
+    lda.z value
+    cmp.z sub
+    bcs __b2
+  !:
+    // *buffer = DIGITS[digit]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    inx
+    // value -= sub
+    lda.z value
+    sec
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
+    lda.z value+2
+    sbc.z sub+2
+    sta.z value+2
+    lda.z value+3
+    sbc.z sub+3
+    sta.z value+3
+    jmp __b1
+}
+// Print an unsigned char using a specific format
+// printf_uchar(byte register(X) uvalue)
+printf_uchar: {
+    .const format_min_length = 2
+    .const format_justify_left = 0
+    .const format_zero_padding = 1
+    .const format_upper_case = 0
+    // printf_buffer.sign = format.sign_always?'+':0
+    // Handle any sign
+    lda #0
+    sta printf_buffer
+    // uctoa(uvalue, printf_buffer.digits, format.radix)
+  // Format number into buffer
+    jsr uctoa
+    // printf_number_buffer(printf_buffer, format)
+    lda printf_buffer
+    sta.z printf_number_buffer.buffer_sign
+  // Print using format
+    lda #format_upper_case
+    sta.z printf_number_buffer.format_upper_case
+    lda #format_zero_padding
+    sta.z printf_number_buffer.format_zero_padding
+    lda #format_justify_left
+    sta.z printf_number_buffer.format_justify_left
+    ldx #format_min_length
+    jsr printf_number_buffer
+    // }
+    rts
+}
+// Converts unsigned number value to a string representing it in RADIX format.
+// If the leading digits are zero they are not included in the string.
+// - value : The number to be converted to RADIX
+// - buffer : receives the string representing the number and zero-termination.
+// - radix : The radix to convert the number to (from the enum RADIX)
+// uctoa(byte register(X) value, byte* zp($13) buffer)
 uctoa: {
-    .label digit_value = $20
-    .label buffer = $29
-    .label digit = 8
-    .label started = 9
+    .const max_digits = 2
+    .label digit_value = $2b
+    .label buffer = $13
+    .label digit = $24
+    .label started = $25
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -767,7 +1108,7 @@ uctoa: {
   __b1:
     // for( char digit=0; digit<max_digits-1; digit++ )
     lda.z digit
-    cmp #2-1
+    cmp #max_digits-1
     bcc __b2
     // *buffer++ = DIGITS[(char)value]
     lda DIGITS,x
@@ -821,10 +1162,10 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($29) buffer, byte register(X) value, byte zp($20) sub)
+// uctoa_append(byte* zp($13) buffer, byte register(X) value, byte zp($2b) sub)
 uctoa_append: {
-    .label buffer = $29
-    .label sub = $20
+    .label buffer = $13
+    .label sub = $2b
     ldy #0
   __b1:
     // while (value >= sub)
@@ -847,143 +1188,152 @@ uctoa_append: {
     jmp __b1
 }
 // Set the cursor to the specified position
-// gotoxy(byte register(X) x, byte register(A) y)
 gotoxy: {
-    .label __4 = $17
-    .label __6 = $15
-    .label __7 = $17
-    .label __8 = $17
-    .label offset = $17
-    .label __9 = $2b
-    .label __10 = $17
-    // if(y>CONIO_HEIGHT)
-    cmp #$19+1
-    bcc __b1
-    lda #0
-  __b1:
-    // if(x>=CONIO_WIDTH)
-    cpx #$28
-    bcc __b2
-    ldx #0
-  __b2:
+    .const x = 0
+    .const y = $18
+    .const offset = y*$28
     // conio_cursor_x = x
-    stx.z conio_cursor_x
+    lda #x
+    sta.z conio_cursor_x
     // conio_cursor_y = y
+    lda #y
     sta.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
-    sta.z __8
-    lda #0
-    sta.z __8+1
-    lda.z __8
-    asl
-    sta.z __9
-    lda.z __8+1
-    rol
-    sta.z __9+1
-    asl.z __9
-    rol.z __9+1
-    lda.z __10
-    clc
-    adc.z __9
-    sta.z __10
-    lda.z __10+1
-    adc.z __9+1
-    sta.z __10+1
-    asl.z __4
-    rol.z __4+1
-    asl.z __4
-    rol.z __4+1
-    asl.z __4
-    rol.z __4+1
-    // offset = (unsigned int)y*CONIO_WIDTH + x
-    txa
-    clc
-    adc.z offset
-    sta.z offset
-    bcc !+
-    inc.z offset+1
-  !:
-    // CONIO_SCREEN_TEXT + offset
-    lda.z offset
-    clc
-    adc #<CONIO_SCREEN_TEXT
-    sta.z __6
-    lda.z offset+1
-    adc #>CONIO_SCREEN_TEXT
-    sta.z __6+1
     // conio_cursor_text = CONIO_SCREEN_TEXT + offset
-    // CONIO_SCREEN_COLORS + offset
-    clc
-    lda.z __7
-    adc #<CONIO_SCREEN_COLORS
-    sta.z __7
-    lda.z __7+1
-    adc #>CONIO_SCREEN_COLORS
-    sta.z __7+1
+    lda #<CONIO_SCREEN_TEXT+offset
+    sta.z conio_cursor_text
+    lda #>CONIO_SCREEN_TEXT+offset
+    sta.z conio_cursor_text+1
     // conio_cursor_color = CONIO_SCREEN_COLORS + offset
+    lda #<CONIO_SCREEN_COLORS+offset
+    sta.z conio_cursor_color
+    lda #>CONIO_SCREEN_COLORS+offset
+    sta.z conio_cursor_color+1
     // }
     rts
 }
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
+    .label return = $d
+    // 0xffffffff - *CIA2_TIMER_AB
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta.z return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta.z return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta.z return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta.z return+3
+    // }
     rts
+}
+// EOR fill from the line buffer onto the canvas
+// eorfill(byte* zp($1e) canvas)
+eorfill: {
+    .label canvas = $1e
+    .label line_column = $1c
+    .label fill_column = $1e
+    lda #<LINE_BUFFER
+    sta.z line_column
+    lda #>LINE_BUFFER
+    sta.z line_column+1
+    ldx #0
+  __b1:
+    // for(char x=0;x<16;x++)
+    cpx #$10
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // eor = line_column[0]
+    ldy #0
+    lda (line_column),y
+    ldy #1
+  __b3:
+    // for(char y=1;y<16*8;y++)
+    cpy #$10*8
+    bcc __b4
+    // line_column += 16*8
+    lda #$10*8
+    clc
+    adc.z line_column
+    sta.z line_column
+    bcc !+
+    inc.z line_column+1
+  !:
+    // fill_column += 16*8
+    lda #$10*8
+    clc
+    adc.z fill_column
+    sta.z fill_column
+    bcc !+
+    inc.z fill_column+1
+  !:
+    // for(char x=0;x<16;x++)
+    inx
+    jmp __b1
+  __b4:
+    // eor ^= line_column[y]
+    eor (line_column),y
+    // fill_column[y] = eor
+    sta (fill_column),y
+    // for(char y=1;y<16*8;y++)
+    iny
+    jmp __b3
 }
 // Draw a EOR friendly line between two points
 // Uses bresenham line drawing routine
-// line(byte* zp(6) canvas, byte zp($f) x1, byte zp($10) y1, byte zp($1e) x2, byte zp($a) y2)
+// line(byte zp($18) x1, byte register(X) y1, byte zp($15) x2, byte zp($16) y2)
 line: {
-    .label canvas = 6
-    .label x1 = $f
-    .label y1 = $10
-    .label x2 = $1e
-    .label y2 = $a
-    .label dx = $21
-    .label dy = $22
-    .label sx = $23
-    .label sy = $24
-    .label y = $10
-    .label e1 = $12
-    .label e = $b
-    .label plot1_y = $10
-    .label plot1_column = $25
-    .label plot2_x = $f
-    .label plot2_column = $27
-    .label print_row = $d
-    .label print_col = $c
-    .label plot3_column = $29
-    .label print_row_1 = $11
-    .label print_col_1 = $e
-    .label plot4_column = $2b
-    .label x = $f
+    .label x1 = $18
+    .label x2 = $15
+    .label y2 = $16
+    .label x = $18
+    .label dx = $2b
+    .label dy = $2c
+    .label sx = $2d
+    .label sy = $2e
+    .label e1 = $19
+    .label e = $17
     // abs_u8(x2-x1)
     lda.z x2
     sec
-    sbc.z x1
+    sbc.z x
+    tay
     jsr abs_u8
     // abs_u8(x2-x1)
+    tya
     // dx = abs_u8(x2-x1)
     sta.z dx
     // abs_u8(y2-y1)
-    lda.z y2
+    txa
+    eor #$ff
     sec
-    sbc.z y1
+    adc.z y2
+    tay
     jsr abs_u8
     // abs_u8(y2-y1)
+    tya
     // dy = abs_u8(y2-y1)
     sta.z dy
     // sgn_u8(x2-x1)
     lda.z x2
     sec
-    sbc.z x1
+    sbc.z x
     jsr sgn_u8
     // sgn_u8(x2-x1)
     // sx = sgn_u8(x2-x1)
     sta.z sx
     // sgn_u8(y2-y1)
-    lda.z y2
+    txa
+    eor #$ff
     sec
-    sbc.z y1
+    adc.z y2
     jsr sgn_u8
     // sgn_u8(y2-y1)
     // sy = sgn_u8(y2-y1)
@@ -993,119 +1343,25 @@ line: {
     cmp.z sx
     bne __b1
     // y++;
-    inc.z y
+    inx
     // y2++;
     inc.z y2
   __b1:
-    // gotoxy(0,0)
-    ldx #0
-    txa
-    jsr gotoxy
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    lda #<s
-    sta.z cputs.s
-    lda #>s
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    ldx.z dx
-    jsr printf_uchar
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    lda #<s1
-    sta.z cputs.s
-    lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    ldx.z dy
-    jsr printf_uchar
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    lda #<s2
-    sta.z cputs.s
-    lda #>s2
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    ldx.z sx
-    jsr printf_uchar
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    lda #<s3
-    sta.z cputs.s
-    lda #>s3
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("dx:%02x dy:%02x sx:%02x sy:%02x",dx,dy,sx,sy)
-    ldx.z sy
-    jsr printf_uchar
     // if(dx > dy)
     lda.z dy
     cmp.z dx
-    bcs !__b2+
-    jmp __b2
-  !__b2:
+    bcc __b2
     // e = dy/2
     lsr
     sta.z e
-    // gotoxy(print_col, print_row)
-    ldx #0
-    lda #1
-    jsr gotoxy
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z x1
-    jsr printf_uchar
-    // printf("%02x %02x %02x",x,y,e)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z plot1_y
-    jsr printf_uchar
-    // printf("%02x %02x %02x",x,y,e)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z e
-    jsr printf_uchar
-    // x/8
-    lda.z x1
-    lsr
-    lsr
-    lsr
-    // canvas + plot_column[x/8]
-    asl
-    // column = canvas + plot_column[x/8]
-    tay
-    clc
-    lda.z canvas
-    adc plot_column,y
-    sta.z plot1_column
-    lda.z canvas+1
-    adc plot_column+1,y
-    sta.z plot1_column+1
-    // x&7
-    lda #7
-    and.z x1
-    // column[y] |= plot_bit[x&7]
-    ldy.z plot1_y
-    tax
-    lda (plot1_column),y
-    ora plot_bit,x
-    sta (plot1_column),y
-    lda #2
-    sta.z print_row
-    lda #0
-    sta.z print_col
-  __b6:
+    // plot(canvas, x, y)
+    jsr plot
+  __b5:
     // y += sy
-    lda.z y
+    txa
     clc
     adc.z sy
-    sta.z y
+    tax
     // e += dx
     lda.z e
     clc
@@ -1114,202 +1370,33 @@ line: {
     // if(dy<e)
     lda.z dy
     cmp.z e
-    bcc __b7
-    // printf("*")
-    lda #<s6
-    sta.z cputs.s
-    lda #>s6
-    sta.z cputs.s+1
-    jsr cputs
-  __b8:
-    // while (y != y2)
-    lda.z y
-    cmp.z y2
-    bne __b6
-    // gotoxy(20,24)
-    ldx #$14
-    lda #$18
-    jsr gotoxy
-    // printf("(%02x,%02x)", x, y)
-    lda #<s
-    sta.z cputs.s
-    lda #>s
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("(%02x,%02x)", x, y)
-    ldx.z x
-    jsr printf_uchar
-    // printf("(%02x,%02x)", x, y)
-    lda #<s1
-    sta.z cputs.s
-    lda #>s1
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("(%02x,%02x)", x, y)
-    ldx.z y
-    jsr printf_uchar
-    // printf("(%02x,%02x)", x, y)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // }
-    rts
-  __b7:
+    bcs __b6
     // x += sx
-    lda.z plot2_x
+    lda.z x
     clc
     adc.z sx
-    sta.z plot2_x
+    sta.z x
     // e -= dy
     lda.z e
     sec
     sbc.z dy
     sta.z e
-    // if(print_col<40-8)
-    lda.z print_col
-    cmp #$28-8
-    bcs __b9
-    // gotoxy(print_col, print_row)
-    tax
-    lda.z print_row
-    jsr gotoxy
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z plot2_x
-    jsr printf_uchar
-    // printf("%02x %02x %02x",x,y,e)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z y
-    jsr printf_uchar
-    // printf("%02x %02x %02x",x,y,e)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z e
-    jsr printf_uchar
-    // if(++print_row==24)
-    inc.z print_row
-    lda #$18
-    cmp.z print_row
-    bne __b9
-    // print_col +=9
-    lax.z print_col
-    axs #-[9]
-    stx.z print_col
-    lda #1
-    sta.z print_row
-  __b9:
-    // x/8
-    lda.z plot2_x
-    lsr
-    lsr
-    lsr
-    // canvas + plot_column[x/8]
-    asl
-    // column = canvas + plot_column[x/8]
-    tay
-    clc
-    lda.z canvas
-    adc plot_column,y
-    sta.z plot2_column
-    lda.z canvas+1
-    adc plot_column+1,y
-    sta.z plot2_column+1
-    // x&7
-    lda #7
-    and.z plot2_x
-    // column[y] |= plot_bit[x&7]
-    ldy.z y
-    tax
-    lda (plot2_column),y
-    ora plot_bit,x
-    sta (plot2_column),y
-    jmp __b8
+    // plot(canvas, x, y)
+    jsr plot
+  __b6:
+    // while (y != y2)
+    cpx.z y2
+    bne __b5
+    // }
+    rts
   __b2:
     // e = dx/2
     lda.z dx
     lsr
     sta.z e1
-    lda #1
-    sta.z print_row_1
-    lda #0
-    sta.z print_col_1
-  __b14:
-    // if(print_col<40-8)
-    lda.z print_col_1
-    cmp #$28-8
-    bcs plot3
-    // gotoxy(print_col, print_row)
-    tax
-    lda.z print_row_1
-    jsr gotoxy
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z x
-    jsr printf_uchar
-    // printf("%02x %02x %02x",x,y,e)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z y
-    jsr printf_uchar
-    // printf("%02x %02x %02x",x,y,e)
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("%02x %02x %02x",x,y,e)
-    ldx.z e1
-    jsr printf_uchar
-    // if(++print_row==24)
-    inc.z print_row_1
-    lda #$18
-    cmp.z print_row_1
-    bne plot3
-    // print_col +=9
-    lax.z print_col_1
-    axs #-[9]
-    stx.z print_col_1
-    lda #1
-    sta.z print_row_1
-  plot3:
-    // x/8
-    lda.z x
-    lsr
-    lsr
-    lsr
-    // canvas + plot_column[x/8]
-    asl
-    // column = canvas + plot_column[x/8]
-    tay
-    clc
-    lda.z canvas
-    adc plot_column,y
-    sta.z plot3_column
-    lda.z canvas+1
-    adc plot_column+1,y
-    sta.z plot3_column+1
-    // x&7
-    lda #7
-    and.z x
-    // column[y] |= plot_bit[x&7]
-    ldy.z y
-    tax
-    lda (plot3_column),y
-    ora plot_bit,x
-    sta (plot3_column),y
+  __b8:
+    // plot(canvas, x, y)
+    jsr plot
     // x += sx
     lda.z x
     clc
@@ -1323,25 +1410,34 @@ line: {
     // if(dx < e)
     lda.z dx
     cmp.z e1
-    bcs __b16
+    bcs __b9
     // y += sy
-    tya
+    txa
     clc
     adc.z sy
-    sta.z y
+    tax
     // e -= dx
     lda.z e1
     sec
     sbc.z dx
     sta.z e1
-  __b16:
+  __b9:
     // while (x != x2)
     lda.z x
     cmp.z x2
-    beq !__b14+
-    jmp __b14
-  !__b14:
+    bne __b8
+    // plot(canvas, x, y)
+    jsr plot
+    rts
+}
+// Plot a single point on the canvas
+// plot(byte zp($18) x, byte register(X) y)
+plot: {
+    .label __2 = $31
+    .label x = $18
+    .label column = $2f
     // x/8
+    lda.z x
     lsr
     lsr
     lsr
@@ -1350,34 +1446,28 @@ line: {
     // column = canvas + plot_column[x/8]
     tay
     clc
-    lda.z canvas
+    lda #<LINE_BUFFER
     adc plot_column,y
-    sta.z plot4_column
-    lda.z canvas+1
+    sta.z column
+    lda #>LINE_BUFFER
     adc plot_column+1,y
-    sta.z plot4_column+1
+    sta.z column+1
     // x&7
     lda #7
     and.z x
+    sta.z __2
     // column[y] |= plot_bit[x&7]
-    ldy.z y
-    tax
-    lda (plot4_column),y
-    ora plot_bit,x
-    sta (plot4_column),y
+    // Plot the bit
+    txa
+    tay
+    lda (column),y
+    ldy.z __2
+    stx.z $ff
+    ora plot_bit,y
+    ldy.z $ff
+    sta (column),y
+    // }
     rts
-    s: .text "dx:"
-    .byte 0
-    s1: .text " dy:"
-    .byte 0
-    s2: .text " sx:"
-    .byte 0
-    s3: .text " sy:"
-    .byte 0
-    s4: .text " "
-    .byte 0
-    s6: .text "*"
-    .byte 0
 }
 // Get the sign of a 8-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is negative
@@ -1396,20 +1486,21 @@ sgn_u8: {
     rts
 }
 // Get the absolute value of a u-bit unsigned number treated as a signed number.
-// abs_u8(byte register(A) u)
+// abs_u8(byte register(Y) u)
 abs_u8: {
     // u & 0x80
-    ldx #$80
-    axs #0
+    tya
+    and #$80
     // if(u & 0x80)
-    cpx #0
+    cmp #0
     bne __b1
     rts
   __b1:
     // return -u;
+    dey
+    tya
     eor #$ff
-    clc
-    adc #1
+    tay
     // }
     rts
 }
@@ -1556,6 +1647,8 @@ irq_bottom_1: {
   DIGITS: .text "0123456789abcdef"
   // Values of hexadecimal digits
   RADIX_HEXADECIMAL_VALUES_CHAR: .byte $10
+  // Values of decimal digits
+  RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
   // SIN/COS tables
   .align $100
 SINTAB:
@@ -1565,11 +1658,5 @@ SINTAB:
   plot_column: .word 0, 1*$80, 2*$80, 3*$80, 4*$80, 5*$80, 6*$80, 7*$80, 8*$80, 9*$80, $a*$80, $b*$80, $c*$80, $d*$80, $e*$80, $f*$80
   // The bits used for plotting a pixel
   plot_bit: .byte $80, $40, $20, $10, 8, 4, 2, 1
-  s: .text "("
-  .byte 0
-  s1: .text ","
-  .byte 0
-  s4: .text ")"
-  .byte 0
   // Buffer used for stringified number being printed
   printf_buffer: .fill SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER, 0

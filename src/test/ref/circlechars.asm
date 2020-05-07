@@ -69,10 +69,14 @@ main: {
     sta.z count+1
     sta.z y
   __b1:
-    // for(char y=0;y<25;y++)
+    // for(signed char y=0;y<25;y++)
     lda.z y
-    cmp #$19
-    bcc __b2
+    sec
+    sbc #$19
+    bvc !+
+    eor #$80
+  !:
+    bmi __b2
     // gotoxy(0,0)
     jsr gotoxy
     // printf("%u chars",count)
@@ -89,24 +93,28 @@ main: {
     lda #0
     sta.z x
   __b3:
-    // for(char x=0;x<40;x++)
+    // for(signed char x=0;x<40;x++)
     lda.z x
-    cmp #$28
-    bcc __b4
-    // for(char y=0;y<25;y++)
+    sec
+    sbc #$28
+    bvc !+
+    eor #$80
+  !:
+    bmi __b4
+    // for(signed char y=0;y<25;y++)
     inc.z y
     jmp __b1
   __b4:
-    // (signed char)x*2
+    // x*2
     lda.z x
     asl
-    // xd = (signed char)x*2-39
+    // xd = x*2-39
     tax
     axs #$27
-    // (signed char)y*2
+    // y*2
     lda.z y
     asl
-    // yd = (signed char)y*2-24
+    // yd = y*2-24
     sec
     sbc #$18
     sta.z yd
@@ -158,7 +166,7 @@ main: {
     bne !+
     inc.z sc+1
   !:
-    // for(char x=0;x<40;x++)
+    // for(signed char x=0;x<40;x++)
     inc.z x
     jmp __b3
     s: .text " chars"

@@ -81,14 +81,14 @@ void main() {
         line(canvas, x0, y0, x1, y1);
         char x2 = COSTAB[p2_idx];
         char y2 = SINTAB[p2_idx];
-        //line(canvas, x1, y1, x2, y2);
-        //line(canvas, x2, y2, x0, y0);
+        line(canvas, x1, y1, x2, y2);
+        line(canvas, x2, y2, x0, y0);
         // Move idx
-        //p0_idx++;
-        //p1_idx++;
-        //p2_idx++;
+        p0_idx++;
+        p1_idx++;
+        p2_idx++;
         // Fill canvas
-        //eorfill(canvas);
+        eorfill(canvas);
         // Swap canvas to show on screen (using XOR)
         canvas_show_memory ^= toD018(SCREEN,CANVAS1)^toD018(SCREEN,CANVAS2);
         // swap canvas being rendered to (using XOR)
@@ -100,7 +100,9 @@ void main() {
         printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1);
         // Wait until the canvas on screen has been switched before starting work on the next frame
         canvas_show_flag = 1;
+        VICII->BORDER_COLOR = RED;
         while(canvas_show_flag) {}
+        VICII->BORDER_COLOR = BLACK;
     }
 }
 

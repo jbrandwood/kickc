@@ -34,7 +34,7 @@ char volatile canvas_show_flag = 0;
 
 // SIN/COS tables
 char align(0x100) SINTAB[0x140] = kickasm {{
-    .fill $200, 63 + 63*sin(i*2*PI/$100)
+    .fill $200, round(63 + 63*sin(i*2*PI/$100))
 }};
 char* COSTAB = SINTAB+0x40;
 
@@ -64,7 +64,7 @@ void main() {
     // Set text color
     textcolor(WHITE);
 
-    char p0_idx = 0xf0;
+    char p0_idx = 0xb5;
     char p1_idx = p0_idx+15;
     char p2_idx = p0_idx+170;
 
@@ -103,8 +103,8 @@ void main() {
         canvas_show_flag = 1;
         // Read and display cycles
         clock_t cyclecount = clock()-CLOCKS_PER_INIT;
-        gotoxy(0,24);
-        printf("frame: %02x cycles: %6lu", p0_idx, cyclecount);
+        //gotoxy(0,24);
+        //printf("frame: %02x cycles: %6lu", p0_idx, cyclecount);
         //printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1);
     }
 }
@@ -127,7 +127,7 @@ void setup_irq() {
 // Interrupt Routine 1: Just above last text line.
 interrupt(kernel_min) void irq_bottom_1() {
     // Change border color
-    VICII->BORDER_COLOR = WHITE;
+    VICII->BORDER_COLOR = DARK_GREY;
     // Show the cycle counter
     VICII->MEMORY = toD018(CONSOLE, PETSCII);
     // Acknowledge the IRQ
@@ -144,6 +144,8 @@ interrupt(kernel_keyboard) void irq_bottom_2() {
     // Show the current canvas (unless a key is being pressed)
     if(!kbhit()) {
         VICII->MEMORY = canvas_show_memory;
+    } else {
+        VICII->MEMORY = toD018(SCREEN, LINE_BUFFER);
     }
     canvas_show_flag = 0;
     // Acknowledge the IRQ
@@ -162,39 +164,57 @@ void line(char* canvas, char x1, char y1, char x2, char y2) {
     char dy = abs_u8(y2-y1);
     char sx = sgn_u8(x2-x1);
     char sy = sgn_u8(y2-y1);
+    // The sign of the x-difference determines if this is a line at the top of the face
+    // being filled or a line at the bottom of the face. Because the points are organized in a clockwise 
+    // fashion any line pointing right is filled below the line and any line pointing left is filled above
     if(sx==0xff) {
-        // The sign of the x-difference determines if this is a line at the top of the face
-        // being filled or a line at the bottom of the face. Because the points are organized in a clockwise
-        // fashion any line pointing right is filled below the line and any line pointing left is filled above
-        // If this line is pointing left then move it down one pixel to ensure the fill is stopped correctly
+        // This is a line at the bottom of the face - move it 1 pixel down to stop the fill correctly
         y++; y2++;
-    }
+    }        
     if(dx > dy) {
-        // X is the driver - plot every X using bresenham
+        // Flat slope - X is the driver - plot every X using bresenham
         char e = dx/2;
-        do  {
+        do  {      
             plot(x, y);
             x += sx;
             e += dy;
-            if(dx < e) {
+            if(e>dx) {
                 y += sy;
                 e -= dx;
             }
         } while (x != x2);
         plot(x, y);
     } else {
-        // Y is the driver - only plot one plot per X
-        char e = dy/2;
-        plot(x, y);
-        do  {
-            y += sy;
-            e += dx;
-            if(dy<e) {
+        // Steep slope - Y is the driver - only plot one plot per X
+        if(sx==sy) {
+            // If dx/dy signs are identical we must render the first pixel of each segment
+            plot(x, y);
+            if(dx==0)
+                return;
+            char e = dy/2;
+            do  {
+                do {
+                    y += sy;
+                    e += dx;
+                } while(e<=dy);    
                 x += sx;
                 e -= dy;
                 plot(x, y);
-            }
-        } while (y != y2);
+            } while (x != x2);
+        } else {
+            // If dx/dy signs differ we must render the last pixel of each segment
+            char e = dy/2;
+            do  {
+                y += sy;
+                e += dx;
+                if(e>dy) {
+                    plot(x, y-sy);
+                    x += sx;
+                    e -= dy;
+                }
+            } while (y != y2);
+            plot(x, y);
+        }
     }
 }
 
@@ -217,6 +237,7 @@ void eorfill(char* line_buffer, char* canvas) {
     char* fill_column = canvas;
     for(char x=0;x<16;x++) {
         char eor = line_column[0];
+        fill_column[0] = eor;
         for(char y=1;y<16*8;y++) {
             eor ^= line_column[y];
             fill_column[y] = eor;

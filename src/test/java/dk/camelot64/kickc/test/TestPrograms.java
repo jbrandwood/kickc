@@ -41,13 +41,18 @@ public class TestPrograms {
    }
 
    @Test
-   public void testCircleChars() throws IOException, URISyntaxException {
-      compileAndCompare("circlechars.c");
+   public void testPolygon() throws IOException, URISyntaxException {
+      compileAndCompare("complex/polygon/polygon.c");
    }
 
    @Test
-   public void testPolygon() throws IOException, URISyntaxException {
-      compileAndCompare("complex/polygon/polygon.c");
+   public void testPlus4Walk() throws IOException, URISyntaxException {
+      compileAndCompare("examples/plus4walk/plus4walk.c");
+   }
+
+   @Test
+   public void testCircleChars() throws IOException, URISyntaxException {
+      compileAndCompare("circlechars.c");
    }
 
    @Test

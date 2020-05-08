@@ -62,7 +62,7 @@
   // CIA#1 Port B: keyboard matrix rows and joystick #1.
   .label CONIO_CIA1_PORT_B = $dc01
   // The line buffer
-  .label LINE_BUFFER = $4000
+  .label LINE_BUFFER = $2000
   // The two charsets used as screen buffers
   .label CANVAS1 = $3000
   .label CANVAS2 = $3800
@@ -73,13 +73,13 @@
   // The default charset address
   .label PETSCII = $1000
   .label COSTAB = SINTAB+$40
-  .label conio_cursor_x = $1a
-  .label conio_cursor_y = $1b
-  .label conio_cursor_text = $1c
-  .label conio_cursor_color = $1e
-  .label conio_textcolor = $20
-  .label canvas_show_memory = $21
-  .label canvas_show_flag = $22
+  .label conio_cursor_x = $13
+  .label conio_cursor_y = $14
+  .label conio_cursor_text = $15
+  .label conio_cursor_color = $17
+  .label conio_textcolor = $19
+  .label canvas_show_memory = $1a
+  .label canvas_show_flag = $1b
 __bbegin:
   // conio_cursor_x = 0
   // The current cursor x-position
@@ -109,7 +109,7 @@ __bbegin:
   lda #toD0181_return
   sta.z canvas_show_memory
   // canvas_show_flag = 0
-  // Flag signalling that the canvas on screen needs to be updated. 
+  // Flag signalling that the canvas on screen needs to be updated.
   // Set to 1 by the renderer when a new canvas is ready for showing, and to 0 by the raster when the canvas is shown on screen.
   lda #0
   sta.z canvas_show_flag
@@ -118,23 +118,23 @@ __bbegin:
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS1)/4&$f
     .const toD0182_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
-    .label __18 = $d
+    .label __18 = $b
     .label cols = 2
     // Setup 16x16 canvas for rendering
     .label screen = 4
-    .label y = $1a
-    .label x0 = $23
-    .label y0 = $24
-    .label x1 = $15
-    .label y1 = $25
-    .label x2 = $15
-    .label y2 = $26
+    .label y = $13
+    .label x0 = $1c
+    .label y0 = $1d
+    .label x1 = $f
+    .label y1 = $1e
+    .label x2 = $f
+    .label y2 = $1f
     .label p0_idx = 6
     .label p1_idx = 7
     .label p2_idx = 8
     // The current canvas being rendered to
     .label canvas = 9
-    .label cyclecount = $d
+    .label cyclecount = $b
     // memset(CONSOLE, ' ', 40*25)
   // Clear the console
     ldx #' '
@@ -202,11 +202,11 @@ main: {
     sta.z canvas
     lda #>CANVAS1
     sta.z canvas+1
-    lda #$88+$aa
+    lda #$f0+$aa
     sta.z p2_idx
-    lda #$88+$f
+    lda #$f0+$f
     sta.z p1_idx
-    lda #$88
+    lda #$f0
     sta.z p0_idx
   __b8:
     // clock_start()
@@ -241,7 +241,8 @@ main: {
     // line(LINE_BUFFER, x0, y0, x1, y1)
     lda.z x0
     sta.z line.x1
-    ldx.z y0
+    lda.z y0
+    sta.z line.y1
     lda.z y1
     sta.z line.y2
     jsr line
@@ -255,14 +256,16 @@ main: {
     // line(LINE_BUFFER, x1, y1, x2, y2)
     lda.z x1
     sta.z line.x1
-    ldx.z y1
+    lda.z y1
+    sta.z line.y1
     lda.z y2
     sta.z line.y2
     jsr line
     // line(LINE_BUFFER, x2, y2, x0, y0)
     lda.z x2
     sta.z line.x1
-    ldx.z y2
+    lda.z y2
+    sta.z line.y1
     lda.z x0
     sta.z line.x2
     lda.z y0
@@ -274,13 +277,6 @@ main: {
     inc.z p1_idx
     // p2_idx++;
     inc.z p2_idx
-    // eorfill(LINE_BUFFER, canvas)
-    lda.z canvas
-    sta.z eorfill.canvas
-    lda.z canvas+1
-    sta.z eorfill.canvas+1
-  // Fill canvas
-    jsr eorfill
     // VICII->BORDER_COLOR = RED
     // Wait until the canvas on screen has been switched before starting work on the next frame
     lda #RED
@@ -293,11 +289,13 @@ main: {
     // VICII->BORDER_COLOR = BLACK
     lda #BLACK
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // canvas_show_memory ^= toD018(SCREEN,CANVAS1)^toD018(SCREEN,CANVAS2)
-    // Swap canvas to show on screen (using XOR)
-    lda #toD0181_return^toD0182_return
-    eor.z canvas_show_memory
-    sta.z canvas_show_memory
+    // eorfill(LINE_BUFFER, canvas)
+    lda.z canvas
+    sta.z eorfill.canvas
+    lda.z canvas+1
+    sta.z eorfill.canvas+1
+  // Fill canvas
+    jsr eorfill
     // canvas ^= (CANVAS1^CANVAS2)
     // swap canvas being rendered to (using XOR)
     lda #<CANVAS1^CANVAS2
@@ -306,6 +304,11 @@ main: {
     lda #>CANVAS1^CANVAS2
     eor.z canvas+1
     sta.z canvas+1
+    // canvas_show_memory ^= toD018(SCREEN,CANVAS1)^toD018(SCREEN,CANVAS2)
+    // Swap canvas to show on screen (using XOR)
+    lda #toD0181_return^toD0182_return
+    eor.z canvas_show_memory
+    sta.z canvas_show_memory
     // canvas_show_flag = 1
     // Set flag used to signal when the canvas has been shown
     lda #1
@@ -391,13 +394,13 @@ main: {
     .byte 0
 }
 // Print an unsigned int using a specific format
-// printf_ulong(dword zp($d) uvalue)
+// printf_ulong(dword zp($b) uvalue)
 printf_ulong: {
     .const format_min_length = 6
     .const format_justify_left = 0
     .const format_zero_padding = 0
     .const format_upper_case = 0
-    .label uvalue = $d
+    .label uvalue = $b
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -422,14 +425,14 @@ printf_ulong: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($25) buffer_sign, byte register(X) format_min_length, byte zp($23) format_justify_left, byte zp($24) format_zero_padding, byte zp($15) format_upper_case)
+// printf_number_buffer(byte zp($1f) buffer_sign, byte register(X) format_min_length, byte zp($1d) format_justify_left, byte zp($1e) format_zero_padding, byte zp($f) format_upper_case)
 printf_number_buffer: {
-    .label __19 = $13
-    .label buffer_sign = $25
-    .label padding = $16
-    .label format_zero_padding = $24
-    .label format_justify_left = $23
-    .label format_upper_case = $15
+    .label __19 = $31
+    .label buffer_sign = $1f
+    .label padding = $10
+    .label format_zero_padding = $1e
+    .label format_justify_left = $1d
+    .label format_upper_case = $f
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -534,11 +537,11 @@ printf_number_buffer: {
     rts
 }
 // Print a padding char a number of times
-// printf_padding(byte zp($18) pad, byte zp($17) length)
+// printf_padding(byte zp($12) pad, byte zp($11) length)
 printf_padding: {
-    .label i = $19
-    .label length = $17
-    .label pad = $18
+    .label i = $1c
+    .label length = $11
+    .label pad = $12
     lda #0
     sta.z i
   __b1:
@@ -602,9 +605,9 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __1 = $1c
-    .label __2 = $1e
-    .label ln_offset = $2f
+    .label __1 = $15
+    .label __2 = $17
+    .label ln_offset = $28
     // ln_offset = CONIO_WIDTH - conio_cursor_x
     sec
     lda #$28
@@ -643,8 +646,8 @@ cputln: {
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
-    .label __7 = $1c
-    .label __8 = $1e
+    .label __7 = $15
+    .label __8 = $17
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
     cmp.z conio_cursor_y
@@ -716,12 +719,12 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($13) str, byte register(X) c, word zp($11) num)
+// memset(void* zp($31) str, byte register(X) c, word zp($28) num)
 memset: {
-    .label end = $11
-    .label dst = $13
-    .label num = $11
-    .label str = $13
+    .label end = $28
+    .label dst = $31
+    .label num = $28
+    .label str = $31
     // if(num>0)
     lda.z num
     bne !+
@@ -761,13 +764,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($13) destination, void* zp($11) source)
+// memcpy(void* zp($31) destination, void* zp($28) source)
 memcpy: {
-    .label src_end = $2f
-    .label dst = $13
-    .label src = $11
-    .label source = $11
-    .label destination = $13
+    .label src_end = $2b
+    .label dst = $31
+    .label src = $28
+    .label source = $28
+    .label destination = $31
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -803,9 +806,9 @@ memcpy: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($b) s)
+// cputs(byte* zp($2e) s)
 cputs: {
-    .label s = $b
+    .label s = $2e
   __b1:
     // c=*s++
     ldy #0
@@ -827,7 +830,7 @@ cputs: {
 // Converts a string to uppercase.
 strupr: {
     .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label src = $b
+    .label src = $2e
     lda #<str
     sta.z src
     lda #>str
@@ -875,11 +878,11 @@ toupper: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($11) str)
+// strlen(byte* zp($28) str)
 strlen: {
-    .label len = $13
-    .label str = $11
-    .label return = $13
+    .label len = $31
+    .label str = $28
+    .label return = $31
     lda #<0
     sta.z len
     sta.z len+1
@@ -913,13 +916,13 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($d) value, byte* zp($11) buffer)
+// ultoa(dword zp($b) value, byte* zp($28) buffer)
 ultoa: {
     .const max_digits = $a
-    .label digit_value = $27
-    .label buffer = $11
-    .label digit = $23
-    .label value = $d
+    .label digit_value = $20
+    .label buffer = $28
+    .label digit = $1d
+    .label value = $b
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1007,12 +1010,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($11) buffer, dword zp($d) value, dword zp($27) sub)
+// ultoa_append(byte* zp($28) buffer, dword zp($b) value, dword zp($20) sub)
 ultoa_append: {
-    .label buffer = $11
-    .label value = $d
-    .label sub = $27
-    .label return = $d
+    .label buffer = $28
+    .label value = $b
+    .label sub = $20
+    .label return = $b
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1091,13 +1094,13 @@ printf_uchar: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($13) buffer)
+// uctoa(byte register(X) value, byte* zp($31) buffer)
 uctoa: {
     .const max_digits = 2
-    .label digit_value = $2b
-    .label buffer = $13
-    .label digit = $24
-    .label started = $25
+    .label digit_value = $24
+    .label buffer = $31
+    .label digit = $1e
+    .label started = $1f
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1162,10 +1165,10 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($13) buffer, byte register(X) value, byte zp($2b) sub)
+// uctoa_append(byte* zp($31) buffer, byte register(X) value, byte zp($24) sub)
 uctoa_append: {
-    .label buffer = $13
-    .label sub = $2b
+    .label buffer = $31
+    .label sub = $24
     ldy #0
   __b1:
     // while (value >= sub)
@@ -1214,7 +1217,7 @@ gotoxy: {
 // Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
-    .label return = $d
+    .label return = $b
     // 0xffffffff - *CIA2_TIMER_AB
     lda #<$ffffffff
     sec
@@ -1233,11 +1236,11 @@ clock: {
     rts
 }
 // EOR fill from the line buffer onto the canvas
-// eorfill(byte* zp($1e) canvas)
+// eorfill(byte* zp($17) canvas)
 eorfill: {
-    .label canvas = $1e
-    .label line_column = $1c
-    .label fill_column = $1e
+    .label canvas = $17
+    .label line_column = $15
+    .label fill_column = $17
     lda #<LINE_BUFFER
     sta.z line_column
     lda #>LINE_BUFFER
@@ -1288,37 +1291,40 @@ eorfill: {
 }
 // Draw a EOR friendly line between two points
 // Uses bresenham line drawing routine
-// line(byte zp($18) x1, byte register(X) y1, byte zp($15) x2, byte zp($16) y2)
+// line(byte zp($11) x1, byte zp($12) y1, byte zp($f) x2, byte zp($10) y2)
 line: {
-    .label x1 = $18
-    .label x2 = $15
-    .label y2 = $16
-    .label x = $18
-    .label dx = $2b
-    .label dy = $2c
-    .label sx = $2d
-    .label sy = $2e
-    .label e1 = $19
-    .label e = $17
+    .label plot1___1 = $2a
+    .label plot2___1 = $2d
+    .label plot3___1 = $30
+    .label x1 = $11
+    .label y1 = $12
+    .label x2 = $f
+    .label y2 = $10
+    .label x = $11
+    .label y = $12
+    .label dx = $24
+    .label dy = $25
+    .label sx = $26
+    .label sy = $27
+    .label plot1_column = $28
+    .label plot2_x = $11
+    .label plot2_column = $2b
+    .label plot3_column = $2e
+    .label plot4_column = $31
     // abs_u8(x2-x1)
     lda.z x2
     sec
     sbc.z x
-    tay
     jsr abs_u8
     // abs_u8(x2-x1)
-    tya
     // dx = abs_u8(x2-x1)
     sta.z dx
     // abs_u8(y2-y1)
-    txa
-    eor #$ff
+    lda.z y2
     sec
-    adc.z y2
-    tay
+    sbc.z y
     jsr abs_u8
     // abs_u8(y2-y1)
-    tya
     // dy = abs_u8(y2-y1)
     sta.z dy
     // sgn_u8(x2-x1)
@@ -1330,10 +1336,9 @@ line: {
     // sx = sgn_u8(x2-x1)
     sta.z sx
     // sgn_u8(y2-y1)
-    txa
-    eor #$ff
+    lda.z y2
     sec
-    adc.z y2
+    sbc.z y
     jsr sgn_u8
     // sgn_u8(y2-y1)
     // sy = sgn_u8(y2-y1)
@@ -1343,7 +1348,7 @@ line: {
     cmp.z sx
     bne __b1
     // y++;
-    inx
+    inc.z y
     // y2++;
     inc.z y2
   __b1:
@@ -1353,39 +1358,83 @@ line: {
     bcc __b2
     // e = dy/2
     lsr
-    sta.z e
-    // plot(canvas, x, y)
-    jsr plot
+    tax
+    // x/8
+    lda.z x
+    lsr
+    lsr
+    lsr
+    // column = plot_column[x/8]
+    asl
+    tay
+    lda plot_column,y
+    sta.z plot1_column
+    lda plot_column+1,y
+    sta.z plot1_column+1
+    // x&7
+    lda #7
+    and.z x
+    sta.z plot1___1
+    // column[y] |= plot_bit[x&7]
+    ldy.z y
+    lda (plot1_column),y
+    ldy.z plot1___1
+    ora plot_bit,y
+    ldy.z y
+    sta (plot1_column),y
   __b5:
     // y += sy
-    txa
+    lda.z y
     clc
     adc.z sy
-    tax
+    sta.z y
     // e += dx
-    lda.z e
+    txa
     clc
     adc.z dx
-    sta.z e
+    tax
     // if(dy<e)
     lda.z dy
-    cmp.z e
+    stx.z $ff
+    cmp.z $ff
     bcs __b6
     // x += sx
-    lda.z x
+    lda.z plot2_x
     clc
     adc.z sx
-    sta.z x
+    sta.z plot2_x
     // e -= dy
-    lda.z e
+    txa
     sec
     sbc.z dy
-    sta.z e
-    // plot(canvas, x, y)
-    jsr plot
+    tax
+    // x/8
+    lda.z plot2_x
+    lsr
+    lsr
+    lsr
+    // column = plot_column[x/8]
+    asl
+    tay
+    lda plot_column,y
+    sta.z plot2_column
+    lda plot_column+1,y
+    sta.z plot2_column+1
+    // x&7
+    lda #7
+    and.z plot2_x
+    sta.z plot2___1
+    // column[y] |= plot_bit[x&7]
+    ldy.z y
+    lda (plot2_column),y
+    ldy.z plot2___1
+    ora plot_bit,y
+    ldy.z y
+    sta (plot2_column),y
   __b6:
     // while (y != y2)
-    cpx.z y2
+    lda.z y
+    cmp.z y2
     bne __b5
     // }
     rts
@@ -1393,80 +1442,81 @@ line: {
     // e = dx/2
     lda.z dx
     lsr
-    sta.z e1
+    tax
   __b8:
-    // plot(canvas, x, y)
-    jsr plot
+    // x/8
+    lda.z x
+    lsr
+    lsr
+    lsr
+    // column = plot_column[x/8]
+    asl
+    tay
+    lda plot_column,y
+    sta.z plot3_column
+    lda plot_column+1,y
+    sta.z plot3_column+1
+    // x&7
+    lda #7
+    and.z x
+    sta.z plot3___1
+    // column[y] |= plot_bit[x&7]
+    ldy.z y
+    lda (plot3_column),y
+    ldy.z plot3___1
+    ora plot_bit,y
+    ldy.z y
+    sta (plot3_column),y
     // x += sx
     lda.z x
     clc
     adc.z sx
     sta.z x
     // e += dy
-    lda.z e1
-    clc
-    adc.z dy
-    sta.z e1
-    // if(dx < e)
-    lda.z dx
-    cmp.z e1
-    bcs __b9
-    // y += sy
     txa
     clc
-    adc.z sy
+    adc.z dy
     tax
+    // if(dx < e)
+    lda.z dx
+    stx.z $ff
+    cmp.z $ff
+    bcs __b9
+    // y += sy
+    tya
+    clc
+    adc.z sy
+    sta.z y
     // e -= dx
-    lda.z e1
+    txa
     sec
     sbc.z dx
-    sta.z e1
+    tax
   __b9:
     // while (x != x2)
     lda.z x
     cmp.z x2
     bne __b8
-    // plot(canvas, x, y)
-    jsr plot
-    rts
-}
-// Plot a single point on the canvas
-// plot(byte zp($18) x, byte register(X) y)
-plot: {
-    .label __2 = $31
-    .label x = $18
-    .label column = $2f
     // x/8
-    lda.z x
     lsr
     lsr
     lsr
-    // canvas + plot_column[x/8]
+    // column = plot_column[x/8]
     asl
-    // column = canvas + plot_column[x/8]
     tay
-    clc
-    lda #<LINE_BUFFER
-    adc plot_column,y
-    sta.z column
-    lda #>LINE_BUFFER
-    adc plot_column+1,y
-    sta.z column+1
+    lda plot_column,y
+    sta.z plot4_column
+    lda plot_column+1,y
+    sta.z plot4_column+1
     // x&7
     lda #7
     and.z x
-    sta.z __2
     // column[y] |= plot_bit[x&7]
-    // Plot the bit
-    txa
-    tay
-    lda (column),y
-    ldy.z __2
-    stx.z $ff
-    ora plot_bit,y
-    ldy.z $ff
-    sta (column),y
-    // }
+    ldy.z y
+    tax
+    lda (plot4_column),y
+    ora plot_bit,x
+    sta (plot4_column),y
     rts
 }
 // Get the sign of a 8-bit unsigned number treated as a signed number.
@@ -1486,21 +1536,20 @@ sgn_u8: {
     rts
 }
 // Get the absolute value of a u-bit unsigned number treated as a signed number.
-// abs_u8(byte register(Y) u)
+// abs_u8(byte register(A) u)
 abs_u8: {
     // u & 0x80
-    tya
-    and #$80
+    ldx #$80
+    axs #0
     // if(u & 0x80)
-    cmp #0
+    cpx #0
     bne __b1
     rts
   __b1:
     // return -u;
-    dey
-    tya
     eor #$ff
-    tay
+    clc
+    adc #1
     // }
     rts
 }
@@ -1655,7 +1704,7 @@ SINTAB:
 .fill $200, 63 + 63*sin(i*2*PI/$100)
 
   // Column offsets
-  plot_column: .word 0, 1*$80, 2*$80, 3*$80, 4*$80, 5*$80, 6*$80, 7*$80, 8*$80, 9*$80, $a*$80, $b*$80, $c*$80, $d*$80, $e*$80, $f*$80
+  plot_column: .word LINE_BUFFER, LINE_BUFFER+1*$80, LINE_BUFFER+2*$80, LINE_BUFFER+3*$80, LINE_BUFFER+4*$80, LINE_BUFFER+5*$80, LINE_BUFFER+6*$80, LINE_BUFFER+7*$80, LINE_BUFFER+8*$80, LINE_BUFFER+9*$80, LINE_BUFFER+$a*$80, LINE_BUFFER+$b*$80, LINE_BUFFER+$c*$80, LINE_BUFFER+$d*$80, LINE_BUFFER+$e*$80, LINE_BUFFER+$f*$80
   // The bits used for plotting a pixel
   plot_bit: .byte $80, $40, $20, $10, 8, 4, 2, 1
   // Buffer used for stringified number being printed

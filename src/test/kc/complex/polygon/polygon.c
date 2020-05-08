@@ -14,7 +14,7 @@
 #undef DEBUG
 
 // The line buffer
-char* const LINE_BUFFER = 0x4000;
+char* const LINE_BUFFER = 0x2000;
 // The two charsets used as screen buffers
 char* const CANVAS1 = 0x3000;
 char* const CANVAS2 = 0x3800;
@@ -28,7 +28,7 @@ char* const PETSCII = 0x1000;
 
 // The current canvas being rendered to the screen - in D018 format.
 char volatile canvas_show_memory = toD018(SCREEN, CANVAS2);
-// Flag signalling that the canvas on screen needs to be updated. 
+// Flag signalling that the canvas on screen needs to be updated.
 // Set to 1 by the renderer when a new canvas is ready for showing, and to 0 by the raster when the canvas is shown on screen.
 char volatile canvas_show_flag = 0;
 
@@ -37,8 +37,6 @@ char align(0x100) SINTAB[0x140] = kickasm {{
     .fill $200, 63 + 63*sin(i*2*PI/$100)
 }};
 char* COSTAB = SINTAB+0x40;
-
-void plot(char* canvas, char x, char y);
 
 void main() {
     // Clear the console
@@ -66,7 +64,7 @@ void main() {
     // Set text color
     textcolor(WHITE);
 
-    char p0_idx = 0x88;
+    char p0_idx = 0xf0;
     char p1_idx = p0_idx+15;
     char p2_idx = p0_idx+170;
 
@@ -91,21 +89,21 @@ void main() {
         p0_idx++;
         p1_idx++;
         p2_idx++;
-        // Fill canvas
-        eorfill(LINE_BUFFER, canvas);
         // Wait until the canvas on screen has been switched before starting work on the next frame
         VICII->BORDER_COLOR = RED;
         while(canvas_show_flag) {}
         VICII->BORDER_COLOR = BLACK;
-        // Swap canvas to show on screen (using XOR)
-        canvas_show_memory ^= toD018(SCREEN,CANVAS1)^toD018(SCREEN,CANVAS2);
+        // Fill canvas
+        eorfill(LINE_BUFFER, canvas);
         // swap canvas being rendered to (using XOR)
         canvas ^= (CANVAS1^CANVAS2);
+        // Swap canvas to show on screen (using XOR)
+        canvas_show_memory ^= toD018(SCREEN,CANVAS1)^toD018(SCREEN,CANVAS2);
         // Set flag used to signal when the canvas has been shown
         canvas_show_flag = 1;
         // Read and display cycles
         clock_t cyclecount = clock()-CLOCKS_PER_INIT;
-        gotoxy(0,24);        
+        gotoxy(0,24);
         printf("frame: %02x cycles: %6lu", p0_idx, cyclecount);
         //printf("(%02x,%02x)-(%02x,%02x)", x0, y0, x1, y1);
     }
@@ -166,7 +164,7 @@ void line(char* canvas, char x1, char y1, char x2, char y2) {
     char sy = sgn_u8(y2-y1);
     if(sx==0xff) {
         // The sign of the x-difference determines if this is a line at the top of the face
-        // being filled or a line at the bottom of the face. Because the points are organized in a clockwise 
+        // being filled or a line at the bottom of the face. Because the points are organized in a clockwise
         // fashion any line pointing right is filled below the line and any line pointing left is filled above
         // If this line is pointing left then move it down one pixel to ensure the fill is stopped correctly
         y++; y2++;
@@ -174,8 +172,8 @@ void line(char* canvas, char x1, char y1, char x2, char y2) {
     if(dx > dy) {
         // X is the driver - plot every X using bresenham
         char e = dx/2;
-        do  {      
-            plot(canvas, x, y);
+        do  {
+            plot(x, y);
             x += sx;
             e += dy;
             if(dx < e) {
@@ -183,32 +181,32 @@ void line(char* canvas, char x1, char y1, char x2, char y2) {
                 e -= dx;
             }
         } while (x != x2);
-        plot(canvas, x, y);
+        plot(x, y);
     } else {
         // Y is the driver - only plot one plot per X
         char e = dy/2;
-        plot(canvas, x, y);
+        plot(x, y);
         do  {
             y += sy;
             e += dx;
             if(dy<e) {
                 x += sx;
                 e -= dy;
-                plot(canvas, x, y);
+                plot(x, y);
             }
         } while (y != y2);
     }
 }
 
 // Column offsets
-unsigned int plot_column[16] = { 0, 1*128, 2*128, 3*128, 4*128, 5*128, 6*128, 7*128, 8*128, 9*128, 10*128, 11*128, 12*128, 13*128, 14*128, 15*128 };
+char* plot_column[16] = { LINE_BUFFER+0, LINE_BUFFER+1*128, LINE_BUFFER+2*128, LINE_BUFFER+3*128, LINE_BUFFER+4*128, LINE_BUFFER+5*128, LINE_BUFFER+6*128, LINE_BUFFER+7*128, LINE_BUFFER+8*128, LINE_BUFFER+9*128, LINE_BUFFER+10*128, LINE_BUFFER+11*128, LINE_BUFFER+12*128, LINE_BUFFER+13*128, LINE_BUFFER+14*128, LINE_BUFFER+15*128 };
 // The bits used for plotting a pixel
 char plot_bit[8] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
 
 // Plot a single point on the canvas
-void plot(char* canvas, char x, char y) {
+inline void plot(char x, char y) {
     // Find the canvas column
-    char* column = canvas + plot_column[x/8];
+    char* column = plot_column[x/8];
     // Plot the bit
     column[y] |= plot_bit[x&7];
 }

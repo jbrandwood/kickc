@@ -11,7 +11,7 @@ import java.util.List;
 public enum TargetCpu {
    /** Vanilla MOS 6502 CPU running in ROM - no illegal opcodes, no self-modifying code. */
    ROM6502("rom6502", Collections.singletonList(Feature.MOS6502_COMMON)),
-   /** MOS 6502 CPU - allows illegal instructions, no self-modifying code. */
+   /** MOS 6502 CPU running in ROM - allows illegal instructions, no self-modifying code. */
    ROM6502X("rom6502x", Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_UNODC)),
    /** Vanilla MOS 6502 CPU - no illegal opcodes, allows self-modifying code. */
    MOS6502("mos6502", Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_SELFMOD)),
@@ -29,7 +29,7 @@ public enum TargetCpu {
    public static final TargetCpu DEFAULT = MOS6502X;
 
    /** Feature of a CPU. A feature is represented by a folder containing a number of fragments. */
-   public static enum Feature {
+   public enum Feature {
       /** Official Instruction Set of the MOS6502 CPU. https://www.masswerk.at/6502/6502_instruction_set.html */
       MOS6502_COMMON("mos6502-common"),
       /** The Undocumented Opcodes of the MOS6502 CPU. http://www.oxyron.de/html/opcodes02.html */

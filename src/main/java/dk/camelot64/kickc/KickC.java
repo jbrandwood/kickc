@@ -61,6 +61,9 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-e"}, description = "Execute the assembled prg file using VICE. Implicitly assembles the output.")
    private boolean execute = false;
 
+   @CommandLine.Option(names = {"-emu"}, description = "Execute the assembled program file by passing it to the named emulator. Implicitly assembles the output.")
+   private String emulator = null;
+
    @CommandLine.Option(names = {"-d"}, description = "Debug the assembled prg file using C64Debugger. Implicitly assembles the output.")
    private boolean debug = false;
 
@@ -390,7 +393,7 @@ public class KickC implements Callable<Void> {
          // Assemble the asm-file if instructed
          String prgFileName = outputFileNameBase + ".prg";
          Path prgPath = outputDir.resolve(prgFileName);
-         if(assemble || execute || debug) {
+         if(assemble || execute || debug || (emulator != null)) {
             Path kasmLogPath = outputDir.resolve(outputFileNameBase + ".klog");
             System.out.println("Assembling to " + prgPath.toString());
             String[] assembleCommand = {asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem", "-debugdump"};
@@ -419,30 +422,34 @@ public class KickC implements Callable<Void> {
             }
          }
 
-         // Debug the prg-file if instructed
          if(debug) {
-            System.out.println("Debugging " + prgPath);
+            emulator = "C64Debugger";
+         }
+         if(execute) {
+            emulator = "x64sc";
+         }
+         String emuOptions = "";
+         if(emulator.equals("C64Debugger")) {
             Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
-            String debugCommand = "C64Debugger " + "-symbols " + viceSymbolsPath + " -wait 2500" + " -prg " + prgPath.toString();
-            if(verbose) {
-               System.out.println("Debugging command: " + debugCommand);
-            }
-            Process process = Runtime.getRuntime().exec(debugCommand);
-            process.waitFor();
+            emuOptions = "-symbols " + viceSymbolsPath + " -wait 2500" + " ";
+         }
+         // The program names used by VICE emulators
+         List<String> viceEmus = Arrays.asList("x64", "x64sc", "x128", "x64dtv", "xcbm2", "xcbm5x0", "xpet", "xplus4", "xscpu64", "xvic");
+         if(viceEmus.contains(emulator)) {
+            Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
+            emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
          }
 
          // Execute the prg-file if instructed
-         if(execute) {
-            System.out.println("Executing " + prgPath);
-            Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
-            String executeCommand = "x64sc " + "-moncommands " + viceSymbolsPath + " " + prgPath.toString();
+         if(emulator != null) {
+            System.out.println("Executing " + prgPath + " using " + emulator);
+            String executeCommand = emulator + " " + emuOptions + prgPath.toAbsolutePath().toString();
             if(verbose) {
                System.out.println("Executing command:  " + executeCommand);
             }
             Process process = Runtime.getRuntime().exec(executeCommand);
             process.waitFor();
          }
-
       }
 
       return null;

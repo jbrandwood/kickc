@@ -23,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertTrue;

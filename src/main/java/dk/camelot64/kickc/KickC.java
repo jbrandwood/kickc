@@ -15,10 +15,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -36,7 +33,7 @@ import java.util.stream.Collectors;
       optionListHeading = "%nOptions:%n",
       version = "KickC 0.8.1 BETA"
 )
-public class KickC implements Callable<Void> {
+public class KickC implements Callable<Integer> {
 
    @CommandLine.Parameters(index = "0", arity = "0..n", description = "The C source files to compile.")
    private List<Path> cFiles = null;
@@ -59,7 +56,7 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-d"}, description = "Debug the assembled prg file using C64Debugger. Implicitly assembles the output.")
    private boolean debug = false;
 
-   @CommandLine.Option(names = {"-D"}, description = "Define a macro to have a specific value.")
+   @CommandLine.Option(names = {"-D"}, parameterConsumer = DefineConsumer.class, description = "Define macro to value (1 if no value given).")
    private Map<String, String> defines = null;
 
    @CommandLine.Option(names = {"-E"}, description = "Only run the preprocessor. Output is sent to standard out.")
@@ -171,14 +168,16 @@ public class KickC implements Callable<Void> {
    private String calling = null;
 
    /** Program Exit Code signaling a compile error. */
-   public static final int COMPILE_ERROR = 1;
+   public static final int COMPILE_ERROR = CommandLine.ExitCode.SOFTWARE;
 
    public static void main(String[] args) {
-      CommandLine.call(new KickC(), args);
+      final CommandLine commandLine = new CommandLine(new KickC());
+      final int exitCode = commandLine.execute(args);
+      System.exit(exitCode);
    }
 
    @Override
-   public Void call() throws Exception {
+   public Integer call() throws Exception {
       System.out.println("//--------------------------------------------------");
       System.out.println("//   " + getVersion() + " by Jesper Gravgaard   ");
       System.out.println("//--------------------------------------------------");
@@ -195,7 +194,7 @@ public class KickC implements Callable<Void> {
                supported.append(value.getName()).append(" ");
             }
             System.err.println(supported);
-            System.exit(COMPILE_ERROR);
+            return COMPILE_ERROR;
          }
          compiler.setTargetPlatform(targetPlatform);
       }
@@ -210,7 +209,7 @@ public class KickC implements Callable<Void> {
                supported.append(value.getName()).append(" ");
             }
             System.err.println(supported);
-            System.exit(COMPILE_ERROR);
+            return COMPILE_ERROR;
          }
          compiler.setTargetCpu(targetCpu);
       }
@@ -325,7 +324,7 @@ public class KickC implements Callable<Void> {
                compiler.setVariableBuilderConfig(config);
             } catch(CompileError e) {
                System.err.println(e.getMessage());
-               System.exit(COMPILE_ERROR);
+               return COMPILE_ERROR;
             }
          }
 
@@ -339,7 +338,7 @@ public class KickC implements Callable<Void> {
                   supported.append(value.getName()).append(" ");
                }
                System.err.println(supported);
-               System.exit(COMPILE_ERROR);
+               return COMPILE_ERROR;
             }
             compiler.setCallingConvention(callingConvention);
          }
@@ -354,7 +353,7 @@ public class KickC implements Callable<Void> {
             } catch(CompileError e) {
                // Print the error and exit with compile error
                System.err.println(e.getMessage());
-               System.exit(COMPILE_ERROR);
+               return COMPILE_ERROR;
             }
             return null;
          }
@@ -366,7 +365,7 @@ public class KickC implements Callable<Void> {
          } catch(CompileError e) {
             // Print the error and exit with compile error
             System.err.println(e.getMessage());
-            System.exit(COMPILE_ERROR);
+            return COMPILE_ERROR;
          }
 
          String asmFileName = outputFileNameBase + ".asm";
@@ -463,7 +462,7 @@ public class KickC implements Callable<Void> {
          }
       }
 
-      return null;
+      return CommandLine.ExitCode.OK;
    }
 
    private void configVerbosity(Compiler compiler) {
@@ -543,6 +542,34 @@ public class KickC implements Callable<Void> {
       String name = file.getFileName().toString();
       int i = name.lastIndexOf('.');
       return i > 0 ? name.substring(i + 1) : "";
+   }
+
+   /**
+    * Picocli Parameter Consumer for -D defines that allow both -Dname and -Dname=Value
+    */
+   static class DefineConsumer implements CommandLine.IParameterConsumer {
+      @Override
+      public void consumeParameters(
+            Stack<String> args,
+            CommandLine.Model.ArgSpec argSpec,
+            CommandLine.Model.CommandSpec commandSpec) {
+         if(args.isEmpty()) {
+            throw new CommandLine.ParameterException(commandSpec.commandLine(),
+                  "Missing required parameter");
+         }
+         String parameter = args.pop();
+         String[] keyValue = parameter.split("=", 2);
+         String key = keyValue[0];
+         String value = keyValue.length > 1
+               ? keyValue[1]
+               : "1";
+         Map<String, String> map = argSpec.getValue();
+         if(map==null) {
+            map = new LinkedHashMap<>();
+            argSpec.setValue(map);
+         }
+         map.put(key, value);
+      }
    }
 
 }

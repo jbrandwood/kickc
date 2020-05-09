@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertTrue;
@@ -4304,7 +4305,7 @@ public class TestPrograms {
       final ArrayList<Path> files = new ArrayList<>();
       final Path filePath = Paths.get(fileName);
       files.add(filePath);
-      compiler.compile(files);
+      compiler.compile(files, null);
       Program program = compiler.getProgram();
       compileAsm(fileName, program);
       boolean success = true;

@@ -8,18 +8,18 @@ import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
+import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
-import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenSource;
+import org.antlr.v4.runtime.*;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Perform KickC compilation and optimizations
@@ -148,13 +148,35 @@ public class Compiler {
       program.getLibraryPaths().add(path);
    }
 
-   public void preprocess(List<Path> cFiles) {
-      Path currentPath = new File(".").toPath();
+   /**
+    * Create a CParser and initialize it by adding any command-line defines and loading the files.
+    *
+    * @param defines The defined to add
+    * @param cFiles The files to load
+    * @param currentPath The current path (used to search for files)
+    * @return The initialized parser
+    */
+   private CParser initializeParser(Map<String, String> defines, List<Path> cFiles, Path currentPath) {
       CParser cParser = new CParser(program);
+      if(defines != null) {
+         for(String macroName : defines.keySet()) {
+            final String macroBodyText = "#define " + macroName + " " + defines.get(macroName) + "\n";
+            final CodePointCharStream macroCharStream = CharStreams.fromString(macroBodyText);
+            final KickCLexer macroLexer = cParser.makeLexer(macroCharStream);
+            cParser.addSourceFirst(macroLexer);
+         }
+      }
       for(Path cFile : cFiles) {
          final TokenSource cFileTokens = cParser.loadCFile(cFile.toString(), currentPath, program.getIncludePaths(), false);
          cParser.addSourceLast(cFileTokens);
       }
+      return cParser;
+   }
+
+
+   public void preprocess(List<Path> cFiles, Map<String, String> defines) {
+      Path currentPath = new File(".").toPath();
+      CParser cParser = initializeParser(defines, cFiles, currentPath);
       final CPreprocessor preprocessor = cParser.getPreprocessor();
       Token token = preprocessor.nextToken();
       while(token.getType() != Token.EOF) {
@@ -164,7 +186,7 @@ public class Compiler {
       System.out.println();
    }
 
-   public void compile(List<Path> cFiles) {
+   public void compile(List<Path> cFiles, Map<String, String> defines) {
       if(cFiles.size() == 0)
          throw new CompileError("Error! You must supply at least one file to compile!");
 
@@ -178,11 +200,7 @@ public class Compiler {
             SourceLoader.loadLinkScriptFile(linkScriptFileName, currentPath, program);
          }
          program.setStatementSequence(new StatementSequence());
-         CParser cParser = new CParser(program);
-         for(Path cFile : cFiles) {
-            final TokenSource cFileTokens = cParser.loadCFile(cFile.toString(), currentPath, program.getIncludePaths(), false);
-            cParser.addSourceLast(cFileTokens);
-         }
+         CParser cParser = initializeParser(defines, cFiles, currentPath);
 
          // Parse the files
          KickCParser.FileContext cFileContext = cParser.getParser().file();

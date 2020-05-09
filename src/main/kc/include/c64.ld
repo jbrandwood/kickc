@@ -1,7 +1,7 @@
 .file [name="%O.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$1001]
-.segmentdef Code [start=$1010]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$080d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(%E)

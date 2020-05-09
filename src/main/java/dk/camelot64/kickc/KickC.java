@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
@@ -40,15 +41,6 @@ public class KickC implements Callable<Void> {
    @CommandLine.Parameters(index = "0", arity = "0..n", description = "The C source files to compile.")
    private List<Path> cFiles = null;
 
-   @CommandLine.Option(names = {"-I", "-includedir"}, description = "Path to an include folder, where the compiler looks for included files. This option can be repeated to add multiple include folders.")
-   private List<Path> includeDir = null;
-
-   @CommandLine.Option(names = {"-L", "-libdir"}, description = "Path to a library folder, where the compiler looks for library files. This option can be repeated to add multiple library folders.")
-   private List<Path> libDir = null;
-
-   @CommandLine.Option(names = {"-F", "-fragmentdir"}, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
-   private Path fragmentDir = null;
-
    @CommandLine.Option(names = {"-o", "-output"}, description = "Name of the output file. By default it is the same as the first input file with the proper extension.")
    private String outputFileName = null;
 
@@ -67,8 +59,20 @@ public class KickC implements Callable<Void> {
    @CommandLine.Option(names = {"-d"}, description = "Debug the assembled prg file using C64Debugger. Implicitly assembles the output.")
    private boolean debug = false;
 
+   @CommandLine.Option(names = {"-D"}, description = "Define a macro to have a specific value.")
+   private Map<String, String> defines = null;
+
    @CommandLine.Option(names = {"-E"}, description = "Only run the preprocessor. Output is sent to standard out.")
    private boolean preprocess = false;
+
+   @CommandLine.Option(names = {"-I", "-includedir"}, description = "Path to an include folder, where the compiler looks for included files. This option can be repeated to add multiple include folders.")
+   private List<Path> includeDir = null;
+
+   @CommandLine.Option(names = {"-L", "-libdir"}, description = "Path to a library folder, where the compiler looks for library files. This option can be repeated to add multiple library folders.")
+   private List<Path> libDir = null;
+
+   @CommandLine.Option(names = {"-F", "-fragmentdir"}, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
+   private Path fragmentDir = null;
 
    @CommandLine.Option(names = {"-Ouplift"}, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
@@ -346,7 +350,7 @@ public class KickC implements Callable<Void> {
          if(preprocess) {
             System.out.println("Preprocessing " + CFileNames);
             try {
-               compiler.preprocess(cFiles);
+               compiler.preprocess(cFiles, defines);
             } catch(CompileError e) {
                // Print the error and exit with compile error
                System.err.println(e.getMessage());
@@ -358,7 +362,7 @@ public class KickC implements Callable<Void> {
          System.out.println("Compiling " + CFileNames);
          Program program = compiler.getProgram();
          try {
-            compiler.compile(cFiles);
+            compiler.compile(cFiles, defines);
          } catch(CompileError e) {
             // Print the error and exit with compile error
             System.err.println(e.getMessage());
@@ -396,13 +400,12 @@ public class KickC implements Callable<Void> {
 
          // Find emulator - if set by #pragma
          if(emulator == null) {
-            if(program.getEmulatorCommand() != null)
+            if(program.getEmulatorCommand() != null && (debug || execute))
                emulator = program.getEmulatorCommand();
-            else if(debug) {
+            else if(debug)
                emulator = "C64Debugger";
-            } else if(execute) {
+            else if(execute)
                emulator = "x64sc";
-            }
          }
 
          if(assemble || emulator != null) {

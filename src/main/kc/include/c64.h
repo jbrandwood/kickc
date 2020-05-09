@@ -27,6 +27,8 @@ struct MOS6581_SID * const SID = 0xd400;
 // The VIC-II MOS 6567/6569
 struct MOS6569_VICII* const VICII = 0xd000;
 // Color Ram
+char * const COLORRAM = 0xd800;
+// Color Ram
 char * const COLS = 0xd800;
 
 // The CIA#1: keyboard matrix, joystick #1/#2

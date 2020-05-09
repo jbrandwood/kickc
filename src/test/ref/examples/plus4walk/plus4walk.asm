@@ -9,11 +9,15 @@
 .segment Code
 
 
-  .label SCREEN = $c00
-  .label COLORRAM = $800
-  .label BGCOLOR = $ff19
-  .label BORDERCOLOR = $ff15
-  .label RASTER = $ff1d
+  .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
+  .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
+  .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d
+  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
+  .label TED = $ff00
+  // Default address of screen luminance/color matrix
+  .label DEFAULT_COLORRAM = $800
+  // Default address of screen character matrix
+  .label DEFAULT_SCREEN = $c00
   // The random state variable
   .label rand_state = 3
 __bbegin:
@@ -29,32 +33,32 @@ main: {
     .label y = 2
     .label __29 = 7
     .label __30 = 5
-    // memset(SCREEN, 0xa0, 1000)
+    // memset(DEFAULT_SCREEN, 0xa0, 1000)
     ldx #$a0
-    lda #<SCREEN
+    lda #<DEFAULT_SCREEN
     sta.z memset.str
-    lda #>SCREEN
+    lda #>DEFAULT_SCREEN
     sta.z memset.str+1
     jsr memset
-    // memset(COLORRAM, 0, 1000)
+    // memset(DEFAULT_COLORRAM, 0, 1000)
     ldx #0
-    lda #<COLORRAM
+    lda #<DEFAULT_COLORRAM
     sta.z memset.str
-    lda #>COLORRAM
+    lda #>DEFAULT_COLORRAM
     sta.z memset.str+1
     jsr memset
-    // memset(COUNT, 0, 1000)
+    // memset(VISITS, 0, 1000)
     ldx #0
-    lda #<COUNT
+    lda #<VISITS
     sta.z memset.str
-    lda #>COUNT
+    lda #>VISITS
     sta.z memset.str+1
     jsr memset
-    // *BORDERCOLOR = 0
+    // TED->BG_COLOR = 0
     lda #0
-    sta BORDERCOLOR
-    // *BGCOLOR = 0
-    sta BGCOLOR
+    sta TED+OFFSET_STRUCT_MOS7360_TED_BG_COLOR
+    // TED->BORDER_COLOR = 0
+    sta TED+OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR
     lda #<1
     sta.z rand_state
     lda #>1
@@ -97,43 +101,43 @@ main: {
     bcc !+
     inc.z offset+1
   !:
-    // COUNT+offset
+    // VISITS+offset
     lda.z offset
     clc
-    adc #<COUNT
+    adc #<VISITS
     sta.z __5
     lda.z offset+1
-    adc #>COUNT
+    adc #>VISITS
     sta.z __5+1
-    // cnt = ++*(COUNT+offset)
+    // cnt = ++*(VISITS+offset)
     ldy #0
     lda (__5),y
     clc
     adc #1
     sta (__5),y
-    // COUNT+offset
+    // VISITS+offset
     lda.z offset
     clc
-    adc #<COUNT
+    adc #<VISITS
     sta.z __6
     lda.z offset+1
-    adc #>COUNT
+    adc #>VISITS
     sta.z __6+1
-    // cnt = ++*(COUNT+offset)
+    // cnt = ++*(VISITS+offset)
     lda (__6),y
     tay
-    // COLORRAM+offset
+    // DEFAULT_COLORRAM+offset
     clc
     lda.z __8
-    adc #<COLORRAM
+    adc #<DEFAULT_COLORRAM
     sta.z __8
     lda.z __8+1
-    adc #>COLORRAM
+    adc #>DEFAULT_COLORRAM
     sta.z __8+1
     // cnt&0xf
     tya
     and #$f
-    // *(COLORRAM+offset) = FADE[cnt&0xf]
+    // *(DEFAULT_COLORRAM+offset) = FADE[cnt&0xf]
     tay
     lda FADE,y
     ldy #0
@@ -163,9 +167,9 @@ main: {
     lda #0
     sta.z y
   __b6:
-    // while(*RASTER!=0xff)
+    // while(TED->RASTER_LO!=0xff)
     lda #$ff
-    cmp RASTER
+    cmp TED+OFFSET_STRUCT_MOS7360_TED_RASTER_LO
     bne __b6
     jmp __b2
   __b4:
@@ -295,5 +299,7 @@ memset: {
     jmp __b2
 }
 .segment Data
+  // Colors to fade up/down when visiting a char multiple times
   FADE: .byte 2, $12, $22, $32, $42, $52, $62, $72, $76, $66, $56, $46, $36, $26, $16, 6
-  COUNT: .fill $3e8, 0
+  // The number of times each character has been visited
+  VISITS: .fill $3e8, 0

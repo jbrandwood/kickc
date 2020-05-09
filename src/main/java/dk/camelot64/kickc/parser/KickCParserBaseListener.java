@@ -582,6 +582,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) { }
 	/**
 	 * {@inheritDoc}

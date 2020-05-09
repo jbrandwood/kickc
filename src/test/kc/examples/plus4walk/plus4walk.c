@@ -1,5 +1,6 @@
 // Random walk with color fading for Commodore Plus/4 / C16
 #pragma link("plus4.ld")
+#pragma emulator("xplus4")
 
 #include <string.h>
 #include <stdlib.h>

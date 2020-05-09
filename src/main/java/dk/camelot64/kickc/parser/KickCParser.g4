@@ -151,6 +151,7 @@ globalDirective
     | (PRAGMA TARGET) PAR_BEGIN NAME PAR_END #globalDirectivePlatform
     | (PRAGMA CPU) PAR_BEGIN NAME PAR_END #globalDirectiveCpu
     | (PRAGMA LINK) PAR_BEGIN STRING PAR_END #globalDirectiveLinkScript
+    | (PRAGMA EMULATOR) PAR_BEGIN STRING PAR_END #globalDirectiveEmulator
     | (PRAGMA CODESEG) PAR_BEGIN NAME PAR_END #globalDirectiveCodeSeg
     | (PRAGMA DATASEG) PAR_BEGIN NAME PAR_END #globalDirectiveDataSeg
     | (PRAGMA ENCODING) PAR_BEGIN NAME PAR_END #globalDirectiveEncoding

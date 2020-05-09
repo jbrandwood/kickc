@@ -393,7 +393,19 @@ public class KickC implements Callable<Void> {
          // Assemble the asm-file if instructed
          String prgFileName = outputFileNameBase + ".prg";
          Path prgPath = outputDir.resolve(prgFileName);
-         if(assemble || execute || debug || (emulator != null)) {
+
+         // Find emulator - if set by #pragma
+         if(emulator == null) {
+            if(program.getEmulatorCommand() != null)
+               emulator = program.getEmulatorCommand();
+            else if(debug) {
+               emulator = "C64Debugger";
+            } else if(execute) {
+               emulator = "x64sc";
+            }
+         }
+
+         if(assemble || emulator != null) {
             Path kasmLogPath = outputDir.resolve(outputFileNameBase + ".klog");
             System.out.println("Assembling to " + prgPath.toString());
             String[] assembleCommand = {asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem", "-debugdump"};
@@ -422,26 +434,22 @@ public class KickC implements Callable<Void> {
             }
          }
 
-         if(debug) {
-            emulator = "C64Debugger";
-         }
-         if(execute) {
-            emulator = "x64sc";
-         }
-         String emuOptions = "";
-         if(emulator.equals("C64Debugger")) {
-            Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
-            emuOptions = "-symbols " + viceSymbolsPath + " -wait 2500" + " ";
-         }
-         // The program names used by VICE emulators
-         List<String> viceEmus = Arrays.asList("x64", "x64sc", "x128", "x64dtv", "xcbm2", "xcbm5x0", "xpet", "xplus4", "xscpu64", "xvic");
-         if(viceEmus.contains(emulator)) {
-            Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
-            emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
-         }
-
          // Execute the prg-file if instructed
          if(emulator != null) {
+
+            // Find commandline options for the emulator
+            String emuOptions = "";
+            if(emulator.equals("C64Debugger")) {
+               Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
+               emuOptions = "-symbols " + viceSymbolsPath + " -wait 2500" + " ";
+            }
+            // The program names used by VICE emulators
+            List<String> viceEmus = Arrays.asList("x64", "x64sc", "x128", "x64dtv", "xcbm2", "xcbm5x0", "xpet", "xplus4", "xscpu64", "xvic");
+            if(viceEmus.contains(emulator)) {
+               Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
+               emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
+            }
+
             System.out.println("Executing " + prgPath + " using " + emulator);
             String executeCommand = emulator + " " + emuOptions + prgPath.toAbsolutePath().toString();
             if(verbose) {

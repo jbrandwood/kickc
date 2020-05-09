@@ -137,6 +137,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) {
+      String emuName = ctx.STRING().getText();
+      emuName = emuName.substring(1, emuName.length() - 1);
+      program.setEmulatorCommand(emuName);
+      return null;
+   }
+
+   @Override
    public Object visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) {
       List<Integer> reservedZps = new ArrayList<>();
       for(TerminalNode reservedNum : ctx.NUMBER()) {

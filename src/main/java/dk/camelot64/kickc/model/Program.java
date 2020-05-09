@@ -49,6 +49,8 @@ public class Program {
    private Path linkScriptFilePath;
    /** Body to any custom link script file used for linking (STATIC) */
    private String linkScriptBody;
+   /** The program name for the emulator to pass the compiled program to. */
+   private String emulatorCommand;
 
    /** Absolute start address of the code. Null to start ad 0x080d. PASS 0-5 (STATIC) */
    private Number programPc;
@@ -504,6 +506,14 @@ public class Program {
 
    public Number getProgramPc() {
       return programPc;
+   }
+
+   public void setEmulatorCommand(String emulatorCommand) {
+      this.emulatorCommand = emulatorCommand;
+   }
+
+   public String getEmulatorCommand() {
+      return emulatorCommand;
    }
 
    public CompileLog getLog() {

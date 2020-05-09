@@ -66,6 +66,7 @@ RESERVE:'reserve' ;
 PC:'pc';
 TARGET:'target';
 LINK:'link';
+EMULATOR:'emulator';
 CPU:'cpu';
 CODESEG:'code_seg';
 DATASEG:'data_seg';

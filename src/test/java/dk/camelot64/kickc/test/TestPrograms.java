@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStructPointerInts() throws IOException, URISyntaxException {
+      compileAndCompare("struct-pointer-ints.c");
+   }
+
+   @Test
    public void testPolygon() throws IOException, URISyntaxException {
       compileAndCompare("complex/polygon/polygon.c");
    }

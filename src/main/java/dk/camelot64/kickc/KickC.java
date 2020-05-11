@@ -349,10 +349,16 @@ public class KickC implements Callable<Integer> {
          StringBuilder CFileNames = new StringBuilder();
          cFiles.stream().forEach(path -> CFileNames.append(path.toString()).append(" "));
 
+         Map<String, String> effectiveDefines = new LinkedHashMap<>();
+         if(defines!=null)
+            effectiveDefines.putAll(defines);
+         if(program.getTargetPlatform().getDefines()!=null)
+            effectiveDefines.putAll(program.getTargetPlatform().getDefines());
+
          if(preprocess) {
             System.out.println("Preprocessing " + CFileNames);
             try {
-               compiler.preprocess(cFiles, defines);
+               compiler.preprocess(cFiles, effectiveDefines);
             } catch(CompileError e) {
                // Print the error and exit with compile error
                System.err.println(e.getMessage());
@@ -363,7 +369,7 @@ public class KickC implements Callable<Integer> {
 
          System.out.println("Compiling " + CFileNames);
          try {
-            compiler.compile(cFiles, defines);
+            compiler.compile(cFiles, effectiveDefines);
          } catch(CompileError e) {
             // Print the error and exit with compile error
             System.err.println(e.getMessage());

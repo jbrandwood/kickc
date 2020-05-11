@@ -8,11 +8,12 @@ import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
-import dk.camelot64.kickc.parser.KickCLexer;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenSource;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -145,10 +146,7 @@ public class Compiler {
       CParser cParser = new CParser(program);
       if(defines != null) {
          for(String macroName : defines.keySet()) {
-            final String macroBodyText = "#define " + macroName + " " + defines.get(macroName) + "\n";
-            final CodePointCharStream macroCharStream = CharStreams.fromString(macroBodyText);
-            final KickCLexer macroLexer = cParser.makeLexer(macroCharStream);
-            cParser.addSourceFirst(macroLexer);
+            cParser.define(macroName, defines.get(macroName));
          }
       }
       for(Path cFile : cFiles) {

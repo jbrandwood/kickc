@@ -42,6 +42,16 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   //@Test
+   //public void testPlus4Define() throws IOException, URISyntaxException {
+   //   compileAndCompare("plus4-define.c", log());
+   //}
+
+   @Test
+   public void testIncludeDefine() throws IOException, URISyntaxException {
+      compileAndCompare("include-define.c");
+   }
+
    @Test
    public void testStructPointerInts() throws IOException, URISyntaxException {
       compileAndCompare("struct-pointer-ints.c");
@@ -81,8 +91,6 @@ public class TestPrograms {
    public void testStars1() throws IOException, URISyntaxException {
       compileAndCompare("stars-1.c");
    }
-
-
 
    /* TODO: Add support for var*var
    @Test
@@ -4314,7 +4322,7 @@ public class TestPrograms {
       files.add(filePath);
       Program program = compiler.getProgram();
       TargetPlatform.setTargetPlatform(TargetPlatform.DEFAULT_NAME, filePath, program, null);
-      compiler.compile(files, null);
+      compiler.compile(files, program.getTargetPlatform().getDefines());
       compileAsm(fileName, program);
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);

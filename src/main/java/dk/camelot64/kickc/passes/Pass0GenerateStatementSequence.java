@@ -182,7 +182,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       final String platformName = ctx.NAME().getText();
       final Path currentFolder = cParser.getSourceFolderPath(ctx);
       final StatementSource statementSource = new StatementSource(ctx);
+      // Remove macros from existing platform!
+      if(program.getTargetPlatform().getDefines() !=null)
+         for(String macroName : program.getTargetPlatform().getDefines().keySet())
+            cParser.undef(macroName);
       TargetPlatform.setTargetPlatform(platformName, currentFolder, program, statementSource);
+      // Define macros from new platform!
+      if(program.getTargetPlatform().getDefines() !=null)
+         for(String macroName : program.getTargetPlatform().getDefines().keySet())
+            cParser.define(macroName, program.getTargetPlatform().getDefines().get(macroName));
+      // Update the ASM fragment synthesizer to match the new CPU
+      program.initAsmFragmentSynthesizer();
       return null;
    }
 

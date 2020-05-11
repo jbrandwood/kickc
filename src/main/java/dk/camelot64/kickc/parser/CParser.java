@@ -102,6 +102,26 @@ public class CParser {
    }
 
    /**
+    * Define a new macro
+    * @param macroName The macro name
+    * @param macroBody The macro body
+    */
+   public void define(String macroName, String macroBody) {
+      final String macroBodyText = "#define " + macroName + " " + macroBody + "\n";
+      final CodePointCharStream macroCharStream = CharStreams.fromString(macroBodyText);
+      final KickCLexer macroLexer = makeLexer(macroCharStream);
+      addSourceFirst(macroLexer);
+   }
+
+   /**
+    * Undef a macro
+    * @param macroName The macro name
+    */
+   public void undef(String macroName) {
+      getPreprocessor().undef(macroName);
+   }
+
+   /**
     * Get the token stream containing tokens after the preprocessor.
     *
     * @return The preprocessed token stream

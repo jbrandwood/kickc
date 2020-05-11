@@ -135,8 +135,47 @@ public class CPreprocessor implements TokenSource {
          return true;
       } else if(inputToken.getType() == KickCLexer.NAME) {
          return expand(inputToken, cTokenSource);
+      //} else if(inputToken.getType() == KickCLexer.PRAGMA) {
+      //   return pragma(inputToken, cTokenSource);
       }
       return false;
+   }
+
+   /**
+    * Handle any #pragma that must be handled by the preprocessor
+    *
+    * @param inputToken The #pragma token
+    * @param cTokenSource The token source used for getting more tokens or for pushing macro expansions
+    * @return true if the input token was preprocessed (and should not be added to the output). False if the token was not a preprocessor token
+    */
+   private boolean pragma(Token inputToken, CTokenSource cTokenSource) {
+      if(inputToken instanceof PragmaToken)
+         // Already examined by the preprocessor - and determined to be for the parser
+         return false;
+      final List<Token> ws = skipWhitespace(cTokenSource);
+      final Token pragmaType = cTokenSource.nextToken();
+
+      /*
+      if(KickCLexer.TARGET == pragmaType.getType()) {
+         skipWhitespace(cTokenSource);
+         nextToken(cTokenSource, KickCLexer.PAR_BEGIN);
+         skipWhitespace(cTokenSource);
+         final String targetName = nextToken(cTokenSource, KickCLexer.NAME).getText();
+         skipWhitespace(cTokenSource);
+         nextToken(cTokenSource, KickCLexer.PAR_END);
+         //TargetPlatform.setTargetPlatform(targetName, null, );
+         throw new InternalError("TODO: Implement #pragma target");
+         // return true;
+      }
+       */
+
+      // Pass on the #pragma to the parser
+      final ArrayList<Token> pragmaTokens = new ArrayList<>();
+      pragmaTokens.add(new PragmaToken(inputToken));
+      pragmaTokens.addAll(ws);
+      pragmaTokens.add(pragmaType);
+      cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
+      return true;
    }
 
    /**
@@ -258,7 +297,7 @@ public class CPreprocessor implements TokenSource {
          List<Token> expandedBody = new ArrayList<>();
          final List<Token> macroBody = macro.body;
          for(Token macroBodyToken : macroBody) {
-            if(macroBodyToken.getType()==KickCLexer.NAME && macro.parameters.contains(macroBodyToken.getText())) {
+            if(macroBodyToken.getType() == KickCLexer.NAME && macro.parameters.contains(macroBodyToken.getText())) {
                // body token is a parameter name - replace with expanded parameter value
                final int paramIndex = macro.parameters.indexOf(macroBodyToken.getText());
                final List<Token> expandedParamValue = paramValues.get(paramIndex);
@@ -278,6 +317,7 @@ public class CPreprocessor implements TokenSource {
 
    /**
     * Add a macro token to the exapnded macro body. Keeps track of which macros has been used to expand the token using {@link ExpansionToken}
+    *
     * @param macroBodyToken The macro body token to add
     * @param macroNameToken The token containing the macro name. Used to get the name and as a source for copying token properties (ensuring file name, line etc. are OK).
     * @param expandedBody The expanded macro body to add the token to
@@ -305,6 +345,15 @@ public class CPreprocessor implements TokenSource {
       // #undef a new macro - find the name
       skipWhitespace(cTokenSource);
       String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
+      undef(macroName);
+   }
+
+   /**
+    * Undefine a macro.
+    *
+    * @param macroName The macro name
+    */
+   public void undef(String macroName) {
       this.defines.remove(macroName);
    }
 
@@ -592,16 +641,21 @@ public class CPreprocessor implements TokenSource {
     * Skip whitespace tokens (except newlines), positioning iterator at the next non-whitespace
     *
     * @param cTokenSource The token iterator
+    * @return The skipped tokens
     */
-   private void skipWhitespace(CTokenSource cTokenSource) {
+   private List<Token> skipWhitespace(CTokenSource cTokenSource) {
+      List<Token> ws = new ArrayList<>();
       while(true) {
          final Token token = cTokenSource.peekToken();
          if(token.getChannel() != CParser.CHANNEL_WHITESPACE)
             break;
          if(token.getText().contains("\n"))
             break;
+         // The token is whitespace
+         ws.add(token);
          cTokenSource.nextToken();
       }
+      return ws;
    }
 
    /**
@@ -623,6 +677,70 @@ public class CPreprocessor implements TokenSource {
 
       Set<String> getMacroNames() {
          return macroNames;
+      }
+
+      @Override
+      public String getText() {
+         return subToken.getText();
+      }
+
+      @Override
+      public int getType() {
+         return subToken.getType();
+      }
+
+      @Override
+      public int getLine() {
+         return subToken.getLine();
+      }
+
+      @Override
+      public int getCharPositionInLine() {
+         return subToken.getCharPositionInLine();
+      }
+
+      @Override
+      public int getChannel() {
+         return subToken.getChannel();
+      }
+
+      @Override
+      public int getTokenIndex() {
+         return subToken.getTokenIndex();
+      }
+
+      @Override
+      public int getStartIndex() {
+         return subToken.getStartIndex();
+      }
+
+      @Override
+      public int getStopIndex() {
+         return subToken.getStopIndex();
+      }
+
+      @Override
+      public TokenSource getTokenSource() {
+         return subToken.getTokenSource();
+      }
+
+      @Override
+      public CharStream getInputStream() {
+         return subToken.getInputStream();
+      }
+   }
+
+   /**
+    * A pragma token that should be handled in the parser (not in the lexer)
+    * Used to allow the lexer to ensure the preprocessor skips it the second time around.
+    **/
+   public static class PragmaToken implements Token {
+
+      /** The underlying pragma token. */
+      private Token subToken;
+
+      PragmaToken(Token subToken) {
+         this.subToken = subToken;
       }
 
       @Override

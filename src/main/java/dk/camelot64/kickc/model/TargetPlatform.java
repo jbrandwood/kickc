@@ -6,14 +6,17 @@ import dk.camelot64.kickc.model.statements.StatementSource;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import javax.json.stream.JsonParsingException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The target platform the compiler is creating a program for.
@@ -113,6 +116,17 @@ public class TargetPlatform {
             final String emulatorCommand = platformJson.getString("emulator", null);
             if(emulatorCommand != null)
                targetPlatform.setEmulatorCommand(emulatorCommand);
+            final JsonObject defines = platformJson.getJsonObject("defines");
+            if(defines!=null) {
+               final Set<String> macroNames = defines.keySet();
+               final LinkedHashMap<String, String> macros = new LinkedHashMap<>();
+               for(String macroName : macroNames) {
+                  final JsonValue jsonValue = defines.get(macroName);
+                  final String macroBody = jsonValue.toString();
+                  macros.put(macroName, macroBody);
+               }
+               targetPlatform.setDefines(macros);
+            }
             program.setTargetPlatform(targetPlatform);
          } catch(CompileError | IOException | JsonParsingException e) {
             throw new CompileError("Error parsing target platform file " + platformFile.getAbsolutePath() + "\n"+e.getMessage(), statementSource);

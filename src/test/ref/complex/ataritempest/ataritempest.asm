@@ -10,7 +10,6 @@
 .segment Code
 init:
   .label BG_COLOR = $c01a
-__bbegin:
 .segment Code
 main: {
     // (*BG_COLOR)++;

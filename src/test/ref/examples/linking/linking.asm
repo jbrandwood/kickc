@@ -11,13 +11,12 @@
 .segmentdef CodeHigh [start=$4000]
 .segmentdef DataHigh [startAfter="CodeHigh"]
 .segment Basic
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .segment Code
 
 
   .label BG_COLOR = $d021
   .label SCREEN = $400
-__bbegin:
 .segment Code
 main: {
     ldx #0

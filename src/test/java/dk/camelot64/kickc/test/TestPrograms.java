@@ -7,6 +7,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetCpu;
+import dk.camelot64.kickc.model.TargetPlatform;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import org.junit.AfterClass;
@@ -34,6 +35,7 @@ public class TestPrograms {
 
    final String stdIncludePath = "src/main/kc/include";
    final String stdLibPath = "src/main/kc/lib";
+   final String stdPlatformPath = "src/main/kc/target";
    final String testPath = "src/test/kc";
    final String refPath = "src/test/ref/";
 
@@ -4294,9 +4296,10 @@ public class TestPrograms {
       if(compileLog != null) {
          compiler.setLog(compileLog);
       }
-      compiler.addIncludePath(stdIncludePath);
       compiler.addIncludePath(testPath);
+      compiler.addIncludePath(stdIncludePath);
       compiler.addLibraryPath(stdLibPath);
+      compiler.addTargetPlatformPath(stdPlatformPath);
       compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
       if(upliftCombinations != null) {
          compiler.setUpliftCombinations(upliftCombinations);
@@ -4304,8 +4307,9 @@ public class TestPrograms {
       final ArrayList<Path> files = new ArrayList<>();
       final Path filePath = Paths.get(fileName);
       files.add(filePath);
-      compiler.compile(files, null);
       Program program = compiler.getProgram();
+      TargetPlatform.setTargetPlatform(TargetPlatform.DEFAULT_NAME, filePath, program, null);
+      compiler.compile(files, null);
       compileAsm(fileName, program);
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);

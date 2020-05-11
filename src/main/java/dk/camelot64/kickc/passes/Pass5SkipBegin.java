@@ -5,6 +5,7 @@ import dk.camelot64.kickc.asm.AsmChunk;
 import dk.camelot64.kickc.asm.AsmInstruction;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -23,8 +24,7 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
    }
 
    public boolean optimize() {
-      ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
-      boolean canSkip = canSkipBegin(beginBlock);
+      boolean canSkip = canSkipBegin(getProgram().getGraph());
       boolean optimized = false;
       if(canSkip) {
          // Change BasicUpstart() to call main directly and remove the JSR main
@@ -55,6 +55,11 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
       return optimized;
    }
 
+   static boolean canSkipBegin(ControlFlowGraph graph) {
+      ControlFlowBlock beginBlock = graph.getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
+      return canSkipBegin(beginBlock, graph);
+   }
+
    /**
     * Examines whether the @begin/@end code can be skipped
     * This looks through all statements to check that the only one is a call to main()
@@ -62,7 +67,7 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
     * @param block The block to examine (initially the @begin block)
     * @return true if the @begin/@end code can be skipped
     */
-   private boolean canSkipBegin(ControlFlowBlock block) {
+   private static boolean canSkipBegin(ControlFlowBlock block, ControlFlowGraph graph) {
       for(Statement statement : block.getStatements()) {
          if(statement instanceof StatementPhiBlock) {
             if(((StatementPhiBlock) statement).getPhiVariables().size() > 0) {
@@ -83,8 +88,8 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
          return false;
       }
       if(block.getDefaultSuccessor() != null) {
-         ControlFlowBlock successor = getProgram().getGraph().getBlock(block.getDefaultSuccessor());
-         return canSkipBegin(successor);
+         ControlFlowBlock successor = graph.getBlock(block.getDefaultSuccessor());
+         return canSkipBegin(successor, graph);
       }
       return true;
    }

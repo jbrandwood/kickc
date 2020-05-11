@@ -13,7 +13,7 @@
 .segmentdef Data [startAfter="Code"]
 .segmentdef Sprite
 .segment Basic
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .segment Code
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
@@ -29,7 +29,6 @@
   .label LOAD_SPRITE = $3000
   .label SCREEN = $400
   .label SPRITES_PTR = SCREEN+SPRITE_PTRS
-__bbegin:
 .segment Code
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40

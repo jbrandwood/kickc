@@ -14,8 +14,8 @@ public class CompileError extends RuntimeException {
    }
 
    public CompileError(String message, StatementSource source) {
-      super(message+"\n"+source.toString());
-      this.source = source.toString();
+      super(message+"\n"+(source==null?"":source.toString()));
+      this.source = (source==null?"":source.toString());
    }
 
    public CompileError(String message, Token token) {

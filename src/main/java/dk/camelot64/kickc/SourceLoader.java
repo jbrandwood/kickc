@@ -1,12 +1,6 @@
 package dk.camelot64.kickc;
 
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.TargetPlatform;
-
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +12,7 @@ public class SourceLoader {
 
    /**
     * Locate a file and load it. Looks through the current path and a set of search folder.
+    *
     * @param fileName The file to look for.
     * @param currentPath The current path. May be null.
     * @param searchPaths The search paths to look through if the file is not found in the current path.
@@ -44,18 +39,34 @@ public class SourceLoader {
       return null;
    }
 
-   public static void loadLinkScriptFile(String fileName, Path currentPath, Program program) {
-      try {
-         File file = loadFile(fileName, currentPath, program.getIncludePaths());
-         if(file==null)
-            throw new CompileError("File  not found " + fileName);
-         Path filePath = file.toPath();
-         String linkScript = new String(Files.readAllBytes(filePath));
-         program.setLinkScript(filePath, linkScript);
-         program.setTargetPlatform(TargetPlatform.CUSTOM);
-      } catch(IOException e) {
-         throw new CompileError("Error loading link script file " + fileName, e);
+   /**
+    * Find all files with a specific extension
+    *
+    * @param currentPath The current folder
+    * @param searchPaths The folders to search
+    * @param extension The extension to look for (excluding the dot)
+    * @return All files in the folders with the given extension.
+    */
+   public static List<File> listFiles(Path currentPath, List<String> searchPaths, String extension) {
+      List<File> allFiles = new ArrayList<>();
+      List<String> allSearchPaths = new ArrayList<>();
+      if(currentPath != null)
+         allSearchPaths.add(currentPath.toString());
+      allSearchPaths.addAll(searchPaths);
+      for(String searchPath : allSearchPaths) {
+         if(!searchPath.endsWith("/")) {
+            searchPath += "/";
+         }
+         final File searchFolder = new File(searchPath);
+         if(searchFolder.exists() && searchFolder.isDirectory()) {
+            final String[] files = searchFolder.list((dir, name) -> name.endsWith("." + extension));
+            if(files != null)
+               for(String file : files) {
+                  allFiles.add(new File(file));
+               }
+         }
       }
+      return allFiles;
    }
 
 }

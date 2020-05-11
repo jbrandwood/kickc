@@ -66,7 +66,7 @@ public enum TargetCpu {
    }
 
    /**
-    * Get the features of the CPU decising which fragments is usable
+    * Get the features of the CPU deciding which fragments is usable
     * @return The features
     */
    public List<Feature> getFeatures() {
@@ -74,14 +74,19 @@ public enum TargetCpu {
    }
 
    /** Get a target CPU by name. */
-   public static TargetCpu getTargetCpu(String name) {
+   public static TargetCpu getTargetCpu(String name, boolean missingOk) {
       for(TargetCpu value : TargetCpu.values()) {
          if(value.getName().equalsIgnoreCase(name)) {
             return value;
          }
       }
-      return null;
+      if(missingOk)
+         return null;
+      StringBuilder supported = new StringBuilder();
+      for(TargetCpu value : TargetCpu.values()) {
+         supported.append(value.getName()).append(" ");
+      }
+      throw new CompileError("Unknown CPU. Supported: " + supported.toString());
    }
-
 
 }

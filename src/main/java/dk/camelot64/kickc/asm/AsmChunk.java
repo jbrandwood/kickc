@@ -307,7 +307,14 @@ public class AsmChunk {
     * @return true if the line is an instruction or similar.
     */
    private boolean shouldIndentAsm(AsmLine line) {
-      return line instanceof AsmInstruction || line instanceof AsmLabelDecl || line instanceof AsmConstant || line instanceof AsmDataNumeric || line instanceof AsmDataFill || line instanceof AsmDataString || line instanceof AsmDataAlignment || line instanceof AsmInlineKickAsm;
+      return line instanceof AsmInstruction ||
+            line instanceof AsmLabelDecl ||
+            line instanceof AsmConstant ||
+            line instanceof AsmDataNumeric ||
+            line instanceof AsmDataFill ||
+            line instanceof AsmDataString ||
+            line instanceof AsmDataAlignment ||
+            (line instanceof AsmInlineKickAsm && !line.getAsm().contains(".pc"));
    }
 
    @Override

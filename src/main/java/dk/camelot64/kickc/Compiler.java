@@ -43,9 +43,6 @@ public class Compiler {
     */
    private boolean enableLoopHeadConstant = false;
 
-   /** File name of link script to use (from command line parameter). */
-   private String linkScriptFileName;
-
    /** Variable optimization/memory area configuration to use (from command line parameter). */
    private VariableBuilderConfig variableBuilderConfig;
 
@@ -70,10 +67,6 @@ public class Compiler {
 
    public void setWarnArrayType(boolean warnArrayType) {
       program.setWarnArrayType(warnArrayType);
-   }
-
-   public void setLinkScriptFileName(String linkScript) {
-      this.linkScriptFileName = linkScript;
    }
 
    public void setVariableBuilderConfig(VariableBuilderConfig variableBuilderConfig) {
@@ -104,24 +97,12 @@ public class Compiler {
       this.program.setEnableLiveRangeCallPath(enableLiveRangeCallPath);
    }
 
-   void setTargetPlatform(TargetPlatform targetPlatform) {
-      program.setTargetPlatform(targetPlatform);
-   }
-
-   public void setTargetCpu(TargetCpu targetCpu) {
-      program.setTargetCpu(targetCpu);
-   }
-
    public void setAsmFragmentBaseFolder(Path asmFragmentBaseFolder) {
       program.setAsmFragmentBaseFolder(asmFragmentBaseFolder);
    }
 
    public void setAsmFragmentCacheFolder(Path asmFragmentcacheDir) {
       program.setAsmFragmentCacheFolder(asmFragmentcacheDir);
-   }
-
-   public void initAsmFragmentSynthesizer() {
-      program.initAsmFragmentSynthesizer();
    }
 
    public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
@@ -146,6 +127,10 @@ public class Compiler {
 
    public void addLibraryPath(String path) {
       program.getLibraryPaths().add(path);
+   }
+
+   public void addTargetPlatformPath(String path) {
+      program.getTargetPlatformPaths().add(path);
    }
 
    /**
@@ -196,9 +181,6 @@ public class Compiler {
 
       try {
          Path currentPath = new File(".").toPath();
-         if(this.linkScriptFileName != null) {
-            SourceLoader.loadLinkScriptFile(linkScriptFileName, currentPath, program);
-         }
          program.setStatementSequence(new StatementSequence());
          CParser cParser = initializeParser(defines, cFiles, currentPath);
 

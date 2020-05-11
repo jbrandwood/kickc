@@ -51,7 +51,7 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
             }
          }
       }
-      if(getProgram().getLinkScriptBody()!=null) {
+      if(!Pass5SkipBegin.canSkipBegin(getProgram().getGraph())) {
          usedLabels.add("::__bbegin");
       }
       return usedLabels;

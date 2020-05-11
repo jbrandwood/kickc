@@ -25,13 +25,13 @@ public class Program {
    private List<String> includePaths;
    /** Paths used for library files. PASS 0 (STATIC) */
    private List<String> libraryPaths;
+   /** Paths used for target files. PASS 0 (STATIC) */
+   private List<String> targetPlatformPaths;
    /** All loaded H/C-files. PASS 0 (STATIC) */
    private List<String> loadedFiles;
 
    /** The target platform that the program is being build for. PASS 0-5 (STATIC) */
-   private TargetPlatform targetPlatform = TargetPlatform.DEFAULT;
-   /** The target CPU that the program is being build for. PASS 0-5 (STATIC) */
-   private TargetCpu targetCpu = TargetCpu.DEFAULT;
+   private TargetPlatform targetPlatform;
 
    /** Base folder for finding ASM fragment files. (STATIC) */
    private Path asmFragmentBaseFolder;
@@ -44,13 +44,6 @@ public class Program {
    private boolean warnFragmentMissing = false;
    /** Array syntax used on types (eg. char[8] x; ) produce a warning instead of an error (STATIC) */
    private boolean warnArrayType = false;
-
-   /** Path to any custom link script file used for linking (STATIC) */
-   private Path linkScriptFilePath;
-   /** Body to any custom link script file used for linking (STATIC) */
-   private String linkScriptBody;
-   /** The program name for the emulator to pass the compiled program to. */
-   private String emulatorCommand;
 
    /** Absolute start address of the code. Null to start ad 0x080d. PASS 0-5 (STATIC) */
    private Number programPc;
@@ -112,6 +105,7 @@ public class Program {
       this.log = new CompileLog();
       this.includePaths = new ArrayList<>();
       this.libraryPaths = new ArrayList<>();
+      this.targetPlatformPaths = new ArrayList<>();
       this.loadedFiles = new ArrayList<>();
       this.asmResourceFiles = new ArrayList<>();
       this.reservedZps = new ArrayList<>();
@@ -123,6 +117,7 @@ public class Program {
    public void endPass1() {
       this.includePaths = null;
       this.libraryPaths = null;
+      this.targetPlatformPaths = null;
       this.loadedFiles = null;
       this.statementSequence = null;
       this.procedureModifiedVars = null;
@@ -216,19 +211,11 @@ public class Program {
    }
 
    public void initAsmFragmentSynthesizer() {
-      this.asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, targetCpu, asmFragmentCacheFolder, getLog());
+      this.asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, targetPlatform.getCpu(), asmFragmentCacheFolder, getLog());
    }
 
    public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
       this.asmFragmentSynthesizer = synthesizer;
-   }
-
-   public TargetCpu getTargetCpu() {
-      return targetCpu;
-   }
-
-   public void setTargetCpu(TargetCpu targetCpu) {
-      this.targetCpu = targetCpu;
    }
 
    public TargetPlatform getTargetPlatform() {
@@ -238,6 +225,11 @@ public class Program {
    public void setTargetPlatform(TargetPlatform targetPlatform) {
       this.targetPlatform = targetPlatform;
    }
+
+   public TargetCpu getTargetCpu() {
+      return getTargetPlatform().getCpu();
+   }
+
 
    public StructVariableMemberUnwinding getStructVariableMemberUnwinding() {
       return structVariableMemberUnwinding;
@@ -261,6 +253,10 @@ public class Program {
 
    public List<String> getLibraryPaths() {
       return libraryPaths;
+   }
+
+   public List<String> getTargetPlatformPaths() {
+      return targetPlatformPaths;
    }
 
    public List<String> getLoadedFiles() {
@@ -508,14 +504,6 @@ public class Program {
       return programPc;
    }
 
-   public void setEmulatorCommand(String emulatorCommand) {
-      this.emulatorCommand = emulatorCommand;
-   }
-
-   public String getEmulatorCommand() {
-      return emulatorCommand;
-   }
-
    public CompileLog getLog() {
       return log;
    }
@@ -524,18 +512,6 @@ public class Program {
       this.log = log;
    }
 
-   public void setLinkScript(Path linkScriptFilePath, String linkScriptBody) {
-      this.linkScriptFilePath = linkScriptFilePath;
-      this.linkScriptBody = linkScriptBody;
-   }
-
-   public Path getLinkScriptFilePath() {
-      return linkScriptFilePath;
-   }
-
-   public String getLinkScriptBody() {
-      return linkScriptBody;
-   }
 
    /**
     * Get information about the size of the program

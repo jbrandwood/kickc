@@ -5,7 +5,7 @@
 .segmentdef Code [start=$100d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
-:BasicUpstart(__bbegin)
+:BasicUpstart(main)
 .segment Code
 
 
@@ -20,7 +20,6 @@
   .label DEFAULT_SCREEN = $c00
   // The random state variable
   .label rand_state = 3
-__bbegin:
 .segment Code
 main: {
     .label __3 = 5

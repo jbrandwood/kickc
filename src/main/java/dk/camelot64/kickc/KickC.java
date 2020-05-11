@@ -71,6 +71,9 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-F", "-fragmentdir"}, description = "Path to the ASM fragment folder, where the compiler looks for ASM fragments.")
    private Path fragmentDir = null;
 
+   @CommandLine.Option(names = {"-P", "-platformdir", "-targetdir"}, description = "Path to a target platform folder, where the compiler looks for target platform files. This option can be repeated to add multiple target platform folders.")
+   private List<Path> targetPlatformDir = null;
+
    @CommandLine.Option(names = {"-Ouplift"}, description = "Optimization Option. Number of combinations to test when uplifting variables to registers in a scope. By default 100 combinations are tested.")
    private Integer optimizeUpliftCombinations = null;
 
@@ -152,11 +155,11 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-Si"}, description = "Interleave comments with intermediate language code and ASM fragment names in the generated ASM.")
    private boolean interleaveIclFile = false;
 
-   @CommandLine.Option(names = {"-t", "-target"}, description = "The target system. Default is C64 with BASIC upstart. See #pragma target")
-   private String target = TargetPlatform.C64BASIC.getName();
+   @CommandLine.Option(names = {"-p", "-t", "-target", "-platform"}, description = "The target platform. Default is C64 with BASIC upstart. See #pragma target")
+   private String targetPlatform = null;
 
    @CommandLine.Option(names = {"-cpu"}, description = "The target CPU. Default is 6502 with illegal opcodes. See #pragma cpu")
-   private String cpu = TargetCpu.MOS6502X.getName();
+   private String cpu = null;
 
    @CommandLine.Option(names = {"-T", "-link"}, description = "Link using a linker script in KickAss segment format. See #pragma link")
    private String linkScript = null;
@@ -184,36 +187,6 @@ public class KickC implements Callable<Integer> {
 
       Compiler compiler = new Compiler();
 
-      if(target != null) {
-         TargetPlatform targetPlatform = TargetPlatform.getTargetPlatform(target);
-         if(targetPlatform == null) {
-            System.err.println("Unknown target platform " + target);
-            StringBuffer supported = new StringBuffer();
-            supported.append("The supported target platforms are: ");
-            for(TargetPlatform value : TargetPlatform.values()) {
-               supported.append(value.getName()).append(" ");
-            }
-            System.err.println(supported);
-            return COMPILE_ERROR;
-         }
-         compiler.setTargetPlatform(targetPlatform);
-      }
-
-      if(cpu != null) {
-         TargetCpu targetCpu = TargetCpu.getTargetCpu(cpu);
-         if(targetCpu == null) {
-            System.err.println("Unknown target CPU " + cpu);
-            StringBuffer supported = new StringBuffer();
-            supported.append("The supported target CPUs are: ");
-            for(TargetCpu value : TargetCpu.values()) {
-               supported.append(value.getName()).append(" ");
-            }
-            System.err.println(supported);
-            return COMPILE_ERROR;
-         }
-         compiler.setTargetCpu(targetCpu);
-      }
-
       if(includeDir != null) {
          for(Path includePath : includeDir) {
             compiler.addIncludePath(includePath.toString());
@@ -223,6 +196,12 @@ public class KickC implements Callable<Integer> {
       if(libDir != null) {
          for(Path libPath : libDir) {
             compiler.addLibraryPath(libPath.toString());
+         }
+      }
+
+      if(targetPlatformDir != null) {
+         for(Path platformPath : targetPlatformDir) {
+            compiler.addTargetPlatformPath(platformPath.toString());
          }
       }
 
@@ -243,7 +222,35 @@ public class KickC implements Callable<Integer> {
 
       compiler.setAsmFragmentBaseFolder(fragmentDir);
       compiler.setAsmFragmentCacheFolder(fragmentCacheDir);
-      compiler.initAsmFragmentSynthesizer();
+
+      Program program = compiler.getProgram();
+      Path currentPath = new File(".").toPath();
+
+      // Set up Target Platform
+      try {
+         if(targetPlatform != null) {
+            TargetPlatform.setTargetPlatform(targetPlatform, currentPath, program, null);
+         } else {
+            TargetPlatform.setTargetPlatform(TargetPlatform.DEFAULT_NAME, currentPath, program, null);
+         }
+      } catch(CompileError e) {
+         // Print the error and exit with compile error
+         System.err.println(e.getMessage());
+         return COMPILE_ERROR;
+      }
+
+
+      // Update link script
+      if(linkScript != null) {
+         program.getTargetPlatform().setLinkScriptFile(SourceLoader.loadFile(linkScript, currentPath, program.getTargetPlatformPaths()));
+      }
+
+      // Update CPU
+      if(cpu != null) {
+         TargetCpu targetCpu = TargetCpu.getTargetCpu(cpu, false);
+         program.getTargetPlatform().setCpu(targetCpu);
+      }
+      program.initAsmFragmentSynthesizer();
 
       if(fragment != null) {
          if(verbose) {
@@ -312,10 +319,6 @@ public class KickC implements Callable<Integer> {
             compiler.setWarnArrayType(true);
          }
 
-         if(linkScript != null) {
-            compiler.setLinkScriptFileName(linkScript);
-         }
-
          if(varModel != null) {
             List<String> settings = Arrays.asList(varModel.split(","));
             settings = settings.stream().map(String::trim).collect(Collectors.toList());
@@ -359,7 +362,6 @@ public class KickC implements Callable<Integer> {
          }
 
          System.out.println("Compiling " + CFileNames);
-         Program program = compiler.getProgram();
          try {
             compiler.compile(cFiles, defines);
          } catch(CompileError e) {
@@ -399,8 +401,8 @@ public class KickC implements Callable<Integer> {
 
          // Find emulator - if set by #pragma
          if(emulator == null) {
-            if(program.getEmulatorCommand() != null && (debug || execute))
-               emulator = program.getEmulatorCommand();
+            if(program.getTargetPlatform().getEmulatorCommand() != null && (debug || execute))
+               emulator = program.getTargetPlatform().getEmulatorCommand();
             else if(debug)
                emulator = "C64Debugger";
             else if(execute)
@@ -564,7 +566,7 @@ public class KickC implements Callable<Integer> {
                ? keyValue[1]
                : "1";
          Map<String, String> map = argSpec.getValue();
-         if(map==null) {
+         if(map == null) {
             map = new LinkedHashMap<>();
             argSpec.setValue(map);
          }

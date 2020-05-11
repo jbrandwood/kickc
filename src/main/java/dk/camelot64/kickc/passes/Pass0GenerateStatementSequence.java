@@ -129,10 +129,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Object visitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) {
       String linkName = ctx.STRING().getText();
-      String linkFileName = linkName.substring(1, linkName.length() - 1);
+      String linkScriptName = linkName.substring(1, linkName.length() - 1);
       program.getLog().append("Loading link script " + linkName);
       Path currentPath = cParser.getSourceFolderPath(ctx);
-      SourceLoader.loadLinkScriptFile(linkFileName, currentPath, program);
+      final File linkScriptFile = SourceLoader.loadFile(linkScriptName, currentPath, program.getTargetPlatformPaths());
+      program.getTargetPlatform().setLinkScriptFile(linkScriptFile);
       return null;
    }
 
@@ -140,7 +141,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) {
       String emuName = ctx.STRING().getText();
       emuName = emuName.substring(1, emuName.length() - 1);
-      program.setEmulatorCommand(emuName);
+      program.getTargetPlatform().setEmulatorCommand(emuName);
       return null;
    }
 
@@ -178,24 +179,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx) {
-      TargetPlatform platform = TargetPlatform.getTargetPlatform(ctx.NAME().getText());
-      if(platform != null) {
-         program.setTargetPlatform(platform);
-      } else {
-         throw new CompileError("Unknown target platform in #pragma platform directive", new StatementSource(ctx));
-      }
+      final String platformName = ctx.NAME().getText();
+      final Path currentFolder = cParser.getSourceFolderPath(ctx);
+      final StatementSource statementSource = new StatementSource(ctx);
+      TargetPlatform.setTargetPlatform(platformName, currentFolder, program, statementSource);
       return null;
    }
 
    @Override
    public Object visitGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx) {
-      TargetCpu cpu = TargetCpu.getTargetCpu(ctx.NAME().getText());
-      if(cpu != null) {
-         program.setTargetCpu(cpu);
-         program.initAsmFragmentSynthesizer();
-      } else {
-         throw new CompileError("Unknown target CPU in #pragma cpu directive", new StatementSource(ctx));
-      }
+      final String cpuName = ctx.NAME().getText();
+      TargetCpu cpu = TargetCpu.getTargetCpu(cpuName, false);
+      program.getTargetPlatform().setCpu(cpu);
+      program.initAsmFragmentSynthesizer();
       return null;
    }
 

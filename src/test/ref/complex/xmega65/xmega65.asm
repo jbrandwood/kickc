@@ -17,7 +17,6 @@
   .label SCREEN = $400
   .label BG_COLOR = $d021
   .label COLS = $d800
-__bbegin:
 .segment Code
 main: {
     // Print message

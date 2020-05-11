@@ -16,6 +16,8 @@ import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -79,36 +81,30 @@ public class Pass4CodeGeneration {
       // Add file level comments
       asm.startChunk(currentScope, null, "File Comments");
       generateComments(asm, program.getFileComments());
-
       asm.startChunk(currentScope, null, "Upstart");
-      Number programPc = program.getProgramPc();
-      if(TargetPlatform.C64BASIC.equals(program.getTargetPlatform())) {
-         useSegments = false;
-         if(programPc == null) programPc = 0x080d;
-         asm.addLine(new AsmSetPc("Basic", AsmFormat.getAsmNumber(0x0801)));
-         asm.addLine(new AsmBasicUpstart("__bbegin"));
-         asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
-      } else if(TargetPlatform.ASM6502.equals(program.getTargetPlatform())) {
-         useSegments = false;
-         if(programPc == null) programPc = 0x2000;
-         asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
-      } else if(TargetPlatform.CUSTOM.equals(program.getTargetPlatform())) {
-         useSegments = true;
-         String linkScriptBody = program.getLinkScriptBody();
-         if(linkScriptBody != null) {
-            String outputFileName = new File(program.getPrimaryFileName()).getName();
-            linkScriptBody = linkScriptBody.replace("%O", outputFileName);
-            linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
-            linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
-            final ControlFlowBlock beginBlock = getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
-            String entryName = (beginBlock == null) ? "main" : "__bbegin";
-            linkScriptBody = linkScriptBody.replace("%E", entryName);
-            asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
-         }
-         if(programPc != null) {
-            asm.addLine(new AsmSetPc("Program", AsmFormat.getAsmNumber(programPc)));
-         }
+      final File linkScriptFile = program.getTargetPlatform().getLinkScriptFile();
+      if(linkScriptFile == null)
+         throw new InternalError("No link script found! Cannot link program.");
+      String linkScriptBody = null;
+      try {
+         linkScriptBody = new String(Files.readAllBytes(linkScriptFile.toPath()));
+      } catch(IOException e) {
+         throw new CompileError("Cannot read link script file " + linkScriptFile.getAbsolutePath(), e);
       }
+      String outputFileName = new File(program.getPrimaryFileName()).getName();
+      linkScriptBody = linkScriptBody.replace("%O", outputFileName);
+      linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
+      linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
+      final boolean skipBegin = Pass5SkipBegin.canSkipBegin(program.getGraph());
+      String entryName = skipBegin ? "main" : "__bbegin";
+      linkScriptBody = linkScriptBody.replace("%E", entryName);
+      Number programPc = program.getProgramPc();
+      if(programPc == null) programPc = 0x080d;
+      linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(programPc));
+      asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
+
+      // If the link script contains ".segment" then generate segments!
+      useSegments = linkScriptBody.contains(".segment");
 
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");

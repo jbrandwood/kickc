@@ -31,6 +31,9 @@ char * const COLORRAM = 0xd800;
 // Color Ram
 char * const COLS = 0xd800;
 
+// Default address of screen character matrix
+char * const DEFAULT_SCREEN = 0x0c00;
+
 // The CIA#1: keyboard matrix, joystick #1/#2
 struct MOS6526_CIA * const CIA1 = 0xdc00;
 // The CIA#2: Serial bus, RS-232, VIC memory bank

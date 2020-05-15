@@ -2,12 +2,14 @@ package dk.camelot64.kickc.test;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
+import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.TargetPlatform;
+import dk.camelot64.kickc.parser.CTargetPlatformParser;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import org.junit.AfterClass;
@@ -42,10 +44,15 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   //@Test
-   //public void testPlus4Define() throws IOException, URISyntaxException {
-   //   compileAndCompare("plus4-define.c", log());
-   //}
+   @Test
+   public void testPlatformPlus4Define() throws IOException, URISyntaxException {
+      compileAndCompare("platform-plus4-define.c");
+   }
+
+   @Test
+   public void testPlatformDefaultDefine() throws IOException, URISyntaxException {
+      compileAndCompare("platform-default-define.c");
+   }
 
    @Test
    public void testIncludeDefine() throws IOException, URISyntaxException {
@@ -4313,7 +4320,6 @@ public class TestPrograms {
       compiler.addIncludePath(stdIncludePath);
       compiler.addLibraryPath(stdLibPath);
       compiler.addTargetPlatformPath(stdPlatformPath);
-      compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
       if(upliftCombinations != null) {
          compiler.setUpliftCombinations(upliftCombinations);
       }
@@ -4321,7 +4327,11 @@ public class TestPrograms {
       final Path filePath = Paths.get(fileName);
       files.add(filePath);
       Program program = compiler.getProgram();
-      TargetPlatform.setTargetPlatform(TargetPlatform.DEFAULT_NAME, filePath, program, null);
+
+      final File platformFile = SourceLoader.loadFile(TargetPlatform.DEFAULT_NAME + "." + CTargetPlatformParser.FILE_EXTENSION, filePath, program.getTargetPlatformPaths());
+      final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(TargetPlatform.DEFAULT_NAME, platformFile, filePath, program.getTargetPlatformPaths());
+      program.setTargetPlatform(targetPlatform);
+      compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
       compiler.compile(files, program.getTargetPlatform().getDefines());
       compileAsm(fileName, program);
       boolean success = true;

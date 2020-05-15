@@ -6,6 +6,7 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.parser.CTargetPlatformParser;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import picocli.CommandLine;
@@ -156,7 +157,7 @@ public class KickC implements Callable<Integer> {
    private boolean interleaveIclFile = false;
 
    @CommandLine.Option(names = {"-p", "-t", "-target", "-platform"}, description = "The target platform. Default is C64 with BASIC upstart. See #pragma target")
-   private String targetPlatform = null;
+   private String targetPlatform = TargetPlatform.DEFAULT_NAME;
 
    @CommandLine.Option(names = {"-cpu"}, description = "The target CPU. Default is 6502 with illegal opcodes. See #pragma cpu")
    private String cpu = null;
@@ -228,17 +229,14 @@ public class KickC implements Callable<Integer> {
 
       // Set up Target Platform
       try {
-         if(targetPlatform != null) {
-            TargetPlatform.setTargetPlatform(targetPlatform, currentPath, program, null);
-         } else {
-            TargetPlatform.setTargetPlatform(TargetPlatform.DEFAULT_NAME, currentPath, program, null);
-         }
+         final File platformFile = SourceLoader.loadFile(targetPlatform + "." + CTargetPlatformParser.FILE_EXTENSION, currentPath, program.getTargetPlatformPaths());
+         final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(this.targetPlatform, platformFile, currentPath, program.getTargetPlatformPaths());
+         program.setTargetPlatform(targetPlatform);
       } catch(CompileError e) {
          // Print the error and exit with compile error
          System.err.println(e.getMessage());
          return COMPILE_ERROR;
       }
-
 
       // Update link script
       if(linkScript != null) {
@@ -350,9 +348,9 @@ public class KickC implements Callable<Integer> {
          cFiles.stream().forEach(path -> CFileNames.append(path.toString()).append(" "));
 
          Map<String, String> effectiveDefines = new LinkedHashMap<>();
-         if(defines!=null)
+         if(defines != null)
             effectiveDefines.putAll(defines);
-         if(program.getTargetPlatform().getDefines()!=null)
+         if(program.getTargetPlatform().getDefines() != null)
             effectiveDefines.putAll(program.getTargetPlatform().getDefines());
 
          if(preprocess) {

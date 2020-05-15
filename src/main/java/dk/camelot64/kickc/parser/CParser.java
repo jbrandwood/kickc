@@ -4,6 +4,7 @@ import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.TargetPlatform;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import org.antlr.v4.runtime.*;
 
@@ -65,7 +66,7 @@ public class CParser {
       this.program = program;
       this.cFiles = new LinkedHashMap<>();
       this.cTokenSource = new CTokenSource();
-      this.preprocessor = new CPreprocessor(cTokenSource, new HashMap<>());
+      this.preprocessor = new CPreprocessor(this, cTokenSource, new HashMap<>());
       this.preprocessedTokenStream = new CommonTokenStream(preprocessor);
       this.parser = new KickCParser(preprocessedTokenStream, this);
       this.typedefs = new ArrayList<>();
@@ -103,6 +104,7 @@ public class CParser {
 
    /**
     * Define a new macro
+    *
     * @param macroName The macro name
     * @param macroBody The macro body
     */
@@ -115,6 +117,7 @@ public class CParser {
 
    /**
     * Undef a macro
+    *
     * @param macroName The macro name
     */
    public void undef(String macroName) {
@@ -158,7 +161,7 @@ public class CParser {
     *
     * @return The path of the folder containing the source file currently being tokenized
     */
-   private Path getCurrentSourceFolderPath() {
+   public Path getCurrentSourceFolderPath() {
       TokenSource currentSource = cTokenSource.getCurrentSource();
       String sourceName = currentSource.getSourceName();
       CFile cFile = cFiles.get(sourceName);
@@ -221,6 +224,34 @@ public class CParser {
          return lexer;
       } catch(IOException e) {
          throw new CompileError("Error parsing file " + fileName, e);
+      }
+   }
+
+   public void loadTargetPlatform(String platformName, Path currentPath) {
+      final File platformFile = SourceLoader.loadFile(platformName + "." + CTargetPlatformParser.FILE_EXTENSION, currentPath, program.getTargetPlatformPaths());
+      if(platformFile != null) {
+         final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(platformName, platformFile, currentPath, program.getTargetPlatformPaths());
+         // Remove macros from existing platform!
+         if(program.getTargetPlatform() != null && program.getTargetPlatform().getDefines() != null)
+            for(String macroName : program.getTargetPlatform().getDefines().keySet())
+               preprocessor.undef(macroName);
+         // Set the new program platform
+         program.setTargetPlatform(targetPlatform);
+         // Define macros from new platform!
+         if(program.getTargetPlatform().getDefines() != null)
+            for(String macroName : program.getTargetPlatform().getDefines().keySet())
+               define(macroName, program.getTargetPlatform().getDefines().get(macroName));
+         // Re-initialize ASM fragment synthesizer
+         program.initAsmFragmentSynthesizer();
+      } else {
+         StringBuilder supported = new StringBuilder();
+         final List<File> platformFiles = SourceLoader.listFiles(currentPath, program.getTargetPlatformPaths(), CTargetPlatformParser.FILE_EXTENSION);
+         for(File file : platformFiles) {
+            String name = file.getName();
+            name = name.substring(0, name.length() - CTargetPlatformParser.FILE_EXTENSION.length() - 1);
+            supported.append(name).append(" ");
+         }
+         throw new CompileError("Unknown target platform '" + platformName + "'. Supported: " + supported.toString());
       }
    }
 

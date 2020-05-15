@@ -22,6 +22,9 @@ import java.util.*;
  */
 public class CPreprocessor implements TokenSource {
 
+   /** The CParser used for loading files. */
+   private CParser cParser;
+
    /** The token source containing the input */
    private CTokenSource input;
 
@@ -47,7 +50,8 @@ public class CPreprocessor implements TokenSource {
       }
    }
 
-   public CPreprocessor(TokenSource input, Map<String, Macro> defines) {
+   public CPreprocessor(CParser cParser, TokenSource input, Map<String, Macro> defines) {
+      this.cParser = cParser;
       if(input instanceof CTokenSource) {
          // If possible use the input directly instead of wrapping it
          this.input = (CTokenSource) input;
@@ -135,11 +139,14 @@ public class CPreprocessor implements TokenSource {
          return true;
       } else if(inputToken.getType() == KickCLexer.NAME) {
          return expand(inputToken, cTokenSource);
-      //} else if(inputToken.getType() == KickCLexer.PRAGMA) {
-      //   return pragma(inputToken, cTokenSource);
+      } else if(inputToken.getType() == KickCLexer.PRAGMA) {
+         return pragma(inputToken, cTokenSource);
       }
       return false;
    }
+
+   /** #pragmas to be handled by the parser (skipped in the preprocessor). */
+   private List<Token> parserPragmas = new ArrayList<>();
 
    /**
     * Handle any #pragma that must be handled by the preprocessor
@@ -149,13 +156,11 @@ public class CPreprocessor implements TokenSource {
     * @return true if the input token was preprocessed (and should not be added to the output). False if the token was not a preprocessor token
     */
    private boolean pragma(Token inputToken, CTokenSource cTokenSource) {
-      if(inputToken instanceof PragmaToken)
+      if(parserPragmas.contains(inputToken))
          // Already examined by the preprocessor - and determined to be for the parser
          return false;
       final List<Token> ws = skipWhitespace(cTokenSource);
       final Token pragmaType = cTokenSource.nextToken();
-
-      /*
       if(KickCLexer.TARGET == pragmaType.getType()) {
          skipWhitespace(cTokenSource);
          nextToken(cTokenSource, KickCLexer.PAR_BEGIN);
@@ -163,15 +168,14 @@ public class CPreprocessor implements TokenSource {
          final String targetName = nextToken(cTokenSource, KickCLexer.NAME).getText();
          skipWhitespace(cTokenSource);
          nextToken(cTokenSource, KickCLexer.PAR_END);
-         //TargetPlatform.setTargetPlatform(targetName, null, );
-         throw new InternalError("TODO: Implement #pragma target");
-         // return true;
+         cParser.loadTargetPlatform(targetName, cParser.getCurrentSourceFolderPath());
+         return true;
       }
-       */
 
       // Pass on the #pragma to the parser
+      parserPragmas.add(inputToken);
       final ArrayList<Token> pragmaTokens = new ArrayList<>();
-      pragmaTokens.add(new PragmaToken(inputToken));
+      pragmaTokens.add(inputToken);
       pragmaTokens.addAll(ws);
       pragmaTokens.add(pragmaType);
       cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
@@ -280,7 +284,7 @@ public class CPreprocessor implements TokenSource {
             List<List<Token>> expandedParamValues = new ArrayList<>();
             for(List<Token> paramTokens : paramValues) {
                List<Token> expandedParamValue = new ArrayList<>();
-               CPreprocessor subPreprocessor = new CPreprocessor(new ListTokenSource(paramTokens), new HashMap<>(defines));
+               CPreprocessor subPreprocessor = new CPreprocessor(cParser, new ListTokenSource(paramTokens), new HashMap<>(defines));
                while(true) {
                   final Token expandedToken = subPreprocessor.nextToken();
                   if(expandedToken.getType() == Token.EOF)
@@ -409,7 +413,7 @@ public class CPreprocessor implements TokenSource {
       // Evaluate any uses of the defined operator (to prevent expansion of the named macro)
       evaluateDefinedOperator(conditionTokens);
       // Expand the condition body before evaluating it
-      CPreprocessor subPreprocessor = new CPreprocessor(new ListTokenSource(conditionTokens), new HashMap<>(defines));
+      CPreprocessor subPreprocessor = new CPreprocessor(cParser, new ListTokenSource(conditionTokens), new HashMap<>(defines));
       // Parse the expression
       KickCParser.ExprContext conditionExpr = ExprParser.parseExpression(subPreprocessor);
       // Evaluate the expression
@@ -729,70 +733,5 @@ public class CPreprocessor implements TokenSource {
          return subToken.getInputStream();
       }
    }
-
-   /**
-    * A pragma token that should be handled in the parser (not in the lexer)
-    * Used to allow the lexer to ensure the preprocessor skips it the second time around.
-    **/
-   public static class PragmaToken implements Token {
-
-      /** The underlying pragma token. */
-      private Token subToken;
-
-      PragmaToken(Token subToken) {
-         this.subToken = subToken;
-      }
-
-      @Override
-      public String getText() {
-         return subToken.getText();
-      }
-
-      @Override
-      public int getType() {
-         return subToken.getType();
-      }
-
-      @Override
-      public int getLine() {
-         return subToken.getLine();
-      }
-
-      @Override
-      public int getCharPositionInLine() {
-         return subToken.getCharPositionInLine();
-      }
-
-      @Override
-      public int getChannel() {
-         return subToken.getChannel();
-      }
-
-      @Override
-      public int getTokenIndex() {
-         return subToken.getTokenIndex();
-      }
-
-      @Override
-      public int getStartIndex() {
-         return subToken.getStartIndex();
-      }
-
-      @Override
-      public int getStopIndex() {
-         return subToken.getStopIndex();
-      }
-
-      @Override
-      public TokenSource getTokenSource() {
-         return subToken.getTokenSource();
-      }
-
-      @Override
-      public CharStream getInputStream() {
-         return subToken.getInputStream();
-      }
-   }
-
 
 }

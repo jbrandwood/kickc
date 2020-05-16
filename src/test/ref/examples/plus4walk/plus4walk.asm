@@ -12,12 +12,12 @@
   .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
   .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
   .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d
-  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
-  .label TED = $ff00
   // Default address of screen luminance/color matrix
   .label DEFAULT_COLORRAM = $800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
+  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
+  .label TED = $ff00
   // The random state variable
   .label rand_state = 3
 .segment Code

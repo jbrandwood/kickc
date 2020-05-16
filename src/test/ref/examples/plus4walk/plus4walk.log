@@ -239,6 +239,13 @@ main::@return: scope:[main]  from main::@1
 @end: scope:[]  from @3
 
 SYMBOL TABLE SSA
+(byte) $0::BASIC
+(byte) $0::CARTRIDGE_HIGH
+(byte) $0::CARTRIDGE_LOW
+(byte) $0::FUNCTION_HIGH
+(byte) $0::FUNCTION_LOW
+(byte) $0::KERNAL
+(byte) $0::UNUSED
 (label) @1
 (label) @2
 (label) @3
@@ -247,6 +254,11 @@ SYMBOL TABLE SSA
 (const nomodify byte*) DEFAULT_COLORRAM = (byte*)(number) $800
 (const nomodify byte*) DEFAULT_SCREEN = (byte*)(number) $c00
 (const byte*) FADE[(number) $10]  = { (byte) 2, (byte) $12, (byte) $22, (byte) $32, (byte) $42, (byte) $52, (byte) $62, (byte) $72, (byte) $76, (byte) $66, (byte) $56, (byte) $46, (byte) $36, (byte) $26, (byte) $16, (byte) 6 }
+(byte) MOS6529_PIO::PORT
+(byte) MOS6551_ACIA::COMMAND
+(byte) MOS6551_ACIA::CONTROL
+(byte) MOS6551_ACIA::DATA
+(byte) MOS6551_ACIA::STATUS
 (byte) MOS7360_TED::BG_COLOR
 (byte) MOS7360_TED::BG_COLOR1
 (byte) MOS7360_TED::BG_COLOR2
@@ -279,6 +291,8 @@ SYMBOL TABLE SSA
 (byte) MOS7360_TED::SOUND_CONTROL
 (const byte*) MOS7360_TED::UNUSED[(number) $1d]  = { fill( $1d, 0) }
 (byte) MOS7360_TED::VSCAN_POS
+(byte) MOS7501_PORT::DDR
+(byte) MOS7501_PORT::PORT
 (const byte) OFFSET_STRUCT_MOS7360_TED_BG_COLOR = (byte) $15
 (const byte) OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = (byte) $19
 (const byte) OFFSET_STRUCT_MOS7360_TED_RASTER_LO = (byte) $1d
@@ -520,9 +534,9 @@ Inlining cast (byte) main::y#4 ← (unumber)(number) $18
 Inlining cast (byte) main::x#3 ← (unumber)(number) 0
 Inlining cast (byte) main::x#4 ← (unumber)(number) $27
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (struct MOS7360_TED*) 65280
 Simplifying constant pointer cast (byte*) 2048
 Simplifying constant pointer cast (byte*) 3072
+Simplifying constant pointer cast (struct MOS7360_TED*) 65280
 Simplifying constant integer cast 0
 Simplifying constant integer cast 7
 Simplifying constant integer cast 9
@@ -918,6 +932,18 @@ memset::@3: scope:[memset]  from memset::@2
 
 
 VARIABLE REGISTER WEIGHTS
+(byte) $0::BASIC
+(byte) $0::CARTRIDGE_HIGH
+(byte) $0::CARTRIDGE_LOW
+(byte) $0::FUNCTION_HIGH
+(byte) $0::FUNCTION_LOW
+(byte) $0::KERNAL
+(byte) $0::UNUSED
+(byte) MOS6529_PIO::PORT
+(byte) MOS6551_ACIA::COMMAND
+(byte) MOS6551_ACIA::CONTROL
+(byte) MOS6551_ACIA::DATA
+(byte) MOS6551_ACIA::STATUS
 (byte) MOS7360_TED::BG_COLOR
 (byte) MOS7360_TED::BG_COLOR1
 (byte) MOS7360_TED::BG_COLOR2
@@ -949,6 +975,8 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS7360_TED::ROM_SWITCH
 (byte) MOS7360_TED::SOUND_CONTROL
 (byte) MOS7360_TED::VSCAN_POS
+(byte) MOS7501_PORT::DDR
+(byte) MOS7501_PORT::PORT
 (void()) main()
 (word~) main::$10 202.0
 (byte~) main::$12 202.0
@@ -1113,12 +1141,12 @@ Target platform is plus4 / MOS6502X
   .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
   .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
   .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d
-  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
-  .label TED = $ff00
   // Default address of screen luminance/color matrix
   .label DEFAULT_COLORRAM = $800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
+  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
+  .label TED = $ff00
   // The random state variable
   .label rand_state = $27
   // The random state variable
@@ -1700,6 +1728,10 @@ Uplift Scope [rand] 2,002: zp[2]:37 [ rand::$0 ] 2,002: zp[2]:41 [ rand::$1 ] 2,
 Uplift Scope [memset] 3,572.33: zp[2]:9 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 183.67: zp[2]:49 [ memset::end#0 ] 143: zp[1]:8 [ memset::c#5 ] 0: zp[2]:6 [ memset::str#4 ] 
 Uplift Scope [] 1,501.5: zp[2]:39 [ rand_state#1 ] 1,501.5: zp[2]:43 [ rand_state#2 ] 325.72: zp[2]:4 [ rand_state#11 rand_state#3 ] 
 Uplift Scope [MOS7360_TED] 
+Uplift Scope [MOS6551_ACIA] 
+Uplift Scope [MOS6529_PIO] 
+Uplift Scope [MOS7501_PORT] 
+Uplift Scope [$0] 
 Uplift Scope [RADIX] 
 
 Uplifting [main] best 8346 combination reg byte x [ main::x#11 main::x#10 main::x#2 main::x#1 ] zp[1]:2 [ main::y#11 main::y#10 main::y#2 main::y#1 ] zp[2]:21 [ main::$5 ] zp[2]:13 [ main::$29 ] zp[2]:15 [ main::$30 ] zp[2]:17 [ main::$3 ] zp[2]:23 [ main::$6 ] reg byte a [ main::$9 ] zp[2]:31 [ main::$10 ] reg byte a [ main::$12 ] reg byte a [ main::$13 ] zp[1]:36 [ main::$18 ] zp[2]:11 [ main::$24 ] zp[1]:33 [ main::rnd#0 ] zp[1]:25 [ main::cnt#0 ] zp[2]:26 [ main::$8 ] zp[2]:19 [ main::offset#0 ] 
@@ -1708,6 +1740,10 @@ Uplifting [rand] best 8346 combination zp[2]:37 [ rand::$0 ] zp[2]:41 [ rand::$1
 Uplifting [memset] best 8327 combination zp[2]:9 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:49 [ memset::end#0 ] reg byte x [ memset::c#5 ] zp[2]:6 [ memset::str#4 ] 
 Uplifting [] best 8327 combination zp[2]:39 [ rand_state#1 ] zp[2]:43 [ rand_state#2 ] zp[2]:4 [ rand_state#11 rand_state#3 ] 
 Uplifting [MOS7360_TED] best 8327 combination 
+Uplifting [MOS6551_ACIA] best 8327 combination 
+Uplifting [MOS6529_PIO] best 8327 combination 
+Uplifting [MOS7501_PORT] best 8327 combination 
+Uplifting [$0] best 8327 combination 
 Uplifting [RADIX] best 8327 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ main::y#11 main::y#10 main::y#2 main::y#1 ]
 Uplifting [main] best 8327 combination zp[1]:2 [ main::y#11 main::y#10 main::y#2 main::y#1 ] 
@@ -1756,12 +1792,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
   .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
   .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d
-  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
-  .label TED = $ff00
   // Default address of screen luminance/color matrix
   .label DEFAULT_COLORRAM = $800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
+  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
+  .label TED = $ff00
   // The random state variable
   .label rand_state = 3
   // @begin
@@ -2295,12 +2331,24 @@ Removing unreachable instruction jmp __b6
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
+(byte) $0::BASIC
+(byte) $0::CARTRIDGE_HIGH
+(byte) $0::CARTRIDGE_LOW
+(byte) $0::FUNCTION_HIGH
+(byte) $0::FUNCTION_LOW
+(byte) $0::KERNAL
+(byte) $0::UNUSED
 (label) @1
 (label) @begin
 (label) @end
 (const nomodify byte*) DEFAULT_COLORRAM = (byte*) 2048
 (const nomodify byte*) DEFAULT_SCREEN = (byte*) 3072
 (const byte*) FADE[(number) $10]  = { (byte) 2, (byte) $12, (byte) $22, (byte) $32, (byte) $42, (byte) $52, (byte) $62, (byte) $72, (byte) $76, (byte) $66, (byte) $56, (byte) $46, (byte) $36, (byte) $26, (byte) $16, (byte) 6 }
+(byte) MOS6529_PIO::PORT
+(byte) MOS6551_ACIA::COMMAND
+(byte) MOS6551_ACIA::CONTROL
+(byte) MOS6551_ACIA::DATA
+(byte) MOS6551_ACIA::STATUS
 (byte) MOS7360_TED::BG_COLOR
 (byte) MOS7360_TED::BG_COLOR1
 (byte) MOS7360_TED::BG_COLOR2
@@ -2333,6 +2381,8 @@ FINAL SYMBOL TABLE
 (byte) MOS7360_TED::SOUND_CONTROL
 (const byte*) MOS7360_TED::UNUSED[(number) $1d]  = { fill( $1d, 0) }
 (byte) MOS7360_TED::VSCAN_POS
+(byte) MOS7501_PORT::DDR
+(byte) MOS7501_PORT::PORT
 (const byte) OFFSET_STRUCT_MOS7360_TED_BG_COLOR = (byte) $15
 (const byte) OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = (byte) $19
 (const byte) OFFSET_STRUCT_MOS7360_TED_RASTER_LO = (byte) $1d
@@ -2459,12 +2509,12 @@ Score: 6721
   .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
   .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
   .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d
-  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
-  .label TED = $ff00
   // Default address of screen luminance/color matrix
   .label DEFAULT_COLORRAM = $800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
+  // The TED chip controlling video and sound on the Plus/4 and Commodore 16
+  .label TED = $ff00
   // The random state variable
   .label rand_state = 3
   // @begin

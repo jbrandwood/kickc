@@ -234,7 +234,7 @@ keyboard_key_pressed: {
 // The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
 // Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-// leading to erroneous readings. You must disable kill the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]

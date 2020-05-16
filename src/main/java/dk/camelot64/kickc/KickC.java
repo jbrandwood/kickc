@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
       descriptionHeading = "%nDescription:%n%n",
       parameterListHeading = "%nParameters:%n",
       optionListHeading = "%nOptions:%n",
-      version = "KickC 0.8.1 BETA"
+      version = "KickC 0.8.2 BETA"
 )
 public class KickC implements Callable<Integer> {
 

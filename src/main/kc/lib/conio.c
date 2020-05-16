@@ -2,32 +2,76 @@
 // Implements similar functions as conio.h from CC65 for compatibility
 // See https://github.com/cc65/cc65/blob/master/include/conio.h
 //
-// Currently only the C64 platform is supported
-#include <string.h>
+// Currently only the C64/PLUS4 platforms are supported
 #include <conio.h>
+#include <string.h>
 
-// The screen width
-#define CONIO_WIDTH 40
-// The screen height
-#define CONIO_HEIGHT 25
-// The screen bytes
-#define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
+#if defined(__C64__)
 
-// The text screen address
-char * const CONIO_SCREEN_TEXT = 0x0400;
-// The color screen address
-char * const CONIO_SCREEN_COLORS = 0xd800;
-// The background color register address
-char * const CONIO_BGCOLOR = 0xd021;
-// The border color register address
-char * const CONIO_BORDERCOLOR = 0xd020;
-// CIA#1 Port A: keyboard matrix columns and joystick #2
-char* const CONIO_CIA1_PORT_A = 0xdc00;
-// CIA#1 Port B: keyboard matrix rows and joystick #1.
-char* const CONIO_CIA1_PORT_B = 0xdc01;
+    // The screen width
+    #define CONIO_WIDTH 40
+    // The screen height
+    #define CONIO_HEIGHT 25
+    // The screen bytes
+    #define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
+    // The text screen address
+    char * const CONIO_SCREEN_TEXT = 0x0400;
+    // The color screen address
+    char * const CONIO_SCREEN_COLORS = 0xd800;
+    // The background color register address
+    char * const CONIO_BGCOLOR = 0xd021;
+    // The border color register address
+    char * const CONIO_BORDERCOLOR = 0xd020;
+    // The default text color
+    const char CONIO_TEXTCOLOR_DEFAULT = 0xe;
 
-// The default text color
-const char CONIO_TEXTCOLOR_DEFAULT = 0xe;
+    // Return true if there's a key waiting, return false if not
+    unsigned char kbhit (void) {
+        // CIA#1 Port A: keyboard matrix columns and joystick #2
+        char* const CONIO_CIA1_PORT_A = 0xdc00;
+        // CIA#1 Port B: keyboard matrix rows and joystick #1.
+        char* const CONIO_CIA1_PORT_B = 0xdc01;
+        *CONIO_CIA1_PORT_A = 0;
+        return ~*CONIO_CIA1_PORT_B;
+    }
+
+#elif defined(__PLUS4__)
+
+    #include <plus4.h>
+
+    // The screen width
+    #define CONIO_WIDTH 40
+    // The screen height
+    #define CONIO_HEIGHT 25
+    // The screen bytes
+    #define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
+
+    // The text screen address
+    char * const CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
+    // The color screen address
+    char * const CONIO_SCREEN_COLORS = DEFAULT_COLORRAM;
+    // The background color register address
+    char * const CONIO_BGCOLOR = &TED->BG_COLOR;
+    // The border color register address
+    char * const CONIO_BORDERCOLOR = &TED->BORDER_COLOR;
+    // The default text color
+    const char CONIO_TEXTCOLOR_DEFAULT = 0;
+
+    // Return true if there's a key waiting, return false if not
+    unsigned char kbhit (void) {
+        // Read all keyboard matrix rows
+        KEYBOARD_PORT->PORT = 0x00;
+        // Write to the keyboard input to latch the matrix column values
+        // TODO: Currently inline ASM is used to prevent the ASM optimizer from removing the load of the KEYBOARD_INPUT.
+        // TED->KEYBOARD_INPUT = 0;
+        asm { sta $ff08 }
+        // Read the keyboard input
+        return ~TED->KEYBOARD_INPUT;
+    }
+
+#else
+// #error "Target platform does not support conio.h"
+#endif
 
 // The current cursor x-position
 __ma char conio_cursor_x = 0;
@@ -208,12 +252,6 @@ unsigned char bordercolor(unsigned char color) {
     char old = *CONIO_BORDERCOLOR;
     *CONIO_BORDERCOLOR = color;
     return old;
-}
-
-// Return true if there's a key waiting, return false if not
-unsigned char kbhit (void) {
-    *CONIO_CIA1_PORT_A = 0;
-    return ~*CONIO_CIA1_PORT_B;
 }
 
 // If onoff is 1, a cursor is displayed when waiting for keyboard input.

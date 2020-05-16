@@ -376,7 +376,7 @@ public class CPreprocessor implements TokenSource {
    }
 
    /**
-    * #ifdef checks if a macro is _NOT_ defined.
+    * #ifndef checks if a macro is _NOT_ defined.
     *
     * @param cTokenSource The token source used to get the macro name
     */

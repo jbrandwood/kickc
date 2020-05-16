@@ -44,10 +44,6 @@
   .label CIA2_TIMER_AB = $dd04
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CONIO_CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CONIO_CIA1_PORT_B = $dc01
   // The line buffer
   .label LINE_BUFFER = $2000
   // The two charsets used as screen buffers
@@ -885,6 +881,10 @@ irq_bottom_2: {
 }
 // Return true if there's a key waiting, return false if not
 kbhit: {
+    // CIA#1 Port A: keyboard matrix columns and joystick #2
+    .label CONIO_CIA1_PORT_A = $dc00
+    // CIA#1 Port B: keyboard matrix rows and joystick #1.
+    .label CONIO_CIA1_PORT_B = $dc01
     // *CONIO_CIA1_PORT_A = 0
     lda #0
     sta CONIO_CIA1_PORT_A

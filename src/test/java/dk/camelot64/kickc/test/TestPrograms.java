@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPlus4Kbhit() throws IOException, URISyntaxException {
+      compileAndCompare("plus4-kbhit.c");
+   }
+
+   @Test
    public void testPlatformPlus4Define() throws IOException, URISyntaxException {
       compileAndCompare("platform-plus4-define.c");
    }

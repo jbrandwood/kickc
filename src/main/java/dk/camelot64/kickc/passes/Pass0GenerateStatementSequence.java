@@ -1739,7 +1739,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.NAME() != null) {
          structDefName = ctx.NAME().getText();
       } else {
-         structDefName = getCurrentScope().allocateIntermediateVariableName();
+         structDefName = program.getScope().allocateIntermediateVariableName();
       }
       StructDefinition structDefinition = program.getScope().addStructDefinition(structDefName);
       scopeStack.push(structDefinition);

@@ -29,7 +29,7 @@ struct MOS7360_TED {
     unsigned char CONTROL2;
     // Keyboard input latch. Giving a strobe - writing to the register, the latch stores the values of the input-lines.
     // Then, we can read them from this register.
-    unsigned char KEYBOARD_INPUT;
+    volatile unsigned char KEYBOARD_INPUT;
     // Interrupt request register. When a counter sends want to send an IRQ, it's bit will appear as a 0; then, if the
     // IRQ was caused then highmost bit is set.
     //    Bit 0     : Unused

@@ -35,10 +35,6 @@
   .label CONIO_BGCOLOR = $d021
   // The border color register address
   .label CONIO_BORDERCOLOR = $d020
-  // CIA#1 Port A: keyboard matrix columns and joystick #2
-  .label CONIO_CIA1_PORT_A = $dc00
-  // CIA#1 Port B: keyboard matrix rows and joystick #1.
-  .label CONIO_CIA1_PORT_B = $dc01
   .label VIC_MEMORY = $d018
   .label conio_cursor_x = 9
   .label conio_cursor_y = $a
@@ -175,6 +171,10 @@ clrscr: {
 }
 // Return true if there's a key waiting, return false if not
 kbhit: {
+    // CIA#1 Port A: keyboard matrix columns and joystick #2
+    .label CONIO_CIA1_PORT_A = $dc00
+    // CIA#1 Port B: keyboard matrix rows and joystick #1.
+    .label CONIO_CIA1_PORT_B = $dc01
     // *CONIO_CIA1_PORT_A = 0
     lda #0
     sta CONIO_CIA1_PORT_A

@@ -46,7 +46,7 @@ public class TestPrograms {
 
    @Test
    public void testPlus4KeyboardTest() throws IOException, URISyntaxException {
-      compileAndCompare("plus4-keyboard-test.c")
+      compileAndCompare("plus4-keyboard-test.c");
    }
 
    @Test

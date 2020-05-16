@@ -15,11 +15,12 @@ struct MOS6561_VIC {
     //   bit 7: Upper bit of video matrix address (also controls address of COLOR RAM)
     char MATRIX_COLUMNS;
     //   Number of Screen Rows
-    //   bits 1-6: set ol rows
-    //   bit 7:  sets or 16 chars
+    //   bit 0: select 0) 8x8 chars or 1) 16x8 chars
+    //   bits 1-6: Number of rows
+    //   bit 7: Current TV raster mean line bit 0.
     char MATRIX_ROWS;
     //   The Raster Line
-    //   bits 0-7: Current TV raster beam line
+    //   bits 0-7: Current TV raster beam line (bit 8-1)
     char RASTER;
     // Character and Screen Address
     //   bits 0-3: start of character memory (default 0)

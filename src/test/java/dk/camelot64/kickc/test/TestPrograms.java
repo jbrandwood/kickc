@@ -45,6 +45,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVic20Raster() throws IOException, URISyntaxException {
+      compileAndCompare("vic20-raster.c");
+   }
+
+
+   @Test
    public void testVic20Simple() throws IOException, URISyntaxException {
       compileAndCompare("vic20-simple.c");
    }

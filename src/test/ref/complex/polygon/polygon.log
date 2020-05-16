@@ -88,11 +88,11 @@ clock_start: scope:[clock_start]  from main::@8
 clock_start::@return: scope:[clock_start]  from clock_start
   return 
   to:@return
-$$
+
 (byte()) kbhit()
 kbhit: scope:[kbhit]  from irq_bottom_2
-  *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (number) 0
-  (byte~) kbhit::$0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B)
+  *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (number) 0
+  (byte~) kbhit::$0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B)
   (byte) kbhit::return#0 ← (byte~) kbhit::$0
   to:kbhit::@return
 kbhit::@return: scope:[kbhit]  from kbhit
@@ -1321,8 +1321,8 @@ interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 (byte()) kbhit()
 (byte~) kbhit::$0
 (label) kbhit::@return
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_A = (byte*)(number) $dc00
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_B = (byte*)(number) $dc01
+(const nomodify byte*) kbhit::CIA1_PORT_A = (byte*)(number) $dc00
+(const nomodify byte*) kbhit::CIA1_PORT_B = (byte*)(number) $dc01
 (byte) kbhit::return
 (byte) kbhit::return#0
 (byte) kbhit::return#1
@@ -2073,7 +2073,7 @@ Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memse
 Adding number conversion cast (unumber) $ffffffff in (number~) clock::$0 ← (number) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
 Adding number conversion cast (unumber) clock::$0 in (number~) clock::$0 ← (unumber)(number) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
 Adding number conversion cast (unumber) $ffffffff in *((const nomodify dword*) CIA2_TIMER_AB) ← (number) $ffffffff
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (number) 0
 Adding number conversion cast (unumber) $3fff in (number~) toD0181_$0 ← (word~) toD0181_$7 & (number) $3fff
 Adding number conversion cast (unumber) toD0181_$0 in (number~) toD0181_$0 ← (word~) toD0181_$7 & (unumber)(number) $3fff
 Adding number conversion cast (unumber) 4 in (number~) toD0181_$1 ← (unumber~) toD0181_$0 * (number) 4
@@ -2205,7 +2205,7 @@ Adding number conversion cast (unumber) 1 in (byte) sgn_u8::return#3 ← (number
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#5
 Inlining cast *((const nomodify dword*) CIA2_TIMER_AB) ← (unumber)(number) $ffffffff
-Inlining cast *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (unumber)(number) 0
 Inlining cast (word) memset::num#0 ← (unumber)(number) $28*(number) $19
 Inlining cast (byte) memset::c#1 ← (unumber)(number) 0
 Inlining cast (word) memset::num#1 ← (unumber)(number) $28*(number) $19
@@ -3608,8 +3608,8 @@ irq_bottom_2::@1: scope:[irq_bottom_2]  from irq_bottom_2::@4
 
 (byte()) kbhit()
 kbhit: scope:[kbhit]  from irq_bottom_2
-  [219] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0
-  [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B)
+  [219] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0
+  [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B)
   to:kbhit::@return
 kbhit::@return: scope:[kbhit]  from kbhit
   [221] return 
@@ -5638,16 +5638,16 @@ irq_bottom_2: {
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CONIO_CIA1_PORT_A = $dc00
+    .label CIA1_PORT_A = $dc00
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CONIO_CIA1_PORT_B = $dc01
+    .label CIA1_PORT_B = $dc01
     .label return = $5d
     .label return_1 = $5b
-    // [219] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [219] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta CONIO_CIA1_PORT_A
-    // [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
-    lda CONIO_CIA1_PORT_B
+    sta CIA1_PORT_A
+    // [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
+    lda CIA1_PORT_B
     eor #$ff
     sta.z return
     jmp __breturn
@@ -5853,8 +5853,8 @@ Statement [214] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byt
 Statement [215] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (const nomodify byte) BORDER_YPOS_BOTTOM-(byte) 8 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [216] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [218] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_MEMORY) ← (volatile byte) canvas_show_memory [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [219] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 [ ] ( kbhit:207 [ canvas_show_memory ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
-Statement [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) [ kbhit::return#0 ] ( kbhit:207 [ canvas_show_memory kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [219] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 [ ] ( kbhit:207 [ canvas_show_memory ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) [ kbhit::return#0 ] ( kbhit:207 [ canvas_show_memory kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
 Statement [222] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) DARK_GREY [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [224] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_MEMORY) ← (const byte) irq_bottom_1::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [225] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -5955,8 +5955,8 @@ Statement [214] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byt
 Statement [215] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (const nomodify byte) BORDER_YPOS_BOTTOM-(byte) 8 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [216] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq_bottom_1() [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [218] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_MEMORY) ← (volatile byte) canvas_show_memory [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [219] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 [ ] ( kbhit:207 [ canvas_show_memory ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
-Statement [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) [ kbhit::return#0 ] ( kbhit:207 [ canvas_show_memory kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [219] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 [ ] ( kbhit:207 [ canvas_show_memory ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) [ kbhit::return#0 ] ( kbhit:207 [ canvas_show_memory kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
 Statement [222] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) DARK_GREY [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [224] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_MEMORY) ← (const byte) irq_bottom_1::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [225] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -7524,14 +7524,14 @@ irq_bottom_2: {
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CONIO_CIA1_PORT_A = $dc00
+    .label CIA1_PORT_A = $dc00
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CONIO_CIA1_PORT_B = $dc01
-    // [219] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    .label CIA1_PORT_B = $dc01
+    // [219] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta CONIO_CIA1_PORT_A
-    // [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
-    lda CONIO_CIA1_PORT_B
+    sta CIA1_PORT_A
+    // [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    lda CIA1_PORT_B
     eor #$ff
     jmp __breturn
     // kbhit::@return
@@ -8017,8 +8017,8 @@ interrupt(KERNEL_KEYBOARD)(void()) irq_bottom_2()
 (byte*) irq_bottom_2::toD0181_screen
 (byte()) kbhit()
 (label) kbhit::@return
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_A = (byte*) 56320
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_B = (byte*) 56321
+(const nomodify byte*) kbhit::CIA1_PORT_A = (byte*) 56320
+(const nomodify byte*) kbhit::CIA1_PORT_B = (byte*) 56321
 (byte) kbhit::return
 (byte) kbhit::return#0 reg byte a 4.333333333333333
 (byte) kbhit::return#2 reg byte a 4.0
@@ -9648,16 +9648,16 @@ irq_bottom_2: {
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CONIO_CIA1_PORT_A = $dc00
+    .label CIA1_PORT_A = $dc00
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CONIO_CIA1_PORT_B = $dc01
-    // *CONIO_CIA1_PORT_A = 0
-    // [219] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    .label CIA1_PORT_B = $dc01
+    // *CIA1_PORT_A = 0
+    // [219] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta CONIO_CIA1_PORT_A
-    // ~*CONIO_CIA1_PORT_B
-    // [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
-    lda CONIO_CIA1_PORT_B
+    sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
+    // [220] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    lda CIA1_PORT_B
     eor #$ff
     // kbhit::@return
     // }

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testVic20Simple() throws IOException, URISyntaxException {
+      compileAndCompare("vic20-simple.c");
+   }
+
+   @Test
    public void testPlus4KeyboardTest() throws IOException, URISyntaxException {
       compileAndCompare("plus4-keyboard-test.c");
    }

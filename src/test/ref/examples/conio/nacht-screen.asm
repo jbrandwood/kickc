@@ -31,10 +31,6 @@
   .label CONIO_SCREEN_TEXT = $400
   // The color screen address
   .label CONIO_SCREEN_COLORS = $d800
-  // The background color register address
-  .label CONIO_BGCOLOR = $d021
-  // The border color register address
-  .label CONIO_BORDERCOLOR = $d020
   .label VIC_MEMORY = $d018
   .label conio_cursor_x = 9
   .label conio_cursor_y = $a
@@ -172,14 +168,14 @@ clrscr: {
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CONIO_CIA1_PORT_A = $dc00
+    .label CIA1_PORT_A = $dc00
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CONIO_CIA1_PORT_B = $dc01
-    // *CONIO_CIA1_PORT_A = 0
+    .label CIA1_PORT_B = $dc01
+    // *CIA1_PORT_A = 0
     lda #0
-    sta CONIO_CIA1_PORT_A
-    // ~*CONIO_CIA1_PORT_B
-    lda CONIO_CIA1_PORT_B
+    sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
+    lda CIA1_PORT_B
     eor #$ff
     // }
     rts
@@ -839,6 +835,8 @@ cursor: {
 }
 // Set the color for the background. The old color setting is returned.
 bgcolor: {
+    // The background color register address
+    .label CONIO_BGCOLOR = $d021
     // *CONIO_BGCOLOR = color
     lda #COLOR_BLACK
     sta CONIO_BGCOLOR
@@ -847,6 +845,8 @@ bgcolor: {
 }
 // Set the color for the border. The old color setting is returned.
 bordercolor: {
+    // The border color register address
+    .label CONIO_BORDERCOLOR = $d020
     // *CONIO_BORDERCOLOR = color
     lda #COLOR_BLACK
     sta CONIO_BORDERCOLOR

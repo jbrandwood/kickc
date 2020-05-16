@@ -119,13 +119,39 @@ strlen::@return: scope:[strlen]  from strlen::@3
 
 (byte()) kbhit()
 kbhit: scope:[kbhit]  from main::@1
-  *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (number) 0
-  (byte~) kbhit::$0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B)
+  *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (number) 0
+  (byte~) kbhit::$0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B)
   (byte) kbhit::return#0 ← (byte~) kbhit::$0
   to:kbhit::@return
 kbhit::@return: scope:[kbhit]  from kbhit
   (byte) kbhit::return#3 ← phi( kbhit/(byte) kbhit::return#0 )
   (byte) kbhit::return#1 ← (byte) kbhit::return#3
+  return 
+  to:@return
+
+(byte()) bgcolor((byte) bgcolor::color)
+bgcolor: scope:[bgcolor]  from MakeNiceScreen::@5
+  (byte) bgcolor::color#1 ← phi( MakeNiceScreen::@5/(byte) bgcolor::color#0 )
+  (byte) bgcolor::old#0 ← *((const nomodify byte*) bgcolor::CONIO_BGCOLOR)
+  *((const nomodify byte*) bgcolor::CONIO_BGCOLOR) ← (byte) bgcolor::color#1
+  (byte) bgcolor::return#0 ← (byte) bgcolor::old#0
+  to:bgcolor::@return
+bgcolor::@return: scope:[bgcolor]  from bgcolor
+  (byte) bgcolor::return#3 ← phi( bgcolor/(byte) bgcolor::return#0 )
+  (byte) bgcolor::return#1 ← (byte) bgcolor::return#3
+  return 
+  to:@return
+
+(byte()) bordercolor((byte) bordercolor::color)
+bordercolor: scope:[bordercolor]  from MakeNiceScreen::@4
+  (byte) bordercolor::color#1 ← phi( MakeNiceScreen::@4/(byte) bordercolor::color#0 )
+  (byte) bordercolor::old#0 ← *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR)
+  *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR) ← (byte) bordercolor::color#1
+  (byte) bordercolor::return#0 ← (byte) bordercolor::old#0
+  to:bordercolor::@return
+bordercolor::@return: scope:[bordercolor]  from bordercolor
+  (byte) bordercolor::return#3 ← phi( bordercolor/(byte) bordercolor::return#0 )
+  (byte) bordercolor::return#1 ← (byte) bordercolor::return#3
   return 
   to:@return
 @1: scope:[]  from @begin
@@ -520,32 +546,6 @@ textcolor::@return: scope:[textcolor]  from textcolor
   return 
   to:@return
 
-(byte()) bgcolor((byte) bgcolor::color)
-bgcolor: scope:[bgcolor]  from MakeNiceScreen::@5
-  (byte) bgcolor::color#1 ← phi( MakeNiceScreen::@5/(byte) bgcolor::color#0 )
-  (byte) bgcolor::old#0 ← *((const nomodify byte*) CONIO_BGCOLOR)
-  *((const nomodify byte*) CONIO_BGCOLOR) ← (byte) bgcolor::color#1
-  (byte) bgcolor::return#0 ← (byte) bgcolor::old#0
-  to:bgcolor::@return
-bgcolor::@return: scope:[bgcolor]  from bgcolor
-  (byte) bgcolor::return#3 ← phi( bgcolor/(byte) bgcolor::return#0 )
-  (byte) bgcolor::return#1 ← (byte) bgcolor::return#3
-  return 
-  to:@return
-
-(byte()) bordercolor((byte) bordercolor::color)
-bordercolor: scope:[bordercolor]  from MakeNiceScreen::@4
-  (byte) bordercolor::color#1 ← phi( MakeNiceScreen::@4/(byte) bordercolor::color#0 )
-  (byte) bordercolor::old#0 ← *((const nomodify byte*) CONIO_BORDERCOLOR)
-  *((const nomodify byte*) CONIO_BORDERCOLOR) ← (byte) bordercolor::color#1
-  (byte) bordercolor::return#0 ← (byte) bordercolor::old#0
-  to:bordercolor::@return
-bordercolor::@return: scope:[bordercolor]  from bordercolor
-  (byte) bordercolor::return#3 ← phi( bordercolor/(byte) bordercolor::return#0 )
-  (byte) bordercolor::return#1 ← (byte) bordercolor::return#3
-  return 
-  to:@return
-
 (byte()) cursor((byte) cursor::onoff)
 cursor: scope:[cursor]  from MakeNiceScreen::@7
   (byte) cursor::onoff#1 ← phi( MakeNiceScreen::@7/(byte) cursor::onoff#0 )
@@ -786,8 +786,6 @@ SYMBOL TABLE SSA
 (const nomodify byte) CH_VLINE = (byte) $5d
 (const nomodify byte) COLOR_BLACK = (byte) 0
 (const nomodify byte) COLOR_GRAY3 = (byte) $f
-(const nomodify byte*) CONIO_BGCOLOR = (byte*)(number) $d021
-(const nomodify byte*) CONIO_BORDERCOLOR = (byte*)(number) $d020
 (const nomodify byte*) CONIO_SCREEN_COLORS = (byte*)(number) $d800
 (const nomodify byte*) CONIO_SCREEN_TEXT = (byte*)(number) $400
 (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT = (byte) $e
@@ -867,6 +865,7 @@ SYMBOL TABLE SSA
 (volatile byte) YSize loadstore
 (byte()) bgcolor((byte) bgcolor::color)
 (label) bgcolor::@return
+(const nomodify byte*) bgcolor::CONIO_BGCOLOR = (byte*)(number) $d021
 (byte) bgcolor::color
 (byte) bgcolor::color#0
 (byte) bgcolor::color#1
@@ -879,6 +878,7 @@ SYMBOL TABLE SSA
 (byte) bgcolor::return#3
 (byte()) bordercolor((byte) bordercolor::color)
 (label) bordercolor::@return
+(const nomodify byte*) bordercolor::CONIO_BORDERCOLOR = (byte*)(number) $d020
 (byte) bordercolor::color
 (byte) bordercolor::color#0
 (byte) bordercolor::color#1
@@ -1152,8 +1152,8 @@ SYMBOL TABLE SSA
 (byte()) kbhit()
 (byte~) kbhit::$0
 (label) kbhit::@return
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_A = (byte*)(number) $dc00
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_B = (byte*)(number) $dc01
+(const nomodify byte*) kbhit::CIA1_PORT_A = (byte*)(number) $dc00
+(const nomodify byte*) kbhit::CIA1_PORT_B = (byte*)(number) $dc01
 (byte) kbhit::return
 (byte) kbhit::return#0
 (byte) kbhit::return#1
@@ -1319,7 +1319,7 @@ SYMBOL TABLE SSA
 
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#2 > (number) 0
 Adding number conversion cast (unumber) 0 in (bool~) strlen::$0 ← (number) 0 != *((byte*) strlen::str#2)
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (number) 0
 Adding number conversion cast (unumber) $19 in (bool~) clrscr::$0 ← (byte) clrscr::l#2 < (number) $19
 Adding number conversion cast (unumber) 0 in (byte) conio_cursor_x ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) conio_cursor_y ← (number) 0
@@ -1385,7 +1385,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3
-Inlining cast *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (unumber)(number) 0
+Inlining cast *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (unumber)(number) 0
 Inlining cast (byte) conio_cursor_x ← (unumber)(number) 0
 Inlining cast (byte) conio_cursor_y ← (unumber)(number) 0
 Inlining cast (byte) gotoxy::y#0 ← (unumber)(number) 0
@@ -1417,10 +1417,10 @@ Inlining cast (byte) MakeNiceScreen::I#1 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 55296
-Simplifying constant pointer cast (byte*) 53281
-Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 56320
 Simplifying constant pointer cast (byte*) 56321
+Simplifying constant pointer cast (byte*) 53281
+Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53272
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -1538,10 +1538,10 @@ Inferred type updated to byte in (unumber~) MakeNiceScreen::$7 ← (volatile byt
 Inferred type updated to byte in (unumber~) MakeNiceScreen::$12 ← (volatile byte) XSize - (byte) 2
 Inferred type updated to byte in (unumber~) MakeNiceScreen::$15 ← (volatile byte) XSize - (byte) 1
 Inversing boolean not [20] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [19] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [90] (bool~) gotoxy::$1 ← (byte) gotoxy::y#6 <= (byte) $19 from [89] (bool~) gotoxy::$0 ← (byte) gotoxy::y#6 > (byte) $19
-Inversing boolean not [94] (bool~) gotoxy::$3 ← (byte) gotoxy::x#6 < (byte) $28 from [93] (bool~) gotoxy::$2 ← (byte) gotoxy::x#6 >= (byte) $28
-Inversing boolean not [127] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [126] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
-Inversing boolean not [144] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [143] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
+Inversing boolean not [104] (bool~) gotoxy::$1 ← (byte) gotoxy::y#6 <= (byte) $19 from [103] (bool~) gotoxy::$0 ← (byte) gotoxy::y#6 > (byte) $19
+Inversing boolean not [108] (bool~) gotoxy::$3 ← (byte) gotoxy::x#6 < (byte) $28 from [107] (bool~) gotoxy::$2 ← (byte) gotoxy::x#6 >= (byte) $28
+Inversing boolean not [141] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [140] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
+Inversing boolean not [158] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [157] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
 Inversing boolean not [289] (bool~) main::$4 ← (byte) 0 == (byte~) main::$3 from [288] (bool~) main::$5 ← (byte) 0 != (byte~) main::$3
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_cursor_text = gotoxy::$6 cputln::$1 cscroll::$7 
@@ -1563,6 +1563,8 @@ Alias memset::str#5 = memset::str#6
 Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
 Alias strlen::str#2 = strlen::str#3 
 Alias kbhit::return#0 = kbhit::$0 kbhit::return#3 kbhit::return#1 
+Alias bgcolor::return#0 = bgcolor::old#0 bgcolor::return#3 bgcolor::return#1 
+Alias bordercolor::return#0 = bordercolor::old#0 bordercolor::return#3 bordercolor::return#1 
 Alias clrscr::line_text#5 = clrscr::line_text#6 
 Alias clrscr::line_cols#5 = clrscr::line_cols#6 
 Alias clrscr::l#2 = clrscr::l#5 
@@ -1588,8 +1590,6 @@ Alias cvline::length#1 = cvline::length#5 cvline::length#4 cvline::length#3
 Alias cvline::y#1 = cvline::y#5 
 Alias cvlinexy::length#2 = cvlinexy::length#3 
 Alias textcolor::return#0 = textcolor::old#0 textcolor::return#3 textcolor::return#1 
-Alias bgcolor::return#0 = bgcolor::old#0 bgcolor::return#3 bgcolor::return#1 
-Alias bordercolor::return#0 = bordercolor::old#0 bordercolor::return#3 bordercolor::return#1 
 Alias cursor::return#0 = cursor::old#0 cursor::return#3 cursor::return#1 
 Alias scroll::return#0 = scroll::old#0 scroll::return#3 scroll::return#1 
 Alias kbhit::return#2 = kbhit::return#4 
@@ -1617,6 +1617,8 @@ Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
 Identical Phi Values (void*) memset::str#5 (void*) memset::str#3
 Identical Phi Values (byte) memset::c#2 (byte) memset::c#4
 Identical Phi Values (byte*) strlen::str#4 (byte*) strlen::str#1
+Identical Phi Values (byte) bgcolor::color#1 (byte) bgcolor::color#0
+Identical Phi Values (byte) bordercolor::color#1 (byte) bordercolor::color#0
 Identical Phi Values (byte*) clrscr::line_text#2 (byte*) clrscr::line_text#5
 Identical Phi Values (byte*) clrscr::line_cols#2 (byte*) clrscr::line_cols#5
 Identical Phi Values (byte) clrscr::l#3 (byte) clrscr::l#2
@@ -1631,8 +1633,6 @@ Identical Phi Values (byte) cvline::length#2 (byte) cvline::length#0
 Identical Phi Values (byte) cvline::length#1 (byte) cvline::length#2
 Identical Phi Values (byte) cvline::x#1 (byte) cvline::x#0
 Identical Phi Values (byte) textcolor::color#1 (byte) textcolor::color#0
-Identical Phi Values (byte) bgcolor::color#1 (byte) bgcolor::color#0
-Identical Phi Values (byte) bordercolor::color#1 (byte) bordercolor::color#0
 Identical Phi Values (byte) cursor::onoff#1 (byte) cursor::onoff#0
 Identical Phi Values (byte) scroll::onoff#1 (byte) scroll::onoff#0
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -1642,23 +1642,23 @@ Simple Condition (bool~) memcpy::$1 [7] if((byte*) memcpy::src#2!=(byte*) memcpy
 Simple Condition (bool~) memset::$1 [14] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$3 [21] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
 Simple Condition (bool~) strlen::$0 [29] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2
-Simple Condition (bool~) clrscr::$0 [48] if((byte) clrscr::l#2<(byte) $19) goto clrscr::@2
-Simple Condition (bool~) clrscr::$1 [56] if((byte) clrscr::c#2<(byte) $28) goto clrscr::@5
-Simple Condition (bool~) gotoxy::$1 [66] if((byte) gotoxy::y#6<=(byte) $19) goto gotoxy::@1
-Simple Condition (bool~) gotoxy::$3 [69] if((byte) gotoxy::x#6<(byte) $28) goto gotoxy::@2
-Simple Condition (bool~) cputc::$0 [89] if((byte) cputc::c#8==(byte) '
+Simple Condition (bool~) clrscr::$0 [56] if((byte) clrscr::l#2<(byte) $19) goto clrscr::@2
+Simple Condition (bool~) clrscr::$1 [64] if((byte) clrscr::c#2<(byte) $28) goto clrscr::@5
+Simple Condition (bool~) gotoxy::$1 [74] if((byte) gotoxy::y#6<=(byte) $19) goto gotoxy::@1
+Simple Condition (bool~) gotoxy::$3 [77] if((byte) gotoxy::x#6<(byte) $28) goto gotoxy::@2
+Simple Condition (bool~) cputc::$0 [97] if((byte) cputc::c#8==(byte) '
 ') goto cputc::@1
-Simple Condition (bool~) cputc::$2 [97] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
-Simple Condition (bool~) cscroll::$1 [112] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
-Simple Condition (bool~) cscroll::$9 [114] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
-Simple Condition (bool~) cputs::$1 [150] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
-Simple Condition (bool~) chline::$0 [172] if((byte) chline::i#2<(byte) chline::length#4) goto chline::@2
-Simple Condition (bool~) cvline::$0 [183] if((byte) cvline::i#2<(byte) cvline::length#0) goto cvline::@2
+Simple Condition (bool~) cputc::$2 [105] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
+Simple Condition (bool~) cscroll::$1 [120] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
+Simple Condition (bool~) cscroll::$9 [122] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
+Simple Condition (bool~) cputs::$1 [158] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) chline::$0 [180] if((byte) chline::i#2<(byte) chline::length#4) goto chline::@2
+Simple Condition (bool~) cvline::$0 [191] if((byte) cvline::i#2<(byte) cvline::length#0) goto cvline::@2
 Simple Condition (bool~) main::$4 [230] if((byte) 0==(byte~) main::$3) goto main::@1
 Simple Condition (bool~) MakeNiceScreen::$21 [294] if((byte) MakeNiceScreen::I#3<(byte~) MakeNiceScreen::$20) goto MakeNiceScreen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [117] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
-Constant right-side identified [122] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [125] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [130] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
 Constant right-side identified [291] (byte~) MakeNiceScreen::$19 ← sizeof  (const struct $0*) MakeNiceScreen::Text
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) strlen::len#0 = 0
@@ -1716,16 +1716,16 @@ Constant (const byte) MakeNiceScreen::I#1 = 0
 Constant (const to_nomodify struct $0*) MakeNiceScreen::T#1 = MakeNiceScreen::Text
 Constant (const byte) MakeNiceScreen::$19 = sizeof MakeNiceScreen::Text
 Successful SSA optimization Pass2ConstantIdentification
-Rewriting conditional comparison [66] if((byte) gotoxy::y#6<=(byte) $19) goto gotoxy::@1
+Rewriting conditional comparison [74] if((byte) gotoxy::y#6<=(byte) $19) goto gotoxy::@1
 Converting *(pointer+n) to pointer[n] [308] (byte) cputsxy::y#0 ← *((byte*~) MakeNiceScreen::$30)  -- *(MakeNiceScreen::$37 + OFFSET_STRUCT_$0_Y)
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying expression containing zero MakeNiceScreen::$37 in [304] (byte*~) MakeNiceScreen::$30 ← (byte*~) MakeNiceScreen::$37 + (const byte) OFFSET_STRUCT_$0_Y
 Simplifying expression containing zero MakeNiceScreen::$37 in [308] (byte) cputsxy::y#0 ← *((byte*~) MakeNiceScreen::$37 + (const byte) OFFSET_STRUCT_$0_Y)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (void*) memcpy::return#2 and assignment [94] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memcpy::return#3 and assignment [96] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memset::return#2 and assignment [98] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [101] (void*) memset::return#3 ← (void*) memset::str#3
+Eliminating unused variable (void*) memcpy::return#2 and assignment [100] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memcpy::return#3 and assignment [102] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memset::return#2 and assignment [104] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [107] (void*) memset::return#3 ← (void*) memset::str#3
 Eliminating unused variable (byte) scroll::return#2 and assignment [187] (byte) scroll::return#2 ← (byte) scroll::return#0
 Eliminating unused variable (byte) textcolor::return#2 and assignment [189] (byte) textcolor::return#2 ← (byte) textcolor::return#0
 Eliminating unused variable (byte) bordercolor::return#2 and assignment [191] (byte) bordercolor::return#2 ← (byte) bordercolor::return#0
@@ -1738,13 +1738,13 @@ Eliminating unused constant (const byte) MakeNiceScreen::I#0
 Eliminating unused constant (const byte) MakeNiceScreen::X#0
 Eliminating unused constant (const byte) OFFSET_STRUCT_$0_Y
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable (byte) textcolor::return#0 and assignment [149] (byte) textcolor::return#0 ← (byte) conio_textcolor
-Eliminating unused variable (byte) bgcolor::return#0 and assignment [152] (byte) bgcolor::return#0 ← *((const nomodify byte*) CONIO_BGCOLOR)
-Eliminating unused variable (byte) bordercolor::return#0 and assignment [155] (byte) bordercolor::return#0 ← *((const nomodify byte*) CONIO_BORDERCOLOR)
+Eliminating unused variable (byte) bgcolor::return#0 and assignment [29] (byte) bgcolor::return#0 ← *((const nomodify byte*) bgcolor::CONIO_BGCOLOR)
+Eliminating unused variable (byte) bordercolor::return#0 and assignment [32] (byte) bordercolor::return#0 ← *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR)
+Eliminating unused variable (byte) textcolor::return#0 and assignment [155] (byte) textcolor::return#0 ← (byte) conio_textcolor
 Eliminating unused variable (byte) cursor::return#0 and assignment [158] (byte) cursor::return#0 ← (byte) conio_display_cursor
 Eliminating unused variable (byte) scroll::return#0 and assignment [161] (byte) scroll::return#0 ← (byte) conio_scroll_enable
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable (byte) conio_display_cursor and assignment [34] (byte) conio_display_cursor ← (byte) 0
+Eliminating unused variable (byte) conio_display_cursor and assignment [38] (byte) conio_display_cursor ← (byte) 0
 Eliminating unused variable conio_display_cursor(null) and assignment [155] conio_display_cursor(null) ← (const byte) cursor::onoff#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const byte) cursor::onoff#0
@@ -1784,7 +1784,7 @@ Inlining Noop Cast [196] (byte*~) MakeNiceScreen::$33 ← (byte*)(to_nomodify st
 Inlining Noop Cast [204] (byte*~) MakeNiceScreen::$37 ← (byte*)(to_nomodify struct $0*) MakeNiceScreen::T#3 keeping MakeNiceScreen::T#3
 Inlining Noop Cast [205] (byte*~) MakeNiceScreen::$38 ← (byte*)(to_nomodify struct $0*) MakeNiceScreen::T#3 keeping MakeNiceScreen::T#3
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift and addition[58] (word~) gotoxy::$4 ← (word~) gotoxy::$8 * (byte) $28
+Rewriting multiplication to use shift and addition[62] (word~) gotoxy::$4 ← (word~) gotoxy::$8 * (byte) $28
 Inlining constant with var siblings (const void*) memcpy::destination#0
 Inlining constant with var siblings (const void*) memcpy::source#0
 Inlining constant with var siblings (const word) memcpy::num#0
@@ -2156,8 +2156,8 @@ clrscr::@4: scope:[clrscr]  from clrscr::@3
 
 (byte()) kbhit()
 kbhit: scope:[kbhit]  from main::@1
-  [40] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0
-  [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B)
+  [40] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0
+  [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B)
   to:kbhit::@return
 kbhit::@return: scope:[kbhit]  from kbhit
   [42] return 
@@ -2565,7 +2565,7 @@ cursor::@return: scope:[cursor]  from cursor
 
 (byte()) bgcolor((byte) bgcolor::color)
 bgcolor: scope:[bgcolor]  from MakeNiceScreen::@5
-  [230] *((const nomodify byte*) CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK
+  [230] *((const nomodify byte*) bgcolor::CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK
   to:bgcolor::@return
 bgcolor::@return: scope:[bgcolor]  from bgcolor
   [231] return 
@@ -2573,7 +2573,7 @@ bgcolor::@return: scope:[bgcolor]  from bgcolor
 
 (byte()) bordercolor((byte) bordercolor::color)
 bordercolor: scope:[bordercolor]  from MakeNiceScreen::@4
-  [232] *((const nomodify byte*) CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK
+  [232] *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK
   to:bordercolor::@return
 bordercolor::@return: scope:[bordercolor]  from bordercolor
   [233] return 
@@ -3035,10 +3035,6 @@ Target platform is c64basic / MOS6502X
   .label CONIO_SCREEN_TEXT = $400
   // The color screen address
   .label CONIO_SCREEN_COLORS = $d800
-  // The background color register address
-  .label CONIO_BGCOLOR = $d021
-  // The border color register address
-  .label CONIO_BORDERCOLOR = $d020
   .label VIC_MEMORY = $d018
   .label conio_cursor_x = $29
   .label conio_cursor_y = $2a
@@ -3269,16 +3265,16 @@ clrscr: {
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CONIO_CIA1_PORT_A = $dc00
+    .label CIA1_PORT_A = $dc00
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CONIO_CIA1_PORT_B = $dc01
+    .label CIA1_PORT_B = $dc01
     .label return = $35
     .label return_1 = $33
-    // [40] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [40] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta CONIO_CIA1_PORT_A
-    // [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
-    lda CONIO_CIA1_PORT_B
+    sta CIA1_PORT_A
+    // [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
+    lda CIA1_PORT_B
     eor #$ff
     sta.z return
     jmp __breturn
@@ -4493,7 +4489,9 @@ cursor: {
   // bgcolor
 // Set the color for the background. The old color setting is returned.
 bgcolor: {
-    // [230] *((const nomodify byte*) CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
+    // The background color register address
+    .label CONIO_BGCOLOR = $d021
+    // [230] *((const nomodify byte*) bgcolor::CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
     lda #COLOR_BLACK
     sta CONIO_BGCOLOR
     jmp __breturn
@@ -4505,7 +4503,9 @@ bgcolor: {
   // bordercolor
 // Set the color for the border. The old color setting is returned.
 bordercolor: {
-    // [232] *((const nomodify byte*) CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
+    // The border color register address
+    .label CONIO_BORDERCOLOR = $d020
+    // [232] *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
     lda #COLOR_BLACK
     sta CONIO_BORDERCOLOR
     jmp __breturn
@@ -4580,8 +4580,8 @@ Statement [35] (byte*) clrscr::line_cols#1 ← (byte*) clrscr::line_cols#5 + (by
 Statement [37] *((byte*) clrscr::line_text#5 + (byte) clrscr::c#2) ← (byte) ' ' [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] ( main:10::clrscr:22 [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  main:10::MakeNiceScreen:15::clrscr:52 [ conio_scroll_enable XSize conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ clrscr::c#2 clrscr::c#1 ]
 Statement [38] *((byte*) clrscr::line_cols#5 + (byte) clrscr::c#2) ← (byte) conio_textcolor [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] ( main:10::clrscr:22 [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  main:10::MakeNiceScreen:15::clrscr:52 [ conio_scroll_enable XSize conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  ) always clobbers reg byte a 
-Statement [40] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 [ ] ( main:10::kbhit:17 [ conio_textcolor ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
-Statement [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) [ kbhit::return#0 ] ( main:10::kbhit:17 [ conio_textcolor kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [40] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 [ ] ( main:10::kbhit:17 [ conio_textcolor ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) [ kbhit::return#0 ] ( main:10::kbhit:17 [ conio_textcolor kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
 Statement [78] (byte*) strlen::str#1 ← (byte*)(to_nomodify struct $0*) MakeNiceScreen::T#3 + (byte) 1 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::str#1 ] ( main:10::MakeNiceScreen:15 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::str#1 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ MakeNiceScreen::I#3 MakeNiceScreen::I#2 ]
 Statement [80] (word) strlen::return#2 ← (word) strlen::len#2 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::return#2 ] ( main:10::MakeNiceScreen:15 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::return#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
@@ -4647,8 +4647,8 @@ Statement [179] (byte*) conio_cursor_text ← (byte*~) gotoxy::$6 [ conio_cursor
 Statement [180] (byte*~) gotoxy::$7 ← (const nomodify byte*) CONIO_SCREEN_COLORS + (word) gotoxy::offset#0 [ conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] ( main:10::MakeNiceScreen:15::cputsxy:88::gotoxy:93 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 conio_textcolor conio_scroll_enable cputsxy::s#0 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#3 = gotoxy::y#6 cputsxy::y#0 } { gotoxy::x#3 = gotoxy::x#6 cputsxy::x#0 MakeNiceScreen::X#1 } }  main:10::MakeNiceScreen:15::cputc:60::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:64::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:68::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cscroll:115::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputc:60::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:64::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:68::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cputln:118::cscroll:126::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputcxy:56::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cvlinexy:70::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 cvlinexy::x#1 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cvlinexy::x#1 = cvlinexy::x#2 } { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  ) always clobbers reg byte a 
 Statement [181] (byte*) conio_cursor_color ← (byte*~) gotoxy::$7 [ conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] ( main:10::MakeNiceScreen:15::cputsxy:88::gotoxy:93 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 conio_textcolor conio_scroll_enable cputsxy::s#0 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#3 = gotoxy::y#6 cputsxy::y#0 } { gotoxy::x#3 = gotoxy::x#6 cputsxy::x#0 MakeNiceScreen::X#1 } }  main:10::MakeNiceScreen:15::cputc:60::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:64::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:68::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cscroll:115::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputc:60::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:64::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:68::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cputln:118::cscroll:126::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputcxy:56::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cvlinexy:70::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 cvlinexy::x#1 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cvlinexy::x#1 = cvlinexy::x#2 } { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  ) always clobbers reg byte a 
 Statement [185] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( main:10::MakeNiceScreen:15::strlen:79 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::len#2 strlen::str#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [230] *((const nomodify byte*) CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bgcolor:50 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
-Statement [232] *((const nomodify byte*) CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bordercolor:48 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
+Statement [230] *((const nomodify byte*) bgcolor::CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bgcolor:50 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
+Statement [232] *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bordercolor:48 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
 Statement [234] (byte) conio_textcolor ← (const nomodify byte) COLOR_GRAY3 [ conio_textcolor ] ( main:10::MakeNiceScreen:15::textcolor:46 [ conio_scroll_enable XSize conio_textcolor ] { }  ) always clobbers reg byte a 
 Statement [236] (byte) conio_scroll_enable ← (const byte) scroll::onoff#0 [ conio_scroll_enable ] ( main:10::MakeNiceScreen:15::scroll:44 [ XSize conio_scroll_enable ] { }  ) always clobbers reg byte a 
 Statement [238] *((const byte*) screensize::x#0) ← (byte) $28 [ ] ( main:10::screensize:13 [ XSize ] { }  ) always clobbers reg byte a 
@@ -4670,8 +4670,8 @@ Statement [34] (byte*) clrscr::line_text#1 ← (byte*) clrscr::line_text#5 + (by
 Statement [35] (byte*) clrscr::line_cols#1 ← (byte*) clrscr::line_cols#5 + (byte) $28 [ conio_textcolor clrscr::l#2 clrscr::line_text#1 clrscr::line_cols#1 ] ( main:10::clrscr:22 [ conio_textcolor clrscr::l#2 clrscr::line_text#1 clrscr::line_cols#1 ] { }  main:10::MakeNiceScreen:15::clrscr:52 [ conio_scroll_enable XSize conio_textcolor clrscr::l#2 clrscr::line_text#1 clrscr::line_cols#1 ] { }  ) always clobbers reg byte a 
 Statement [37] *((byte*) clrscr::line_text#5 + (byte) clrscr::c#2) ← (byte) ' ' [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] ( main:10::clrscr:22 [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  main:10::MakeNiceScreen:15::clrscr:52 [ conio_scroll_enable XSize conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  ) always clobbers reg byte a 
 Statement [38] *((byte*) clrscr::line_cols#5 + (byte) clrscr::c#2) ← (byte) conio_textcolor [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] ( main:10::clrscr:22 [ conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  main:10::MakeNiceScreen:15::clrscr:52 [ conio_scroll_enable XSize conio_textcolor clrscr::l#2 clrscr::line_text#5 clrscr::line_cols#5 clrscr::c#2 ] { }  ) always clobbers reg byte a 
-Statement [40] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 [ ] ( main:10::kbhit:17 [ conio_textcolor ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
-Statement [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) [ kbhit::return#0 ] ( main:10::kbhit:17 [ conio_textcolor kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [40] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 [ ] ( main:10::kbhit:17 [ conio_textcolor ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
+Statement [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) [ kbhit::return#0 ] ( main:10::kbhit:17 [ conio_textcolor kbhit::return#0 ] { { kbhit::return#0 = kbhit::return#2 } }  ) always clobbers reg byte a 
 Statement [78] (byte*) strlen::str#1 ← (byte*)(to_nomodify struct $0*) MakeNiceScreen::T#3 + (byte) 1 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::str#1 ] ( main:10::MakeNiceScreen:15 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::str#1 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Statement [80] (word) strlen::return#2 ← (word) strlen::len#2 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::return#2 ] ( main:10::MakeNiceScreen:15 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::return#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
 Statement [81] (word~) MakeNiceScreen::$22 ← (word) strlen::return#2 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 MakeNiceScreen::$22 ] ( main:10::MakeNiceScreen:15 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 MakeNiceScreen::$22 ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } }  ) always clobbers reg byte a 
@@ -4718,8 +4718,8 @@ Statement [179] (byte*) conio_cursor_text ← (byte*~) gotoxy::$6 [ conio_cursor
 Statement [180] (byte*~) gotoxy::$7 ← (const nomodify byte*) CONIO_SCREEN_COLORS + (word) gotoxy::offset#0 [ conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] ( main:10::MakeNiceScreen:15::cputsxy:88::gotoxy:93 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 conio_textcolor conio_scroll_enable cputsxy::s#0 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#3 = gotoxy::y#6 cputsxy::y#0 } { gotoxy::x#3 = gotoxy::x#6 cputsxy::x#0 MakeNiceScreen::X#1 } }  main:10::MakeNiceScreen:15::cputc:60::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:64::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:68::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cscroll:115::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputc:60::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:64::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputc:68::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cputln:118::cscroll:126::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputcxy:56::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cvlinexy:70::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 cvlinexy::x#1 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text gotoxy::$7 ] { { cvlinexy::x#1 = cvlinexy::x#2 } { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  ) always clobbers reg byte a 
 Statement [181] (byte*) conio_cursor_color ← (byte*~) gotoxy::$7 [ conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] ( main:10::MakeNiceScreen:15::cputsxy:88::gotoxy:93 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 conio_textcolor conio_scroll_enable cputsxy::s#0 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#3 = gotoxy::y#6 cputsxy::y#0 } { gotoxy::x#3 = gotoxy::x#6 cputsxy::x#0 MakeNiceScreen::X#1 } }  main:10::MakeNiceScreen:15::cputc:60::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:64::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:68::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cscroll:115::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cscroll:115::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cscroll:115::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cscroll:115::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputc:60::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:64::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputc:68::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cputsxy:88::cputs:95::cputc:104::cputln:118::cscroll:126::gotoxy:131 [ XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 cputs::s#0 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputsxy::x#0 = MakeNiceScreen::X#1 } { cputs::s#1 = cputsxy::s#0 } { cputc::c#0 = cputc::c#8 cputs::c#1 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputc:195::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::chline:58::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#1 = chline::length#4 } }  main:10::MakeNiceScreen:15::chline:66::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#2 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::chline:193::cputc:202::cputln:118::cscroll:126::gotoxy:131 [ XSize chline::length#4 chline::i#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { chline::length#0 = chline::length#4 } }  main:10::MakeNiceScreen:15::cputcxy:56::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::cputc:208::cputln:118::cscroll:126::gotoxy:131 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cputcxy::y#0 = cputcxy::y#2 MakeTeeLine::Y#2 } { cputc::c#1 = cputc::c#8 cputcxy::c#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::cputc:222::cputln:118::cscroll:126::gotoxy:131 [ XSize cvline::x#0 cvline::i#2 cvline::y#2 conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cvlinexy::x#1 = cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cputcxy:56::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:72::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::MakeTeeLine:74::cputcxy:191::gotoxy:206 [ XSize conio_textcolor conio_scroll_enable cputcxy::c#2 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#2 = gotoxy::y#6 cputcxy::y#2 cputcxy::y#0 MakeTeeLine::Y#2 } }  main:10::MakeNiceScreen:15::cvlinexy:62::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 } }  main:10::MakeNiceScreen:15::cvlinexy:70::gotoxy:212 [ XSize conio_textcolor conio_scroll_enable conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::x#5 = gotoxy::x#6 cvlinexy::x#2 cvlinexy::x#1 } }  main:10::MakeNiceScreen:15::cvlinexy:62::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  main:10::MakeNiceScreen:15::cvlinexy:70::cvline:214::gotoxy:226 [ XSize conio_textcolor conio_scroll_enable cvline::x#0 cvline::i#2 cvline::y#1 conio_cursor_x conio_cursor_y conio_cursor_text conio_cursor_color ] { { cvlinexy::x#1 = cvlinexy::x#2 } { gotoxy::y#4 = gotoxy::y#6 cvline::y#1 } { gotoxy::x#4 = gotoxy::x#6 cvline::x#0 } }  ) always clobbers reg byte a 
 Statement [185] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( main:10::MakeNiceScreen:15::strlen:79 [ conio_textcolor conio_scroll_enable XSize MakeNiceScreen::I#3 MakeNiceScreen::T#3 strlen::len#2 strlen::str#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [230] *((const nomodify byte*) CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bgcolor:50 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
-Statement [232] *((const nomodify byte*) CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bordercolor:48 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
+Statement [230] *((const nomodify byte*) bgcolor::CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bgcolor:50 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
+Statement [232] *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK [ ] ( main:10::MakeNiceScreen:15::bordercolor:48 [ conio_textcolor conio_scroll_enable XSize ] { }  ) always clobbers reg byte a 
 Statement [234] (byte) conio_textcolor ← (const nomodify byte) COLOR_GRAY3 [ conio_textcolor ] ( main:10::MakeNiceScreen:15::textcolor:46 [ conio_scroll_enable XSize conio_textcolor ] { }  ) always clobbers reg byte a 
 Statement [236] (byte) conio_scroll_enable ← (const byte) scroll::onoff#0 [ conio_scroll_enable ] ( main:10::MakeNiceScreen:15::scroll:44 [ XSize conio_scroll_enable ] { }  ) always clobbers reg byte a 
 Statement [238] *((const byte*) screensize::x#0) ← (byte) $28 [ ] ( main:10::screensize:13 [ XSize ] { }  ) always clobbers reg byte a 
@@ -4807,10 +4807,10 @@ Uplift Scope [cvlinexy] 1,304: zp[1]:38 [ cvlinexy::x#2 cvlinexy::x#1 ]
 Uplift Scope [MakeTeeLine] 1,001: zp[1]:33 [ MakeTeeLine::Y#2 ] 
 Uplift Scope [kbhit] 367.33: zp[1]:53 [ kbhit::return#0 ] 202: zp[1]:51 [ kbhit::return#2 ] 
 Uplift Scope [main] 202: zp[1]:52 [ main::$3 ] 
-Uplift Scope [screensize] 
-Uplift Scope [textcolor] 
 Uplift Scope [bgcolor] 
 Uplift Scope [bordercolor] 
+Uplift Scope [screensize] 
+Uplift Scope [textcolor] 
 Uplift Scope [cursor] 
 Uplift Scope [scroll] 
 Uplift Scope [$0] 
@@ -4834,10 +4834,10 @@ Uplifting [cvlinexy] best 131797 combination reg byte x [ cvlinexy::x#2 cvlinexy
 Uplifting [MakeTeeLine] best 131788 combination reg byte a [ MakeTeeLine::Y#2 ] 
 Uplifting [kbhit] best 131695 combination reg byte a [ kbhit::return#0 ] reg byte a [ kbhit::return#2 ] 
 Uplifting [main] best 131635 combination reg byte a [ main::$3 ] 
-Uplifting [screensize] best 131635 combination 
-Uplifting [textcolor] best 131635 combination 
 Uplifting [bgcolor] best 131635 combination 
 Uplifting [bordercolor] best 131635 combination 
+Uplifting [screensize] best 131635 combination 
+Uplifting [textcolor] best 131635 combination 
 Uplifting [cursor] best 131635 combination 
 Uplifting [scroll] best 131635 combination 
 Uplifting [$0] best 131635 combination 
@@ -4946,10 +4946,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CONIO_SCREEN_TEXT = $400
   // The color screen address
   .label CONIO_SCREEN_COLORS = $d800
-  // The background color register address
-  .label CONIO_BGCOLOR = $d021
-  // The border color register address
-  .label CONIO_BORDERCOLOR = $d020
   .label VIC_MEMORY = $d018
   .label conio_cursor_x = 9
   .label conio_cursor_y = $a
@@ -5166,14 +5162,14 @@ clrscr: {
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CONIO_CIA1_PORT_A = $dc00
+    .label CIA1_PORT_A = $dc00
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CONIO_CIA1_PORT_B = $dc01
-    // [40] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    .label CIA1_PORT_B = $dc01
+    // [40] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta CONIO_CIA1_PORT_A
-    // [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
-    lda CONIO_CIA1_PORT_B
+    sta CIA1_PORT_A
+    // [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    lda CIA1_PORT_B
     eor #$ff
     jmp __breturn
     // kbhit::@return
@@ -6270,7 +6266,9 @@ cursor: {
   // bgcolor
 // Set the color for the background. The old color setting is returned.
 bgcolor: {
-    // [230] *((const nomodify byte*) CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
+    // The background color register address
+    .label CONIO_BGCOLOR = $d021
+    // [230] *((const nomodify byte*) bgcolor::CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
     lda #COLOR_BLACK
     sta CONIO_BGCOLOR
     jmp __breturn
@@ -6282,7 +6280,9 @@ bgcolor: {
   // bordercolor
 // Set the color for the border. The old color setting is returned.
 bordercolor: {
-    // [232] *((const nomodify byte*) CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
+    // The border color register address
+    .label CONIO_BORDERCOLOR = $d020
+    // [232] *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
     lda #COLOR_BLACK
     sta CONIO_BORDERCOLOR
     jmp __breturn
@@ -6622,8 +6622,6 @@ FINAL SYMBOL TABLE
 (const nomodify byte) CH_VLINE = (byte) $5d
 (const nomodify byte) COLOR_BLACK = (byte) 0
 (const nomodify byte) COLOR_GRAY3 = (byte) $f
-(const nomodify byte*) CONIO_BGCOLOR = (byte*) 53281
-(const nomodify byte*) CONIO_BORDERCOLOR = (byte*) 53280
 (const nomodify byte*) CONIO_SCREEN_COLORS = (byte*) 55296
 (const nomodify byte*) CONIO_SCREEN_TEXT = (byte*) 1024
 (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT = (byte) $e
@@ -6671,11 +6669,13 @@ FINAL SYMBOL TABLE
 (volatile byte) YSize loadstore zp[1]:18 20.0
 (byte()) bgcolor((byte) bgcolor::color)
 (label) bgcolor::@return
+(const nomodify byte*) bgcolor::CONIO_BGCOLOR = (byte*) 53281
 (byte) bgcolor::color
 (byte) bgcolor::old
 (byte) bgcolor::return
 (byte()) bordercolor((byte) bordercolor::color)
 (label) bordercolor::@return
+(const nomodify byte*) bordercolor::CONIO_BORDERCOLOR = (byte*) 53280
 (byte) bordercolor::color
 (byte) bordercolor::old
 (byte) bordercolor::return
@@ -6829,8 +6829,8 @@ FINAL SYMBOL TABLE
 (byte) gotoxy::y#7 reg byte a 3.3333333333666668E10
 (byte()) kbhit()
 (label) kbhit::@return
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_A = (byte*) 56320
-(const nomodify byte*) kbhit::CONIO_CIA1_PORT_B = (byte*) 56321
+(const nomodify byte*) kbhit::CIA1_PORT_A = (byte*) 56320
+(const nomodify byte*) kbhit::CIA1_PORT_B = (byte*) 56321
 (byte) kbhit::return
 (byte) kbhit::return#0 reg byte a 367.33333333333337
 (byte) kbhit::return#2 reg byte a 202.0
@@ -6987,10 +6987,6 @@ Score: 114584
   .label CONIO_SCREEN_TEXT = $400
   // The color screen address
   .label CONIO_SCREEN_COLORS = $d800
-  // The background color register address
-  .label CONIO_BGCOLOR = $d021
-  // The border color register address
-  .label CONIO_BORDERCOLOR = $d020
   .label VIC_MEMORY = $d018
   .label conio_cursor_x = 9
   .label conio_cursor_y = $a
@@ -7197,16 +7193,16 @@ clrscr: {
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CONIO_CIA1_PORT_A = $dc00
+    .label CIA1_PORT_A = $dc00
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CONIO_CIA1_PORT_B = $dc01
-    // *CONIO_CIA1_PORT_A = 0
-    // [40] *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    .label CIA1_PORT_B = $dc01
+    // *CIA1_PORT_A = 0
+    // [40] *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
-    sta CONIO_CIA1_PORT_A
-    // ~*CONIO_CIA1_PORT_B
-    // [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CONIO_CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
-    lda CONIO_CIA1_PORT_B
+    sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
+    // [41] (byte) kbhit::return#0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    lda CIA1_PORT_B
     eor #$ff
     // kbhit::@return
     // }
@@ -8225,8 +8221,10 @@ cursor: {
   // bgcolor
 // Set the color for the background. The old color setting is returned.
 bgcolor: {
+    // The background color register address
+    .label CONIO_BGCOLOR = $d021
     // *CONIO_BGCOLOR = color
-    // [230] *((const nomodify byte*) CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
+    // [230] *((const nomodify byte*) bgcolor::CONIO_BGCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
     lda #COLOR_BLACK
     sta CONIO_BGCOLOR
     // bgcolor::@return
@@ -8237,8 +8235,10 @@ bgcolor: {
   // bordercolor
 // Set the color for the border. The old color setting is returned.
 bordercolor: {
+    // The border color register address
+    .label CONIO_BORDERCOLOR = $d020
     // *CONIO_BORDERCOLOR = color
-    // [232] *((const nomodify byte*) CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
+    // [232] *((const nomodify byte*) bordercolor::CONIO_BORDERCOLOR) ← (const nomodify byte) COLOR_BLACK -- _deref_pbuc1=vbuc2 
     lda #COLOR_BLACK
     sta CONIO_BORDERCOLOR
     // bordercolor::@return

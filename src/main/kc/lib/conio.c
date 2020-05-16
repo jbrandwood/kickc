@@ -2,7 +2,7 @@
 // Implements similar functions as conio.h from CC65 for compatibility
 // See https://github.com/cc65/cc65/blob/master/include/conio.h
 //
-// Currently only the C64/PLUS4 platforms are supported
+// Currently C64/PLUS4/VIC20 platforms are supported
 #include <conio.h>
 #include <string.h>
 
@@ -18,21 +18,35 @@
     char * const CONIO_SCREEN_TEXT = 0x0400;
     // The color screen address
     char * const CONIO_SCREEN_COLORS = 0xd800;
-    // The background color register address
-    char * const CONIO_BGCOLOR = 0xd021;
-    // The border color register address
-    char * const CONIO_BORDERCOLOR = 0xd020;
     // The default text color
     const char CONIO_TEXTCOLOR_DEFAULT = 0xe;
 
     // Return true if there's a key waiting, return false if not
     unsigned char kbhit (void) {
         // CIA#1 Port A: keyboard matrix columns and joystick #2
-        char* const CONIO_CIA1_PORT_A = 0xdc00;
+        char* const CIA1_PORT_A = 0xdc00;
         // CIA#1 Port B: keyboard matrix rows and joystick #1.
-        char* const CONIO_CIA1_PORT_B = 0xdc01;
-        *CONIO_CIA1_PORT_A = 0;
-        return ~*CONIO_CIA1_PORT_B;
+        char* const CIA1_PORT_B = 0xdc01;
+        *CIA1_PORT_A = 0;
+        return ~*CIA1_PORT_B;
+    }
+
+    // Set the color for the background. The old color setting is returned.
+    unsigned char bgcolor(unsigned char color) {
+        // The background color register address
+        char * const CONIO_BGCOLOR = 0xd021;
+        char old = *CONIO_BGCOLOR;
+        *CONIO_BGCOLOR = color;
+        return old;
+    }
+
+    // Set the color for the border. The old color setting is returned.
+    unsigned char bordercolor(unsigned char color) {
+        // The border color register address
+        char * const CONIO_BORDERCOLOR = 0xd020;
+        char old = *CONIO_BORDERCOLOR;
+        *CONIO_BORDERCOLOR = color;
+        return old;
     }
 
 #elif defined(__PLUS4__)
@@ -50,10 +64,6 @@
     char * const CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
     // The color screen address
     char * const CONIO_SCREEN_COLORS = DEFAULT_COLORRAM;
-    // The background color register address
-    char * const CONIO_BGCOLOR = &TED->BG_COLOR;
-    // The border color register address
-    char * const CONIO_BORDERCOLOR = &TED->BORDER_COLOR;
     // The default text color
     const char CONIO_TEXTCOLOR_DEFAULT = 0;
 
@@ -67,6 +77,60 @@
         asm { sta $ff08 }
         // Read the keyboard input
         return ~TED->KEYBOARD_INPUT;
+    }
+
+    // Set the color for the background. The old color setting is returned.
+    unsigned char bgcolor(unsigned char color) {
+        char old = TED->BG_COLOR;
+        TED->BG_COLOR = color;
+        return old;
+    }
+
+    // Set the color for the border. The old color setting is returned.
+    unsigned char bordercolor(unsigned char color) {
+        char old = TED->BORDER_COLOR;
+        TED->BORDER_COLOR = color;
+        return old;
+    }
+
+#elif defined(__VIC20__)
+
+    #include <vic20.h>
+
+    // The screen width
+    #define CONIO_WIDTH 22
+    // The screen height
+    #define CONIO_HEIGHT 23
+    // The screen bytes
+    #define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
+
+    // The text screen address
+    char * const CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
+    // The color screen address
+    char * const CONIO_SCREEN_COLORS = DEFAULT_COLORRAM;
+    // The default text color
+    const char CONIO_TEXTCOLOR_DEFAULT = BLUE;
+
+    // Return true if there's a key waiting, return false if not
+    unsigned char kbhit (void) {
+        // Read all keyboard matrix rows
+        VIA2->PORT_B = 0x00;
+        // Read the keyboard input
+        return ~VIA2->PORT_A;
+    }
+
+    // Set the color for the background. The old color setting is returned.
+    unsigned char bgcolor(unsigned char color) {
+        char old = VIC->BORDER_BACKGROUND_COLOR;
+        VIC->BORDER_BACKGROUND_COLOR = old&0x0f|(color<<4);
+        return old>>4;
+    }
+
+    // Set the color for the border. The old color setting is returned.
+    unsigned char bordercolor(unsigned char color) {
+        char old = VIC->BORDER_BACKGROUND_COLOR;
+        VIC->BORDER_BACKGROUND_COLOR = old&0xf8|color;
+        return old&0x07;
     }
 
 #else
@@ -237,20 +301,6 @@ void cvlinexy(unsigned char x, unsigned char y, unsigned char length) {
 unsigned char textcolor(unsigned char color) {
     char old = conio_textcolor;
     conio_textcolor = color;
-    return old;
-}
-
-// Set the color for the background. The old color setting is returned.
-unsigned char bgcolor(unsigned char color) {
-    char old = *CONIO_BGCOLOR;
-    *CONIO_BGCOLOR = color;
-    return old;
-}
-
-// Set the color for the border. The old color setting is returned.
-unsigned char bordercolor(unsigned char color) {
-    char old = *CONIO_BORDERCOLOR;
-    *CONIO_BORDERCOLOR = color;
     return old;
 }
 

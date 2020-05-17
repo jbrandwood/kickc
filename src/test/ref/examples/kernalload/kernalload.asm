@@ -2,9 +2,8 @@
 // The kernalload.ld link file creates a D64 disk image containing the executable and the sprite.
 // To execute the program succesfully you must mount the D64 disk image and execute the kernalload.PRG program
   // Create a D64 disk containing the program and a sprite file
-.file [name="kernalload.prg", type="prg", segments="Program"]
 .disk [filename="kernalload.d64", name="DISK", id=1] {
-        [name="KERNALLOAD", type="prg", segments="Program"],
+        [name="KERNALLOAD.D64", type="prg", segments="Program"],
         [name="SPRITE", type="prg", segments="Sprite"]
 }
 .segmentdef Program [segments="Basic, Code, Data"]

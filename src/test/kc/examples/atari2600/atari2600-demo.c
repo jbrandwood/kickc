@@ -1,9 +1,17 @@
-// Minimal Atari 2600 VCS Program
+// Demonstration Atari 2600 VCS Program
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
 #pragma target(atari2600)
 #include <atari2600.h>
 
-char __mem col=0;
+// Variables
+#pragma data_seg(Vars)
+char __mem idx=0;
+
+// Data 
+#pragma data_seg(Data)
+const char align(0x100) SINTABLE[0x100] = kickasm {{
+    .fill $100, round(127.5+127.5*sin(2*PI*i/256))
+}};
 
 void main() {
     while(1) {
@@ -28,7 +36,7 @@ void main() {
         // Update the registers in TIA (the video chip) in order to generate what the player sees.  
         // For now we're just going to output 192 colored scanlines lines so we have something to see.
         TIA->VBLANK = 0; // D1=1, turns off Vertical Blank signal (image output on)
-        char c = col++;
+        char c = SINTABLE[idx++];
         for(char i=0;i<192;i++) {
             TIA->WSYNC = 0; // Wait for SYNC (halts CPU until end of scanline)
             TIA->COLUBK = c++; // Set background color

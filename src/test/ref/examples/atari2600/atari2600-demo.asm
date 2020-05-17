@@ -1,9 +1,10 @@
-// Minimal Atari 2600 VCS Program
+// Demonstration Atari 2600 VCS Program
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
   // Atari 2600 VCS 4K ROM
-.file [name="atari2600-min.a26", type="bin", segments="Code, Vectors"]
+.file [name="atari2600-demo.a26", type="bin", segments="Code, Data, Vectors"]
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
-.segmentdef Data [start=$80,max=$ff, virtual]
+.segmentdef Data [startAfter="Code",max=$fff9]
+.segmentdef Vars [start=$80,max=$ff, virtual]
 .segmentdef Vectors [start=$fffa,max=$ffff]
 .segment Vectors
 .word main // NMI
@@ -19,7 +20,7 @@
 .segment Code
 main: {
     lda #0
-    sta col
+    sta idx
   __b2:
     // TIA->VSYNC = 2
     // Vertical Sync
@@ -52,10 +53,11 @@ main: {
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
-    // c = col++
+    // c = SINTABLE[idx++]
     // D1=1, turns off Vertical Blank signal (image output on)
-    ldx col
-    inc col
+    ldy idx
+    ldx SINTABLE,y
+    inc idx
     tay
   __b6:
     // for(char i=0;i<192;i++)
@@ -108,4 +110,9 @@ main: {
     jmp __b3
 }
 .segment Data
-  col: .byte 0
+  .align $100
+SINTABLE:
+.fill $100, round(127.5+127.5*sin(2*PI*i/256))
+
+.segment Vars
+  idx: .byte 0

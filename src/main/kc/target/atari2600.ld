@@ -1,7 +1,8 @@
 // Atari 2600 VCS 4K ROM
-.file [name="%O", type="bin", segments="Code, Vectors"]
+.file [name="%O", type="bin", segments="Code, Data, Vectors"]
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
-.segmentdef Data [start=$80,max=$ff, virtual]
+.segmentdef Data [startAfter="Code",max=$fff9]
+.segmentdef Vars [start=$80,max=$ff, virtual]
 .segmentdef Vectors [start=$fffa,max=$ffff]
 .segment Vectors
 .word %E // NMI

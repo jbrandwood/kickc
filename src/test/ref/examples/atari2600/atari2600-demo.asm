@@ -1,11 +1,11 @@
 // Demonstration Atari 2600 VCS Program
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
-  // Atari 2600 VCS 4K ROM
+  // Atari 2600 VCS 2K ROM
 .file [name="atari2600-demo.a26", type="bin", segments="Code, Data, Vectors"]
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [startAfter="Code",max=$fff9]
-.segmentdef Vars [start=$80,max=$ff, virtual]
 .segmentdef Vectors [start=$fffa,max=$ffff]
+.segmentdef Vars [start=$80,max=$ff, virtual]
 .segment Vectors
 .word main // NMI
 .word main // RESET

@@ -3,6 +3,7 @@
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
 
 #pragma link("ataritempest.ld")
+#pragma extension("bin")
 
 char* const BG_COLOR = 0xc01a;
 

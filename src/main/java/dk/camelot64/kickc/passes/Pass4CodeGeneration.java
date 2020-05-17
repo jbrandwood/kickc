@@ -16,8 +16,6 @@ import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -82,16 +80,9 @@ public class Pass4CodeGeneration {
       asm.startChunk(currentScope, null, "File Comments");
       generateComments(asm, program.getFileComments());
       asm.startChunk(currentScope, null, "Upstart");
-      final File linkScriptFile = program.getTargetPlatform().getLinkScriptFile();
-      if(linkScriptFile == null)
-         throw new InternalError("No link script found! Cannot link program.");
-      String linkScriptBody = null;
-      try {
-         linkScriptBody = new String(Files.readAllBytes(linkScriptFile.toPath()));
-      } catch(IOException e) {
-         throw new CompileError("Cannot read link script file " + linkScriptFile.getAbsolutePath(), e);
-      }
-      String outputFileName = new File(program.getPrimaryFileName()).getName();
+      final TargetPlatform targetPlatform = program.getTargetPlatform();
+      String linkScriptBody = targetPlatform.getLinkScriptBody();
+      String outputFileName = new File(program.getPrimaryFileName()).getName() + "." + program.getTargetPlatform().getOutFileExtension();
       linkScriptBody = linkScriptBody.replace("%O", outputFileName);
       linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
       linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());

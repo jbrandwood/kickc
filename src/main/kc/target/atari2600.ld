@@ -1,5 +1,5 @@
 // Atari 2600 VCS 4K ROM
-.file [name="%O.prg", type="bin", segments="Code, Vectors"]
+.file [name="%O", type="bin", segments="Code, Vectors"]
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [start=$80,max=$ff, virtual]
 .segmentdef Vectors [start=$fffa,max=$ffff]

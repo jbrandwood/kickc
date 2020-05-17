@@ -1,4 +1,4 @@
-.file [name="%O.prg", type="prg", segments="Program"]
+.file [name="%O", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$0801]
 .segmentdef Code [start=$080d]

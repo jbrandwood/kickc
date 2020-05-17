@@ -2,6 +2,7 @@
 // The kernalload.ld link file creates a D64 disk image containing the executable and the sprite.
 // To execute the program succesfully you must mount the D64 disk image and execute the kernalload.PRG program
 #pragma link("kernalload.ld")
+#pragma extension("d64")
 
 #include <string.h>
 #include <c64.h>

@@ -1,4 +1,4 @@
-.file [name="%O.bin", type="bin", segments="AtariTempest"]
+.file [name="%O", type="bin", segments="AtariTempest"]
 .segmentdef AtariTempest [segments="Code, RomData, Vectors"]
 .segmentdef Code [start=$9000, min=$9000, max=$Fff9]
 .segmentdef RomData [startAfter="Code", min=$9000, max=$Fff9]

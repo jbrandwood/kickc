@@ -149,6 +149,7 @@ globalDirective
     : (PRAGMA TARGET) PAR_BEGIN NAME PAR_END #globalDirectivePlatform
     | (PRAGMA CPU) PAR_BEGIN NAME PAR_END #globalDirectiveCpu
     | (PRAGMA LINK) PAR_BEGIN STRING PAR_END #globalDirectiveLinkScript
+    | (PRAGMA EXTENSION) PAR_BEGIN STRING PAR_END #globalDirectiveExtension
     | (PRAGMA EMULATOR) PAR_BEGIN STRING PAR_END #globalDirectiveEmulator
     | (PRAGMA RESERVE) PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END #globalDirectiveReserve
     | (PRAGMA PC) PAR_BEGIN NUMBER PAR_END #globalDirectivePc

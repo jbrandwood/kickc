@@ -522,30 +522,6 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -582,6 +558,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -589,6 +577,30 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

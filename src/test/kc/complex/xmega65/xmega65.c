@@ -5,6 +5,7 @@
 #include <string.h>
 
 #pragma link("xmega65.ld")
+#pragma extension("bin")
 
 
 char* const RASTER = 0xd012;

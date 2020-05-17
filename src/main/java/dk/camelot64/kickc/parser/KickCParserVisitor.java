@@ -286,20 +286,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParameterDeclList(KickCParser.ParameterDeclListContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code globalDirectiveReserve}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code globalDirectivePc}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code globalDirectivePlatform}
 	 * labeled alternative in {@link KickCParser#globalDirective}.
 	 * @param ctx the parse tree
@@ -321,12 +307,33 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code globalDirectiveExtension}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code globalDirectiveEmulator}
 	 * labeled alternative in {@link KickCParser#globalDirective}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code globalDirectiveReserve}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code globalDirectivePc}
+	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code globalDirectiveCodeSeg}
 	 * labeled alternative in {@link KickCParser#globalDirective}.

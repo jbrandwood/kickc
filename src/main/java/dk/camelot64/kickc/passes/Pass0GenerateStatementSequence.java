@@ -138,6 +138,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
+   public Object visitGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx) {
+      String extension = ctx.STRING().getText();
+      extension = extension.substring(1, extension.length() - 1);
+      program.getTargetPlatform().setOutFileExtension(extension);
+      return null;
+   }
+
+   @Override
    public Object visitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) {
       String emuName = ctx.STRING().getText();
       emuName = emuName.substring(1, emuName.length() - 1);

@@ -1,7 +1,7 @@
 // Minimal Atari 2600 VCS Program
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
   // Atari 2600 VCS 4K ROM
-.file [name="atari2600-min.prg", type="bin", segments="Code, Vectors"]
+.file [name="atari2600-min.a26", type="bin", segments="Code, Vectors"]
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [start=$80,max=$ff, virtual]
 .segmentdef Vectors [start=$fffa,max=$ffff]
@@ -21,24 +21,20 @@ main: {
     lda #0
     sta col
   __b2:
-    // TIA->WSYNC = 2
+    // TIA->VSYNC = 2
     // Vertical Sync
     // here we generate the signal that tells the TV to move the beam to the top of
     // the screen so we can start the next frame of video.
     // The Sync Signal must be on for 3 scanlines.
     lda #2
-    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
-    // TIA->VSYNC = 2
-    // Wait for SYNC (halts CPU until end of scanline)
     sta TIA
-    // TIA->WSYNC = 2
+    // TIA->WSYNC = 0
     // Accumulator D1=1, turns on Vertical Sync signal
+    lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // Wait for Sync - halts CPU until end of 1st scanline of VSYNC
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
-    // TIA->WSYNC = 0
     // wait until end of 2nd scanline of VSYNC
-    lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
     // TIA->VSYNC = 0
     // wait until end of 3rd scanline of VSYNC
@@ -80,15 +76,15 @@ main: {
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK
     tax
   __b9:
-    // for(char i=0;i<07;i++)
-    cpx #7
+    // for(char i=0;i<30;i++)
+    cpx #$1e
     bcc __b10
     jmp __b2
   __b10:
     // TIA->WSYNC = 0
     lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC
-    // for(char i=0;i<07;i++)
+    // for(char i=0;i<30;i++)
     inx
     jmp __b9
   __b7:

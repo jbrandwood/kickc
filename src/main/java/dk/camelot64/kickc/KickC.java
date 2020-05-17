@@ -45,16 +45,19 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-odir"}, description = "Path to the output folder, where the compiler places all generated files. By default the folder of the output file is used.")
    private Path outputDir = null;
 
-   @CommandLine.Option(names = {"-a"}, description = "Assemble the output file using KickAssembler. Produces a .prg file.")
+   @CommandLine.Option(names = {"-oext"}, description = "Override the output file extension. The default is specified in the target platform / linker configuration.")
+   private String outputExtension = null;
+
+   @CommandLine.Option(names = {"-a"}, description = "Assemble the output file using KickAssembler. Produces a binary file.")
    private boolean assemble = false;
 
-   @CommandLine.Option(names = {"-e"}, description = "Execute the assembled prg file using VICE. Implicitly assembles the output.")
+   @CommandLine.Option(names = {"-e"}, description = "Execute the assembled binary file using an appropriate emulator. The emulator chosen depends on the target platform.")
    private boolean execute = false;
 
    @CommandLine.Option(names = {"-emu"}, description = "Execute the assembled program file by passing it to the named emulator. Implicitly assembles the output.")
    private String emulator = null;
 
-   @CommandLine.Option(names = {"-d"}, description = "Debug the assembled prg file using C64Debugger. Implicitly assembles the output.")
+   @CommandLine.Option(names = {"-d"}, description = "Debug the assembled binary file using C64Debugger. Implicitly assembles the output.")
    private boolean debug = false;
 
    @CommandLine.Option(names = {"-D"}, parameterConsumer = DefineConsumer.class, description = "Define macro to value (1 if no value given).")
@@ -243,6 +246,11 @@ public class KickC implements Callable<Integer> {
          program.getTargetPlatform().setLinkScriptFile(SourceLoader.loadFile(linkScript, currentPath, program.getTargetPlatformPaths()));
       }
 
+      // Update output file extension
+      if(outputExtension != null) {
+         program.getTargetPlatform().setOutFileExtension(outputExtension);
+      }
+
       // Update CPU
       if(cpu != null) {
          TargetCpu targetCpu = TargetCpu.getTargetCpu(cpu, false);
@@ -400,8 +408,8 @@ public class KickC implements Callable<Integer> {
          }
 
          // Assemble the asm-file if instructed
-         String prgFileName = outputFileNameBase + ".prg";
-         Path prgPath = outputDir.resolve(prgFileName);
+         String outputBinaryFileName = outputFileNameBase + "." + program.getTargetPlatform().getOutFileExtension();
+         Path outputBinaryFilePath = outputDir.resolve(outputBinaryFileName);
 
          // Find emulator - if set by #pragma
          if(emulator == null) {
@@ -415,10 +423,21 @@ public class KickC implements Callable<Integer> {
 
          if(assemble || emulator != null) {
             Path kasmLogPath = outputDir.resolve(outputFileNameBase + ".klog");
-            System.out.println("Assembling to " + prgPath.toString());
-            String[] assembleCommand = {asmPath.toString(), "-log", kasmLogPath.toString(), "-o", prgPath.toString(), "-vicesymbols", "-showmem", "-debugdump"};
+            System.out.println("Assembling to " + outputBinaryFilePath.toString());
+            List<String> assembleCommand = new ArrayList<>();
+            assembleCommand.add(asmPath.toString());
+            assembleCommand.add("-log");
+            assembleCommand.add(kasmLogPath.toString());
+            final String linkScriptBody = program.getTargetPlatform().getLinkScriptBody();
+            if(!linkScriptBody.contains(".file") && !linkScriptBody.contains(".disk")) {
+               assembleCommand.add("-o");
+               assembleCommand.add(outputBinaryFilePath.toString());
+            }
+            assembleCommand.add("-vicesymbols");
+            assembleCommand.add("-showmem");
+            assembleCommand.add("-debugdump");
             if(verbose) {
-               System.out.print("Assembling command: java -jar kickassembler-5.9.jar ");
+               System.out.print("Assembling command: java -jar KickAss.jar ");
                for(String cmd : assembleCommand) {
                   System.out.print(cmd + " ");
                }
@@ -431,7 +450,7 @@ public class KickC implements Callable<Integer> {
             int kasmResult = -1;
             try {
                CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
-               kasmResult = KickAssembler.main2(assembleCommand);
+               kasmResult = KickAssembler.main2(assembleCommand.toArray(new String[0]));
             } catch(Throwable e) {
                throw new CompileError("KickAssembling file failed! ", e);
             } finally {
@@ -442,7 +461,7 @@ public class KickC implements Callable<Integer> {
             }
          }
 
-         // Execute the prg-file if instructed
+         // Execute the binary file if instructed
          if(emulator != null) {
 
             // Find commandline options for the emulator
@@ -458,8 +477,8 @@ public class KickC implements Callable<Integer> {
                emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
             }
 
-            System.out.println("Executing " + prgPath + " using " + emulator);
-            String executeCommand = emulator + " " + emuOptions + prgPath.toAbsolutePath().toString();
+            System.out.println("Executing " + outputBinaryFilePath + " using " + emulator);
+            String executeCommand = emulator + " " + emuOptions + outputBinaryFilePath.toAbsolutePath().toString();
             if(verbose) {
                System.out.println("Executing command:  " + executeCommand);
             }

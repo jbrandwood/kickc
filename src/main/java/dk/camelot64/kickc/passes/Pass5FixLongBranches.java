@@ -79,13 +79,13 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
 
       // Compile using KickAssembler - catch the output in a String
       File asmFile = getTmpFile(outputFileName, ".asm");
-      File asmPrgFile = getTmpFile(outputFileName, ".prg");
+      File binaryFile = getTmpFile(outputFileName, "."+getProgram().getTargetPlatform().getOutFileExtension());
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = -1;
       try {
          CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
-         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath()});
+         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-o", binaryFile.getAbsolutePath()});
       } catch(Throwable e) {
          if(e instanceof AssertionError && e.getMessage().contains("Invalid number of bytes in memblock!")) {
             throw new CompileError("Error! KickAssembler failed due to assertion. Please run java without -ea / -enableassertions.", e);

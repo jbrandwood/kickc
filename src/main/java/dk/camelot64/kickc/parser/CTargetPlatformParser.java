@@ -34,25 +34,38 @@ public class CTargetPlatformParser {
          final JsonReader jsonReader = Json.createReader(new BufferedInputStream(new FileInputStream(platformFile)));
          final JsonObject platformJson = jsonReader.readObject();
          TargetPlatform targetPlatform = new TargetPlatform(platformName);
-         final String cpuName = platformJson.getString("cpu", null);
-         if(cpuName != null)
-            targetPlatform.setCpu(TargetCpu.getTargetCpu(cpuName, false));
-         final String linkScriptName = platformJson.getString("link", null);
-         if(linkScriptName != null)
-            targetPlatform.setLinkScriptFile(SourceLoader.loadFile(linkScriptName, currentFolder, platformSearchPaths));
-         final String emulatorCommand = platformJson.getString("emulator", null);
-         if(emulatorCommand != null)
-            targetPlatform.setEmulatorCommand(emulatorCommand);
-         final JsonObject defines = platformJson.getJsonObject("defines");
-         if(defines != null) {
-            final Set<String> macroNames = defines.keySet();
-            final LinkedHashMap<String, String> macros = new LinkedHashMap<>();
-            for(String macroName : macroNames) {
-               final JsonValue jsonValue = defines.get(macroName);
-               final String macroBody = jsonValue.toString();
-               macros.put(macroName, macroBody);
+         {
+            final String cpuName = platformJson.getString("cpu", null);
+            if(cpuName != null)
+               targetPlatform.setCpu(TargetCpu.getTargetCpu(cpuName, false));
+         }
+         {
+            final String linkScriptName = platformJson.getString("link", null);
+            if(linkScriptName != null)
+               targetPlatform.setLinkScriptFile(SourceLoader.loadFile(linkScriptName, currentFolder, platformSearchPaths));
+         }
+         {
+            final String emulatorCommand = platformJson.getString("emulator", null);
+            if(emulatorCommand != null)
+               targetPlatform.setEmulatorCommand(emulatorCommand);
+         }
+         {
+            final String outExtension = platformJson.getString("extension", null);
+            if(outExtension != null)
+               targetPlatform.setOutFileExtension(outExtension);
+         }
+         {
+            final JsonObject defines = platformJson.getJsonObject("defines");
+            if(defines != null) {
+               final Set<String> macroNames = defines.keySet();
+               final LinkedHashMap<String, String> macros = new LinkedHashMap<>();
+               for(String macroName : macroNames) {
+                  final JsonValue jsonValue = defines.get(macroName);
+                  final String macroBody = jsonValue.toString();
+                  macros.put(macroName, macroBody);
+               }
+               targetPlatform.setDefines(macros);
             }
-            targetPlatform.setDefines(macros);
          }
          return targetPlatform;
       } catch(CompileError | IOException | JsonParsingException e) {

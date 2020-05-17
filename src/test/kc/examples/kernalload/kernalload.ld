@@ -1,6 +1,6 @@
 // Create a D64 disk containing the program and a sprite file
 .disk [filename="%O", name="DISK", id=1] {
-        [name="%^O", type="prg", segments="Program"],
+        [name="KERNALLOAD", type="prg", segments="Program"],
         [name="SPRITE", type="prg", segments="Sprite"]
 }
 .segmentdef Program [segments="Basic, Code, Data"]

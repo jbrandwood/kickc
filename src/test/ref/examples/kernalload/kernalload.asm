@@ -3,7 +3,7 @@
 // To execute the program succesfully you must mount the D64 disk image and execute the kernalload.PRG program
   // Create a D64 disk containing the program and a sprite file
 .disk [filename="kernalload.d64", name="DISK", id=1] {
-        [name="KERNALLOAD.D64", type="prg", segments="Program"],
+        [name="KERNALLOAD", type="prg", segments="Program"],
         [name="SPRITE", type="prg", segments="Sprite"]
 }
 .segmentdef Program [segments="Basic, Code, Data"]

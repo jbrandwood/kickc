@@ -217,6 +217,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPrintfSpeed() throws IOException, URISyntaxException {
+      compileAndCompare("printf-speed.c");
+   }
+
+   @Test
    public void testPrintf16() throws IOException, URISyntaxException {
       compileAndCompare("printf-16.c");
    }

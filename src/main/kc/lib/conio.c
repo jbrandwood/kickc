@@ -141,10 +141,10 @@
 __ma char conio_cursor_x = 0;
 // The current cursor y-position
 __ma char conio_cursor_y = 0;
-// The current cursor address
-__ma char *conio_cursor_text = CONIO_SCREEN_TEXT;
-// The current cursor address
-__ma char *conio_cursor_color = CONIO_SCREEN_COLORS;
+// The current text cursor line start
+__ma char *conio_line_text = CONIO_SCREEN_TEXT;
+// The current color cursor line start
+__ma char *conio_line_color = CONIO_SCREEN_COLORS;
 // The current text color
 __ma char conio_textcolor = CONIO_TEXTCOLOR_DEFAULT;
 // Is a cursor whown when waiting for input (0: no, other: yes)
@@ -167,8 +167,8 @@ void clrscr(void) {
     }
     conio_cursor_x = 0;
     conio_cursor_y = 0;
-    conio_cursor_text = CONIO_SCREEN_TEXT;
-    conio_cursor_color = CONIO_SCREEN_COLORS;
+    conio_line_text = CONIO_SCREEN_TEXT;
+    conio_line_color = CONIO_SCREEN_COLORS;
 }
 
 // Set the cursor to the specified position
@@ -177,9 +177,9 @@ void gotoxy(unsigned char x, unsigned char y) {
     if(x>=CONIO_WIDTH) x = 0;
     conio_cursor_x = x;
     conio_cursor_y = y;
-    unsigned int offset = (unsigned int)y*CONIO_WIDTH + x;
-    conio_cursor_text = CONIO_SCREEN_TEXT + offset;
-    conio_cursor_color = CONIO_SCREEN_COLORS + offset;
+    unsigned int line_offset = (unsigned int)y*CONIO_WIDTH;
+    conio_line_text = CONIO_SCREEN_TEXT + line_offset;
+    conio_line_color = CONIO_SCREEN_COLORS + line_offset;
 }
 
 // Return the current screen size.
@@ -214,21 +214,17 @@ void cputc(char c) {
     if(c=='\n') {
         cputln();
     } else {
-        *conio_cursor_text++ = c;
-        *conio_cursor_color++ = conio_textcolor;
-        if(++conio_cursor_x==CONIO_WIDTH) {
-            conio_cursor_x = 0;
-            ++conio_cursor_y;
-            cscroll();
-        }
+        conio_line_text[conio_cursor_x] = c;
+        conio_line_color[conio_cursor_x] = conio_textcolor;
+        if(++conio_cursor_x==CONIO_WIDTH)
+            cputln();
     }
 }
 
 // Print a newline
 void cputln() {
-    unsigned int ln_offset = CONIO_WIDTH - conio_cursor_x;
-    conio_cursor_text =  conio_cursor_text  + ln_offset;
-    conio_cursor_color = conio_cursor_color + ln_offset;
+    conio_line_text +=  CONIO_WIDTH;
+    conio_line_color += CONIO_WIDTH;
     conio_cursor_x = 0;
     conio_cursor_y++;
     cscroll();
@@ -242,8 +238,8 @@ void cscroll() {
             memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH);
             memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH);
             memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH);
-            conio_cursor_text = conio_cursor_text-CONIO_WIDTH;
-            conio_cursor_color = conio_cursor_color-CONIO_WIDTH;
+            conio_line_text -= CONIO_WIDTH;
+            conio_line_color -= CONIO_WIDTH;
             conio_cursor_y--;
         } else {
             gotoxy(0,0);

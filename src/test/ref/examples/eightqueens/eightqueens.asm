@@ -30,8 +30,8 @@
   .label CIA1 = $dc00
   .label conio_cursor_x = $14
   .label conio_cursor_y = $15
-  .label conio_cursor_text = $16
-  .label conio_cursor_color = $18
+  .label conio_line_text = $16
+  .label conio_line_color = $18
   // The number of found solutions
   .label count = 2
 __bbegin:
@@ -42,18 +42,18 @@ __bbegin:
   // conio_cursor_y = 0
   // The current cursor y-position
   sta.z conio_cursor_y
-  // conio_cursor_text = CONIO_SCREEN_TEXT
-  // The current cursor address
+  // conio_line_text = CONIO_SCREEN_TEXT
+  // The current text cursor line start
   lda #<CONIO_SCREEN_TEXT
-  sta.z conio_cursor_text
+  sta.z conio_line_text
   lda #>CONIO_SCREEN_TEXT
-  sta.z conio_cursor_text+1
-  // conio_cursor_color = CONIO_SCREEN_COLORS
-  // The current cursor address
+  sta.z conio_line_text+1
+  // conio_line_color = CONIO_SCREEN_COLORS
+  // The current color cursor line start
   lda #<CONIO_SCREEN_COLORS
-  sta.z conio_cursor_color
+  sta.z conio_line_color
   lda #>CONIO_SCREEN_COLORS
-  sta.z conio_cursor_color+1
+  sta.z conio_line_color+1
   jsr main
   rts
 main: {
@@ -157,35 +157,19 @@ cputc: {
     // if(c=='\n')
     cmp #'\n'
     beq __b1
-    // *conio_cursor_text++ = c
-    ldy #0
-    sta (conio_cursor_text),y
-    // *conio_cursor_text++ = c;
-    inc.z conio_cursor_text
-    bne !+
-    inc.z conio_cursor_text+1
-  !:
-    // *conio_cursor_color++ = conio_textcolor
+    // conio_line_text[conio_cursor_x] = c
+    ldy.z conio_cursor_x
+    sta (conio_line_text),y
+    // conio_line_color[conio_cursor_x] = conio_textcolor
     lda #CONIO_TEXTCOLOR_DEFAULT
-    ldy #0
-    sta (conio_cursor_color),y
-    // *conio_cursor_color++ = conio_textcolor;
-    inc.z conio_cursor_color
-    bne !+
-    inc.z conio_cursor_color+1
-  !:
+    sta (conio_line_color),y
     // if(++conio_cursor_x==CONIO_WIDTH)
     inc.z conio_cursor_x
     lda #$28
     cmp.z conio_cursor_x
     bne __breturn
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // ++conio_cursor_y;
-    inc.z conio_cursor_y
-    // cscroll()
-    jsr cscroll
+    // cputln()
+    jsr cputln
   __breturn:
     // }
     rts
@@ -196,35 +180,22 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __1 = $16
-    .label __2 = $18
-    .label ln_offset = $25
-    // ln_offset = CONIO_WIDTH - conio_cursor_x
-    sec
+    // conio_line_text +=  CONIO_WIDTH
     lda #$28
-    sbc.z conio_cursor_x
-    sta.z ln_offset
-    lda #0
-    sbc #0
-    sta.z ln_offset+1
-    // conio_cursor_text  + ln_offset
-    lda.z __1
     clc
-    adc.z ln_offset
-    sta.z __1
-    lda.z __1+1
-    adc.z ln_offset+1
-    sta.z __1+1
-    // conio_cursor_text =  conio_cursor_text  + ln_offset
-    // conio_cursor_color + ln_offset
-    lda.z __2
+    adc.z conio_line_text
+    sta.z conio_line_text
+    bcc !+
+    inc.z conio_line_text+1
+  !:
+    // conio_line_color += CONIO_WIDTH
+    lda #$28
     clc
-    adc.z ln_offset
-    sta.z __2
-    lda.z __2+1
-    adc.z ln_offset+1
-    sta.z __2+1
-    // conio_cursor_color = conio_cursor_color + ln_offset
+    adc.z conio_line_color
+    sta.z conio_line_color
+    bcc !+
+    inc.z conio_line_color+1
+  !:
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
@@ -237,8 +208,6 @@ cputln: {
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
-    .label __7 = $16
-    .label __8 = $18
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
     cmp.z conio_cursor_y
@@ -277,24 +246,22 @@ cscroll: {
     lda #>CONIO_SCREEN_COLORS+$19*$28-$28
     sta.z memset.str+1
     jsr memset
-    // conio_cursor_text-CONIO_WIDTH
-    lda.z __7
+    // conio_line_text -= CONIO_WIDTH
+    lda.z conio_line_text
     sec
     sbc #<$28
-    sta.z __7
-    lda.z __7+1
+    sta.z conio_line_text
+    lda.z conio_line_text+1
     sbc #>$28
-    sta.z __7+1
-    // conio_cursor_text = conio_cursor_text-CONIO_WIDTH
-    // conio_cursor_color-CONIO_WIDTH
-    lda.z __8
+    sta.z conio_line_text+1
+    // conio_line_color -= CONIO_WIDTH
+    lda.z conio_line_color
     sec
     sbc #<$28
-    sta.z __8
-    lda.z __8+1
+    sta.z conio_line_color
+    lda.z conio_line_color+1
     sbc #>$28
-    sta.z __8+1
-    // conio_cursor_color = conio_cursor_color-CONIO_WIDTH
+    sta.z conio_line_color+1
     // conio_cursor_y--;
     dec.z conio_cursor_y
   __breturn:
@@ -1192,23 +1159,23 @@ uctoa_append: {
 gotoxy: {
     .const x = 0
     .const y = 5
-    .const offset = y*$28
+    .const line_offset = y*$28
     // conio_cursor_x = x
     lda #x
     sta.z conio_cursor_x
     // conio_cursor_y = y
     lda #y
     sta.z conio_cursor_y
-    // conio_cursor_text = CONIO_SCREEN_TEXT + offset
-    lda #<CONIO_SCREEN_TEXT+offset
-    sta.z conio_cursor_text
-    lda #>CONIO_SCREEN_TEXT+offset
-    sta.z conio_cursor_text+1
-    // conio_cursor_color = CONIO_SCREEN_COLORS + offset
-    lda #<CONIO_SCREEN_COLORS+offset
-    sta.z conio_cursor_color
-    lda #>CONIO_SCREEN_COLORS+offset
-    sta.z conio_cursor_color+1
+    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda #<CONIO_SCREEN_TEXT+line_offset
+    sta.z conio_line_text
+    lda #>CONIO_SCREEN_TEXT+line_offset
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
+    lda #<CONIO_SCREEN_COLORS+line_offset
+    sta.z conio_line_color
+    lda #>CONIO_SCREEN_COLORS+line_offset
+    sta.z conio_line_color+1
     // }
     rts
 }
@@ -1487,16 +1454,16 @@ clrscr: {
     sta.z conio_cursor_x
     // conio_cursor_y = 0
     sta.z conio_cursor_y
-    // conio_cursor_text = CONIO_SCREEN_TEXT
+    // conio_line_text = CONIO_SCREEN_TEXT
     lda #<CONIO_SCREEN_TEXT
-    sta.z conio_cursor_text
+    sta.z conio_line_text
     lda #>CONIO_SCREEN_TEXT
-    sta.z conio_cursor_text+1
-    // conio_cursor_color = CONIO_SCREEN_COLORS
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
     lda #<CONIO_SCREEN_COLORS
-    sta.z conio_cursor_color
+    sta.z conio_line_color
     lda #>CONIO_SCREEN_COLORS
-    sta.z conio_cursor_color+1
+    sta.z conio_line_color+1
     // }
     rts
   __b2:

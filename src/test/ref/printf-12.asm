@@ -18,10 +18,10 @@
   .label CONIO_SCREEN_TEXT = $400
   // The color screen address
   .label CONIO_SCREEN_COLORS = $d800
-  .label conio_cursor_x = $13
-  .label conio_cursor_y = $14
-  .label conio_cursor_text = $15
-  .label conio_cursor_color = $17
+  .label conio_cursor_x = $11
+  .label conio_cursor_y = $12
+  .label conio_line_text = $13
+  .label conio_line_color = $15
 __bbegin:
   // conio_cursor_x = 0
   // The current cursor x-position
@@ -30,18 +30,18 @@ __bbegin:
   // conio_cursor_y = 0
   // The current cursor y-position
   sta.z conio_cursor_y
-  // conio_cursor_text = CONIO_SCREEN_TEXT
-  // The current cursor address
+  // conio_line_text = CONIO_SCREEN_TEXT
+  // The current text cursor line start
   lda #<CONIO_SCREEN_TEXT
-  sta.z conio_cursor_text
+  sta.z conio_line_text
   lda #>CONIO_SCREEN_TEXT
-  sta.z conio_cursor_text+1
-  // conio_cursor_color = CONIO_SCREEN_COLORS
-  // The current cursor address
+  sta.z conio_line_text+1
+  // conio_line_color = CONIO_SCREEN_COLORS
+  // The current color cursor line start
   lda #<CONIO_SCREEN_COLORS
-  sta.z conio_cursor_color
+  sta.z conio_line_color
   lda #>CONIO_SCREEN_COLORS
-  sta.z conio_cursor_color+1
+  sta.z conio_line_color+1
   jsr main
   rts
 main: {
@@ -51,7 +51,7 @@ main: {
     .label si = -$4d2
     .label sl = -$1e240
     .label ul = $8aa52
-    .label c = $19
+    .label c = $17
     // clrscr()
     jsr clrscr
     // c = 'x'
@@ -219,9 +219,9 @@ main: {
     .byte 0
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($f) s)
+// cputs(byte* zp($d) s)
 cputs: {
-    .label s = $f
+    .label s = $d
   __b1:
     // c=*s++
     ldy #0
@@ -247,35 +247,19 @@ cputc: {
     // if(c=='\n')
     cmp #'\n'
     beq __b1
-    // *conio_cursor_text++ = c
-    ldy #0
-    sta (conio_cursor_text),y
-    // *conio_cursor_text++ = c;
-    inc.z conio_cursor_text
-    bne !+
-    inc.z conio_cursor_text+1
-  !:
-    // *conio_cursor_color++ = conio_textcolor
+    // conio_line_text[conio_cursor_x] = c
+    ldy.z conio_cursor_x
+    sta (conio_line_text),y
+    // conio_line_color[conio_cursor_x] = conio_textcolor
     lda #CONIO_TEXTCOLOR_DEFAULT
-    ldy #0
-    sta (conio_cursor_color),y
-    // *conio_cursor_color++ = conio_textcolor;
-    inc.z conio_cursor_color
-    bne !+
-    inc.z conio_cursor_color+1
-  !:
+    sta (conio_line_color),y
     // if(++conio_cursor_x==CONIO_WIDTH)
     inc.z conio_cursor_x
     lda #$28
     cmp.z conio_cursor_x
     bne __breturn
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // ++conio_cursor_y;
-    inc.z conio_cursor_y
-    // cscroll()
-    jsr cscroll
+    // cputln()
+    jsr cputln
   __breturn:
     // }
     rts
@@ -286,35 +270,22 @@ cputc: {
 }
 // Print a newline
 cputln: {
-    .label __1 = $15
-    .label __2 = $17
-    .label ln_offset = $20
-    // ln_offset = CONIO_WIDTH - conio_cursor_x
-    sec
+    // conio_line_text +=  CONIO_WIDTH
     lda #$28
-    sbc.z conio_cursor_x
-    sta.z ln_offset
-    lda #0
-    sbc #0
-    sta.z ln_offset+1
-    // conio_cursor_text  + ln_offset
-    lda.z __1
     clc
-    adc.z ln_offset
-    sta.z __1
-    lda.z __1+1
-    adc.z ln_offset+1
-    sta.z __1+1
-    // conio_cursor_text =  conio_cursor_text  + ln_offset
-    // conio_cursor_color + ln_offset
-    lda.z __2
+    adc.z conio_line_text
+    sta.z conio_line_text
+    bcc !+
+    inc.z conio_line_text+1
+  !:
+    // conio_line_color += CONIO_WIDTH
+    lda #$28
     clc
-    adc.z ln_offset
-    sta.z __2
-    lda.z __2+1
-    adc.z ln_offset+1
-    sta.z __2+1
-    // conio_cursor_color = conio_cursor_color + ln_offset
+    adc.z conio_line_color
+    sta.z conio_line_color
+    bcc !+
+    inc.z conio_line_color+1
+  !:
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x
@@ -327,8 +298,6 @@ cputln: {
 }
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
-    .label __7 = $15
-    .label __8 = $17
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$19
     cmp.z conio_cursor_y
@@ -367,24 +336,22 @@ cscroll: {
     lda #>CONIO_SCREEN_COLORS+$19*$28-$28
     sta.z memset.str+1
     jsr memset
-    // conio_cursor_text-CONIO_WIDTH
-    lda.z __7
+    // conio_line_text -= CONIO_WIDTH
+    lda.z conio_line_text
     sec
     sbc #<$28
-    sta.z __7
-    lda.z __7+1
+    sta.z conio_line_text
+    lda.z conio_line_text+1
     sbc #>$28
-    sta.z __7+1
-    // conio_cursor_text = conio_cursor_text-CONIO_WIDTH
-    // conio_cursor_color-CONIO_WIDTH
-    lda.z __8
+    sta.z conio_line_text+1
+    // conio_line_color -= CONIO_WIDTH
+    lda.z conio_line_color
     sec
     sbc #<$28
-    sta.z __8
-    lda.z __8+1
+    sta.z conio_line_color
+    lda.z conio_line_color+1
     sbc #>$28
-    sta.z __8+1
-    // conio_cursor_color = conio_cursor_color-CONIO_WIDTH
+    sta.z conio_line_color+1
     // conio_cursor_y--;
     dec.z conio_cursor_y
   __breturn:
@@ -392,11 +359,11 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(9) str, byte register(X) c)
+// memset(void* zp($1e) str, byte register(X) c)
 memset: {
-    .label end = $1a
-    .label dst = 9
-    .label str = 9
+    .label end = $18
+    .label dst = $1e
+    .label str = $1e
     // end = (char*)str + num
     lda #$28
     clc
@@ -429,13 +396,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($11) destination, void* zp(9) source)
+// memcpy(void* zp($f) destination, void* zp($1e) source)
 memcpy: {
-    .label src_end = $1a
-    .label dst = $11
-    .label src = 9
-    .label source = 9
-    .label destination = $11
+    .label src_end = $18
+    .label dst = $f
+    .label src = $1e
+    .label source = $1e
+    .label destination = $f
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -508,14 +475,14 @@ printf_ulong: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($c) buffer_sign, byte register(X) format_min_length, byte zp(4) format_justify_left, byte zp($b) format_zero_padding, byte zp($d) format_upper_case)
+// printf_number_buffer(byte zp($a) buffer_sign, byte register(X) format_min_length, byte zp(4) format_justify_left, byte zp(9) format_zero_padding, byte zp($b) format_upper_case)
 printf_number_buffer: {
-    .label __19 = 9
-    .label buffer_sign = $c
-    .label padding = $e
+    .label __19 = $1e
+    .label buffer_sign = $a
+    .label padding = $c
     .label format_justify_left = 4
-    .label format_zero_padding = $b
-    .label format_upper_case = $d
+    .label format_zero_padding = 9
+    .label format_upper_case = $b
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -620,10 +587,10 @@ printf_number_buffer: {
     rts
 }
 // Print a padding char a number of times
-// printf_padding(byte zp(2) pad, byte zp($22) length)
+// printf_padding(byte zp(2) pad, byte zp($20) length)
 printf_padding: {
     .label i = 3
-    .label length = $22
+    .label length = $20
     .label pad = 2
     lda #0
     sta.z i
@@ -645,7 +612,7 @@ printf_padding: {
 // Converts a string to uppercase.
 strupr: {
     .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label src = $f
+    .label src = $d
     lda #<str
     sta.z src
     lda #>str
@@ -693,11 +660,11 @@ toupper: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($11) str)
+// strlen(byte* zp($f) str)
 strlen: {
-    .label len = 9
-    .label str = $11
-    .label return = 9
+    .label len = $1e
+    .label str = $f
+    .label return = $1e
     lda #<0
     sta.z len
     sta.z len+1
@@ -731,10 +698,10 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp(5) value, byte* zp(9) buffer)
+// ultoa(dword zp(5) value, byte* zp($1e) buffer)
 ultoa: {
-    .label digit_value = $1c
-    .label buffer = 9
+    .label digit_value = $1a
+    .label buffer = $1e
     .label digit = 4
     .label value = 5
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -824,11 +791,11 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp(9) buffer, dword zp(5) value, dword zp($1c) sub)
+// ultoa_append(byte* zp($1e) buffer, dword zp(5) value, dword zp($1a) sub)
 ultoa_append: {
-    .label buffer = 9
+    .label buffer = $1e
     .label value = 5
-    .label sub = $1c
+    .label sub = $1a
     .label return = 5
     ldx #0
   __b1:
@@ -916,9 +883,9 @@ printf_slong: {
     rts
 }
 // Print an unsigned int using a specific format
-// printf_uint(word zp($f) uvalue, byte register(X) format_radix)
+// printf_uint(word zp($d) uvalue, byte register(X) format_radix)
 printf_uint: {
-    .label uvalue = $f
+    .label uvalue = $d
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -944,14 +911,14 @@ printf_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($f) value, byte* zp($1a) buffer, byte register(X) radix)
+// utoa(word zp($d) value, byte* zp($18) buffer, byte register(X) radix)
 utoa: {
-    .label digit_value = $20
-    .label buffer = $1a
-    .label digit = $c
-    .label value = $f
-    .label max_digits = $b
-    .label digit_values = $11
+    .label digit_value = $1e
+    .label buffer = $18
+    .label digit = $a
+    .label value = $d
+    .label max_digits = 9
+    .label digit_values = $f
     // if(radix==DECIMAL)
     cpx #DECIMAL
     beq __b2
@@ -1087,12 +1054,12 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($1a) buffer, word zp($f) value, word zp($20) sub)
+// utoa_append(byte* zp($18) buffer, word zp($d) value, word zp($1e) sub)
 utoa_append: {
-    .label buffer = $1a
-    .label value = $f
-    .label sub = $20
-    .label return = $f
+    .label buffer = $18
+    .label value = $d
+    .label sub = $1e
+    .label return = $d
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1195,12 +1162,12 @@ printf_uchar: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($f) buffer)
+// uctoa(byte register(X) value, byte* zp($d) buffer)
 uctoa: {
-    .label digit_value = $22
-    .label buffer = $f
-    .label digit = $d
-    .label started = $e
+    .label digit_value = $20
+    .label buffer = $d
+    .label digit = $b
+    .label started = $c
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1265,10 +1232,10 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($f) buffer, byte register(X) value, byte zp($22) sub)
+// uctoa_append(byte* zp($d) buffer, byte register(X) value, byte zp($20) sub)
 uctoa_append: {
-    .label buffer = $f
-    .label sub = $22
+    .label buffer = $d
+    .label sub = $20
     ldy #0
   __b1:
     // while (value >= sub)
@@ -1326,8 +1293,8 @@ printf_schar: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = $11
-    .label line_cols = $1a
+    .label line_text = $f
+    .label line_cols = $18
     lda #<CONIO_SCREEN_COLORS
     sta.z line_cols
     lda #>CONIO_SCREEN_COLORS
@@ -1346,16 +1313,16 @@ clrscr: {
     sta.z conio_cursor_x
     // conio_cursor_y = 0
     sta.z conio_cursor_y
-    // conio_cursor_text = CONIO_SCREEN_TEXT
+    // conio_line_text = CONIO_SCREEN_TEXT
     lda #<CONIO_SCREEN_TEXT
-    sta.z conio_cursor_text
+    sta.z conio_line_text
     lda #>CONIO_SCREEN_TEXT
-    sta.z conio_cursor_text+1
-    // conio_cursor_color = CONIO_SCREEN_COLORS
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
     lda #<CONIO_SCREEN_COLORS
-    sta.z conio_cursor_color
+    sta.z conio_line_color
     lda #>CONIO_SCREEN_COLORS
-    sta.z conio_cursor_color+1
+    sta.z conio_line_color+1
     // }
     rts
   __b2:

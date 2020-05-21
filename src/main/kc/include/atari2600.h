@@ -12,3 +12,4 @@ struct ATARI_TIA_READ * const TIA_READ = 0x00;
 
 // Atari RIOT registers
 struct MOS6532_RIOT * const RIOT = 0x280;
+

@@ -1,6 +1,19 @@
 // Atari Television Interface Adaptor (TIA)
 // https://en.wikipedia.org/wiki/Television_Interface_Adaptor
 // http://www.qotile.net/minidig/docs/stella.pdf
+// Based on https://github.com/munsie/dasm/blob/master/machines/atari2600/vcs.h
+
+// The number of CPU cycles per scanline
+const char CYCLES_PER_SCANLINE = 76;
+
+// The TIA WSYNC register (for access from inline ASM)
+char* const TIA_WSYNC = 0x02;
+// The TIA RESP0 register (for access from inline ASM)
+char* const TIA_RESP0 = 0x10;
+// The TIA RESP1 register (for access from inline ASM)
+char* const TIA_RESP1 = 0x11;
+// The TIA HMP0 register (for access from inline ASM)
+char* const TIA_HMP0 = 0x20;
 
 struct ATARI_TIA_WRITE {
     // $00   0000 00x0   Vertical Sync Set-Clear
@@ -61,9 +74,9 @@ struct ATARI_TIA_WRITE {
     char GRP0;
     // $1C   xxxx xxxx   Graphics Register Player 1
     char GRP1;
-    // $1D   0000 00x0   Graphics Enable Missle 0
+    // $1D   0000 00x0   Graphics Enable Missile 0
     char ENAM0;
-    // $1E   0000 00x0   Graphics Enable Missle 1
+    // $1E   0000 00x0   Graphics Enable Missile 1
     char ENAM1;
     // $1F   0000 00x0   Graphics Enable Ball
     char ENABL;
@@ -71,9 +84,9 @@ struct ATARI_TIA_WRITE {
     char HMP0;
     // $21   xxxx 0000   Horizontal Motion Player 1
     char HMP1;
-    // $22   xxxx 0000   Horizontal Motion Missle 0
+    // $22   xxxx 0000   Horizontal Motion Missile 0
     char HMM0;
-    // $23   xxxx 0000   Horizontal Motion Missle 1
+    // $23   xxxx 0000   Horizontal Motion Missile 1
     char HMM1;
     // $24   xxxx 0000   Horizontal Motion Ball
     char HMBL;
@@ -83,9 +96,9 @@ struct ATARI_TIA_WRITE {
     char VDELP1;
     // $27   0000 000x   Vertical Delay Ball
     char VDELBL;
-    // $28   0000 00x0   Reset Missle 0 to Player 0
+    // $28   0000 00x0   Reset Missile 0 to Player 0
     char RESMP0;
-    // $29   0000 00x0   Reset Missle 1 to Player 1
+    // $29   0000 00x0   Reset Missile 1 to Player 1
     char RESMP1;
     // $2A   ---- ----   Apply Horizontal Motion
     char HMOVE;
@@ -126,3 +139,4 @@ struct ATARI_TIA_READ {
     // $0D x000 0000  Read Input (Trigger) 1
     char INPT5;
 };
+

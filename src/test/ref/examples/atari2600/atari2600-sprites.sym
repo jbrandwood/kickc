@@ -60,6 +60,7 @@
 (byte) ATARI_TIA_WRITE::VDELP1
 (byte) ATARI_TIA_WRITE::VSYNC
 (byte) ATARI_TIA_WRITE::WSYNC
+(const nomodify byte) CYCLES_PER_SCANLINE = (byte) $4c
 (byte) MOS6532_RIOT::INTIM
 (byte) MOS6532_RIOT::SWACNT
 (byte) MOS6532_RIOT::SWBCNT
@@ -71,25 +72,35 @@
 (byte) MOS6532_RIOT::TIM8T
 (const byte*) MOS6532_RIOT::UNUSED[(number) $f]  = { fill( $f, 0) }
 (const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_COLUBK = (byte) 9
-(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF = (byte) 8
+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_COLUP0 = (byte) 6
+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0 = (byte) $1b
 (const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE = (byte) $2a
-(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF0 = (byte) $d
-(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF1 = (byte) $e
-(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF2 = (byte) $f
 (const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK = (byte) 1
 (const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC = (byte) 2
 (const byte) OFFSET_STRUCT_MOS6532_RIOT_INTIM = (byte) 4
 (const byte) OFFSET_STRUCT_MOS6532_RIOT_TIM64T = (byte) $16
 (const nomodify struct MOS6532_RIOT*) RIOT = (struct MOS6532_RIOT*) 640
-(const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .fill $100, round(127.5+127.5*sin(2*PI*i/256))
+(const to_nomodify byte*) SINTABLE_160[(number) $100]  = kickasm {{ .fill $100, 5+round(74.5+74.5*sin(2*PI*i/256))
  }}
+(const byte*) SPRITE_C[]  = { (byte) 0, (byte) $18, (byte) $18, (byte) $18, (byte) $18, (byte) $3c, (byte) $3c, (byte) $3c, (byte) $3c, (byte) $66, (byte) $66, (byte) $66, (byte) $66, (byte) $c0, (byte) $c0, (byte) $c0, (byte) $c0, (byte) $c0, (byte) $c0, (byte) $c0, (byte) $c0, (byte) $66, (byte) $66, (byte) $66, (byte) $66, (byte) $3c, (byte) $3c, (byte) $3c, (byte) $3c, (byte) $18, (byte) $18, (byte) $18, (byte) $18, (byte) 0 }
 (const nomodify struct ATARI_TIA_WRITE*) TIA = (struct ATARI_TIA_WRITE*) 0
+(const nomodify byte*) TIA_HMP0 = (byte*) 32
+(const nomodify byte*) TIA_RESP0 = (byte*) 16
+(const nomodify byte*) TIA_WSYNC = (byte*) 2
 (byte) idx
-(byte) idx#1 idx mem[1] 64.82352941176471
-(byte) idx#12 idx mem[1] 109.36363636363637
+(byte) idx#1 idx mem[1] 39.357142857142854
+(byte) idx#2 idx mem[1] 133.66666666666669
+(byte) idx2
+(byte) idx2#1 idx2 mem[1] 42.38461538461539
+(byte) idx2#2 idx2 mem[1] 109.36363636363637
 (void()) main()
 (label) main::@1
 (label) main::@10
+(label) main::@11
+(label) main::@12
+(label) main::@13
+(label) main::@14
+(label) main::@15
 (label) main::@2
 (label) main::@3
 (label) main::@4
@@ -98,14 +109,23 @@
 (label) main::@7
 (label) main::@8
 (label) main::@9
-(byte) main::c
-(byte) main::c#0 reg byte x 101.0
-(byte) main::c#1 reg byte x 1001.0
-(byte) main::c#2 reg byte x 888.5
+(byte) main::gfx
+(byte) main::gfx#0 reg byte a 1501.5
 (byte) main::i
-(byte) main::i#1 reg byte y 2002.0
-(byte) main::i#2 reg byte y 333.6666666666667
+(byte) main::i#1 reg byte x 2002.0
+(byte) main::i#2 reg byte x 417.08333333333337
+(byte) main::p0_idx
+(byte) main::p0_idx#3 reg byte y 2002.0
+(byte) main::p0_idx#4 reg byte y 500.5
+(byte) main::p0_idx#8 reg byte y 1501.5
+(byte) p0_xpos loadstore mem[1] 2.4634146341463414 = (byte) 0
+(byte) p0_ypos
+(byte) p0_ypos#1 p0_ypos mem[1] 52.476190476190474
 
-mem[1] [ idx#12 idx#1 ]
-reg byte y [ main::i#2 main::i#1 ]
-reg byte x [ main::c#2 main::c#0 main::c#1 ]
+mem[1] [ idx#2 idx#1 ]
+mem[1] [ idx2#2 idx2#1 ]
+reg byte x [ main::i#2 main::i#1 ]
+reg byte y [ main::p0_idx#4 main::p0_idx#8 main::p0_idx#3 ]
+mem[1] [ p0_xpos ]
+mem[1] [ p0_ypos#1 ]
+reg byte a [ main::gfx#0 ]

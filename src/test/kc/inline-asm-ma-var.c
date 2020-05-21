@@ -13,5 +13,5 @@ void main() {
             eor value
             sta SCREEN
         }
-    }    
+    }
 }

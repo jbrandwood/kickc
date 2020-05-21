@@ -1012,6 +1012,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testInlineAsmMaVar() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-ma-var.c");
+   }
+
+   @Test
    public void testInlineAsmParam() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-param.c");
    }

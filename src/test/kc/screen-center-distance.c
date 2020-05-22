@@ -7,7 +7,7 @@
 #include <time.h>
 #include <print.h>
 
-#pragma reserve(08)
+#pragma zp_reserve(08)
 
 byte* const CHARSET = 0x2000;
 byte* const SCREEN = 0x2800;

@@ -616,6 +616,16 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link KickCParser#directiveReserveParam}.
+	 * @param ctx the parse tree
+	 */
+	void enterDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link KickCParser#directiveReserveParam}.
+	 * @param ctx the parse tree
+	 */
+	void exitDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.
 	 * @param ctx the parse tree

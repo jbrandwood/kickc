@@ -1,4 +1,4 @@
-#pragma reserve(0x16)
+#pragma zp_reserve(0x16)
 #pragma encoding(petscii_mixed)
 char strTemp[] = "v=X";
 int main(void){

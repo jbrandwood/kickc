@@ -7,7 +7,7 @@
 // Data
 #pragma data_seg(Data)
 const char SINTABLE_160[0x100] = kickasm {{
-    .fill $100, 5+round(74.5+74.5*sin(2*PI*i/256))
+    .fill $100, 10+round(64.5+64.5*sin(2*PI*i/256))
 }};
 
 char SPRITE_C[] = { 
@@ -47,7 +47,6 @@ char SPRITE_C[] = {
     0
 };
 
-
 // Variables
 #pragma data_seg(Vars)
 // Counts frames
@@ -66,12 +65,8 @@ void main() {
     TIA->COLUP0 = 0xf0;
     // - Graphics
     TIA->GRP0 = 0xaf;
-
-    // Player 1
-    // - Color
-    //TIA->COLUP1 = 0xf0;
-    // - Graphics
-    //TIA->GRP1 = 0xf5;
+    // - Size
+    TIA->NUSIZ0 = 0x05;
 
     while(1) {
 

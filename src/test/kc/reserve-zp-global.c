@@ -1,6 +1,6 @@
 // Demonstrates global directive reserving addresses on zeropage
 
-#pragma reserve(2,5)
+#pragma zp_reserve(2,5)
 
 void main() {
     byte* const SCREEN = $400;
@@ -9,7 +9,7 @@ void main() {
     }
 }
 
-reserve(3) byte sub1(byte i) {
+__zp_reserve(3) byte sub1(byte i) {
     return i+i;
 }
 

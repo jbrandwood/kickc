@@ -7,6 +7,6 @@ void main() {
     }
 }
 
-reserve(2, 3, 4) byte sub1(byte i) {
+__zp_reserve(2, 3, 4) byte sub1(byte i) {
     return i+i;
 }

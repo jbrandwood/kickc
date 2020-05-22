@@ -155,13 +155,38 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) {
-      List<Integer> reservedZps = new ArrayList<>();
-      for(TerminalNode reservedNum : ctx.NUMBER()) {
-         Number reservedZp = NumberParser.parseLiteral(reservedNum.getText());
-         reservedZps.add(reservedZp.intValue());
-      }
+      final List<KickCParser.DirectiveReserveParamContext> reserveParams = ctx.directiveReserveParam();
+      List<Integer> reservedZps = getReservedZps(reserveParams);
       program.addReservedZps(reservedZps);
       return null;
+   }
+
+   /**
+    * Find the list of all reserved ZP-addresses from a list of reserve parameters (potentially including ranges)
+    * @param reserveParams The params
+    * @return The list of reserved zeropage addresses
+    */
+   private List<Integer> getReservedZps(List<KickCParser.DirectiveReserveParamContext> reserveParams) {
+      List<Integer> reservedZps = new ArrayList<>();
+      for(KickCParser.DirectiveReserveParamContext reserveCtx : reserveParams) {
+         final TerminalNode rangeStart = reserveCtx.NUMBER(0);
+         final TerminalNode rangeEnd = reserveCtx.NUMBER(1);
+         if(rangeEnd==null) {
+            // Only a single reserved address
+            Number reservedZp = NumberParser.parseLiteral(rangeStart.getText());
+            reservedZps.add(reservedZp.intValue());
+         }  else {
+            // A range of reserved addresses
+            Number startZp = NumberParser.parseLiteral(rangeStart.getText());
+            Number endZp = NumberParser.parseLiteral(rangeEnd.getText());
+            int zp = startZp.intValue();
+            while(zp<=endZp.intValue()) {
+               reservedZps.add(zp);
+               zp++;
+            }
+         }
+      }
+      return reservedZps;
    }
 
    @Override
@@ -1155,11 +1180,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) {
-      List<Integer> reservedZps = new ArrayList<>();
-      for(TerminalNode reservedNum : ctx.NUMBER()) {
-         int reservedZp = NumberParser.parseLiteral(reservedNum.getText()).intValue();
-         reservedZps.add(reservedZp);
-      }
+      final List<KickCParser.DirectiveReserveParamContext> reserveParams = ctx.directiveReserveParam();
+      final List<Integer> reservedZps = getReservedZps(reserveParams);
       return new Directive.ReserveZp(reservedZps);
    }
 

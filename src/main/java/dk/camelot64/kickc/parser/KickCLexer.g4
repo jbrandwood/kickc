@@ -62,7 +62,7 @@ ASSIGN_COMPOUND : '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|='
 
 // Keywords
 TYPEDEF: 'typedef' ;
-RESERVE:'reserve' ;
+RESERVE: 'zp_reserve' ;
 PC:'pc';
 TARGET:'target';
 LINK:'link';
@@ -81,6 +81,7 @@ VOLATILE: 'volatile' ;
 STATIC: 'static' ;
 INTERRUPT: 'interrupt' ;
 REGISTER: 'register' ;
+LOCAL_RESERVE: '__zp_reserve' ;
 ADDRESS: '__address' ;
 ADDRESS_ZEROPAGE: '__zp' ;
 ADDRESS_MAINMEM: '__mem' ;

@@ -8,10 +8,10 @@ void main() {
     }
 }
 
-reserve(2, 3, 4) byte sub1(byte i) {
+__zp_reserve(2, 3, 4) byte sub1(byte i) {
     return i+i;
 }
 
-reserve(5, 6, 7) byte sub2(byte i) {
+__zp_reserve(5, 6, 7) byte sub2(byte i) {
     return i+i+i;
 }

@@ -173,7 +173,7 @@ void gen_chargen_sprite(char ch, char* sprite) {
 }
 
 // Reserve zeropage addresses used by the BASIC FP operations
-#pragma reserve(0x07, 0x0d, 0x0e, 0x12)
+#pragma zp_reserve(0x07, 0x0d, 0x0e, 0x12)
 
 // Generate a sinus table using BASIC floats
 // - sintab is a pointer to the table to fill

@@ -16,6 +16,7 @@
   .const CYCLES_PER_SCANLINE = $4c
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_COLUP0 = 6
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0 = $1b
+  .const OFFSET_STRUCT_ATARI_TIA_WRITE_NUSIZ0 = 4
   .const OFFSET_STRUCT_MOS6532_RIOT_TIM64T = $16
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC = 2
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_HMOVE = $2a
@@ -45,15 +46,14 @@ main: {
     // - Graphics
     lda #$af
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_GRP0
+    // TIA->NUSIZ0 = 0x05
+    // - Size
+    lda #5
+    sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_NUSIZ0
     lda #$39
     sta idx2
     lda #0
     sta idx
-  // Player 1
-  // - Color
-  //TIA->COLUP1 = 0xf0;
-  // - Graphics
-  //TIA->GRP1 = 0xf5;
   __b2:
     // TIA->VSYNC = 2
     // Vertical Sync
@@ -198,7 +198,7 @@ main: {
 }
 .segment Data
 SINTABLE_160:
-.fill $100, 5+round(74.5+74.5*sin(2*PI*i/256))
+.fill $100, 10+round(64.5+64.5*sin(2*PI*i/256))
 
   SPRITE_C: .byte 0, $18, $18, $18, $18, $3c, $3c, $3c, $3c, $66, $66, $66, $66, $c0, $c0, $c0, $c0, $c0, $c0, $c0, $c0, $66, $66, $66, $66, $3c, $3c, $3c, $3c, $18, $18, $18, $18, 0
 .segment Vars

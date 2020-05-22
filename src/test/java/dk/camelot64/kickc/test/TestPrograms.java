@@ -2308,8 +2308,18 @@ public class TestPrograms {
    }
 
    @Test
+   public void testReserveZpGlobalRange() throws IOException, URISyntaxException {
+      compileAndCompare("reserve-zp-global-range.c");
+   }
+
+   @Test
    public void testReserveZpGlobal() throws IOException, URISyntaxException {
       compileAndCompare("reserve-zp-global.c");
+   }
+
+   @Test
+   public void testReserveZpProcedure4() throws IOException, URISyntaxException {
+      compileAndCompare("reserve-zp-procedure-4.c");
    }
 
    @Test

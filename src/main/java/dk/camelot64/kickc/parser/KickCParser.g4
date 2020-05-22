@@ -151,13 +151,17 @@ globalDirective
     | (PRAGMA LINK) PAR_BEGIN STRING PAR_END #globalDirectiveLinkScript
     | (PRAGMA EXTENSION) PAR_BEGIN STRING PAR_END #globalDirectiveExtension
     | (PRAGMA EMULATOR) PAR_BEGIN STRING PAR_END #globalDirectiveEmulator
-    | (PRAGMA RESERVE) PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END #globalDirectiveReserve
+    | (PRAGMA RESERVE) PAR_BEGIN directiveReserveParam ( COMMA directiveReserveParam )* PAR_END #globalDirectiveReserve
     | (PRAGMA PC) PAR_BEGIN NUMBER PAR_END #globalDirectivePc
     | (PRAGMA CODESEG) PAR_BEGIN NAME PAR_END #globalDirectiveCodeSeg
     | (PRAGMA DATASEG) PAR_BEGIN NAME PAR_END #globalDirectiveDataSeg
     | (PRAGMA ENCODING) PAR_BEGIN NAME PAR_END #globalDirectiveEncoding
     | (PRAGMA CALLING) PAR_BEGIN CALLINGCONVENTION PAR_END #globalDirectiveCalling
     | (PRAGMA VARMODEL) PAR_BEGIN NAME ( COMMA NAME )* PAR_END #globalDirectiveVarModel
+    ;
+
+directiveReserveParam
+    : NUMBER (RANGE NUMBER)?
     ;
 
 directive
@@ -176,7 +180,7 @@ directive
     | INLINE #directiveInline
     | INTRINSIC #directiveIntrinsic
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
-    | RESERVE PAR_BEGIN NUMBER ( COMMA NUMBER )* PAR_END  #directiveReserveZp
+    | LOCAL_RESERVE PAR_BEGIN directiveReserveParam ( COMMA directiveReserveParam )* PAR_END  #directiveReserveZp
     | CALLINGCONVENTION #directiveCallingConvention
     ;
 
@@ -210,7 +214,7 @@ switchCase:
 
 forLoop
     : forClassicInit ';' commaExpr ';' commaExpr? #forClassic
-    | (declType declPointer*)? NAME COLON expr '..' expr  #forRange
+    | (declType declPointer*)? NAME COLON expr RANGE expr  #forRange
     ;
 
 forClassicInit

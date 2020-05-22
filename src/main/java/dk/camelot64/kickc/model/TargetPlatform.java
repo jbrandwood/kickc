@@ -3,6 +3,8 @@ package dk.camelot64.kickc.model;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +35,9 @@ public class TargetPlatform {
 
    /** A number of preprocessor macro defines. */
    private Map<String, String> defines = null;
+
+   /** Reserved zeropage addresses. */
+   private List<Integer> reservedZps = new ArrayList<>();
 
    public TargetPlatform(String name) {
       this.name = name;
@@ -99,5 +104,11 @@ public class TargetPlatform {
       this.defines = defines;
    }
 
+   public void setReservedZps(List<Integer> reservedZps) {
+      this.reservedZps = reservedZps;
+   }
 
+   public List<Integer> getReservedZps() {
+      return reservedZps;
+   }
 }

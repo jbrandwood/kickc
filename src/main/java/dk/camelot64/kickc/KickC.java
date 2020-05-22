@@ -360,6 +360,7 @@ public class KickC implements Callable<Integer> {
             effectiveDefines.putAll(defines);
          if(program.getTargetPlatform().getDefines() != null)
             effectiveDefines.putAll(program.getTargetPlatform().getDefines());
+         program.addReservedZps(program.getTargetPlatform().getReservedZps());
 
          if(preprocess) {
             System.out.println("Preprocessing " + CFileNames);

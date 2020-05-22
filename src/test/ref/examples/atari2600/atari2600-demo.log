@@ -532,9 +532,9 @@ Complete equivalence classes
 [ idx#12 idx#1 ]
 [ main::i#2 main::i#1 ]
 [ main::c#2 main::c#0 main::c#1 ]
-Allocated mem[1] [ idx#12 idx#1 ]
-Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-Allocated zp[1]:3 [ main::c#2 main::c#0 main::c#1 ]
+Allocated zp[1]:128 [ idx#12 idx#1 ]
+Allocated zp[1]:129 [ main::i#2 main::i#1 ]
+Allocated zp[1]:130 [ main::c#2 main::c#0 main::c#1 ]
 
 INITIAL ASM
 Target platform is atari2600 / MOS6502X
@@ -547,7 +547,6 @@ Target platform is atari2600 / MOS6502X
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [startAfter="Code",max=$fff9]
 .segmentdef Vectors [start=$fffa,max=$ffff]
-.segmentdef Vars [start=$80,max=$ff, virtual]
 .segment Vectors
 .word main // NMI
 .word main // RESET
@@ -569,6 +568,8 @@ Target platform is atari2600 / MOS6502X
   .label TIA = 0
   // Atari RIOT registers
   .label RIOT = $280
+  // Counts frames
+  .label idx = $80
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -586,8 +587,8 @@ __bend:
 .segment Code
   // main
 main: {
-    .label c = 3
-    .label i = 2
+    .label c = $82
+    .label i = $81
     // [4] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF0) ← (byte) $a0 -- _deref_pbuc1=vbuc2 
     lda #$a0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_PF0
@@ -602,9 +603,9 @@ main: {
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
     // [8] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [8] phi (byte) idx#12 = (byte) 0 [phi:main->main::@1#0] -- vbum1=vbuc1 
+    // [8] phi (byte) idx#12 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     jmp __b1
     // main::@1
   __b1:
@@ -655,13 +656,13 @@ main: {
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
-    // [17] (byte) main::c#0 ← *((const to_nomodify byte*) SINTABLE + (byte) idx#12) -- vbuz1=pbuc1_derefidx_vbum2 
+    // [17] (byte) main::c#0 ← *((const to_nomodify byte*) SINTABLE + (byte) idx#12) -- vbuz1=pbuc1_derefidx_vbuz2 
     // D1=1, turns off Vertical Blank signal (image output on)
-    ldy idx
+    ldy.z idx
     lda SINTABLE,y
     sta.z c
-    // [18] (byte) idx#1 ← ++ (byte) idx#12 -- vbum1=_inc_vbum1 
-    inc idx
+    // [18] (byte) idx#1 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+    inc.z idx
     // [19] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   __b6_from___b5:
     // [19] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@5->main::@6#0] -- register_copy 
@@ -752,11 +753,10 @@ main: {
 }
   // File Data
 .segment Data
+// Sinus table
 SINTABLE:
 .fill $100, round(127.5+127.5*sin(2*PI*i/256))
 
-.segment Vars
-  idx: .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [4] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF0) ← (byte) $a0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
@@ -764,7 +764,7 @@ Statement [5] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte)
 Statement [6] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF2) ← (byte) $aa [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [7] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF) ← (byte) $55 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [9] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA) ← (byte) 2 [ idx#12 ] ( main:2 [ idx#12 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for mem[1] [ idx#12 idx#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:128 [ idx#12 idx#1 ]
 Statement [10] *((byte*)(const nomodify struct MOS6532_RIOT*) RIOT+(const byte) OFFSET_STRUCT_MOS6532_RIOT_TIM64T) ← (byte)(number) $29*(number) $4c/(number) $40 [ idx#12 ] ( main:2 [ idx#12 ] { }  ) always clobbers reg byte a 
 Statement [11] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#12 ] ( main:2 [ idx#12 ] { }  ) always clobbers reg byte a 
 Statement [12] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#12 ] ( main:2 [ idx#12 ] { }  ) always clobbers reg byte a 
@@ -779,8 +779,8 @@ Statement [24] *((byte*)(const nomodify struct MOS6532_RIOT*) RIOT+(const byte) 
 Statement [25] if((byte) 0!=*((byte*)(const nomodify struct MOS6532_RIOT*) RIOT+(const byte) OFFSET_STRUCT_MOS6532_RIOT_INTIM)) goto main::@10 [ idx#1 ] ( main:2 [ idx#1 ] { }  ) always clobbers reg byte a 
 Statement [26] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#1 ] ( main:2 [ idx#1 ] { }  ) always clobbers reg byte a 
 Statement [27] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#1 main::i#2 main::c#2 ] ( main:2 [ idx#1 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::c#2 main::c#0 main::c#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:129 [ main::i#2 main::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:130 [ main::c#2 main::c#0 main::c#1 ]
 Statement [35] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#12 ] ( main:2 [ idx#12 ] { }  ) always clobbers reg byte a 
 Statement [4] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF0) ← (byte) $a0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_PF1) ← (byte) $55 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
@@ -802,24 +802,24 @@ Statement [25] if((byte) 0!=*((byte*)(const nomodify struct MOS6532_RIOT*) RIOT+
 Statement [26] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#1 ] ( main:2 [ idx#1 ] { }  ) always clobbers reg byte a 
 Statement [27] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#1 main::i#2 main::c#2 ] ( main:2 [ idx#1 main::i#2 main::c#2 ] { }  ) always clobbers reg byte a 
 Statement [35] *((byte*)(const nomodify struct ATARI_TIA_WRITE*) TIA+(const byte) OFFSET_STRUCT_ATARI_TIA_WRITE_WSYNC) ← (byte) 0 [ idx#12 ] ( main:2 [ idx#12 ] { }  ) always clobbers reg byte a 
-Potential registers mem[1] [ idx#12 idx#1 ] : mem[1] , reg byte x , reg byte y , 
-Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
-Potential registers zp[1]:3 [ main::c#2 main::c#0 main::c#1 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[1]:128 [ idx#12 idx#1 ] : zp[1]:128 , reg byte x , reg byte y , 
+Potential registers zp[1]:129 [ main::i#2 main::i#1 ] : zp[1]:129 , reg byte x , reg byte y , 
+Potential registers zp[1]:130 [ main::c#2 main::c#0 main::c#1 ] : zp[1]:130 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 2,335.67: zp[1]:2 [ main::i#2 main::i#1 ] 1,990.5: zp[1]:3 [ main::c#2 main::c#0 main::c#1 ] 
-Uplift Scope [] 174.19: mem[1] [ idx#12 idx#1 ] 
+Uplift Scope [main] 2,335.67: zp[1]:129 [ main::i#2 main::i#1 ] 1,990.5: zp[1]:130 [ main::c#2 main::c#0 main::c#1 ] 
+Uplift Scope [] 174.19: zp[1]:128 [ idx#12 idx#1 ] 
 Uplift Scope [ATARI_TIA_WRITE] 
 Uplift Scope [ATARI_TIA_READ] 
 Uplift Scope [MOS6532_RIOT] 
 
-Uplifting [main] best 9401 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::c#2 main::c#0 main::c#1 ] 
-Uplifting [] best 9401 combination mem[1] [ idx#12 idx#1 ] 
-Uplifting [ATARI_TIA_WRITE] best 9401 combination 
-Uplifting [ATARI_TIA_READ] best 9401 combination 
-Uplifting [MOS6532_RIOT] best 9401 combination 
-Attempting to uplift remaining variables inmem[1] [ idx#12 idx#1 ]
-Uplifting [] best 9401 combination mem[1] [ idx#12 idx#1 ] 
+Uplifting [main] best 9371 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::c#2 main::c#0 main::c#1 ] 
+Uplifting [] best 9371 combination zp[1]:128 [ idx#12 idx#1 ] 
+Uplifting [ATARI_TIA_WRITE] best 9371 combination 
+Uplifting [ATARI_TIA_READ] best 9371 combination 
+Uplifting [MOS6532_RIOT] best 9371 combination 
+Attempting to uplift remaining variables inzp[1]:128 [ idx#12 idx#1 ]
+Uplifting [] best 9371 combination zp[1]:128 [ idx#12 idx#1 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -831,7 +831,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [startAfter="Code",max=$fff9]
 .segmentdef Vectors [start=$fffa,max=$ffff]
-.segmentdef Vars [start=$80,max=$ff, virtual]
 .segment Vectors
 .word main // NMI
 .word main // RESET
@@ -853,6 +852,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label TIA = 0
   // Atari RIOT registers
   .label RIOT = $280
+  // Counts frames
+  .label idx = $80
   // @begin
 __bbegin:
   // [1] phi from @begin to @1 [phi:@begin->@1]
@@ -884,9 +885,9 @@ main: {
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
     // [8] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [8] phi (byte) idx#12 = (byte) 0 [phi:main->main::@1#0] -- vbum1=vbuc1 
+    // [8] phi (byte) idx#12 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     jmp __b1
     // main::@1
   __b1:
@@ -937,12 +938,12 @@ main: {
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
-    // [17] (byte) main::c#0 ← *((const to_nomodify byte*) SINTABLE + (byte) idx#12) -- vbuxx=pbuc1_derefidx_vbum1 
+    // [17] (byte) main::c#0 ← *((const to_nomodify byte*) SINTABLE + (byte) idx#12) -- vbuxx=pbuc1_derefidx_vbuz1 
     // D1=1, turns off Vertical Blank signal (image output on)
-    ldy idx
+    ldy.z idx
     ldx SINTABLE,y
-    // [18] (byte) idx#1 ← ++ (byte) idx#12 -- vbum1=_inc_vbum1 
-    inc idx
+    // [18] (byte) idx#1 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+    inc.z idx
     // [19] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   __b6_from___b5:
     // [19] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@5->main::@6#0] -- register_copy 
@@ -1026,11 +1027,10 @@ main: {
 }
   // File Data
 .segment Data
+// Sinus table
 SINTABLE:
 .fill $100, round(127.5+127.5*sin(2*PI*i/256))
 
-.segment Vars
-  idx: .byte 0
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -1156,8 +1156,8 @@ FINAL SYMBOL TABLE
  }}
 (const nomodify struct ATARI_TIA_WRITE*) TIA = (struct ATARI_TIA_WRITE*) 0
 (byte) idx
-(byte) idx#1 idx mem[1] 64.82352941176471
-(byte) idx#12 idx mem[1] 109.36363636363637
+(byte) idx#1 idx zp[1]:128 64.82352941176471
+(byte) idx#12 idx zp[1]:128 109.36363636363637
 (void()) main()
 (label) main::@1
 (label) main::@10
@@ -1177,13 +1177,13 @@ FINAL SYMBOL TABLE
 (byte) main::i#1 reg byte y 2002.0
 (byte) main::i#2 reg byte y 333.6666666666667
 
-mem[1] [ idx#12 idx#1 ]
+zp[1]:128 [ idx#12 idx#1 ]
 reg byte y [ main::i#2 main::i#1 ]
 reg byte x [ main::c#2 main::c#0 main::c#1 ]
 
 
 FINAL ASSEMBLER
-Score: 8289
+Score: 8259
 
   // File Comments
 // Minimal Atari 2600 VCS Program
@@ -1194,7 +1194,6 @@ Score: 8289
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [startAfter="Code",max=$fff9]
 .segmentdef Vectors [start=$fffa,max=$ffff]
-.segmentdef Vars [start=$80,max=$ff, virtual]
 .segment Vectors
 .word main // NMI
 .word main // RESET
@@ -1216,6 +1215,8 @@ Score: 8289
   .label TIA = 0
   // Atari RIOT registers
   .label RIOT = $280
+  // Counts frames
+  .label idx = $80
   // @begin
   // [1] phi from @begin to @1 [phi:@begin->@1]
   // @1
@@ -1242,9 +1243,9 @@ main: {
     lda #$55
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
     // [8] phi from main to main::@1 [phi:main->main::@1]
-    // [8] phi (byte) idx#12 = (byte) 0 [phi:main->main::@1#0] -- vbum1=vbuc1 
+    // [8] phi (byte) idx#12 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
-    sta idx
+    sta.z idx
     // main::@1
     // main::@2
   __b2:
@@ -1292,12 +1293,12 @@ main: {
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // c = SINTABLE[idx++]
-    // [17] (byte) main::c#0 ← *((const to_nomodify byte*) SINTABLE + (byte) idx#12) -- vbuxx=pbuc1_derefidx_vbum1 
+    // [17] (byte) main::c#0 ← *((const to_nomodify byte*) SINTABLE + (byte) idx#12) -- vbuxx=pbuc1_derefidx_vbuz1 
     // D1=1, turns off Vertical Blank signal (image output on)
-    ldy idx
+    ldy.z idx
     ldx SINTABLE,y
-    // [18] (byte) idx#1 ← ++ (byte) idx#12 -- vbum1=_inc_vbum1 
-    inc idx
+    // [18] (byte) idx#1 ← ++ (byte) idx#12 -- vbuz1=_inc_vbuz1 
+    inc.z idx
     // [19] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
     // [19] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@5->main::@6#0] -- register_copy 
     // [19] phi (byte) main::i#2 = (byte) 0 [phi:main::@5->main::@6#1] -- vbuyy=vbuc1 
@@ -1389,9 +1390,8 @@ main: {
 }
   // File Data
 .segment Data
+// Sinus table
 SINTABLE:
 .fill $100, round(127.5+127.5*sin(2*PI*i/256))
 
-.segment Vars
-  idx: .byte 0
 

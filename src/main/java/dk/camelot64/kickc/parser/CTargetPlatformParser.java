@@ -1,20 +1,19 @@
 package dk.camelot64.kickc.parser;
 
+import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.TargetPlatform;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
+import javax.json.*;
 import javax.json.stream.JsonParsingException;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
@@ -53,6 +52,39 @@ public class CTargetPlatformParser {
             final String outExtension = platformJson.getString("extension", null);
             if(outExtension != null)
                targetPlatform.setOutFileExtension(outExtension);
+         }
+         {
+            final JsonArray zpReserves = platformJson.getJsonArray("zp_reserve");
+            if(zpReserves != null) {
+               List<Integer> reservedZps = new ArrayList<>();
+               for(JsonValue zpReserve : zpReserves) {
+                  if(zpReserve instanceof JsonString) {
+                     final String zpReserveStr = ((JsonString) zpReserve).getString();
+                     if(!zpReserveStr.contains("..")) {
+                        // A single zeropage address
+                        final Number zpReserveNumber = NumberParser.parseLiteral(zpReserveStr);
+                        reservedZps.add(zpReserveNumber.intValue());
+                     } else {
+                        // A range of zeropage addresses
+                        final int split = zpReserveStr.indexOf("..");
+                        final String startStr = zpReserveStr.substring(0, split);
+                        final String endStr = zpReserveStr.substring(split+2);
+                        final Number startZp  = NumberParser.parseLiteral(startStr);
+                        final Number endZp  = NumberParser.parseLiteral(endStr);
+                        int zp = startZp.intValue();
+                        while(zp<=endZp.intValue()) {
+                           reservedZps.add(zp);
+                           zp++;
+                        }
+                     }
+                  } else if(zpReserve instanceof JsonNumber) {
+                     reservedZps.add(((JsonNumber) zpReserve).intValue());
+                  } else {
+                     throw new CompileError("Cannot handle zp_reserve value " + zpReserve.toString());
+                  }
+               }
+               targetPlatform.setReservedZps(reservedZps);
+            }
          }
          {
             final JsonObject defines = platformJson.getJsonObject("defines");

@@ -235,12 +235,17 @@ public class CParser {
          if(program.getTargetPlatform() != null && program.getTargetPlatform().getDefines() != null)
             for(String macroName : program.getTargetPlatform().getDefines().keySet())
                preprocessor.undef(macroName);
+         // Remove reserved ZP's from existing platform
+         program.getReservedZps().removeAll(program.getTargetPlatform().getReservedZps());
+
          // Set the new program platform
          program.setTargetPlatform(targetPlatform);
          // Define macros from new platform!
          if(program.getTargetPlatform().getDefines() != null)
             for(String macroName : program.getTargetPlatform().getDefines().keySet())
                define(macroName, program.getTargetPlatform().getDefines().get(macroName));
+         // Add reserved ZP's from new platform
+         program.addReservedZps(program.getTargetPlatform().getReservedZps());
          // Re-initialize ASM fragment synthesizer
          program.initAsmFragmentSynthesizer();
       } else {

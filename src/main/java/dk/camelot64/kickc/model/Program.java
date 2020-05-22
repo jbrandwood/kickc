@@ -491,6 +491,10 @@ public class Program {
       return reservedZps;
    }
 
+   public void setReservedZps(List<Integer> reservedZps) {
+      this.reservedZps = reservedZps;
+   }
+
    /**
     * Set the absolute position of the program code
     *

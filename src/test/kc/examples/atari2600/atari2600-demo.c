@@ -3,15 +3,13 @@
 #pragma target(atari2600)
 #include <atari2600.h>
 
-// Variables
-#pragma data_seg(Vars)
-char __mem idx=0;
-
-// Data
-#pragma data_seg(Data)
+// Sinus table
 const char SINTABLE[0x100] = kickasm {{
     .fill $100, round(127.5+127.5*sin(2*PI*i/256))
 }};
+
+// Counts frames
+char idx=0;
 
 void main() {
 

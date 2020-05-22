@@ -2,14 +2,13 @@
 // Source: https://atariage.com/forums/blogs/entry/11109-step-1-generate-a-stable-display/
 #pragma target(atari2600)
 #include <atari2600.h>
-#pragma var_model(mem)
 
-// Data
-#pragma data_seg(Data)
+// Sinus table
 const char SINTABLE_160[0x100] = kickasm {{
     .fill $100, 10+round(64.5+64.5*sin(2*PI*i/256))
 }};
 
+// The letter C
 char SPRITE_C[] = { 
     0,
     0b00011000,
@@ -47,8 +46,6 @@ char SPRITE_C[] = {
     0
 };
 
-// Variables
-#pragma data_seg(Vars)
 // Counts frames
 char idx;
 char idx2 = 57;

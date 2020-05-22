@@ -5,7 +5,6 @@
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [startAfter="Code",max=$fff9]
 .segmentdef Vectors [start=$fffa,max=$ffff]
-.segmentdef Vars [start=$80,max=$ff, virtual]
 .segment Vectors
 .word main // NMI
 .word main // RESET
@@ -26,6 +25,8 @@
   .label TIA = 0
   // Atari RIOT registers
   .label RIOT = $280
+  // Counts frames
+  .label idx = $80
 .segment Code
 main: {
     // TIA->PF0 = 0b10100000
@@ -41,7 +42,7 @@ main: {
     lda #$55
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_COLUPF
     lda #0
-    sta idx
+    sta.z idx
   __b2:
     // TIA->VSYNC = 2
     // Vertical Sync
@@ -78,9 +79,9 @@ main: {
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // c = SINTABLE[idx++]
     // D1=1, turns off Vertical Blank signal (image output on)
-    ldy idx
+    ldy.z idx
     ldx SINTABLE,y
-    inc idx
+    inc.z idx
     tay
   __b6:
     // for(char i=0;i<192;i++)
@@ -141,8 +142,7 @@ main: {
     jmp __b3
 }
 .segment Data
+// Sinus table
 SINTABLE:
 .fill $100, round(127.5+127.5*sin(2*PI*i/256))
 
-.segment Vars
-  idx: .byte 0

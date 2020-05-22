@@ -4382,6 +4382,7 @@ public class TestPrograms {
       final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(TargetPlatform.DEFAULT_NAME, platformFile, filePath, program.getTargetPlatformPaths());
       program.setTargetPlatform(targetPlatform);
       compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
+      program.addReservedZps(program.getTargetPlatform().getReservedZps());
       compiler.compile(files, program.getTargetPlatform().getDefines());
       compileAsm(fileName, program);
       boolean success = true;

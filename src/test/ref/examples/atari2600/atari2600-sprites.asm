@@ -5,11 +5,10 @@
 .segmentdef Code [start=$f800,min=$f800,max=$fff9]
 .segmentdef Data [startAfter="Code",max=$fff9]
 .segmentdef Vectors [start=$fffa,max=$ffff]
-.segmentdef Vars [start=$80,max=$ff, virtual]
 .segment Vectors
-.word main // NMI
-.word main // RESET
-.word main // IRQ
+.word __bbegin // NMI
+.word __bbegin // RESET
+.word __bbegin // IRQ
 .segment Code
 
   // The number of CPU cycles per scanline
@@ -33,6 +32,19 @@
   .label TIA = 0
   // Atari RIOT registers
   .label RIOT = $280
+  .label p0_xpos = $82
+  // Counts frames
+  .label idx = $80
+  // Player 0 Y position
+  .label p0_ypos = $83
+  .label idx2 = $81
+__bbegin:
+  // p0_xpos
+  // Player 0 X position
+  lda #0
+  sta.z p0_xpos
+  jsr main
+  rts
 .segment Code
 main: {
     // asm
@@ -51,9 +63,9 @@ main: {
     lda #5
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_NUSIZ0
     lda #$39
-    sta idx2
+    sta.z idx2
     lda #0
-    sta idx
+    sta.z idx
   __b2:
     // TIA->VSYNC = 2
     // Vertical Sync
@@ -93,17 +105,17 @@ main: {
     sta TIA_HMP0
     sta TIA_RESP0
     // p0_xpos = SINTABLE_160[idx++]
-    ldy idx
+    ldy.z idx
     lda SINTABLE_160,y
-    sta p0_xpos
+    sta.z p0_xpos
     // p0_xpos = SINTABLE_160[idx++];
-    inc idx
+    inc.z idx
     // p0_ypos = SINTABLE_160[idx2++]
-    ldy idx2
+    ldy.z idx2
     lda SINTABLE_160,y
-    sta p0_ypos
+    sta.z p0_ypos
     // p0_ypos = SINTABLE_160[idx2++];
-    inc idx2
+    inc.z idx2
     // TIA->WSYNC = 0
     // Execute horisontal movement
     lda #0
@@ -168,7 +180,7 @@ main: {
     cpy #0
     bne __b9
     // if(p0_ypos==i)
-    cpx p0_ypos
+    cpx.z p0_ypos
     bne __b10
     ldy #1
     jmp __b10
@@ -197,15 +209,9 @@ main: {
     jmp __b3
 }
 .segment Data
+  // Sinus table
 SINTABLE_160:
 .fill $100, 10+round(64.5+64.5*sin(2*PI*i/256))
 
+  // The letter C
   SPRITE_C: .byte 0, $18, $18, $18, $18, $3c, $3c, $3c, $3c, $66, $66, $66, $66, $c0, $c0, $c0, $c0, $c0, $c0, $c0, $c0, $66, $66, $66, $66, $3c, $3c, $3c, $3c, $18, $18, $18, $18, 0
-.segment Vars
-  // Player 0 X position
-  p0_xpos: .byte 0
-  // Counts frames
-  idx: .byte 0
-  // Player 0 Y position
-  p0_ypos: .byte 0
-  idx2: .byte 0

@@ -28,6 +28,7 @@
                       // Mirroring nibble 0001 == Vertical mirroring only
 .segment Code
 
+  .const SIZEOF_STRUCT_OBJECTATTRIBUTE = 4
   .const OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
   .const OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
@@ -36,6 +37,7 @@
   .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
+  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const SIZEOF_BYTE = 1
   // $3000-$3EFF	$0F00	Mirrors of $2000-$2EFF
   // $3F00-$3F1F	$0020	Palette RAM indexes
@@ -138,18 +140,15 @@ main: {
 initSpriteData: {
     ldx #0
   __b1:
-    // for(char i=0;i<sizeof(SPRITES);i++)
-    cpx #$10*SIZEOF_BYTE
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // OAM_BUFFER[i] = SPRITES[i]
+    // ((char*)OAM_BUFFER)[i] = ((char*)SPRITES)[i]
     lda SPRITES,x
     sta OAM_BUFFER,x
-    // for(char i=0;i<sizeof(SPRITES);i++)
+    // while (++i!=sizeof(SPRITES))
     inx
-    jmp __b1
+    cpx #4*SIZEOF_STRUCT_OBJECTATTRIBUTE
+    bne __b1
+    // }
+    rts
 }
 // Copy palette values to PPU
 initPaletteData: {
@@ -231,27 +230,27 @@ vblank: {
 }
 // move the Luigi sprites left
 moveLuigiLeft: {
-    // OAM_BUFFER[0x03]--;
-    dec OAM_BUFFER+3
-    // OAM_BUFFER[0x07]--;
-    dec OAM_BUFFER+7
-    // OAM_BUFFER[0x0b]--;
-    dec OAM_BUFFER+$b
-    // OAM_BUFFER[0x0f]--;
-    dec OAM_BUFFER+$f
+    // OAM_BUFFER[0].x--;
+    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
+    // OAM_BUFFER[1].x--;
+    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
+    // OAM_BUFFER[2].x--;
+    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
+    // OAM_BUFFER[3].x--;
+    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // }
     rts
 }
 // move the Luigi sprites right
 moveLuigiRight: {
-    // OAM_BUFFER[0x03]++;
-    inc OAM_BUFFER+3
-    // OAM_BUFFER[0x07]++;
-    inc OAM_BUFFER+7
-    // OAM_BUFFER[0x0b]++;
-    inc OAM_BUFFER+$b
-    // OAM_BUFFER[0x0f]++;
-    inc OAM_BUFFER+$f
+    // OAM_BUFFER[0].x++;
+    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
+    // OAM_BUFFER[1].x++;
+    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
+    // OAM_BUFFER[2].x++;
+    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
+    // OAM_BUFFER[3].x++;
+    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // }
     rts
 }

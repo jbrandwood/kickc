@@ -8,7 +8,8 @@
 .segmentout [ segments="ProgramRom" ]
 .segmentout [ segments="CharacterRom" ]
  }}
-(const nomodify byte*) OAM_BUFFER = (byte*) 512
+(const nomodify struct ObjectAttribute*) OAM_BUFFER = (struct ObjectAttribute*) 512
+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X = (byte) 3
 (const byte) OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = (byte) $10
 (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1 = (byte) $16
 (const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA = (byte) $14
@@ -17,6 +18,10 @@
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA = (byte) 7
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUMASK = (byte) 1
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = (byte) 2
+(byte) ObjectAttribute::attributes
+(byte) ObjectAttribute::tile
+(byte) ObjectAttribute::x
+(byte) ObjectAttribute::y
 (const byte*) PALETTE[(number) $20]  = { (byte) $f, (byte) $31, (byte) $32, (byte) $33, (byte) $f, (byte) $35, (byte) $36, (byte) $37, (byte) $f, (byte) $39, (byte) $3a, (byte) $3b, (byte) $f, (byte) $3d, (byte) $3e, (byte) $f, (byte) $f, (byte) $1c, (byte) $15, (byte) $14, (byte) $f, (byte) 2, (byte) $38, (byte) $3c, (byte) $f, (byte) $30, (byte) $37, (byte) $1a, (byte) $f, (byte) $f, (byte) $f, (byte) $f }
 (const struct RICOH_2C02*) PPU = (struct RICOH_2C02*) 8192
 (const nomodify byte*) PPU_PALETTE = (byte*) 16128
@@ -54,7 +59,8 @@
 (byte) RICOH_2C02::PPUSCROLL
 (volatile byte) RICOH_2C02::PPUSTATUS loadstore
 (const byte) SIZEOF_BYTE = (byte) 1
-(const byte*) SPRITES[]  = { (byte) $80, (byte) $36, (byte) 2, (byte) $80, (byte) $80, (byte) $37, (byte) 2, (byte) $88, (byte) $88, (byte) $38, (byte) 2, (byte) $80, (byte) $88, (byte) $39, (byte) 2, (byte) $88 }
+(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE = (byte) 4
+(const struct ObjectAttribute*) SPRITES[]  = { { y: (byte) $80, tile: (byte) $36, attributes: (byte) 2, x: (byte) $80 }, { y: (byte) $80, tile: (byte) $37, attributes: (byte) 2, x: (byte) $88 }, { y: (byte) $88, tile: (byte) $38, attributes: (byte) 2, x: (byte) $80 }, { y: (byte) $88, tile: (byte) $39, attributes: (byte) 2, x: (byte) $88 } }
 (const byte*) TILES[]  = kickasm {{ .import binary "smb1_chr.bin"
  }}
 (const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_STACK)(void()) vblank(), &(void()) main(), (void()*) 0 }
@@ -67,11 +73,10 @@
 (byte) initPaletteData::i#2 reg byte x 1334.6666666666667
 (void()) initSpriteData()
 (label) initSpriteData::@1
-(label) initSpriteData::@2
 (label) initSpriteData::@return
 (byte) initSpriteData::i
-(byte) initSpriteData::i#1 reg byte x 2002.0
-(byte) initSpriteData::i#2 reg byte x 1668.3333333333335
+(byte) initSpriteData::i#1 reg byte x 1501.5
+(byte) initSpriteData::i#2 reg byte x 2002.0
 (void()) main()
 (label) main::@1
 (label) main::@2

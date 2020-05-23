@@ -71,22 +71,6 @@ interrupt(hardware_stack) void vblank() {
 
 }
 
-// move the Luigi sprites right
-void moveLuigiRight() {
-    OAM_BUFFER[0x03]++;
-    OAM_BUFFER[0x07]++;
-    OAM_BUFFER[0x0b]++;
-    OAM_BUFFER[0x0f]++;
-}
-
-// move the Luigi sprites left
-void moveLuigiLeft() {
-    OAM_BUFFER[0x03]--;
-    OAM_BUFFER[0x07]--;
-    OAM_BUFFER[0x0b]--;
-    OAM_BUFFER[0x0f]--;
-}
-
 // Copy palette values to PPU
 void initPaletteData() {
     // Reset the high/low latch to "high"
@@ -98,16 +82,6 @@ void initPaletteData() {
     // Write to PPU
     for(char i=0;i<sizeof(PALETTE);i++)
         PPU->PPUDATA = PALETTE[i];
-}
-
-// OAM (Object Attribute Memory) Buffer
-// Will be transfered to the PPU via DMA
-char * const OAM_BUFFER = 0x0200;
-
-// Initialize OAM (Object Attribute Memory) Buffer 
-void initSpriteData() {
-    for(char i=0;i<sizeof(SPRITES);i++) 
-        OAM_BUFFER[i] = SPRITES[i];
 }
 
 char PALETTE[0x20] = {
@@ -123,13 +97,49 @@ char PALETTE[0x20] = {
     0x0f, 0x0f, 0x0f, 0x0f   // All black
 };    
 
+// Sprite Object Attribute Memory Structure
+struct ObjectAttribute {
+    char y;
+    char tile;
+    char attributes;
+    char x;
+};
+
+// OAM (Object Attribute Memory) Buffer
+// Will be transfered to the PPU via DMA
+struct ObjectAttribute * const OAM_BUFFER = 0x0200;
+
+// move the Luigi sprites right
+void moveLuigiRight() {
+    OAM_BUFFER[0].x++;
+    OAM_BUFFER[1].x++;
+    OAM_BUFFER[2].x++;
+    OAM_BUFFER[3].x++;
+}
+
+// move the Luigi sprites left
+void moveLuigiLeft() {
+    OAM_BUFFER[0].x--;
+    OAM_BUFFER[1].x--;
+    OAM_BUFFER[2].x--;
+    OAM_BUFFER[3].x--;
+}
+
+// Initialize OAM (Object Attribute Memory) Buffer 
+void initSpriteData() {
+    char i=0;
+    do {
+        ((char*)OAM_BUFFER)[i] = ((char*)SPRITES)[i];
+    } while (++i!=sizeof(SPRITES));
+}
+
 // Small Luigi Sprite Data
-char SPRITES[] = {
-//  Y  ,  TILE,  ATTR      ,  X
-    128,  0x36,  0b00000010,  128,		// Sprite 0
-    128,  0x37,  0b00000010,  136,		// Sprite 1
-    136,  0x38,  0b00000010,  128,		// Sprite 2
-    136,  0x39,  0b00000010,  136		// Sprite 3
+struct ObjectAttribute SPRITES[] = {
+//     Y ,  TILE,  ATTR      ,  X
+    { 128,  0x36,  0b00000010,  128 },		// Sprite 0
+    { 128,  0x37,  0b00000010,  136 },		// Sprite 1
+    { 136,  0x38,  0b00000010,  128 },		// Sprite 2
+    { 136,  0x39,  0b00000010,  136 }		// Sprite 3
 };
 
 // Tiles

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNesDemo() throws IOException, URISyntaxException {
+      compileAndCompare("examples/nes/nes-demo.c");
+   }
+
+   @Test
    public void testAtari2600Sprites() throws IOException, URISyntaxException {
       compileAndCompare("examples/atari2600/atari2600-sprites.c");
    }

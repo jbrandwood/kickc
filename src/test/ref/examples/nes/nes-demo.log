@@ -1,14 +1,14 @@
-Resolved forward reference OAM_BUFFER to (const nomodify struct ObjectAttribute*) OAM_BUFFER
-Resolved forward reference PALETTE to (const byte*) PALETTE
-Resolved forward reference PALETTE to (const byte*) PALETTE
 Resolved forward reference SPRITES to (const struct ObjectAttribute*) SPRITES
 Resolved forward reference SPRITES to (const struct ObjectAttribute*) SPRITES
+Resolved forward reference PALETTE to (const byte*) PALETTE
+Resolved forward reference PALETTE to (const byte*) PALETTE
 Inlined call call disableVideoOutput 
 Inlined call call disableAudioOutput 
 Inlined call call clearVBlankFlag 
 Inlined call call waitForVBlank 
 Inlined call call waitForVBlank 
 Inlined call call enableVideoOutput 
+Inlined call call transferSpriteBufferToPpu 
 
 CONTROL FLOW GRAPH SSA
 @begin: scope:[]  from
@@ -73,10 +73,10 @@ main::waitForVBlank2_@1: scope:[main]  from main::waitForVBlank2 main::waitForVB
   if((bool~) main::waitForVBlank2_$1) goto main::waitForVBlank2_@1
   to:main::@4
 main::@4: scope:[main]  from main::waitForVBlank2_@1
-  call initPaletteData 
+  call initPalette 
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  call initSpriteData 
+  call initSpriteBuffer 
   to:main::@6
 main::@6: scope:[main]  from main::@5
   to:main::enableVideoOutput1
@@ -98,73 +98,48 @@ main::@return: scope:[main]  from main::@2
 
 interrupt(HARDWARE_STACK)(void()) vblank()
 vblank: scope:[vblank]  from
-  (byte*~) vblank::$13 ← (byte*)(const struct RICOH_2C02*) PPU
-  (byte*~) vblank::$7 ← (byte*~) vblank::$13 + (const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR
-  *((byte*~) vblank::$7) ← (number) 0
-  (byte~) vblank::$0 ← > (const nomodify struct ObjectAttribute*) OAM_BUFFER
-  (byte*~) vblank::$14 ← (byte*)(const struct RICOH_2A03*) APU
-  (byte*~) vblank::$8 ← (byte*~) vblank::$14 + (const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA
-  *((byte*~) vblank::$8) ← (byte~) vblank::$0
-  (byte*~) vblank::$15 ← (byte*)(const struct RICOH_2A03*) APU
-  (byte*~) vblank::$9 ← (byte*~) vblank::$15 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-  *((byte*~) vblank::$9) ← (number) 1
-  (byte*~) vblank::$16 ← (byte*)(const struct RICOH_2A03*) APU
-  (byte*~) vblank::$10 ← (byte*~) vblank::$16 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-  *((byte*~) vblank::$10) ← (number) 0
-  (byte*~) vblank::$17 ← (byte*)(const struct RICOH_2A03*) APU
-  (byte*~) vblank::$11 ← (byte*~) vblank::$17 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-  (number~) vblank::$1 ← *((byte*~) vblank::$11) & (number) 1
-  (bool~) vblank::$19 ← (number) 0 != (number~) vblank::$1
-  (bool~) vblank::$2 ← ! (bool~) vblank::$19
+  to:vblank::transferSpriteBufferToPpu1
+vblank::transferSpriteBufferToPpu1: scope:[vblank]  from vblank
+  (byte*~) vblank::transferSpriteBufferToPpu1_$2 ← (byte*)(const struct RICOH_2C02*) PPU
+  (byte*~) vblank::transferSpriteBufferToPpu1_$0 ← (byte*~) vblank::transferSpriteBufferToPpu1_$2 + (const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR
+  *((byte*~) vblank::transferSpriteBufferToPpu1_$0) ← (number) 0
+  (byte*~) vblank::transferSpriteBufferToPpu1_$3 ← (byte*)(const struct RICOH_2A03*) APU
+  (byte*~) vblank::transferSpriteBufferToPpu1_$1 ← (byte*~) vblank::transferSpriteBufferToPpu1_$3 + (const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA
+  *((byte*~) vblank::transferSpriteBufferToPpu1_$1) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER
+  to:vblank::@4
+vblank::@4: scope:[vblank]  from vblank::transferSpriteBufferToPpu1
+  (byte*~) vblank::$11 ← (byte*)(const struct RICOH_2A03*) APU
+  (byte*~) vblank::$7 ← (byte*~) vblank::$11 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+  *((byte*~) vblank::$7) ← (number) 1
+  (byte*~) vblank::$12 ← (byte*)(const struct RICOH_2A03*) APU
+  (byte*~) vblank::$8 ← (byte*~) vblank::$12 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+  *((byte*~) vblank::$8) ← (number) 0
+  (byte*~) vblank::$13 ← (byte*)(const struct RICOH_2A03*) APU
+  (byte*~) vblank::$9 ← (byte*~) vblank::$13 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+  (number~) vblank::$1 ← *((byte*~) vblank::$9) & (number) 1
+  (bool~) vblank::$15 ← (number) 0 != (number~) vblank::$1
+  (bool~) vblank::$2 ← ! (bool~) vblank::$15
   if((bool~) vblank::$2) goto vblank::@1
   to:vblank::@2
-vblank::@1: scope:[vblank]  from vblank vblank::@4
-  (byte*~) vblank::$18 ← (byte*)(const struct RICOH_2A03*) APU
-  (byte*~) vblank::$12 ← (byte*~) vblank::$18 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-  (number~) vblank::$3 ← *((byte*~) vblank::$12) & (number) 1
-  (bool~) vblank::$20 ← (number) 0 != (number~) vblank::$3
-  (bool~) vblank::$4 ← ! (bool~) vblank::$20
+vblank::@1: scope:[vblank]  from vblank::@4 vblank::@5
+  (byte*~) vblank::$14 ← (byte*)(const struct RICOH_2A03*) APU
+  (byte*~) vblank::$10 ← (byte*~) vblank::$14 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+  (number~) vblank::$3 ← *((byte*~) vblank::$10) & (number) 1
+  (bool~) vblank::$16 ← (number) 0 != (number~) vblank::$3
+  (bool~) vblank::$4 ← ! (bool~) vblank::$16
   if((bool~) vblank::$4) goto vblank::@return
   to:vblank::@3
-vblank::@2: scope:[vblank]  from vblank
+vblank::@2: scope:[vblank]  from vblank::@4
   call moveLuigiRight 
-  to:vblank::@4
-vblank::@4: scope:[vblank]  from vblank::@2
+  to:vblank::@5
+vblank::@5: scope:[vblank]  from vblank::@2
   to:vblank::@1
 vblank::@3: scope:[vblank]  from vblank::@1
   call moveLuigiLeft 
-  to:vblank::@5
-vblank::@5: scope:[vblank]  from vblank::@3
+  to:vblank::@6
+vblank::@6: scope:[vblank]  from vblank::@3
   to:vblank::@return
-vblank::@return: scope:[vblank]  from vblank::@1 vblank::@5
-  return 
-  to:@return
-
-(void()) initPaletteData()
-initPaletteData: scope:[initPaletteData]  from main::@4
-  asm { ldaPPU_PPUSTATUS  }
-  (byte*~) initPaletteData::$5 ← (byte*)(const struct RICOH_2C02*) PPU
-  (byte*~) initPaletteData::$2 ← (byte*~) initPaletteData::$5 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
-  *((byte*~) initPaletteData::$2) ← >(const nomodify byte*) PPU_PALETTE
-  (byte*~) initPaletteData::$6 ← (byte*)(const struct RICOH_2C02*) PPU
-  (byte*~) initPaletteData::$3 ← (byte*~) initPaletteData::$6 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
-  *((byte*~) initPaletteData::$3) ← <(const nomodify byte*) PPU_PALETTE
-  (byte) initPaletteData::i#0 ← (byte) 0
-  to:initPaletteData::@1
-initPaletteData::@1: scope:[initPaletteData]  from initPaletteData initPaletteData::@2
-  (byte) initPaletteData::i#2 ← phi( initPaletteData/(byte) initPaletteData::i#0 initPaletteData::@2/(byte) initPaletteData::i#1 )
-  (byte~) initPaletteData::$0 ← sizeof  (const byte*) PALETTE
-  (bool~) initPaletteData::$1 ← (byte) initPaletteData::i#2 < (byte~) initPaletteData::$0
-  if((bool~) initPaletteData::$1) goto initPaletteData::@2
-  to:initPaletteData::@return
-initPaletteData::@2: scope:[initPaletteData]  from initPaletteData::@1
-  (byte) initPaletteData::i#3 ← phi( initPaletteData::@1/(byte) initPaletteData::i#2 )
-  (byte*~) initPaletteData::$7 ← (byte*)(const struct RICOH_2C02*) PPU
-  (byte*~) initPaletteData::$4 ← (byte*~) initPaletteData::$7 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA
-  *((byte*~) initPaletteData::$4) ← *((const byte*) PALETTE + (byte) initPaletteData::i#3)
-  (byte) initPaletteData::i#1 ← ++ (byte) initPaletteData::i#3
-  to:initPaletteData::@1
-initPaletteData::@return: scope:[initPaletteData]  from initPaletteData::@1
+vblank::@return: scope:[vblank]  from vblank::@1 vblank::@6
   return 
   to:@return
 
@@ -198,20 +173,48 @@ moveLuigiLeft::@return: scope:[moveLuigiLeft]  from moveLuigiLeft
   return 
   to:@return
 
-(void()) initSpriteData()
-initSpriteData: scope:[initSpriteData]  from main::@5
-  (byte) initSpriteData::i#0 ← (byte) 0
-  to:initSpriteData::@1
-initSpriteData::@1: scope:[initSpriteData]  from initSpriteData initSpriteData::@1
-  (byte) initSpriteData::i#2 ← phi( initSpriteData/(byte) initSpriteData::i#0 initSpriteData::@1/(byte) initSpriteData::i#1 )
-  (byte*~) initSpriteData::$2 ← (byte*)(const struct ObjectAttribute*) SPRITES
-  *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteData::i#2) ← *((byte*~) initSpriteData::$2 + (byte) initSpriteData::i#2)
-  (byte) initSpriteData::i#1 ← ++ (byte) initSpriteData::i#2
-  (byte~) initSpriteData::$0 ← sizeof  (const struct ObjectAttribute*) SPRITES
-  (bool~) initSpriteData::$1 ← (byte) initSpriteData::i#1 != (byte~) initSpriteData::$0
-  if((bool~) initSpriteData::$1) goto initSpriteData::@1
-  to:initSpriteData::@return
-initSpriteData::@return: scope:[initSpriteData]  from initSpriteData::@1
+(void()) initSpriteBuffer()
+initSpriteBuffer: scope:[initSpriteBuffer]  from main::@5
+  (byte) initSpriteBuffer::i#0 ← (byte) 0
+  to:initSpriteBuffer::@1
+initSpriteBuffer::@1: scope:[initSpriteBuffer]  from initSpriteBuffer initSpriteBuffer::@1
+  (byte) initSpriteBuffer::i#2 ← phi( initSpriteBuffer/(byte) initSpriteBuffer::i#0 initSpriteBuffer::@1/(byte) initSpriteBuffer::i#1 )
+  (byte*~) initSpriteBuffer::$2 ← (byte*)(const struct ObjectAttribute*) SPRITES
+  *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteBuffer::i#2) ← *((byte*~) initSpriteBuffer::$2 + (byte) initSpriteBuffer::i#2)
+  (byte) initSpriteBuffer::i#1 ← ++ (byte) initSpriteBuffer::i#2
+  (byte~) initSpriteBuffer::$0 ← sizeof  (const struct ObjectAttribute*) SPRITES
+  (bool~) initSpriteBuffer::$1 ← (byte) initSpriteBuffer::i#1 != (byte~) initSpriteBuffer::$0
+  if((bool~) initSpriteBuffer::$1) goto initSpriteBuffer::@1
+  to:initSpriteBuffer::@return
+initSpriteBuffer::@return: scope:[initSpriteBuffer]  from initSpriteBuffer::@1
+  return 
+  to:@return
+
+(void()) initPalette()
+initPalette: scope:[initPalette]  from main::@4
+  asm { ldaPPU_PPUSTATUS  }
+  (byte*~) initPalette::$5 ← (byte*)(const struct RICOH_2C02*) PPU
+  (byte*~) initPalette::$2 ← (byte*~) initPalette::$5 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
+  *((byte*~) initPalette::$2) ← >(const nomodify byte*) PPU_PALETTE
+  (byte*~) initPalette::$6 ← (byte*)(const struct RICOH_2C02*) PPU
+  (byte*~) initPalette::$3 ← (byte*~) initPalette::$6 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
+  *((byte*~) initPalette::$3) ← <(const nomodify byte*) PPU_PALETTE
+  (byte) initPalette::i#0 ← (byte) 0
+  to:initPalette::@1
+initPalette::@1: scope:[initPalette]  from initPalette initPalette::@2
+  (byte) initPalette::i#2 ← phi( initPalette/(byte) initPalette::i#0 initPalette::@2/(byte) initPalette::i#1 )
+  (byte~) initPalette::$0 ← sizeof  (const byte*) PALETTE
+  (bool~) initPalette::$1 ← (byte) initPalette::i#2 < (byte~) initPalette::$0
+  if((bool~) initPalette::$1) goto initPalette::@2
+  to:initPalette::@return
+initPalette::@2: scope:[initPalette]  from initPalette::@1
+  (byte) initPalette::i#3 ← phi( initPalette::@1/(byte) initPalette::i#2 )
+  (byte*~) initPalette::$7 ← (byte*)(const struct RICOH_2C02*) PPU
+  (byte*~) initPalette::$4 ← (byte*~) initPalette::$7 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA
+  *((byte*~) initPalette::$4) ← *((const byte*) PALETTE + (byte) initPalette::i#3)
+  (byte) initPalette::i#1 ← ++ (byte) initPalette::i#3
+  to:initPalette::@1
+initPalette::@return: scope:[initPalette]  from initPalette::@1
   return 
   to:@return
 @1: scope:[]  from @begin
@@ -285,33 +288,33 @@ SYMBOL TABLE SSA
 (const byte*) TILES[]  = kickasm {{ .import binary "smb1_chr.bin"
  }}
 (const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_STACK)(void()) vblank(), &(void()) main(), (void()*)(number) 0 }
-(void()) initPaletteData()
-(byte~) initPaletteData::$0
-(bool~) initPaletteData::$1
-(byte*~) initPaletteData::$2
-(byte*~) initPaletteData::$3
-(byte*~) initPaletteData::$4
-(byte*~) initPaletteData::$5
-(byte*~) initPaletteData::$6
-(byte*~) initPaletteData::$7
-(label) initPaletteData::@1
-(label) initPaletteData::@2
-(label) initPaletteData::@return
-(byte) initPaletteData::i
-(byte) initPaletteData::i#0
-(byte) initPaletteData::i#1
-(byte) initPaletteData::i#2
-(byte) initPaletteData::i#3
-(void()) initSpriteData()
-(byte~) initSpriteData::$0
-(bool~) initSpriteData::$1
-(byte*~) initSpriteData::$2
-(label) initSpriteData::@1
-(label) initSpriteData::@return
-(byte) initSpriteData::i
-(byte) initSpriteData::i#0
-(byte) initSpriteData::i#1
-(byte) initSpriteData::i#2
+(void()) initPalette()
+(byte~) initPalette::$0
+(bool~) initPalette::$1
+(byte*~) initPalette::$2
+(byte*~) initPalette::$3
+(byte*~) initPalette::$4
+(byte*~) initPalette::$5
+(byte*~) initPalette::$6
+(byte*~) initPalette::$7
+(label) initPalette::@1
+(label) initPalette::@2
+(label) initPalette::@return
+(byte) initPalette::i
+(byte) initPalette::i#0
+(byte) initPalette::i#1
+(byte) initPalette::i#2
+(byte) initPalette::i#3
+(void()) initSpriteBuffer()
+(byte~) initSpriteBuffer::$0
+(bool~) initSpriteBuffer::$1
+(byte*~) initSpriteBuffer::$2
+(label) initSpriteBuffer::@1
+(label) initSpriteBuffer::@return
+(byte) initSpriteBuffer::i
+(byte) initSpriteBuffer::i#0
+(byte) initSpriteBuffer::i#1
+(byte) initSpriteBuffer::i#2
 (void()) main()
 (bool~) main::$8
 (bool~) main::$9
@@ -367,20 +370,15 @@ SYMBOL TABLE SSA
 (number~) moveLuigiRight::$9
 (label) moveLuigiRight::@return
 interrupt(HARDWARE_STACK)(void()) vblank()
-(byte~) vblank::$0
 (number~) vblank::$1
 (byte*~) vblank::$10
 (byte*~) vblank::$11
 (byte*~) vblank::$12
 (byte*~) vblank::$13
 (byte*~) vblank::$14
-(byte*~) vblank::$15
-(byte*~) vblank::$16
-(byte*~) vblank::$17
-(byte*~) vblank::$18
-(bool~) vblank::$19
+(bool~) vblank::$15
+(bool~) vblank::$16
 (bool~) vblank::$2
-(bool~) vblank::$20
 (number~) vblank::$3
 (bool~) vblank::$4
 (byte*~) vblank::$7
@@ -391,7 +389,13 @@ interrupt(HARDWARE_STACK)(void()) vblank()
 (label) vblank::@3
 (label) vblank::@4
 (label) vblank::@5
+(label) vblank::@6
 (label) vblank::@return
+(label) vblank::transferSpriteBufferToPpu1
+(byte*~) vblank::transferSpriteBufferToPpu1_$0
+(byte*~) vblank::transferSpriteBufferToPpu1_$1
+(byte*~) vblank::transferSpriteBufferToPpu1_$2
+(byte*~) vblank::transferSpriteBufferToPpu1_$3
 
 Adding number conversion cast (unumber) 0 in *((byte*~) main::disableVideoOutput1_$0) ← (number) 0
 Adding number conversion cast (unumber) 0 in *((byte*~) main::disableVideoOutput1_$1) ← (number) 0
@@ -422,15 +426,15 @@ Adding number conversion cast (unumber) main::waitForVBlank2_$0 in (number~) mai
 Adding number conversion cast (unumber) 0 in (bool~) main::waitForVBlank2_$4 ← (number) 0 != (unumber~) main::waitForVBlank2_$0
 Adding number conversion cast (unumber) $80 in *((byte*~) main::enableVideoOutput1_$0) ← (number) $80
 Adding number conversion cast (unumber) $10 in *((byte*~) main::enableVideoOutput1_$1) ← (number) $10
-Adding number conversion cast (unumber) 0 in *((byte*~) vblank::$7) ← (number) 0
-Adding number conversion cast (unumber) 1 in *((byte*~) vblank::$9) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*~) vblank::$10) ← (number) 0
-Adding number conversion cast (unumber) 1 in (number~) vblank::$1 ← *((byte*~) vblank::$11) & (number) 1
-Adding number conversion cast (unumber) vblank::$1 in (number~) vblank::$1 ← *((byte*~) vblank::$11) & (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in (bool~) vblank::$19 ← (number) 0 != (unumber~) vblank::$1
-Adding number conversion cast (unumber) 1 in (number~) vblank::$3 ← *((byte*~) vblank::$12) & (number) 1
-Adding number conversion cast (unumber) vblank::$3 in (number~) vblank::$3 ← *((byte*~) vblank::$12) & (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in (bool~) vblank::$20 ← (number) 0 != (unumber~) vblank::$3
+Adding number conversion cast (unumber) 0 in *((byte*~) vblank::transferSpriteBufferToPpu1_$0) ← (number) 0
+Adding number conversion cast (unumber) 1 in *((byte*~) vblank::$7) ← (number) 1
+Adding number conversion cast (unumber) 0 in *((byte*~) vblank::$8) ← (number) 0
+Adding number conversion cast (unumber) 1 in (number~) vblank::$1 ← *((byte*~) vblank::$9) & (number) 1
+Adding number conversion cast (unumber) vblank::$1 in (number~) vblank::$1 ← *((byte*~) vblank::$9) & (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) vblank::$15 ← (number) 0 != (unumber~) vblank::$1
+Adding number conversion cast (unumber) 1 in (number~) vblank::$3 ← *((byte*~) vblank::$10) & (number) 1
+Adding number conversion cast (unumber) vblank::$3 in (number~) vblank::$3 ← *((byte*~) vblank::$10) & (unumber)(number) 1
+Adding number conversion cast (unumber) 0 in (bool~) vblank::$16 ← (number) 0 != (unumber~) vblank::$3
 Adding number conversion cast (unumber) 0 in (number~) moveLuigiRight::$5 ← (number) 0 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Adding number conversion cast (unumber) moveLuigiRight::$5 in (number~) moveLuigiRight::$5 ← (unumber)(number) 0 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Adding number conversion cast (unumber) 1 in (number~) moveLuigiRight::$7 ← (number) 1 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
@@ -462,9 +466,9 @@ Inlining cast *((const nomodify byte*) MEMORY+(unumber)(number) $600 + (byte) ma
 Inlining cast *((const nomodify byte*) MEMORY+(unumber)(number) $700 + (byte) main::i#2) ← (unumber)(number) 0
 Inlining cast *((byte*~) main::enableVideoOutput1_$0) ← (unumber)(number) $80
 Inlining cast *((byte*~) main::enableVideoOutput1_$1) ← (unumber)(number) $10
-Inlining cast *((byte*~) vblank::$7) ← (unumber)(number) 0
-Inlining cast *((byte*~) vblank::$9) ← (unumber)(number) 1
-Inlining cast *((byte*~) vblank::$10) ← (unumber)(number) 0
+Inlining cast *((byte*~) vblank::transferSpriteBufferToPpu1_$0) ← (unumber)(number) 0
+Inlining cast *((byte*~) vblank::$7) ← (unumber)(number) 1
+Inlining cast *((byte*~) vblank::$8) ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 16128
 Simplifying constant pointer cast (byte*) 16407
@@ -562,8 +566,8 @@ Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) main::waitForVBlank1_$0 ← *((byte*~) main::waitForVBlank1_$2) & (byte) $80
 Inferred type updated to byte in (unumber~) main::waitForVBlank2_$0 ← *((byte*~) main::waitForVBlank2_$2) & (byte) $80
-Inferred type updated to byte in (unumber~) vblank::$1 ← *((byte*~) vblank::$11) & (byte) 1
-Inferred type updated to byte in (unumber~) vblank::$3 ← *((byte*~) vblank::$12) & (byte) 1
+Inferred type updated to byte in (unumber~) vblank::$1 ← *((byte*~) vblank::$9) & (byte) 1
+Inferred type updated to byte in (unumber~) vblank::$3 ← *((byte*~) vblank::$10) & (byte) 1
 Inferred type updated to byte in (unumber~) moveLuigiRight::$5 ← (byte) 0 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Inferred type updated to byte in (unumber~) moveLuigiRight::$7 ← (byte) 1 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Inferred type updated to byte in (unumber~) moveLuigiRight::$9 ← (byte) 2 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
@@ -574,19 +578,19 @@ Inferred type updated to byte in (unumber~) moveLuigiLeft::$9 ← (byte) 2 * (co
 Inferred type updated to byte in (unumber~) moveLuigiLeft::$11 ← (byte) 3 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Inversing boolean not [16] (bool~) main::waitForVBlank1_$1 ← (byte) 0 == (byte~) main::waitForVBlank1_$0 from [15] (bool~) main::waitForVBlank1_$4 ← (byte) 0 != (byte~) main::waitForVBlank1_$0
 Inversing boolean not [35] (bool~) main::waitForVBlank2_$1 ← (byte) 0 == (byte~) main::waitForVBlank2_$0 from [34] (bool~) main::waitForVBlank2_$4 ← (byte) 0 != (byte~) main::waitForVBlank2_$0
-Inversing boolean not [65] (bool~) vblank::$2 ← (byte) 0 == (byte~) vblank::$1 from [64] (bool~) vblank::$19 ← (byte) 0 != (byte~) vblank::$1
-Inversing boolean not [71] (bool~) vblank::$4 ← (byte) 0 == (byte~) vblank::$3 from [70] (bool~) vblank::$20 ← (byte) 0 != (byte~) vblank::$3
+Inversing boolean not [64] (bool~) vblank::$2 ← (byte) 0 == (byte~) vblank::$1 from [63] (bool~) vblank::$15 ← (byte) 0 != (byte~) vblank::$1
+Inversing boolean not [70] (bool~) vblank::$4 ← (byte) 0 == (byte~) vblank::$3 from [69] (bool~) vblank::$16 ← (byte) 0 != (byte~) vblank::$3
 Successful SSA optimization Pass2UnaryNotSimplification
-Alias initPaletteData::i#2 = initPaletteData::i#3 
+Alias initPalette::i#2 = initPalette::i#3 
 Successful SSA optimization Pass2AliasElimination
 Simple Condition (bool~) main::waitForVBlank1_$1 [16] if((byte) 0==(byte~) main::waitForVBlank1_$0) goto main::waitForVBlank1_@1
 Simple Condition (bool~) main::$8 [29] if((byte) 0!=(byte) main::i#1) goto main::@1
 Simple Condition (bool~) main::waitForVBlank2_$1 [34] if((byte) 0==(byte~) main::waitForVBlank2_$0) goto main::waitForVBlank2_@1
 Simple Condition (bool~) main::$9 [44] if((number) 0!=(number) 1) goto main::@2
-Simple Condition (bool~) vblank::$2 [63] if((byte) 0==(byte~) vblank::$1) goto vblank::@1
-Simple Condition (bool~) vblank::$4 [68] if((byte) 0==(byte~) vblank::$3) goto vblank::@return
-Simple Condition (bool~) initPaletteData::$1 [83] if((byte) initPaletteData::i#2<(byte~) initPaletteData::$0) goto initPaletteData::@2
-Simple Condition (bool~) initSpriteData::$1 [114] if((byte) initSpriteData::i#1!=(byte~) initSpriteData::$0) goto initSpriteData::@1
+Simple Condition (bool~) vblank::$2 [62] if((byte) 0==(byte~) vblank::$1) goto vblank::@1
+Simple Condition (bool~) vblank::$4 [67] if((byte) 0==(byte~) vblank::$3) goto vblank::@return
+Simple Condition (bool~) initSpriteBuffer::$1 [96] if((byte) initSpriteBuffer::i#1!=(byte~) initSpriteBuffer::$0) goto initSpriteBuffer::@1
+Simple Condition (bool~) initPalette::$1 [109] if((byte) initPalette::i#2<(byte~) initPalette::$0) goto initPalette::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [1] (byte*~) main::disableVideoOutput1_$2 ← (byte*)(const struct RICOH_2C02*) PPU
 Constant right-side identified [4] (byte*~) main::disableVideoOutput1_$3 ← (byte*)(const struct RICOH_2C02*) PPU
@@ -595,27 +599,26 @@ Constant right-side identified [12] (byte*~) main::waitForVBlank1_$3 ← (byte*)
 Constant right-side identified [30] (byte*~) main::waitForVBlank2_$3 ← (byte*)(const struct RICOH_2C02*) PPU
 Constant right-side identified [37] (byte*~) main::enableVideoOutput1_$2 ← (byte*)(const struct RICOH_2C02*) PPU
 Constant right-side identified [40] (byte*~) main::enableVideoOutput1_$3 ← (byte*)(const struct RICOH_2C02*) PPU
-Constant right-side identified [46] (byte*~) vblank::$13 ← (byte*)(const struct RICOH_2C02*) PPU
-Constant right-side identified [49] (byte~) vblank::$0 ← > (const nomodify struct ObjectAttribute*) OAM_BUFFER
-Constant right-side identified [50] (byte*~) vblank::$14 ← (byte*)(const struct RICOH_2A03*) APU
-Constant right-side identified [53] (byte*~) vblank::$15 ← (byte*)(const struct RICOH_2A03*) APU
-Constant right-side identified [56] (byte*~) vblank::$16 ← (byte*)(const struct RICOH_2A03*) APU
-Constant right-side identified [59] (byte*~) vblank::$17 ← (byte*)(const struct RICOH_2A03*) APU
-Constant right-side identified [64] (byte*~) vblank::$18 ← (byte*)(const struct RICOH_2A03*) APU
-Constant right-side identified [73] (byte*~) initPaletteData::$5 ← (byte*)(const struct RICOH_2C02*) PPU
-Constant right-side identified [76] (byte*~) initPaletteData::$6 ← (byte*)(const struct RICOH_2C02*) PPU
-Constant right-side identified [81] (byte~) initPaletteData::$0 ← sizeof  (const byte*) PALETTE
-Constant right-side identified [84] (byte*~) initPaletteData::$7 ← (byte*)(const struct RICOH_2C02*) PPU
-Constant right-side identified [89] (byte~) moveLuigiRight::$5 ← (byte) 0 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [91] (byte~) moveLuigiRight::$7 ← (byte) 1 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [93] (byte~) moveLuigiRight::$9 ← (byte) 2 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [95] (byte~) moveLuigiRight::$11 ← (byte) 3 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [98] (byte~) moveLuigiLeft::$5 ← (byte) 0 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [100] (byte~) moveLuigiLeft::$7 ← (byte) 1 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [102] (byte~) moveLuigiLeft::$9 ← (byte) 2 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [104] (byte~) moveLuigiLeft::$11 ← (byte) 3 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant right-side identified [109] (byte*~) initSpriteData::$2 ← (byte*)(const struct ObjectAttribute*) SPRITES
-Constant right-side identified [112] (byte~) initSpriteData::$0 ← sizeof  (const struct ObjectAttribute*) SPRITES
+Constant right-side identified [46] (byte*~) vblank::transferSpriteBufferToPpu1_$2 ← (byte*)(const struct RICOH_2C02*) PPU
+Constant right-side identified [49] (byte*~) vblank::transferSpriteBufferToPpu1_$3 ← (byte*)(const struct RICOH_2A03*) APU
+Constant right-side identified [52] (byte*~) vblank::$11 ← (byte*)(const struct RICOH_2A03*) APU
+Constant right-side identified [55] (byte*~) vblank::$12 ← (byte*)(const struct RICOH_2A03*) APU
+Constant right-side identified [58] (byte*~) vblank::$13 ← (byte*)(const struct RICOH_2A03*) APU
+Constant right-side identified [63] (byte*~) vblank::$14 ← (byte*)(const struct RICOH_2A03*) APU
+Constant right-side identified [71] (byte~) moveLuigiRight::$5 ← (byte) 0 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [73] (byte~) moveLuigiRight::$7 ← (byte) 1 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [75] (byte~) moveLuigiRight::$9 ← (byte) 2 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [77] (byte~) moveLuigiRight::$11 ← (byte) 3 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [80] (byte~) moveLuigiLeft::$5 ← (byte) 0 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [82] (byte~) moveLuigiLeft::$7 ← (byte) 1 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [84] (byte~) moveLuigiLeft::$9 ← (byte) 2 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [86] (byte~) moveLuigiLeft::$11 ← (byte) 3 * (const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant right-side identified [91] (byte*~) initSpriteBuffer::$2 ← (byte*)(const struct ObjectAttribute*) SPRITES
+Constant right-side identified [94] (byte~) initSpriteBuffer::$0 ← sizeof  (const struct ObjectAttribute*) SPRITES
+Constant right-side identified [99] (byte*~) initPalette::$5 ← (byte*)(const struct RICOH_2C02*) PPU
+Constant right-side identified [102] (byte*~) initPalette::$6 ← (byte*)(const struct RICOH_2C02*) PPU
+Constant right-side identified [107] (byte~) initPalette::$0 ← sizeof  (const byte*) PALETTE
+Constant right-side identified [110] (byte*~) initPalette::$7 ← (byte*)(const struct RICOH_2C02*) PPU
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::disableVideoOutput1_$2 = (byte*)PPU
 Constant (const byte*) main::disableVideoOutput1_$3 = (byte*)PPU
@@ -625,18 +628,12 @@ Constant (const byte) main::i#0 = 0
 Constant (const byte*) main::waitForVBlank2_$3 = (byte*)PPU
 Constant (const byte*) main::enableVideoOutput1_$2 = (byte*)PPU
 Constant (const byte*) main::enableVideoOutput1_$3 = (byte*)PPU
-Constant (const byte*) vblank::$13 = (byte*)PPU
-Constant (const byte) vblank::$0 = >OAM_BUFFER
+Constant (const byte*) vblank::transferSpriteBufferToPpu1_$2 = (byte*)PPU
+Constant (const byte*) vblank::transferSpriteBufferToPpu1_$3 = (byte*)APU
+Constant (const byte*) vblank::$11 = (byte*)APU
+Constant (const byte*) vblank::$12 = (byte*)APU
+Constant (const byte*) vblank::$13 = (byte*)APU
 Constant (const byte*) vblank::$14 = (byte*)APU
-Constant (const byte*) vblank::$15 = (byte*)APU
-Constant (const byte*) vblank::$16 = (byte*)APU
-Constant (const byte*) vblank::$17 = (byte*)APU
-Constant (const byte*) vblank::$18 = (byte*)APU
-Constant (const byte*) initPaletteData::$5 = (byte*)PPU
-Constant (const byte*) initPaletteData::$6 = (byte*)PPU
-Constant (const byte) initPaletteData::i#0 = 0
-Constant (const byte) initPaletteData::$0 = sizeof PALETTE
-Constant (const byte*) initPaletteData::$7 = (byte*)PPU
 Constant (const byte) moveLuigiRight::$5 = 0*SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant (const byte) moveLuigiRight::$7 = 1*SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant (const byte) moveLuigiRight::$9 = 2*SIZEOF_STRUCT_OBJECTATTRIBUTE
@@ -645,9 +642,14 @@ Constant (const byte) moveLuigiLeft::$5 = 0*SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant (const byte) moveLuigiLeft::$7 = 1*SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant (const byte) moveLuigiLeft::$9 = 2*SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant (const byte) moveLuigiLeft::$11 = 3*SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant (const byte) initSpriteData::i#0 = 0
-Constant (const byte*) initSpriteData::$2 = (byte*)SPRITES
-Constant (const byte) initSpriteData::$0 = sizeof SPRITES
+Constant (const byte) initSpriteBuffer::i#0 = 0
+Constant (const byte*) initSpriteBuffer::$2 = (byte*)SPRITES
+Constant (const byte) initSpriteBuffer::$0 = sizeof SPRITES
+Constant (const byte*) initPalette::$5 = (byte*)PPU
+Constant (const byte*) initPalette::$6 = (byte*)PPU
+Constant (const byte) initPalette::i#0 = 0
+Constant (const byte) initPalette::$0 = sizeof PALETTE
+Constant (const byte*) initPalette::$7 = (byte*)PPU
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [44] if((number) 0!=(number) 1) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -658,29 +660,29 @@ Converting *(pointer+n) to pointer[n] [14] (byte~) main::waitForVBlank1_$0 ← *
 Converting *(pointer+n) to pointer[n] [32] (byte~) main::waitForVBlank2_$0 ← *((byte*~) main::waitForVBlank2_$2) & (byte) $80  -- *(main::waitForVBlank2_$3 + OFFSET_STRUCT_RICOH_2C02_PPUSTATUS)
 Converting *(pointer+n) to pointer[n] [39] *((byte*~) main::enableVideoOutput1_$0) ← (byte) $80  -- *(main::enableVideoOutput1_$2 + OFFSET_STRUCT_RICOH_2C02_PPUCTRL)
 Converting *(pointer+n) to pointer[n] [42] *((byte*~) main::enableVideoOutput1_$1) ← (byte) $10  -- *(main::enableVideoOutput1_$3 + OFFSET_STRUCT_RICOH_2C02_PPUMASK)
-Converting *(pointer+n) to pointer[n] [48] *((byte*~) vblank::$7) ← (byte) 0  -- *(vblank::$13 + OFFSET_STRUCT_RICOH_2C02_OAMADDR)
-Converting *(pointer+n) to pointer[n] [52] *((byte*~) vblank::$8) ← (const byte) vblank::$0  -- *(vblank::$14 + OFFSET_STRUCT_RICOH_2A03_OAMDMA)
-Converting *(pointer+n) to pointer[n] [55] *((byte*~) vblank::$9) ← (byte) 1  -- *(vblank::$15 + OFFSET_STRUCT_RICOH_2A03_JOY1)
-Converting *(pointer+n) to pointer[n] [58] *((byte*~) vblank::$10) ← (byte) 0  -- *(vblank::$16 + OFFSET_STRUCT_RICOH_2A03_JOY1)
-Converting *(pointer+n) to pointer[n] [61] (byte~) vblank::$1 ← *((byte*~) vblank::$11) & (byte) 1  -- *(vblank::$17 + OFFSET_STRUCT_RICOH_2A03_JOY1)
-Converting *(pointer+n) to pointer[n] [66] (byte~) vblank::$3 ← *((byte*~) vblank::$12) & (byte) 1  -- *(vblank::$18 + OFFSET_STRUCT_RICOH_2A03_JOY1)
-Converting *(pointer+n) to pointer[n] [75] *((byte*~) initPaletteData::$2) ← >(const nomodify byte*) PPU_PALETTE  -- *(initPaletteData::$5 + OFFSET_STRUCT_RICOH_2C02_PPUADDR)
-Converting *(pointer+n) to pointer[n] [78] *((byte*~) initPaletteData::$3) ← <(const nomodify byte*) PPU_PALETTE  -- *(initPaletteData::$6 + OFFSET_STRUCT_RICOH_2C02_PPUADDR)
-Converting *(pointer+n) to pointer[n] [86] *((byte*~) initPaletteData::$4) ← *((const byte*) PALETTE + (byte) initPaletteData::i#2)  -- *(initPaletteData::$7 + OFFSET_STRUCT_RICOH_2C02_PPUDATA)
+Converting *(pointer+n) to pointer[n] [48] *((byte*~) vblank::transferSpriteBufferToPpu1_$0) ← (byte) 0  -- *(vblank::transferSpriteBufferToPpu1_$2 + OFFSET_STRUCT_RICOH_2C02_OAMADDR)
+Converting *(pointer+n) to pointer[n] [51] *((byte*~) vblank::transferSpriteBufferToPpu1_$1) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER  -- *(vblank::transferSpriteBufferToPpu1_$3 + OFFSET_STRUCT_RICOH_2A03_OAMDMA)
+Converting *(pointer+n) to pointer[n] [54] *((byte*~) vblank::$7) ← (byte) 1  -- *(vblank::$11 + OFFSET_STRUCT_RICOH_2A03_JOY1)
+Converting *(pointer+n) to pointer[n] [57] *((byte*~) vblank::$8) ← (byte) 0  -- *(vblank::$12 + OFFSET_STRUCT_RICOH_2A03_JOY1)
+Converting *(pointer+n) to pointer[n] [60] (byte~) vblank::$1 ← *((byte*~) vblank::$9) & (byte) 1  -- *(vblank::$13 + OFFSET_STRUCT_RICOH_2A03_JOY1)
+Converting *(pointer+n) to pointer[n] [65] (byte~) vblank::$3 ← *((byte*~) vblank::$10) & (byte) 1  -- *(vblank::$14 + OFFSET_STRUCT_RICOH_2A03_JOY1)
+Converting *(pointer+n) to pointer[n] [101] *((byte*~) initPalette::$2) ← >(const nomodify byte*) PPU_PALETTE  -- *(initPalette::$5 + OFFSET_STRUCT_RICOH_2C02_PPUADDR)
+Converting *(pointer+n) to pointer[n] [104] *((byte*~) initPalette::$3) ← <(const nomodify byte*) PPU_PALETTE  -- *(initPalette::$6 + OFFSET_STRUCT_RICOH_2C02_PPUADDR)
+Converting *(pointer+n) to pointer[n] [112] *((byte*~) initPalette::$4) ← *((const byte*) PALETTE + (byte) initPalette::i#2)  -- *(initPalette::$7 + OFFSET_STRUCT_RICOH_2C02_PPUDATA)
 Successful SSA optimization Pass2InlineDerefIdx
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE in 
 Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE in 
-Simplifying constant evaluating to zero <(const nomodify byte*) PPU_PALETTE in [78] *((const byte*) initPaletteData::$6 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← <(const nomodify byte*) PPU_PALETTE
+Simplifying constant evaluating to zero <(const nomodify byte*) PPU_PALETTE in [104] *((const byte*) initPalette::$6 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← <(const nomodify byte*) PPU_PALETTE
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero main::disableVideoOutput1_$2 in [2] (byte*~) main::disableVideoOutput1_$0 ← (const byte*) main::disableVideoOutput1_$2 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUCTRL
 Simplifying expression containing zero main::disableVideoOutput1_$2 in [3] *((const byte*) main::disableVideoOutput1_$2 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUCTRL) ← (byte) 0
 Simplifying expression containing zero MEMORY in [19] *((const nomodify byte*) MEMORY+(byte) 0 + (byte) main::i#2) ← (byte) 0
 Simplifying expression containing zero main::enableVideoOutput1_$2 in [38] (byte*~) main::enableVideoOutput1_$0 ← (const byte*) main::enableVideoOutput1_$2 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUCTRL
 Simplifying expression containing zero main::enableVideoOutput1_$2 in [39] *((const byte*) main::enableVideoOutput1_$2 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUCTRL) ← (byte) $80
-Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [90] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiRight::$5) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiRight::$5)
-Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [90] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiRight::$5) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
-Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [99] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiLeft::$5) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiLeft::$5)
-Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [99] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiLeft::$5) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
+Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [72] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiRight::$5) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiRight::$5)
+Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [72] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiRight::$5) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
+Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [81] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiLeft::$5) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiLeft::$5)
+Simplifying expression containing zero (byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X in [81] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X + (const byte) moveLuigiLeft::$5) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte*~) main::disableVideoOutput1_$0 and assignment [1] (byte*~) main::disableVideoOutput1_$0 ← (const byte*) main::disableVideoOutput1_$2
 Eliminating unused variable (byte*~) main::disableVideoOutput1_$1 and assignment [3] (byte*~) main::disableVideoOutput1_$1 ← (const byte*) main::disableVideoOutput1_$3 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUMASK
@@ -689,65 +691,64 @@ Eliminating unused variable (byte*~) main::waitForVBlank1_$2 and assignment [9] 
 Eliminating unused variable (byte*~) main::waitForVBlank2_$2 and assignment [23] (byte*~) main::waitForVBlank2_$2 ← (const byte*) main::waitForVBlank2_$3 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
 Eliminating unused variable (byte*~) main::enableVideoOutput1_$0 and assignment [28] (byte*~) main::enableVideoOutput1_$0 ← (const byte*) main::enableVideoOutput1_$2
 Eliminating unused variable (byte*~) main::enableVideoOutput1_$1 and assignment [30] (byte*~) main::enableVideoOutput1_$1 ← (const byte*) main::enableVideoOutput1_$3 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUMASK
-Eliminating unused variable (byte*~) vblank::$7 and assignment [33] (byte*~) vblank::$7 ← (const byte*) vblank::$13 + (const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR
-Eliminating unused variable (byte*~) vblank::$8 and assignment [35] (byte*~) vblank::$8 ← (const byte*) vblank::$14 + (const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA
-Eliminating unused variable (byte*~) vblank::$9 and assignment [37] (byte*~) vblank::$9 ← (const byte*) vblank::$15 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-Eliminating unused variable (byte*~) vblank::$10 and assignment [39] (byte*~) vblank::$10 ← (const byte*) vblank::$16 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-Eliminating unused variable (byte*~) vblank::$11 and assignment [41] (byte*~) vblank::$11 ← (const byte*) vblank::$17 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-Eliminating unused variable (byte*~) vblank::$12 and assignment [44] (byte*~) vblank::$12 ← (const byte*) vblank::$18 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
-Eliminating unused variable (byte*~) initPaletteData::$2 and assignment [51] (byte*~) initPaletteData::$2 ← (const byte*) initPaletteData::$5 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
-Eliminating unused variable (byte*~) initPaletteData::$3 and assignment [53] (byte*~) initPaletteData::$3 ← (const byte*) initPaletteData::$6 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
-Eliminating unused variable (byte*~) initPaletteData::$4 and assignment [57] (byte*~) initPaletteData::$4 ← (const byte*) initPaletteData::$7 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA
+Eliminating unused variable (byte*~) vblank::transferSpriteBufferToPpu1_$0 and assignment [33] (byte*~) vblank::transferSpriteBufferToPpu1_$0 ← (const byte*) vblank::transferSpriteBufferToPpu1_$2 + (const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR
+Eliminating unused variable (byte*~) vblank::transferSpriteBufferToPpu1_$1 and assignment [35] (byte*~) vblank::transferSpriteBufferToPpu1_$1 ← (const byte*) vblank::transferSpriteBufferToPpu1_$3 + (const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA
+Eliminating unused variable (byte*~) vblank::$7 and assignment [37] (byte*~) vblank::$7 ← (const byte*) vblank::$11 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+Eliminating unused variable (byte*~) vblank::$8 and assignment [39] (byte*~) vblank::$8 ← (const byte*) vblank::$12 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+Eliminating unused variable (byte*~) vblank::$9 and assignment [41] (byte*~) vblank::$9 ← (const byte*) vblank::$13 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+Eliminating unused variable (byte*~) vblank::$10 and assignment [44] (byte*~) vblank::$10 ← (const byte*) vblank::$14 + (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1
+Eliminating unused variable (byte*~) initPalette::$2 and assignment [66] (byte*~) initPalette::$2 ← (const byte*) initPalette::$5 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
+Eliminating unused variable (byte*~) initPalette::$3 and assignment [68] (byte*~) initPalette::$3 ← (const byte*) initPalette::$6 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR
+Eliminating unused variable (byte*~) initPalette::$4 and assignment [72] (byte*~) initPalette::$4 ← (const byte*) initPalette::$7 + (const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA
 Eliminating unused constant (const byte) moveLuigiRight::$5
 Eliminating unused constant (const byte) moveLuigiLeft::$5
 Eliminating unused constant (const byte) OFFSET_STRUCT_RICOH_2C02_PPUCTRL
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Resolving array sizeof() sizeof (const byte*) PALETTE
 Resolving array sizeof() sizeof (const struct ObjectAttribute*) SPRITES
+Resolving array sizeof() sizeof (const byte*) PALETTE
 Successful SSA optimization PassNSizeOfSimplification
-Adding number conversion cast (unumber) $20 in 
 Adding number conversion cast (unumber) 4 in 
+Adding number conversion cast (unumber) $20 in 
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast $20
 Simplifying constant integer cast 4
+Simplifying constant integer cast $20
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $20
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings (const byte) main::i#0
-Inlining constant with var siblings (const byte) initPaletteData::i#0
-Inlining constant with var siblings (const byte) initSpriteData::i#0
-Constant inlined initPaletteData::$5 = (byte*)(const struct RICOH_2C02*) PPU
-Constant inlined initSpriteData::i#0 = (byte) 0
-Constant inlined initPaletteData::$6 = (byte*)(const struct RICOH_2C02*) PPU
+Inlining constant with var siblings (const byte) initSpriteBuffer::i#0
+Inlining constant with var siblings (const byte) initPalette::i#0
 Constant inlined main::disableVideoOutput1_$2 = (byte*)(const struct RICOH_2C02*) PPU
 Constant inlined main::disableVideoOutput1_$3 = (byte*)(const struct RICOH_2C02*) PPU
-Constant inlined initPaletteData::$0 = (byte) $20*(const byte) SIZEOF_BYTE
 Constant inlined moveLuigiRight::$9 = (byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant inlined main::enableVideoOutput1_$3 = (byte*)(const struct RICOH_2C02*) PPU
 Constant inlined main::enableVideoOutput1_$2 = (byte*)(const struct RICOH_2C02*) PPU
-Constant inlined initPaletteData::$7 = (byte*)(const struct RICOH_2C02*) PPU
 Constant inlined main::waitForVBlank1_$3 = (byte*)(const struct RICOH_2C02*) PPU
-Constant inlined vblank::$0 = >(const nomodify struct ObjectAttribute*) OAM_BUFFER
+Constant inlined vblank::transferSpriteBufferToPpu1_$3 = (byte*)(const struct RICOH_2A03*) APU
+Constant inlined initSpriteBuffer::i#0 = (byte) 0
+Constant inlined vblank::transferSpriteBufferToPpu1_$2 = (byte*)(const struct RICOH_2C02*) PPU
 Constant inlined main::i#0 = (byte) 0
 Constant inlined main::disableAudioOutput1_$1 = (byte*)(const struct RICOH_2A03*) APU
-Constant inlined vblank::$13 = (byte*)(const struct RICOH_2C02*) PPU
+Constant inlined vblank::$13 = (byte*)(const struct RICOH_2A03*) APU
 Constant inlined vblank::$14 = (byte*)(const struct RICOH_2A03*) APU
 Constant inlined moveLuigiLeft::$11 = (byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant inlined vblank::$15 = (byte*)(const struct RICOH_2A03*) APU
-Constant inlined initSpriteData::$2 = (byte*)(const struct ObjectAttribute*) SPRITES
-Constant inlined vblank::$16 = (byte*)(const struct RICOH_2A03*) APU
-Constant inlined vblank::$17 = (byte*)(const struct RICOH_2A03*) APU
-Constant inlined initSpriteData::$0 = (byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant inlined vblank::$18 = (byte*)(const struct RICOH_2A03*) APU
+Constant inlined initPalette::$5 = (byte*)(const struct RICOH_2C02*) PPU
+Constant inlined initPalette::$6 = (byte*)(const struct RICOH_2C02*) PPU
+Constant inlined initPalette::$7 = (byte*)(const struct RICOH_2C02*) PPU
+Constant inlined initSpriteBuffer::$2 = (byte*)(const struct ObjectAttribute*) SPRITES
+Constant inlined vblank::$11 = (byte*)(const struct RICOH_2A03*) APU
+Constant inlined vblank::$12 = (byte*)(const struct RICOH_2A03*) APU
+Constant inlined initSpriteBuffer::$0 = (byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
+Constant inlined initPalette::$0 = (byte) $20*(const byte) SIZEOF_BYTE
+Constant inlined initPalette::i#0 = (byte) 0
 Constant inlined moveLuigiRight::$7 = (byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant inlined main::waitForVBlank2_$3 = (byte*)(const struct RICOH_2C02*) PPU
 Constant inlined moveLuigiLeft::$7 = (byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant inlined moveLuigiRight::$11 = (byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
 Constant inlined moveLuigiLeft::$9 = (byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE
-Constant inlined initPaletteData::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK)
 Consolidated array index constant in *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ)
@@ -760,24 +761,24 @@ Consolidated array index constant in *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_JOY1)
 Consolidated array index constant in *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_JOY1)
 Consolidated array index constant in *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_JOY1)
 Consolidated array index constant in *((byte*)APU+OFFSET_STRUCT_RICOH_2A03_JOY1)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
+Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR)
 Consolidated array index constant in *((byte*)PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
-Consolidated array index constant in *((byte*)OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Added new block during phi lifting main::@7(between main::@1 and main::@1)
-Added new block during phi lifting initSpriteData::@2(between initSpriteData::@1 and initSpriteData::@1)
+Added new block during phi lifting initSpriteBuffer::@2(between initSpriteBuffer::@1 and initSpriteBuffer::@1)
 Adding NOP phi() at start of @begin
 Adding NOP phi() at start of @1
 Adding NOP phi() at start of @2
@@ -789,28 +790,29 @@ Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of main::@2
-Adding NOP phi() at start of initSpriteData
+Adding NOP phi() at start of initSpriteBuffer
+Adding NOP phi() at start of vblank
 Adding NOP phi() at start of vblank::@2
-Adding NOP phi() at start of vblank::@4
-Adding NOP phi() at start of vblank::@3
 Adding NOP phi() at start of vblank::@5
+Adding NOP phi() at start of vblank::@3
+Adding NOP phi() at start of vblank::@6
 CALL GRAPH
 Calls in [] to main:2 
-Calls in [main] to initPaletteData:30 initSpriteData:32 
-Calls in [vblank] to moveLuigiRight:61 moveLuigiLeft:66 
+Calls in [main] to initPalette:30 initSpriteBuffer:32 
+Calls in [vblank] to moveLuigiRight:62 moveLuigiLeft:67 
 
 Created 3 initial phi equivalence classes
 Coalesced [37] main::i#3 ← main::i#1
-Coalesced [44] initSpriteData::i#3 ← initSpriteData::i#1
-Coalesced [53] initPaletteData::i#4 ← initPaletteData::i#1
+Coalesced [44] initSpriteBuffer::i#3 ← initSpriteBuffer::i#1
+Coalesced [53] initPalette::i#4 ← initPalette::i#1
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@7
-Culled Empty Block (label) initSpriteData::@2
-Culled Empty Block (label) vblank::@4
+Culled Empty Block (label) initSpriteBuffer::@2
 Culled Empty Block (label) vblank::@5
+Culled Empty Block (label) vblank::@6
 Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
 Adding NOP phi() at start of @begin
@@ -821,7 +823,8 @@ Adding NOP phi() at start of main::waitForVBlank2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@2
-Adding NOP phi() at start of initSpriteData
+Adding NOP phi() at start of initSpriteBuffer
+Adding NOP phi() at start of vblank
 Adding NOP phi() at start of vblank::@2
 Adding NOP phi() at start of vblank::@3
 
@@ -880,11 +883,11 @@ main::waitForVBlank2_@1: scope:[main]  from main::waitForVBlank2 main::waitForVB
   to:main::@3
 main::@3: scope:[main]  from main::waitForVBlank2_@1
   [27] phi()
-  [28] call initPaletteData 
+  [28] call initPalette 
   to:main::@4
 main::@4: scope:[main]  from main::@3
   [29] phi()
-  [30] call initSpriteData 
+  [30] call initSpriteBuffer 
   to:main::enableVideoOutput1
 main::enableVideoOutput1: scope:[main]  from main::@4
   [31] *((byte*)(const struct RICOH_2C02*) PPU) ← (byte) $80
@@ -894,83 +897,88 @@ main::@2: scope:[main]  from main::@2 main::enableVideoOutput1
   [33] phi()
   to:main::@2
 
-(void()) initSpriteData()
-initSpriteData: scope:[initSpriteData]  from main::@4
+(void()) initSpriteBuffer()
+initSpriteBuffer: scope:[initSpriteBuffer]  from main::@4
   [34] phi()
-  to:initSpriteData::@1
-initSpriteData::@1: scope:[initSpriteData]  from initSpriteData initSpriteData::@1
-  [35] (byte) initSpriteData::i#2 ← phi( initSpriteData/(byte) 0 initSpriteData::@1/(byte) initSpriteData::i#1 )
-  [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteData::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteData::i#2)
-  [37] (byte) initSpriteData::i#1 ← ++ (byte) initSpriteData::i#2
-  [38] if((byte) initSpriteData::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteData::@1
-  to:initSpriteData::@return
-initSpriteData::@return: scope:[initSpriteData]  from initSpriteData::@1
+  to:initSpriteBuffer::@1
+initSpriteBuffer::@1: scope:[initSpriteBuffer]  from initSpriteBuffer initSpriteBuffer::@1
+  [35] (byte) initSpriteBuffer::i#2 ← phi( initSpriteBuffer/(byte) 0 initSpriteBuffer::@1/(byte) initSpriteBuffer::i#1 )
+  [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteBuffer::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteBuffer::i#2)
+  [37] (byte) initSpriteBuffer::i#1 ← ++ (byte) initSpriteBuffer::i#2
+  [38] if((byte) initSpriteBuffer::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteBuffer::@1
+  to:initSpriteBuffer::@return
+initSpriteBuffer::@return: scope:[initSpriteBuffer]  from initSpriteBuffer::@1
   [39] return 
   to:@return
 
-(void()) initPaletteData()
-initPaletteData: scope:[initPaletteData]  from main::@3
+(void()) initPalette()
+initPalette: scope:[initPalette]  from main::@3
   asm { ldaPPU_PPUSTATUS  }
   [41] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← >(const nomodify byte*) PPU_PALETTE
   [42] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← (byte) 0
-  to:initPaletteData::@1
-initPaletteData::@1: scope:[initPaletteData]  from initPaletteData initPaletteData::@2
-  [43] (byte) initPaletteData::i#2 ← phi( initPaletteData/(byte) 0 initPaletteData::@2/(byte) initPaletteData::i#1 )
-  [44] if((byte) initPaletteData::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPaletteData::@2
-  to:initPaletteData::@return
-initPaletteData::@return: scope:[initPaletteData]  from initPaletteData::@1
+  to:initPalette::@1
+initPalette::@1: scope:[initPalette]  from initPalette initPalette::@2
+  [43] (byte) initPalette::i#2 ← phi( initPalette/(byte) 0 initPalette::@2/(byte) initPalette::i#1 )
+  [44] if((byte) initPalette::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPalette::@2
+  to:initPalette::@return
+initPalette::@return: scope:[initPalette]  from initPalette::@1
   [45] return 
   to:@return
-initPaletteData::@2: scope:[initPaletteData]  from initPaletteData::@1
-  [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPaletteData::i#2)
-  [47] (byte) initPaletteData::i#1 ← ++ (byte) initPaletteData::i#2
-  to:initPaletteData::@1
+initPalette::@2: scope:[initPalette]  from initPalette::@1
+  [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPalette::i#2)
+  [47] (byte) initPalette::i#1 ← ++ (byte) initPalette::i#2
+  to:initPalette::@1
 
 interrupt(HARDWARE_STACK)(void()) vblank()
 vblank: scope:[vblank]  from
-  [48] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0
-  [49] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER
-  [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1
-  [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0
-  [52] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1
-  [53] if((byte) 0==(byte~) vblank::$1) goto vblank::@1
+  [48] phi()
+  to:vblank::transferSpriteBufferToPpu1
+vblank::transferSpriteBufferToPpu1: scope:[vblank]  from vblank
+  [49] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0
+  [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER
+  to:vblank::@4
+vblank::@4: scope:[vblank]  from vblank::transferSpriteBufferToPpu1
+  [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1
+  [52] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0
+  [53] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1
+  [54] if((byte) 0==(byte~) vblank::$1) goto vblank::@1
   to:vblank::@2
-vblank::@2: scope:[vblank]  from vblank
-  [54] phi()
-  [55] call moveLuigiRight 
+vblank::@2: scope:[vblank]  from vblank::@4
+  [55] phi()
+  [56] call moveLuigiRight 
   to:vblank::@1
-vblank::@1: scope:[vblank]  from vblank vblank::@2
-  [56] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1
-  [57] if((byte) 0==(byte~) vblank::$3) goto vblank::@return
+vblank::@1: scope:[vblank]  from vblank::@2 vblank::@4
+  [57] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1
+  [58] if((byte) 0==(byte~) vblank::$3) goto vblank::@return
   to:vblank::@3
 vblank::@3: scope:[vblank]  from vblank::@1
-  [58] phi()
-  [59] call moveLuigiLeft 
+  [59] phi()
+  [60] call moveLuigiLeft 
   to:vblank::@return
 vblank::@return: scope:[vblank]  from vblank::@1 vblank::@3
-  [60] return 
+  [61] return 
   to:@return
 
 (void()) moveLuigiLeft()
 moveLuigiLeft: scope:[moveLuigiLeft]  from vblank::@3
-  [61] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
-  [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
-  [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
-  [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
+  [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
+  [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
+  [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
+  [65] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
   to:moveLuigiLeft::@return
 moveLuigiLeft::@return: scope:[moveLuigiLeft]  from moveLuigiLeft
-  [65] return 
+  [66] return 
   to:@return
 
 (void()) moveLuigiRight()
 moveLuigiRight: scope:[moveLuigiRight]  from vblank::@2
-  [66] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
-  [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
-  [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
-  [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
+  [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X)
+  [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
+  [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
+  [70] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE)
   to:moveLuigiRight::@return
 moveLuigiRight::@return: scope:[moveLuigiRight]  from moveLuigiRight
-  [70] return 
+  [71] return 
   to:@return
 
 
@@ -1011,14 +1019,14 @@ VARIABLE REGISTER WEIGHTS
 (byte) RICOH_2C02::PPUMASK
 (byte) RICOH_2C02::PPUSCROLL
 (volatile byte) RICOH_2C02::PPUSTATUS loadstore
-(void()) initPaletteData()
-(byte) initPaletteData::i
-(byte) initPaletteData::i#1 2002.0
-(byte) initPaletteData::i#2 1334.6666666666667
-(void()) initSpriteData()
-(byte) initSpriteData::i
-(byte) initSpriteData::i#1 1501.5
-(byte) initSpriteData::i#2 2002.0
+(void()) initPalette()
+(byte) initPalette::i
+(byte) initPalette::i#1 2002.0
+(byte) initPalette::i#2 1334.6666666666667
+(void()) initSpriteBuffer()
+(byte) initSpriteBuffer::i
+(byte) initSpriteBuffer::i#1 1501.5
+(byte) initSpriteBuffer::i#2 2002.0
 (void()) main()
 (byte) main::i
 (byte) main::i#1 151.5
@@ -1033,23 +1041,23 @@ interrupt(HARDWARE_STACK)(void()) vblank()
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-[ initSpriteData::i#2 initSpriteData::i#1 ]
-[ initPaletteData::i#2 initPaletteData::i#1 ]
+[ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ]
+[ initPalette::i#2 initPalette::i#1 ]
 Added variable main::waitForVBlank1_$0 to live range equivalence class [ main::waitForVBlank1_$0 ]
 Added variable main::waitForVBlank2_$0 to live range equivalence class [ main::waitForVBlank2_$0 ]
 Added variable vblank::$1 to live range equivalence class [ vblank::$1 ]
 Added variable vblank::$3 to live range equivalence class [ vblank::$3 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ initSpriteData::i#2 initSpriteData::i#1 ]
-[ initPaletteData::i#2 initPaletteData::i#1 ]
+[ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ]
+[ initPalette::i#2 initPalette::i#1 ]
 [ main::waitForVBlank1_$0 ]
 [ main::waitForVBlank2_$0 ]
 [ vblank::$1 ]
 [ vblank::$3 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-Allocated zp[1]:3 [ initSpriteData::i#2 initSpriteData::i#1 ]
-Allocated zp[1]:4 [ initPaletteData::i#2 initPaletteData::i#1 ]
+Allocated zp[1]:3 [ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ]
+Allocated zp[1]:4 [ initPalette::i#2 initPalette::i#1 ]
 Allocated zp[1]:5 [ main::waitForVBlank1_$0 ]
 Allocated zp[1]:6 [ main::waitForVBlank2_$0 ]
 Allocated zp[1]:7 [ vblank::$1 ]
@@ -1094,12 +1102,12 @@ Target platform is nes / MOS6502
   .const OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
   .const OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
   .const OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
-  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const SIZEOF_BYTE = 1
   // $3000-$3EFF	$0F00	Mirrors of $2000-$2EFF
   // $3F00-$3F1F	$0020	Palette RAM indexes
@@ -1150,6 +1158,7 @@ main: {
     // Clear RAM - since it has all variables and the stack it is necesary to do it inline
     .label i = 2
     // asm { cld ldx#$ff txs  }
+    // Initialize decimal-mode and stack
     cld
     ldx #$ff
     txs
@@ -1263,18 +1272,18 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [28] call initPaletteData 
+    // [28] call initPalette 
     // Now the PPU is ready.
-    jsr initPaletteData
+    jsr initPalette
     // [29] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
     jmp __b4
     // main::@4
   __b4:
-    // [30] call initSpriteData 
-    // [34] phi from main::@4 to initSpriteData [phi:main::@4->initSpriteData]
-  initSpriteData_from___b4:
-    jsr initSpriteData
+    // [30] call initSpriteBuffer 
+    // [34] phi from main::@4 to initSpriteBuffer [phi:main::@4->initSpriteBuffer]
+  initSpriteBuffer_from___b4:
+    jsr initSpriteBuffer
     jmp enableVideoOutput1
     // main::enableVideoOutput1
   enableVideoOutput1:
@@ -1293,41 +1302,41 @@ main: {
   __b2:
     jmp __b2_from___b2
 }
-  // initSpriteData
-// Initialize OAM (Object Attribute Memory) Buffer 
-initSpriteData: {
+  // initSpriteBuffer
+// Initialize OAM (Object Attribute Memory) Buffer with the SPRITE data
+initSpriteBuffer: {
     .label i = 3
-    // [35] phi from initSpriteData to initSpriteData::@1 [phi:initSpriteData->initSpriteData::@1]
-  __b1_from_initSpriteData:
-    // [35] phi (byte) initSpriteData::i#2 = (byte) 0 [phi:initSpriteData->initSpriteData::@1#0] -- vbuz1=vbuc1 
+    // [35] phi from initSpriteBuffer to initSpriteBuffer::@1 [phi:initSpriteBuffer->initSpriteBuffer::@1]
+  __b1_from_initSpriteBuffer:
+    // [35] phi (byte) initSpriteBuffer::i#2 = (byte) 0 [phi:initSpriteBuffer->initSpriteBuffer::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
-    // [35] phi from initSpriteData::@1 to initSpriteData::@1 [phi:initSpriteData::@1->initSpriteData::@1]
+    // [35] phi from initSpriteBuffer::@1 to initSpriteBuffer::@1 [phi:initSpriteBuffer::@1->initSpriteBuffer::@1]
   __b1_from___b1:
-    // [35] phi (byte) initSpriteData::i#2 = (byte) initSpriteData::i#1 [phi:initSpriteData::@1->initSpriteData::@1#0] -- register_copy 
+    // [35] phi (byte) initSpriteBuffer::i#2 = (byte) initSpriteBuffer::i#1 [phi:initSpriteBuffer::@1->initSpriteBuffer::@1#0] -- register_copy 
     jmp __b1
-    // initSpriteData::@1
+    // initSpriteBuffer::@1
   __b1:
-    // [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteData::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteData::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteBuffer::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteBuffer::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda SPRITES,y
     sta OAM_BUFFER,y
-    // [37] (byte) initSpriteData::i#1 ← ++ (byte) initSpriteData::i#2 -- vbuz1=_inc_vbuz1 
+    // [37] (byte) initSpriteBuffer::i#1 ← ++ (byte) initSpriteBuffer::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [38] if((byte) initSpriteData::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteData::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [38] if((byte) initSpriteBuffer::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteBuffer::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4*SIZEOF_STRUCT_OBJECTATTRIBUTE
     cmp.z i
     bne __b1_from___b1
     jmp __breturn
-    // initSpriteData::@return
+    // initSpriteBuffer::@return
   __breturn:
     // [39] return 
     rts
 }
-  // initPaletteData
+  // initPalette
 // Copy palette values to PPU
-initPaletteData: {
+initPalette: {
     .label i = 4
     // asm { ldaPPU_PPUSTATUS  }
     // Reset the high/low latch to "high"
@@ -1340,35 +1349,35 @@ initPaletteData: {
     // Write the low byte of PPU Palette address
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // [43] phi from initPaletteData to initPaletteData::@1 [phi:initPaletteData->initPaletteData::@1]
-  __b1_from_initPaletteData:
-    // [43] phi (byte) initPaletteData::i#2 = (byte) 0 [phi:initPaletteData->initPaletteData::@1#0] -- vbuz1=vbuc1 
+    // [43] phi from initPalette to initPalette::@1 [phi:initPalette->initPalette::@1]
+  __b1_from_initPalette:
+    // [43] phi (byte) initPalette::i#2 = (byte) 0 [phi:initPalette->initPalette::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
   // Write to PPU
-    // initPaletteData::@1
+    // initPalette::@1
   __b1:
-    // [44] if((byte) initPaletteData::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPaletteData::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [44] if((byte) initPalette::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPalette::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$20*SIZEOF_BYTE
     bcc __b2
     jmp __breturn
-    // initPaletteData::@return
+    // initPalette::@return
   __breturn:
     // [45] return 
     rts
-    // initPaletteData::@2
+    // initPalette::@2
   __b2:
-    // [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPaletteData::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    // [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPalette::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda PALETTE,y
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // [47] (byte) initPaletteData::i#1 ← ++ (byte) initPaletteData::i#2 -- vbuz1=_inc_vbuz1 
+    // [47] (byte) initPalette::i#1 ← ++ (byte) initPalette::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [43] phi from initPaletteData::@2 to initPaletteData::@1 [phi:initPaletteData::@2->initPaletteData::@1]
+    // [43] phi from initPalette::@2 to initPalette::@1 [phi:initPalette::@2->initPalette::@1]
   __b1_from___b2:
-    // [43] phi (byte) initPaletteData::i#2 = (byte) initPaletteData::i#1 [phi:initPaletteData::@2->initPaletteData::@1#0] -- register_copy 
+    // [43] phi (byte) initPalette::i#2 = (byte) initPalette::i#1 [phi:initPalette::@2->initPalette::@1#0] -- register_copy 
     jmp __b1
 }
   // vblank
@@ -1382,59 +1391,62 @@ vblank: {
     pha
     tya
     pha
-    // [48] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // Refresh DRAM-stored sprite data before it decays.
-    // Set OAM start address to sprite#0
+    jmp transferSpriteBufferToPpu1
+    // vblank::transferSpriteBufferToPpu1
+  transferSpriteBufferToPpu1:
+    // [49] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
-    // [49] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER -- _deref_pbuc1=vbuc2 
-    // Set the high byte (02) of the RAM address and start the DMA transfer to OAM memory
+    // [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER -- _deref_pbuc1=vbuc2 
     lda #>OAM_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
-    // [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    jmp __b4
+    // vblank::@4
+  __b4:
+    // [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Freeze the button positions.
     lda #1
     sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [52] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // [52] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuz1=_deref_pbuc1_band_vbuc2 
+    // [53] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuz1=_deref_pbuc1_band_vbuc2 
     lda #1
     and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
     sta.z __1
-    // [53] if((byte) 0==(byte~) vblank::$1) goto vblank::@1 -- vbuc1_eq_vbuz1_then_la1 
+    // [54] if((byte) 0==(byte~) vblank::$1) goto vblank::@1 -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp.z __1
     beq __b1
-    // [54] phi from vblank to vblank::@2 [phi:vblank->vblank::@2]
-  __b2_from_vblank:
+    // [55] phi from vblank::@4 to vblank::@2 [phi:vblank::@4->vblank::@2]
+  __b2_from___b4:
     jmp __b2
     // vblank::@2
   __b2:
-    // [55] call moveLuigiRight 
+    // [56] call moveLuigiRight 
     jsr moveLuigiRight
     jmp __b1
     // vblank::@1
   __b1:
-    // [56] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuz1=_deref_pbuc1_band_vbuc2 
+    // [57] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuz1=_deref_pbuc1_band_vbuc2 
     lda #1
     and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
     sta.z __3
-    // [57] if((byte) 0==(byte~) vblank::$3) goto vblank::@return -- vbuc1_eq_vbuz1_then_la1 
+    // [58] if((byte) 0==(byte~) vblank::$3) goto vblank::@return -- vbuc1_eq_vbuz1_then_la1 
     lda #0
     cmp.z __3
     beq __breturn
-    // [58] phi from vblank::@1 to vblank::@3 [phi:vblank::@1->vblank::@3]
+    // [59] phi from vblank::@1 to vblank::@3 [phi:vblank::@1->vblank::@3]
   __b3_from___b1:
     jmp __b3
     // vblank::@3
   __b3:
-    // [59] call moveLuigiLeft 
+    // [60] call moveLuigiLeft 
     jsr moveLuigiLeft
     jmp __breturn
     // vblank::@return
   __breturn:
-    // [60] return  - exit interrupt(HARDWARE_STACK)
+    // [61] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
     pla
@@ -1445,42 +1457,42 @@ vblank: {
   // moveLuigiLeft
 // move the Luigi sprites left
 moveLuigiLeft: {
-    // [61] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
-    // [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [65] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     jmp __breturn
     // moveLuigiLeft::@return
   __breturn:
-    // [65] return 
+    // [66] return 
     rts
 }
   // moveLuigiRight
 // move the Luigi sprites right
 moveLuigiRight: {
-    // [66] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
-    // [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [70] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     jmp __breturn
     // moveLuigiRight::@return
   __breturn:
-    // [70] return 
+    // [71] return 
     rts
 }
   // File Data
 .segment Data
-  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
   // Small Luigi Sprite Data
   SPRITES: .byte $80, $36, 2, $80, $80, $37, 2, $88, $88, $38, 2, $80, $88, $39, 2, $88
+  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
 .segment Tiles
 TILES:
 .import binary "smb1_chr.bin"
@@ -1508,20 +1520,20 @@ Statement [21] *((const nomodify byte*) MEMORY+(word) $700 + (byte) main::i#2) �
 Statement [25] (byte~) main::waitForVBlank2_$0 ← *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & (byte) $80 [ main::waitForVBlank2_$0 ] (  [ main::waitForVBlank2_$0 ] { }  main:2 [ main::waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
 Statement [31] *((byte*)(const struct RICOH_2C02*) PPU) ← (byte) $80 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [32] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUMASK) ← (byte) $10 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteData::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteData::i#2) [ initSpriteData::i#2 ] ( initSpriteData:30 [ initSpriteData::i#2 ] { }  main:2::initSpriteData:30 [ initSpriteData::i#2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:3 [ initSpriteData::i#2 initSpriteData::i#1 ]
+Statement [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteBuffer::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteBuffer::i#2) [ initSpriteBuffer::i#2 ] ( initSpriteBuffer:30 [ initSpriteBuffer::i#2 ] { }  main:2::initSpriteBuffer:30 [ initSpriteBuffer::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ]
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
-Statement [41] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← >(const nomodify byte*) PPU_PALETTE [ ] ( initPaletteData:28 [ ] { }  main:2::initPaletteData:28 [ ] { }  ) always clobbers reg byte a 
-Statement [42] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← (byte) 0 [ ] ( initPaletteData:28 [ ] { }  main:2::initPaletteData:28 [ ] { }  ) always clobbers reg byte a 
-Statement [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPaletteData::i#2) [ initPaletteData::i#2 ] ( initPaletteData:28 [ initPaletteData::i#2 ] { }  main:2::initPaletteData:28 [ initPaletteData::i#2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ initPaletteData::i#2 initPaletteData::i#1 ]
-Statement [48] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [49] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [52] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$1 ] (  [ vblank::$1 ] { }  ) always clobbers reg byte a 
-Statement [56] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$3 ] (  [ vblank::$3 ] { }  ) always clobbers reg byte a 
-Statement [60] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [41] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← >(const nomodify byte*) PPU_PALETTE [ ] ( initPalette:28 [ ] { }  main:2::initPalette:28 [ ] { }  ) always clobbers reg byte a 
+Statement [42] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← (byte) 0 [ ] ( initPalette:28 [ ] { }  main:2::initPalette:28 [ ] { }  ) always clobbers reg byte a 
+Statement [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPalette::i#2) [ initPalette::i#2 ] ( initPalette:28 [ initPalette::i#2 ] { }  main:2::initPalette:28 [ initPalette::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ initPalette::i#2 initPalette::i#1 ]
+Statement [49] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [52] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [53] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$1 ] (  [ vblank::$1 ] { }  ) always clobbers reg byte a 
+Statement [57] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$3 ] (  [ vblank::$3 ] { }  ) always clobbers reg byte a 
+Statement [61] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement asm { cld ldx#$ff txs  } always clobbers reg byte x 
 Statement [5] *((byte*)(const struct RICOH_2C02*) PPU) ← (byte) 0 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUMASK) ← (byte) 0 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
@@ -1540,29 +1552,29 @@ Statement [21] *((const nomodify byte*) MEMORY+(word) $700 + (byte) main::i#2) �
 Statement [25] (byte~) main::waitForVBlank2_$0 ← *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUSTATUS) & (byte) $80 [ main::waitForVBlank2_$0 ] (  [ main::waitForVBlank2_$0 ] { }  main:2 [ main::waitForVBlank2_$0 ] { }  ) always clobbers reg byte a 
 Statement [31] *((byte*)(const struct RICOH_2C02*) PPU) ← (byte) $80 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
 Statement [32] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUMASK) ← (byte) $10 [ ] (  [ ] { }  main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteData::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteData::i#2) [ initSpriteData::i#2 ] ( initSpriteData:30 [ initSpriteData::i#2 ] { }  main:2::initSpriteData:30 [ initSpriteData::i#2 ] { }  ) always clobbers reg byte a 
+Statement [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteBuffer::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteBuffer::i#2) [ initSpriteBuffer::i#2 ] ( initSpriteBuffer:30 [ initSpriteBuffer::i#2 ] { }  main:2::initSpriteBuffer:30 [ initSpriteBuffer::i#2 ] { }  ) always clobbers reg byte a 
 Statement asm { ldaPPU_PPUSTATUS  } always clobbers reg byte a 
-Statement [41] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← >(const nomodify byte*) PPU_PALETTE [ ] ( initPaletteData:28 [ ] { }  main:2::initPaletteData:28 [ ] { }  ) always clobbers reg byte a 
-Statement [42] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← (byte) 0 [ ] ( initPaletteData:28 [ ] { }  main:2::initPaletteData:28 [ ] { }  ) always clobbers reg byte a 
-Statement [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPaletteData::i#2) [ initPaletteData::i#2 ] ( initPaletteData:28 [ initPaletteData::i#2 ] { }  main:2::initPaletteData:28 [ initPaletteData::i#2 ] { }  ) always clobbers reg byte a 
-Statement [48] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [49] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [52] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$1 ] (  [ vblank::$1 ] { }  ) always clobbers reg byte a 
-Statement [56] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$3 ] (  [ vblank::$3 ] { }  ) always clobbers reg byte a 
-Statement [60] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [41] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← >(const nomodify byte*) PPU_PALETTE [ ] ( initPalette:28 [ ] { }  main:2::initPalette:28 [ ] { }  ) always clobbers reg byte a 
+Statement [42] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR) ← (byte) 0 [ ] ( initPalette:28 [ ] { }  main:2::initPalette:28 [ ] { }  ) always clobbers reg byte a 
+Statement [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPalette::i#2) [ initPalette::i#2 ] ( initPalette:28 [ initPalette::i#2 ] { }  main:2::initPalette:28 [ initPalette::i#2 ] { }  ) always clobbers reg byte a 
+Statement [49] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [52] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [53] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$1 ] (  [ vblank::$1 ] { }  ) always clobbers reg byte a 
+Statement [57] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 [ vblank::$3 ] (  [ vblank::$3 ] { }  ) always clobbers reg byte a 
+Statement [61] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
-Potential registers zp[1]:3 [ initSpriteData::i#2 initSpriteData::i#1 ] : zp[1]:3 , reg byte x , reg byte y , 
-Potential registers zp[1]:4 [ initPaletteData::i#2 initPaletteData::i#1 ] : zp[1]:4 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ initPalette::i#2 initPalette::i#1 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::waitForVBlank1_$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:6 [ main::waitForVBlank2_$0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:7 [ vblank::$1 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:8 [ vblank::$3 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [initSpriteData] 3,503.5: zp[1]:3 [ initSpriteData::i#2 initSpriteData::i#1 ] 
-Uplift Scope [initPaletteData] 3,336.67: zp[1]:4 [ initPaletteData::i#2 initPaletteData::i#1 ] 
+Uplift Scope [initSpriteBuffer] 3,503.5: zp[1]:3 [ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ] 
+Uplift Scope [initPalette] 3,336.67: zp[1]:4 [ initPalette::i#2 initPalette::i#1 ] 
 Uplift Scope [main] 263.72: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:5 [ main::waitForVBlank1_$0 ] 202: zp[1]:6 [ main::waitForVBlank2_$0 ] 
 Uplift Scope [vblank] 4: zp[1]:7 [ vblank::$1 ] 4: zp[1]:8 [ vblank::$3 ] 
 Uplift Scope [RICOH_2C02] 
@@ -1572,16 +1584,16 @@ Uplift Scope [moveLuigiRight]
 Uplift Scope [moveLuigiLeft] 
 Uplift Scope [] 
 
-Uplifting [initSpriteData] best 2555 combination reg byte x [ initSpriteData::i#2 initSpriteData::i#1 ] 
-Uplifting [initPaletteData] best 2435 combination reg byte x [ initPaletteData::i#2 initPaletteData::i#1 ] 
-Uplifting [main] best 1985 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::waitForVBlank1_$0 ] reg byte a [ main::waitForVBlank2_$0 ] 
-Uplifting [vblank] best 1973 combination reg byte a [ vblank::$1 ] reg byte a [ vblank::$3 ] 
-Uplifting [RICOH_2C02] best 1973 combination 
-Uplifting [RICOH_2A03] best 1973 combination 
-Uplifting [ObjectAttribute] best 1973 combination 
-Uplifting [moveLuigiRight] best 1973 combination 
-Uplifting [moveLuigiLeft] best 1973 combination 
-Uplifting [] best 1973 combination 
+Uplifting [initSpriteBuffer] best 2588 combination reg byte x [ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ] 
+Uplifting [initPalette] best 2468 combination reg byte x [ initPalette::i#2 initPalette::i#1 ] 
+Uplifting [main] best 2018 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::waitForVBlank1_$0 ] reg byte a [ main::waitForVBlank2_$0 ] 
+Uplifting [vblank] best 2006 combination reg byte a [ vblank::$1 ] reg byte a [ vblank::$3 ] 
+Uplifting [RICOH_2C02] best 2006 combination 
+Uplifting [RICOH_2A03] best 2006 combination 
+Uplifting [ObjectAttribute] best 2006 combination 
+Uplifting [moveLuigiRight] best 2006 combination 
+Uplifting [moveLuigiLeft] best 2006 combination 
+Uplifting [] best 2006 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1621,12 +1633,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
   .const OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
   .const OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
-  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const SIZEOF_BYTE = 1
   // $3000-$3EFF	$0F00	Mirrors of $2000-$2EFF
   // $3F00-$3F1F	$0020	Palette RAM indexes
@@ -1673,6 +1685,7 @@ __bend:
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
     // asm { cld ldx#$ff txs  }
+    // Initialize decimal-mode and stack
     cld
     ldx #$ff
     txs
@@ -1772,18 +1785,18 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [28] call initPaletteData 
+    // [28] call initPalette 
     // Now the PPU is ready.
-    jsr initPaletteData
+    jsr initPalette
     // [29] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
     jmp __b4
     // main::@4
   __b4:
-    // [30] call initSpriteData 
-    // [34] phi from main::@4 to initSpriteData [phi:main::@4->initSpriteData]
-  initSpriteData_from___b4:
-    jsr initSpriteData
+    // [30] call initSpriteBuffer 
+    // [34] phi from main::@4 to initSpriteBuffer [phi:main::@4->initSpriteBuffer]
+  initSpriteBuffer_from___b4:
+    jsr initSpriteBuffer
     jmp enableVideoOutput1
     // main::enableVideoOutput1
   enableVideoOutput1:
@@ -1802,37 +1815,37 @@ main: {
   __b2:
     jmp __b2_from___b2
 }
-  // initSpriteData
-// Initialize OAM (Object Attribute Memory) Buffer 
-initSpriteData: {
-    // [35] phi from initSpriteData to initSpriteData::@1 [phi:initSpriteData->initSpriteData::@1]
-  __b1_from_initSpriteData:
-    // [35] phi (byte) initSpriteData::i#2 = (byte) 0 [phi:initSpriteData->initSpriteData::@1#0] -- vbuxx=vbuc1 
+  // initSpriteBuffer
+// Initialize OAM (Object Attribute Memory) Buffer with the SPRITE data
+initSpriteBuffer: {
+    // [35] phi from initSpriteBuffer to initSpriteBuffer::@1 [phi:initSpriteBuffer->initSpriteBuffer::@1]
+  __b1_from_initSpriteBuffer:
+    // [35] phi (byte) initSpriteBuffer::i#2 = (byte) 0 [phi:initSpriteBuffer->initSpriteBuffer::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [35] phi from initSpriteData::@1 to initSpriteData::@1 [phi:initSpriteData::@1->initSpriteData::@1]
+    // [35] phi from initSpriteBuffer::@1 to initSpriteBuffer::@1 [phi:initSpriteBuffer::@1->initSpriteBuffer::@1]
   __b1_from___b1:
-    // [35] phi (byte) initSpriteData::i#2 = (byte) initSpriteData::i#1 [phi:initSpriteData::@1->initSpriteData::@1#0] -- register_copy 
+    // [35] phi (byte) initSpriteBuffer::i#2 = (byte) initSpriteBuffer::i#1 [phi:initSpriteBuffer::@1->initSpriteBuffer::@1#0] -- register_copy 
     jmp __b1
-    // initSpriteData::@1
+    // initSpriteBuffer::@1
   __b1:
-    // [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteData::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteData::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteBuffer::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteBuffer::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SPRITES,x
     sta OAM_BUFFER,x
-    // [37] (byte) initSpriteData::i#1 ← ++ (byte) initSpriteData::i#2 -- vbuxx=_inc_vbuxx 
+    // [37] (byte) initSpriteBuffer::i#1 ← ++ (byte) initSpriteBuffer::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [38] if((byte) initSpriteData::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteData::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [38] if((byte) initSpriteBuffer::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteBuffer::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4*SIZEOF_STRUCT_OBJECTATTRIBUTE
     bne __b1_from___b1
     jmp __breturn
-    // initSpriteData::@return
+    // initSpriteBuffer::@return
   __breturn:
     // [39] return 
     rts
 }
-  // initPaletteData
+  // initPalette
 // Copy palette values to PPU
-initPaletteData: {
+initPalette: {
     // asm { ldaPPU_PPUSTATUS  }
     // Reset the high/low latch to "high"
     lda PPU_PPUSTATUS
@@ -1844,32 +1857,32 @@ initPaletteData: {
     // Write the low byte of PPU Palette address
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // [43] phi from initPaletteData to initPaletteData::@1 [phi:initPaletteData->initPaletteData::@1]
-  __b1_from_initPaletteData:
-    // [43] phi (byte) initPaletteData::i#2 = (byte) 0 [phi:initPaletteData->initPaletteData::@1#0] -- vbuxx=vbuc1 
+    // [43] phi from initPalette to initPalette::@1 [phi:initPalette->initPalette::@1]
+  __b1_from_initPalette:
+    // [43] phi (byte) initPalette::i#2 = (byte) 0 [phi:initPalette->initPalette::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
   // Write to PPU
-    // initPaletteData::@1
+    // initPalette::@1
   __b1:
-    // [44] if((byte) initPaletteData::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPaletteData::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [44] if((byte) initPalette::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPalette::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$20*SIZEOF_BYTE
     bcc __b2
     jmp __breturn
-    // initPaletteData::@return
+    // initPalette::@return
   __breturn:
     // [45] return 
     rts
-    // initPaletteData::@2
+    // initPalette::@2
   __b2:
-    // [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPaletteData::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPalette::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda PALETTE,x
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // [47] (byte) initPaletteData::i#1 ← ++ (byte) initPaletteData::i#2 -- vbuxx=_inc_vbuxx 
+    // [47] (byte) initPalette::i#1 ← ++ (byte) initPalette::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [43] phi from initPaletteData::@2 to initPaletteData::@1 [phi:initPaletteData::@2->initPaletteData::@1]
+    // [43] phi from initPalette::@2 to initPalette::@1 [phi:initPalette::@2->initPalette::@1]
   __b1_from___b2:
-    // [43] phi (byte) initPaletteData::i#2 = (byte) initPaletteData::i#1 [phi:initPaletteData::@2->initPaletteData::@1#0] -- register_copy 
+    // [43] phi (byte) initPalette::i#2 = (byte) initPalette::i#1 [phi:initPalette::@2->initPalette::@1#0] -- register_copy 
     jmp __b1
 }
   // vblank
@@ -1881,55 +1894,58 @@ vblank: {
     pha
     tya
     pha
-    // [48] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // Refresh DRAM-stored sprite data before it decays.
-    // Set OAM start address to sprite#0
+    jmp transferSpriteBufferToPpu1
+    // vblank::transferSpriteBufferToPpu1
+  transferSpriteBufferToPpu1:
+    // [49] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
-    // [49] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER -- _deref_pbuc1=vbuc2 
-    // Set the high byte (02) of the RAM address and start the DMA transfer to OAM memory
+    // [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER -- _deref_pbuc1=vbuc2 
     lda #>OAM_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
-    // [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    jmp __b4
+    // vblank::@4
+  __b4:
+    // [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Freeze the button positions.
     lda #1
     sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [52] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // [52] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [53] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #1
     and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // [53] if((byte) 0==(byte~) vblank::$1) goto vblank::@1 -- vbuc1_eq_vbuaa_then_la1 
+    // [54] if((byte) 0==(byte~) vblank::$1) goto vblank::@1 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq __b1
-    // [54] phi from vblank to vblank::@2 [phi:vblank->vblank::@2]
-  __b2_from_vblank:
+    // [55] phi from vblank::@4 to vblank::@2 [phi:vblank::@4->vblank::@2]
+  __b2_from___b4:
     jmp __b2
     // vblank::@2
   __b2:
-    // [55] call moveLuigiRight 
+    // [56] call moveLuigiRight 
     jsr moveLuigiRight
     jmp __b1
     // vblank::@1
   __b1:
-    // [56] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [57] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #1
     and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // [57] if((byte) 0==(byte~) vblank::$3) goto vblank::@return -- vbuc1_eq_vbuaa_then_la1 
+    // [58] if((byte) 0==(byte~) vblank::$3) goto vblank::@return -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq __breturn
-    // [58] phi from vblank::@1 to vblank::@3 [phi:vblank::@1->vblank::@3]
+    // [59] phi from vblank::@1 to vblank::@3 [phi:vblank::@1->vblank::@3]
   __b3_from___b1:
     jmp __b3
     // vblank::@3
   __b3:
-    // [59] call moveLuigiLeft 
+    // [60] call moveLuigiLeft 
     jsr moveLuigiLeft
     jmp __breturn
     // vblank::@return
   __breturn:
-    // [60] return  - exit interrupt(HARDWARE_STACK)
+    // [61] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
     pla
@@ -1940,42 +1956,42 @@ vblank: {
   // moveLuigiLeft
 // move the Luigi sprites left
 moveLuigiLeft: {
-    // [61] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
-    // [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [65] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     jmp __breturn
     // moveLuigiLeft::@return
   __breturn:
-    // [65] return 
+    // [66] return 
     rts
 }
   // moveLuigiRight
 // move the Luigi sprites right
 moveLuigiRight: {
-    // [66] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
-    // [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [70] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     jmp __breturn
     // moveLuigiRight::@return
   __breturn:
-    // [70] return 
+    // [71] return 
     rts
 }
   // File Data
 .segment Data
-  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
   // Small Luigi Sprite Data
   SPRITES: .byte $80, $36, 2, $80, $80, $37, 2, $88, $88, $38, 2, $80, $88, $39, 2, $88
+  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
 .segment Tiles
 TILES:
 .import binary "smb1_chr.bin"
@@ -2002,6 +2018,8 @@ Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp transferSpriteBufferToPpu1
+Removing instruction jmp __b4
 Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __b3
@@ -2033,10 +2051,10 @@ Removing instruction waitForVBlank2_from___b1:
 Removing instruction waitForVBlank2___b1:
 Removing instruction __b3_from_waitForVBlank2___b1:
 Removing instruction __b4_from___b3:
-Removing instruction initSpriteData_from___b4:
+Removing instruction initSpriteBuffer_from___b4:
 Removing instruction __b2_from_enableVideoOutput1:
 Removing instruction __b1_from___b1:
-Removing instruction __b2_from_vblank:
+Removing instruction __b2_from___b4:
 Removing instruction __b3_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __bbegin:
@@ -2049,11 +2067,13 @@ Removing instruction __b3:
 Removing instruction __b4:
 Removing instruction enableVideoOutput1:
 Removing instruction __b2:
-Removing instruction __b1_from_initSpriteData:
+Removing instruction __b1_from_initSpriteBuffer:
 Removing instruction __breturn:
-Removing instruction __b1_from_initPaletteData:
+Removing instruction __b1_from_initPalette:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
+Removing instruction transferSpriteBufferToPpu1:
+Removing instruction __b4:
 Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction __breturn:
@@ -2131,19 +2151,19 @@ FINAL SYMBOL TABLE
 (const byte*) TILES[]  = kickasm {{ .import binary "smb1_chr.bin"
  }}
 (const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_STACK)(void()) vblank(), &(void()) main(), (void()*) 0 }
-(void()) initPaletteData()
-(label) initPaletteData::@1
-(label) initPaletteData::@2
-(label) initPaletteData::@return
-(byte) initPaletteData::i
-(byte) initPaletteData::i#1 reg byte x 2002.0
-(byte) initPaletteData::i#2 reg byte x 1334.6666666666667
-(void()) initSpriteData()
-(label) initSpriteData::@1
-(label) initSpriteData::@return
-(byte) initSpriteData::i
-(byte) initSpriteData::i#1 reg byte x 1501.5
-(byte) initSpriteData::i#2 reg byte x 2002.0
+(void()) initPalette()
+(label) initPalette::@1
+(label) initPalette::@2
+(label) initPalette::@return
+(byte) initPalette::i
+(byte) initPalette::i#1 reg byte x 2002.0
+(byte) initPalette::i#2 reg byte x 1334.6666666666667
+(void()) initSpriteBuffer()
+(label) initSpriteBuffer::@1
+(label) initSpriteBuffer::@return
+(byte) initSpriteBuffer::i
+(byte) initSpriteBuffer::i#1 reg byte x 1501.5
+(byte) initSpriteBuffer::i#2 reg byte x 2002.0
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -2172,11 +2192,13 @@ interrupt(HARDWARE_STACK)(void()) vblank()
 (label) vblank::@1
 (label) vblank::@2
 (label) vblank::@3
+(label) vblank::@4
 (label) vblank::@return
+(label) vblank::transferSpriteBufferToPpu1
 
 reg byte x [ main::i#2 main::i#1 ]
-reg byte x [ initSpriteData::i#2 initSpriteData::i#1 ]
-reg byte x [ initPaletteData::i#2 initPaletteData::i#1 ]
+reg byte x [ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ]
+reg byte x [ initPalette::i#2 initPalette::i#1 ]
 reg byte a [ main::waitForVBlank1_$0 ]
 reg byte a [ main::waitForVBlank2_$0 ]
 reg byte a [ vblank::$1 ]
@@ -2223,12 +2245,12 @@ Score: 1475
   .const OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
   .const OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
   .const OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
-  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const SIZEOF_BYTE = 1
   // $3000-$3EFF	$0F00	Mirrors of $2000-$2EFF
   // $3F00-$3F1F	$0020	Palette RAM indexes
@@ -2268,6 +2290,7 @@ Score: 1475
 main: {
     // asm
     // asm { cld ldx#$ff txs  }
+    // Initialize decimal-mode and stack
     cld
     ldx #$ff
     txs
@@ -2355,16 +2378,16 @@ main: {
     beq waitForVBlank2
     // [27] phi from main::waitForVBlank2_@1 to main::@3 [phi:main::waitForVBlank2_@1->main::@3]
     // main::@3
-    // initPaletteData()
-    // [28] call initPaletteData 
+    // initPalette()
+    // [28] call initPalette 
     // Now the PPU is ready.
-    jsr initPaletteData
+    jsr initPalette
     // [29] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // main::@4
-    // initSpriteData()
-    // [30] call initSpriteData 
-    // [34] phi from main::@4 to initSpriteData [phi:main::@4->initSpriteData]
-    jsr initSpriteData
+    // initSpriteBuffer()
+    // [30] call initSpriteBuffer 
+    // [34] phi from main::@4 to initSpriteBuffer [phi:main::@4->initSpriteBuffer]
+    jsr initSpriteBuffer
     // main::enableVideoOutput1
     // PPU->PPUCTRL = 0b10000000
     // [31] *((byte*)(const struct RICOH_2C02*) PPU) ← (byte) $80 -- _deref_pbuc1=vbuc2 
@@ -2380,34 +2403,34 @@ main: {
     // main::@2
     jmp __b2
 }
-  // initSpriteData
-// Initialize OAM (Object Attribute Memory) Buffer 
-initSpriteData: {
-    // [35] phi from initSpriteData to initSpriteData::@1 [phi:initSpriteData->initSpriteData::@1]
-    // [35] phi (byte) initSpriteData::i#2 = (byte) 0 [phi:initSpriteData->initSpriteData::@1#0] -- vbuxx=vbuc1 
+  // initSpriteBuffer
+// Initialize OAM (Object Attribute Memory) Buffer with the SPRITE data
+initSpriteBuffer: {
+    // [35] phi from initSpriteBuffer to initSpriteBuffer::@1 [phi:initSpriteBuffer->initSpriteBuffer::@1]
+    // [35] phi (byte) initSpriteBuffer::i#2 = (byte) 0 [phi:initSpriteBuffer->initSpriteBuffer::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [35] phi from initSpriteData::@1 to initSpriteData::@1 [phi:initSpriteData::@1->initSpriteData::@1]
-    // [35] phi (byte) initSpriteData::i#2 = (byte) initSpriteData::i#1 [phi:initSpriteData::@1->initSpriteData::@1#0] -- register_copy 
-    // initSpriteData::@1
+    // [35] phi from initSpriteBuffer::@1 to initSpriteBuffer::@1 [phi:initSpriteBuffer::@1->initSpriteBuffer::@1]
+    // [35] phi (byte) initSpriteBuffer::i#2 = (byte) initSpriteBuffer::i#1 [phi:initSpriteBuffer::@1->initSpriteBuffer::@1#0] -- register_copy 
+    // initSpriteBuffer::@1
   __b1:
     // ((char*)OAM_BUFFER)[i] = ((char*)SPRITES)[i]
-    // [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteData::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteData::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [36] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER + (byte) initSpriteBuffer::i#2) ← *((byte*)(const struct ObjectAttribute*) SPRITES + (byte) initSpriteBuffer::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda SPRITES,x
     sta OAM_BUFFER,x
     // while (++i!=sizeof(SPRITES))
-    // [37] (byte) initSpriteData::i#1 ← ++ (byte) initSpriteData::i#2 -- vbuxx=_inc_vbuxx 
+    // [37] (byte) initSpriteBuffer::i#1 ← ++ (byte) initSpriteBuffer::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [38] if((byte) initSpriteData::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteData::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [38] if((byte) initSpriteBuffer::i#1!=(byte) 4*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) goto initSpriteBuffer::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4*SIZEOF_STRUCT_OBJECTATTRIBUTE
     bne __b1
-    // initSpriteData::@return
+    // initSpriteBuffer::@return
     // }
     // [39] return 
     rts
 }
-  // initPaletteData
+  // initPalette
 // Copy palette values to PPU
-initPaletteData: {
+initPalette: {
     // asm
     // asm { ldaPPU_PPUSTATUS  }
     // Reset the high/low latch to "high"
@@ -2422,31 +2445,31 @@ initPaletteData: {
     // Write the low byte of PPU Palette address
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // [43] phi from initPaletteData to initPaletteData::@1 [phi:initPaletteData->initPaletteData::@1]
-    // [43] phi (byte) initPaletteData::i#2 = (byte) 0 [phi:initPaletteData->initPaletteData::@1#0] -- vbuxx=vbuc1 
+    // [43] phi from initPalette to initPalette::@1 [phi:initPalette->initPalette::@1]
+    // [43] phi (byte) initPalette::i#2 = (byte) 0 [phi:initPalette->initPalette::@1#0] -- vbuxx=vbuc1 
     tax
   // Write to PPU
-    // initPaletteData::@1
+    // initPalette::@1
   __b1:
     // for(char i=0;i<sizeof(PALETTE);i++)
-    // [44] if((byte) initPaletteData::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPaletteData::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [44] if((byte) initPalette::i#2<(byte) $20*(const byte) SIZEOF_BYTE) goto initPalette::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$20*SIZEOF_BYTE
     bcc __b2
-    // initPaletteData::@return
+    // initPalette::@return
     // }
     // [45] return 
     rts
-    // initPaletteData::@2
+    // initPalette::@2
   __b2:
     // PPU->PPUDATA = PALETTE[i]
-    // [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPaletteData::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [46] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA) ← *((const byte*) PALETTE + (byte) initPalette::i#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda PALETTE,x
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
     // for(char i=0;i<sizeof(PALETTE);i++)
-    // [47] (byte) initPaletteData::i#1 ← ++ (byte) initPaletteData::i#2 -- vbuxx=_inc_vbuxx 
+    // [47] (byte) initPalette::i#1 ← ++ (byte) initPalette::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [43] phi from initPaletteData::@2 to initPaletteData::@1 [phi:initPaletteData::@2->initPaletteData::@1]
-    // [43] phi (byte) initPaletteData::i#2 = (byte) initPaletteData::i#1 [phi:initPaletteData::@2->initPaletteData::@1#0] -- register_copy 
+    // [43] phi from initPalette::@2 to initPalette::@1 [phi:initPalette::@2->initPalette::@1]
+    // [43] phi (byte) initPalette::i#2 = (byte) initPalette::i#1 [phi:initPalette::@2->initPalette::@1#0] -- register_copy 
     jmp __b1
 }
   // vblank
@@ -2458,58 +2481,57 @@ vblank: {
     pha
     tya
     pha
+    // vblank::transferSpriteBufferToPpu1
     // PPU->OAMADDR = 0
-    // [48] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // Refresh DRAM-stored sprite data before it decays.
-    // Set OAM start address to sprite#0
+    // [49] *((byte*)(const struct RICOH_2C02*) PPU+(const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
     // APU->OAMDMA = >OAM_BUFFER
-    // [49] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER -- _deref_pbuc1=vbuc2 
-    // Set the high byte (02) of the RAM address and start the DMA transfer to OAM memory
+    // [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA) ← >(const nomodify struct ObjectAttribute*) OAM_BUFFER -- _deref_pbuc1=vbuc2 
     lda #>OAM_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
+    // vblank::@4
     // APU->JOY1 = 1
-    // [50] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Freeze the button positions.
     lda #1
     sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
     // APU->JOY1 = 0
-    // [51] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [52] *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
     // APU->JOY1&0b00000001
-    // [52] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [53] (byte~) vblank::$1 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #1
     and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
     // if(APU->JOY1&0b00000001)
-    // [53] if((byte) 0==(byte~) vblank::$1) goto vblank::@1 -- vbuc1_eq_vbuaa_then_la1 
+    // [54] if((byte) 0==(byte~) vblank::$1) goto vblank::@1 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq __b1
-    // [54] phi from vblank to vblank::@2 [phi:vblank->vblank::@2]
+    // [55] phi from vblank::@4 to vblank::@2 [phi:vblank::@4->vblank::@2]
     // vblank::@2
     // moveLuigiRight()
-    // [55] call moveLuigiRight 
+    // [56] call moveLuigiRight 
     jsr moveLuigiRight
     // vblank::@1
   __b1:
     // APU->JOY1&0b00000001
-    // [56] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
+    // [57] (byte~) vblank::$3 ← *((byte*)(const struct RICOH_2A03*) APU+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1) & (byte) 1 -- vbuaa=_deref_pbuc1_band_vbuc2 
     lda #1
     and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
     // if(APU->JOY1&0b00000001)
-    // [57] if((byte) 0==(byte~) vblank::$3) goto vblank::@return -- vbuc1_eq_vbuaa_then_la1 
+    // [58] if((byte) 0==(byte~) vblank::$3) goto vblank::@return -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq __breturn
-    // [58] phi from vblank::@1 to vblank::@3 [phi:vblank::@1->vblank::@3]
+    // [59] phi from vblank::@1 to vblank::@3 [phi:vblank::@1->vblank::@3]
     // vblank::@3
     // moveLuigiLeft()
-    // [59] call moveLuigiLeft 
+    // [60] call moveLuigiLeft 
     jsr moveLuigiLeft
     // vblank::@return
   __breturn:
     // }
-    // [60] return  - exit interrupt(HARDWARE_STACK)
+    // [61] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
     pla
@@ -2521,47 +2543,47 @@ vblank: {
 // move the Luigi sprites left
 moveLuigiLeft: {
     // OAM_BUFFER[0].x--;
-    // [61] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
     // OAM_BUFFER[1].x--;
-    // [62] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // OAM_BUFFER[2].x--;
-    // [63] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // OAM_BUFFER[3].x--;
-    // [64] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [65] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← -- *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // moveLuigiLeft::@return
     // }
-    // [65] return 
+    // [66] return 
     rts
 }
   // moveLuigiRight
 // move the Luigi sprites right
 moveLuigiRight: {
     // OAM_BUFFER[0].x++;
-    // [66] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
     // OAM_BUFFER[1].x++;
-    // [67] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 1*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // OAM_BUFFER[2].x++;
-    // [68] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 2*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // OAM_BUFFER[3].x++;
-    // [69] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [70] *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) ← ++ *((byte*)(const nomodify struct ObjectAttribute*) OAM_BUFFER+(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X+(byte) 3*(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
     // moveLuigiRight::@return
     // }
-    // [70] return 
+    // [71] return 
     rts
 }
   // File Data
 .segment Data
-  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
   // Small Luigi Sprite Data
   SPRITES: .byte $80, $36, 2, $80, $80, $37, 2, $88, $88, $38, 2, $80, $88, $39, 2, $88
+  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
 .segment Tiles
 TILES:
 .import binary "smb1_chr.bin"

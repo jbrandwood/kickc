@@ -32,12 +32,12 @@
   .const OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
   .const OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
+  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
+  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
   .const OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
-  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
-  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const SIZEOF_BYTE = 1
   // $3000-$3EFF	$0F00	Mirrors of $2000-$2EFF
   // $3F00-$3F1F	$0020	Palette RAM indexes
@@ -69,6 +69,7 @@
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
     // asm
+    // Initialize decimal-mode and stack
     cld
     ldx #$ff
     txs
@@ -121,11 +122,11 @@ main: {
     // while(!(PPU->PPUSTATUS&0x80))
     cmp #0
     beq waitForVBlank2
-    // initPaletteData()
+    // initPalette()
     // Now the PPU is ready.
-    jsr initPaletteData
-    // initSpriteData()
-    jsr initSpriteData
+    jsr initPalette
+    // initSpriteBuffer()
+    jsr initSpriteBuffer
     // PPU->PPUCTRL = 0b10000000
     lda #$80
     sta PPU
@@ -136,8 +137,8 @@ main: {
   // Infinite loop
     jmp __b2
 }
-// Initialize OAM (Object Attribute Memory) Buffer 
-initSpriteData: {
+// Initialize OAM (Object Attribute Memory) Buffer with the SPRITE data
+initSpriteBuffer: {
     ldx #0
   __b1:
     // ((char*)OAM_BUFFER)[i] = ((char*)SPRITES)[i]
@@ -151,7 +152,7 @@ initSpriteData: {
     rts
 }
 // Copy palette values to PPU
-initPaletteData: {
+initPalette: {
     // asm
     // Reset the high/low latch to "high"
     lda PPU_PPUSTATUS
@@ -187,12 +188,9 @@ vblank: {
     tya
     pha
     // PPU->OAMADDR = 0
-    // Refresh DRAM-stored sprite data before it decays.
-    // Set OAM start address to sprite#0
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
     // APU->OAMDMA = >OAM_BUFFER
-    // Set the high byte (02) of the RAM address and start the DMA transfer to OAM memory
     lda #>OAM_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // APU->JOY1 = 1
@@ -255,9 +253,9 @@ moveLuigiRight: {
     rts
 }
 .segment Data
-  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
   // Small Luigi Sprite Data
   SPRITES: .byte $80, $36, 2, $80, $80, $37, 2, $88, $88, $38, 2, $80, $88, $39, 2, $88
+  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
 .segment Tiles
 TILES:
 .import binary "smb1_chr.bin"

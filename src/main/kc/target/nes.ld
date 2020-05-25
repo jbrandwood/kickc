@@ -14,10 +14,10 @@
 .segmentdef ProgramRom [ segments="Code, Data, Vectors" ]
 .segmentdef CharacterRom [ segments="Tiles" ]
 .segmentdef NesRom
-//.segment NesRom
-//.segmentout [ segments="Header" ]
-//.segmentout [ segments="ProgramRom" ]
-//.segmentout [ segments="CharacterRom" ]
+.segment NesRom
+.segmentout [ segments="Header" ]
+.segmentout [ segments="ProgramRom" ]
+.segmentout [ segments="CharacterRom" ]
 .segment Header
 .text   @"NES\$1a"
 .byte   $01           // 1x 16KB ROM (PRG)

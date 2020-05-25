@@ -15,7 +15,7 @@ void main() {
     // Initialize the video & audio
     disableVideoOutput();
     disableAudioOutput();
-    //  Note: When the system is first turned on or reset, the PPU may not be in a usable state right
+    // Note: When the system is first turned on or reset, the PPU may not be in a usable state right
     // away. You should wait at least 30,000 (thirty thousand) CPU cycles for the PPU to initialize, 
     // which may be accomplished by waiting for 2 (two) vertical blank intervals.
     clearVBlankFlag();
@@ -158,12 +158,3 @@ export void()* const VECTORS[] = {
     // IRQ Called when a BRK instruction is executed.
     0 
 };
-
-// Generate the NES ROM contents
-// Can be moved into the linker file when KickAsm 5.15 is released.
-#pragma data_seg(NesRom)
-export char NES_ROM[] = kickasm {{
-.segmentout [ segments="Header" ]
-.segmentout [ segments="ProgramRom" ]
-.segmentout [ segments="CharacterRom" ]
-}};

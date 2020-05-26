@@ -11,6 +11,7 @@
 .segmentdef Code    [ start=$c000,       min=$c000, max=$fff9 ]
 .segmentdef Data    [ startAfter="Code", min=$c000, max=$fff9 ]
 .segmentdef Vectors [ start=$fffa,       min=$fffa, max=$ffff ]
+.segmentdef GameRam [start=$200,max=$7ff, virtual]
 .segmentdef ProgramRom [ segments="Code, Data, Vectors" ]
 .segmentdef CharacterRom [ segments="Tiles" ]
 .segmentdef NesRom

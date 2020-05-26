@@ -84,6 +84,26 @@ inline void ppuSpriteBufferDmaTransfer(struct SpriteData* spriteBuffer) {
     APU->OAMDMA = >spriteBuffer;
 }
 
+// Read Standard Controller #1
+// Returns a byte representing the pushed buttons
+// - bit 0: right
+// - bit 1: left
+// - bit 2: down
+// - bit 3: up
+// - bit 4: start
+// - bit 5: select
+// - bit 6: B
+// - bit 7: A
+char readJoy1() {
+    // Latch the controller buttons
+    APU->JOY1 = 1;
+    APU->JOY1 = 0;
+    char joy = 0;
+    for(char i=0;i<8;i++)
+        joy = joy<<1 | APU->JOY1&1;
+    return joy;
+}
+
 // Prepare for transfering data from the CPU to the PPU
 // - ppuData : Pointer in the PPU memory
 inline void ppuDataPrepare(void* const ppuData) {

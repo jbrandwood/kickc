@@ -46,6 +46,34 @@ void clearVBlankFlag();
 // Note: Calling this will destroy the stack, so it only works if called directly inside the reset routine.
 void initNES();
 
+// Read Standard Controller #1
+// Returns a byte representing the pushed buttons
+// - bit 0: right
+// - bit 1: left
+// - bit 2: down
+// - bit 3: up
+// - bit 4: start
+// - bit 5: select
+// - bit 6: B
+// - bit 7: A
+char readJoy1();
+
+// Standard Controller Right Button
+const char JOY_RIGHT =  0b00000001;
+// Standard Controller Left Button
+const char JOY_LEFT =   0b00000010;
+// Standard Controller Down Button
+const char JOY_DOWN =   0b00000100;
+// Standard Controller Up Button
+const char JOY_UP =     0b00001000;
+// Standard Controller Start Button
+const char JOY_START =  0b00010000;
+// Standard Controller Select Button
+const char JOY_SELECT = 0b00100000;
+// Standard Controller B Button
+const char JOY_B =      0b01000000;
+// Standard Controller A Button
+const char JOY_A =      0b10000000;
 
 // Prepare for transferring data from the CPU to the PPU
 // - ppuData : Pointer in the PPU memory

@@ -1,5 +1,5 @@
 ldy #0
-lda {z2}
+lda ({z2}),y
 asl
 sta {m1}
 lda #0

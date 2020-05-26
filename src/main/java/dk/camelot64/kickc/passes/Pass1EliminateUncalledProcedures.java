@@ -1,9 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 
@@ -21,16 +20,7 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
 
    @Override
    public boolean step() {
-      Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementCalling) {
-               StatementCalling call = (StatementCalling) statement;
-               ProcedureRef procedureRef = call.getProcedure();
-               calledProcedures.add(procedureRef);
-            }
-         }
-      }
+      Set<ProcedureRef> calledProcedures = getGraph().getAllCalledProcedures();
 
       Set<ProcedureRef> unusedProcedures = new LinkedHashSet<>();
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);

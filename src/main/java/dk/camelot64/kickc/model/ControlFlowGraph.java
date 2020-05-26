@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementCalling;
 import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -159,6 +160,26 @@ public class ControlFlowGraph implements Serializable {
       entryPointBlocks.add(getFirstBlock());
       return entryPointBlocks;
    }
+
+   /**
+    * Get all called procedures in the graph
+    * @return All called procedures
+    */
+   public Set<ProcedureRef> getAllCalledProcedures() {
+      Set<ProcedureRef> calledProcedures = new LinkedHashSet<>();
+      for(ControlFlowBlock block : getAllBlocks()) {
+         for(Statement statement : block.getStatements()) {
+            if(statement instanceof StatementCalling) {
+               StatementCalling call = (StatementCalling) statement;
+               ProcedureRef procedureRef = call.getProcedure();
+               calledProcedures.add(procedureRef);
+            }
+         }
+      }
+      return calledProcedures;
+   }
+
+
 
 
    @Override

@@ -149,7 +149,7 @@ main::@2: scope:[main]  from main::@1
   [11] (byte*) main::cols#1 ← ++ (byte*) main::cols#2
   to:main::@1
 
-(void()) fn1()
+__stackcall (void()) fn1()
 fn1: scope:[fn1]  from main::@2
   [12] phi()
   to:fn1::@1
@@ -167,7 +167,7 @@ fn1::@2: scope:[fn1]  from fn1::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) fn1()
+__stackcall (void()) fn1()
 (byte*) fn1::screen
 (byte*) fn1::screen#1 200002.0
 (byte*) fn1::screen#2 166668.3333333333
@@ -243,8 +243,6 @@ main: {
     // main::@2
   __b2:
     // [9] call fn1 
-    // [12] phi from main::@2 to fn1 [phi:main::@2->fn1]
-  fn1_from___b2:
     jsr fn1
     // [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
@@ -324,9 +322,9 @@ Uplift Scope [fn1] 366,670.33: zp[2]:4 [ fn1::screen#2 fn1::screen#1 ]
 Uplift Scope [main] 303: zp[2]:2 [ main::cols#2 main::cols#1 ] 
 Uplift Scope [] 
 
-Uplifting [fn1] best 7595 combination zp[2]:4 [ fn1::screen#2 fn1::screen#1 ] 
-Uplifting [main] best 7595 combination zp[2]:2 [ main::cols#2 main::cols#1 ] 
-Uplifting [] best 7595 combination 
+Uplifting [fn1] best 7649 combination zp[2]:4 [ fn1::screen#2 fn1::screen#1 ] 
+Uplifting [main] best 7649 combination zp[2]:2 [ main::cols#2 main::cols#1 ] 
+Uplifting [] best 7649 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -385,8 +383,6 @@ main: {
     // main::@2
   __b2:
     // [9] call fn1 
-    // [12] phi from main::@2 to fn1 [phi:main::@2->fn1]
-  fn1_from___b2:
     jsr fn1
     // [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 
     ldy #0
@@ -472,7 +468,6 @@ Removing instruction __b1:
 Removing instruction main_from___b1:
 Removing instruction __bend_from___b1:
 Removing instruction __b2_from___b1:
-Removing instruction fn1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __bbegin:
 Removing instruction __bend:
@@ -490,7 +485,7 @@ FINAL SYMBOL TABLE
 (label) @1
 (label) @begin
 (label) @end
-(void()) fn1()
+__stackcall (void()) fn1()
 (label) fn1::@1
 (label) fn1::@2
 (label) fn1::@return
@@ -510,7 +505,7 @@ zp[2]:4 [ fn1::screen#2 fn1::screen#1 ]
 
 
 FINAL ASSEMBLER
-Score: 6673
+Score: 6727
 
   // File Comments
 // Tests calling into a function pointer with local variables
@@ -556,7 +551,6 @@ main: {
   __b2:
     // (*cls)()
     // [9] call fn1 
-    // [12] phi from main::@2 to fn1 [phi:main::@2->fn1]
     jsr fn1
     // (*cols)++;
     // [10] *((byte*) main::cols#2) ← ++ *((byte*) main::cols#2) -- _deref_pbuz1=_inc__deref_pbuz1 

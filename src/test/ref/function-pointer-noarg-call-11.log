@@ -1,0 +1,381 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  to:@1
+
+(void()) myFunc()
+myFunc: scope:[myFunc]  from
+  *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR)
+  to:myFunc::@return
+myFunc::@return: scope:[myFunc]  from myFunc
+  return 
+  to:@return
+
+(void()) myFunc2()
+myFunc2: scope:[myFunc2]  from
+  *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR)
+  to:myFunc2::@return
+myFunc2::@return: scope:[myFunc2]  from myFunc2
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  (void()*) funcPointer#0 ← (void()*) 0
+  to:@2
+
+(void()) main()
+main: scope:[main]  from @2
+  (void()*) funcPointer#1 ← &(void()) myFunc()
+  call *((void()*) funcPointer#1) 
+  (void()*) funcPointer#2 ← &(void()) myFunc2()
+  call *((void()*) funcPointer#2) 
+  to:main::@return
+main::@return: scope:[main]  from main
+  (void()*) funcPointer#5 ← phi( main/(void()*) funcPointer#2 )
+  (void()*) funcPointer#3 ← (void()*) funcPointer#5
+  return 
+  to:@return
+@2: scope:[]  from @1
+  (void()*) funcPointer#7 ← phi( @1/(void()*) funcPointer#0 )
+  call main 
+  to:@3
+@3: scope:[]  from @2
+  (void()*) funcPointer#6 ← phi( @2/(void()*) funcPointer#3 )
+  (void()*) funcPointer#4 ← (void()*) funcPointer#6
+  to:@end
+@end: scope:[]  from @3
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @3
+(label) @begin
+(label) @end
+(void()*) funcPointer
+(void()*) funcPointer#0
+(void()*) funcPointer#1
+(void()*) funcPointer#2
+(void()*) funcPointer#3
+(void()*) funcPointer#4
+(void()*) funcPointer#5
+(void()*) funcPointer#6
+(void()*) funcPointer#7
+(void()) main()
+(label) main::@return
+(void()) myFunc()
+(label) myFunc::@return
+(const nomodify byte*) myFunc::BORDER_COLOR = (byte*)(number) $d020
+(void()) myFunc2()
+(label) myFunc2::@return
+(const nomodify byte*) myFunc2::BG_COLOR = (byte*)(number) $d021
+
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant pointer cast (byte*) 53281
+Successful SSA optimization PassNCastSimplification
+Alias funcPointer#2 = funcPointer#5 funcPointer#3 
+Alias funcPointer#0 = funcPointer#7 
+Alias funcPointer#4 = funcPointer#6 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (void()*) funcPointer#4 (void()*) funcPointer#2
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const void()*) funcPointer#0 = (void()*) 0
+Constant (const void()*) funcPointer#1 = &myFunc
+Constant (const void()*) funcPointer#2 = &myFunc2
+Successful SSA optimization Pass2ConstantIdentification
+Replacing constant pointer function [6] call myFunc 
+Replacing constant pointer function [8] call myFunc2 
+Successful SSA optimization Pass2ConstantCallPointerIdentification
+Eliminating unused constant (const void()*) funcPointer#0
+Eliminating unused constant (const void()*) funcPointer#1
+Eliminating unused constant (const void()*) funcPointer#2
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @3
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [] to main:3 
+Calls in [main] to myFunc:7 myFunc2:8 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @1
+Culled Empty Block (label) @3
+Renumbering block @2 to @1
+Adding NOP phi() at start of @begin
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] phi()
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] phi()
+  [5] call myFunc 
+  [6] call myFunc2 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [7] return 
+  to:@return
+
+__stackcall (void()) myFunc2()
+myFunc2: scope:[myFunc2]  from main
+  [8] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR)
+  to:myFunc2::@return
+myFunc2::@return: scope:[myFunc2]  from myFunc2
+  [9] return 
+  to:@return
+
+__stackcall (void()) myFunc()
+myFunc: scope:[myFunc]  from
+  [10] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR)
+  to:myFunc::@return
+myFunc::@return: scope:[myFunc]  from myFunc
+  [11] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()*) funcPointer
+(void()) main()
+__stackcall (void()) myFunc()
+__stackcall (void()) myFunc2()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Tests calling through pointers to non-args no-return functions
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] call myFunc 
+    jsr myFunc
+    // [6] call myFunc2 
+    jsr myFunc2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // myFunc2
+myFunc2: {
+    .label BG_COLOR = $d021
+    // [8] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    jmp __breturn
+    // myFunc2::@return
+  __breturn:
+    // [9] return 
+    rts
+}
+  // myFunc
+myFunc: {
+    .label BORDER_COLOR = $d020
+    // [10] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    jmp __breturn
+    // myFunc::@return
+  __breturn:
+    // [11] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [myFunc] 
+Uplift Scope [myFunc2] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [myFunc] best 63 combination 
+Uplifting [myFunc2] best 63 combination 
+Uplifting [main] best 63 combination 
+Uplifting [] best 63 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests calling through pointers to non-args no-return functions
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+__bbegin:
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+main_from___b1:
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [5] call myFunc 
+    jsr myFunc
+    // [6] call myFunc2 
+    jsr myFunc2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // myFunc2
+myFunc2: {
+    .label BG_COLOR = $d021
+    // [8] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    jmp __breturn
+    // myFunc2::@return
+  __breturn:
+    // [9] return 
+    rts
+}
+  // myFunc
+myFunc: {
+    .label BORDER_COLOR = $d020
+    // [10] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    jmp __breturn
+    // myFunc::@return
+  __breturn:
+    // [11] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from___bbegin:
+Removing instruction __b1:
+Removing instruction main_from___b1:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __bbegin:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jsr main
+Succesful ASM optimization Pass5SkipBegin
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(void()*) funcPointer
+(void()) main()
+(label) main::@return
+__stackcall (void()) myFunc()
+(label) myFunc::@return
+(const nomodify byte*) myFunc::BORDER_COLOR = (byte*) 53280
+__stackcall (void()) myFunc2()
+(label) myFunc2::@return
+(const nomodify byte*) myFunc2::BG_COLOR = (byte*) 53281
+
+
+
+FINAL ASSEMBLER
+Score: 42
+
+  // File Comments
+// Tests calling through pointers to non-args no-return functions
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // @begin
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  // [4] phi from @1 to main [phi:@1->main]
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // (*funcPointer)()
+    // [5] call myFunc 
+    jsr myFunc
+    // [6] call myFunc2 
+    jsr myFunc2
+    // main::@return
+    // }
+    // [7] return 
+    rts
+}
+  // myFunc2
+myFunc2: {
+    .label BG_COLOR = $d021
+    // (*BG_COLOR)++;
+    // [8] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    // myFunc2::@return
+    // }
+    // [9] return 
+    rts
+}
+  // myFunc
+myFunc: {
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    // [10] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    // myFunc::@return
+    // }
+    // [11] return 
+    rts
+}
+  // File Data
+

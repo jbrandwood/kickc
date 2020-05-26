@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementCallPointer;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
@@ -70,6 +71,8 @@ public class Pass2ConstantCallPointerIdentification extends Pass2SsaOptimization
       call.setIndex(callPointer.getIndex());
       block.setCallSuccessor(constProcedureRef.getLabelRef());
       statementsIt.add(call);
+      final Procedure procedure = getScope().getProcedure(constProcedureRef);
+      procedure.setCallingConvention(Procedure.CallingConvention.STACK_CALL);
       getLog().append("Replacing constant pointer function " + call.toString(getProgram(), false));
    }
 

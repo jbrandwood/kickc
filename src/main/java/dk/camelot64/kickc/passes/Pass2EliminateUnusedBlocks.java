@@ -4,9 +4,7 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.statements.Statement;
-import dk.camelot64.kickc.model.statements.StatementLValue;
-import dk.camelot64.kickc.model.statements.StatementPhiBlock;
+import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Symbol;
@@ -55,7 +53,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
 
 
       Set<LabelRef> unusedProcedureBlocks = new HashSet<>();
-      for( LabelRef unusedBlock : unusedBlocks) {
+      for(LabelRef unusedBlock : unusedBlocks) {
          Symbol unusedSymbol = getScope().getSymbol(unusedBlock);
          if(unusedSymbol instanceof Label) {
             getGraph().remove(unusedBlock);
@@ -79,7 +77,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
          } else if(unusedProcedureBlocks.contains(unusedBlock)) {
             // Already removed - we are happy!
          } else {
-            throw new CompileError("Unable to remove unused block "+unusedBlock);
+            throw new CompileError("Unable to remove unused block " + unusedBlock);
          }
       }
 
@@ -97,6 +95,7 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
       for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
          findReferencedBlocks(entryPointBlock, referencedBlocks);
       }
+
       return referencedBlocks;
    }
 
@@ -157,6 +156,15 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
             return;
          }
          findReferencedBlocks(getGraph().getBlock(block.getDefaultSuccessor()), used);
+      }
+      for(Statement statement : block.getStatements()) {
+         if(statement instanceof StatementCall) {
+            final ProcedureRef procedure = ((StatementCall) statement).getProcedure();
+            findReferencedBlocks(getGraph().getBlock(procedure.getLabelRef()), used);
+         } else if(statement instanceof StatementCallExecute) {
+            final ProcedureRef procedure = ((StatementCallExecute) statement).getProcedure();
+            findReferencedBlocks(getGraph().getBlock(procedure.getLabelRef()), used);
+         }
       }
    }
 

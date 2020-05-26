@@ -411,12 +411,6 @@ vblank: {
     pha
     tya
     pha
-    // PPU->OAMADDR = 0
-    lda #0
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
-    // APU->OAMDMA = >spriteBuffer
-    lda #>SPRITE_BUFFER
-    sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // readJoy1()
     jsr readJoy1
     // joy = readJoy1()
@@ -471,7 +465,7 @@ vblank: {
     and #JOY_RIGHT
     // if(joy&JOY_RIGHT)
     cmp #0
-    beq __b4
+    beq ppuSpriteBufferDmaTransfer1
     // SPRITE_BUFFER[0].x++;
     inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X
     // SPRITE_BUFFER[1].x++;
@@ -480,7 +474,13 @@ vblank: {
     inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+2*SIZEOF_STRUCT_SPRITEDATA
     // SPRITE_BUFFER[3].x++;
     inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+3*SIZEOF_STRUCT_SPRITEDATA
-  __b4:
+  ppuSpriteBufferDmaTransfer1:
+    // PPU->OAMADDR = 0
+    lda #0
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
+    // APU->OAMDMA = >spriteBuffer
+    lda #>SPRITE_BUFFER
+    sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // PPU->PPUSCROLL = 0
     // Set scroll
     lda #0

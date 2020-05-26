@@ -32,39 +32,35 @@ void main() {
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 interrupt(hardware_stack) void vblank() {
 
-    // DMA transfer the entire sprite buffer to the PPU
-    ppuSpriteBufferDmaTransfer(SPRITE_BUFFER);
-
    // Read controller 1
     char joy = readJoy1();
-
     if(joy&JOY_DOWN) {
         SPRITE_BUFFER[0].y++;
         SPRITE_BUFFER[1].y++;
         SPRITE_BUFFER[2].y++;
         SPRITE_BUFFER[3].y++;
     }
-
     if(joy&JOY_UP) {
         SPRITE_BUFFER[0].y--;
         SPRITE_BUFFER[1].y--;
         SPRITE_BUFFER[2].y--;
         SPRITE_BUFFER[3].y--;    
     }
-
     if(joy&JOY_LEFT) {
         SPRITE_BUFFER[0].x--;
         SPRITE_BUFFER[1].x--;
         SPRITE_BUFFER[2].x--;
         SPRITE_BUFFER[3].x--;    
     }
-
     if(joy&JOY_RIGHT) {
         SPRITE_BUFFER[0].x++;
         SPRITE_BUFFER[1].x++;
         SPRITE_BUFFER[2].x++;
         SPRITE_BUFFER[3].x++;    
     }
+
+    // DMA transfer the entire sprite buffer to the PPU
+    ppuSpriteBufferDmaTransfer(SPRITE_BUFFER);
 
     // Set scroll
     PPU->PPUSCROLL = 0;
@@ -82,13 +78,14 @@ char FLOOR[] = { 0x85, 0x85, 0x86, 0x86};
 
 // Sprite Data
 struct SpriteData SPRITES[] = {
-//     Y ,  TILE,  ATTR      ,  X
-    // Small Luigi 
+    // Small Luigi
+    // Y ,  TILE,  ATTR      ,  X
     { 150,  0x36,  0b00000010,  12 },		// Sprite 0
     { 150,  0x37,  0b00000010,  20 },		// Sprite 1
     { 158,  0x38,  0b00000010,  12 },		// Sprite 2
     { 158,  0x39,  0b00000010,  20 },		// Sprite 3
     // Small Goomba 
+    // Y ,  TILE,  ATTR      ,  X
     { 150,  0x70,  0b00000000,  72 },		// Sprite 0
     { 150,  0x71,  0b00000000,  80 },		// Sprite 1
     { 158,  0x72,  0b00000001,  72 },		// Sprite 2
@@ -116,7 +113,7 @@ export char TILES[] = kickasm(resource "smb1_chr.bin") {{
 }};
 
 // Sprite Buffer (in GAME RAM)
-// Will be transfered to the PPU via DMA during vblank
+// Will be transferred to the PPU via DMA during vblank
 #pragma data_seg(GameRam)
 struct SpriteData align(0x100) SPRITE_BUFFER[0x40];
 

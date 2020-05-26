@@ -13,6 +13,19 @@ struct RICOH_2A03 * APU = 0x4000;
 // Pointer to the start of RAM memory
 char * const MEMORY = 0;
 
+// Sprite Object Attribute Memory Structure
+// The memory layout of a sprite in the PPU's OAM memory
+struct SpriteData {
+    char y;
+    char tile;
+    char attributes;
+    char x;
+};
+
+// DMA transfer a complete sprite memory buffer to the PPU
+// - The Sprite OAM buffer to transfer (must be aligned to $100 in memory)
+void ppuSpriteBufferDmaTransfer(struct SpriteData* spriteBuffer);
+
 // Disable audio output
 void disableAudioOutput();
 
@@ -27,3 +40,39 @@ void waitForVBlank();
 
 // Clear the vblank flag
 void clearVBlankFlag();
+
+// Initialize the NES after a RESET.
+// Clears the memory and sets up the stack
+// Note: Calling this will destroy the stack, so it only works if called directly inside the reset routine.
+void initNES();
+
+
+// Prepare for transferring data from the CPU to the PPU
+// - ppuData : Pointer in the PPU memory
+void ppuDataPrepare(void* const ppuData);
+
+// Put one byte into PPU memory
+// The byte is put into the current PPU address pointed to by the (autoincrementing) PPU->PPUADDR
+void ppuDataPut(char val);
+
+// Fill a number of bytes in the PPU memory
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+void ppuDataFill(void* const ppuData, char val, unsigned int size);
+
+// Transfer a number of bytes from the CPU memory to the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+void ppuDataTransfer(void* const ppuData, void* const cpuData, unsigned int size);
+
+// Transfer a 2x2 tile into the PPU memory
+// - ppuData : Pointer in the PPU memory
+// - tile : The tile to transfer
+void ppuDataPutTile(void* const ppuData, char* tile);
+
+
+// Set one byte in PPU memory
+// - ppuData : Pointer in the PPU memory
+// - val : The value to set
+void ppuDataSet(void* const ppuData, char val);

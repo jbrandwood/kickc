@@ -28,19 +28,23 @@
                       // Mirroring nibble 0001 == Vertical mirroring only
 .segment Code
 
-  .const SIZEOF_STRUCT_OBJECTATTRIBUTE = 4
+  .const SIZEOF_STRUCT_SPRITEDATA = 4
   .const OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
   .const OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
-  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
-  .const OFFSET_STRUCT_OBJECTATTRIBUTE_X = 3
   .const OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
   .const OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
+  .const OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
+  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
   .const SIZEOF_BYTE = 1
-  // $3000-$3EFF	$0F00	Mirrors of $2000-$2EFF
-  // $3F00-$3F1F	$0020	Palette RAM indexes
+  // $2000-$23bf	$03c0	Name table 0
+  .label PPU_NAME_TABLE_0 = $2000
+  // $23c0-$23ff	$0040	Attribute table 0
+  .label PPU_ATTRIBUTE_TABLE_0 = $23c0
+  // $3000-$3eff	$0f00	Mirrors of $2000-$2eff
+  // $3f00-$3f1f	$0020	Palette RAM indexes
   .label PPU_PALETTE = $3f00
   // APU Frame Counter
   // generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
@@ -56,8 +60,8 @@
   .label FR_COUNTER = $4017
   // Pointer to the start of RAM memory
   .label MEMORY = 0
-  // OAM (Object Attribute Memory) Buffer
-  // Will be transfered to the PPU via DMA
+  // Sprite OAM Buffer
+  // Will be transfered to the PPU via DMA during vblank
   .label OAM_BUFFER = $200
   // PPU Status Register for reading in ASM
   .label PPU_PPUSTATUS = $2002
@@ -69,7 +73,6 @@
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
     // asm
-    // Initialize decimal-mode and stack
     cld
     ldx #$ff
     txs
@@ -85,15 +88,15 @@ main: {
     sta APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ
     // asm
     lda PPU_PPUSTATUS
-  waitForVBlank1:
+  initNES1_waitForVBlank1:
     // PPU->PPUSTATUS&0x80
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // while(!(PPU->PPUSTATUS&0x80))
     cmp #0
-    beq waitForVBlank1
+    beq initNES1_waitForVBlank1
     ldx #0
-  __b1:
+  initNES1___b1:
     // (MEMORY+0x000)[i] = 0
     lda #0
     sta MEMORY,x
@@ -114,70 +117,265 @@ main: {
     // while (++i)
     inx
     cpx #0
-    bne __b1
-  waitForVBlank2:
+    bne initNES1___b1
+  initNES1_waitForVBlank2:
     // PPU->PPUSTATUS&0x80
     lda #$80
     and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
     // while(!(PPU->PPUSTATUS&0x80))
     cmp #0
-    beq waitForVBlank2
-    // initPalette()
-    // Now the PPU is ready.
-    jsr initPalette
-    // initSpriteBuffer()
-    jsr initSpriteBuffer
+    beq initNES1_waitForVBlank2
+    // asm
+    lda PPU_PPUSTATUS
+    // ppuDataTransfer(PPU_PALETTE, PALETTE, sizeof(PALETTE))
+  // Transfer the palette
+    jsr ppuDataTransfer
+    // ppuDataFill(PPU_NAME_TABLE_0, 0xfc, 0x3c0)
+  // Clear the name table
+    ldx #$fc
+    lda #<$3c0
+    sta.z ppuDataFill.size
+    lda #>$3c0
+    sta.z ppuDataFill.size+1
+    lda #<PPU_NAME_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData
+    lda #>PPU_NAME_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
+    jsr ppuDataFill
+    // ppuDataFill(PPU_ATTRIBUTE_TABLE_0, 0, 0x40)
+  // Fill the PPU attribute table
+    ldx #0
+    lda #<$40
+    sta.z ppuDataFill.size
+    lda #>$40
+    sta.z ppuDataFill.size+1
+    lda #<PPU_ATTRIBUTE_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData
+    lda #>PPU_ATTRIBUTE_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
+    jsr ppuDataFill
+    ldx #0
+  // Show the entire tile set
+  //char ch=0;
+  //for(char y=0;y!=16;y++) {
+  //    ppuDataPrepare(PPU_NAME_TABLE_0+32*4+4+(unsigned int)y*32);
+  //    for(char x=0;x!=16;x++)
+  //        ppuDataPut(ch++);
+  //}
+  // Show floor
+  __b1:
+    // for(char x=0;x<32;x+=2)
+    cpx #$20
+    bcc __b2
+    // ppuDataPutTile(PPU_NAME_TABLE_0+18*32+28, FLAG)
+  // Show flag
+    lda #<FLAG
+    sta.z ppuDataPutTile.tile
+    lda #>FLAG
+    sta.z ppuDataPutTile.tile+1
+    lda #<PPU_NAME_TABLE_0+$12*$20+$1c
+    sta.z ppuDataPutTile.ppuData
+    lda #>PPU_NAME_TABLE_0+$12*$20+$1c
+    sta.z ppuDataPutTile.ppuData+1
+    jsr ppuDataPutTile
+    ldx #0
+  // Initialize Sprite OAM Buffer with the SPRITE data
+  __b4:
+    // for(char i=0;i<sizeof(SPRITES); i++)
+    cpx #4*SIZEOF_STRUCT_SPRITEDATA
+    bcc __b5
+    // PPU->PPUSCROLL = 0
+    // Set initial scroll
+    lda #0
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
+    // PPU->PPUSCROLL = -8
+    lda #-8
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
     // PPU->PPUCTRL = 0b10000000
     lda #$80
     sta PPU
-    // PPU->PPUMASK = 0b00010000
-    lda #$10
+    // PPU->PPUMASK = 0b00011000
+    lda #$18
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK
-  __b2:
+  __b3:
   // Infinite loop
-    jmp __b2
-}
-// Initialize OAM (Object Attribute Memory) Buffer with the SPRITE data
-initSpriteBuffer: {
-    ldx #0
-  __b1:
+    jmp __b3
+  __b5:
     // ((char*)OAM_BUFFER)[i] = ((char*)SPRITES)[i]
     lda SPRITES,x
     sta OAM_BUFFER,x
-    // while (++i!=sizeof(SPRITES))
+    // for(char i=0;i<sizeof(SPRITES); i++)
     inx
-    cpx #4*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    bne __b1
+    jmp __b4
+  __b2:
+    // PPU_NAME_TABLE_0+20*32+x
+    txa
+    clc
+    adc #<PPU_NAME_TABLE_0+$14*$20
+    sta.z ppuDataPutTile.ppuData
+    lda #>PPU_NAME_TABLE_0+$14*$20
+    adc #0
+    sta.z ppuDataPutTile.ppuData+1
+    // ppuDataPutTile(PPU_NAME_TABLE_0+20*32+x, FLOOR)
+    lda #<FLOOR
+    sta.z ppuDataPutTile.tile
+    lda #>FLOOR
+    sta.z ppuDataPutTile.tile+1
+    jsr ppuDataPutTile
+    // x+=2
+    inx
+    inx
+    jmp __b1
+}
+// Transfer a 2x2 tile into the PPU memory
+// - ppuData : Pointer in the PPU memory
+// - tile : The tile to transfer
+// ppuDataPutTile(byte* zp(6) ppuData, byte* zp(2) tile)
+ppuDataPutTile: {
+    .label ppuDataPrepare2_ppuData = 6
+    .label ppuData = 6
+    .label tile = 2
+    // >ppuData
+    lda.z ppuData+1
+    // PPU->PPUADDR = >ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // <ppuData
+    lda.z ppuData
+    // PPU->PPUADDR = <ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // ppuDataPut(tile[0])
+    ldy #0
+    lda (tile),y
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // ppuDataPut(tile[1])
+    ldy #1
+    lda (tile),y
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // (char*)ppuData+32
+    lda #$20
+    clc
+    adc.z ppuDataPrepare2_ppuData
+    sta.z ppuDataPrepare2_ppuData
+    bcc !+
+    inc.z ppuDataPrepare2_ppuData+1
+  !:
+    // >ppuData
+    lda.z ppuDataPrepare2_ppuData+1
+    // PPU->PPUADDR = >ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // <ppuData
+    lda.z ppuDataPrepare2_ppuData
+    // PPU->PPUADDR = <ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // ppuDataPut(tile[2])
+    ldy #2
+    lda (tile),y
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // ppuDataPut(tile[3])
+    ldy #3
+    lda (tile),y
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
     // }
     rts
 }
-// Copy palette values to PPU
-initPalette: {
-    // asm
-    // Reset the high/low latch to "high"
-    lda PPU_PPUSTATUS
-    // PPU->PPUADDR = >PPU_PALETTE
-    // Write the high byte of PPU Palette address
-    lda #>PPU_PALETTE
+// Fill a number of bytes in the PPU memory
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+// ppuDataFill(byte register(X) val, word zp(2) size)
+ppuDataFill: {
+    .label ppuDataPrepare1_ppuData = 6
+    .label i = 4
+    .label size = 2
+    // >ppuData
+    lda.z ppuDataPrepare1_ppuData+1
+    // PPU->PPUADDR = >ppuData
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // PPU->PPUADDR = <PPU_PALETTE
-    // Write the low byte of PPU Palette address
+    // <ppuData
+    lda.z ppuDataPrepare1_ppuData
+    // PPU->PPUADDR = <ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    lda #<0
+    sta.z i
+    sta.z i+1
+  // Transfer to PPU
+  __b1:
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp.z size+1
+    bcc ppuDataPut1
+    bne !+
+    lda.z i
+    cmp.z size
+    bcc ppuDataPut1
+  !:
+    // }
+    rts
+  ppuDataPut1:
+    // PPU->PPUDATA = val
+    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    jmp __b1
+}
+// Transfer a number of bytes from the CPU memory to the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+ppuDataTransfer: {
+    .const size = $20*SIZEOF_BYTE
+    .label ppuData = PPU_PALETTE
+    .label cpuData = PALETTE
+    // Transfer to PPU
+    .label cpuSrc = 6
+    .label i = 4
+    // PPU->PPUADDR = >ppuData
+    lda #>ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // PPU->PPUADDR = <ppuData
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    tax
-  // Write to PPU
+    lda #<cpuData
+    sta.z cpuSrc
+    lda #>cpuData
+    sta.z cpuSrc+1
+    lda #<0
+    sta.z i
+    sta.z i+1
   __b1:
-    // for(char i=0;i<sizeof(PALETTE);i++)
-    cpx #$20*SIZEOF_BYTE
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp #>size
     bcc __b2
+    bne !+
+    lda.z i
+    cmp #<size
+    bcc __b2
+  !:
     // }
     rts
   __b2:
-    // PPU->PPUDATA = PALETTE[i]
-    lda PALETTE,x
+    // ppuDataPut(*cpuSrc++)
+    ldy #0
+    lda (cpuSrc),y
+    // PPU->PPUDATA = val
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // for(char i=0;i<sizeof(PALETTE);i++)
-    inx
+    // ppuDataPut(*cpuSrc++);
+    inc.z cpuSrc
+    bne !+
+    inc.z cpuSrc+1
+  !:
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
     jmp __b1
 }
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
@@ -190,11 +388,11 @@ vblank: {
     // PPU->OAMADDR = 0
     lda #0
     sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
-    // APU->OAMDMA = >OAM_BUFFER
+    // APU->OAMDMA = >spriteBuffer
     lda #>OAM_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
     // APU->JOY1 = 1
-    // Freeze the button positions.
+    // Latch the controller buttons
     lda #1
     sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
     // APU->JOY1 = 0
@@ -206,8 +404,14 @@ vblank: {
     // if(APU->JOY1&0b00000001)
     cmp #0
     beq __b1
-    // moveLuigiRight()
-    jsr moveLuigiRight
+    // OAM_BUFFER[0].y++;
+    inc OAM_BUFFER
+    // OAM_BUFFER[1].y++;
+    inc OAM_BUFFER+1*SIZEOF_STRUCT_SPRITEDATA
+    // OAM_BUFFER[2].y++;
+    inc OAM_BUFFER+2*SIZEOF_STRUCT_SPRITEDATA
+    // OAM_BUFFER[3].y++;
+    inc OAM_BUFFER+3*SIZEOF_STRUCT_SPRITEDATA
   __b1:
     // APU->JOY1&0b00000001
     lda #1
@@ -215,8 +419,14 @@ vblank: {
     // if(APU->JOY1&0b00000001)
     cmp #0
     beq __breturn
-    // moveLuigiLeft()
-    jsr moveLuigiLeft
+    // OAM_BUFFER[0].y--;
+    dec OAM_BUFFER
+    // OAM_BUFFER[1].y--;
+    dec OAM_BUFFER+1*SIZEOF_STRUCT_SPRITEDATA
+    // OAM_BUFFER[2].y--;
+    dec OAM_BUFFER+2*SIZEOF_STRUCT_SPRITEDATA
+    // OAM_BUFFER[3].y--;
+    dec OAM_BUFFER+3*SIZEOF_STRUCT_SPRITEDATA
   __breturn:
     // }
     pla
@@ -226,36 +436,15 @@ vblank: {
     pla
     rti
 }
-// move the Luigi sprites left
-moveLuigiLeft: {
-    // OAM_BUFFER[0].x--;
-    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
-    // OAM_BUFFER[1].x--;
-    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // OAM_BUFFER[2].x--;
-    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // OAM_BUFFER[3].x--;
-    dec OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // }
-    rts
-}
-// move the Luigi sprites right
-moveLuigiRight: {
-    // OAM_BUFFER[0].x++;
-    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X
-    // OAM_BUFFER[1].x++;
-    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+1*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // OAM_BUFFER[2].x++;
-    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+2*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // OAM_BUFFER[3].x++;
-    inc OAM_BUFFER+OFFSET_STRUCT_OBJECTATTRIBUTE_X+3*SIZEOF_STRUCT_OBJECTATTRIBUTE
-    // }
-    rts
-}
 .segment Data
+  // Flag tile
+  FLAG: .byte $54, $55, $56, $57
+  // Floor tile
+  FLOOR: .byte $85, $85, $86, $86
   // Small Luigi Sprite Data
   SPRITES: .byte $80, $36, 2, $80, $80, $37, 2, $88, $88, $38, 2, $80, $88, $39, 2, $88
-  PALETTE: .byte $f, $31, $32, $33, $f, $35, $36, $37, $f, $39, $3a, $3b, $f, $3d, $3e, $f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
+  // Color Palette
+  PALETTE: .byte $f, $13, $23, $33, $f, 6, $15, $36, $f, $39, $4a, $5b, $f, $3d, $4e, $5f, $f, $1c, $15, $14, $f, 2, $38, $3c, $f, $30, $37, $1a, $f, $f, $f, $f
 .segment Tiles
 TILES:
 .import binary "smb1_chr.bin"

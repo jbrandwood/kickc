@@ -2,10 +2,11 @@
 (label) @begin
 (label) @end
 (const struct RICOH_2A03*) APU = (struct RICOH_2A03*) 16384
+(const byte*) FLAG[]  = { (byte) $54, (byte) $55, (byte) $56, (byte) $57 }
+(const byte*) FLOOR[]  = { (byte) $85, (byte) $85, (byte) $86, (byte) $86 }
 (const nomodify byte*) FR_COUNTER = (byte*) 16407
 (const nomodify byte*) MEMORY = (byte*) 0
-(const nomodify struct ObjectAttribute*) OAM_BUFFER = (struct ObjectAttribute*) 512
-(const byte) OFFSET_STRUCT_OBJECTATTRIBUTE_X = (byte) 3
+(const nomodify struct SpriteData*) OAM_BUFFER = (struct SpriteData*) 512
 (const byte) OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = (byte) $10
 (const byte) OFFSET_STRUCT_RICOH_2A03_JOY1 = (byte) $16
 (const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA = (byte) $14
@@ -13,13 +14,12 @@
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR = (byte) 6
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUDATA = (byte) 7
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUMASK = (byte) 1
+(const byte) OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = (byte) 5
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = (byte) 2
-(byte) ObjectAttribute::attributes
-(byte) ObjectAttribute::tile
-(byte) ObjectAttribute::x
-(byte) ObjectAttribute::y
-(const byte*) PALETTE[(number) $20]  = { (byte) $f, (byte) $31, (byte) $32, (byte) $33, (byte) $f, (byte) $35, (byte) $36, (byte) $37, (byte) $f, (byte) $39, (byte) $3a, (byte) $3b, (byte) $f, (byte) $3d, (byte) $3e, (byte) $f, (byte) $f, (byte) $1c, (byte) $15, (byte) $14, (byte) $f, (byte) 2, (byte) $38, (byte) $3c, (byte) $f, (byte) $30, (byte) $37, (byte) $1a, (byte) $f, (byte) $f, (byte) $f, (byte) $f }
+(const byte*) PALETTE[(number) $20]  = { (byte) $f, (byte) $13, (byte) $23, (byte) $33, (byte) $f, (byte) 6, (byte) $15, (byte) $36, (byte) $f, (byte) $39, (byte) $4a, (byte) $5b, (byte) $f, (byte) $3d, (byte) $4e, (byte) $5f, (byte) $f, (byte) $1c, (byte) $15, (byte) $14, (byte) $f, (byte) 2, (byte) $38, (byte) $3c, (byte) $f, (byte) $30, (byte) $37, (byte) $1a, (byte) $f, (byte) $f, (byte) $f, (byte) $f }
 (const struct RICOH_2C02*) PPU = (struct RICOH_2C02*) 8192
+(const nomodify byte*) PPU_ATTRIBUTE_TABLE_0 = (byte*) 9152
+(const nomodify byte*) PPU_NAME_TABLE_0 = (byte*) 8192
 (const nomodify byte*) PPU_PALETTE = (byte*) 16128
 (const to_volatile byte*) PPU_PPUSTATUS = (byte*) 8194
 (byte) RICOH_2A03::DMC_FREQ
@@ -55,46 +55,124 @@
 (byte) RICOH_2C02::PPUSCROLL
 (volatile byte) RICOH_2C02::PPUSTATUS loadstore
 (const byte) SIZEOF_BYTE = (byte) 1
-(const byte) SIZEOF_STRUCT_OBJECTATTRIBUTE = (byte) 4
-(const struct ObjectAttribute*) SPRITES[]  = { { y: (byte) $80, tile: (byte) $36, attributes: (byte) 2, x: (byte) $80 }, { y: (byte) $80, tile: (byte) $37, attributes: (byte) 2, x: (byte) $88 }, { y: (byte) $88, tile: (byte) $38, attributes: (byte) 2, x: (byte) $80 }, { y: (byte) $88, tile: (byte) $39, attributes: (byte) 2, x: (byte) $88 } }
+(const byte) SIZEOF_STRUCT_SPRITEDATA = (byte) 4
+(const struct SpriteData*) SPRITES[]  = { { y: (byte) $80, tile: (byte) $36, attributes: (byte) 2, x: (byte) $80 }, { y: (byte) $80, tile: (byte) $37, attributes: (byte) 2, x: (byte) $88 }, { y: (byte) $88, tile: (byte) $38, attributes: (byte) 2, x: (byte) $80 }, { y: (byte) $88, tile: (byte) $39, attributes: (byte) 2, x: (byte) $88 } }
+(byte) SpriteData::attributes
+(byte) SpriteData::tile
+(byte) SpriteData::x
+(byte) SpriteData::y
 (const byte*) TILES[]  = kickasm {{ .import binary "smb1_chr.bin"
  }}
 (const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_STACK)(void()) vblank(), &(void()) main(), (void()*) 0 }
-(void()) initPalette()
-(label) initPalette::@1
-(label) initPalette::@2
-(label) initPalette::@return
-(byte) initPalette::i
-(byte) initPalette::i#1 reg byte x 2002.0
-(byte) initPalette::i#2 reg byte x 1334.6666666666667
-(void()) initSpriteBuffer()
-(label) initSpriteBuffer::@1
-(label) initSpriteBuffer::@return
-(byte) initSpriteBuffer::i
-(byte) initSpriteBuffer::i#1 reg byte x 1501.5
-(byte) initSpriteBuffer::i#2 reg byte x 2002.0
 (void()) main()
 (label) main::@1
+(label) main::@10
+(label) main::@11
 (label) main::@2
 (label) main::@3
 (label) main::@4
-(label) main::clearVBlankFlag1
-(label) main::disableAudioOutput1
-(label) main::disableVideoOutput1
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@8
+(label) main::@9
 (label) main::enableVideoOutput1
 (byte) main::i
-(byte) main::i#1 reg byte x 151.5
-(byte) main::i#2 reg byte x 112.22222222222223
-(label) main::waitForVBlank1
-(byte~) main::waitForVBlank1_$0 reg byte a 202.0
-(label) main::waitForVBlank1_@1
-(label) main::waitForVBlank2
-(byte~) main::waitForVBlank2_$0 reg byte a 202.0
-(label) main::waitForVBlank2_@1
-(void()) moveLuigiLeft()
-(label) moveLuigiLeft::@return
-(void()) moveLuigiRight()
-(label) moveLuigiRight::@return
+(byte) main::i#1 reg byte x 202.0
+(byte) main::i#2 reg byte x 168.33333333333331
+(label) main::initNES1
+(label) main::initNES1_@1
+(label) main::initNES1_@7
+(label) main::initNES1_clearVBlankFlag1
+(label) main::initNES1_disableAudioOutput1
+(label) main::initNES1_disableVideoOutput1
+(byte) main::initNES1_i
+(byte) main::initNES1_i#1 reg byte x 151.5
+(byte) main::initNES1_i#2 reg byte x 112.22222222222223
+(label) main::initNES1_waitForVBlank1
+(byte~) main::initNES1_waitForVBlank1_$0 reg byte a 202.0
+(label) main::initNES1_waitForVBlank1_@1
+(label) main::initNES1_waitForVBlank2
+(byte~) main::initNES1_waitForVBlank2_$0 reg byte a 202.0
+(label) main::initNES1_waitForVBlank2_@1
+(byte) main::x
+(byte) main::x#1 reg byte x 202.0
+(byte) main::x#2 reg byte x 80.8
+(void()) ppuDataFill((nomodify void*) ppuDataFill::ppuData , (byte) ppuDataFill::val , (word) ppuDataFill::size)
+(label) ppuDataFill::@1
+(label) ppuDataFill::@2
+(label) ppuDataFill::@return
+(word) ppuDataFill::i
+(word) ppuDataFill::i#1 i zp[2]:4 2002.0
+(word) ppuDataFill::i#2 i zp[2]:4 1001.0
+(nomodify void*) ppuDataFill::ppuData
+(label) ppuDataFill::ppuDataPrepare1
+(byte~) ppuDataFill::ppuDataPrepare1_$0 reg byte a 202.0
+(byte~) ppuDataFill::ppuDataPrepare1_$1 reg byte a 202.0
+(nomodify void*) ppuDataFill::ppuDataPrepare1_ppuData
+(nomodify void*) ppuDataFill::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:6 67.33333333333333
+(label) ppuDataFill::ppuDataPut1
+(byte) ppuDataFill::ppuDataPut1_val
+(word) ppuDataFill::size
+(word) ppuDataFill::size#3 size zp[2]:2 111.22222222222223
+(byte) ppuDataFill::val
+(byte) ppuDataFill::val#4 reg byte x 111.22222222222223
+(void()) ppuDataPutTile((nomodify void*) ppuDataPutTile::ppuData , (byte*) ppuDataPutTile::tile)
+(label) ppuDataPutTile::@1
+(label) ppuDataPutTile::@2
+(label) ppuDataPutTile::@3
+(label) ppuDataPutTile::@4
+(label) ppuDataPutTile::@5
+(label) ppuDataPutTile::@return
+(nomodify void*) ppuDataPutTile::ppuData
+(nomodify byte*) ppuDataPutTile::ppuData#0 ppuData zp[2]:6 101.0
+(nomodify void*) ppuDataPutTile::ppuData#2 ppuData zp[2]:6 233.66666666666669
+(nomodify void*) ppuDataPutTile::ppuData#9 ppuData zp[2]:6 202.0
+(label) ppuDataPutTile::ppuDataPrepare1
+(byte~) ppuDataPutTile::ppuDataPrepare1_$0 reg byte a 2002.0
+(byte~) ppuDataPutTile::ppuDataPrepare1_$1 reg byte a 2002.0
+(nomodify void*) ppuDataPutTile::ppuDataPrepare1_ppuData
+(label) ppuDataPutTile::ppuDataPrepare2
+(byte~) ppuDataPutTile::ppuDataPrepare2_$0 reg byte a 2002.0
+(byte~) ppuDataPutTile::ppuDataPrepare2_$1 reg byte a 2002.0
+(nomodify void*) ppuDataPutTile::ppuDataPrepare2_ppuData
+(nomodify byte*) ppuDataPutTile::ppuDataPrepare2_ppuData#0 ppuDataPrepare2_ppuData zp[2]:6 333.6666666666667
+(label) ppuDataPutTile::ppuDataPut1
+(byte) ppuDataPutTile::ppuDataPut1_val
+(byte) ppuDataPutTile::ppuDataPut1_val#0 reg byte a 2002.0
+(label) ppuDataPutTile::ppuDataPut2
+(byte) ppuDataPutTile::ppuDataPut2_val
+(byte) ppuDataPutTile::ppuDataPut2_val#0 reg byte a 2002.0
+(label) ppuDataPutTile::ppuDataPut3
+(byte) ppuDataPutTile::ppuDataPut3_val
+(byte) ppuDataPutTile::ppuDataPut3_val#0 reg byte a 2002.0
+(label) ppuDataPutTile::ppuDataPut4
+(byte) ppuDataPutTile::ppuDataPut4_val
+(byte) ppuDataPutTile::ppuDataPut4_val#0 reg byte a 2002.0
+(byte*) ppuDataPutTile::tile
+(byte*) ppuDataPutTile::tile#10 tile zp[2]:2 250.25
+(void()) ppuDataTransfer((nomodify void*) ppuDataTransfer::ppuData , (nomodify void*) ppuDataTransfer::cpuData , (word) ppuDataTransfer::size)
+(label) ppuDataTransfer::@1
+(label) ppuDataTransfer::@2
+(label) ppuDataTransfer::@3
+(label) ppuDataTransfer::@return
+(nomodify void*) ppuDataTransfer::cpuData
+(const nomodify void*) ppuDataTransfer::cpuData#0 cpuData = (void*)(const byte*) PALETTE
+(byte*) ppuDataTransfer::cpuSrc
+(byte*) ppuDataTransfer::cpuSrc#1 cpuSrc zp[2]:6 1001.0
+(byte*) ppuDataTransfer::cpuSrc#2 cpuSrc zp[2]:6 750.75
+(word) ppuDataTransfer::i
+(word) ppuDataTransfer::i#1 i zp[2]:4 2002.0
+(word) ppuDataTransfer::i#2 i zp[2]:4 600.5999999999999
+(nomodify void*) ppuDataTransfer::ppuData
+(const nomodify void*) ppuDataTransfer::ppuData#0 ppuData = (void*)(const nomodify byte*) PPU_PALETTE
+(label) ppuDataTransfer::ppuDataPrepare1
+(nomodify void*) ppuDataTransfer::ppuDataPrepare1_ppuData
+(label) ppuDataTransfer::ppuDataPut1
+(byte) ppuDataTransfer::ppuDataPut1_val
+(byte) ppuDataTransfer::ppuDataPut1_val#0 reg byte a 2002.0
+(word) ppuDataTransfer::size
+(const word) ppuDataTransfer::size#0 size = (byte) $20*(const byte) SIZEOF_BYTE
 interrupt(HARDWARE_STACK)(void()) vblank()
 (byte~) vblank::$1 reg byte a 4.0
 (byte~) vblank::$3 reg byte a 4.0
@@ -103,12 +181,28 @@ interrupt(HARDWARE_STACK)(void()) vblank()
 (label) vblank::@3
 (label) vblank::@4
 (label) vblank::@return
-(label) vblank::transferSpriteBufferToPpu1
+(label) vblank::ppuSpriteBufferDmaTransfer1
+(struct SpriteData*) vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer
 
+reg byte x [ main::initNES1_i#2 main::initNES1_i#1 ]
+reg byte x [ main::x#2 main::x#1 ]
 reg byte x [ main::i#2 main::i#1 ]
-reg byte x [ initSpriteBuffer::i#2 initSpriteBuffer::i#1 ]
-reg byte x [ initPalette::i#2 initPalette::i#1 ]
-reg byte a [ main::waitForVBlank1_$0 ]
-reg byte a [ main::waitForVBlank2_$0 ]
+zp[2]:2 [ ppuDataFill::size#3 ppuDataPutTile::tile#10 ]
+reg byte x [ ppuDataFill::val#4 ]
+zp[2]:4 [ ppuDataTransfer::i#2 ppuDataTransfer::i#1 ppuDataFill::i#2 ppuDataFill::i#1 ]
+zp[2]:6 [ ppuDataTransfer::cpuSrc#2 ppuDataTransfer::cpuSrc#1 ppuDataFill::ppuDataPrepare1_ppuData#0 ppuDataPutTile::ppuData#2 ppuDataPutTile::ppuData#9 ppuDataPutTile::ppuData#0 ppuDataPutTile::ppuDataPrepare2_ppuData#0 ]
+reg byte a [ main::initNES1_waitForVBlank1_$0 ]
+reg byte a [ main::initNES1_waitForVBlank2_$0 ]
+reg byte a [ ppuDataPutTile::ppuDataPrepare1_$0 ]
+reg byte a [ ppuDataPutTile::ppuDataPrepare1_$1 ]
+reg byte a [ ppuDataPutTile::ppuDataPut1_val#0 ]
+reg byte a [ ppuDataPutTile::ppuDataPut2_val#0 ]
+reg byte a [ ppuDataPutTile::ppuDataPrepare2_$0 ]
+reg byte a [ ppuDataPutTile::ppuDataPrepare2_$1 ]
+reg byte a [ ppuDataPutTile::ppuDataPut3_val#0 ]
+reg byte a [ ppuDataPutTile::ppuDataPut4_val#0 ]
+reg byte a [ ppuDataFill::ppuDataPrepare1_$0 ]
+reg byte a [ ppuDataFill::ppuDataPrepare1_$1 ]
+reg byte a [ ppuDataTransfer::ppuDataPut1_val#0 ]
 reg byte a [ vblank::$1 ]
 reg byte a [ vblank::$3 ]

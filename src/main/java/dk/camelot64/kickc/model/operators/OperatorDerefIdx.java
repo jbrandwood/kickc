@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorDerefIdx extends OperatorBinary {
 
    public OperatorDerefIdx(int precedence) {
-      super("*idx=", "_derefidx_", precedence);
+      super("*idx=", "_derefidx_", precedence, false);
    }
 
    @Override

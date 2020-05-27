@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorSetLow extends OperatorBinary {
 
    public OperatorSetLow(int precedence) {
-      super("lo=", "_setlo_", precedence);
+      super("lo=", "_setlo_", precedence, false);
    }
 
    @Override

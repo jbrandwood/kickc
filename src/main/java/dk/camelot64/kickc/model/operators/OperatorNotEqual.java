@@ -10,7 +10,7 @@ import java.util.Objects;
 public class OperatorNotEqual extends OperatorBinary {
 
    public OperatorNotEqual(int precedence) {
-      super("!=", "_neq_", precedence);
+      super("!=", "_neq_", precedence, false);
    }
 
    @Override

@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorShiftRight extends OperatorBinary {
 
    public OperatorShiftRight(int precedence) {
-      super(">>", "_ror_", precedence);
+      super(">>", "_ror_", precedence, false);
    }
 
    @Override

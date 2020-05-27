@@ -11,7 +11,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorDWord extends OperatorBinary {
 
    public OperatorDWord(int precedence) {
-      super("dw=", "_dword_", precedence);
+      super("dw=", "_dword_", precedence, false);
    }
 
    @Override

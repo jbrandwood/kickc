@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.values.*;
 public class OperatorLessThanEqual extends OperatorBinary {
 
    public OperatorLessThanEqual(int precedence) {
-      super("<=", "_le_", precedence);
+      super("<=", "_le_", precedence, false);
    }
 
    @Override

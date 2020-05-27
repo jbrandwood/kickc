@@ -14,7 +14,7 @@ import dk.camelot64.kickc.model.values.ConstantPointer;
 public class OperatorBitwiseOr extends OperatorBinary {
 
    public OperatorBitwiseOr(int precedence) {
-      super("|", "_bor_", precedence);
+      super("|", "_bor_", precedence, true);
    }
 
    @Override

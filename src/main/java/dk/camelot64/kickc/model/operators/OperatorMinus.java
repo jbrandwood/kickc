@@ -11,7 +11,7 @@ import dk.camelot64.kickc.model.values.*;
 public class OperatorMinus extends OperatorBinary {
 
    public OperatorMinus(int precedence) {
-      super("-", "_minus_", precedence);
+      super("-", "_minus_", precedence, false);
    }
 
    @Override

@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorLogicAnd extends OperatorBinary {
 
    public OperatorLogicAnd(int precedence) {
-      super("&&", "_and_", precedence);
+      super("&&", "_and_", precedence, true);
    }
 
    @Override

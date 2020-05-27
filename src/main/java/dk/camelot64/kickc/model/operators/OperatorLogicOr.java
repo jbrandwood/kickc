@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorLogicOr extends OperatorBinary {
 
    public OperatorLogicOr(int precedence) {
-      super("||", "_or_", precedence);
+      super("||", "_or_", precedence, true);
    }
 
    @Override

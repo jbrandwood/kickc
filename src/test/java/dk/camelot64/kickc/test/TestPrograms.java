@@ -44,6 +44,18 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+
+   @Test
+   public void testProblemMaVarOverwrite() throws IOException, URISyntaxException {
+      compileAndCompare("problem-ma-var-overwrite.c");
+   }
+
+   @Test
+   public void testMinusPrecedenceProblem() throws IOException, URISyntaxException {
+      compileAndCompare("minus-precedence-problem.c");
+   }
+
+
    @Test
    public void testNesDemo() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes/nes-demo.c");

@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorAssignment extends OperatorBinary {
 
    public OperatorAssignment(int precedence) {
-      super("=", "_assign_", precedence);
+      super("=", "_assign_", precedence, false);
    }
 
    @Override

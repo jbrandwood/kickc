@@ -10,7 +10,7 @@ import dk.camelot64.kickc.model.values.ConstantPointer;
 public class OperatorModulo extends OperatorBinary {
 
    public OperatorModulo(int precedence) {
-      super("%", "_mod_", precedence);
+      super("%", "_mod_", precedence, false);
    }
 
    @Override

@@ -6,8 +6,12 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 /** A binary expression operator */
 public abstract class OperatorBinary extends Operator {
 
-   public OperatorBinary(String operator, String asmOperator, int precedence) {
+   /** Is the operator associative, meaning that (A+B)+C = A+(B+C). */
+   private boolean associative;
+
+   public OperatorBinary(String operator, String asmOperator, int precedence, boolean associative) {
       super(operator, asmOperator, Type.BINARY, precedence);
+      this.associative = associative;
    }
 
    /**
@@ -26,4 +30,7 @@ public abstract class OperatorBinary extends Operator {
     */
    public abstract SymbolType inferType(SymbolType left, SymbolType right);
 
+   public boolean isAssociative() {
+      return associative;
+   }
 }

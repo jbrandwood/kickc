@@ -10,7 +10,7 @@ import dk.camelot64.kickc.model.values.ConstantPointer;
 public class OperatorDivide extends OperatorBinary {
 
    public OperatorDivide(int precedence) {
-      super("/", "_div_", precedence);
+      super("/", "_div_", precedence, false);
    }
 
    @Override

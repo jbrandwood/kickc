@@ -12,7 +12,7 @@ import dk.camelot64.kickc.model.values.*;
 public class OperatorPlus extends OperatorBinary {
 
    public OperatorPlus(int precedence) {
-      super("+", "_plus_", precedence);
+      super("+", "_plus_", precedence, true);
    }
 
    @Override

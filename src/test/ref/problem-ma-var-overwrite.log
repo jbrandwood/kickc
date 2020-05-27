@@ -1,0 +1,536 @@
+
+CONTROL FLOW GRAPH SSA
+@begin: scope:[]  from
+  (volatile byte*) h1 ← (byte*) 0
+  to:@1
+
+(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
+test: scope:[test]  from main
+  (byte*) test::other#1 ← phi( main/(byte*) test::other#0 )
+  (byte*) test::videoMem#1 ← phi( main/(byte*) test::videoMem#0 )
+  (byte*) test::colorMem#1 ← phi( main/(byte*) test::colorMem#0 )
+  (byte*) test::diff#0 ← (byte*) 0
+  (byte*) test::dst ← (byte*) 0
+  (word~) test::$0 ← (byte*) test::colorMem#1 - (byte*) test::videoMem#1
+  (byte*) test::diff#1 ← ((byte*)) (word~) test::$0
+  (word~) test::$2 ← (word)(byte*) test::diff#1
+  (byte*~) test::$1 ← (byte*) test::other#1 + (word~) test::$2
+  (byte*) test::dst ← (byte*~) test::$1
+  *((byte*) test::dst + (number) 0) ← (number) 1
+  asm { ldy#0 lda#1 sta(dst),y  }
+  to:test::@return
+test::@return: scope:[test]  from test
+  return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from @1
+  (byte*) test::videoMem#0 ← (volatile byte*) h1
+  (byte*) test::colorMem#0 ← (byte*)(number) $d800
+  (byte*) test::other#0 ← (byte*)(number) $c000
+  call test 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+@1: scope:[]  from @begin
+  call main 
+  to:@2
+@2: scope:[]  from @1
+  to:@end
+@end: scope:[]  from @2
+
+SYMBOL TABLE SSA
+(label) @1
+(label) @2
+(label) @begin
+(label) @end
+(volatile byte*) h1 loadstore
+(void()) main()
+(label) main::@1
+(label) main::@return
+(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
+(word~) test::$0
+(byte*~) test::$1
+(word~) test::$2
+(label) test::@return
+(byte*) test::colorMem
+(byte*) test::colorMem#0
+(byte*) test::colorMem#1
+(byte*) test::diff
+(byte*) test::diff#0
+(byte*) test::diff#1
+(byte*) test::dst loadstore
+(byte*) test::other
+(byte*) test::other#0
+(byte*) test::other#1
+(byte*) test::videoMem
+(byte*) test::videoMem#0
+(byte*) test::videoMem#1
+
+Adding number conversion cast (unumber) 1 in *((byte*) test::dst + (number) 0) ← (number) 1
+Adding number conversion cast (unumber) 0 in *((byte*) test::dst + (number) 0) ← ((unumber)) (number) 1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte*) test::diff#1 ← (byte*)(word~) test::$0
+Inlining cast *((byte*) test::dst + (unumber)(number) 0) ← (unumber)(number) 1
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant pointer cast (byte*) 55296
+Simplifying constant pointer cast (byte*) 49152
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)test::dst = test::$1 
+Identical Phi Values (byte*) test::colorMem#1 (byte*) test::colorMem#0
+Identical Phi Values (byte*) test::videoMem#1 (byte*) test::videoMem#0
+Identical Phi Values (byte*) test::other#1 (byte*) test::other#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant (const byte*) test::diff#0 = (byte*) 0
+Constant (const byte*) test::colorMem#0 = (byte*) 55296
+Constant (const byte*) test::other#0 = (byte*) 49152
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero test::dst in [9] *((byte*) test::dst + (byte) 0) ← (byte) 1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte*) test::diff#0
+Successful SSA optimization PassNEliminateUnusedVars
+Alias candidate removed (volatile)test::dst = test::$1 
+Inlining Noop Cast [3] (byte*) test::diff#1 ← (byte*)(word~) test::$0 keeping test::diff#1
+Successful SSA optimization Pass2NopCastInlining
+Inlining Noop Cast [4] (word~) test::$2 ← (word)(byte*)(word) test::diff#1 keeping (byte*)test::diff#1
+Successful SSA optimization Pass2NopCastInlining
+Alias candidate removed (volatile)test::dst = test::$1 
+Alias candidate removed (volatile)test::dst = test::$1 
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @2
+Adding NOP phi() at start of @end
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [] to main:2 
+Calls in [main] to test:6 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) @2
+Culled Empty Block (label) main::@1
+Adding NOP phi() at start of @1
+Adding NOP phi() at start of @end
+
+FINAL CONTROL FLOW GRAPH
+@begin: scope:[]  from
+  [0] (volatile byte*) h1 ← (byte*) 0
+  to:@1
+@1: scope:[]  from @begin
+  [1] phi()
+  [2] call main 
+  to:@end
+@end: scope:[]  from @1
+  [3] phi()
+
+(void()) main()
+main: scope:[main]  from @1
+  [4] (byte*) test::videoMem#0 ← (volatile byte*) h1
+  [5] call test 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+
+(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
+test: scope:[test]  from main
+  [7] (byte*) test::dst ← (byte*) 0
+  [8] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0
+  [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1
+  [10] (byte*) test::dst ← (byte*~) test::$1
+  [11] *((byte*) test::dst) ← (byte) 1
+  asm { ldy#0 lda#1 sta(dst),y  }
+  to:test::@return
+test::@return: scope:[test]  from test
+  [13] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(volatile byte*) h1 loadstore 6.5
+(void()) main()
+(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
+(byte*~) test::$1 202.0
+(byte*) test::colorMem
+(byte*) test::diff
+(word) test::diff#1 101.0
+(byte*) test::dst loadstore 151.5
+(byte*) test::other
+(byte*) test::videoMem
+(byte*) test::videoMem#0 56.0
+
+Initial phi equivalence classes
+Added variable h1 to live range equivalence class [ h1 ]
+Added variable test::videoMem#0 to live range equivalence class [ test::videoMem#0 ]
+Added variable test::dst to live range equivalence class [ test::dst ]
+Added variable test::diff#1 to live range equivalence class [ test::diff#1 ]
+Added variable test::$1 to live range equivalence class [ test::$1 ]
+Complete equivalence classes
+[ h1 ]
+[ test::videoMem#0 ]
+[ test::dst ]
+[ test::diff#1 ]
+[ test::$1 ]
+Allocated zp[2]:2 [ h1 ]
+Allocated zp[2]:4 [ test::videoMem#0 ]
+Allocated zp[2]:6 [ test::dst ]
+Allocated zp[2]:8 [ test::diff#1 ]
+Allocated zp[2]:10 [ test::$1 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Demonstrates that a local __ma variable overwrites a parameter§
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label h1 = 2
+  // @begin
+__bbegin:
+  // [0] (volatile byte*) h1 ← (byte*) 0 -- pbuz1=pbuc1 
+  lda #<0
+  sta.z h1
+  lda #>0
+  sta.z h1+1
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [4] (byte*) test::videoMem#0 ← (volatile byte*) h1 -- pbuz1=pbuz2 
+    lda.z h1
+    sta.z test.videoMem
+    lda.z h1+1
+    sta.z test.videoMem+1
+    // [5] call test 
+    jsr test
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // test
+// This must be volatile because is used in an interrupt routine...
+// test(byte* zp(4) videoMem)
+test: {
+    .label colorMem = $d800
+    .label other = $c000
+    .label dst = 6
+    .label __1 = $a
+    .label diff = 8
+    .label videoMem = 4
+    // [7] (byte*) test::dst ← (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z dst
+    lda #>0
+    sta.z dst+1
+    // [8] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz2 
+    sec
+    lda #<colorMem
+    sbc.z videoMem
+    sta.z diff
+    lda #>colorMem
+    sbc.z videoMem+1
+    sta.z diff+1
+    // [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z diff
+    clc
+    adc #<other
+    sta.z __1
+    lda.z diff+1
+    adc #>other
+    sta.z __1+1
+    // [10] (byte*) test::dst ← (byte*~) test::$1 -- pbuz1=pbuz2 
+    lda.z __1
+    sta.z dst
+    lda.z __1+1
+    sta.z dst+1
+    // [11] *((byte*) test::dst) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    lda #1
+    ldy #0
+    sta (dst),y
+    // asm { ldy#0 lda#1 sta(dst),y  }
+    ldy #0
+    lda #1
+    sta (dst),y
+    jmp __breturn
+    // test::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] (volatile byte*) h1 ← (byte*) 0 [ h1 ] (  [ h1 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte*) test::videoMem#0 ← (volatile byte*) h1 [ test::videoMem#0 ] ( main:2 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [7] (byte*) test::dst ← (byte*) 0 [ test::videoMem#0 ] ( main:2::test:5 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [8] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 [ test::diff#1 ] ( main:2::test:5 [ test::diff#1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 [ test::$1 ] ( main:2::test:5 [ test::$1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [10] (byte*) test::dst ← (byte*~) test::$1 [ test::dst ] ( main:2::test:5 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [11] *((byte*) test::dst) ← (byte) 1 [ test::dst ] ( main:2::test:5 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a reg byte y 
+Statement asm { ldy#0 lda#1 sta(dst),y  } always clobbers reg byte a reg byte y 
+Potential registers zp[2]:2 [ h1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ test::videoMem#0 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ test::dst ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ test::diff#1 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ test::$1 ] : zp[2]:10 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [test] 202: zp[2]:10 [ test::$1 ] 151.5: zp[2]:6 [ test::dst ] 101: zp[2]:8 [ test::diff#1 ] 56: zp[2]:4 [ test::videoMem#0 ] 
+Uplift Scope [] 6.5: zp[2]:2 [ h1 ] 
+Uplift Scope [main] 
+
+Uplifting [test] best 136 combination zp[2]:10 [ test::$1 ] zp[2]:6 [ test::dst ] zp[2]:8 [ test::diff#1 ] zp[2]:4 [ test::videoMem#0 ] 
+Uplifting [] best 136 combination zp[2]:2 [ h1 ] 
+Uplifting [main] best 136 combination 
+Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 ] ] with [ zp[2]:8 [ test::diff#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:6 [ test::dst ] ] with [ zp[2]:10 [ test::$1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 test::diff#1 ] ] with [ zp[2]:6 [ test::dst test::$1 ] ] - score: 1
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates that a local __ma variable overwrites a parameter§
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label h1 = 2
+  // @begin
+__bbegin:
+  // [0] (volatile byte*) h1 ← (byte*) 0 -- pbuz1=pbuc1 
+  lda #<0
+  sta.z h1
+  lda #>0
+  sta.z h1+1
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+__b1_from___bbegin:
+  jmp __b1
+  // @1
+__b1:
+  // [2] call main 
+  jsr main
+  // [3] phi from @1 to @end [phi:@1->@end]
+__bend_from___b1:
+  jmp __bend
+  // @end
+__bend:
+  // main
+main: {
+    // [4] (byte*) test::videoMem#0 ← (volatile byte*) h1 -- pbuz1=pbuz2 
+    lda.z h1
+    sta.z test.videoMem
+    lda.z h1+1
+    sta.z test.videoMem+1
+    // [5] call test 
+    jsr test
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // test
+// This must be volatile because is used in an interrupt routine...
+// test(byte* zp(4) videoMem)
+test: {
+    .label colorMem = $d800
+    .label other = $c000
+    .label dst = 4
+    .label __1 = 4
+    .label diff = 4
+    .label videoMem = 4
+    // [7] (byte*) test::dst ← (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z dst
+    lda #>0
+    sta.z dst+1
+    // [8] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz1 
+    sec
+    lda #<colorMem
+    sbc.z diff
+    sta.z diff
+    lda #>colorMem
+    sbc.z diff+1
+    sta.z diff+1
+    // [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda.z __1
+    adc #<other
+    sta.z __1
+    lda.z __1+1
+    adc #>other
+    sta.z __1+1
+    // [10] (byte*) test::dst ← (byte*~) test::$1
+    // [11] *((byte*) test::dst) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    lda #1
+    ldy #0
+    sta (dst),y
+    // asm { ldy#0 lda#1 sta(dst),y  }
+    ldy #0
+    lda #1
+    sta (dst),y
+    jmp __breturn
+    // test::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Removing instruction lda #>0
+Removing instruction ldy #0
+Removing instruction lda #1
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b1_from___bbegin:
+Removing instruction __bend_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b1:
+Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Adding RTS to root block 
+Succesful ASM optimization Pass5AddMainRts
+
+FINAL SYMBOL TABLE
+(label) @1
+(label) @begin
+(label) @end
+(volatile byte*) h1 loadstore zp[2]:2 6.5
+(void()) main()
+(label) main::@return
+(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
+(byte*~) test::$1 zp[2]:4 202.0
+(label) test::@return
+(byte*) test::colorMem
+(const byte*) test::colorMem#0 colorMem = (byte*) 55296
+(byte*) test::diff
+(word) test::diff#1 diff zp[2]:4 101.0
+(byte*) test::dst loadstore zp[2]:4 151.5
+(byte*) test::other
+(const byte*) test::other#0 other = (byte*) 49152
+(byte*) test::videoMem
+(byte*) test::videoMem#0 videoMem zp[2]:4 56.0
+
+zp[2]:2 [ h1 ]
+zp[2]:4 [ test::videoMem#0 test::diff#1 test::dst test::$1 ]
+
+
+FINAL ASSEMBLER
+Score: 110
+
+  // File Comments
+// Demonstrates that a local __ma variable overwrites a parameter§
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(__bbegin)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label h1 = 2
+  // @begin
+__bbegin:
+  // h1
+  // [0] (volatile byte*) h1 ← (byte*) 0 -- pbuz1=pbuc1 
+  lda #<0
+  sta.z h1
+  sta.z h1+1
+  // [1] phi from @begin to @1 [phi:@begin->@1]
+  // @1
+  // [2] call main 
+  jsr main
+  rts
+  // [3] phi from @1 to @end [phi:@1->@end]
+  // @end
+  // main
+main: {
+    // test(h1, 0xD800, 0xC000)
+    // [4] (byte*) test::videoMem#0 ← (volatile byte*) h1 -- pbuz1=pbuz2 
+    lda.z h1
+    sta.z test.videoMem
+    lda.z h1+1
+    sta.z test.videoMem+1
+    // [5] call test 
+    jsr test
+    // main::@return
+    // }
+    // [6] return 
+    rts
+}
+  // test
+// This must be volatile because is used in an interrupt routine...
+// test(byte* zp(4) videoMem)
+test: {
+    .label colorMem = $d800
+    .label other = $c000
+    .label dst = 4
+    .label __1 = 4
+    .label diff = 4
+    .label videoMem = 4
+    // dst
+    // [7] (byte*) test::dst ← (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z dst
+    sta.z dst+1
+    // colorMem - videoMem
+    // [8] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz1 
+    sec
+    lda #<colorMem
+    sbc.z diff
+    sta.z diff
+    lda #>colorMem
+    sbc.z diff+1
+    sta.z diff+1
+    // other + ((unsigned int)diff)
+    // [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda.z __1
+    adc #<other
+    sta.z __1
+    lda.z __1+1
+    adc #>other
+    sta.z __1+1
+    // dst = other + ((unsigned int)diff)
+    // [10] (byte*) test::dst ← (byte*~) test::$1
+    // dst[0] = 1
+    // [11] *((byte*) test::dst) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    lda #1
+    ldy #0
+    sta (dst),y
+    // asm
+    // asm { ldy#0 lda#1 sta(dst),y  }
+    sta (dst),y
+    // test::@return
+    // }
+    // [13] return 
+    rts
+}
+  // File Data
+

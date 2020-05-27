@@ -10,7 +10,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorLessThan extends OperatorBinary {
 
    public OperatorLessThan(int precedence) {
-      super("<", "_lt_", precedence);
+      super("<", "_lt_", precedence, false);
    }
 
    @Override

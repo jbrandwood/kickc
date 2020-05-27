@@ -11,7 +11,7 @@ import dk.camelot64.kickc.model.values.ConstantPointer;
 public class OperatorBitwiseAnd extends OperatorBinary {
 
    public OperatorBitwiseAnd(int precedence) {
-      super("&", "_band_", precedence);
+      super("&", "_band_", precedence, true);
    }
 
    @Override

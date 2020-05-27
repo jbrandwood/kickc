@@ -89,6 +89,7 @@ public class AsmFormat {
     * @return
     */
    private static String getAsmConstantBinary(Program program, ConstantValue left, OperatorBinary operator, ConstantValue right, ScopeRef codeScope) {
+
       if(Operators.MODULO.equals(operator)) {
          // Remainder operator % not supported by KickAss - use modulo function instead
          return "mod(" +
@@ -96,11 +97,20 @@ public class AsmFormat {
                "," +
                getAsmConstant(program, right, operator.getPrecedence(), codeScope) +
                ")";
-      } else {
-         return getAsmConstant(program, left, operator.getPrecedence(), codeScope) +
-               operator.getOperator() +
-               getAsmConstant(program, right, operator.getPrecedence(), codeScope);
       }
+
+      // Handle non-associative operators - only handle right side since parser is left-associativeA-B-C = (A-B)-C
+      boolean rightParenthesis = false;
+      if(!operator.isAssociative()) {
+         if(right instanceof ConstantBinary && ((ConstantBinary) right).getOperator().equals(operator)) {
+            // Right sub-expression is also binary with the same non-associative operator
+            rightParenthesis = true;
+         }
+      }
+
+      return getAsmConstant(program, left, operator.getPrecedence(), codeScope) +
+            operator.getOperator() +
+            (rightParenthesis ? "(" : "") + getAsmConstant(program, right, operator.getPrecedence(), codeScope) + (rightParenthesis ? ")" : "");
    }
 
    /**
@@ -220,9 +230,9 @@ public class AsmFormat {
       } else if(Operators.POS.equals(operator)) {
          return getAsmConstant(program, operand, outerPrecedence, codeScope);
       } else if(Operators.NEG.equals(operator) && operand instanceof ConstantUnary) {
-         return operator.getOperator() + "(" +getAsmConstant(program, operand, operator.getPrecedence(), codeScope)+ ")";
-      } else if(Operators.NEG.equals(operator) && operand instanceof ConstantInteger && ((ConstantInteger) operand).getInteger()<0) {
-         return operator.getOperator() + "(" +getAsmConstant(program, operand, operator.getPrecedence(), codeScope)+ ")";
+         return operator.getOperator() + "(" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope) + ")";
+      } else if(Operators.NEG.equals(operator) && operand instanceof ConstantInteger && ((ConstantInteger) operand).getInteger() < 0) {
+         return operator.getOperator() + "(" + getAsmConstant(program, operand, operator.getPrecedence(), codeScope) + ")";
       } else {
          return operator.getOperator() +
                getAsmConstant(program, operand, operator.getPrecedence(), codeScope);

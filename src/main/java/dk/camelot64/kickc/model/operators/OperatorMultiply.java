@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorMultiply extends OperatorBinary {
 
    public OperatorMultiply(int precedence) {
-      super("*", "_mul_", precedence);
+      super("*", "_mul_", precedence, true);
    }
 
    @Override

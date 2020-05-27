@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.ConstantLiteral;
 public class OperatorSetHigh extends OperatorBinary {
 
    public OperatorSetHigh(int precedence) {
-      super("hi=", "_sethi_", precedence);
+      super("hi=", "_sethi_", precedence, false);
    }
 
    @Override

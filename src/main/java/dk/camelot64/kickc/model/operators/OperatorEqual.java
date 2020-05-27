@@ -12,7 +12,7 @@ import java.util.Objects;
 public class OperatorEqual extends OperatorBinary {
 
    public OperatorEqual(int precedence) {
-      super("==", "_eq_", precedence);
+      super("==", "_eq_", precedence, false);
    }
 
    @Override

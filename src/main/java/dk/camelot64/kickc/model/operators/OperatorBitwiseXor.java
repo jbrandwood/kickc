@@ -11,7 +11,7 @@ import dk.camelot64.kickc.model.values.ConstantPointer;
 public class OperatorBitwiseXor extends OperatorBinary {
 
    public OperatorBitwiseXor(int precedence) {
-      super("^", "_bxor_", precedence);
+      super("^", "_bxor_", precedence, true);
    }
 
    @Override

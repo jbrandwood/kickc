@@ -44,9 +44,6 @@ public class Compiler {
     */
    private boolean enableLoopHeadConstant = false;
 
-   /** Variable optimization/memory area configuration to use (from command line parameter). */
-   private VariableBuilderConfig variableBuilderConfig;
-
    /** The initial calling convention to use when compiling (from command line parameter). */
    private Procedure.CallingConvention callingConvention;
 
@@ -58,7 +55,7 @@ public class Compiler {
       return program;
    }
 
-   public void setDisableUplift(boolean disableUplift) {
+   void setDisableUplift(boolean disableUplift) {
       this.disableUplift = disableUplift;
    }
 
@@ -66,12 +63,8 @@ public class Compiler {
       program.setWarnFragmentMissing(warnFragmentMissing);
    }
 
-   public void setWarnArrayType(boolean warnArrayType) {
+   void setWarnArrayType(boolean warnArrayType) {
       program.setWarnArrayType(warnArrayType);
-   }
-
-   public void setVariableBuilderConfig(VariableBuilderConfig variableBuilderConfig) {
-      this.variableBuilderConfig = variableBuilderConfig;
    }
 
    public void setCallingConvention(Procedure.CallingConvention callingConvention) {
@@ -185,18 +178,11 @@ public class Compiler {
          // Parse the files
          KickCParser.FileContext cFileContext = cParser.getParser().file();
 
-         if(variableBuilderConfig == null) {
-            VariableBuilderConfig config = new VariableBuilderConfig();
-            VariableBuilderConfig.defaultPreConfig(config, getLog());
-            VariableBuilderConfig.defaultPostConfig(config, getLog());
-            this.variableBuilderConfig = config;
-         }
-
          if(callingConvention == null) {
             callingConvention = Procedure.CallingConvention.PHI_CALL;
          }
 
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, variableBuilderConfig, callingConvention);
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention);
          pass0GenerateStatementSequence.generate();
 
          StatementSequence sequence = program.getStatementSequence();

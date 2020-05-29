@@ -329,8 +329,8 @@ public class KickC implements Callable<Integer> {
             List<String> settings = Arrays.asList(varModel.split(","));
             settings = settings.stream().map(String::trim).collect(Collectors.toList());
             try {
-               VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, StatementSource.NONE, compiler.getLog());
-               compiler.setVariableBuilderConfig(config);
+               VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, StatementSource.NONE);
+               program.getTargetPlatform().setVariableBuilderConfig(config);
             } catch(CompileError e) {
                System.err.println(e.getMessage());
                return COMPILE_ERROR;

@@ -39,8 +39,15 @@ public class TargetPlatform {
    /** Reserved zeropage addresses. */
    private List<Integer> reservedZps = new ArrayList<>();
 
+   /** Configuration for the variable builder. */
+   private VariableBuilderConfig variableBuilderConfig;
+
    public TargetPlatform(String name) {
       this.name = name;
+      VariableBuilderConfig config = new VariableBuilderConfig();
+      VariableBuilderConfig.defaultPreConfig(config);
+      VariableBuilderConfig.defaultPostConfig(config);
+      this.variableBuilderConfig = config;
    }
 
    public String getName() {
@@ -110,5 +117,13 @@ public class TargetPlatform {
 
    public List<Integer> getReservedZps() {
       return reservedZps;
+   }
+
+   public VariableBuilderConfig getVariableBuilderConfig() {
+      return variableBuilderConfig;
+   }
+
+   public void setVariableBuilderConfig(VariableBuilderConfig variableBuilderConfig) {
+      this.variableBuilderConfig = variableBuilderConfig;
    }
 }

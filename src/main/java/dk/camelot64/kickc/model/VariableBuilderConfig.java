@@ -47,7 +47,7 @@ public class VariableBuilderConfig {
     * @param program The program log (used for error messages)
     * @return A variable builder configuration
     */
-   public static VariableBuilderConfig fromSettings(List<String> settings, StatementSource statementSource, CompileLog log) {
+   public static VariableBuilderConfig fromSettings(List<String> settings, StatementSource statementSource) {
       // Detect if the first setting is "full"
       boolean full = false;
       if(settings.size() > 0 && settings.get(0).equals(SETTING_FULL)) {
@@ -56,13 +56,13 @@ public class VariableBuilderConfig {
       }
       VariableBuilderConfig config = new VariableBuilderConfig();
       if(!full)
-         defaultPreConfig(config, log);
+         defaultPreConfig(config);
       // Apply all settings
       for(String setting : settings) {
-         config.addSetting(setting, log, statementSource);
+         config.addSetting(setting, statementSource);
       }
       if(!full)
-         defaultPostConfig(config, log);
+         defaultPostConfig(config);
       return config;
    }
 
@@ -75,8 +75,8 @@ public class VariableBuilderConfig {
     * @param config The variable builder configuration
     * @param log The compile log
     */
-   public static void defaultPreConfig(VariableBuilderConfig config, CompileLog log) {
-      config.addSetting("ssa_zp", log, StatementSource.NONE);
+   public static void defaultPreConfig(VariableBuilderConfig config) {
+      config.addSetting("ssa_zp", StatementSource.NONE);
    }
 
    /**
@@ -85,15 +85,15 @@ public class VariableBuilderConfig {
     * @param config The variable builder configuration
     * @param log The compile log
     */
-   public static void defaultPostConfig(VariableBuilderConfig config, CompileLog log) {
+   public static void defaultPostConfig(VariableBuilderConfig config) {
       // Arrays are always load/store variables in main memory
-      config.addSetting("array_ma_mem", log, StatementSource.NONE);
+      config.addSetting("array_ma_mem", StatementSource.NONE);
       // Global struct values are always load/store variables in main memory
-      config.addSetting("global_struct_ma_mem", log, StatementSource.NONE);
+      config.addSetting("global_struct_ma_mem", StatementSource.NONE);
       // Parameters are always passed using single-static-assignment
-      config.addSetting("parameter_ssa", log, StatementSource.NONE);
+      config.addSetting("parameter_ssa", StatementSource.NONE);
       // Pointers are always on zeropage
-      config.addSetting("pointer_zp", log, StatementSource.NONE);
+      config.addSetting("pointer_zp", StatementSource.NONE);
    }
 
    /** The different scopes. */
@@ -170,7 +170,7 @@ public class VariableBuilderConfig {
       this.settings = new HashMap<>();
    }
 
-   public void addSetting(String pragmaParam, CompileLog log, StatementSource statementSource) {
+   public void addSetting(String pragmaParam, StatementSource statementSource) {
       List<String> paramElements = new ArrayList<>(Arrays.asList(pragmaParam.split("_")));
       List<Scope> scopes = getScopes(paramElements);
       List<Type> types = getTypes(paramElements);

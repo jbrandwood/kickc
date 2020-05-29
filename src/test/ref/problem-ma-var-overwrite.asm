@@ -25,8 +25,8 @@ main: {
 test: {
     .label colorMem = $d800
     .label other = $c000
-    .label dst = 4
-    .label __1 = 4
+    .label dst = 6
+    .label __1 = 6
     .label diff = 4
     .label videoMem = 4
     // dst
@@ -42,11 +42,11 @@ test: {
     sbc.z diff+1
     sta.z diff+1
     // other + ((unsigned int)diff)
+    lda.z diff
     clc
-    lda.z __1
     adc #<other
     sta.z __1
-    lda.z __1+1
+    lda.z diff+1
     adc #>other
     sta.z __1+1
     // dst = other + ((unsigned int)diff)

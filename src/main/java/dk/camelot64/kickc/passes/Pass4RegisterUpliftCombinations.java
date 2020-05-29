@@ -198,10 +198,17 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
     * @return true if there is an overlapping register allocation
     */
    private static boolean isStatementAllocationOverlapping(Program program, Statement statement) {
+      VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
       LiveRangeVariablesEffective.AliveCombinations aliveCombinations = program.getLiveRangeVariablesEffective().getAliveCombinations(statement);
       for(LiveRangeVariablesEffective.AliveCombination combination : aliveCombinations.getAll()) {
          LinkedHashMap<Registers.Register, LiveRangeEquivalenceClass> usedRegisters = new LinkedHashMap<>();
          Collection<VariableRef> aliveAtStmt = combination.getEffectiveAliveAtStmt();
+         final Collection<VariableRef> stmtDefinedVars = variableReferenceInfos.getDefinedVars(statement);
+         if(!aliveAtStmt.containsAll(stmtDefinedVars)) {
+            // Also add the variables assigned by the statement. They are written to even if they are not used later - so they are used!
+            aliveAtStmt = new LinkedHashSet<>(aliveAtStmt);
+            aliveAtStmt.addAll(stmtDefinedVars);
+         }
          Pass2AliasElimination.Aliases aliasesAtStmt = combination.getEffectiveAliasesAtStmt();
          for(VariableRef varRef : aliveAtStmt) {
             Variable var = program.getSymbolInfos().getVariable(varRef);
@@ -210,7 +217,7 @@ public class Pass4RegisterUpliftCombinations extends Pass2Base {
             if(allocationClass != null && !allocationClass.contains(varRef)) {
                // Examine if the var is an alias of a var in the allocation class
                boolean overlap = true;
-               if(aliasesAtStmt!=null) {
+               if(aliasesAtStmt != null) {
                   Pass2AliasElimination.AliasSet aliasSet = aliasesAtStmt.findAliasSet(varRef);
                   if(aliasSet != null) {
                      for(VariableRef aliasVar : aliasSet.getVars()) {

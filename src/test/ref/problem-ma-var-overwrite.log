@@ -305,7 +305,6 @@ Uplifting [] best 136 combination zp[2]:2 [ h1 ]
 Uplifting [main] best 136 combination 
 Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 ] ] with [ zp[2]:8 [ test::diff#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ test::dst ] ] with [ zp[2]:10 [ test::$1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 test::diff#1 ] ] with [ zp[2]:6 [ test::dst test::$1 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -356,8 +355,8 @@ main: {
 test: {
     .label colorMem = $d800
     .label other = $c000
-    .label dst = 4
-    .label __1 = 4
+    .label dst = 6
+    .label __1 = 6
     .label diff = 4
     .label videoMem = 4
     // [7] (byte*) test::dst ← (byte*) 0 -- pbuz1=pbuc1 
@@ -373,12 +372,12 @@ test: {
     lda #>colorMem
     sbc.z diff+1
     sta.z diff+1
-    // [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z diff
     clc
-    lda.z __1
     adc #<other
     sta.z __1
-    lda.z __1+1
+    lda.z diff+1
     adc #>other
     sta.z __1+1
     // [10] (byte*) test::dst ← (byte*~) test::$1
@@ -428,20 +427,21 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
-(byte*~) test::$1 zp[2]:4 202.0
+(byte*~) test::$1 zp[2]:6 202.0
 (label) test::@return
 (byte*) test::colorMem
 (const byte*) test::colorMem#0 colorMem = (byte*) 55296
 (byte*) test::diff
 (word) test::diff#1 diff zp[2]:4 101.0
-(byte*) test::dst loadstore zp[2]:4 151.5
+(byte*) test::dst loadstore zp[2]:6 151.5
 (byte*) test::other
 (const byte*) test::other#0 other = (byte*) 49152
 (byte*) test::videoMem
 (byte*) test::videoMem#0 videoMem zp[2]:4 56.0
 
 zp[2]:2 [ h1 ]
-zp[2]:4 [ test::videoMem#0 test::diff#1 test::dst test::$1 ]
+zp[2]:4 [ test::videoMem#0 test::diff#1 ]
+zp[2]:6 [ test::dst test::$1 ]
 
 
 FINAL ASSEMBLER
@@ -490,8 +490,8 @@ main: {
 test: {
     .label colorMem = $d800
     .label other = $c000
-    .label dst = 4
-    .label __1 = 4
+    .label dst = 6
+    .label __1 = 6
     .label diff = 4
     .label videoMem = 4
     // dst
@@ -509,12 +509,12 @@ test: {
     sbc.z diff+1
     sta.z diff+1
     // other + ((unsigned int)diff)
-    // [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [9] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z diff
     clc
-    lda.z __1
     adc #<other
     sta.z __1
-    lda.z __1+1
+    lda.z diff+1
     adc #>other
     sta.z __1+1
     // dst = other + ((unsigned int)diff)

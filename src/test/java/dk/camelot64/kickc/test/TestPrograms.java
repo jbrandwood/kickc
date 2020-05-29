@@ -1727,6 +1727,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStruct43() throws IOException, URISyntaxException {
+      compileAndCompare("struct-43.c");
+   }
+
+   @Test
    public void testStruct42() throws IOException, URISyntaxException {
       compileAndCompare("struct-42.c");
    }

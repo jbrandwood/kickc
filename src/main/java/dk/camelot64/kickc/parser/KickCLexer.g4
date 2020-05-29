@@ -133,6 +133,7 @@ IFIF: '#if' ;
 ELIF: '#elif' ;
 IFELSE: '#else' ;
 ENDIF: '#endif' ;
+ERROR: '#error' ;
 
 // Numbers
 NUMBER : NUMFLOAT | NUMINT ;

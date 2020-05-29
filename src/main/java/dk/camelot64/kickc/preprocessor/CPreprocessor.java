@@ -141,6 +141,9 @@ public class CPreprocessor implements TokenSource {
          return expand(inputToken, cTokenSource);
       } else if(inputToken.getType() == KickCLexer.PRAGMA) {
          return pragma(inputToken, cTokenSource);
+      } else if(inputToken.getType() == KickCLexer.ERROR) {
+         error(inputToken, cTokenSource);
+         return true;
       }
       return false;
    }
@@ -181,6 +184,25 @@ public class CPreprocessor implements TokenSource {
       cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
       return true;
    }
+
+   /**
+    * Report an error and halt compilation
+    *
+    * @param inputToken The #error token
+    * @param cTokenSource The token source used to get the error message
+    */
+   private void error(Token inputToken, CTokenSource cTokenSource) {
+      skipWhitespace(cTokenSource);
+      final ArrayList<Token> errorBody = readBody(cTokenSource);
+      StringBuilder errorMsg = new StringBuilder();
+      Token lastToken = inputToken;
+      for(Token token : errorBody) {
+         errorMsg.append(token.getText());
+         lastToken = token;
+      }
+      throw new CompileError(errorMsg.toString(), new StatementSource(inputToken, lastToken));
+   }
+
 
    /**
     * Define a macro.

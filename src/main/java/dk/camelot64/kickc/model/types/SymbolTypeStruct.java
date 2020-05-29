@@ -63,10 +63,11 @@ public class SymbolTypeStruct implements SymbolType {
 
    public static int getMemberSizeBytes(SymbolType memberType, ConstantValue arraySize, ProgramScope programScope) {
       if(arraySize!=null) {
+         final SymbolType elementType = ((SymbolTypePointer) memberType).getElementType();
          if(programScope != null) {
             ConstantLiteral sizeLiteral = arraySize.calculateLiteral(programScope);
             if(sizeLiteral instanceof ConstantInteger) {
-               return memberType.getSizeBytes() * ((ConstantInteger) sizeLiteral).getInteger().intValue();
+               return elementType.getSizeBytes() * ((ConstantInteger) sizeLiteral).getInteger().intValue();
             }
          } else {
             return 5; // Add a token size

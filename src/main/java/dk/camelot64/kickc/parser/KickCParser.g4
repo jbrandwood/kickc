@@ -26,18 +26,7 @@ asmFile
     ;
 
 declSeq
-    : declOrImport*
-    ;
-
-declOrImport
-    : decl
-    | importDecl
-    ;
-
-importDecl
-    : IMPORT IMPORT_LOCALFILE #importFile
-    | INCLUDE IMPORT_LOCALFILE #includeFile
-    | INCLUDE IMPORT_SYSTEMFILE #includeSystem
+    : decl*
     ;
 
 decl

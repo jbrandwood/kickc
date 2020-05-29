@@ -1,5 +1,6 @@
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
+// Creates a font where each char contains the number of the char (00-ff)
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

@@ -1,5 +1,14 @@
 // A minimal NES demo
 // Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
+// Nintendo Entertainment System (NES
+// https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
+// https://github.com/gregkrsak/first_nes
+// Ricoh 2C02 - NES Picture Processing Unit (PPU)
+// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
+// https://en.wikipedia.org/wiki/Picture_Processing_Unit
+// https://wiki.nesdev.com/w/index.php/PPU_registers
+// http://nesdev.com/2C02%20technical%20reference.TXT
+// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
   // Nintendo Entertainment System (NES) ROM
 // https://sadistech.com/nesromtool/romdoc.html
 // https://forums.nesdev.com/viewtopic.php?f=2&t=9896

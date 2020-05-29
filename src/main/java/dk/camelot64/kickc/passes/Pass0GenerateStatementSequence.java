@@ -84,37 +84,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.visit(ctx.declSeq());
       return null;
    }
-
-   @Override
-   public Object visitImportFile(KickCParser.ImportFileContext ctx) {
-      String importName = ctx.IMPORT_LOCALFILE().getText();
-      String importFileName = importName.substring(1, importName.length() - 1);
-      if(program.getLog().isVerboseParse()) {
-         program.getLog().append("Importing " + importFileName);
-      }
-      return null;
-   }
-
-   @Override
-   public Object visitIncludeFile(KickCParser.IncludeFileContext ctx) {
-      String includeName = ctx.IMPORT_LOCALFILE().getText();
-      String includeFileName = includeName.substring(1, includeName.length() - 1);
-      if(program.getLog().isVerboseParse()) {
-         program.getLog().append("Including " + includeFileName);
-      }
-      return null;
-   }
-
-   @Override
-   public Object visitIncludeSystem(KickCParser.IncludeSystemContext ctx) {
-      String includeName = ctx.IMPORT_SYSTEMFILE().getText();
-      String includeFileName = includeName.substring(1, includeName.length() - 1);
-      if(program.getLog().isVerboseParse()) {
-         program.getLog().append("Including system" + includeFileName);
-      }
-      return null;
-   }
-
+   
    @Override
    public Object visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) {
       List<TerminalNode> settingNodes = new ArrayList<>(ctx.NAME());

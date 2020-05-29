@@ -15,9 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -95,6 +93,19 @@ public class CTargetPlatformParser {
                settings = settings.stream().map(String::trim).collect(Collectors.toList());
                VariableBuilderConfig config = VariableBuilderConfig.fromSettings(settings, StatementSource.NONE);
                targetPlatform.setVariableBuilderConfig(config);
+            }
+         }
+         {
+            final JsonObject defines = platformJson.getJsonObject("defines");
+            if(defines != null) {
+               final Set<String> macroNames = defines.keySet();
+               final LinkedHashMap<String, String> macros = new LinkedHashMap<>();
+               for(String macroName : macroNames) {
+                  final JsonValue jsonValue = defines.get(macroName);
+                  final String macroBody = jsonValue.toString();
+                  macros.put(macroName, macroBody);
+               }
+               targetPlatform.setDefines(macros);
             }
          }
          return targetPlatform;

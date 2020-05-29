@@ -1,4 +1,9 @@
 // Generates a 16-bit signed sinus
+// Sinus Generator functions using only multiplication, addition and bit shifting
+// Uses a single division for converting the wavelength to a reciprocal.
+// Generates sinus using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
+// Uses the approximation sin(x) = x - x^/6 + x^/128
+// Optimization possibility: Use symmetries when generating sinustables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

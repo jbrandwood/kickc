@@ -1,4 +1,7 @@
 // Shows a font where each char contains the number of the char (00-ff)
+// Commodore 64 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

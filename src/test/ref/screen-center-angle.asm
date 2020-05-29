@@ -1,5 +1,9 @@
 // Calculate the angle to the center of the screen - and show it using font-hex
 // 4.65 million cycles
+// C standard library stdlib.h
+// Implementation of functions found int C stdlib.h / stdlib.c
+// C standard library string.h
+// Functions to manipulate C strings and arrays.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

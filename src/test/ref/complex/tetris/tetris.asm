@@ -178,6 +178,8 @@ __bbegin:
   lda #>0>>$10
   sta.z score_bcd+3
   // kickasm
+// Tetris Game for the Commodore 64
+// A sprite multiplexer covering the playfield with a black layer to allow for 3 single-pixel colors
   // irq_raster_next = IRQ_RASTER_FIRST
   // The raster line of the next IRQ
   lda #IRQ_RASTER_FIRST

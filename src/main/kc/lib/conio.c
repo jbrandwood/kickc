@@ -134,7 +134,7 @@
     }
 
 #else
-// #error "Target platform does not support conio.h"
+    #error "Target platform does not support conio.h"
 #endif
 
 // The current cursor x-position

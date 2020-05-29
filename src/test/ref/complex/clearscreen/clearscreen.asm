@@ -1,4 +1,8 @@
 // Clears start screen throwing around the letters (by turning them into sprites)
+// C standard library stdlib.h
+// Implementation of functions found int C stdlib.h / stdlib.c
+// C standard library string.h
+// Functions to manipulate C strings and arrays.
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

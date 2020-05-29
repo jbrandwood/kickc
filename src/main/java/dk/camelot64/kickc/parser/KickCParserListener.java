@@ -40,52 +40,6 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitDeclSeq(KickCParser.DeclSeqContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#declOrImport}.
-	 * @param ctx the parse tree
-	 */
-	void enterDeclOrImport(KickCParser.DeclOrImportContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#declOrImport}.
-	 * @param ctx the parse tree
-	 */
-	void exitDeclOrImport(KickCParser.DeclOrImportContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code importFile}
-	 * labeled alternative in {@link KickCParser#importDecl}.
-	 * @param ctx the parse tree
-	 */
-	void enterImportFile(KickCParser.ImportFileContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code importFile}
-	 * labeled alternative in {@link KickCParser#importDecl}.
-	 * @param ctx the parse tree
-	 */
-	void exitImportFile(KickCParser.ImportFileContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code includeFile}
-	 * labeled alternative in {@link KickCParser#importDecl}.
-	 * @param ctx the parse tree
-	 */
-	void enterIncludeFile(KickCParser.IncludeFileContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code includeFile}
-	 * labeled alternative in {@link KickCParser#importDecl}.
-	 * @param ctx the parse tree
-	 */
-	void exitIncludeFile(KickCParser.IncludeFileContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code includeSystem}
-	 * labeled alternative in {@link KickCParser#importDecl}.
-	 * @param ctx the parse tree
-	 */
-	void enterIncludeSystem(KickCParser.IncludeSystemContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code includeSystem}
-	 * labeled alternative in {@link KickCParser#importDecl}.
-	 * @param ctx the parse tree
-	 */
-	void exitIncludeSystem(KickCParser.IncludeSystemContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link KickCParser#decl}.
 	 * @param ctx the parse tree
 	 */

@@ -1,3 +1,4 @@
+// Functions for performing input and output.
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

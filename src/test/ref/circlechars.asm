@@ -1,4 +1,6 @@
 // Plot a r=9 circle on the screen using chars - count how many chars are used
+// C standard library string.h
+// Functions to manipulate C strings and arrays.
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

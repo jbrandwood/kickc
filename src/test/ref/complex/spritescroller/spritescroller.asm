@@ -1,4 +1,7 @@
 // Put a 2x2 font into sprites and show it on screen
+// Commodore 64 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

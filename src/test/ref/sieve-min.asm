@@ -1,3 +1,5 @@
+// C standard library string.h
+// Functions to manipulate C strings and arrays.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

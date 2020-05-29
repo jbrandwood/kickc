@@ -1,4 +1,9 @@
 // Time of Day / RTOS test using the 6526 CIA on C64
+// Provides provide console input/output
+// Implements similar functions as conio.h from CC65 for compatibility
+// See https://github.com/cc65/cc65/blob/master/include/conio.h
+//
+// Currently C64/PLUS4/VIC20 platforms are supported
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

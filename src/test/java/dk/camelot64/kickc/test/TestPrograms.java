@@ -399,6 +399,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPreprocessor12() throws IOException, URISyntaxException {
+      compileAndCompare("preprocessor-12.c");
+   }
+
+   @Test
    public void testPreprocessor11() throws IOException, URISyntaxException {
       compileAndCompare("preprocessor-11.c");
    }

@@ -144,6 +144,12 @@ public class CPreprocessor implements TokenSource {
       } else if(inputToken.getType() == KickCLexer.ERROR) {
          error(inputToken, cTokenSource);
          return true;
+      } else if(inputToken.getType() == KickCLexer.IMPORT) {
+         include(inputToken, cTokenSource);
+         return true;
+      } else if(inputToken.getType() == KickCLexer.INCLUDE) {
+         include(inputToken, cTokenSource);
+         return true;
       }
       return false;
    }
@@ -201,6 +207,26 @@ public class CPreprocessor implements TokenSource {
          lastToken = token;
       }
       throw new CompileError(errorMsg.toString(), new StatementSource(inputToken, lastToken));
+   }
+
+   /**
+    * Import a file
+    *
+    * @param inputToken The #import token
+    * @param cTokenSource The token source used to get the file to import
+    */
+   private void include(Token inputToken, CTokenSource cTokenSource) {
+      skipWhitespace(cTokenSource);
+      final Token fileNameToken = cTokenSource.nextToken();
+      if(fileNameToken.getType() == KickCLexer.IMPORT_LOCALFILE) {
+         final String fileName = fileNameToken.getText();
+         cParser.includeCFile(fileName, false);
+      } else if(fileNameToken.getType() == KickCLexer.IMPORT_SYSTEMFILE) {
+         final String fileName = fileNameToken.getText();
+         cParser.includeCFile(fileName, true);
+      } else {
+         throw new CompileError("Error! #include not followed by file!", new StatementSource(inputToken, fileNameToken));
+      }
    }
 
 

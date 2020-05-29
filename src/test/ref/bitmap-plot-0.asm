@@ -1,5 +1,8 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots simple plots
+// Commodore 64 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"

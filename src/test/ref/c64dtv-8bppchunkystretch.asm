@@ -1,4 +1,9 @@
 // C64DTV 8bpp charmode stretcher
+// C64 DTV version 2 Registers and Constants
+//
+// Sources
+// (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
+// (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

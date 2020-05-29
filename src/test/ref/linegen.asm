@@ -1,5 +1,8 @@
 // Linear table generator
 // Work in progress towards a sinus generator
+// Simple binary division implementation
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

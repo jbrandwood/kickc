@@ -1,4 +1,4 @@
-ldy #{c1}
+ldy #0
 lda {m2}
 sta ({z1}),y
 iny

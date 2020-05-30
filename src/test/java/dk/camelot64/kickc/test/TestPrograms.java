@@ -518,7 +518,6 @@ public class TestPrograms {
       compileAndCompare("millfork-benchmarks/linkedlist-kc.c");
    }
 
-
    @Test
    public void testSqrDelta() throws IOException, URISyntaxException {
       compileAndCompare("sqr-delta.c");

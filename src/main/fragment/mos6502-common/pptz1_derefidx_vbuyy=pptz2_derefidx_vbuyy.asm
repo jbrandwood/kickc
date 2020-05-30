@@ -1,5 +1,5 @@
 lda ({z2}),y
-sta {m1}
+sta ({z1}),y
 iny
 lda ({z2}),y
-sta {m1}+1
+sta ({z1}),y

@@ -3,6 +3,7 @@ package dk.camelot64.kickc.passes;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.asm.AsmFormat;
 import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import kickass.KickAssembler;
 import kickass.nonasm.c64.CharToPetsciiConverter;
@@ -114,6 +115,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                   // Found line number
                   //getLog().append("Found long branch line number "+contextLineIdx);
                   if(fixLongBranch(contextLineIdx - 1)) {
+                     removeTmpDir();
                      return true;
                   }
                }
@@ -121,7 +123,23 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
             }
          }
       }
+
+      removeTmpDir();
       return false;
+   }
+
+   private void removeTmpDir() {
+      // Delete the temporary directory with folders
+      String[]entries = tmpDir.toFile().list();
+      for(String s: entries){
+         File currentFile = new File(tmpDir.toFile(),s);
+         if(!currentFile.delete()) {
+            System.err.println("Warning! Cannot delete temporary file "+currentFile.getAbsolutePath());
+         }
+      }
+      if(!tmpDir.toFile().delete()) {
+         System.err.println("Warning! Cannot delete temporary folder "+tmpDir.toAbsolutePath());
+      }
    }
 
    /**

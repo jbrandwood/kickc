@@ -522,12 +522,12 @@ divr16u: {
     inc.z quotient+1
   !:
     // rem = rem - divisor
-    lda.z rem
     sec
-    sbc #<$14-1
+    lda.z rem
+    sbc #$14-1
     sta.z rem
     lda.z rem+1
-    sbc #>$14-1
+    sbc #0
     sta.z rem+1
   __b3:
     // for( char i : 0..15)

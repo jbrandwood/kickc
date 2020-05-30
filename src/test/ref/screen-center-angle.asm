@@ -218,12 +218,12 @@ init_angle_screen: {
     cmp #$13+1
     bcc __b3
     // screen_topline -= 40
-    lda.z screen_topline
     sec
-    sbc #<$28
+    lda.z screen_topline
+    sbc #$28
     sta.z screen_topline
     lda.z screen_topline+1
-    sbc #>$28
+    sbc #0
     sta.z screen_topline+1
     // screen_bottomline += 40
     lda #$28
@@ -246,8 +246,8 @@ init_angle_screen: {
     asl
     // 39-x*2
     eor #$ff
-    clc
-    adc #$27+1
+    sec
+    adc #$27
     // xw = (signed word)(word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1

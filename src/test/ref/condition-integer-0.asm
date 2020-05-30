@@ -40,12 +40,12 @@ main: {
   // loop word
   __b7:
     // if(i)
-    lda.z i1
-    cmp #<0
+    lda #0
+    cmp.z i1
     bne !+
     lda.z i1+1
-    cmp #>0
-    beq __b8
+    bne !+
+    jmp __b8
   !:
     // SCREEN[idx++] = '+'
     lda #'+'

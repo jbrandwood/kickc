@@ -3026,8 +3026,8 @@ gfx_init_screen2: {
     // col2 = ($f-col)
     tya
     eor #$ff
-    clc
-    adc #$f+1
+    sec
+    adc #$f
     sta.z col2
     // col*$10
     tya

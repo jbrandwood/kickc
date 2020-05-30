@@ -31,8 +31,8 @@ main: {
     // 255-i
     tya
     eor #$ff
-    clc
-    adc #$ff+1
+    sec
+    adc #$ff
     // buf2[i] = 255-i
     sta (buf2),y
     // for(unsigned char i:0..99)
@@ -63,12 +63,12 @@ free: {
 malloc: {
     .label mem = 6
     // mem = heap_head-size
-    lda.z heap_head
     sec
-    sbc #<$64
+    lda.z heap_head
+    sbc #$64
     sta.z mem
     lda.z heap_head+1
-    sbc #>$64
+    sbc #0
     sta.z mem+1
     // heap_head = mem
     lda.z mem

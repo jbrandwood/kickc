@@ -1,3 +1,3 @@
 eor #$ff
-clc
-adc #{c1}+1
+sec
+adc #{c1}

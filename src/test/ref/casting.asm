@@ -11,8 +11,8 @@ main: {
     // b2 = 200-b
     txa
     eor #$ff
-    clc
-    adc #$c8+1
+    sec
+    adc #$c8
     // SCREEN[b] = b2
     sta SCREEN,x
     // sb = - (signed byte)b

@@ -168,20 +168,20 @@ cscroll: {
     sta.z memset.str+1
     jsr memset
     // conio_line_text -= CONIO_WIDTH
-    lda.z conio_line_text
     sec
-    sbc #<$28
+    lda.z conio_line_text
+    sbc #$28
     sta.z conio_line_text
     lda.z conio_line_text+1
-    sbc #>$28
+    sbc #0
     sta.z conio_line_text+1
     // conio_line_color -= CONIO_WIDTH
-    lda.z conio_line_color
     sec
-    sbc #<$28
+    lda.z conio_line_color
+    sbc #$28
     sta.z conio_line_color
     lda.z conio_line_color+1
-    sbc #>$28
+    sbc #0
     sta.z conio_line_color+1
     // conio_cursor_y--;
     dec.z conio_cursor_y

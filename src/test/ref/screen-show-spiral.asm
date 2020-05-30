@@ -220,12 +220,12 @@ init_angle_screen: {
     cmp #$13+1
     bcc __b3
     // screen_topline -= 40
-    lda.z screen_topline
     sec
-    sbc #<$28
+    lda.z screen_topline
+    sbc #$28
     sta.z screen_topline
     lda.z screen_topline+1
-    sbc #>$28
+    sbc #0
     sta.z screen_topline+1
     // screen_bottomline += 40
     lda #$28
@@ -248,8 +248,8 @@ init_angle_screen: {
     asl
     // 39-x*2
     eor #$ff
-    clc
-    adc #$27+1
+    sec
+    adc #$27
     // xw = (signed word)(word){ 39-x*2, 0 }
     ldy #0
     sta.z xw+1
@@ -549,8 +549,8 @@ init_dist_screen: {
     cmp #$18
     bcs __b2
     eor #$ff
-    clc
-    adc #$18+1
+    sec
+    adc #$18
   __b4:
     // sqr(yd)
     jsr sqr
@@ -578,12 +578,12 @@ init_dist_screen: {
     inc.z screen_topline+1
   !:
     // screen_bottomline -= 40
-    lda.z screen_bottomline
     sec
-    sbc #<$28
+    lda.z screen_bottomline
+    sbc #$28
     sta.z screen_bottomline
     lda.z screen_bottomline+1
-    sbc #>$28
+    sbc #0
     sta.z screen_bottomline+1
     // for(byte y: 0..12)
     inc.z y
@@ -600,8 +600,8 @@ init_dist_screen: {
     cmp #$27
     bcs __b8
     eor #$ff
-    clc
-    adc #$27+1
+    sec
+    adc #$27
   __b10:
     // sqr(xd)
     jsr sqr
@@ -704,12 +704,12 @@ bsearch16u: {
     beq __b2
   !:
     bcc __b2
-    lda.z __2
     sec
-    sbc #<1*SIZEOF_WORD
+    lda.z __2
+    sbc #1*SIZEOF_WORD
     sta.z __2
     lda.z __2+1
-    sbc #>1*SIZEOF_WORD
+    sbc #0
     sta.z __2+1
   __b2:
     // }

@@ -711,8 +711,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZM1, "sta $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
 
       // Synthesize typed pointer math using void pointers
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..([czm][1-9])(.*)", null, null, "$1pvo$2$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p..([czm][1-9])(.*p.*)", null, null, "$1pvo$2$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p[^v][^o]([czm][1-9])(.*)", null, null, "$1pvo$2$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p[^v][^o]([czm][1-9])(.*p.*)", null, null, "$1pvo$2$3", null, null));
 
       // Synthesize some constant pointers as constant words (remove when the above section can be included)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([czm].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));

@@ -360,6 +360,7 @@ public class Compiler {
       optimizations.add(new PassNStatementIndices(program));
       optimizations.add(() -> {
          program.clearVariableReferenceInfos();
+         program.clearControlFlowBlockSuccessorClosure();
          return false;
       });
       optimizations.add(new Pass2UnaryNotSimplification(program));
@@ -372,6 +373,7 @@ public class Compiler {
       });
       optimizations.add(() -> {
          program.clearVariableReferenceInfos();
+         program.clearControlFlowBlockSuccessorClosure();
          return false;
       });
       optimizations.add(() -> {
@@ -433,6 +435,7 @@ public class Compiler {
       loopUnrolling.add(new PassNStatementIndices(program));
       loopUnrolling.add(() -> {
          program.clearVariableReferenceInfos();
+         program.clearControlFlowBlockSuccessorClosure();
          return false;
       });
       loopUnrolling.add(() -> {
@@ -481,6 +484,7 @@ public class Compiler {
       constantOptimizations.add(new PassNStatementIndices(program));
       constantOptimizations.add(() -> {
          program.clearVariableReferenceInfos();
+         program.clearControlFlowBlockSuccessorClosure();
          return false;
       });
       constantOptimizations.add(new Pass2NopCastInlining(program));
@@ -571,6 +575,7 @@ public class Compiler {
 
       program.clearStatementInfos();
       program.clearVariableReferenceInfos();
+      program.clearControlFlowBlockSuccessorClosure();
       pass2AssertSSA();
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
@@ -585,6 +590,7 @@ public class Compiler {
       program.clearStatementIndices();
       program.clearStatementInfos();
       program.clearVariableReferenceInfos();
+      program.clearControlFlowBlockSuccessorClosure();
       program.clearLiveRangeVariables();
       program.clearLiveRangeVariablesEffective();
       new PassNStatementIndices(program).execute();

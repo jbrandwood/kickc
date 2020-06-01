@@ -20,9 +20,6 @@ import java.util.stream.Collectors;
  */
 public class VariableReferenceInfos {
 
-   /** For each block this is the closure of all successor blocks. */
-   private Map<LabelRef, Collection<LabelRef>> blockSuccessorClosure;
-
    /** References to variables/constants by block label. */
    private Map<LabelRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> blockVarReferences;
 
@@ -124,12 +121,10 @@ public class VariableReferenceInfos {
    }
 
    public VariableReferenceInfos(
-         Map<LabelRef, Collection<LabelRef>> blockSuccessorClosure,
          Map<SymbolVariableRef, Collection<ReferenceToSymbolVar>> symbolVarReferences,
          Map<LabelRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> blockVarReferences,
          Map<Integer, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> statementVarReferences
    ) {
-      this.blockSuccessorClosure = blockSuccessorClosure;
       this.symbolVarReferences = symbolVarReferences;
       this.blockVarReferences = blockVarReferences;
       this.statementVarReferences = statementVarReferences;
@@ -137,14 +132,6 @@ public class VariableReferenceInfos {
 
    public String getSizeInfo() {
       StringBuilder sizeInfo = new StringBuilder();
-      if(blockSuccessorClosure != null) {
-         sizeInfo.append("SIZE blockSuccessorClosure ").append(blockSuccessorClosure.size()).append(" labels ");
-         int sub = 0;
-         for(Collection<LabelRef> labelRefs : blockSuccessorClosure.values()) {
-            sub += labelRefs.size();
-         }
-         sizeInfo.append(" ").append(sub).append(" labels").append("\n");
-      }
       {
          sizeInfo.append("SIZE symbolVarReferences ").append(symbolVarReferences.size()).append(" SymbolVariableRefs ");
          int sub = 0;
@@ -183,28 +170,6 @@ public class VariableReferenceInfos {
    }
 
    /**
-    * Get all variables used or defined inside a block and its successors (including any called method)
-    *
-    * @param labelRef The block to examine
-    * @return All used variables
-    */
-   public Collection<VariableRef> getReferencedVars(LabelRef labelRef) {
-      ArrayList<VariableRef> variableRefs = new ArrayList<>();
-      blockSuccessorClosure.get(labelRef)
-            .forEach(labelRef1 -> blockVarReferences
-                  .get(labelRef1)
-                  .stream()
-                  .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
-                  .forEach(referenceToSymbolVar -> {
-                           if(!variableRefs.contains(referenceToSymbolVar.getReferenced()))
-                              variableRefs.add((VariableRef) referenceToSymbolVar.getReferenced());
-                        }
-                  )
-            );
-      return variableRefs;
-   }
-
-   /**
     * Get the variables defined by a statement
     *
     * @param stmt The statement
@@ -213,7 +178,7 @@ public class VariableReferenceInfos {
    public Collection<VariableRef> getDefinedVars(Statement stmt) {
       Collection<ReferenceToSymbolVar> referenceToSymbolVars = statementVarReferences.get(stmt.getIndex());
       // TODO: This may cause problems since it is a sign that the maps are out of date!
-      if(referenceToSymbolVars==null)
+      if(referenceToSymbolVars == null)
          return new ArrayList<>();
       return referenceToSymbolVars
             .stream()
@@ -253,6 +218,26 @@ public class VariableReferenceInfos {
             .map(ReferenceToSymbolVar::getReferenced)
             .map(symbolVariableRef -> (VariableRef) symbolVariableRef)
             .collect(Collectors.toList());
+   }
+
+   /**
+    * Get the variables referenced (used or defined) in a block.
+    *
+    * @param labelRef The label of the block.
+    * @return The referenced variables
+    */
+   public Collection<VariableRef> getReferencedVars(LabelRef labelRef) {
+      ArrayList<VariableRef> variableRefs = new ArrayList<>();
+      blockVarReferences
+            .get(labelRef)
+            .stream()
+            .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
+            .forEach(referenceToSymbolVar -> {
+                     if(!variableRefs.contains(referenceToSymbolVar.getReferenced()))
+                        variableRefs.add((VariableRef) referenceToSymbolVar.getReferenced());
+                  }
+            );
+      return variableRefs;
    }
 
    /**

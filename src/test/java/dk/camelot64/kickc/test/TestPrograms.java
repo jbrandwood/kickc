@@ -4308,8 +4308,8 @@ public class TestPrograms {
    @BeforeClass
    public static void setUp() {
       Path asmFragmentBaseFolder = new File("src/main/fragment/").toPath();
-      Path asmFragmentCacheFolder = null;
-      asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, TargetCpu.MOS6502X, asmFragmentCacheFolder, new CompileLog());
+      // Path asmFragmentCacheFolder = new File("src/main/fragment/cache").toPath();
+      asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, TargetCpu.MOS6502X, null, new CompileLog());
    }
 
    @AfterClass

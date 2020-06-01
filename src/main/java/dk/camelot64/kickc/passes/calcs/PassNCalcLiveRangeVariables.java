@@ -42,10 +42,11 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
     */
    public static Map<ProcedureRef, Collection<VariableRef>> calculateProcedureReferencedVars(Program program) {
       VariableReferenceInfos referenceInfo = program.getVariableReferenceInfos();
+      final ControlFlowBlockSuccessorClosure blockSuccessorClosure = program.getControlFlowBlockSuccessorClosure();
       Collection<Procedure> allProcedures = program.getScope().getAllProcedures(true);
       Map<ProcedureRef, Collection<VariableRef>> procReferencedVars = new LinkedHashMap<>();
       for(Procedure procedure : allProcedures) {
-         Collection<VariableRef> referencedVars = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
+         Collection<VariableRef> referencedVars = blockSuccessorClosure.getSuccessorClosureReferencedVars(procedure.getRef().getLabelRef(), referenceInfo);
          procReferencedVars.put(procedure.getRef(), referencedVars);
       }
       return procReferencedVars;

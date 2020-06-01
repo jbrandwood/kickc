@@ -33,15 +33,17 @@ public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesE
    /** Variables (normally) alive at each statement by index. */
    private Map<Integer, Collection<VariableRef>> statementLiveVariables;
 
-   /**
-    * Information about which procedures reference which variables.
-    */
+   /**  Information about which procedures reference which variables.   */
    private VariableReferenceInfos referenceInfo;
 
-   public LiveRangeVariablesEffectiveCallPaths(Program program, Map<ProcedureRef, CallPaths> procedureCallPaths, LiveRangeVariables liveRangeVariables, VariableReferenceInfos referenceInfo) {
+   /**  Information about which blocks follow other blocks.   */
+   private ControlFlowBlockSuccessorClosure blockSuccessorClosure;
+
+   public LiveRangeVariablesEffectiveCallPaths(Program program, Map<ProcedureRef, CallPaths> procedureCallPaths, LiveRangeVariables liveRangeVariables, VariableReferenceInfos referenceInfo, ControlFlowBlockSuccessorClosure blockSuccessorClosure) {
       this.program = program;
       this.procedureCallPaths = procedureCallPaths;
       this.referenceInfo = referenceInfo;
+      this.blockSuccessorClosure = blockSuccessorClosure;
       this.statementLiveVariables = new LinkedHashMap<>();
       for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
@@ -106,7 +108,7 @@ public class LiveRangeVariablesEffectiveCallPaths implements LiveRangeVariablesE
          if(scope instanceof Procedure) {
             Procedure procedure = (Procedure) scope;
             callPaths = procedureCallPaths.get(procedure.getRef());
-            referencedInProcedure = referenceInfo.getReferencedVars(procedure.getRef().getLabelRef());
+            referencedInProcedure = blockSuccessorClosure.getSuccessorClosureReferencedVars(procedure.getRef().getLabelRef(), referenceInfo);
          } else {
             callPaths = new CallPaths(ROOT_PROCEDURE);
             // Interrupt is called outside procedure scope - create initial call-path.

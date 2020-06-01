@@ -79,6 +79,8 @@ public class Program {
    private CallGraph callGraph;
    /** Cached information about the variables referenced by blocks/statements. PASS 1-4 (CACHED ON-DEMAND) */
    private VariableReferenceInfos variableReferenceInfos;
+   /** Cached information about the closure of all block successors. */
+   private ControlFlowBlockSuccessorClosure blockSuccessorClosure;
    /** Information about dominators of all blocks. PASS 2U-4 (CACHED ON-DEMAND) */
    private DominatorsGraph dominators;
    /** Cached information about symbols. Contains a symbol table cache for fast access. PASS 3-4 (CACHED ON-DEMAND) */
@@ -337,6 +339,16 @@ public class Program {
 
    public void clearVariableReferenceInfos() {
       this.variableReferenceInfos = null;
+   }
+
+   public ControlFlowBlockSuccessorClosure getControlFlowBlockSuccessorClosure() {
+      if(blockSuccessorClosure == null)
+         this.blockSuccessorClosure = new PassNCalcBlockSuccessorClosure(this).calculate();
+      return blockSuccessorClosure;
+   }
+
+   public void clearControlFlowBlockSuccessorClosure() {
+      this.blockSuccessorClosure = null;
    }
 
    public DominatorsGraph getDominators() {

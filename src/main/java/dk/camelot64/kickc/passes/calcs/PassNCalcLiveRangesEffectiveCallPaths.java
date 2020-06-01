@@ -33,18 +33,20 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
     */
    private LiveRangeVariables liveRangeVariables;
 
-   /**
-    * Information about which procedures reference which variables.
-    */
+   /** Information about which procedures reference which variables. */
    private VariableReferenceInfos referenceInfo;
+
+   /** Information about which blocks follow other blocks. */
+   private ControlFlowBlockSuccessorClosure blockSuccessorClosure;
 
    @Override
    public LiveRangeVariablesEffectiveCallPaths calculate() {
       this.liveRangeVariables = getProgram().getLiveRangeVariables();
       this.referenceInfo = getProgram().getVariableReferenceInfos();
+      this.blockSuccessorClosure = getProgram().getControlFlowBlockSuccessorClosure();
       this.procedureCallPaths = new LinkedHashMap<>();
       populateProcedureCallPaths();
-      LiveRangeVariablesEffectiveCallPaths aliveEffective = new LiveRangeVariablesEffectiveCallPaths(getProgram(), procedureCallPaths, liveRangeVariables, referenceInfo);
+      LiveRangeVariablesEffectiveCallPaths aliveEffective = new LiveRangeVariablesEffectiveCallPaths(getProgram(), procedureCallPaths, liveRangeVariables, referenceInfo, blockSuccessorClosure);
       return aliveEffective;
       //getLog().append("Calculated effective variable live ranges");
    }
@@ -92,7 +94,7 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
                // Make sure we have populated the call-paths of the calling procedure
                populateProcedureCallPaths(callerProcedure, visited);
                // Find variables referenced in caller procedure
-               Collection<VariableRef> referencedInCaller = referenceInfo.getReferencedVars(callerProcedure.getRef().getLabelRef());
+               Collection<VariableRef> referencedInCaller = blockSuccessorClosure.getSuccessorClosureReferencedVars(callerProcedure.getRef().getLabelRef(), referenceInfo);
                // For each caller path - create a new call-path
                LiveRangeVariablesEffectiveCallPaths.CallPaths callerPaths = procedureCallPaths.get(callerProcedure.getRef());
                if(callerPaths!=null) 

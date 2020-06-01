@@ -11,7 +11,7 @@ public class StatementInfos {
    /** The control flow graph. */
    private ControlFlowGraph graph;
 
-   /** Maps statement index to block label. */
+   /** Maps statement index to block. */
    private Map<Integer, ControlFlowBlock> stmtBlocks;
 
    /** Maps statement index to statement. */

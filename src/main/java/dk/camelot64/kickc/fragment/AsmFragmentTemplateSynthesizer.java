@@ -143,6 +143,7 @@ public class AsmFragmentTemplateSynthesizer {
     * @return The map with all best fragments from the cache file. null if the cache file is not found.
     */
    private Map<String, AsmFragmentTemplate> loadBestFragmentCache(Path cacheFolder, CompileLog log) {
+      final Date before = new Date();
       if(cacheFolder == null) {
          return null;
       }
@@ -173,8 +174,10 @@ public class AsmFragmentTemplateSynthesizer {
             }
             cacheLine = fragmentCacheReader.readLine();
          }
+         final Date after = new Date();
+         final long millis = after.getTime() - before.getTime();
          if(log.isVerboseFragmentLog())
-            log.append("Loaded cached fragments " + bestFragmentCache.size() + " from " + cacheFile.getPath());
+            log.append("Loaded cached fragments " + bestFragmentCache.size() + " from " + cacheFile.getPath() + " in " + millis + "ms");
          return bestFragmentCache;
       } catch(IOException e) {
          throw new RuntimeException("Error loading fragment cache file " + baseFragmentFolder, e);
@@ -189,6 +192,7 @@ public class AsmFragmentTemplateSynthesizer {
     * @param log The compile log
     */
    public void saveBestFragmentCache(CompileLog log) {
+      Date before = new Date();
       if(this.cacheFolder == null) {
          return;
       }
@@ -202,8 +206,10 @@ public class AsmFragmentTemplateSynthesizer {
                fragmentFilePrint.println(fragmentTemplate.getBody());
          }
          fragmentFilePrint.close();
+         final Date after = new Date();
+         final long millis = after.getTime() - before.getTime();
          if(log.isVerboseFragmentLog())
-            log.append("Saved cached fragments " + this.bestFragmentCache.size() + " to " + cacheFile.getPath());
+            log.append("Saved cached fragments " + this.bestFragmentCache.size() + " to " + cacheFile.getPath() + " in " + millis + "ms");
       } catch(IOException e) {
          throw new RuntimeException("Error saving fragment cache file " + cacheFile, e);
       } catch(StringIndexOutOfBoundsException e) {

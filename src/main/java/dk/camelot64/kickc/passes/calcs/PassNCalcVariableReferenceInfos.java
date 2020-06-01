@@ -22,8 +22,6 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
 
    @Override
    public VariableReferenceInfos calculate() {
-      LinkedHashMap<LabelRef, Collection<LabelRef>> blockSuccessors = new LinkedHashMap<>();
-
       Map<SymbolVariableRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> symbolVarReferences = new LinkedHashMap<>();
       Map<LabelRef, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> blockVarReferences = new LinkedHashMap<>();
       Map<Integer, Collection<VariableReferenceInfos.ReferenceToSymbolVar>> statementVarReferences = new LinkedHashMap<>();
@@ -57,12 +55,7 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
             }
          }
       }
-      for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
-         LabelRef blockLabel = block.getLabel();
-         LinkedHashSet<LabelRef> successorClosure = new LinkedHashSet<>();
-         findSuccessorClosure(block.getLabel(), successorClosure, new ArrayList<>());
-         blockSuccessors.put(blockLabel, successorClosure);
-      }
+
       // Gather symbols in the symbol table referencing other variables/constants
       Collection<Variable> allVariables = getProgram().getScope().getAllVars(true);
       for(Variable referencingVar : allVariables) {
@@ -77,7 +70,7 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
                   }
                });
       }
-      return new VariableReferenceInfos(blockSuccessors, symbolVarReferences, blockVarReferences, statementVarReferences);
+      return new VariableReferenceInfos(symbolVarReferences, blockVarReferences, statementVarReferences);
    }
 
    /**
@@ -180,34 +173,6 @@ public class PassNCalcVariableReferenceInfos extends PassNCalcBase<VariableRefer
          }, null, null, null);
       return referenced;
    }
-
-   /**
-    * Recursively get all blocks in the closure of successors & calls for a specific block
-    *
-    * @param labelRef The block to examine
-    * @param successorClosure the set of all blocks that are successors (including called methods).
-    * @param visited The blocks already visited during the search. Used to stop infinite recursion.
-    */
-   private void findSuccessorClosure(LabelRef labelRef, LinkedHashSet<LabelRef> successorClosure, Collection<LabelRef> visited) {
-      if(labelRef == null || visited.contains(labelRef))
-         return;
-      visited.add(labelRef);
-      ControlFlowBlock block = getProgram().getGraph().getBlock(labelRef);
-      if(block == null)
-         return;
-      successorClosure.add(labelRef);
-      findSuccessorClosure(block.getDefaultSuccessor(), successorClosure, visited);
-      findSuccessorClosure(block.getConditionalSuccessor(), successorClosure, visited);
-      findSuccessorClosure(block.getCallSuccessor(), successorClosure, visited);
-      // Also handle stack-calls
-      for(Statement statement : block.getStatements()) {
-         if(statement instanceof StatementCallExecute) {
-            final ProcedureRef calledProcRef = ((StatementCallExecute) statement).getProcedure();
-            findSuccessorClosure(calledProcRef.getLabelRef(), successorClosure, visited);
-         }
-      }
-   }
-
 
    /**
     * Get the variables defined by a statement

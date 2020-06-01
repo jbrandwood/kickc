@@ -203,7 +203,7 @@ public class Registers {
 
       @Override
       public int hashCode() {
-         return Objects.hash(zp, bytes, nonRelocatable);
+         return zp;
       }
    }
 

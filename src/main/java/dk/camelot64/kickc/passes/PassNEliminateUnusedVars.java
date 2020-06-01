@@ -31,6 +31,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
    public boolean step() {
       new PassNStatementIndices(getProgram()).execute();
       getProgram().clearVariableReferenceInfos();
+      getProgram().clearControlFlowBlockSuccessorClosure();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
       boolean modified = false;
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -138,6 +139,7 @@ public class PassNEliminateUnusedVars extends Pass2SsaOptimization {
       }
 
       getProgram().clearVariableReferenceInfos();
+      getProgram().clearControlFlowBlockSuccessorClosure();
       getProgram().clearStatementIndices();
       return modified;
    }

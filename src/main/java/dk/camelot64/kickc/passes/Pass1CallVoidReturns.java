@@ -26,6 +26,7 @@ public class Pass1CallVoidReturns extends Pass2SsaOptimization {
    public boolean step() {
       new PassNStatementIndices(getProgram()).execute();
       getProgram().clearVariableReferenceInfos();
+      getProgram().clearControlFlowBlockSuccessorClosure();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
@@ -59,6 +60,7 @@ public class Pass1CallVoidReturns extends Pass2SsaOptimization {
       }
       getProgram().clearStatementIndices();
       getProgram().clearVariableReferenceInfos();
+      getProgram().clearControlFlowBlockSuccessorClosure();
       return false;
    }
 

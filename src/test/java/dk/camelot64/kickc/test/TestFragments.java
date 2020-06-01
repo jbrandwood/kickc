@@ -140,6 +140,13 @@ public class TestFragments {
       testFragments("fragments-complex", signaturesComplex);
    }
 
+  // @Test
+  // public void testPointers() throws IOException {
+  //    List<String> signatures = Arrays.asList("vbuz1=pbuz2_derefidx_vbuc1");
+  //    testFragments("fragments-complex", signatures);
+  // }
+
+
    @Test
    public void testFragmentsExist() {
       testFragmentExists("vbuaa=pbuc2_derefidx_vbuxx");

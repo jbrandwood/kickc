@@ -5,7 +5,10 @@ import dk.camelot64.kickc.model.TargetCpu;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -22,20 +25,13 @@ import java.util.*;
  */
 public class AsmFragmentTemplateSynthesizer {
 
-   /** Name of the file holding the fragment cache. */
-   public static final String FRAGMENT_CACHE_FILE = "fragment-cache.asm";
-
    /** Create synthesizer. */
    public AsmFragmentTemplateSynthesizer(Path baseFragmentFolder, TargetCpu cpu, Path cacheFolder, CompileLog log) {
       this.baseFragmentFolder = baseFragmentFolder;
       this.cpu = cpu;
-      this.cacheFolder = cacheFolder;
       this.synthesisGraph = new LinkedHashMap<>();
       this.bestTemplateUpdate = new ArrayDeque<>();
-      this.bestFragmentCache = loadBestFragmentCache(cacheFolder, log);
-      if(this.bestFragmentCache == null)
-         this.bestFragmentCache = new LinkedHashMap<>();
-
+      this.fragmentCache = AsmFragmentTemplateCache.load(cacheFolder, cpu, log);
    }
 
    /** The folder containing fragment files. */
@@ -44,14 +40,8 @@ public class AsmFragmentTemplateSynthesizer {
    /** The Target CPU - used for obtaining CPU-specific fragment files. */
    private TargetCpu cpu;
 
-   /** The folder containing cached fragment files. */
-   private Path cacheFolder;
-
    /** Cache for the best fragment templates. Maps signature to the best fragment template for the signature. */
-   private Map<String, AsmFragmentTemplate> bestFragmentCache;
-
-   /** Special singleton representing that the fragment can not be synthesized or loaded. */
-   private AsmFragmentTemplate NO_SYNTHESIS = new AsmFragmentTemplate("NO_SYNTHESIS", null, false);
+   private AsmFragmentTemplateCache fragmentCache;
 
    /**
     * Contains the synthesis for each fragment template signature.
@@ -63,8 +53,9 @@ public class AsmFragmentTemplateSynthesizer {
    private Map<String, AsmFragmentSynthesis> synthesisGraph;
 
    /** Finalize the fragment template synthesizer. */
-   public void finalize(CompileLog log) {
-      saveBestFragmentCache(log);
+   void finalize(CompileLog log) {
+      if(fragmentCache != null)
+         fragmentCache.save(log);
    }
 
    /**
@@ -97,8 +88,8 @@ public class AsmFragmentTemplateSynthesizer {
     */
    private AsmFragmentTemplate getFragmentTemplate(String signature, CompileLog log) {
       // Attempt to find in memory/disk cache
-      AsmFragmentTemplate bestTemplate = bestFragmentCache.get(signature);
-      if(bestTemplate == NO_SYNTHESIS) {
+      AsmFragmentTemplate bestTemplate = fragmentCache.get(signature);
+      if(bestTemplate == AsmFragmentTemplateCache.NO_SYNTHESIS) {
          if(log.isVerboseFragmentLog()) {
             log.append("Unknown fragment " + signature);
          }
@@ -111,7 +102,7 @@ public class AsmFragmentTemplateSynthesizer {
             if(log.isVerboseFragmentLog()) {
                log.append("Unknown fragment " + signature);
             }
-            bestFragmentCache.put(signature, NO_SYNTHESIS);
+            fragmentCache.put(signature, AsmFragmentTemplateCache.NO_SYNTHESIS);
             throw new UnknownFragmentException(signature);
          }
          double minScore = Double.MAX_VALUE;
@@ -128,94 +119,13 @@ public class AsmFragmentTemplateSynthesizer {
          if(log.isVerboseFragmentLog()) {
             log.append("Found best fragment  " + bestTemplate.getName() + " score: " + minScore);
          }
-         bestFragmentCache.put(signature, bestTemplate);
+         fragmentCache.put(signature, bestTemplate);
       }
       // Count usages
       AsmFragmentTemplateUsages.incUsage(bestTemplate);
       return bestTemplate;
    }
 
-   /**
-    * Attempt to load a fragment cache containing all best synthesized fragments
-    *
-    * @param cacheFolder Folder containing the cache
-    * @param log The compile log
-    * @return The map with all best fragments from the cache file. null if the cache file is not found.
-    */
-   private Map<String, AsmFragmentTemplate> loadBestFragmentCache(Path cacheFolder, CompileLog log) {
-      final Date before = new Date();
-      if(cacheFolder == null) {
-         return null;
-      }
-      try {
-         File cacheFile = cacheFolder.resolve(FRAGMENT_CACHE_FILE).toFile();
-         if(!cacheFile.exists()) {
-            return null;
-         }
-         LinkedHashMap<String, AsmFragmentTemplate> bestFragmentCache = new LinkedHashMap<>();
-         BufferedReader fragmentCacheReader = new BufferedReader(new FileReader(cacheFile));
-         String cacheLine = fragmentCacheReader.readLine();
-         StringBuilder body = null;
-         String signature = null;
-         while(cacheLine != null) {
-            // Determine if the line is a new fragment or the continuation of the current fragment body
-            if(cacheLine.startsWith("//FRAGMENT ")) {
-               // New fragment - first put the current one into the cache
-               if(signature != null) {
-                  CharStream fragmentCharStream = CharStreams.fromString(body.toString());
-                  AsmFragmentTemplate template = new AsmFragmentTemplate(signature, fixNewlines(fragmentCharStream.toString()), true);
-                  bestFragmentCache.put(signature, template);
-               }
-               body = new StringBuilder();
-               signature = cacheLine.substring(11);
-            } else {
-               // Continuation of body
-               body.append(cacheLine).append("\n");
-            }
-            cacheLine = fragmentCacheReader.readLine();
-         }
-         final Date after = new Date();
-         final long millis = after.getTime() - before.getTime();
-         if(log.isVerboseFragmentLog())
-            log.append("Loaded cached fragments " + bestFragmentCache.size() + " from " + cacheFile.getPath() + " in " + millis + "ms");
-         return bestFragmentCache;
-      } catch(IOException e) {
-         throw new RuntimeException("Error loading fragment cache file " + baseFragmentFolder, e);
-      } catch(StringIndexOutOfBoundsException e) {
-         throw new RuntimeException("Problem reading fragment file " + baseFragmentFolder, e);
-      }
-   }
-
-   /**
-    * Attempt to save fragment cache containing all best synthesized fragments
-    *
-    * @param log The compile log
-    */
-   public void saveBestFragmentCache(CompileLog log) {
-      Date before = new Date();
-      if(this.cacheFolder == null) {
-         return;
-      }
-      File cacheFile = this.cacheFolder.resolve(FRAGMENT_CACHE_FILE).toFile();
-      try {
-         PrintStream fragmentFilePrint = new PrintStream(cacheFile);
-         for(String signature : this.bestFragmentCache.keySet()) {
-            AsmFragmentTemplate fragmentTemplate = this.bestFragmentCache.get(signature);
-            fragmentFilePrint.println("//FRAGMENT " + signature);
-            if(fragmentTemplate.getBody() != null)
-               fragmentFilePrint.println(fragmentTemplate.getBody());
-         }
-         fragmentFilePrint.close();
-         final Date after = new Date();
-         final long millis = after.getTime() - before.getTime();
-         if(log.isVerboseFragmentLog())
-            log.append("Saved cached fragments " + this.bestFragmentCache.size() + " to " + cacheFile.getPath() + " in " + millis + "ms");
-      } catch(IOException e) {
-         throw new RuntimeException("Error saving fragment cache file " + cacheFile, e);
-      } catch(StringIndexOutOfBoundsException e) {
-         throw new RuntimeException("Problem saving fragment file " + cacheFile, e);
-      }
-   }
 
    /**
     * Get the best fragment templates for a signature.
@@ -262,7 +172,7 @@ public class AsmFragmentTemplateSynthesizer {
        *
        * @param signature The signature of the fragment template to load/synthesize
        */
-      public AsmFragmentSynthesis(String signature) {
+      AsmFragmentSynthesis(String signature) {
          this.signature = signature;
          this.bestTemplates = new LinkedHashMap<>();
          this.synthesisOptions = new LinkedHashSet<>();
@@ -276,7 +186,7 @@ public class AsmFragmentTemplateSynthesizer {
        *
        * @param synthesisOption The option to add
        */
-      public void addSynthesisOption(AsmFragmentSynthesisOption synthesisOption) {
+      void addSynthesisOption(AsmFragmentSynthesisOption synthesisOption) {
          this.synthesisOptions.add(synthesisOption);
       }
 
@@ -285,7 +195,7 @@ public class AsmFragmentTemplateSynthesizer {
        *
        * @return The options
        */
-      public Collection<AsmFragmentSynthesisOption> getSynthesisOptions() {
+      Collection<AsmFragmentSynthesisOption> getSynthesisOptions() {
          return synthesisOptions;
       }
 
@@ -294,15 +204,15 @@ public class AsmFragmentTemplateSynthesizer {
        *
        * @param synthesisOption Thew parent option to add
        */
-      public void addParentOption(AsmFragmentSynthesisOption synthesisOption) {
+      void addParentOption(AsmFragmentSynthesisOption synthesisOption) {
          this.parentOptions.add(synthesisOption);
       }
 
-      public void addFileTemplate(AsmFragmentTemplate fileTemplate) {
+      void addFileTemplate(AsmFragmentTemplate fileTemplate) {
          this.fileTemplates.add(fileTemplate);
       }
 
-      public List<AsmFragmentTemplate> getFileTemplates() {
+      List<AsmFragmentTemplate> getFileTemplates() {
          return fileTemplates;
       }
 
@@ -313,7 +223,7 @@ public class AsmFragmentTemplateSynthesizer {
        * @param candidate The template candidate to examine
        * @return true if the best template was updated
        */
-      public boolean bestTemplateCandidate(AsmFragmentTemplate candidate) {
+      boolean bestTemplateCandidate(AsmFragmentTemplate candidate) {
          AsmFragmentClobber candidateClobber = candidate.getClobber();
          double candidateCycles = candidate.getCycles();
 
@@ -370,7 +280,7 @@ public class AsmFragmentTemplateSynthesizer {
        *
        * @return The parent options.
        */
-      public Set<AsmFragmentSynthesisOption> getParentOptions() {
+      Set<AsmFragmentSynthesisOption> getParentOptions() {
          return parentOptions;
       }
 
@@ -380,7 +290,7 @@ public class AsmFragmentTemplateSynthesizer {
        *
        * @return The best templates of the synthesis.
        */
-      public Collection<AsmFragmentTemplate> getBestTemplates() {
+      Collection<AsmFragmentTemplate> getBestTemplates() {
          return bestTemplates.values();
       }
 
@@ -407,7 +317,7 @@ public class AsmFragmentTemplateSynthesizer {
        * @param signature he signature of the fragment template being synthesized.
        * @param rule The synthesis rule capable of synthesizing this template from the sub-fragment.
        */
-      public AsmFragmentSynthesisOption(String signature, AsmFragmentTemplateSynthesisRule rule) {
+      AsmFragmentSynthesisOption(String signature, AsmFragmentTemplateSynthesisRule rule) {
          this.signature = signature;
          this.rule = rule;
          this.subSignature = rule.getSubSignature(signature);
@@ -417,11 +327,11 @@ public class AsmFragmentTemplateSynthesizer {
          return signature;
       }
 
-      public String getSubSignature() {
+      String getSubSignature() {
          return subSignature;
       }
 
-      public AsmFragmentTemplateSynthesisRule getRule() {
+      AsmFragmentTemplateSynthesisRule getRule() {
          return rule;
       }
 
@@ -429,20 +339,15 @@ public class AsmFragmentTemplateSynthesizer {
       public boolean equals(Object o) {
          if(this == o) return true;
          if(o == null || getClass() != o.getClass()) return false;
-
          AsmFragmentSynthesisOption that = (AsmFragmentSynthesisOption) o;
-
-         if(signature != null ? !signature.equals(that.signature) : that.signature != null) return false;
-         if(subSignature != null ? !subSignature.equals(that.subSignature) : that.subSignature != null) return false;
-         return rule != null ? rule.equals(that.rule) : that.rule == null;
+         return Objects.equals(signature, that.signature) &&
+               Objects.equals(subSignature, that.subSignature) &&
+               Objects.equals(rule, that.rule);
       }
 
       @Override
       public int hashCode() {
-         int result = signature != null ? signature.hashCode() : 0;
-         result = 31 * result + (subSignature != null ? subSignature.hashCode() : 0);
-         result = 31 * result + (rule != null ? rule.hashCode() : 0);
-         return result;
+         return Objects.hash(signature, subSignature, rule);
       }
    }
 
@@ -489,13 +394,11 @@ public class AsmFragmentTemplateSynthesizer {
       synthesisGraph.put(signature, synthesis);
       queueUpdateBestTemplate(synthesis);
       // Load the template from file - if it exists
-      List<AsmFragmentTemplate> fileTemplates = loadFragmentTemplates(signature, log);
-      if(fileTemplates != null) {
-         for(AsmFragmentTemplate fileTemplate : fileTemplates) {
-            synthesis.addFileTemplate(fileTemplate);
-            if(log.isVerboseFragmentLog()) {
-               log.append("New fragment synthesis " + signature + " - Successfully loaded " + signature + ".asm");
-            }
+      List<AsmFragmentTemplate> fileTemplates = loadFragmentTemplates(signature);
+      for(AsmFragmentTemplate fileTemplate : fileTemplates) {
+         synthesis.addFileTemplate(fileTemplate);
+         if(log.isVerboseFragmentLog()) {
+            log.append("New fragment synthesis " + signature + " - Successfully loaded " + signature + ".asm");
          }
       }
       // Populate with synthesis options
@@ -535,7 +438,7 @@ public class AsmFragmentTemplateSynthesizer {
     * During the update more items can be added to the work queue.
     * Returns when the work queue is empty.
     */
-   void updateBestTemplates(CompileLog log) {
+   private void updateBestTemplates(CompileLog log) {
       while(!bestTemplateUpdate.isEmpty()) {
          AsmFragmentSynthesis synthesis = bestTemplateUpdate.pop();
          boolean modified = false;
@@ -591,10 +494,9 @@ public class AsmFragmentTemplateSynthesizer {
     * Attempt to load a fragment template from disk. Also searches relevant fragment sub-folders specified by CPU and other options.
     *
     * @param signature The signature
-    * @param log The compile log
     * @return The fragment template from a file. null if the template is not found as a file.
     */
-   private List<AsmFragmentTemplate> loadFragmentTemplates(String signature, CompileLog log) {
+   private List<AsmFragmentTemplate> loadFragmentTemplates(String signature) {
       ArrayList<AsmFragmentTemplate> fileTemplates = new ArrayList<>();
       List<TargetCpu.Feature> cpuFeatures = cpu.getFeatures();
       for(TargetCpu.Feature cpuFeature : cpuFeatures) {
@@ -643,7 +545,7 @@ public class AsmFragmentTemplateSynthesizer {
     * @param body The body
     * @return The body with fixed newlines
     */
-   private String fixNewlines(String body) {
+   static String fixNewlines(String body) {
       body = body.replace("\r", "");
       while(body.length() > 0 && body.charAt(body.length() - 1) == '\n') {
          body = body.substring(0, body.length() - 1);

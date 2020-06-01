@@ -2,6 +2,8 @@ package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplate;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;
@@ -228,6 +230,10 @@ public class KickC implements Callable<Integer> {
       compiler.setAsmFragmentCacheFolder(fragmentCacheDir);
 
       Program program = compiler.getProgram();
+
+      // Initialize the master ASM fragment synthesizer
+      program.initAsmFragmentMasterSynthesizer();
+
       Path currentPath = new File(".").toPath();
 
       // Set up Target Platform
@@ -256,14 +262,15 @@ public class KickC implements Callable<Integer> {
          TargetCpu targetCpu = TargetCpu.getTargetCpu(cpu, false);
          program.getTargetPlatform().setCpu(targetCpu);
       }
-      program.initAsmFragmentSynthesizer();
 
       if(fragment != null) {
          if(verbose) {
             compiler.getLog().setVerboseFragmentLog(true);
          }
          compiler.getLog().setSysOut(true);
-         Collection<AsmFragmentTemplate> fragmentTemplates = compiler.getAsmFragmentSynthesizer().getBestTemplates(fragment, compiler.getLog());
+         final AsmFragmentTemplateMasterSynthesizer masterSynthesizer = compiler.getAsmFragmentMasterSynthesizer();
+         final AsmFragmentTemplateSynthesizer cpuSynthesizer = masterSynthesizer.getSynthesizer(program.getTargetCpu());
+         Collection<AsmFragmentTemplate> fragmentTemplates = cpuSynthesizer.getBestTemplates(fragment, compiler.getLog());
          for(AsmFragmentTemplate fragmentTemplate : fragmentTemplates) {
             AsmFragmentTemplateUsages.logTemplate(compiler.getLog(), fragmentTemplate, "");
          }
@@ -393,7 +400,8 @@ public class KickC implements Callable<Integer> {
          asmWriter.close();
          asmOutputStream.close();
 
-         compiler.getAsmFragmentSynthesizer().finalize(compiler.getLog());
+         // Save the fragment synthesizer cache files
+         program.getAsmFragmentMasterSynthesizer().finalize(compiler.getLog());
 
          // Copy Resource Files (if out-dir is different from in-dir)
          if(!CFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {

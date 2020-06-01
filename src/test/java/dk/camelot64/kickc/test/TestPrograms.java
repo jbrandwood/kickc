@@ -7,7 +7,6 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.TargetPlatform;
 import dk.camelot64.kickc.parser.CTargetPlatformParser;
 import kickass.KickAssembler;
@@ -4307,9 +4306,9 @@ public class TestPrograms {
 
    @BeforeClass
    public static void setUp() {
-      Path asmFragmentBaseFolder = new File("src/main/fragment/").toPath();
-      // Path asmFragmentCacheFolder = new File("src/main/fragment/cache").toPath();
-      asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, TargetCpu.MOS6502X, null, new CompileLog());
+      //Path asmFragmentBaseFolder = new File("src/main/fragment/").toPath();
+      //Path asmFragmentCacheFolder = new File("src/main/fragment/cache").toPath();
+      //asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, TargetCpu.MOS6502X, asmFragmentCacheFolder, new CompileLog());
    }
 
    @AfterClass
@@ -4403,7 +4402,7 @@ public class TestPrograms {
       Compiler compiler = new Compiler();
       compiler.setWarnFragmentMissing(true);
       compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
-      compiler.setAsmFragmentCacheFolder(null);
+      compiler.setAsmFragmentCacheFolder(new File("src/main/fragment/cache/").toPath());
       if(compileLog != null) {
          compiler.setLog(compileLog);
       }
@@ -4418,11 +4417,11 @@ public class TestPrograms {
       final Path filePath = Paths.get(fileName);
       files.add(filePath);
       Program program = compiler.getProgram();
-
+      // Initialize the master ASM fragment synthesizer
+      program.initAsmFragmentMasterSynthesizer();
       final File platformFile = SourceLoader.loadFile(TargetPlatform.DEFAULT_NAME + "." + CTargetPlatformParser.FILE_EXTENSION, filePath, program.getTargetPlatformPaths());
       final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(TargetPlatform.DEFAULT_NAME, platformFile, filePath, program.getTargetPlatformPaths());
       program.setTargetPlatform(targetPlatform);
-      compiler.initAsmFragmentSynthesizer(asmFragmentSynthesizer);
       program.addReservedZps(program.getTargetPlatform().getReservedZps());
       compiler.compile(files, program.getTargetPlatform().getDefines());
       compileAsm(fileName, program);
@@ -4438,8 +4437,8 @@ public class TestPrograms {
          //System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
       }
-
-      compiler.getAsmFragmentSynthesizer().finalize(program.getLog());
+      // Save the ASM fragment caches (if there are any changes)
+      compiler.getAsmFragmentMasterSynthesizer().finalize(program.getLog());
    }
 
    private void compileAsm(String fileName, Program program) throws IOException {

@@ -958,7 +958,8 @@ public class Pass4CodeGeneration {
       StringBuilder fragmentVariationsTried = new StringBuilder();
       while(fragmentInstance == null) {
          try {
-            fragmentInstance = program.getAsmFragmentSynthesizer().getFragmentInstance(fragmentInstanceSpec, program.getLog());
+            final AsmFragmentTemplateSynthesizer cpuSynthesizer = program.getAsmFragmentMasterSynthesizer().getSynthesizer(program.getTargetCpu());
+            fragmentInstance = cpuSynthesizer.getFragmentInstance(fragmentInstanceSpec, program.getLog());
          } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
             // Unknown fragment - keep looking through alternative ASM fragment instance specs until we have tried them all
             String signature = fragmentInstanceSpec.getSignature();

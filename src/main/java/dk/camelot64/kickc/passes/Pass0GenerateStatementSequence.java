@@ -188,7 +188,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       final String cpuName = ctx.NAME().getText();
       TargetCpu cpu = TargetCpu.getTargetCpu(cpuName, false);
       program.getTargetPlatform().setCpu(cpu);
-      program.initAsmFragmentSynthesizer();
       return null;
    }
 

@@ -2,7 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.values.LabelRef;
@@ -38,7 +38,7 @@ public class Program {
    /** Cache folder for finding ASM fragment files. (STATIC) */
    private Path asmFragmentCacheFolder;
    /** The ASM fragment synthesizer responsible for loading/synthesizing ASM fragments. Depends on the target CPU. (STATIC) */
-   private AsmFragmentTemplateSynthesizer asmFragmentSynthesizer;
+   private AsmFragmentTemplateMasterSynthesizer asmFragmentMasterSynthesizer;
 
    /** Missing fragments produce a warning instead of an error (STATIC) */
    private boolean warnFragmentMissing = false;
@@ -208,16 +208,12 @@ public class Program {
       this.asmFragmentBaseFolder = asmFragmentBaseFolder;
    }
 
-   public AsmFragmentTemplateSynthesizer getAsmFragmentSynthesizer() {
-      return asmFragmentSynthesizer;
+   public AsmFragmentTemplateMasterSynthesizer getAsmFragmentMasterSynthesizer() {
+      return asmFragmentMasterSynthesizer;
    }
 
-   public void initAsmFragmentSynthesizer() {
-      this.asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, targetPlatform.getCpu(), asmFragmentCacheFolder, getLog());
-   }
-
-   public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
-      this.asmFragmentSynthesizer = synthesizer;
+   public void initAsmFragmentMasterSynthesizer() {
+      this.asmFragmentMasterSynthesizer = new AsmFragmentTemplateMasterSynthesizer(asmFragmentBaseFolder, asmFragmentCacheFolder, getLog());
    }
 
    public TargetPlatform getTargetPlatform() {

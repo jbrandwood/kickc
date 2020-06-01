@@ -1,8 +1,11 @@
 package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
+import dk.camelot64.kickc.model.Comment;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementSequence;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
@@ -95,16 +98,12 @@ public class Compiler {
       program.setAsmFragmentBaseFolder(asmFragmentBaseFolder);
    }
 
-   public void setAsmFragmentCacheFolder(Path asmFragmentcacheDir) {
-      program.setAsmFragmentCacheFolder(asmFragmentcacheDir);
+   public void setAsmFragmentCacheFolder(Path asmFragmentCacheDir) {
+      program.setAsmFragmentCacheFolder(asmFragmentCacheDir);
    }
 
-   public void initAsmFragmentSynthesizer(AsmFragmentTemplateSynthesizer synthesizer) {
-      program.initAsmFragmentSynthesizer(synthesizer);
-   }
-
-   public AsmFragmentTemplateSynthesizer getAsmFragmentSynthesizer() {
-      return program.getAsmFragmentSynthesizer();
+   public AsmFragmentTemplateMasterSynthesizer getAsmFragmentMasterSynthesizer() {
+      return program.getAsmFragmentMasterSynthesizer();
    }
 
    public void setLog(CompileLog compileLog) {

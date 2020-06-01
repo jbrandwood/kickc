@@ -246,8 +246,6 @@ public class CParser {
                define(macroName, program.getTargetPlatform().getDefines().get(macroName));
          // Add reserved ZP's from new platform
          program.addReservedZps(program.getTargetPlatform().getReservedZps());
-         // Re-initialize ASM fragment synthesizer
-         program.initAsmFragmentSynthesizer();
       } else {
          StringBuilder supported = new StringBuilder();
          final List<File> platformFiles = SourceLoader.listFiles(currentPath, program.getTargetPlatformPaths(), CTargetPlatformParser.FILE_EXTENSION);

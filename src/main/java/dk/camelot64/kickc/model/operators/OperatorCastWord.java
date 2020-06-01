@@ -22,7 +22,7 @@ public class OperatorCastWord extends OperatorCast {
       } else if(value instanceof ConstantPointer) {
          return new ConstantInteger(0xffff & ((ConstantPointer) value).getLocation(), SymbolType.WORD);
       } else if(value instanceof ConstantString) {
-         throw new ConstantNotLiteral("String cannot be cast to word");
+         throw ConstantNotLiteral.EXCEPTION;
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + value );
    }

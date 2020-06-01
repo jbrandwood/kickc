@@ -23,7 +23,7 @@ public class OperatorPlus extends OperatorBinary {
       } else if(left instanceof ConstantEnumerable && right instanceof ConstantEnumerable) {
          return new ConstantInteger(((ConstantEnumerable) left).getInteger() + ((ConstantEnumerable) right).getInteger());
       } else if(left instanceof ConstantString && right instanceof ConstantInteger) {
-         throw new ConstantNotLiteral("String pointer not literal");
+         throw ConstantNotLiteral.EXCEPTION;
       }
       throw new CompileError("Calculation not implemented " + left + " " + getOperator() + " " + right);
    }

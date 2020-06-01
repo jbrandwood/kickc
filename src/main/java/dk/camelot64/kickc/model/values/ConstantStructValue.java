@@ -31,7 +31,7 @@ public class ConstantStructValue implements ConstantValue {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      throw new ConstantNotLiteral("Cannot calculate literal struct.");
+      throw ConstantNotLiteral.EXCEPTION;
    }
 
    public SymbolTypeStruct getStructType() {

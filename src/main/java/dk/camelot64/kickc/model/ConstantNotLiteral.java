@@ -6,7 +6,11 @@ package dk.camelot64.kickc.model;
  **/
 public class ConstantNotLiteral extends RuntimeException {
 
-   public ConstantNotLiteral(String message) {
+   /** Global singleton (saves initialization time for the exception stacktrace)*/
+   public static final ConstantNotLiteral EXCEPTION = new ConstantNotLiteral("Constant not literal!");
+
+   private ConstantNotLiteral(String message) {
       super(message);
    }
+
 }

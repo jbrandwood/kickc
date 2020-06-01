@@ -17,7 +17,7 @@ public class OperatorMultiply extends OperatorBinary {
       if(left instanceof ConstantInteger && right instanceof ConstantInteger) {
          return new ConstantInteger(((ConstantInteger) left).getInteger() * ((ConstantInteger) right).getInteger());
       }
-      throw new ConstantNotLiteral("Not literal "+left.toString()+"*"+right.toString());
+      throw ConstantNotLiteral.EXCEPTION;
    }
 
    @Override

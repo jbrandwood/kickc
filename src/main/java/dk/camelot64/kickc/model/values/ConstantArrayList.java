@@ -52,7 +52,7 @@ public class ConstantArrayList implements ConstantArray {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      throw new ConstantNotLiteral("Cannot calculate literal array");
+      throw ConstantNotLiteral.EXCEPTION;
    }
 
    @Override

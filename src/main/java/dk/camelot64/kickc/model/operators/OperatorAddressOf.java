@@ -15,7 +15,7 @@ public class OperatorAddressOf extends OperatorUnary {
 
    @Override
    public ConstantLiteral calculateLiteral(ConstantLiteral operand, ProgramScope scope) {
-      throw new ConstantNotLiteral("Constant not literal");
+      throw ConstantNotLiteral.EXCEPTION;
    }
 
    @Override

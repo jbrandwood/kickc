@@ -28,14 +28,14 @@ public class OperatorGetLow extends OperatorUnary {
          } else if(SymbolType.BYTE.equals(operandInt.getType()) || SymbolType.SBYTE.equals(operandInt.getType())) {
             return operandInt;
          } else if(SymbolType.NUMBER.equals(operandInt.getType())) {
-            throw new ConstantNotLiteral("Operand not resolved "+operand);
+            throw ConstantNotLiteral.EXCEPTION;
          }
       } else if(operand instanceof ConstantPointer) {
          return new ConstantInteger(((ConstantPointer) operand).getLocation()&0xff);
       } else if(operand instanceof ConstantString) {
-         throw new ConstantNotLiteral("address of string is not literal");
+         throw ConstantNotLiteral.EXCEPTION;
       }
-      throw new ConstantNotLiteral("Calculation not implemented " + getOperator() + " " + operand );
+      throw ConstantNotLiteral.EXCEPTION;
    }
 
    @Override

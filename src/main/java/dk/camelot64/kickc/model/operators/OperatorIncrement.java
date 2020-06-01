@@ -21,7 +21,7 @@ public class OperatorIncrement extends OperatorUnary {
       } else if(operand instanceof ConstantPointer) {
          return new ConstantPointer(0xffff&(((ConstantPointer) operand).getLocation()+1), ((ConstantPointer) operand).getElementType());
       }
-      throw new ConstantNotLiteral("Calculation not literal " + getOperator() + " " + operand );
+      throw ConstantNotLiteral.EXCEPTION;
    }
 
    @Override

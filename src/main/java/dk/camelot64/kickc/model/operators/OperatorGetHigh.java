@@ -28,12 +28,12 @@ public class OperatorGetHigh extends OperatorUnary {
          } else if(SymbolType.BYTE.equals(operandInt.getType()) || SymbolType.SBYTE.equals(operandInt.getType())) {
             return new ConstantInteger(0L, SymbolType.BYTE);
          } else if(SymbolType.NUMBER.equals(operandInt.getType())) {
-            throw new ConstantNotLiteral("Operand not resolved "+operand);
+            throw ConstantNotLiteral.EXCEPTION;
          }
       } else if(operand instanceof ConstantPointer) {
          return new ConstantInteger(((ConstantPointer) operand).getLocation()>>8);
       } else if(operand instanceof ConstantString) {
-         throw new ConstantNotLiteral("address of string is not literal");
+         throw ConstantNotLiteral.EXCEPTION;
       }
       throw new CompileError("Calculation not implemented " + getOperator() + " " + operand );
    }

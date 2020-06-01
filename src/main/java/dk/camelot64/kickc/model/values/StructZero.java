@@ -28,7 +28,7 @@ public class StructZero implements ConstantValue {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      throw new ConstantNotLiteral("Cannot calculate literal struct.");
+      throw ConstantNotLiteral.EXCEPTION;
    }
 
    @Override

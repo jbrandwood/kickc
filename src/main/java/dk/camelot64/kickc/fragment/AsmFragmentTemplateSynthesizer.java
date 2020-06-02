@@ -26,12 +26,15 @@ import java.util.*;
 public class AsmFragmentTemplateSynthesizer {
 
    /** Create synthesizer. */
-   public AsmFragmentTemplateSynthesizer(Path baseFragmentFolder, TargetCpu cpu, Path cacheFolder, CompileLog log) {
+   public AsmFragmentTemplateSynthesizer(TargetCpu cpu, Path baseFragmentFolder, boolean useFragmentCache, CompileLog log) {
       this.baseFragmentFolder = baseFragmentFolder;
       this.cpu = cpu;
       this.synthesisGraph = new LinkedHashMap<>();
       this.bestTemplateUpdate = new ArrayDeque<>();
-      this.fragmentCache = AsmFragmentTemplateCache.load(cacheFolder, cpu, log);
+      if(useFragmentCache)
+         this.fragmentCache = AsmFragmentTemplateCache.load(cpu, baseFragmentFolder, log);
+      else
+         this.fragmentCache = AsmFragmentTemplateCache.memory(cpu);
    }
 
    /** The folder containing fragment files. */

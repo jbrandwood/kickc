@@ -35,8 +35,6 @@ public class Program {
 
    /** Base folder for finding ASM fragment files. (STATIC) */
    private Path asmFragmentBaseFolder;
-   /** Cache folder for finding ASM fragment files. (STATIC) */
-   private Path asmFragmentCacheFolder;
    /** The ASM fragment synthesizer responsible for loading/synthesizing ASM fragments. Depends on the target CPU. (STATIC) */
    private AsmFragmentTemplateMasterSynthesizer asmFragmentMasterSynthesizer;
 
@@ -192,14 +190,6 @@ public class Program {
       this.warnArrayType = errorArrayKickC;
    }
 
-   public Path getAsmFragmentCacheFolder() {
-      return asmFragmentCacheFolder;
-   }
-
-   public void setAsmFragmentCacheFolder(Path asmFragmentCacheFolder) {
-      this.asmFragmentCacheFolder = asmFragmentCacheFolder;
-   }
-
    public Path getAsmFragmentBaseFolder() {
       return asmFragmentBaseFolder;
    }
@@ -212,8 +202,8 @@ public class Program {
       return asmFragmentMasterSynthesizer;
    }
 
-   public void initAsmFragmentMasterSynthesizer() {
-      this.asmFragmentMasterSynthesizer = new AsmFragmentTemplateMasterSynthesizer(asmFragmentBaseFolder, asmFragmentCacheFolder, getLog());
+   public void initAsmFragmentMasterSynthesizer(boolean useFragmentCache) {
+      this.asmFragmentMasterSynthesizer = new AsmFragmentTemplateMasterSynthesizer(asmFragmentBaseFolder, useFragmentCache, getLog());
    }
 
    public TargetPlatform getTargetPlatform() {

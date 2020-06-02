@@ -14,8 +14,8 @@ public class AsmFragmentTemplateMasterSynthesizer {
 
    /** Fragment base folder. */
    private final Path baseFragmentFolder;
-   /** Fragment cache folder. */
-   private final Path cacheFolder;
+   /** Use the fragment synthesis cache */
+   private boolean useFragmentCache;
    /** Compile Log. */
    private CompileLog log;
 
@@ -23,9 +23,9 @@ public class AsmFragmentTemplateMasterSynthesizer {
    private Map<TargetCpu, AsmFragmentTemplateSynthesizer> synthesizers;
 
    /** Create master synthesizer. */
-   public AsmFragmentTemplateMasterSynthesizer(Path baseFragmentFolder, Path cacheFolder, CompileLog log) {
+   public AsmFragmentTemplateMasterSynthesizer(Path baseFragmentFolder, boolean useFragmentCache, CompileLog log) {
       this.baseFragmentFolder = baseFragmentFolder;
-      this.cacheFolder = cacheFolder;
+      this.useFragmentCache = useFragmentCache;
       this.log = log;
       this.synthesizers = new LinkedHashMap<>();
    }
@@ -33,7 +33,7 @@ public class AsmFragmentTemplateMasterSynthesizer {
    public AsmFragmentTemplateSynthesizer getSynthesizer(TargetCpu targetCpu) {
       AsmFragmentTemplateSynthesizer synthesizer = synthesizers.get(targetCpu);
       if(synthesizer==null) {
-         synthesizer = new AsmFragmentTemplateSynthesizer(baseFragmentFolder, targetCpu, cacheFolder, log);
+         synthesizer = new AsmFragmentTemplateSynthesizer(targetCpu, baseFragmentFolder, useFragmentCache, log);
          synthesizers.put(targetCpu, synthesizer);
       }
       return synthesizer;

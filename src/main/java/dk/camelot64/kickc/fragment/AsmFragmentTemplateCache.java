@@ -14,6 +14,12 @@ import java.util.Map;
 /** Cache for ASM fragments. The cache remembers all synthesized fragments allowing for faster access after the first synthesis. */
 public class AsmFragmentTemplateCache {
 
+   /** Hash and lastModify information for the fragment system. */
+   private AsmFragmentSystemHash fragmentSystemHash;
+
+   /** Name of the sub-folder holding the fragment cache. */
+   public static final String CACHE_FOLDER_NAME = "cache";
+
    /** The folder containing cached fragment files. */
    private Path cacheFolder;
 
@@ -26,9 +32,10 @@ public class AsmFragmentTemplateCache {
    /** Detects any modification of the cache. */
    private boolean modified;
 
-   public AsmFragmentTemplateCache(Path cacheFolder, TargetCpu cpu, Map<String, AsmFragmentTemplate> cache) {
+   AsmFragmentTemplateCache(Path cacheFolder, TargetCpu cpu, AsmFragmentSystemHash fragmentSystemHash, Map<String, AsmFragmentTemplate> cache) {
       this.cacheFolder = cacheFolder;
       this.cpu = cpu;
+      this.fragmentSystemHash = fragmentSystemHash;
       this.cache = cache;
       this.modified = false;
    }
@@ -36,7 +43,10 @@ public class AsmFragmentTemplateCache {
    /** Special singleton representing that the fragment can not be synthesized or loaded. */
    public static AsmFragmentTemplate NO_SYNTHESIS = new AsmFragmentTemplate("NO_SYNTHESIS", "NO_SYNTHESIS", false);
 
-   /** The prefix for header.lines in the fragment cache file. */
+   /** Prefix for the fragment hash file header. */
+   public static final String HASH_HEADER = "//KICKC FRAGMENT CACHE ";
+
+   /** The prefix for fragment header lines in the fragment cache file. */
    public static final String FRAGMENT_HEADER = "//FRAGMENT ";
 
    /**
@@ -69,24 +79,56 @@ public class AsmFragmentTemplateCache {
    }
 
    /**
+    * Creates an empty memory-only fragment cache
+    *
+    * @param cpu The CPU to make a cache for
+    * @return The new empty cache
+    */
+   public static AsmFragmentTemplateCache memory(TargetCpu cpu) {
+      return new AsmFragmentTemplateCache(null, cpu, new AsmFragmentSystemHash(0, 0), new LinkedHashMap<>());
+   }
+
+   /**
     * Attempt to load a fragment cache containing all best synthesized fragments
     *
-    * @param cacheFolder Folder containing the cache
+    * @param baseFragmentFolder Folder containing fragments. (The cache is localed in the sub-folder named "cache)
     * @param log The compile log
     * @return The map with all best fragments from the cache file. null if the cache file is not found.
     */
-   public static AsmFragmentTemplateCache load(Path cacheFolder, TargetCpu cpu, CompileLog log) {
+   public static AsmFragmentTemplateCache load(TargetCpu cpu, Path baseFragmentFolder, CompileLog log) {
+      final AsmFragmentSystemHash fragmentSystemHash = AsmFragmentSystemHash.calculate(baseFragmentFolder);
+      Path cacheFolder = baseFragmentFolder.resolve(CACHE_FOLDER_NAME);
       final Date before = new Date();
-      if(cacheFolder == null) {
-         return new AsmFragmentTemplateCache(null, cpu, new LinkedHashMap<>());
+      if(!cacheFolder.toFile().exists()) {
+         if(log.isVerboseFragmentLog())
+            log.append("Creating fragment cache folder " + cacheFolder.toAbsolutePath().toString());
+         cacheFolder.toFile().mkdir();
+         return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
       }
       try {
          File cacheFile = cacheFolder.resolve(getCacheFileName(cpu)).toFile();
          if(!cacheFile.exists()) {
-            return new AsmFragmentTemplateCache(cacheFolder, cpu, new LinkedHashMap<>());
+            return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
+         }
+         if(cacheFile.lastModified() < fragmentSystemHash.getLastModified()) {
+            if(log.isVerboseFragmentLog())
+               log.append("Deleting outdated fragment cache file " + cacheFile.getAbsolutePath());
+            cacheFile.delete();
+            return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
          }
          LinkedHashMap<String, AsmFragmentTemplate> cache = new LinkedHashMap<>();
          BufferedReader fragmentCacheReader = new BufferedReader(new FileReader(cacheFile));
+         String hashLine = fragmentCacheReader.readLine();
+         final String hash = hashLine.substring(HASH_HEADER.length());
+         // Compare cache file hash with fragment system hash
+         if(!hash.equals(fragmentSystemHash.getHashString())) {
+            // Cache file hash does not match fragment system hash
+            if(log.isVerboseFragmentLog())
+               log.append("Deleting hash mismatch fragment cache file " + cacheFile.getAbsolutePath());
+            cacheFile.delete();
+            return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
+         }
+         // Read the first "real" line
          String cacheLine = fragmentCacheReader.readLine();
          StringBuilder body = null;
          String signature = null;
@@ -112,7 +154,7 @@ public class AsmFragmentTemplateCache {
          final long millis = after.getTime() - before.getTime();
          if(log.isVerboseFragmentLog())
             log.append("Loaded cached fragments " + cache.size() + " from " + cacheFile.getPath() + " in " + millis + "ms");
-         return new AsmFragmentTemplateCache(cacheFolder, cpu, cache);
+         return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, cache);
       } catch(IOException e) {
          throw new RuntimeException("Error loading fragment cache file " + cacheFolder, e);
       } catch(StringIndexOutOfBoundsException e) {
@@ -145,10 +187,11 @@ public class AsmFragmentTemplateCache {
       File cacheFile = this.cacheFolder.resolve(getCacheFileName(cpu)).toFile();
       try {
          PrintStream fragmentFilePrint = new PrintStream(cacheFile);
+         fragmentFilePrint.println(HASH_HEADER + fragmentSystemHash.getHashString());
          for(String signature : this.cache.keySet()) {
             AsmFragmentTemplate fragmentTemplate = this.cache.get(signature);
             fragmentFilePrint.println(FRAGMENT_HEADER + signature);
-            if(fragmentTemplate==NO_SYNTHESIS) {
+            if(fragmentTemplate == NO_SYNTHESIS) {
                fragmentFilePrint.println(NO_SYNTHESIS.getBody());
             } else {
                if(fragmentTemplate.getBody() != null)

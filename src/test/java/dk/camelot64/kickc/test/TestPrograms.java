@@ -4,7 +4,6 @@ import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.asm.AsmProgram;
-import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
@@ -4302,13 +4301,8 @@ public class TestPrograms {
       compileAndCompare("condition-type-mismatch.c");
    }
 
-   static AsmFragmentTemplateSynthesizer asmFragmentSynthesizer;
-
    @BeforeClass
    public static void setUp() {
-      //Path asmFragmentBaseFolder = new File("src/main/fragment/").toPath();
-      //Path asmFragmentCacheFolder = new File("src/main/fragment/cache").toPath();
-      //asmFragmentSynthesizer = new AsmFragmentTemplateSynthesizer(asmFragmentBaseFolder, TargetCpu.MOS6502X, asmFragmentCacheFolder, new CompileLog());
    }
 
    @AfterClass
@@ -4402,7 +4396,6 @@ public class TestPrograms {
       Compiler compiler = new Compiler();
       compiler.setWarnFragmentMissing(true);
       compiler.setAsmFragmentBaseFolder(new File("src/main/fragment/").toPath());
-      compiler.setAsmFragmentCacheFolder(new File("src/main/fragment/cache/").toPath());
       if(compileLog != null) {
          compiler.setLog(compileLog);
       }
@@ -4418,7 +4411,7 @@ public class TestPrograms {
       files.add(filePath);
       Program program = compiler.getProgram();
       // Initialize the master ASM fragment synthesizer
-      program.initAsmFragmentMasterSynthesizer();
+      program.initAsmFragmentMasterSynthesizer(true);
       final File platformFile = SourceLoader.loadFile(TargetPlatform.DEFAULT_NAME + "." + CTargetPlatformParser.FILE_EXTENSION, filePath, program.getTargetPlatformPaths());
       final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(TargetPlatform.DEFAULT_NAME, platformFile, filePath, program.getTargetPlatformPaths());
       program.setTargetPlatform(targetPlatform);

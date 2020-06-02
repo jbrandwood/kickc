@@ -95,8 +95,8 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-Onoloophead"}, description = "Optimization Option. Disabled experimental loop-head constant pass which identifies loops where the condition is constant on the first iteration.")
    private boolean optimizeNoLoopHeadConstant = false;
 
-   @CommandLine.Option(names = {"-Ocache"}, description = "Optimization Option. Enables a fragment cache file.")
-   private boolean optimizeFragmentCache = false;
+   @CommandLine.Option(names = {"-Onocache"}, description = "Optimization Option. Disables the fragment synthesis cache. The cache is enabled by default.")
+   private boolean optimizeNoFragmentCache = false;
 
    @CommandLine.Option(names = {"-Oliverangecallpath"}, description = "Optimization Option. Enables live ranges per call path optimization, which limits memory usage and code, but takes a lot of compile time.")
    private boolean optimizeLiveRangeCallPath = false;
@@ -214,25 +214,14 @@ public class KickC implements Callable<Integer> {
       if(fragmentDir == null) {
          fragmentDir = new File("fragment/").toPath();
       }
-
-      Path fragmentCacheDir = null;
-      if(optimizeFragmentCache) {
-         if(outputDir != null) {
-            fragmentCacheDir = outputDir;
-         } else {
-            fragmentCacheDir = new File(".").toPath();
-         }
-      }
+      compiler.setAsmFragmentBaseFolder(fragmentDir);
 
       configVerbosity(compiler);
-
-      compiler.setAsmFragmentBaseFolder(fragmentDir);
-      compiler.setAsmFragmentCacheFolder(fragmentCacheDir);
 
       Program program = compiler.getProgram();
 
       // Initialize the master ASM fragment synthesizer
-      program.initAsmFragmentMasterSynthesizer();
+      program.initAsmFragmentMasterSynthesizer(!optimizeNoFragmentCache);
 
       Path currentPath = new File(".").toPath();
 

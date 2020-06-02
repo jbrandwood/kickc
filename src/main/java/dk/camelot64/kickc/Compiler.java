@@ -98,10 +98,6 @@ public class Compiler {
       program.setAsmFragmentBaseFolder(asmFragmentBaseFolder);
    }
 
-   public void setAsmFragmentCacheFolder(Path asmFragmentCacheDir) {
-      program.setAsmFragmentCacheFolder(asmFragmentCacheDir);
-   }
-
    public AsmFragmentTemplateMasterSynthesizer getAsmFragmentMasterSynthesizer() {
       return program.getAsmFragmentMasterSynthesizer();
    }

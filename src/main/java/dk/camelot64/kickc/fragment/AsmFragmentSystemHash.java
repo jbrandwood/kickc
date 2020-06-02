@@ -49,6 +49,10 @@ public class AsmFragmentSystemHash {
                }
          }
       }
+      // Also hash in all synthesis rules
+      for(AsmFragmentTemplateSynthesisRule synthesisRule : AsmFragmentTemplateSynthesisRule.getSynthesisRules()) {
+         hash += synthesisRule.hashCode();
+      }
       return new AsmFragmentSystemHash(hash, lastModified);
    }
 

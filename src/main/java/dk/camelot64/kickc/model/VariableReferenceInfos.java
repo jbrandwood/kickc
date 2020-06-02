@@ -4,10 +4,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.calcs.PassNCalcVariableReferenceInfos;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -169,6 +166,9 @@ public class VariableReferenceInfos {
       return PassNCalcVariableReferenceInfos.getReferencedVars(rValue);
    }
 
+   /** Caches results for getDefinedVars(). */
+   private Map<Integer, List<VariableRef>> cachedDefinedVars = new HashMap<>();
+
    /**
     * Get the variables defined by a statement
     *
@@ -176,17 +176,22 @@ public class VariableReferenceInfos {
     * @return Variables defined by the statement
     */
    public Collection<VariableRef> getDefinedVars(Statement stmt) {
+      List<VariableRef> result = cachedDefinedVars.get(stmt.getIndex());
+      if(result!=null)
+         return result;
       Collection<ReferenceToSymbolVar> referenceToSymbolVars = statementVarReferences.get(stmt.getIndex());
-      // TODO: This may cause problems since it is a sign that the maps are out of date!
       if(referenceToSymbolVars == null)
+         // TODO: This may cause problems since it is a sign that the maps are out of date!
          return new ArrayList<>();
-      return referenceToSymbolVars
+      result = referenceToSymbolVars
             .stream()
             .filter(referenceToSymbolVar -> referenceToSymbolVar.getReferenced() instanceof VariableRef)
             .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.DEFINE.equals(referenceToSymbolVar.getReferenceType()))
             .map(ReferenceToSymbolVar::getReferenced)
             .map(symbolVariableRef -> (VariableRef) symbolVariableRef)
             .collect(Collectors.toList());
+      cachedDefinedVars.put(stmt.getIndex(), result);
+      return result;
    }
 
    /**

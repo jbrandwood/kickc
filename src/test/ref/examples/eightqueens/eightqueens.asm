@@ -6,36 +6,22 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  // The default text color
-  .const CONIO_TEXTCOLOR_DEFAULT = $e
+  .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
-  .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
-  .const OFFSET_STRUCT_TIME_OF_DAY_MIN = 2
-  .const OFFSET_STRUCT_TIME_OF_DAY_HOURS = 3
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL = $f
-  .const OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS = $b
-  .const OFFSET_STRUCT_MOS6526_CIA_TOD_MIN = $a
-  .const OFFSET_STRUCT_MOS6526_CIA_TOD_SEC = 9
-  .const OFFSET_STRUCT_MOS6526_CIA_TOD_10THS = 8
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // The screen width
-  // The screen height
-  // The screen bytes
-  // The text screen address
-  .label CONIO_SCREEN_TEXT = $400
-  // The color screen address
-  .label CONIO_SCREEN_COLORS = $d800
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
-  .label conio_cursor_x = $14
-  .label conio_cursor_y = $15
-  .label conio_line_text = $16
-  .label conio_line_color = $18
+  // Color Ram
+  .label COLORRAM = $d800
+  // Default address of screen character matrix
+  .label DEFAULT_SCREEN = $400
+  .label conio_cursor_x = $19
+  .label conio_cursor_y = $1a
+  .label conio_line_text = $1b
+  .label conio_line_color = $1d
   // The number of found solutions
   .label count = 2
 __bbegin:
   // conio_cursor_x = 0
+  // The number of bytes on the screen
   // The current cursor x-position
   lda #0
   sta.z conio_cursor_x
@@ -44,15 +30,15 @@ __bbegin:
   sta.z conio_cursor_y
   // conio_line_text = CONIO_SCREEN_TEXT
   // The current text cursor line start
-  lda #<CONIO_SCREEN_TEXT
+  lda #<DEFAULT_SCREEN
   sta.z conio_line_text
-  lda #>CONIO_SCREEN_TEXT
+  lda #>DEFAULT_SCREEN
   sta.z conio_line_text+1
   // conio_line_color = CONIO_SCREEN_COLORS
   // The current color cursor line start
-  lda #<CONIO_SCREEN_COLORS
+  lda #<COLORRAM
   sta.z conio_line_color
-  lda #>CONIO_SCREEN_COLORS
+  lda #>COLORRAM
   sta.z conio_line_color+1
   jsr main
   rts
@@ -73,46 +59,20 @@ main: {
     jsr cputs
     // printf("\nnumber of queens:%u",QUEENS)
     jsr printf_uint
-    // tod_init(TOD_ZERO)
-    lda TOD_ZERO
-    sta.z tod_init.tod_TENTHS
-    lda TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_SEC
-    sta.z tod_init.tod_SEC
-    ldx TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_MIN
-    ldy TOD_ZERO+OFFSET_STRUCT_TIME_OF_DAY_HOURS
-    jsr tod_init
     // queens()
     jsr queens
-    // tod_read()
-    jsr tod_read
-    sta.z tod_read.return_MIN
-    lda.z tod_read.return_HOURS
-    // tod_str(tod_read())
-    sty.z tod_str.tod_TENTHS
-    stx.z tod_str.tod_SEC
-    ldy.z tod_read.return_MIN
-    tax
-    jsr tod_str
-    // printf("\n\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()))
+    // printf("\n\nsolutions: %lu\n",count)
     lda #<s2
     sta.z cputs.s
     lda #>s2
     sta.z cputs.s+1
     jsr cputs
-    // printf("\n\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()))
+    // printf("\n\nsolutions: %lu\n",count)
     jsr printf_ulong
-    // printf("\n\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()))
+    // printf("\n\nsolutions: %lu\n",count)
     lda #<s3
     sta.z cputs.s
     lda #>s3
-    sta.z cputs.s+1
-    jsr cputs
-    // printf("\n\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()))
-    jsr printf_string
-    // printf("\n\nsolutions: %lu time: %s.\n",count,tod_str(tod_read()))
-    lda #<s4
-    sta.z cputs.s
-    lda #>s4
     sta.z cputs.s+1
     jsr cputs
     // }
@@ -123,15 +83,11 @@ main: {
     .byte 0
     s2: .text @"\n\nsolutions: "
     .byte 0
-    s3: .text " time: "
-    .byte 0
-    s4: .text @".\n"
-    .byte 0
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($10) s)
+// cputs(byte* zp($15) s)
 cputs: {
-    .label s = $10
+    .label s = $15
   __b1:
     // c=*s++
     ldy #0
@@ -161,7 +117,7 @@ cputc: {
     ldy.z conio_cursor_x
     sta (conio_line_text),y
     // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda #CONIO_TEXTCOLOR_DEFAULT
+    lda #LIGHT_BLUE
     sta (conio_line_color),y
     // if(++conio_cursor_x==CONIO_WIDTH)
     inc.z conio_cursor_x
@@ -213,37 +169,37 @@ cscroll: {
     cmp.z conio_cursor_y
     bne __breturn
     // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
     sta.z memcpy.destination
-    lda #>CONIO_SCREEN_TEXT
+    lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    lda #<CONIO_SCREEN_TEXT+$28
+    lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
-    lda #>CONIO_SCREEN_TEXT+$28
+    lda #>DEFAULT_SCREEN+$28
     sta.z memcpy.source+1
     jsr memcpy
     // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<CONIO_SCREEN_COLORS
+    lda #<COLORRAM
     sta.z memcpy.destination
-    lda #>CONIO_SCREEN_COLORS
+    lda #>COLORRAM
     sta.z memcpy.destination+1
-    lda #<CONIO_SCREEN_COLORS+$28
+    lda #<COLORRAM+$28
     sta.z memcpy.source
-    lda #>CONIO_SCREEN_COLORS+$28
+    lda #>COLORRAM+$28
     sta.z memcpy.source+1
     jsr memcpy
     // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
     ldx #' '
-    lda #<CONIO_SCREEN_TEXT+$19*$28-$28
+    lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
-    lda #>CONIO_SCREEN_TEXT+$19*$28-$28
+    lda #>DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str+1
     jsr memset
     // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
-    ldx #CONIO_TEXTCOLOR_DEFAULT
-    lda #<CONIO_SCREEN_COLORS+$19*$28-$28
+    ldx #LIGHT_BLUE
+    lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
-    lda #>CONIO_SCREEN_COLORS+$19*$28-$28
+    lda #>COLORRAM+$19*$28-$28
     sta.z memset.str+1
     jsr memset
     // conio_line_text -= CONIO_WIDTH
@@ -269,11 +225,11 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($a) str, byte register(X) c)
+// memset(void* zp($b) str, byte register(X) c)
 memset: {
     .label end = $25
-    .label dst = $a
-    .label str = $a
+    .label dst = $b
+    .label str = $b
     // end = (char*)str + num
     lda #$28
     clc
@@ -306,13 +262,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($12) destination, void* zp($a) source)
+// memcpy(void* zp($17) destination, void* zp($b) source)
 memcpy: {
     .label src_end = $25
-    .label dst = $12
-    .label src = $a
-    .label source = $a
-    .label destination = $12
+    .label dst = $17
+    .label src = $b
+    .label source = $b
+    .label destination = $17
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -346,18 +302,6 @@ memcpy: {
     inc.z src+1
   !:
     jmp __b1
-}
-// Print a string value using a specific format
-// Handles justification and min length 
-printf_string: {
-    // cputs(str)
-    lda #<tod_buffer
-    sta.z cputs.s
-    lda #>tod_buffer
-    sta.z cputs.s+1
-    jsr cputs
-    // }
-    rts
 }
 // Print an unsigned int using a specific format
 // printf_ulong(dword zp(2) uvalue)
@@ -393,14 +337,14 @@ printf_ulong: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($d) buffer_sign, byte register(X) format_min_length, byte zp($23) format_justify_left, byte zp($c) format_zero_padding, byte zp($e) format_upper_case)
+// printf_number_buffer(byte zp($11) buffer_sign, byte register(X) format_min_length, byte zp(6) format_justify_left, byte zp($10) format_zero_padding, byte zp($12) format_upper_case)
 printf_number_buffer: {
-    .label __19 = $a
-    .label buffer_sign = $d
-    .label padding = $24
-    .label format_zero_padding = $c
-    .label format_justify_left = $23
-    .label format_upper_case = $e
+    .label __19 = $b
+    .label buffer_sign = $11
+    .label padding = $13
+    .label format_zero_padding = $10
+    .label format_justify_left = 6
+    .label format_upper_case = $12
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -505,11 +449,11 @@ printf_number_buffer: {
     rts
 }
 // Print a padding char a number of times
-// printf_padding(byte zp($1a) pad, byte zp($f) length)
+// printf_padding(byte zp($23) pad, byte zp($14) length)
 printf_padding: {
-    .label i = $1b
-    .label length = $f
-    .label pad = $1a
+    .label i = $24
+    .label length = $14
+    .label pad = $23
     lda #0
     sta.z i
   __b1:
@@ -530,7 +474,7 @@ printf_padding: {
 // Converts a string to uppercase.
 strupr: {
     .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label src = $10
+    .label src = $15
     lda #<str
     sta.z src
     lda #>str
@@ -578,11 +522,11 @@ toupper: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($12) str)
+// strlen(byte* zp($17) str)
 strlen: {
-    .label len = $a
-    .label str = $12
-    .label return = $a
+    .label len = $b
+    .label str = $17
+    .label return = $b
     lda #<0
     sta.z len
     sta.z len+1
@@ -616,12 +560,12 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp(6) value, byte* zp($a) buffer)
+// ultoa(dword zp(7) value, byte* zp($b) buffer)
 ultoa: {
     .label digit_value = $1f
-    .label buffer = $a
-    .label digit = $23
-    .label value = 6
+    .label buffer = $b
+    .label digit = 6
+    .label value = 7
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -709,12 +653,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($a) buffer, dword zp(6) value, dword zp($1f) sub)
+// ultoa_append(byte* zp($b) buffer, dword zp(7) value, dword zp($1f) sub)
 ultoa_append: {
-    .label buffer = $a
-    .label value = 6
+    .label buffer = $b
+    .label value = 7
     .label sub = $1f
-    .label return = 6
+    .label return = 7
     ldx #0
   __b1:
     // while (value >= sub)
@@ -759,107 +703,6 @@ ultoa_append: {
     sta.z value+3
     jmp __b1
 }
-// Convert time of day to a human-readable string "hh:mm:ss:10"
-// tod_str(byte zp($1d) tod_TENTHS, byte zp($1e) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
-tod_str: {
-    .label tod_TENTHS = $1d
-    .label tod_SEC = $1e
-    // tod.HOURS>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // '0'+(tod.HOURS>>4)
-    clc
-    adc #'0'
-    // tod_buffer[0] = '0'+(tod.HOURS>>4)
-    sta tod_buffer
-    // tod.HOURS&0x0f
-    txa
-    and #$f
-    // '0'+(tod.HOURS&0x0f)
-    clc
-    adc #'0'
-    // tod_buffer[1] = '0'+(tod.HOURS&0x0f)
-    sta tod_buffer+1
-    // tod.MIN>>4
-    tya
-    lsr
-    lsr
-    lsr
-    lsr
-    // '0'+(tod.MIN>>4)
-    clc
-    adc #'0'
-    // tod_buffer[3] = '0'+(tod.MIN>>4)
-    sta tod_buffer+3
-    // tod.MIN&0x0f
-    tya
-    and #$f
-    // '0'+(tod.MIN&0x0f)
-    clc
-    adc #'0'
-    // tod_buffer[4] = '0'+(tod.MIN&0x0f)
-    sta tod_buffer+4
-    // tod.SEC>>4
-    lda.z tod_SEC
-    lsr
-    lsr
-    lsr
-    lsr
-    // '0'+(tod.SEC>>4)
-    clc
-    adc #'0'
-    // tod_buffer[6] = '0'+(tod.SEC>>4)
-    sta tod_buffer+6
-    // tod.SEC&0x0f
-    lda #$f
-    and.z tod_SEC
-    // '0'+(tod.SEC&0x0f)
-    clc
-    adc #'0'
-    // tod_buffer[7] = '0'+(tod.SEC&0x0f)
-    sta tod_buffer+7
-    // tod.TENTHS>>4
-    lda.z tod_TENTHS
-    lsr
-    lsr
-    lsr
-    lsr
-    // '0'+(tod.TENTHS>>4)
-    clc
-    adc #'0'
-    // tod_buffer[9] = '0'+(tod.TENTHS>>4)
-    sta tod_buffer+9
-    // tod.TENTHS&0x0f
-    lda #$f
-    and.z tod_TENTHS
-    // '0'+(tod.TENTHS&0x0f)
-    clc
-    adc #'0'
-    // tod_buffer[10] = '0'+(tod.TENTHS&0x0f)
-    sta tod_buffer+$a
-    // }
-    rts
-}
-// Read time of day
-tod_read: {
-    .label return_HOURS = $23
-    .label return_MIN = $1c
-    // hours = CIA1->TOD_HOURS
-    // Reading sequence is important. TOD latches on reading hours until 10ths is read.
-    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
-    sta.z return_HOURS
-    // mins = CIA1->TOD_MIN
-    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN
-    // secs = CIA1->TOD_SEC
-    ldx CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC
-    // tenths = CIA1->TOD_10THS
-    ldy CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS
-    // }
-    rts
-}
 // Generates all valid placements of queens on a NxN board without recursion
 // Works exactly like the recursive solution by generating all legal placements af a queen for a specific row taking into consideration the queens already placed on the rows below 
 // and then moving on to generating all legal placements on the rows above.
@@ -868,7 +711,7 @@ tod_read: {
 // When all columns on a row is exhausted move back down to the lower level and move forward one position until we are done with the last position on the first row
 queens: {
     // The current row where the queen is moving
-    .label row = $1c
+    .label row = $d
     lda #<0
     sta.z count
     sta.z count+1
@@ -935,9 +778,9 @@ queens: {
 }
 // Print the board with a legal placement.
 print: {
-    .label i = $1d
-    .label i1 = $1e
-    .label j = $c
+    .label i = $e
+    .label i1 = $f
+    .label j = $10
     // gotoxy(0,5)
     jsr gotoxy
     // printf("\n#%lu:\n ",count)
@@ -972,9 +815,9 @@ print: {
     rts
   __b4:
     // printf("\n%x",i)
-    lda #<s2
+    lda #<@s3
     sta.z cputs.s
-    lda #>s2
+    lda #>@s3
     sta.z cputs.s+1
     jsr cputs
     // printf("\n%x",i)
@@ -1025,8 +868,6 @@ print: {
     .byte 0
     s1: .text @":\n "
     .byte 0
-    s2: .text @"\n"
-    .byte 0
     s3: .text "Q"
     .byte 0
     s4: .text "-"
@@ -1060,12 +901,12 @@ printf_uchar: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($10) buffer)
+// uctoa(byte register(X) value, byte* zp($15) buffer)
 uctoa: {
     .label digit_value = $24
-    .label buffer = $10
-    .label digit = $d
-    .label started = $e
+    .label buffer = $15
+    .label digit = $11
+    .label started = $12
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1130,9 +971,9 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($10) buffer, byte register(X) value, byte zp($24) sub)
+// uctoa_append(byte* zp($15) buffer, byte register(X) value, byte zp($24) sub)
 uctoa_append: {
-    .label buffer = $10
+    .label buffer = $15
     .label sub = $24
     ldy #0
   __b1:
@@ -1167,14 +1008,14 @@ gotoxy: {
     lda #y
     sta.z conio_cursor_y
     // conio_line_text = CONIO_SCREEN_TEXT + line_offset
-    lda #<CONIO_SCREEN_TEXT+line_offset
+    lda #<DEFAULT_SCREEN+line_offset
     sta.z conio_line_text
-    lda #>CONIO_SCREEN_TEXT+line_offset
+    lda #>DEFAULT_SCREEN+line_offset
     sta.z conio_line_text+1
     // conio_line_color = CONIO_SCREEN_COLORS + line_offset
-    lda #<CONIO_SCREEN_COLORS+line_offset
+    lda #<COLORRAM+line_offset
     sta.z conio_line_color
-    lda #>CONIO_SCREEN_COLORS+line_offset
+    lda #>COLORRAM+line_offset
     sta.z conio_line_color+1
     // }
     rts
@@ -1182,11 +1023,11 @@ gotoxy: {
 // Checks is a placement of the queen on the board is legal.
 // Checks the passed (row, column) against all queens placed on the board on lower rows.
 // If no conflict for desired position returns 1 otherwise returns 0
-// legal(byte zp($1c) row, byte zp($23) column)
+// legal(byte zp($d) row, byte zp($23) column)
 legal: {
-    .label row = $1c
+    .label row = $d
     .label column = $23
-    .label diff1_return = $24
+    .label diff1_return = $13
     ldy #1
   __b1:
     // row-1
@@ -1247,37 +1088,6 @@ legal: {
     sta.z diff1_return
     jmp diff2
 }
-// Initialize time-of-day clock
-// This uses the MOS6526 CIA#1
-// tod_init(byte zp($1a) tod_TENTHS, byte zp($1b) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
-tod_init: {
-    .label tod_TENTHS = $1a
-    .label tod_SEC = $1b
-    // CIA1->TIMER_A_CONTROL |= 0x80
-    // Set 50hz (this assumes PAL!) (bit7=1)
-    lda #$80
-    ora CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA1->TIMER_B_CONTROL &= 0x7f
-    // Writing TOD clock (bit7=0)
-    lda #$7f
-    and CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA1->TOD_HOURS = tod.HOURS
-    // Reset TOD clock
-    // Writing sequence is important. TOD stops when hours is written and starts when 10ths is written.
-    sty CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
-    // CIA1->TOD_MIN = tod.MIN
-    stx CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN
-    // CIA1->TOD_SEC = tod.SEC
-    lda.z tod_SEC
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC
-    // CIA1->TOD_10THS = tod.TENTHS
-    lda.z tod_TENTHS
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS
-    // }
-    rts
-}
 // Print an unsigned int using a specific format
 printf_uint: {
     .const format_min_length = 0
@@ -1312,13 +1122,13 @@ printf_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($10) value, byte* zp($12) buffer)
+// utoa(word zp($15) value, byte* zp($17) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $25
-    .label buffer = $12
-    .label digit = $f
-    .label value = $10
+    .label buffer = $17
+    .label digit = $14
+    .label value = $15
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1396,12 +1206,12 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($12) buffer, word zp($10) value, word zp($25) sub)
+// utoa_append(byte* zp($17) buffer, word zp($15) value, word zp($25) sub)
 utoa_append: {
-    .label buffer = $12
-    .label value = $10
+    .label buffer = $17
+    .label value = $15
     .label sub = $25
-    .label return = $10
+    .label return = $15
     ldx #0
   __b1:
     // while (value >= sub)
@@ -1434,15 +1244,15 @@ utoa_append: {
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
-    .label line_text = $12
-    .label line_cols = $16
-    lda #<CONIO_SCREEN_COLORS
+    .label line_text = $17
+    .label line_cols = $1b
+    lda #<COLORRAM
     sta.z line_cols
-    lda #>CONIO_SCREEN_COLORS
+    lda #>COLORRAM
     sta.z line_cols+1
-    lda #<CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
     sta.z line_text
-    lda #>CONIO_SCREEN_TEXT
+    lda #>DEFAULT_SCREEN
     sta.z line_text+1
     ldx #0
   __b1:
@@ -1455,14 +1265,14 @@ clrscr: {
     // conio_cursor_y = 0
     sta.z conio_cursor_y
     // conio_line_text = CONIO_SCREEN_TEXT
-    lda #<CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
     sta.z conio_line_text
-    lda #>CONIO_SCREEN_TEXT
+    lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
     // conio_line_color = CONIO_SCREEN_COLORS
-    lda #<CONIO_SCREEN_COLORS
+    lda #<COLORRAM
     sta.z conio_line_color
-    lda #>CONIO_SCREEN_COLORS
+    lda #>COLORRAM
     sta.z conio_line_color+1
     // }
     rts
@@ -1496,7 +1306,7 @@ clrscr: {
     lda #' '
     sta (line_text),y
     // line_cols[c] = conio_textcolor
-    lda #CONIO_TEXTCOLOR_DEFAULT
+    lda #LIGHT_BLUE
     sta (line_cols),y
     // for( char c=0;c<CONIO_WIDTH; c++ )
     iny
@@ -1510,12 +1320,9 @@ clrscr: {
   RADIX_DECIMAL_VALUES: .word $2710, $3e8, $64, $a
   // Values of decimal digits
   RADIX_DECIMAL_VALUES_LONG: .dword $3b9aca00, $5f5e100, $989680, $f4240, $186a0, $2710, $3e8, $64, $a
-  // The buffer used by tod_str()
-  tod_buffer: .text "00:00:00:00"
-  .byte 0
   // The board. board[i] holds the column position of the queen on row i. 
   board: .fill $14, 0
+  s3: .text @"\n"
+  .byte 0
   // Buffer used for stringified number being printed
   printf_buffer: .fill SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER, 0
-  // Time of Day 00:00:00:00
-  TOD_ZERO: .byte 0, 0, 0, 0

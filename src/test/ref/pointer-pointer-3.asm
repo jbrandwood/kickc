@@ -42,9 +42,9 @@ setscreen: {
     .label val = 2
     // *screen = val
     lda.z val
-    sta.z screen
+    sta.z @screen
     lda.z val+1
-    sta.z screen+1
+    sta.z @screen+1
     // }
     rts
 }

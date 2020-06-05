@@ -3,11 +3,11 @@
 // https://github.com/cc65/cc65/blob/master/samples/nachtm.c
 
 #include <conio.h>
+#include <conio-lines.h>
 #include <string.h>
 
 const char COLOR_GRAY3 = 0x0f;
 const char COLOR_BLACK = 0x00;
-char * const VIC_MEMORY = 0xd018;
 
 static unsigned char XSize, YSize;
 

@@ -8,6 +8,9 @@
 #include <mos6529.h>
 #include <mos7501.h>
 
+#ifndef __PLUS4__
+    #error "Target platform must be PLU4"
+#endif
 // The processor port
 // Used for serial I/O and controlling the cassette
 struct MOS7501_PORT * const PROCESSOR_PORT = 0x00;

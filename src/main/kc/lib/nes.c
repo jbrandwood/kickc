@@ -24,7 +24,7 @@ inline void enableVideoOutput() {
     // Enable vertical blank interrupt
     PPU->PPUCTRL = 0b10000000;
     // Enable sprite and tile rendering
-    PPU->PPUMASK = 0b00011000;
+    PPU->PPUMASK = 0b00011110;
 }
 
 // Wait for vblank to start
@@ -104,7 +104,7 @@ char readJoy1() {
     return joy;
 }
 
-// Prepare for transfering data from the CPU to the PPU
+// Prepare for transferring data from the CPU to the PPU
 // - ppuData : Pointer in the PPU memory
 inline void ppuDataPrepare(void* const ppuData) {
     // Write the high byte of PPU address
@@ -114,7 +114,7 @@ inline void ppuDataPrepare(void* const ppuData) {
 }
 
 // Put one byte into PPU memory
-// The byte is put into the current PPU address pointed to by the (autoincrementing) PPU->PPUADDR
+// The byte is put into the current PPU address pointed to by the (auto-incrementing) PPU->PPUADDR
 inline void ppuDataPut(char val) {
     // Transfer to PPU
     PPU->PPUDATA = val;

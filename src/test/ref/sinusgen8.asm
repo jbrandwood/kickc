@@ -207,11 +207,11 @@ sin8s_gen: {
   __b1:
     // for( unsigned int i=0; i<wavelength; i++)
     lda.z i+1
-    cmp #>wavelength
+    cmp #>@wavelength
     bcc __b2
     bne !+
     lda.z i
-    cmp #<wavelength
+    cmp #<@wavelength
     bcc __b2
   !:
     // }

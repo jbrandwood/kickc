@@ -3,6 +3,10 @@
 #include <mos6569.h>
 #include <mos6581.h>
 
+#ifndef __C64__
+#error "Target platform must be C64"
+#endif
+
 // Processor port data direction register
 char*  const PROCPORT_DDR = 0x00;
 // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written

@@ -36,7 +36,7 @@ main: {
 sum: {
     // a+b
     clc
-    adc #a
+    adc #@a
     // }
     rts
 }

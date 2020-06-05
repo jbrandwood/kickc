@@ -88,18 +88,6 @@ clock_start: scope:[clock_start]  from main::@8
 clock_start::@return: scope:[clock_start]  from clock_start
   return 
   to:@return
-
-(byte()) kbhit()
-kbhit: scope:[kbhit]  from irq_bottom_2
-  *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (number) 0
-  (byte~) kbhit::$0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B)
-  (byte) kbhit::return#0 ← (byte~) kbhit::$0
-  to:kbhit::@return
-kbhit::@return: scope:[kbhit]  from kbhit
-  (byte) kbhit::return#3 ← phi( kbhit/(byte) kbhit::return#0 )
-  (byte) kbhit::return#1 ← (byte) kbhit::return#3
-  return 
-  to:@return
 @1: scope:[]  from @begin
   (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
   to:@2
@@ -114,6 +102,18 @@ textcolor: scope:[textcolor]  from main::@16
 textcolor::@return: scope:[textcolor]  from textcolor
   (byte) textcolor::return#3 ← phi( textcolor/(byte) textcolor::return#0 )
   (byte) textcolor::return#1 ← (byte) textcolor::return#3
+  return 
+  to:@return
+
+(byte()) kbhit()
+kbhit: scope:[kbhit]  from irq_bottom_2
+  *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (number) 0
+  (byte~) kbhit::$0 ← ~ *((const nomodify byte*) kbhit::CIA1_PORT_B)
+  (byte) kbhit::return#0 ← (byte~) kbhit::$0
+  to:kbhit::@return
+kbhit::@return: scope:[kbhit]  from kbhit
+  (byte) kbhit::return#3 ← phi( kbhit/(byte) kbhit::return#0 )
+  (byte) kbhit::return#1 ← (byte) kbhit::return#3
   return 
   to:@return
 @2: scope:[]  from @1
@@ -1064,12 +1064,13 @@ SYMBOL TABLE SSA
 (const nomodify byte) CIA_TIMER_CONTROL_START = (byte) 1
 (const nomodify byte) CIA_TIMER_CONTROL_STOP = (byte) 0
 (const nomodify byte*) COLS = (byte*)(number) $d800
-(const nomodify byte) CONIO_TEXTCOLOR_DEFAULT = (byte) $e
+(const nomodify byte) CONIO_TEXTCOLOR_DEFAULT = (const nomodify byte) LIGHT_BLUE
 (const nomodify byte*) CONSOLE = (byte*)(number) $400
 (const byte*) COSTAB = (const byte*) SINTAB+(number) $40
 (const nomodify byte) DARK_GREY = (byte) $b
 (const nomodify byte) IRQ_RASTER = (byte) 1
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
+(const nomodify byte) LIGHT_BLUE = (byte) $e
 (const nomodify byte*) LINE_BUFFER = (byte*)(number) $2000
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
@@ -2454,8 +2455,8 @@ Alias memset::dst#2 = memset::dst#3
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#7 = memset::str#8 
 Alias clock::return#0 = clock::$0 clock::return#3 clock::return#1 
-Alias kbhit::return#0 = kbhit::$0 kbhit::return#3 kbhit::return#1 
 Alias textcolor::return#0 = textcolor::old#0 textcolor::return#3 textcolor::return#1 
+Alias kbhit::return#0 = kbhit::$0 kbhit::return#3 kbhit::return#1 
 Alias toD0181_screen#0 = toD0181_screen#1 
 Alias toD0181_gfx#0 = toD0181_gfx#1 
 Alias main::y#2 = main::y#3 main::c#0 
@@ -2732,13 +2733,15 @@ Eliminating unused constant (const byte*) line::canvas#1
 Eliminating unused constant (const byte*) line::canvas#2
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused variable (dword) clock::return#0 and assignment [10] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
-Eliminating unused variable (byte) textcolor::return#0 and assignment [22] (byte) textcolor::return#0 ← (byte) conio_textcolor
+Eliminating unused variable (byte) textcolor::return#0 and assignment [19] (byte) textcolor::return#0 ← (byte) conio_textcolor
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable (byte) conio_textcolor and assignment [20] (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
-Eliminating unused variable conio_textcolor(null) and assignment [21] conio_textcolor(null) ← (const byte) textcolor::color#0
+Eliminating unused variable (byte) conio_textcolor and assignment [17] (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
+Eliminating unused variable conio_textcolor(null) and assignment [18] conio_textcolor(null) ← (const byte) textcolor::color#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
 Eliminating unused constant (const byte) textcolor::color#0
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant (const nomodify byte) LIGHT_BLUE
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks

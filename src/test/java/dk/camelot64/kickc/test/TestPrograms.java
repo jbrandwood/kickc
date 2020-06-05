@@ -42,6 +42,10 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testGlobalLabelProblem() throws IOException, URISyntaxException {
+      compileAndCompare("global-label-problem.c");
+   }
 
    @Test
    public void testProblemMaVarOverwrite() throws IOException, URISyntaxException {

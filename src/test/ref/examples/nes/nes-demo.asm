@@ -193,8 +193,8 @@ main: {
     // PPU->PPUCTRL = 0b10000000
     lda #$80
     sta PPU
-    // PPU->PPUMASK = 0b00011000
-    lda #$18
+    // PPU->PPUMASK = 0b00011110
+    lda #$1e
     sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK
   __b3:
   // Infinite loop

@@ -2,21 +2,18 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  // The default text color
-  .const CONIO_TEXTCOLOR_DEFAULT = $e
-  // The screen width
-  // The screen height
-  // The screen bytes
-  // The text screen address
-  .label CONIO_SCREEN_TEXT = $400
-  // The color screen address
-  .label CONIO_SCREEN_COLORS = $d800
+  .const LIGHT_BLUE = $e
+  // Color Ram
+  .label COLORRAM = $d800
+  // Default address of screen character matrix
+  .label DEFAULT_SCREEN = $400
   .label conio_cursor_x = 6
   .label conio_cursor_y = 7
   .label conio_line_text = 8
   .label conio_line_color = $a
 __bbegin:
   // conio_cursor_x = 0
+  // The number of bytes on the screen
   // The current cursor x-position
   lda #0
   sta.z conio_cursor_x
@@ -25,15 +22,15 @@ __bbegin:
   sta.z conio_cursor_y
   // conio_line_text = CONIO_SCREEN_TEXT
   // The current text cursor line start
-  lda #<CONIO_SCREEN_TEXT
+  lda #<DEFAULT_SCREEN
   sta.z conio_line_text
-  lda #>CONIO_SCREEN_TEXT
+  lda #>DEFAULT_SCREEN
   sta.z conio_line_text+1
   // conio_line_color = CONIO_SCREEN_COLORS
   // The current color cursor line start
-  lda #<CONIO_SCREEN_COLORS
+  lda #<COLORRAM
   sta.z conio_line_color
-  lda #>CONIO_SCREEN_COLORS
+  lda #>COLORRAM
   sta.z conio_line_color+1
   jsr main
   rts
@@ -82,7 +79,7 @@ cputc: {
     ldy.z conio_cursor_x
     sta (conio_line_text),y
     // conio_line_color[conio_cursor_x] = conio_textcolor
-    lda #CONIO_TEXTCOLOR_DEFAULT
+    lda #LIGHT_BLUE
     sta (conio_line_color),y
     // if(++conio_cursor_x==CONIO_WIDTH)
     inc.z conio_cursor_x
@@ -134,37 +131,37 @@ cscroll: {
     cmp.z conio_cursor_y
     bne __breturn
     // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
     sta.z memcpy.destination
-    lda #>CONIO_SCREEN_TEXT
+    lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    lda #<CONIO_SCREEN_TEXT+$28
+    lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
-    lda #>CONIO_SCREEN_TEXT+$28
+    lda #>DEFAULT_SCREEN+$28
     sta.z memcpy.source+1
     jsr memcpy
     // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<CONIO_SCREEN_COLORS
+    lda #<COLORRAM
     sta.z memcpy.destination
-    lda #>CONIO_SCREEN_COLORS
+    lda #>COLORRAM
     sta.z memcpy.destination+1
-    lda #<CONIO_SCREEN_COLORS+$28
+    lda #<COLORRAM+$28
     sta.z memcpy.source
-    lda #>CONIO_SCREEN_COLORS+$28
+    lda #>COLORRAM+$28
     sta.z memcpy.source+1
     jsr memcpy
     // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
     ldx #' '
-    lda #<CONIO_SCREEN_TEXT+$19*$28-$28
+    lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
-    lda #>CONIO_SCREEN_TEXT+$19*$28-$28
+    lda #>DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str+1
     jsr memset
     // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
-    ldx #CONIO_TEXTCOLOR_DEFAULT
-    lda #<CONIO_SCREEN_COLORS+$19*$28-$28
+    ldx #LIGHT_BLUE
+    lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
-    lda #>CONIO_SCREEN_COLORS+$19*$28-$28
+    lda #>COLORRAM+$19*$28-$28
     sta.z memset.str+1
     jsr memset
     // conio_line_text -= CONIO_WIDTH

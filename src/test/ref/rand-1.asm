@@ -4,19 +4,14 @@
 .pc = $801 "Basic"
 :BasicUpstart(__bbegin)
 .pc = $80d "Program"
-  // The default text color
-  .const CONIO_TEXTCOLOR_DEFAULT = $e
   .const WHITE = 1
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
-  // The screen width
-  // The screen height
-  // The screen bytes
-  // The text screen address
-  .label CONIO_SCREEN_TEXT = $400
-  // The color screen address
-  .label CONIO_SCREEN_COLORS = $d800
+  // Color Ram
+  .label COLORRAM = $d800
+  // Default address of screen character matrix
+  .label DEFAULT_SCREEN = $400
   .label conio_cursor_x = $16
   .label conio_cursor_y = $17
   .label conio_line_text = $18
@@ -26,6 +21,7 @@
   .label rand_state = $11
 __bbegin:
   // conio_cursor_x = 0
+  // The number of bytes on the screen
   // The current cursor x-position
   lda #0
   sta.z conio_cursor_x
@@ -34,19 +30,19 @@ __bbegin:
   sta.z conio_cursor_y
   // conio_line_text = CONIO_SCREEN_TEXT
   // The current text cursor line start
-  lda #<CONIO_SCREEN_TEXT
+  lda #<DEFAULT_SCREEN
   sta.z conio_line_text
-  lda #>CONIO_SCREEN_TEXT
+  lda #>DEFAULT_SCREEN
   sta.z conio_line_text+1
   // conio_line_color = CONIO_SCREEN_COLORS
   // The current color cursor line start
-  lda #<CONIO_SCREEN_COLORS
+  lda #<COLORRAM
   sta.z conio_line_color
-  lda #>CONIO_SCREEN_COLORS
+  lda #>COLORRAM
   sta.z conio_line_color+1
   // conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
   // The current text color
-  lda #CONIO_TEXTCOLOR_DEFAULT
+  lda #LIGHT_BLUE
   sta.z conio_textcolor
   jsr main
   rts
@@ -401,37 +397,37 @@ cscroll: {
     cmp.z conio_cursor_y
     bne __breturn
     // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
     sta.z memcpy.destination
-    lda #>CONIO_SCREEN_TEXT
+    lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    lda #<CONIO_SCREEN_TEXT+$28
+    lda #<DEFAULT_SCREEN+$28
     sta.z memcpy.source
-    lda #>CONIO_SCREEN_TEXT+$28
+    lda #>DEFAULT_SCREEN+$28
     sta.z memcpy.source+1
     jsr memcpy
     // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    lda #<CONIO_SCREEN_COLORS
+    lda #<COLORRAM
     sta.z memcpy.destination
-    lda #>CONIO_SCREEN_COLORS
+    lda #>COLORRAM
     sta.z memcpy.destination+1
-    lda #<CONIO_SCREEN_COLORS+$28
+    lda #<COLORRAM+$28
     sta.z memcpy.source
-    lda #>CONIO_SCREEN_COLORS+$28
+    lda #>COLORRAM+$28
     sta.z memcpy.source+1
     jsr memcpy
     // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
     ldx #' '
-    lda #<CONIO_SCREEN_TEXT+$19*$28-$28
+    lda #<DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str
-    lda #>CONIO_SCREEN_TEXT+$19*$28-$28
+    lda #>DEFAULT_SCREEN+$19*$28-$28
     sta.z memset.str+1
     jsr memset
     // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
     ldx.z conio_textcolor
-    lda #<CONIO_SCREEN_COLORS+$19*$28-$28
+    lda #<COLORRAM+$19*$28-$28
     sta.z memset.str
-    lda #>CONIO_SCREEN_COLORS+$19*$28-$28
+    lda #>COLORRAM+$19*$28-$28
     sta.z memset.str+1
     jsr memset
     // conio_line_text -= CONIO_WIDTH
@@ -850,19 +846,19 @@ gotoxy: {
     // CONIO_SCREEN_TEXT + line_offset
     lda.z line_offset
     clc
-    adc #<CONIO_SCREEN_TEXT
+    adc #<DEFAULT_SCREEN
     sta.z __5
     lda.z line_offset+1
-    adc #>CONIO_SCREEN_TEXT
+    adc #>DEFAULT_SCREEN
     sta.z __5+1
     // conio_line_text = CONIO_SCREEN_TEXT + line_offset
     // CONIO_SCREEN_COLORS + line_offset
     clc
     lda.z __6
-    adc #<CONIO_SCREEN_COLORS
+    adc #<COLORRAM
     sta.z __6
     lda.z __6+1
-    adc #>CONIO_SCREEN_COLORS
+    adc #>COLORRAM
     sta.z __6+1
     // conio_line_color = CONIO_SCREEN_COLORS + line_offset
     // }
@@ -1081,13 +1077,13 @@ utoa_append: {
 clrscr: {
     .label line_text = $14
     .label line_cols = $18
-    lda #<CONIO_SCREEN_COLORS
+    lda #<COLORRAM
     sta.z line_cols
-    lda #>CONIO_SCREEN_COLORS
+    lda #>COLORRAM
     sta.z line_cols+1
-    lda #<CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
     sta.z line_text
-    lda #>CONIO_SCREEN_TEXT
+    lda #>DEFAULT_SCREEN
     sta.z line_text+1
     ldx #0
   __b1:
@@ -1100,14 +1096,14 @@ clrscr: {
     // conio_cursor_y = 0
     sta.z conio_cursor_y
     // conio_line_text = CONIO_SCREEN_TEXT
-    lda #<CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
     sta.z conio_line_text
-    lda #>CONIO_SCREEN_TEXT
+    lda #>DEFAULT_SCREEN
     sta.z conio_line_text+1
     // conio_line_color = CONIO_SCREEN_COLORS
-    lda #<CONIO_SCREEN_COLORS
+    lda #<COLORRAM
     sta.z conio_line_color
-    lda #>CONIO_SCREEN_COLORS
+    lda #>COLORRAM
     sta.z conio_line_color+1
     // }
     rts

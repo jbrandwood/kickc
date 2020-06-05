@@ -4,7 +4,6 @@
 //
 // Currently C64/PLUS4/VIC20 platforms are supported
 
-
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 void clrscr(void);
 
@@ -43,16 +42,6 @@ void cputs(const char* s);
 // Same as "gotoxy (x, y); puts (s);"
 void cputsxy(unsigned char x, unsigned char y, const char* s);
 
-// Output a horizontal line with the given length starting at the current cursor position.
-void chline(unsigned char length);
-
-// Output a vertical line with the given length at the current cursor position.
-void cvline(unsigned char length);
-
-// Move cursor and output a vertical line with the given length
-// Same as "gotoxy (x, y); cvline (length);"
-void cvlinexy(unsigned char x, unsigned char y, unsigned char length);
-
 // Set the color for text output. The old color setting is returned.
 unsigned char textcolor(unsigned char color);
 
@@ -74,20 +63,3 @@ unsigned char cursor(unsigned char onoff);
 // If onoff is 1, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
 unsigned char scroll(unsigned char onoff);
-
-// The horizontal line character
-const char CH_HLINE = 0x40;
-// The vertical line character
-const char CH_VLINE = 0x5d;
-// The upper left corner character
-const char CH_ULCORNER = 0x70;
-// The upper right corner character
-const char CH_URCORNER = 0x6e;
-// The lower left corner character
-const char CH_LLCORNER = 0x6d;
-// The lower right corner character
-const char CH_LRCORNER = 0x7d;
-// The left T character
-const char CH_LTEE = 0x6b;
-// The right T character
-const char CH_RTEE = 0x73;

@@ -79,9 +79,9 @@ public class AsmFragmentInstance {
          Variable boundVar = (Variable) boundValue;
          Registers.Register register = boundVar.getAllocation();
          if(register != null && register instanceof Registers.RegisterZpMem) {
-            return new AsmParameter(AsmFormat.getAsmParamName(program, boundVar, codeScopeRef), true);
+            return new AsmParameter(AsmFormat.getAsmSymbolName(program, boundVar, codeScopeRef), true);
          } else if(register!=null && register instanceof Registers.RegisterMainMem) {
-            return new AsmParameter(AsmFormat.getAsmParamName(program, boundVar, codeScopeRef), false);
+            return new AsmParameter(AsmFormat.getAsmSymbolName(program, boundVar, codeScopeRef), false);
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
          }

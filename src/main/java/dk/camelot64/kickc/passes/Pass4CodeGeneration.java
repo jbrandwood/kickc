@@ -240,7 +240,7 @@ public class Pass4CodeGeneration {
     * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     */
    private void generateIndirectCall(AsmProgram asm, Variable procedureVariable, ScopeRef codeScopeRef) {
-      String varAsmName = AsmFormat.getAsmParamName(program, procedureVariable, codeScopeRef);
+      String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, codeScopeRef);
       indirectCallAsmNames.add(varAsmName);
       asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_" + varAsmName, false);
    }
@@ -928,7 +928,7 @@ public class Pass4CodeGeneration {
                SymbolType procedureVariableType = procedureVariable.getType();
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
-                     String varAsmName = AsmFormat.getAsmParamName(program, procedureVariable, block.getScope());
+                     String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, block.getScope());
                      asm.addInstruction("jsr", AsmAddressingMode.ABS, varAsmName, false);
                      supported = true;
                   }

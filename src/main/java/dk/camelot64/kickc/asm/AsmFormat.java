@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.operators.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
@@ -26,8 +27,7 @@ public class AsmFormat {
    public static String getAsmConstant(Program program, ConstantValue value, int precedence, ScopeRef codeScope) {
       if(value instanceof ConstantRef) {
          Variable constantVar = program.getScope().getConstant((ConstantRef) value);
-         String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
-         return getAsmParamName(program, constantVar.getScope().getRef(), asmName, codeScope);
+         return getAsmSymbolName(program, constantVar, codeScope);
       } else if(value instanceof ConstantInteger) {
          return getAsmNumber(((ConstantInteger) value).getValue());
       } else if(value instanceof ConstantBool) {
@@ -62,9 +62,9 @@ public class AsmFormat {
          SymbolRef toSym = ((ConstantSymbolPointer) value).getToSymbol();
          Symbol symbol = program.getScope().getSymbol(toSym);
          if(symbol instanceof Variable) {
-            return getAsmParamName(program, (Variable) symbol, codeScope);
+            return getAsmSymbolName(program, symbol, codeScope);
          } else if(symbol instanceof Procedure) {
-            return getAsmParamName(program, (Procedure) symbol, codeScope);
+            return getAsmSymbolName(program, symbol, codeScope);
          } else {
             throw new RuntimeException("Unhandled symbol type " + symbol);
          }
@@ -290,26 +290,34 @@ public class AsmFormat {
    }
 
    /**
-    * Get the ASM parameter for a specific bound constant/ variable
+    * Get the ASM name for referencing a specific bound constant/ variable
     *
-    * @param varScopeRef The scope containing the var/const
-    * @param asmName The ASM name of the variable (local name or specific ASM name).
+    * @param program The program
+    * @param symbol The symbol being referenced
     * @param codeScopeRef The scope containing the code being generated. Used for adding scope to the name when needed (eg. line.x1 when referencing x1 variable inside line scope from outside line scope).
     * @return The ASM parameter to use in the ASM code
     */
-   static String getAsmParamName(Program program, ScopeRef varScopeRef, String asmName, ScopeRef codeScopeRef) {
-      if(!varScopeRef.equals(codeScopeRef)) {
-         if(varScopeRef.getFullName().length() > 0)
-            return asmFix(varScopeRef.getFullName() + "." + asmName);
+   public static String getAsmSymbolName(Program program, Symbol symbol, ScopeRef codeScopeRef) {
+      ScopeRef symbolScopeRef = symbol.getScope().getRef();
+      String asmName = symbol.getLocalName();
+      if(symbol instanceof Variable && ((Variable) symbol).getAsmName()!=null)
+            asmName = ((Variable) symbol).getAsmName();
+      if(!symbolScopeRef.equals(codeScopeRef)) {
+         if(symbolScopeRef.getFullName().length() > 0)
+            // Reference to symbol in another scope
+            return asmFix(symbolScopeRef.getFullName() + "." + asmName);
          else {
-            // Check if the local scope has a symbol with the same name
-            // TODO: Fix asmName!!
-            if(program.getScope().getScope(codeScopeRef).getLocalSymbol(asmName)!=null)
+            // Check if the local code scope has a symbol with the same name
+            final Scope codeScope = program.getScope().getScope(codeScopeRef);
+            if(codeScope.getLocalSymbol(symbol.getLocalName())!=null)
+               // Explicit reference to global symbol
                return "@"+asmFix(asmName);
             else
+               // Implicit reference to global symbol
                return asmFix(asmName);
          }
       } else {
+         // Reference to local symbol
          return asmFix(asmName);
       }
    }
@@ -342,29 +350,5 @@ public class AsmFormat {
       return result.toString();
    }
 
-
-   /**
-    * Get the ASM parameter for a specific bound variable
-    *
-    * @param boundVar The variable
-    * @return The ASM parameter to use in the ASM code
-    */
-   public static String getAsmParamName(Program program, Variable boundVar, ScopeRef codeScopeRef) {
-      ScopeRef varScopeRef = boundVar.getScope().getRef();
-      String asmName = boundVar.getAsmName() == null ? boundVar.getLocalName() : boundVar.getAsmName();
-      return getAsmParamName(program, varScopeRef, asmName, codeScopeRef);
-   }
-
-   /**
-    * Get the ASM parameter for a specific bound constant
-    *
-    * @param boundProc The constant
-    * @return The ASM parameter to use in the ASM code
-    */
-   private static String getAsmParamName(Program program, Procedure boundProc, ScopeRef codeScopeRef) {
-      ScopeRef procScopeRef = boundProc.getScope().getRef();
-      String asmName = boundProc.getLocalName();
-      return getAsmParamName(program, procScopeRef, asmName, codeScopeRef);
-   }
 
 }

@@ -1,11 +1,11 @@
 // Commodore 64 Registers and Constants
+#ifndef __C64__
+#error "Target platform must be C64"
+#endif
 #include <mos6526.h>
 #include <mos6569.h>
 #include <mos6581.h>
 
-#ifndef __C64__
-#error "Target platform must be C64"
-#endif
 
 // Processor port data direction register
 char*  const PROCPORT_DDR = 0x00;

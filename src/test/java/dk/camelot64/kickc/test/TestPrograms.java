@@ -57,6 +57,10 @@ public class TestPrograms {
       compileAndCompare("minus-precedence-problem.c");
    }
 
+   @Test
+   public void testNesConio() throws IOException, URISyntaxException {
+      compileAndCompare("examples/nes-conio/nes-conio.c");
+   }
 
    @Test
    public void testNesDemo() throws IOException, URISyntaxException {

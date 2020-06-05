@@ -120,6 +120,13 @@ inline void ppuDataPut(char val) {
     PPU->PPUDATA = val;
 }
 
+// Read one byte from PPU memory
+// The byte is read from the current PPU address pointed to by the (autoincrementing) PPU->PPUADDR
+inline char ppuDataRead() {
+    // Transfer from PPU
+    return PPU->PPUDATA;
+}
+
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
@@ -161,4 +168,11 @@ void ppuDataPutTile(void* const ppuData, char* tile) {
 void ppuDataSet(void* const ppuData, char val) {
     ppuDataPrepare(ppuData);
     ppuDataPut(val);
+}
+
+// Get one byte from PPU memory
+// - ppuData : Pointer in the PPU memory
+char ppuDataGet(void* const ppuData) {
+    ppuDataPrepare(ppuData);
+    return ppuDataRead();
 }

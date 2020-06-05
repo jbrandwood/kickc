@@ -1,6 +1,9 @@
 // Nintendo Entertainment System (NES
 // https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
 // https://github.com/gregkrsak/first_nes
+#ifndef __NES__
+#error "Target platform must be NES"
+#endif
 #include <ricoh_2c02.h>
 #include <ricoh_2a03.h>
 
@@ -83,6 +86,10 @@ void ppuDataPrepare(void* const ppuData);
 // The byte is put into the current PPU address pointed to by the (autoincrementing) PPU->PPUADDR
 void ppuDataPut(char val);
 
+// Read one byte from PPU memory
+// The byte is read from the current PPU address pointed to by the (autoincrementing) PPU->PPUADDR
+char ppuDataRead();
+
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
@@ -99,8 +106,11 @@ void ppuDataTransfer(void* const ppuData, void* const cpuData, unsigned int size
 // - tile : The tile to transfer
 void ppuDataPutTile(void* const ppuData, char* tile);
 
-
 // Set one byte in PPU memory
 // - ppuData : Pointer in the PPU memory
 // - val : The value to set
 void ppuDataSet(void* const ppuData, char val);
+
+// Get one byte from PPU memory
+// - ppuData : Pointer in the PPU memory
+char ppuDataGet(void* const ppuData);

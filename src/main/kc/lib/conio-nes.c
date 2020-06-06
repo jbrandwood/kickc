@@ -104,6 +104,11 @@ void cputln() {
     cscroll();
 }
 
+#pragma data_seg(GameRam)
+// Buffer used for scrolling the NES screen
+char conio_cscroll_buffer[CONIO_WIDTH];
+#pragma data_seg(Data)
+
 // Scroll the entire screen if the cursor is beyond the last line
 void cscroll() {
     if(conio_cursor_y==CONIO_HEIGHT) {
@@ -112,10 +117,10 @@ void cscroll() {
             char* line1 = CONIO_SCREEN_TEXT;
             char* line2 = CONIO_SCREEN_TEXT+CONIO_WIDTH;
             for(char y=0;y<CONIO_HEIGHT-1;y++) {
-                for(char x=0;x<CONIO_WIDTH;x++) {
-                    char ch = ppuDataGet(line2++);
-                    ppuDataSet(line1++, ch);
-                }
+                ppuDataFetch(scroll_buffer, line2, CONIO_WIDTH);
+                ppuDataTransfer(line1, scroll_buffer, CONIO_WIDTH);
+                line1 += CONIO_WIDTH;
+                line2 += CONIO_WIDTH;
             }
             // Fill last line with space
             ppuDataFill(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH);

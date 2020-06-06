@@ -63,6 +63,8 @@ Inlined call call ppuDataPrepare (nomodify void*) ppuDataFill::ppuData
 Inlined call call ppuDataPut (byte) ppuDataFill::val 
 Inlined call call ppuDataPrepare (nomodify void*) ppuDataTransfer::ppuData 
 Inlined call call ppuDataPut *((byte*) ppuDataTransfer::cpuSrc) 
+Inlined call call ppuDataPrepare (nomodify void*) ppuDataFetch::ppuData 
+Inlined call (byte~) ppuDataFetch::$2 ← call ppuDataRead 
 Inlined call call ppuDataPrepare (nomodify void*) ppuDataPutTile::ppuData 
 Inlined call call ppuDataPut *((byte*) ppuDataPutTile::tile + (number) 0) 
 Inlined call call ppuDataPut *((byte*) ppuDataPutTile::tile + (number) 1) 
@@ -634,7 +636,7 @@ SYMBOL TABLE SSA
 (const nomodify byte*) PPU_ATTRIBUTE_TABLE_0 = (byte*)(number) $23c0
 (const nomodify byte*) PPU_NAME_TABLE_0 = (byte*)(number) $2000
 (const nomodify byte*) PPU_PALETTE = (byte*)(number) $3f00
-(const to_volatile byte*) PPU_PPUSTATUS = (byte*)(number) $2002
+(const nomodify to_volatile byte*) PPU_PPUSTATUS = (byte*)(number) $2002
 (byte) RICOH_2A03::DMC_FREQ
 (byte) RICOH_2A03::DMC_LEN
 (byte) RICOH_2A03::DMC_RAW
@@ -1176,10 +1178,10 @@ Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 9152
 Simplifying constant pointer cast (byte*) 16128
+Simplifying constant pointer cast (byte*) 8194
 Simplifying constant pointer cast (byte*) 16407
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant pointer cast (void()*) 0
-Simplifying constant pointer cast (byte*) 8194
 Simplifying constant pointer cast (struct RICOH_2C02*) 8192
 Simplifying constant pointer cast (struct RICOH_2A03*) 16384
 Simplifying constant integer cast 1
@@ -2487,6 +2489,8 @@ Target platform is nes / MOS6502
   // $3000-$3eff	$0f00	Mirrors of $2000-$2eff
   // $3f00-$3f1f	$0020	Palette RAM indexes
   .label PPU_PALETTE = $3f00
+  // PPU Status Register for reading in ASM
+  .label PPU_PPUSTATUS = $2002
   // APU Frame Counter
   // generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
   // https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
@@ -2501,8 +2505,6 @@ Target platform is nes / MOS6502
   .label FR_COUNTER = $4017
   // Pointer to the start of RAM memory
   .label MEMORY = 0
-  // PPU Status Register for reading in ASM
-  .label PPU_PPUSTATUS = $2002
   // NES Picture Processing Unit (PPU)
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)
@@ -3620,6 +3622,8 @@ ASSEMBLER BEFORE OPTIMIZATION
   // $3000-$3eff	$0f00	Mirrors of $2000-$2eff
   // $3f00-$3f1f	$0020	Palette RAM indexes
   .label PPU_PALETTE = $3f00
+  // PPU Status Register for reading in ASM
+  .label PPU_PPUSTATUS = $2002
   // APU Frame Counter
   // generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
   // https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
@@ -3634,8 +3638,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label FR_COUNTER = $4017
   // Pointer to the start of RAM memory
   .label MEMORY = 0
-  // PPU Status Register for reading in ASM
-  .label PPU_PPUSTATUS = $2002
   // NES Picture Processing Unit (PPU)
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)
@@ -4589,7 +4591,7 @@ FINAL SYMBOL TABLE
 (const nomodify byte*) PPU_ATTRIBUTE_TABLE_0 = (byte*) 9152
 (const nomodify byte*) PPU_NAME_TABLE_0 = (byte*) 8192
 (const nomodify byte*) PPU_PALETTE = (byte*) 16128
-(const to_volatile byte*) PPU_PPUSTATUS = (byte*) 8194
+(const nomodify to_volatile byte*) PPU_PPUSTATUS = (byte*) 8194
 (byte) RICOH_2A03::DMC_FREQ
 (byte) RICOH_2A03::DMC_LEN
 (byte) RICOH_2A03::DMC_RAW
@@ -4894,6 +4896,8 @@ Score: 3905
   // $3000-$3eff	$0f00	Mirrors of $2000-$2eff
   // $3f00-$3f1f	$0020	Palette RAM indexes
   .label PPU_PALETTE = $3f00
+  // PPU Status Register for reading in ASM
+  .label PPU_PPUSTATUS = $2002
   // APU Frame Counter
   // generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
   // https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
@@ -4908,8 +4912,6 @@ Score: 3905
   .label FR_COUNTER = $4017
   // Pointer to the start of RAM memory
   .label MEMORY = 0
-  // PPU Status Register for reading in ASM
-  .label PPU_PPUSTATUS = $2002
   // NES Picture Processing Unit (PPU)
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)

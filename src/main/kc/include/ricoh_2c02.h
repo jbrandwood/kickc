@@ -136,5 +136,7 @@ struct RICOH_2C02 {
 };
 
 // PPU Status Register for reading in ASM
-volatile char * PPU_PPUSTATUS = 0x2002;
+volatile char * const PPU_PPUSTATUS = 0x2002;
+// PPU Data Register for reading in ASM
+volatile char * const PPU_PPUDATA = 0x2007;
 

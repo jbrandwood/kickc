@@ -65,6 +65,8 @@
   // $3000-$3eff	$0f00	Mirrors of $2000-$2eff
   // $3f00-$3f1f	$0020	Palette RAM indexes
   .label PPU_PALETTE = $3f00
+  // PPU Status Register for reading in ASM
+  .label PPU_PPUSTATUS = $2002
   // APU Frame Counter
   // generates low-frequency clocks for the channels and an optional 60 Hz interrupt.
   // https://wiki.nesdev.com/w/index.php/APU_Frame_Counter
@@ -79,8 +81,6 @@
   .label FR_COUNTER = $4017
   // Pointer to the start of RAM memory
   .label MEMORY = 0
-  // PPU Status Register for reading in ASM
-  .label PPU_PPUSTATUS = $2002
   // NES Picture Processing Unit (PPU)
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)

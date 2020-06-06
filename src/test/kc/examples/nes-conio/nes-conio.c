@@ -2,6 +2,13 @@
 #pragma target(nes)
 #include <nes.h>
 #include <conio.h>
+#include <stdio.h>
+
+#pragma data_seg(GameRam)
+char num_buffer[11];
+char scroll_buffer[32];
+#pragma data_seg(Data)
+
 
 // RESET Called when the NES is reset, including when it is turned on.
 void main() {
@@ -14,11 +21,20 @@ void main() {
     ppuDataFill(PPU_ATTRIBUTE_TABLE_1, 0, 0x40);
     // Print a string
     clrscr();
-    cputs("hello world!\ni am nes\n look at me \n\n");
-
+    for(char x=1;x<screensizex()-1;x++) {
+        cputcxy(x, 1, '-');
+        cputcxy(x, screensizey()-4, '-');
+    }
+    for(char y=1;y<screensizey()-3;y++) {
+        cputcxy(1, y, 'i');
+        cputcxy(screensizex()-2, y, 'i');
+    }
+    for(char i=0;i<screensizey();i++) {
+        uctoa(i&0xf, num_buffer, HEXADECIMAL);
+        cputsxy(i, i, num_buffer);        
+    }
     x_scroll = 0;
     y_scroll = -8;
-
 
     // Enable screen rendering and vblank
     enableVideoOutput();

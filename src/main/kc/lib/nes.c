@@ -104,7 +104,7 @@ char readJoy1() {
     return joy;
 }
 
-// Prepare for transferring data from the CPU to the PPU
+// Prepare for transferring data to/from the CPU to the PPU
 // - ppuData : Pointer in the PPU memory
 inline void ppuDataPrepare(void* const ppuData) {
     // Write the high byte of PPU address
@@ -120,8 +120,12 @@ inline void ppuDataPut(char val) {
     PPU->PPUDATA = val;
 }
 
-// Read one byte from PPU memory
-// The byte is read from the current PPU address pointed to by the (autoincrementing) PPU->PPUADDR
+// Read one byte from the PPU memory
+// Note: Reading from the PPU works in a somewhat un-intuitive way.
+// The read operation returns the current contents of the read-buffer and then fills the buffer from the current
+// PPU->PPUADDR, which is also auto-incremented.
+// This means the value returned is from the previous read address.
+// If you want to get the value at PPU->PPUADDR you must call read twice.
 inline char ppuDataRead() {
     // Transfer from PPU
     return PPU->PPUDATA;
@@ -149,6 +153,20 @@ void ppuDataTransfer(void* const ppuData, void* const cpuData, unsigned int size
         ppuDataPut(*cpuSrc++);
 }
 
+// Transfer a number of bytes from the PPU memory to the CPU memory
+// - ppuData : Pointer in the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
+// - size : The number of bytes to transfer
+void ppuDataFetch(void* const cpuData, void* const ppuData, unsigned int size) {
+    ppuDataPrepare(ppuData);
+    // Perform a dummy-read to discard the current value in the data read buffer and update it with the first byte from the PPU address
+    asm { lda PPU_PPUDATA }
+    // Fetch from PPU to CPU
+    char* cpuDst = (char*)cpuData;
+    for(unsigned int i=0;i<size;i++)
+        *cpuDst++ = ppuDataRead();
+}
+
 // Transfer a 2x2 tile into the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - tile : The tile to transfer
@@ -160,7 +178,6 @@ void ppuDataPutTile(void* const ppuData, char* tile) {
     ppuDataPut(tile[2]);
     ppuDataPut(tile[3]);
 }
-
 
 // Set one byte in PPU memory
 // - ppuData : Pointer in the PPU memory
@@ -174,5 +191,8 @@ void ppuDataSet(void* const ppuData, char val) {
 // - ppuData : Pointer in the PPU memory
 char ppuDataGet(void* const ppuData) {
     ppuDataPrepare(ppuData);
+    // Perform a dummy-read to discard the current value in the data read buffer and update it with the byte we want
+    asm { lda PPU_PPUDATA }
+    // Get the data we want out of the buffer (this unfortunately performs a second increment of the pointer)
     return ppuDataRead();
 }

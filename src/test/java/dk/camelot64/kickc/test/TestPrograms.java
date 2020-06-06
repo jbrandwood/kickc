@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstParenthesis() throws IOException, URISyntaxException {
+      compileAndCompare("const-parenthesis.c");
+   }
+
+   @Test
    public void testGlobalLabelProblem() throws IOException, URISyntaxException {
       compileAndCompare("global-label-problem.c");
    }

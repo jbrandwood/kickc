@@ -45,6 +45,7 @@
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
   .const OFFSET_STRUCT_RICOH_2C02_OAMADDR = 3
   .const OFFSET_STRUCT_RICOH_2A03_OAMDMA = $14
+  .const OFFSET_STRUCT_RICOH_2A03_JOY1 = $16
   .const OFFSET_STRUCT_RICOH_2C02_PPUADDR = 6
   .const OFFSET_STRUCT_RICOH_2C02_PPUDATA = 7
   .const OFFSET_STRUCT_RICOH_2C02_PPUSCROLL = 5
@@ -76,8 +77,9 @@
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)
   .label APU = $4000
-  .label y_sin_idx = $a
-  .label x_sin_idx = $b
+  .label y_sin_idx = $c
+  .label x_sin_idx = $d
+  .label x_sin_idx_2 = $e
 __bbegin:
   // y_sin_idx = 0
   // Index into the Y sine
@@ -87,6 +89,10 @@ __bbegin:
   // Index into the X sine
   lda #$49
   sta.z x_sin_idx
+  // x_sin_idx_2 = 82
+  // Index into the small X sine
+  lda #$52
+  sta.z x_sin_idx_2
   jsr main
   rts
 .segment Code
@@ -304,9 +310,15 @@ ppuDataTransfer: {
 }
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 vblank: {
-    .label __4 = $c
-    .label y_idx = 8
-    .label x_idx = 9
+    .label __17 = $a
+    .label __19 = $a
+    .label __23 = $b
+    .label __25 = $b
+    .label __28 = $f
+    .label y_idx = 9
+    .label x_idx = $a
+    .label x_idx_2 = $b
+    .label s = 8
     pha
     txa
     pha
@@ -322,20 +334,13 @@ vblank: {
     // APU->OAMDMA = >spriteBuffer
     lda #>SPRITE_BUFFER
     sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
-    // y_idx = y_sin_idx++
-    // Update sprite positions
-    lda.z y_sin_idx
-    sta.z y_idx
-    inc.z y_sin_idx
-    // x_idx = x_sin_idx++
-    lda.z x_sin_idx
-    sta.z x_idx
-    inc.z x_sin_idx
-    ldx #0
-  __b1:
-    // for(char s=0;s<0x40;s++)
-    cpx #$40
-    bcc __b2
+    // readJoy1()
+    jsr readJoy1
+    // joy = readJoy1()
+    // if(joy)
+    cmp #0
+    beq __b1
+  __breturn:
     // }
     pla
     tay
@@ -343,35 +348,141 @@ vblank: {
     tax
     pla
     rti
-  __b2:
-    // SPRITE_BUFFER[s].y = SINTABLE[y_idx]
-    txa
-    asl
-    asl
-    sta.z __4
-    ldy.z y_idx
-    lda SINTABLE,y
-    ldy.z __4
-    sta SPRITE_BUFFER,y
-    // SINTABLE[x_idx]+8
-    lda #8
-    ldy.z x_idx
-    clc
-    adc SINTABLE,y
-    // SPRITE_BUFFER[s].x = SINTABLE[x_idx]+8
-    ldy.z __4
-    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X,y
-    // y_idx += 4
-    lda #4
-    clc
-    adc.z y_idx
+  __b1:
+    // y_idx = y_sin_idx++
+    // Update sprite positions
+    lda.z y_sin_idx
     sta.z y_idx
-    // x_idx -= 7
-    lda.z x_idx
-    sec
-    sbc #7
+    inc.z y_sin_idx
+    // (x_sin_idx==238) ? 0 : x_sin_idx+1
+    lda #$ee
+    cmp.z x_sin_idx
+    beq __b2
+    ldx.z x_sin_idx
+    inx
+    jmp __b3
+  __b2:
+    ldx #0
+  __b3:
+    // x_sin_idx = (x_sin_idx==238) ? 0 : x_sin_idx+1
+    stx.z x_sin_idx
+    // x_idx = x_sin_idx
+    txa
     sta.z x_idx
+    // (x_sin_idx_2==88) ? 0 : x_sin_idx_2+1
+    lda #$58
+    cmp.z x_sin_idx_2
+    beq __b4
+    ldx.z x_sin_idx_2
+    inx
+    jmp __b5
+  __b4:
+    ldx #0
+  __b5:
+    // x_sin_idx_2 = (x_sin_idx_2==88) ? 0 : x_sin_idx_2+1
+    stx.z x_sin_idx_2
+    // x_idx_2 = x_sin_idx_2
+    txa
+    sta.z x_idx_2
+    lda #0
+    sta.z s
+  __b6:
     // for(char s=0;s<0x40;s++)
+    lda.z s
+    cmp #$40
+    bcc __b7
+    jmp __breturn
+  __b7:
+    // SPRITE_BUFFER[s].y = SINTABLE_240[y_idx]
+    lda.z s
+    asl
+    asl
+    sta.z __28
+    ldy.z y_idx
+    lda SINTABLE_240,y
+    ldy.z __28
+    sta SPRITE_BUFFER,y
+    // y_idx -= 4
+    lax.z y_idx
+    axs #4
+    stx.z y_idx
+    // SINTABLE_184[x_idx] + SINTABLE_64[x_idx_2]
+    ldy.z x_idx
+    lda SINTABLE_184,y
+    ldy.z x_idx_2
+    clc
+    adc SINTABLE_64,y
+    // SPRITE_BUFFER[s].x = SINTABLE_184[x_idx] + SINTABLE_64[x_idx_2]
+    ldy.z __28
+    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X,y
+    // (x_idx<3) ? x_idx+236 : x_idx-3
+    lda.z x_idx
+    cmp #3
+    bcc __b8
+    lax.z __17
+    axs #3
+    stx.z __17
+  __b10:
+    // (x_idx_2>=86) ? x_idx_2-86 : x_idx_2+3
+    lda.z x_idx_2
+    cmp #$56
+    bcs __b11
+    lax.z __23
+    axs #-[3]
+    stx.z __23
+  __b13:
+    // for(char s=0;s<0x40;s++)
+    inc.z s
+    jmp __b6
+  __b11:
+    // (x_idx_2>=86) ? x_idx_2-86 : x_idx_2+3
+    lax.z __25
+    axs #$56
+    stx.z __25
+    jmp __b13
+  __b8:
+    // (x_idx<3) ? x_idx+236 : x_idx-3
+    lax.z __19
+    axs #-[$ec]
+    stx.z __19
+    jmp __b10
+}
+// Read Standard Controller #1
+// Returns a byte representing the pushed buttons
+// - bit 0: right
+// - bit 1: left
+// - bit 2: down
+// - bit 3: up
+// - bit 4: start
+// - bit 5: select
+// - bit 6: B
+// - bit 7: A
+readJoy1: {
+    .label __1 = $10
+    // APU->JOY1 = 1
+    // Latch the controller buttons
+    lda #1
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // APU->JOY1 = 0
+    lda #0
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    tax
+  __b1:
+    // for(char i=0;i<8;i++)
+    cpx #8
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // joy<<1
+    asl
+    sta.z __1
+    // APU->JOY1&1
+    lda #1
+    and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // joy = joy<<1 | APU->JOY1&1
+    ora.z __1
+    // for(char i=0;i<8;i++)
     inx
     jmp __b1
 }
@@ -381,8 +492,16 @@ vblank: {
   // Color Palette
   PALETTE: .byte 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f
   // Sinus Table (0-239)
-SINTABLE:
+SINTABLE_240:
 .fill $100, round(115.5+107.5*sin(2*PI*i/256))
+
+  // Sinus Table (0-63)
+SINTABLE_64:
+.fill 89, round(52.5+52.5*sin(2*PI*i/89))
+
+  // Sinus Table (0-183)
+SINTABLE_184:
+.fill 239, round(71.5+71.5*sin(2*PI*i/239))
 
 .segment Tiles
 TILES:

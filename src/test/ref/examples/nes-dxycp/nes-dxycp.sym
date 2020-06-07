@@ -7,6 +7,7 @@
 (const nomodify byte*) MEMORY = (byte*) 0
 (const byte*) MESSAGE[(number) $40]  = (byte*) "rex-of-camelot-presents-a-dxycp-on-nintendo-entertainment-system"z
 (const byte) OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = (byte) $10
+(const byte) OFFSET_STRUCT_RICOH_2A03_JOY1 = (byte) $16
 (const byte) OFFSET_STRUCT_RICOH_2A03_OAMDMA = (byte) $14
 (const byte) OFFSET_STRUCT_RICOH_2C02_OAMADDR = (byte) 3
 (const byte) OFFSET_STRUCT_RICOH_2C02_PPUADDR = (byte) 6
@@ -55,7 +56,11 @@
 (byte) RICOH_2C02::PPUMASK
 (byte) RICOH_2C02::PPUSCROLL
 (volatile byte) RICOH_2C02::PPUSTATUS loadstore
-(const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .fill $100, round(115.5+107.5*sin(2*PI*i/256))
+(const to_nomodify byte*) SINTABLE_184[(number) $ef]  = kickasm {{ .fill 239, round(71.5+71.5*sin(2*PI*i/239))
+ }}
+(const to_nomodify byte*) SINTABLE_240[(number) $100]  = kickasm {{ .fill $100, round(115.5+107.5*sin(2*PI*i/256))
+ }}
+(const to_nomodify byte*) SINTABLE_64[(number) $59]  = kickasm {{ .fill 89, round(52.5+52.5*sin(2*PI*i/89))
  }}
 (const byte) SIZEOF_BYTE = (byte) 1
 (const struct SpriteData*) SPRITE_BUFFER[(number) $100]  = { fill( $100, 0) }
@@ -140,28 +145,69 @@
 (byte) ppuDataTransfer::ppuDataPut1_val#0 reg byte a 2002.0
 (word) ppuDataTransfer::size
 (const word) ppuDataTransfer::size#0 size = (byte) $20*(const byte) SIZEOF_BYTE
+(byte()) readJoy1()
+(byte~) readJoy1::$1 zp[1]:16 101.0
+(byte~) readJoy1::$2 reg byte a 202.0
+(label) readJoy1::@1
+(label) readJoy1::@2
+(label) readJoy1::@return
+(byte) readJoy1::i
+(byte) readJoy1::i#1 reg byte x 202.0
+(byte) readJoy1::i#2 reg byte x 60.599999999999994
+(byte) readJoy1::joy
+(byte) readJoy1::joy#1 reg byte a 101.0
+(byte) readJoy1::joy#2 reg byte a 51.0
+(byte) readJoy1::return
+(byte) readJoy1::return#2 reg byte a 4.0
 interrupt(HARDWARE_STACK)(void()) vblank()
-(byte~) vblank::$2 reg byte a 22.0
-(byte~) vblank::$4 zp[1]:12 11.0
+(byte~) vblank::$10 reg byte x 4.0
+(byte~) vblank::$12 reg byte x 4.0
+(byte~) vblank::$14 reg byte a 22.0
+(byte~) vblank::$17 zp[1]:10 22.0
+(byte~) vblank::$19 zp[1]:10 22.0
+(byte~) vblank::$23 zp[1]:11 22.0
+(byte~) vblank::$25 zp[1]:11 22.0
+(byte~) vblank::$28 zp[1]:15 8.25
+(byte~) vblank::$5 reg byte x 4.0
+(byte~) vblank::$7 reg byte x 4.0
 (label) vblank::@1
+(label) vblank::@10
+(label) vblank::@11
+(label) vblank::@12
+(label) vblank::@13
+(label) vblank::@14
+(label) vblank::@15
 (label) vblank::@2
 (label) vblank::@3
+(label) vblank::@4
+(label) vblank::@5
+(label) vblank::@6
+(label) vblank::@7
+(label) vblank::@8
+(label) vblank::@9
 (label) vblank::@return
+(byte) vblank::joy
+(byte) vblank::joy#0 reg byte a 4.0
 (label) vblank::ppuSpriteBufferDmaTransfer1
 (struct SpriteData*) vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer
 (byte) vblank::s
-(byte) vblank::s#1 reg byte x 22.0
-(byte) vblank::s#2 reg byte x 5.5
+(byte) vblank::s#1 s zp[1]:8 22.0
+(byte) vblank::s#2 s zp[1]:8 2.933333333333333
 (byte) vblank::x_idx
-(byte) vblank::x_idx#0 x_idx zp[1]:9 2.0
-(byte) vblank::x_idx#1 x_idx zp[1]:9 11.0
-(byte) vblank::x_idx#2 x_idx zp[1]:9 5.0
+(byte) vblank::x_idx#0 x_idx zp[1]:10 0.6666666666666666
+(byte) vblank::x_idx#1 x_idx zp[1]:10 5.5
+(byte) vblank::x_idx#2 x_idx zp[1]:10 7.125
+(byte) vblank::x_idx_2
+(byte) vblank::x_idx_2#0 x_idx_2 zp[1]:11 4.0
+(byte) vblank::x_idx_2#1 x_idx_2 zp[1]:11 16.5
+(byte) vblank::x_idx_2#2 x_idx_2 zp[1]:11 4.75
 (byte) vblank::y_idx
-(byte) vblank::y_idx#0 y_idx zp[1]:8 1.0
-(byte) vblank::y_idx#1 y_idx zp[1]:8 7.333333333333333
-(byte) vblank::y_idx#2 y_idx zp[1]:8 5.833333333333333
-(volatile byte) x_sin_idx loadstore zp[1]:11 1.1428571428571428
-(volatile byte) y_sin_idx loadstore zp[1]:10 1.6
+(byte) vblank::y_idx#0 y_idx zp[1]:9 0.3333333333333333
+(byte) vblank::y_idx#1 y_idx zp[1]:9 1.8333333333333333
+(byte) vblank::y_idx#2 y_idx zp[1]:9 8.75
+(volatile byte) x_sin_idx loadstore zp[1]:13 0.7692307692307693
+(volatile byte) x_sin_idx_2 loadstore zp[1]:14 0.5555555555555556
+(volatile byte) y_sin_idx loadstore zp[1]:12 0.8
 
 reg byte x [ main::initNES1_i#2 main::initNES1_i#1 ]
 reg byte x [ main::s#2 main::s#1 ]
@@ -169,16 +215,26 @@ reg byte x [ ppuDataFill::val#4 ]
 zp[2]:2 [ ppuDataFill::i#2 ppuDataFill::i#1 ]
 zp[2]:4 [ ppuDataTransfer::i#2 ppuDataTransfer::i#1 ppuDataFill::ppuDataPrepare1_ppuData#0 ]
 zp[2]:6 [ ppuDataTransfer::cpuSrc#2 ppuDataTransfer::cpuSrc#1 ppuDataFill::size#3 ]
-reg byte x [ vblank::s#2 vblank::s#1 ]
-zp[1]:8 [ vblank::y_idx#2 vblank::y_idx#1 vblank::y_idx#0 ]
-zp[1]:9 [ vblank::x_idx#2 vblank::x_idx#1 vblank::x_idx#0 ]
-zp[1]:10 [ y_sin_idx ]
-zp[1]:11 [ x_sin_idx ]
+reg byte x [ vblank::$7 vblank::$5 ]
+reg byte x [ vblank::$12 vblank::$10 ]
+zp[1]:8 [ vblank::s#2 vblank::s#1 ]
+zp[1]:9 [ vblank::y_idx#2 vblank::y_idx#1 vblank::y_idx#0 ]
+zp[1]:10 [ vblank::x_idx#2 vblank::x_idx#1 vblank::x_idx#0 vblank::$19 vblank::$17 ]
+zp[1]:11 [ vblank::x_idx_2#2 vblank::x_idx_2#1 vblank::x_idx_2#0 vblank::$25 vblank::$23 ]
+reg byte x [ readJoy1::i#2 readJoy1::i#1 ]
+reg byte a [ readJoy1::joy#2 readJoy1::joy#1 ]
+zp[1]:12 [ y_sin_idx ]
+zp[1]:13 [ x_sin_idx ]
+zp[1]:14 [ x_sin_idx_2 ]
 reg byte a [ main::initNES1_waitForVBlank1_$0 ]
 reg byte a [ main::initNES1_waitForVBlank2_$0 ]
 reg byte y [ main::$7 ]
 reg byte a [ ppuDataFill::ppuDataPrepare1_$0 ]
 reg byte a [ ppuDataFill::ppuDataPrepare1_$1 ]
 reg byte a [ ppuDataTransfer::ppuDataPut1_val#0 ]
-zp[1]:12 [ vblank::$4 ]
-reg byte a [ vblank::$2 ]
+reg byte a [ readJoy1::return#2 ]
+reg byte a [ vblank::joy#0 ]
+zp[1]:15 [ vblank::$28 ]
+reg byte a [ vblank::$14 ]
+zp[1]:16 [ readJoy1::$1 ]
+reg byte a [ readJoy1::$2 ]

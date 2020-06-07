@@ -27,6 +27,8 @@ void main() {
 volatile char y_sin_idx = 0;
 // Index into the X sine
 volatile char x_sin_idx = 73;
+// Index into the small X sine
+volatile char x_sin_idx_2 = 82;
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 interrupt(hardware_stack) void vblank() {
@@ -35,14 +37,25 @@ interrupt(hardware_stack) void vblank() {
     PPU->PPUSCROLL = 0;    
     // DMA transfer the entire sprite buffer to the PPU
     ppuSpriteBufferDmaTransfer(SPRITE_BUFFER);
+
+    // Read controller 1
+    char joy = readJoy1();
+    // If anything pressed - pause
+    if(joy) 
+        return;
+
     // Update sprite positions
-    char y_idx = y_sin_idx++;    
-    char x_idx = x_sin_idx++;    
+    char y_idx = y_sin_idx++;
+    x_sin_idx = (x_sin_idx==238) ? 0 : x_sin_idx+1;
+    char x_idx = x_sin_idx;
+    x_sin_idx_2 = (x_sin_idx_2==88) ? 0 : x_sin_idx_2+1;
+    char x_idx_2 = x_sin_idx_2;
     for(char s=0;s<0x40;s++) {
-        SPRITE_BUFFER[s].y = SINTABLE[y_idx];
-        SPRITE_BUFFER[s].x = SINTABLE[x_idx]+8;
-        y_idx += 4;
-        x_idx -= 7;
+        SPRITE_BUFFER[s].y = SINTABLE_240[y_idx];
+        y_idx -= 4;
+        SPRITE_BUFFER[s].x = SINTABLE_184[x_idx] + SINTABLE_64[x_idx_2];
+        x_idx = (x_idx<3) ? x_idx+236 : x_idx-3;
+        x_idx_2 = (x_idx_2>=86) ? x_idx_2-86 : x_idx_2+3 ;
     }
 }
 
@@ -67,9 +80,20 @@ char PALETTE[0x20] = {
 }; 
 
 // Sinus Table (0-239)
-const char SINTABLE[0x100] = kickasm {{
+const char SINTABLE_240[0x100] = kickasm {{
     .fill $100, round(115.5+107.5*sin(2*PI*i/256))
 }};
+
+// Sinus Table (0-63)
+const char SINTABLE_64[89] = kickasm {{
+    .fill 89, round(52.5+52.5*sin(2*PI*i/89))
+}};
+
+// Sinus Table (0-183)
+const char SINTABLE_184[239] = kickasm {{
+    .fill 239, round(71.5+71.5*sin(2*PI*i/239))
+}};
+
 
 // Tile Set (in CHR ROM) - A C64 charset from http://www.zimmers.net/anonftp/pub/cbm/firmware/computers/c64/
 #pragma data_seg(Tiles)

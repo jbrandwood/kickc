@@ -1,5 +1,3 @@
-Resolved forward reference scroll_buffer to (const byte*) scroll_buffer
-Resolved forward reference scroll_buffer to (const byte*) scroll_buffer
 Resolved forward reference PALETTE to (const byte*) PALETTE
 Resolved forward reference PALETTE to (const byte*) PALETTE
 Resolved forward reference x_scroll to (volatile byte) x_scroll
@@ -431,7 +429,7 @@ cscroll::@5: scope:[cscroll]  from cscroll::@4
   (byte) cscroll::y#5 ← phi( cscroll::@4/(byte) cscroll::y#2 )
   (byte*) cscroll::line1#4 ← phi( cscroll::@4/(byte*) cscroll::line1#5 )
   (byte*) cscroll::line2#2 ← phi( cscroll::@4/(byte*) cscroll::line2#4 )
-  (nomodify void*) ppuDataFetch::cpuData#0 ← (void*)(const byte*) scroll_buffer
+  (nomodify void*) ppuDataFetch::cpuData#0 ← (void*)(const byte*) conio_cscroll_buffer
   (nomodify void*) ppuDataFetch::ppuData#0 ← (void*)(byte*) cscroll::line2#2
   (word) ppuDataFetch::size#0 ← (number) $20
   call ppuDataFetch 
@@ -441,7 +439,7 @@ cscroll::@8: scope:[cscroll]  from cscroll::@5
   (byte*) cscroll::line2#5 ← phi( cscroll::@5/(byte*) cscroll::line2#2 )
   (byte*) cscroll::line1#2 ← phi( cscroll::@5/(byte*) cscroll::line1#4 )
   (nomodify void*) ppuDataTransfer::ppuData#0 ← (void*)(byte*) cscroll::line1#2
-  (nomodify void*) ppuDataTransfer::cpuData#0 ← (void*)(const byte*) scroll_buffer
+  (nomodify void*) ppuDataTransfer::cpuData#0 ← (void*)(const byte*) conio_cscroll_buffer
   (word) ppuDataTransfer::size#0 ← (number) $20
   call ppuDataTransfer 
   to:cscroll::@9
@@ -1137,6 +1135,7 @@ SYMBOL TABLE SSA
 (void()) clrscr()
 (label) clrscr::@1
 (label) clrscr::@return
+(const byte*) conio_cscroll_buffer[(number) $20]  = { fill( $20, 0) }
 (byte) conio_cursor_x loadstore
 (byte) conio_cursor_y loadstore
 (byte*) conio_line_text loadstore
@@ -1674,7 +1673,6 @@ SYMBOL TABLE SSA
 (byte) readJoy1::return#2
 (byte) readJoy1::return#3
 (byte) readJoy1::return#4
-(const byte*) scroll_buffer[(number) $20]  = { fill( $20, 0) }
 (void()) uctoa((byte) uctoa::value , (byte*) uctoa::buffer , (byte) uctoa::radix)
 (bool~) uctoa::$0
 (bool~) uctoa::$1
@@ -2443,9 +2441,9 @@ Constant (const byte*) cscroll::line2#0 = CONIO_SCREEN_TEXT+$20
 Constant (const byte) cscroll::y#0 = 0
 Constant (const byte) gotoxy::x#1 = 0
 Constant (const byte) gotoxy::y#1 = 0
-Constant (const nomodify void*) ppuDataFetch::cpuData#0 = (void*)scroll_buffer
+Constant (const nomodify void*) ppuDataFetch::cpuData#0 = (void*)conio_cscroll_buffer
 Constant (const word) ppuDataFetch::size#0 = $20
-Constant (const nomodify void*) ppuDataTransfer::cpuData#0 = (void*)scroll_buffer
+Constant (const nomodify void*) ppuDataTransfer::cpuData#0 = (void*)conio_cscroll_buffer
 Constant (const word) ppuDataTransfer::size#0 = $20
 Constant (const nomodify void*) ppuDataFill::ppuData#1 = (void*)CONIO_SCREEN_TEXT+(word)$1e*$20-$20
 Constant (const byte) ppuDataFill::val#1 = ' '
@@ -2761,7 +2759,7 @@ Constant inlined readJoy1::joy#0 = (byte) 0
 Constant inlined ppuDataTransfer::cpuData#1 = (void*)(const byte*) PALETTE
 Constant inlined cscroll::y#0 = (byte) 0
 Constant inlined cscroll::line2#0 = (const nomodify byte*) PPU_NAME_TABLE_0+(byte) $20
-Constant inlined ppuDataTransfer::cpuData#0 = (void*)(const byte*) scroll_buffer
+Constant inlined ppuDataTransfer::cpuData#0 = (void*)(const byte*) conio_cscroll_buffer
 Constant inlined ppuDataTransfer::ppuData#1 = (void*)(const nomodify byte*) PPU_PALETTE
 Constant inlined cputcxy::c#3 = (byte) 'i'
 Constant inlined cputcxy::c#2 = (byte) 'i'
@@ -3260,7 +3258,7 @@ cscroll::@5: scope:[cscroll]  from cscroll::@4
 (void()) ppuDataTransfer((nomodify void*) ppuDataTransfer::ppuData , (nomodify void*) ppuDataTransfer::cpuData , (word) ppuDataTransfer::size)
 ppuDataTransfer: scope:[ppuDataTransfer]  from cscroll::@4 main::@6
   [110] (word) ppuDataTransfer::size#3 ← phi( cscroll::@4/(byte) $20 main::@6/(byte) $20*(const byte) SIZEOF_BYTE )
-  [110] (nomodify void*) ppuDataTransfer::cpuData#2 ← phi( cscroll::@4/(void*)(const byte*) scroll_buffer main::@6/(void*)(const byte*) PALETTE )
+  [110] (nomodify void*) ppuDataTransfer::cpuData#2 ← phi( cscroll::@4/(void*)(const byte*) conio_cscroll_buffer main::@6/(void*)(const byte*) PALETTE )
   [110] (nomodify void*) ppuDataTransfer::ppuDataPrepare1_ppuData#0 ← phi( cscroll::@4/(nomodify void*) ppuDataTransfer::ppuData#0 main::@6/(void*)(const nomodify byte*) PPU_PALETTE )
   to:ppuDataTransfer::ppuDataPrepare1
 ppuDataTransfer::ppuDataPrepare1: scope:[ppuDataTransfer]  from ppuDataTransfer
@@ -4805,10 +4803,10 @@ cscroll: {
     sta.z ppuDataTransfer.size
     lda #>$20
     sta.z ppuDataTransfer.size+1
-    // [110] phi (nomodify void*) ppuDataTransfer::cpuData#2 = (void*)(const byte*) scroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
-    lda #<scroll_buffer
+    // [110] phi (nomodify void*) ppuDataTransfer::cpuData#2 = (void*)(const byte*) conio_cscroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
+    lda #<conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData
-    lda #>scroll_buffer
+    lda #>conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData+1
     // [110] phi (nomodify void*) ppuDataTransfer::ppuDataPrepare1_ppuData#0 = (nomodify void*) ppuDataTransfer::ppuData#0 [phi:cscroll::@4->ppuDataTransfer#2] -- register_copy 
     jsr ppuDataTransfer
@@ -4943,7 +4941,7 @@ ppuDataTransfer: {
 // ppuDataFetch(void* zp($3e) ppuData)
 ppuDataFetch: {
     .const size = $20
-    .label cpuData = scroll_buffer
+    .label cpuData = conio_cscroll_buffer
     .label ppuDataPrepare1___0 = $43
     .label ppuDataPrepare1___1 = $44
     .label ppuDataRead1_return = $45
@@ -5740,6 +5738,9 @@ readJoy1: {
     jmp __b1
 }
   // File Data
+.segment GameRam
+  // Buffer used for scrolling the NES screen
+  conio_cscroll_buffer: .fill $20, 0
 .segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
@@ -5747,7 +5748,6 @@ readJoy1: {
   RADIX_HEXADECIMAL_VALUES_CHAR: .byte $10
 .segment GameRam
   num_buffer: .fill $b, 0
-  scroll_buffer: .fill $20, 0
 .segment Data
   // Color Palette
   PALETTE: .byte 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f
@@ -6845,10 +6845,10 @@ cscroll: {
     sta.z ppuDataTransfer.size
     lda #>$20
     sta.z ppuDataTransfer.size+1
-    // [110] phi (nomodify void*) ppuDataTransfer::cpuData#2 = (void*)(const byte*) scroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
-    lda #<scroll_buffer
+    // [110] phi (nomodify void*) ppuDataTransfer::cpuData#2 = (void*)(const byte*) conio_cscroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
+    lda #<conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData
-    lda #>scroll_buffer
+    lda #>conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData+1
     // [110] phi (nomodify void*) ppuDataTransfer::ppuDataPrepare1_ppuData#0 = (nomodify void*) ppuDataTransfer::ppuData#0 [phi:cscroll::@4->ppuDataTransfer#2] -- register_copy 
     jsr ppuDataTransfer
@@ -6970,7 +6970,7 @@ ppuDataTransfer: {
 // ppuDataFetch(void* zp($19) ppuData)
 ppuDataFetch: {
     .const size = $20
-    .label cpuData = scroll_buffer
+    .label cpuData = conio_cscroll_buffer
     // Fetch from PPU to CPU
     .label cpuDst = 7
     .label i = 5
@@ -7662,6 +7662,9 @@ readJoy1: {
     jmp __b1
 }
   // File Data
+.segment GameRam
+  // Buffer used for scrolling the NES screen
+  conio_cscroll_buffer: .fill $20, 0
 .segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
@@ -7669,7 +7672,6 @@ readJoy1: {
   RADIX_HEXADECIMAL_VALUES_CHAR: .byte $10
 .segment GameRam
   num_buffer: .fill $b, 0
-  scroll_buffer: .fill $20, 0
 .segment Data
   // Color Palette
   PALETTE: .byte 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f
@@ -8061,6 +8063,7 @@ FINAL SYMBOL TABLE
 (void()) clrscr()
 (label) clrscr::@1
 (label) clrscr::@return
+(const byte*) conio_cscroll_buffer[(number) $20]  = { fill( $20, 0) }
 (byte) conio_cursor_x loadstore zp[1]:17 4375315.90625
 (byte) conio_cursor_y loadstore zp[1]:18 6.5306328755102046E7
 (byte*) conio_line_text loadstore zp[2]:19 4.9111335755555555E7
@@ -8209,7 +8212,7 @@ FINAL SYMBOL TABLE
 (label) ppuDataFetch::@3
 (label) ppuDataFetch::@return
 (nomodify void*) ppuDataFetch::cpuData
-(const nomodify void*) ppuDataFetch::cpuData#0 cpuData = (void*)(const byte*) scroll_buffer
+(const nomodify void*) ppuDataFetch::cpuData#0 cpuData = (void*)(const byte*) conio_cscroll_buffer
 (byte*) ppuDataFetch::cpuDst
 (byte*) ppuDataFetch::cpuDst#1 cpuDst zp[2]:7 1.0E17
 (byte*) ppuDataFetch::cpuDst#2 cpuDst zp[2]:7 7.5E16
@@ -8309,7 +8312,6 @@ FINAL SYMBOL TABLE
 (byte) readJoy1::joy#2 reg byte a 51.0
 (byte) readJoy1::return
 (byte) readJoy1::return#2 reg byte a 4.0
-(const byte*) scroll_buffer[(number) $20]  = { fill( $20, 0) }
 (void()) uctoa((byte) uctoa::value , (byte*) uctoa::buffer , (byte) uctoa::radix)
 (label) uctoa::@1
 (label) uctoa::@2
@@ -9068,7 +9070,7 @@ cscroll: {
     rts
     // cscroll::@2
   __b2:
-    // ppuDataFetch(scroll_buffer, line2, CONIO_WIDTH)
+    // ppuDataFetch(conio_cscroll_buffer, line2, CONIO_WIDTH)
     // [103] (nomodify void*) ppuDataFetch::ppuData#0 ← (void*)(byte*) cscroll::line2#2 -- pvoz1=pvoz2 
     lda.z line2
     sta.z ppuDataFetch.ppuData
@@ -9078,7 +9080,7 @@ cscroll: {
     // [123] phi from cscroll::@2 to ppuDataFetch [phi:cscroll::@2->ppuDataFetch]
     jsr ppuDataFetch
     // cscroll::@4
-    // ppuDataTransfer(line1, scroll_buffer, CONIO_WIDTH)
+    // ppuDataTransfer(line1, conio_cscroll_buffer, CONIO_WIDTH)
     // [105] (nomodify void*) ppuDataTransfer::ppuData#0 ← (void*)(byte*) cscroll::line1#2 -- pvoz1=pvoz2 
     lda.z line1
     sta.z ppuDataTransfer.ppuData
@@ -9091,10 +9093,10 @@ cscroll: {
     sta.z ppuDataTransfer.size
     lda #>$20
     sta.z ppuDataTransfer.size+1
-    // [110] phi (nomodify void*) ppuDataTransfer::cpuData#2 = (void*)(const byte*) scroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
-    lda #<scroll_buffer
+    // [110] phi (nomodify void*) ppuDataTransfer::cpuData#2 = (void*)(const byte*) conio_cscroll_buffer [phi:cscroll::@4->ppuDataTransfer#1] -- pvoz1=pvoc1 
+    lda #<conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData
-    lda #>scroll_buffer
+    lda #>conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData+1
     // [110] phi (nomodify void*) ppuDataTransfer::ppuDataPrepare1_ppuData#0 = (nomodify void*) ppuDataTransfer::ppuData#0 [phi:cscroll::@4->ppuDataTransfer#2] -- register_copy 
     jsr ppuDataTransfer
@@ -9212,7 +9214,7 @@ ppuDataTransfer: {
 // ppuDataFetch(void* zp($19) ppuData)
 ppuDataFetch: {
     .const size = $20
-    .label cpuData = scroll_buffer
+    .label cpuData = conio_cscroll_buffer
     // Fetch from PPU to CPU
     .label cpuDst = 7
     .label i = 5
@@ -9882,6 +9884,9 @@ readJoy1: {
     jmp __b1
 }
   // File Data
+.segment GameRam
+  // Buffer used for scrolling the NES screen
+  conio_cscroll_buffer: .fill $20, 0
 .segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
@@ -9889,7 +9894,6 @@ readJoy1: {
   RADIX_HEXADECIMAL_VALUES_CHAR: .byte $10
 .segment GameRam
   num_buffer: .fill $b, 0
-  scroll_buffer: .fill $20, 0
 .segment Data
   // Color Palette
   PALETTE: .byte 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f

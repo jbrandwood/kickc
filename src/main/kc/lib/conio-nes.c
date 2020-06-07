@@ -117,8 +117,8 @@ void cscroll() {
             char* line1 = CONIO_SCREEN_TEXT;
             char* line2 = CONIO_SCREEN_TEXT+CONIO_WIDTH;
             for(char y=0;y<CONIO_HEIGHT-1;y++) {
-                ppuDataFetch(scroll_buffer, line2, CONIO_WIDTH);
-                ppuDataTransfer(line1, scroll_buffer, CONIO_WIDTH);
+                ppuDataFetch(conio_cscroll_buffer, line2, CONIO_WIDTH);
+                ppuDataTransfer(line1, conio_cscroll_buffer, CONIO_WIDTH);
                 line1 += CONIO_WIDTH;
                 line2 += CONIO_WIDTH;
             }

@@ -1,13 +1,7 @@
-// NES conio printing
+// NES DXYCP using sprites
 #pragma target(nes)
 #include <nes.h>
-#include <conio.h>
-#include <stdio.h>
-
-#pragma data_seg(GameRam)
-char num_buffer[11];
-#pragma data_seg(Data)
-
+#include <string.h>
 
 // RESET Called when the NES is reset, including when it is turned on.
 void main() {
@@ -16,25 +10,12 @@ void main() {
     // Transfer the palette
     ppuDataTransfer(PPU_PALETTE, PALETTE, sizeof(PALETTE));
     // Fill the PPU attribute table
+    ppuDataFill(PPU_NAME_TABLE_0, '*', 32*30);
     ppuDataFill(PPU_ATTRIBUTE_TABLE_0, 0, 0x40);
-    ppuDataFill(PPU_ATTRIBUTE_TABLE_1, 0, 0x40);
-    // Print a string
-    clrscr();
-    for(char x=1;x<screensizex()-1;x++) {
-        cputcxy(x, 1, '-');
-        cputcxy(x, screensizey()-4, '-');
+    // Initialize Sprite Buffer with the SPRITE data
+    for(char s=0;s<0x40;s++) {        
+        SPRITE_BUFFER[s] = { 0, MESSAGE[s], 0b00000010, 0 };
     }
-    for(char y=1;y<screensizey()-3;y++) {
-        cputcxy(1, y, 'i');
-        cputcxy(screensizex()-2, y, 'i');
-    }
-    for(char i=0;i<screensizey();i++) {
-        uctoa(i&0xf, num_buffer, HEXADECIMAL);
-        cputsxy(i, i, num_buffer);        
-    }
-    x_scroll = 0;
-    y_scroll = -8;
-
     // Enable screen rendering and vblank
     enableVideoOutput();
     // Infinite loop
@@ -42,36 +23,34 @@ void main() {
     }
 }
 
-volatile char x_scroll;
-volatile char y_scroll;
+// Index into the Y sine
+volatile char y_sin_idx = 0;
+// Index into the X sine
+volatile char x_sin_idx = 73;
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 interrupt(hardware_stack) void vblank() {
-   // Read controller 1
-    char joy = readJoy1();
-    if(joy&JOY_DOWN) {
-        if(++y_scroll==240)
-            y_scroll=0;
+    // Set scroll
+    PPU->PPUSCROLL = 0;
+    PPU->PPUSCROLL = 0;    
+    // DMA transfer the entire sprite buffer to the PPU
+    ppuSpriteBufferDmaTransfer(SPRITE_BUFFER);
+    // Update sprite positions
+    char y_idx = y_sin_idx++;    
+    char x_idx = x_sin_idx++;    
+    for(char s=0;s<0x40;s++) {
+        SPRITE_BUFFER[s].y = SINTABLE[y_idx];
+        SPRITE_BUFFER[s].x = SINTABLE[x_idx]+8;
+        y_idx += 4;
+        x_idx -= 7;
     }
-    if(joy&JOY_UP) {
-        if(--y_scroll==255)
-            y_scroll=239;
-    }
-    if(joy&JOY_LEFT) {
-        x_scroll++;
-    }
-    if(joy&JOY_RIGHT) {
-        x_scroll--;
-    }
-
-    PPU->PPUSCROLL = x_scroll;
-    PPU->PPUSCROLL = y_scroll;
 }
 
 // Data (in PRG ROM)
 #pragma data_seg(Data)
 
-char MESSAGE[] = "hello world!";
+// The DXYCP message  0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+char MESSAGE[0x40] = "rex-of-camelot-presents-a-dxycp-on-nintendo-entertainment-system"z;
 
 // Color Palette
 char PALETTE[0x20] = {
@@ -85,7 +64,12 @@ char PALETTE[0x20] = {
     0x01, 0x0f, 0x18, 0x08,   // Goomba lower colors
     0x01, 0x30, 0x37, 0x1a,  // Luigi-like colors
     0x0f, 0x0f, 0x0f, 0x0f   // All black
-};    
+}; 
+
+// Sinus Table (0-239)
+const char SINTABLE[0x100] = kickasm {{
+    .fill $100, round(115.5+107.5*sin(2*PI*i/256))
+}};
 
 // Tile Set (in CHR ROM) - A C64 charset from http://www.zimmers.net/anonftp/pub/cbm/firmware/computers/c64/
 #pragma data_seg(Tiles)
@@ -98,6 +82,11 @@ export char TILES[] = kickasm(resource "characters.901225-01.bin") {{
         .fill 8, 0
     }
 }};
+
+// Sprite Buffer (in GAME RAM)
+// Will be transferred to the PPU via DMA during vblank
+#pragma data_seg(GameRam)
+struct SpriteData align(0x100) SPRITE_BUFFER[0x100];
 
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)

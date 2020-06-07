@@ -63,6 +63,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNesDxycp() throws IOException, URISyntaxException {
+      compileAndCompare("examples/nes-dxycp/nes-dxycp.c");
+   }
+
+   @Test
    public void testNesConio() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes-conio/nes-conio.c");
    }

@@ -409,13 +409,13 @@ cscroll: {
     // }
     rts
   __b2:
-    // ppuDataFetch(scroll_buffer, line2, CONIO_WIDTH)
+    // ppuDataFetch(conio_cscroll_buffer, line2, CONIO_WIDTH)
     lda.z line2
     sta.z ppuDataFetch.ppuData
     lda.z line2+1
     sta.z ppuDataFetch.ppuData+1
     jsr ppuDataFetch
-    // ppuDataTransfer(line1, scroll_buffer, CONIO_WIDTH)
+    // ppuDataTransfer(line1, conio_cscroll_buffer, CONIO_WIDTH)
     lda.z line1
     sta.z ppuDataTransfer.ppuData
     lda.z line1+1
@@ -424,9 +424,9 @@ cscroll: {
     sta.z ppuDataTransfer.size
     lda #>$20
     sta.z ppuDataTransfer.size+1
-    lda #<scroll_buffer
+    lda #<conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData
-    lda #>scroll_buffer
+    lda #>conio_cscroll_buffer
     sta.z ppuDataTransfer.cpuData+1
     jsr ppuDataTransfer
     // line1 += CONIO_WIDTH
@@ -509,7 +509,7 @@ ppuDataTransfer: {
 // ppuDataFetch(void* zp($19) ppuData)
 ppuDataFetch: {
     .const size = $20
-    .label cpuData = scroll_buffer
+    .label cpuData = conio_cscroll_buffer
     // Fetch from PPU to CPU
     .label cpuDst = 7
     .label i = 5
@@ -947,6 +947,9 @@ readJoy1: {
     inx
     jmp __b1
 }
+.segment GameRam
+  // Buffer used for scrolling the NES screen
+  conio_cscroll_buffer: .fill $20, 0
 .segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
@@ -954,7 +957,6 @@ readJoy1: {
   RADIX_HEXADECIMAL_VALUES_CHAR: .byte $10
 .segment GameRam
   num_buffer: .fill $b, 0
-  scroll_buffer: .fill $20, 0
 .segment Data
   // Color Palette
   PALETTE: .byte 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $21, $f, $30, 1, $f, $30, 8, 1, $f, $18, 8, 1, $30, $37, $1a, $f, $f, $f, $f

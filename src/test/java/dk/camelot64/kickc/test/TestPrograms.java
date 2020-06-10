@@ -42,6 +42,11 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   //@Test
+   //public void testStaticInitCode() throws IOException, URISyntaxException {
+   //   compileAndCompare("static-init-code.c", log());
+   //}
+
    @Test
    public void testConstParenthesis() throws IOException, URISyntaxException {
       compileAndCompare("const-parenthesis.c");

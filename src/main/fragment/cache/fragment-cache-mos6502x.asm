@@ -17688,3 +17688,47 @@ sbc #2
 ldx {z1}
 dex
 dex
+//FRAGMENT vbuz1=_hi_pvoz2
+lda {z2}+1
+sta {z1}
+//FRAGMENT vbuz1=_lo_pvoz2
+lda {z2}
+sta {z1}
+//FRAGMENT vbuaa=_hi_pvoz1
+lda {z1}+1
+//FRAGMENT vbuxx=_hi_pvoz1
+ldx {z1}+1
+//FRAGMENT vbuaa=_lo_pvoz1
+lda {z1}
+//FRAGMENT vbuxx=_lo_pvoz1
+ldx {z1}
+//FRAGMENT vbuyy=_hi_pvoz1
+ldy {z1}+1
+//FRAGMENT vbuyy=_lo_pvoz1
+ldy {z1}
+//FRAGMENT vwuz1=vwuz2_rol_5
+lda {z2}
+asl
+sta {z1}
+lda {z2}+1
+rol
+sta {z1}+1
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1
+//FRAGMENT vwuz1=vwuz1_rol_5
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1

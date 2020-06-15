@@ -12,6 +12,8 @@ public class SymbolRef implements Value {
    public static final String END_BLOCK_NAME = "@end";
    public static final String PROCEXIT_BLOCK_NAME = "@return";
    public static final String MAIN_PROC_NAME = "main";
+   public static final String START_PROC_NAME = "_start";
+   public static final String INIT_PROC_NAME = "_init";
 
    /** The full name of the variable. Allowing lookup in the symbol table. */
    private String fullName;

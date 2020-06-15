@@ -2,13 +2,12 @@ package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
-import dk.camelot64.kickc.model.Comment;
-import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.Program;
-import dk.camelot64.kickc.model.StatementSequence;
+import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementCall;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
@@ -20,10 +19,7 @@ import org.antlr.v4.runtime.TokenSource;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Perform KickC compilation and optimizations
@@ -167,7 +163,6 @@ public class Compiler {
 
       try {
          Path currentPath = new File(".").toPath();
-         program.setStatementSequence(new StatementSequence());
          CParser cParser = initializeParser(defines, cFiles, currentPath);
 
          // Parse the files
@@ -180,9 +175,15 @@ public class Compiler {
          Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention);
          pass0GenerateStatementSequence.generate();
 
-         StatementSequence sequence = program.getStatementSequence();
+         // Add the _start() procedure to the program
+         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.STACK_CALL);
+         startProcedure.setParameters(new ArrayList<>());
+         program.getScope().add(startProcedure);
+         final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
+         final StatementSequence sequence = startProcedureCompilation.getStatementSequence();
+         if(program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME)!=null)
+            sequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         program.setStatementSequence(sequence);
 
          pass1GenerateSSA();
          pass2Optimize();
@@ -221,7 +222,10 @@ public class Compiler {
    private void pass1GenerateSSA() {
       if(getLog().isVerboseStatementSequence()) {
          getLog().append("\nSTATEMENTS");
-         getLog().append(program.getStatementSequence().toString(program));
+         for(Procedure procedure : program.getScope().getAllProcedures(true)) {
+            final ProcedureCompilation procedureCompilation = program.createProcedureCompilation(procedure.getRef());
+            getLog().append(procedureCompilation.getStatementSequence().toString(program));
+         }
       }
 
       new Pass1GenerateControlFlowGraph(program).execute();

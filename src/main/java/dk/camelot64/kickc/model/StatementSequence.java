@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import java.util.ArrayList;
 import java.util.List;
 
-/** A sequence of statements used before pass1*/
+/** A sequence of statements used before pass1 */
 public class StatementSequence {
 
    private ArrayList<Statement> statements;
@@ -45,7 +45,7 @@ public class StatementSequence {
    }
 
    /**
-    * Look backwar from the end of the sequence and find the last label
+    * Look backwards from the end of the sequence and find the last label
     * @return The label of the block, currently being build
     */
    public LabelRef getCurrentBlockLabel() {

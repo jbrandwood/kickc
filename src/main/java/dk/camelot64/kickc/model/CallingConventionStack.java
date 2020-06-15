@@ -16,7 +16,6 @@ import java.util.Collections;
  */
 public class CallingConventionStack {
 
-
    /** Prefix of the constant holding the stack offset for parameters/return value. */
    public static final String OFFSET_STACK = "OFFSET_STACK_";
 

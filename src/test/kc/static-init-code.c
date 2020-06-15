@@ -13,4 +13,4 @@ void main() {
 }
 
 // Initialize another volatile ZP-variable (will be done in the initializer)
-volatile char c2 = SCREEN>1000?'s':'m';
+volatile char c2 = 's';

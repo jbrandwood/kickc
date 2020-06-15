@@ -20,6 +20,8 @@ public class Procedure extends Scope {
    private boolean variableLengthParameterList;
    /** true if the procedure is declared inline. */
    private boolean declaredInline;
+   /** True if the procedure is declared intrinsic. */
+   private boolean declaredIntrinsic;
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
    private InterruptType interruptType;
    /** Comments preceding the procedure in the source code. */
@@ -28,8 +30,6 @@ public class Procedure extends Scope {
    private List<Integer> reservedZps;
    /** The code segment to put the procedure into. */
    private String codeSegment;
-   /** True if the procedure is declared intrinsic. */
-   private boolean declaredIntrinsic;
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Collections.singletonList(Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME);

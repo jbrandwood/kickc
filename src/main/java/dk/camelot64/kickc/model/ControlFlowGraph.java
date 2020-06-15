@@ -21,16 +21,14 @@ import java.util.*;
 public class ControlFlowGraph implements Serializable {
 
    private List<ControlFlowBlock> blocks;
-   private LabelRef firstBlockRef;
 
    /**
     * Sequence of blocks used when generating ASM
     */
    private List<LabelRef> sequence;
 
-   public ControlFlowGraph(List<ControlFlowBlock> blocks, LabelRef firstBlockRef) {
+   public ControlFlowGraph(List<ControlFlowBlock> blocks) {
       this.blocks = blocks;
-      this.firstBlockRef = firstBlockRef;
    }
 
    public ControlFlowBlock getBlock(LabelRef symbol) {
@@ -44,10 +42,6 @@ public class ControlFlowGraph implements Serializable {
 
    public void addBlock(ControlFlowBlock block) {
       blocks.add(block);
-   }
-
-   public ControlFlowBlock getFirstBlock() {
-      return getBlock(firstBlockRef);
    }
 
    public List<ControlFlowBlock> getAllBlocks() {
@@ -136,9 +130,20 @@ public class ControlFlowGraph implements Serializable {
       return null;
    }
 
+   public ControlFlowBlock getStartBlock() {
+      for(ControlFlowBlock block : getAllBlocks()) {
+         LabelRef label = block.getLabel();
+         if(label.getFullName().equals(SymbolRef.START_PROC_NAME)) {
+            return block;
+         }
+      }
+      return null;
+   }
+
+
    /**
     * Get all blocks that are program entry points.
-    * This is the main-block and any blocks referenced by the address-off operator (&)
+    * This is the start-block and any blocks referenced by the address-off operator (&)
     * @param program The program
     * @return All entry-point blocks
     */
@@ -152,12 +157,10 @@ public class ControlFlowGraph implements Serializable {
             entryPointBlocks.add(procedureBlock);
          }
       }
-
-      ControlFlowBlock mainBlock = getMainBlock();
-      if(mainBlock != null && !entryPointBlocks.contains(mainBlock)) {
-         entryPointBlocks.add(mainBlock);
+      ControlFlowBlock startBlock = getStartBlock();
+      if(startBlock != null && !entryPointBlocks.contains(startBlock)) {
+         entryPointBlocks.add(startBlock);
       }
-      entryPointBlocks.add(getFirstBlock());
       return entryPointBlocks;
    }
 
@@ -179,9 +182,6 @@ public class ControlFlowGraph implements Serializable {
       return calledProcedures;
    }
 
-
-
-
    @Override
    public String toString() {
       return toString(null);
@@ -199,20 +199,14 @@ public class ControlFlowGraph implements Serializable {
    public boolean equals(Object o) {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
-
       ControlFlowGraph that = (ControlFlowGraph) o;
-
-      if(!blocks.equals(that.blocks)) return false;
-      if(!firstBlockRef.equals(that.firstBlockRef)) return false;
-      return Objects.equals(sequence, that.sequence);
+      return Objects.equals(blocks, that.blocks) &&
+            Objects.equals(sequence, that.sequence);
    }
 
    @Override
    public int hashCode() {
-      int result = blocks.hashCode();
-      result = 31 * result + firstBlockRef.hashCode();
-      result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
-      return result;
+      return Objects.hash(blocks, sequence);
    }
 
    /**

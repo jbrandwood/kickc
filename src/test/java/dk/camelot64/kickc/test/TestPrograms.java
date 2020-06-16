@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStrcpy0() throws IOException, URISyntaxException {
+      compileAndCompare("strcpy-0.c");
+   }
+
+   @Test
    public void testStaticInitCode() throws IOException, URISyntaxException {
       compileAndCompare("static-init-code.c");
    }

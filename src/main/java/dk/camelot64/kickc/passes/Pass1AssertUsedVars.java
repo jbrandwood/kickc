@@ -35,7 +35,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
       getProgram().clearControlFlowBlockSuccessorClosure();
       VariableReferenceInfos referenceInfos = getProgram().getVariableReferenceInfos();
 
-      ControlFlowBlock beginBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
+      ControlFlowBlock startBlock = getProgram().getGraph().getBlock(new LabelRef(SymbolRef.START_PROC_NAME));
       final LinkedHashSet<SymbolVariableRef> defined = new LinkedHashSet<>();
       // Add all variables with an init-value
       for(Variable var : getScope().getAllVars(true)) {
@@ -43,7 +43,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
             defined.add(var.getRef());
          }
       }
-      assertUsedVars(beginBlock, null, referenceInfos, defined, new LinkedHashSet<>());
+      assertUsedVars(startBlock, null, referenceInfos, defined, new LinkedHashSet<>());
       getProgram().clearVariableReferenceInfos();
       getProgram().clearControlFlowBlockSuccessorClosure();
       getProgram().clearStatementIndices();

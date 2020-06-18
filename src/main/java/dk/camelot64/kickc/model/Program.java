@@ -52,12 +52,16 @@ public class Program {
    /** Reserved ZP addresses that the compiler cannot use. PASS 0-5 (STATIC) */
    private List<Integer> reservedZps;
    /** Resource files that should be copied to the output folder to be compiled with the generated ASM. PASS 0-5 (STATIC) */
-   private List<Path> asmResourceFiles;
+   private final List<Path> asmResourceFiles;
    /** Comments for the (main) file. PASS 0-4 (STATIC) */
    private List<Comment> fileComments;
 
    /** The main scope. PASS 0-5 (DYNAMIC) */
    private ProgramScope scope;
+   /** The control flow graph. PASS 1-5 (DYNAMIC) */
+   private ControlFlowGraph graph;
+   /** The procedure that starts the execution of the program. (Default: _start() which calls _init() and main() ) */
+   private ProcedureRef startProcedure;
 
    /** Struct values unwound to individual variables. PASS 1 (STATIC) */
    private StructVariableMemberUnwinding structVariableMemberUnwinding;
@@ -71,8 +75,6 @@ public class Program {
    /** Variables modified inside procedures. PASS 1 (STATIC) */
    private ProcedureModifiedVars procedureModifiedVars;
 
-   /** The control flow graph. PASS 1-5 (DYNAMIC) */
-   private ControlFlowGraph graph;
    /** Registers potentially usable as allocation for each live range equivalence class. PASS 4 (DYNAMIC) */
    private RegisterPotentials registerPotentials;
    /** Live range equivalence classes containing variables that do not have overlapping live ranges. PASS 3-5 (DYNAMIC) */
@@ -292,6 +294,14 @@ public class Program {
 
    public void setGraph(ControlFlowGraph graph) {
       this.graph = graph;
+   }
+
+   public ProcedureRef getStartProcedure() {
+      return startProcedure;
+   }
+
+   public void setStartProcedure(ProcedureRef startProcedure) {
+      this.startProcedure = startProcedure;
    }
 
    public ProcedureModifiedVars getProcedureModifiedVars() {

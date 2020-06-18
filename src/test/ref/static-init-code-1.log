@@ -1,0 +1,170 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from _start
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'o'
+  *((const nomodify byte*) SCREEN + (number) 1) ← (byte) 'k'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__stackcall (void()) _start()
+_start: scope:[_start]  from
+  call main 
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+__stackcall (void()) _start()
+(label) _start::@1
+(void()) main()
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'o'
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (byte) 'k'
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte) 'o'
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] *((const nomodify byte*) SCREEN) ← (byte) 'o'
+  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'k'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Tests static initialization code
+// No initialization code should call main() directly removing _start() and _init()
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'o' -- _deref_pbuc1=vbuc2 
+    lda #'o'
+    sta SCREEN
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'k' -- _deref_pbuc1=vbuc2 
+    lda #'k'
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((const nomodify byte*) SCREEN) ← (byte) 'o' [ ] ( ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'k' [ ] ( ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests static initialization code
+// No initialization code should call main() directly removing _start() and _init()
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'o' -- _deref_pbuc1=vbuc2 
+    lda #'o'
+    sta SCREEN
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'k' -- _deref_pbuc1=vbuc2 
+    lda #'k'
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(const nomodify byte*) SCREEN = (byte*) 1024
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 18
+
+  // File Comments
+// Tests static initialization code
+// No initialization code should call main() directly removing _start() and _init()
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // SCREEN[0] = 'o'
+    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'o' -- _deref_pbuc1=vbuc2 
+    lda #'o'
+    sta SCREEN
+    // SCREEN[1] = 'k'
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'k' -- _deref_pbuc1=vbuc2 
+    lda #'k'
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

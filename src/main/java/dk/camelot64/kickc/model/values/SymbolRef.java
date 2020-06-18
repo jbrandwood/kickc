@@ -74,9 +74,8 @@ public class SymbolRef implements Value {
    }
 
    public boolean isIntermediate() {
-      if(
-            fullName.contains(BEGIN_BLOCK_NAME) ||
-                  fullName.contains(END_BLOCK_NAME)) return false;
+      if( fullName.contains(BEGIN_BLOCK_NAME) || fullName.contains(END_BLOCK_NAME))
+         return false;
       return fullName.contains("$") || fullName.contains("@");
    }
 

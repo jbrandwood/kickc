@@ -86,8 +86,7 @@ public class Pass4CodeGeneration {
       linkScriptBody = linkScriptBody.replace("%O", outputFileName);
       linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
       linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
-      final boolean skipBegin = Pass5SkipBegin.canSkipBegin(program.getGraph());
-      String entryName = skipBegin ? "main" : "__bbegin";
+      String entryName = program.getStartProcedure().getFullName();;
       linkScriptBody = linkScriptBody.replace("%E", entryName);
       Number programPc = program.getProgramPc();
       if(programPc == null) programPc = 0x080d;

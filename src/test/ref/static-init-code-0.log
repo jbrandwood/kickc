@@ -1,0 +1,318 @@
+Resolved forward reference c2 to (volatile byte) c2
+Calling convention STACK_CALL adding prepare/execute/finalize for call _init 
+
+CONTROL FLOW GRAPH SSA
+
+__stackcall (void()) _init()
+_init: scope:[_init]  from
+  (volatile byte) c1 ← (byte) 'o'
+  (volatile byte) c2 ← (byte) 'k'
+  return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from _start
+  *((const nomodify byte*) SCREEN + (number) 0) ← (volatile byte) c1
+  *((const nomodify byte*) SCREEN + (number) 1) ← (volatile byte) c2
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__stackcall (void()) _start()
+_start: scope:[_start]  from
+  callexecute _init 
+  call main 
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+__stackcall (void()) _init()
+__stackcall (void()) _start()
+(label) _start::@1
+(volatile byte) c1 loadstore
+(volatile byte) c2 loadstore
+(void()) main()
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (volatile byte) c1
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (volatile byte) c2
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero SCREEN in [3] *((const nomodify byte*) SCREEN + (byte) 0) ← (volatile byte) c1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Adding NOP phi() at start of _start
+CALL GRAPH
+Calls in [_start] to _init:1 main:2 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of _start
+
+FINAL CONTROL FLOW GRAPH
+
+__stackcall (void()) _start()
+_start: scope:[_start]  from
+  [0] phi()
+  [1] callexecute _init 
+  [2] call main 
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  [3] return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from _start
+  [4] *((const nomodify byte*) SCREEN) ← (volatile byte) c1
+  [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+
+__stackcall (void()) _init()
+_init: scope:[_init]  from
+  [7] (volatile byte) c1 ← (byte) 'o'
+  [8] (volatile byte) c2 ← (byte) 'k'
+  [9] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__stackcall (void()) _init()
+__stackcall (void()) _start()
+(volatile byte) c1 loadstore 22.0
+(volatile byte) c2 loadstore 11.0
+(void()) main()
+
+Initial phi equivalence classes
+Added variable c1 to live range equivalence class [ c1 ]
+Added variable c2 to live range equivalence class [ c2 ]
+Complete equivalence classes
+[ c1 ]
+[ c2 ]
+Allocated zp[1]:2 [ c1 ]
+Allocated zp[1]:3 [ c2 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Tests static initialization code
+// Currently placed outside any function scope and pushed into @begin block.
+// To be put into an initializer function.
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(_start)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label c1 = 2
+  .label c2 = 3
+  // _start
+_start: {
+    // [1] callexecute _init  -- jsr 
+    jsr _init
+    // [2] call main 
+    jsr main
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] return 
+    rts
+}
+  // main
+main: {
+    // [4] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
+    lda.z c1
+    sta SCREEN
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
+    lda.z c2
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // _init
+_init: {
+    // [7] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
+    // Initialize a volatile ZP-variable (will be done in the initializer)
+    lda #'o'
+    sta.z c1
+    // [8] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
+    // Initialize another volatile ZP-variable (will be done in the initializer)
+    lda #'k'
+    sta.z c2
+    // [9] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 [ c2 ] ( ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 [ ] ( ) always clobbers reg byte a 
+Statement [7] (volatile byte) c1 ← (byte) 'o' [ ] ( ) always clobbers reg byte a 
+Statement [8] (volatile byte) c2 ← (byte) 'k' [ ] ( ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ c1 ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ c2 ] : zp[1]:3 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 22: zp[1]:2 [ c1 ] 11: zp[1]:3 [ c2 ] 
+Uplift Scope [_init] 
+Uplift Scope [main] 
+Uplift Scope [_start] 
+
+Uplifting [] best 60 combination zp[1]:2 [ c1 ] zp[1]:3 [ c2 ] 
+Uplifting [_init] best 60 combination 
+Uplifting [main] best 60 combination 
+Uplifting [_start] best 60 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ c1 ]
+Uplifting [] best 60 combination zp[1]:2 [ c1 ] 
+Attempting to uplift remaining variables inzp[1]:3 [ c2 ]
+Uplifting [] best 60 combination zp[1]:3 [ c2 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests static initialization code
+// Currently placed outside any function scope and pushed into @begin block.
+// To be put into an initializer function.
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(_start)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label c1 = 2
+  .label c2 = 3
+  // _start
+_start: {
+    // [1] callexecute _init  -- jsr 
+    jsr _init
+    // [2] call main 
+    jsr main
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] return 
+    rts
+}
+  // main
+main: {
+    // [4] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
+    lda.z c1
+    sta SCREEN
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
+    lda.z c2
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // _init
+_init: {
+    // [7] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
+    // Initialize a volatile ZP-variable (will be done in the initializer)
+    lda #'o'
+    sta.z c1
+    // [8] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
+    // Initialize another volatile ZP-variable (will be done in the initializer)
+    lda #'k'
+    sta.z c2
+    // [9] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(const nomodify byte*) SCREEN = (byte*) 1024
+__stackcall (void()) _init()
+__stackcall (void()) _start()
+(label) _start::@1
+(volatile byte) c1 loadstore zp[1]:2 22.0
+(volatile byte) c2 loadstore zp[1]:3 11.0
+(void()) main()
+(label) main::@return
+
+zp[1]:2 [ c1 ]
+zp[1]:3 [ c2 ]
+
+
+FINAL ASSEMBLER
+Score: 54
+
+  // File Comments
+// Tests static initialization code
+// Currently placed outside any function scope and pushed into @begin block.
+// To be put into an initializer function.
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(_start)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label c1 = 2
+  .label c2 = 3
+  // _start
+_start: {
+    // [1] callexecute _init  -- jsr 
+    jsr _init
+    // [2] call main 
+    jsr main
+    // _start::@1
+    // [3] return 
+    rts
+}
+  // main
+main: {
+    // SCREEN[0] = c1
+    // [4] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
+    lda.z c1
+    sta SCREEN
+    // SCREEN[1] = c2
+    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
+    lda.z c2
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [6] return 
+    rts
+}
+  // _init
+_init: {
+    // c1 = 'o'
+    // [7] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
+    // Initialize a volatile ZP-variable (will be done in the initializer)
+    lda #'o'
+    sta.z c1
+    // c2 = 'k'
+    // [8] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
+    // Initialize another volatile ZP-variable (will be done in the initializer)
+    lda #'k'
+    sta.z c2
+    // [9] return 
+    rts
+}
+  // File Data
+

@@ -43,13 +43,23 @@ public class TestPrograms {
    }
 
    @Test
-   public void testStrcpy0() throws IOException, URISyntaxException {
-      compileAndCompare("strcpy-0.c");
+   public void testStaticInitCode2() throws IOException, URISyntaxException {
+      compileAndCompare("static-init-code-2.c", log());
    }
 
    @Test
-   public void testStaticInitCode() throws IOException, URISyntaxException {
-      compileAndCompare("static-init-code.c");
+   public void testStaticInitCode1() throws IOException, URISyntaxException {
+      compileAndCompare("static-init-code-1.c");
+   }
+
+   @Test
+   public void testStaticInitCode0() throws IOException, URISyntaxException {
+      compileAndCompare("static-init-code-0.c");
+   }
+
+   @Test
+   public void testStrcpy0() throws IOException, URISyntaxException {
+      compileAndCompare("strcpy-0.c");
    }
 
    @Test

@@ -56,7 +56,7 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
    }
 
    static boolean canSkipBegin(ControlFlowGraph graph) {
-      ControlFlowBlock beginBlock = graph.getBlock(new LabelRef(SymbolRef.BEGIN_BLOCK_NAME));
+      ControlFlowBlock beginBlock = graph.getBlock(new LabelRef(SymbolRef.START_PROC_NAME));
       return canSkipBegin(beginBlock, graph);
    }
 
@@ -78,7 +78,9 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
             if(!SymbolRef.MAIN_PROC_NAME.equals(procedure.getFullName())) {
                return false;
             }
-         } else if(statement instanceof StatementKickAsm){
+         } else if(statement instanceof StatementReturn && ((StatementReturn) statement).getValue() == null) {
+            // Empty return do not prevent skipping begin
+         } else if(statement instanceof StatementKickAsm) {
             // KASM-statements do not prevent skipping begin
          } else {
             return false;
@@ -89,7 +91,8 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
       }
       if(block.getDefaultSuccessor() != null) {
          ControlFlowBlock successor = graph.getBlock(block.getDefaultSuccessor());
-         return canSkipBegin(successor, graph);
+         if(successor != null)
+            return canSkipBegin(successor, graph);
       }
       return true;
    }

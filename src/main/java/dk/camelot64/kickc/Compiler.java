@@ -2,24 +2,23 @@ package dk.camelot64.kickc;
 
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateMasterSynthesizer;
-import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.StatementCall;
-import dk.camelot64.kickc.model.statements.StatementSource;
+import dk.camelot64.kickc.model.CompileError;
+import dk.camelot64.kickc.model.ProcedureCompilation;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
-import dk.camelot64.kickc.model.symbols.Scope;
-import dk.camelot64.kickc.model.types.SymbolType;
-import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenSource;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Perform KickC compilation and optimizations
@@ -175,15 +174,6 @@ public class Compiler {
          Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention);
          pass0GenerateStatementSequence.generate();
 
-         // Add the _start() procedure to the program
-         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.STACK_CALL);
-         startProcedure.setParameters(new ArrayList<>());
-         program.getScope().add(startProcedure);
-         final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
-         final StatementSequence sequence = startProcedureCompilation.getStatementSequence();
-         if(program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME)!=null)
-            sequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
 
          pass1GenerateSSA();
          pass2Optimize();
@@ -400,6 +390,7 @@ public class Compiler {
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
+      optimizations.add(new PassNEliminateEmptyStart(program));
       if(enableLoopHeadConstant) {
          optimizations.add(new PassNStatementIndices(program));
          optimizations.add(() -> {
@@ -473,11 +464,9 @@ public class Compiler {
    }
 
    private void pass2InlineConstants() {
-
       if(getLog().isVerboseSizeInfo()) {
          getLog().append(program.getSizeInfo());
       }
-
       // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
       List<PassStep> constantOptimizations = new ArrayList<>();
       constantOptimizations.add(new PassNStatementIndices(program));
@@ -719,11 +708,11 @@ public class Compiler {
       pass5Optimizations.add(new Pass5UnnecesaryLoadElimination(program));
       pass5Optimizations.add(new Pass5RedundantLabelElimination(program));
       pass5Optimizations.add(new Pass5UnusedLabelElimination(program));
-      pass5Optimizations.add(new Pass5SkipBegin(program));
+      //pass5Optimizations.add(new Pass5SkipBegin(program));
       pass5Optimizations.add(new Pass5DoubleJumpElimination(program));
       pass5Optimizations.add(new Pass5UnreachableCodeElimination(program));
       pass5Optimizations.add(new Pass5RelabelLongLabels(program));
-      pass5Optimizations.add(new Pass5SkipBegin(program));
+      //pass5Optimizations.add(new Pass5SkipBegin(program));
       pass5Optimizations.add(new Pass5AddMainRts(program));
       boolean asmOptimized = true;
       while(asmOptimized) {

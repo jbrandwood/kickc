@@ -36,6 +36,10 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
 
       for(final ControlFlowBlock removeBlock : remove) {
          ControlFlowBlock successor = getGraph().getDefaultSuccessor(removeBlock);
+         if(successor==null) {
+            dontRemove.add(removeBlock);
+            continue;
+         }
          LabelRef successorRef = successor.getLabel();
          // Replace all jumps (default/conditional/call) to @removeBlock with a jump to the default successor
          final List<ControlFlowBlock> predecessors = getGraph().getPredecessors(removeBlock);

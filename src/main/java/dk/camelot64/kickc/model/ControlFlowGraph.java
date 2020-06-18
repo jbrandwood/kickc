@@ -157,7 +157,8 @@ public class ControlFlowGraph implements Serializable {
             entryPointBlocks.add(procedureBlock);
          }
       }
-      ControlFlowBlock startBlock = getStartBlock();
+      final ProcedureRef startProcedure = program.getStartProcedure();
+      final ControlFlowBlock startBlock = getBlock(startProcedure.getLabelRef());
       if(startBlock != null && !entryPointBlocks.contains(startBlock)) {
          entryPointBlocks.add(startBlock);
       }

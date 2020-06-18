@@ -16,6 +16,7 @@ import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -101,6 +102,28 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    public void generate() {
       this.visit(fileCtx);
+
+      // Finalize the _init() procedure - if present
+      final ProcedureRef initProcedureRef = new ProcedureRef(SymbolRef.INIT_PROC_NAME);
+      final ProcedureCompilation initCompilation = program.getProcedureCompilation(initProcedureRef);
+      if(initCompilation!=null) {
+         initCompilation.getStatementSequence().addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         initCompilation.getStatementSequence().addStatement(new StatementProcedureEnd(initProcedureRef, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      }
+
+      // Add the _start() procedure to the program
+      program.setStartProcedure(new ProcedureRef(SymbolRef.START_PROC_NAME));
+      final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.STACK_CALL);
+      startProcedure.setParameters(new ArrayList<>());
+      program.getScope().add(startProcedure);
+      final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
+      final StatementSequence sequence = startProcedureCompilation.getStatementSequence();
+      if(initCompilation!=null)
+         sequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      sequence.addStatement(new StatementProcedureEnd(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+
    }
 
    @Override

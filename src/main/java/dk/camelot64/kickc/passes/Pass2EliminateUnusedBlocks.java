@@ -52,29 +52,20 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
       }
 
 
-      Set<LabelRef> unusedProcedureBlocks = new HashSet<>();
+      Set<LabelRef> removedBlocks = new HashSet<>();
       for(LabelRef unusedBlock : unusedBlocks) {
          Symbol unusedSymbol = getScope().getSymbol(unusedBlock);
          if(unusedSymbol instanceof Label) {
             getGraph().remove(unusedBlock);
             Label label = getScope().getLabel(unusedBlock);
             label.getScope().remove(label);
-            removePhiRValues(unusedBlock);
+            removePhiRValues(unusedBlock, getProgram());
+            removedBlocks.add(unusedBlock);
             getLog().append("Removing unused block " + unusedBlock);
          } else if(unusedSymbol instanceof Procedure) {
             ProcedureRef unusedProcedureRef = ((Procedure) unusedSymbol).getRef();
-            getLog().append("Removing unused procedure " + unusedProcedureRef);
-            Procedure unusedProcedure = getProgram().getScope().getProcedure(unusedProcedureRef);
-            List<ControlFlowBlock> procedureBlocks = getProgram().getGraph().getScopeBlocks(unusedProcedureRef);
-            for(ControlFlowBlock procedureBlock : procedureBlocks) {
-               LabelRef blockLabelRef = procedureBlock.getLabel();
-               getLog().append("Removing unused procedure block " + blockLabelRef);
-               getProgram().getGraph().remove(blockLabelRef);
-               removePhiRValues(blockLabelRef);
-               unusedProcedureBlocks.add(blockLabelRef);
-            }
-            unusedProcedure.getScope().remove(unusedProcedure);
-         } else if(unusedProcedureBlocks.contains(unusedBlock)) {
+            removeProcedure(unusedProcedureRef, removedBlocks, getProgram());
+         } else if(removedBlocks.contains(unusedBlock)) {
             // Already removed - we are happy!
          } else {
             throw new CompileError("Unable to remove unused block " + unusedBlock);
@@ -82,6 +73,25 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
       }
 
       return unusedBlocks.size() > 0;
+   }
+
+   /**
+    * Removes an entire procedure from the program (control flow graph and symbol table)
+    * @param procedureRef The procedure to remove
+    * @param removedBlocks A set where all removed blocks are added to.
+    */
+   public static void removeProcedure(ProcedureRef procedureRef, Set<LabelRef> removedBlocks, Program program) {
+      program.getLog().append("Removing unused procedure " + procedureRef);
+      Procedure unusedProcedure = program.getScope().getProcedure(procedureRef);
+      List<ControlFlowBlock> procedureBlocks = program.getGraph().getScopeBlocks(procedureRef);
+      for(ControlFlowBlock procedureBlock : procedureBlocks) {
+         LabelRef blockLabelRef = procedureBlock.getLabel();
+         program.getLog().append("Removing unused procedure block " + blockLabelRef);
+         program.getGraph().remove(blockLabelRef);
+         removePhiRValues(blockLabelRef, program);
+         removedBlocks.add(blockLabelRef);
+      }
+      unusedProcedure.getScope().remove(unusedProcedure);
    }
 
    /**
@@ -104,9 +114,9 @@ public class Pass2EliminateUnusedBlocks extends Pass2SsaOptimization {
     *
     * @param removeBlock The block to remove from PHI RValues
     */
-   private void removePhiRValues(LabelRef removeBlock) {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         removePhiRValues(removeBlock, block, getLog());
+   private static void removePhiRValues(LabelRef removeBlock, Program program) {
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
+         removePhiRValues(removeBlock, block, program.getLog());
       }
    }
 

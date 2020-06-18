@@ -44,7 +44,7 @@ public class TestPrograms {
 
    @Test
    public void testStaticInitCode2() throws IOException, URISyntaxException {
-      compileAndCompare("static-init-code-2.c", log());
+      compileAndCompare("static-init-code-2.c");
    }
 
    @Test

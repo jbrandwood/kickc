@@ -754,3 +754,9 @@ tay
 ldy {z1}
 //FRAGMENT pbuc1_derefidx_vbuyy=vbuaa
 sta {c1},y
+//FRAGMENT vbuaa=vbuaa_plus_vbuc1
+clc
+adc #{c1}
+//FRAGMENT vbuaa=_inc_vbuaa
+clc
+adc #1

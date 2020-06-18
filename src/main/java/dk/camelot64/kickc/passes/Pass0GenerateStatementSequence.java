@@ -89,7 +89,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Statement outside procedure declaration - put into the _init procedure
          Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
          if(initProc == null) {
-            initProc = new Procedure(SymbolRef.INIT_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.STACK_CALL);
+            initProc = new Procedure(SymbolRef.INIT_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
             initProc.setParameters(new ArrayList<>());
             program.getScope().add(initProc);
             program.createProcedureCompilation(initProc.getRef());

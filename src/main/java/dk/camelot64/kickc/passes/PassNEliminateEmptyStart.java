@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.statements.StatementReturn;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 
+import java.util.HashSet;
 import java.util.List;
 
 /** Pass that eliminates the __start() procedure if it is empty (ie. only contains a call to main() ). */
@@ -24,7 +25,8 @@ public class PassNEliminateEmptyStart extends Pass2SsaOptimization {
       if(singleCall != null) {
          // Start only has a single call
          getProgram().setStartProcedure(singleCall.getProcedure());
-         Pass1EliminateUncalledProcedures.removeProcedure(getProgram(), startProcRef);
+         Pass2EliminateUnusedBlocks.removeProcedure(startProcRef, new HashSet<>(), getProgram());
+         return true;
       }
       return false;
    }

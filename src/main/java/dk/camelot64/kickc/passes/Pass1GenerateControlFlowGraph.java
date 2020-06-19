@@ -35,6 +35,13 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
          ControlFlowBlock procBlock = getOrCreateBlock(procedure.getLabel().getRef(), procedure.getRef());
          currentBlock = procBlock;
          for(Statement statement : sequence.getStatements()) {
+            Symbol currentBlockLabel = getProgram().getScope().getSymbol(currentBlock.getLabel());
+            Scope currentBlockScope;
+            if(currentBlockLabel instanceof Procedure) {
+               currentBlockScope = (Scope) currentBlockLabel;
+            } else {
+               currentBlockScope = currentBlockLabel.getScope();
+            }
             if(statement instanceof StatementProcedureBegin) {
                // Do nothing
             } else if(statement instanceof StatementProcedureEnd) {
@@ -42,7 +49,7 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
                currentBlock.setDefaultSuccessor(new Label(SymbolRef.PROCEXIT_BLOCK_NAME, programScope, false).getRef());
             } else if(statement instanceof StatementLabel) {
                StatementLabel statementLabel = (StatementLabel) statement;
-               ControlFlowBlock nextBlock = getOrCreateBlock(statementLabel.getLabel(), procedure.getRef());
+               ControlFlowBlock nextBlock = getOrCreateBlock(statementLabel.getLabel(), currentBlock.getScope());
                nextBlock.setComments(statementLabel.getComments());
                currentBlock.setDefaultSuccessor(nextBlock.getLabel());
                currentBlock = nextBlock;
@@ -50,13 +57,13 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
                StatementJump statementJump = (StatementJump) statement;
                ControlFlowBlock jmpBlock = getOrCreateBlock(statementJump.getDestination(), currentBlock.getScope());
                currentBlock.setDefaultSuccessor(jmpBlock.getLabel());
-               ControlFlowBlock nextBlock = getOrCreateBlock(procedure.addLabelIntermediate().getRef(), currentBlock.getScope());
+               ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef(), currentBlock.getScope());
                currentBlock = nextBlock;
             } else if(statement instanceof StatementConditionalJump) {
                currentBlock.addStatement(statement);
                StatementConditionalJump statementConditionalJump = (StatementConditionalJump) statement;
                ControlFlowBlock jmpBlock = getOrCreateBlock(statementConditionalJump.getDestination(), currentBlock.getScope());
-               ControlFlowBlock nextBlock = getOrCreateBlock(procedure.addLabelIntermediate().getRef(), currentBlock.getScope());
+               ControlFlowBlock nextBlock = getOrCreateBlock(currentBlockScope.addLabelIntermediate().getRef(), currentBlock.getScope());
                currentBlock.setDefaultSuccessor(nextBlock.getLabel());
                currentBlock.setConditionalSuccessor(jmpBlock.getLabel());
                currentBlock = nextBlock;

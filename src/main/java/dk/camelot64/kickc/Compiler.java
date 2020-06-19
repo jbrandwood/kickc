@@ -217,8 +217,11 @@ public class Compiler {
             getLog().append(procedureCompilation.getStatementSequence().toString(program));
          }
       }
-
       new Pass1GenerateControlFlowGraph(program).execute();
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("FIRST CONTROL FLOW GRAPH");
+         getLog().append(program.getGraph().toString(program));
+      }
       new Pass1ResolveForwardReferences(program).execute();
       new Pass1AssertProcedureDefined(program).execute();
       new Pass1AssertVariableDefined(program).execute();

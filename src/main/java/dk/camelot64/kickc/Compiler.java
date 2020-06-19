@@ -213,7 +213,7 @@ public class Compiler {
       if(getLog().isVerboseStatementSequence()) {
          getLog().append("\nSTATEMENTS");
          for(Procedure procedure : program.getScope().getAllProcedures(true)) {
-            final ProcedureCompilation procedureCompilation = program.createProcedureCompilation(procedure.getRef());
+            final ProcedureCompilation procedureCompilation = program.getProcedureCompilation(procedure.getRef());
             getLog().append(procedureCompilation.getStatementSequence().toString(program));
          }
       }

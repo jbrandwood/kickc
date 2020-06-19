@@ -267,6 +267,10 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
                }
             }
          }
+         if(procedure.getRef().equals(program.getStartProcedure())) {
+            // TODO: Does this handle main() / _start() correctly?
+            program.getLog().append("Does this handle main() / _start() correctly?");
+         }
       }
       return predecessors;
    }

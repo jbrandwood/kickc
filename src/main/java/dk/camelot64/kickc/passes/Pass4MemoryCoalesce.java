@@ -33,12 +33,19 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
       ArrayList<ScopeRef> threadHeads = new ArrayList<>();
       Collection<Procedure> procedures = program.getScope().getAllProcedures(true);
       for(Procedure procedure : procedures) {
-         if(procedure.getFullName().equals(SymbolRef.MAIN_PROC_NAME)) {
+         if(procedure.getRef().equals(program.getStartProcedure())) {
+            // TODO: Handles main() correctly?
             threadHeads.add(procedure.getRef());
             continue;
          }
          if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
             threadHeads.add(procedure.getRef());
+            continue;
+         }
+         if(procedure.getInterruptType()!=null) {
+            // TODO: Handles Interrupts correctly?
+            threadHeads.add(procedure.getRef());
+            continue;
          }
       }
       return threadHeads;

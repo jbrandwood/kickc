@@ -70,7 +70,7 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
       if(callPaths == null) {
          callPaths = new LiveRangeVariablesEffectiveCallPaths.CallPaths(procedureRef);
 
-         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedureRef, getProgram())) {
+         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedureRef, getProgram()) || procedureRef.equals(getProgram().getStartProcedure())) {
             // Interrupt is called outside procedure scope - create initial call-path.
             ArrayList<CallGraph.CallBlock.Call> rootPath = new ArrayList<>();
             ArrayList<VariableRef> rootAlive = new ArrayList<>();

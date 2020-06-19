@@ -89,10 +89,12 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Statement outside procedure declaration - put into the _init procedure
          Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
          if(initProc == null) {
+            // Create the _init() procedure
             initProc = new Procedure(SymbolRef.INIT_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
             initProc.setParameters(new ArrayList<>());
             program.getScope().add(initProc);
             program.createProcedureCompilation(initProc.getRef());
+            program.getProcedureCompilation(initProc.getRef()).getStatementSequence().addStatement(new StatementProcedureBegin(initProc.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
          }
          procedureCompilation = program.getProcedureCompilation(initProc.getRef());
       }
@@ -118,6 +120,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       program.getScope().add(startProcedure);
       final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
       final StatementSequence sequence = startProcedureCompilation.getStatementSequence();
+      sequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
       if(initCompilation!=null)
          sequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
       sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));

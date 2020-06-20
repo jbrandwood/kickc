@@ -10,7 +10,8 @@ _init::@return: scope:[_init]  from _init
 
 (void()) main()
 main: scope:[main]  from _start::@1
-  *((const byte*) SCREEN + (number) 0) ← *((const byte*) SINTAB + (number) 0)
+  *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) c1
+  *((const nomodify byte*) SCREEN + (number) 1) ← (const byte) c2
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -30,30 +31,29 @@ _start::@return: scope:[_start]  from _start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN = (byte*)(number) $400
-(const byte*) SINTAB[(number) $100]  = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
- }}
+(const nomodify byte*) SCREEN = (byte*)(number) $400
 (void()) _init()
 (label) _init::@return
 (void()) _start()
 (label) _start::@1
 (label) _start::@2
 (label) _start::@return
+(const byte) c1 = (byte) 'o'
+(const byte) c2 = (byte) 'k'
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((const byte*) SINTAB + (number) 0)
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((const byte*) SINTAB + (unumber)(number) 0)
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) c1
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (const byte) c2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
-Simplifying constant integer cast 0
+Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SINTAB in [1] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB + (byte) 0)
-Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB)
+Simplifying expression containing zero SCREEN in [1] *((const nomodify byte*) SCREEN + (byte) 0) ← (const byte) c1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing call to empty procedure call _init 
 Removing unused procedure _init
@@ -66,6 +66,8 @@ Removing unused procedure block _start::@1
 Removing unused procedure block _start::@2
 Removing unused procedure block _start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Consolidated array index constant in *(SCREEN+1)
+Successful SSA optimization Pass2ConstantAdditionElimination
 CALL GRAPH
 
 Created 0 initial phi equivalence classes
@@ -75,10 +77,11 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from
-  [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB)
+  [0] *((const nomodify byte*) SCREEN) ← (const byte) c1
+  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) c2
   to:main::@return
 main::@return: scope:[main]  from main
-  [1] return 
+  [2] return 
   to:@return
 
 
@@ -91,65 +94,70 @@ Complete equivalence classes
 INITIAL ASM
 Target platform is c64basic / MOS6502X
   // File Comments
-// Test initializing array using KickAssembler
+// Tests static initialization code
+// No initializer code should be needed (since all values are constant)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const c1 = 'o'
+  .const c2 = 'k'
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
-    lda SINTAB
+    // [0] *((const nomodify byte*) SCREEN) ← (const byte) c1 -- _deref_pbuc1=vbuc2 
+    lda #c1
     sta SCREEN
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) c2 -- _deref_pbuc1=vbuc2 
+    lda #c2
+    sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [1] return 
+    // [2] return 
     rts
 }
   // File Data
-// Sinus table
-SINTAB:
-.fill 256, 128 + 128*sin(i*2*PI/256)
-
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const nomodify byte*) SCREEN) ← (const byte) c1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) c2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 17 combination 
-Uplifting [] best 17 combination 
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
-// Test initializing array using KickAssembler
+// Tests static initialization code
+// No initializer code should be needed (since all values are constant)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const c1 = 'o'
+  .const c2 = 'k'
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
-    lda SINTAB
+    // [0] *((const nomodify byte*) SCREEN) ← (const byte) c1 -- _deref_pbuc1=vbuc2 
+    lda #c1
     sta SCREEN
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) c2 -- _deref_pbuc1=vbuc2 
+    lda #c2
+    sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [1] return 
+    // [2] return 
     rts
 }
   // File Data
-// Sinus table
-SINTAB:
-.fill 256, 128 + 128*sin(i*2*PI/256)
-
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __breturn
@@ -158,39 +166,42 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN = (byte*) 1024
-(const byte*) SINTAB[(number) $100]  = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
- }}
+(const nomodify byte*) SCREEN = (byte*) 1024
+(const byte) c1 = (byte) 'o'
+(const byte) c2 = (byte) 'k'
 (void()) main()
 (label) main::@return
 
 
 
 FINAL ASSEMBLER
-Score: 14
+Score: 18
 
   // File Comments
-// Test initializing array using KickAssembler
+// Tests static initialization code
+// No initializer code should be needed (since all values are constant)
   // Upstart
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
+  .const c1 = 'o'
+  .const c2 = 'k'
   .label SCREEN = $400
   // main
 main: {
-    // SCREEN[0] = SINTAB[0]
-    // [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
-    lda SINTAB
+    // SCREEN[0] = c1
+    // [0] *((const nomodify byte*) SCREEN) ← (const byte) c1 -- _deref_pbuc1=vbuc2 
+    lda #c1
     sta SCREEN
+    // SCREEN[1] = c2
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) c2 -- _deref_pbuc1=vbuc2 
+    lda #c2
+    sta SCREEN+1
     // main::@return
     // }
-    // [1] return 
+    // [2] return 
     rts
 }
   // File Data
-// Sinus table
-SINTAB:
-.fill 256, 128 + 128*sin(i*2*PI/256)
-
 

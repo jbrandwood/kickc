@@ -10,18 +10,21 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-__stackcall (void()) _start()
+(void()) _start()
 _start: scope:[_start]  from
   call main 
   to:_start::@1
 _start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
   return 
   to:@return
 
 SYMBOL TABLE SSA
 (const nomodify byte*) SCREEN = (byte*)(number) $400
-__stackcall (void()) _start()
+(void()) _start()
 (label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@return
 
@@ -37,6 +40,11 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte) 'o'
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 CALL GRAPH
@@ -90,8 +98,8 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (byte) 'o' [ ] ( ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'k' [ ] ( ) always clobbers reg byte a 
+Statement [0] *((const nomodify byte*) SCREEN) ← (byte) 'o' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'k' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 

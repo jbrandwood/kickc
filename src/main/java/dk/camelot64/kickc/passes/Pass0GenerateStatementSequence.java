@@ -85,7 +85,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    void addStatement(Statement statement) {
       ProcedureCompilation procedureCompilation = getCurrentProcedureCompilation();
-      if(procedureCompilation==null) {
+      if(procedureCompilation == null) {
          // Statement outside procedure declaration - put into the _init procedure
          Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
          if(initProc == null) {
@@ -108,24 +108,31 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Finalize the _init() procedure - if present
       final ProcedureRef initProcedureRef = new ProcedureRef(SymbolRef.INIT_PROC_NAME);
       final ProcedureCompilation initCompilation = program.getProcedureCompilation(initProcedureRef);
-      if(initCompilation!=null) {
-         initCompilation.getStatementSequence().addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         initCompilation.getStatementSequence().addStatement(new StatementProcedureEnd(initProcedureRef, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      if(initCompilation != null) {
+         final StatementSequence initSequence = initCompilation.getStatementSequence();
+         final Label initReturnLabel = program.getScope().getProcedure(initProcedureRef).addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
+         initSequence.addStatement(new StatementLabel(initReturnLabel.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         initSequence.addStatement(new StatementProcedureEnd(initProcedureRef, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
       }
 
       // Add the _start() procedure to the program
-      program.setStartProcedure(new ProcedureRef(SymbolRef.START_PROC_NAME));
-      final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.STACK_CALL);
-      startProcedure.setParameters(new ArrayList<>());
-      program.getScope().add(startProcedure);
-      final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
-      final StatementSequence sequence = startProcedureCompilation.getStatementSequence();
-      sequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-      if(initCompilation!=null)
-         sequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-      sequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-      sequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-      sequence.addStatement(new StatementProcedureEnd(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      {
+         program.setStartProcedure(new ProcedureRef(SymbolRef.START_PROC_NAME));
+         final Procedure startProcedure = new Procedure(SymbolRef.START_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         startProcedure.setParameters(new ArrayList<>());
+         program.getScope().add(startProcedure);
+         final ProcedureCompilation startProcedureCompilation = program.createProcedureCompilation(startProcedure.getRef());
+         final StatementSequence startSequence = startProcedureCompilation.getStatementSequence();
+         startSequence.addStatement(new StatementProcedureBegin(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         if(initCompilation != null)
+            startSequence.addStatement(new StatementCall(null, SymbolRef.INIT_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementCall(null, SymbolRef.MAIN_PROC_NAME, new ArrayList<>(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         final Label startReturnLabel = startProcedure.addLabel(SymbolRef.PROCEXIT_BLOCK_NAME);
+         startSequence.addStatement(new StatementLabel(startReturnLabel.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementReturn(null, new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+         startSequence.addStatement(new StatementProcedureEnd(startProcedure.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      }
 
    }
 
@@ -1026,7 +1033,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       ConstantArrayKickAsm constantArrayKickAsm = new ConstantArrayKickAsm(((SymbolTypePointer) varDecl.getEffectiveType()).getElementType(), kasm.getKickAsmCode(), kasm.getUses(), varDecl.getEffectiveArraySpec().getArraySize());
       // Remove the KickAsm statement
-      final StatementSequence sequence = getCurrentProcedureCompilation().getStatementSequence();
+      ProcedureCompilation procedureCompilation = getCurrentProcedureCompilation();
+      if(procedureCompilation == null) {
+         // Statement outside procedure declaration - put into the _init procedure
+         Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
+         procedureCompilation = program.getProcedureCompilation(initProc.getRef());
+      }
+      final StatementSequence sequence = procedureCompilation.getStatementSequence();
+
       sequence.getStatements().remove(sequence.getStatements().size() - 1);
       // Add a constant variable
       Scope scope = getCurrentScope();

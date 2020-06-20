@@ -27,7 +27,7 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
             // Remove all calls
             removeAllCalls(procedure.getRef());
             // Remove the procedure
-            Pass2EliminateUnusedBlocks.removeProcedure(procedure.getRef(), new HashSet<>(),getProgram() );
+            Pass2EliminateUnusedBlocks.removeProcedure(procedure.getRef(), new HashSet<>(), getProgram());
             optimized = true;
          }
       }
@@ -40,15 +40,18 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementCalling && ((StatementCalling) statement).getProcedure().equals(ref)) {
-               getLog().append("Removing call to empty procedure "+statement.toString(getProgram(), false));
+               getLog().append("Removing call to empty procedure " + statement.toString(getProgram(), false));
                stmtIt.remove();
             } else if(statement instanceof StatementCallPrepare && ((StatementCallPrepare) statement).getProcedure().equals(ref)) {
-               getLog().append("Removing call to empty procedure "+statement.toString(getProgram(), false));
+               getLog().append("Removing call to empty procedure " + statement.toString(getProgram(), false));
                stmtIt.remove();
             } else if(statement instanceof StatementCallFinalize && ((StatementCallFinalize) statement).getProcedure().equals(ref)) {
-               getLog().append("Removing call to empty procedure "+statement.toString(getProgram(), false));
+               getLog().append("Removing call to empty procedure " + statement.toString(getProgram(), false));
                stmtIt.remove();
             }
+         }
+         if(ref.getLabelRef().equals(block.getCallSuccessor())) {
+            block.setCallSuccessor(null);
          }
       }
    }

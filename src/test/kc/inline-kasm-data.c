@@ -1,10 +1,8 @@
 // Example of inline kickasm data
 
-byte* const sintab = $1000;
-kickasm(pc sintab) {{
+__address(0x1000) char sintab[] = kickasm {{
     .fill 25, 20 + 20*sin(toRadians(i*360/25))
-}}
-
+}};
 
 void main() {
     byte* screen = $400;

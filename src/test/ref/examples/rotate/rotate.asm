@@ -28,9 +28,6 @@
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
   .label COS = SIN+$40
-  // A single sprite
-  .label SPRITE = $3000
-  // kickasm
 // sin(x) = cos(x+PI/2)
 main: {
     // asm
@@ -459,7 +456,7 @@ init: {
     ldx #0
   __b1:
     // sprites_ptr[i] = (char)(SPRITE/$40)
-    lda #SPRITE/$40
+    lda #$ff&SPRITE/$40
     sta sprites_ptr,x
     // SPRITES_COLOR[i] = GREEN
     lda #GREEN
@@ -635,8 +632,10 @@ SIN:
   // Positions to rotate
   xs: .byte -$46, -$46, -$46, 0, 0, $46, $46, $46
   ys: .byte -$46, 0, $46, -$46, $46, -$46, 0, $46
-.pc = SPRITE "SPRITE"
-  .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+.pc = $3000 "SPRITE"
+// A single sprite
+SPRITE:
+.var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)

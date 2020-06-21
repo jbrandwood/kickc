@@ -71,23 +71,23 @@ public class VariableBuilder {
       }
       variable.setMemoryArea(this.getMemoryArea());
       variable.setMemoryAlignment(this.getAlignment());
+      variable.setMemoryAddress(this.getAddress());
       variable.setDeclarationOnly(this.isDeclarationOnly());
-
 
       // Check if the symbol has already been declared
       Symbol declaredSymbol = scope.getLocalSymbol(varName);
-      if(declaredSymbol!=null &&  !declaredSymbol.getFullName().equals(variable.getFullName()))
+      if(declaredSymbol != null && !declaredSymbol.getFullName().equals(variable.getFullName()))
          // We found another symbol!
          declaredSymbol = null;
 
-      if(declaredSymbol!=null) {
+      if(declaredSymbol != null) {
          if(!(declaredSymbol instanceof Variable))
-            throw new CompileError("Error! Conflicting declarations for: "+variable.getFullName());
+            throw new CompileError("Error! Conflicting declarations for: " + variable.getFullName());
          Variable declaredVar = (Variable) declaredSymbol;
          if(!declaredVar.isDeclarationOnly() && !variable.isDeclarationOnly())
-            throw new CompileError("Error! Redefinition of variable: "+variable.getFullName());
+            throw new CompileError("Error! Redefinition of variable: " + variable.getFullName());
          if(!SymbolTypeConversion.variableDeclarationMatch(declaredVar, variable))
-            throw new CompileError("Error! Conflicting declarations for: "+variable.getFullName());
+            throw new CompileError("Error! Conflicting declarations for: " + variable.getFullName());
 
          // Update the variable with the definition
          if(!variable.isDeclarationOnly()) {
@@ -249,6 +249,7 @@ public class VariableBuilder {
 
    /**
     * Declared but not defined. ( "extern" keyword)
+    *
     * @return true if the variable is declared but not defined.
     */
    public boolean isDeclarationOnly() {
@@ -282,7 +283,7 @@ public class VariableBuilder {
          VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeParameter(), isScopeMember());
          VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
          VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
-         if(setting!=null && VariableBuilderConfig.Optimization.MA.equals(setting.optimization))
+         if(setting != null && VariableBuilderConfig.Optimization.MA.equals(setting.optimization))
             return false;
          else
             return true;
@@ -328,7 +329,7 @@ public class VariableBuilder {
          VariableBuilderConfig.Scope scope = VariableBuilderConfig.getScope(isScopeGlobal(), isScopeLocal(), isScopeParameter(), isScopeMember());
          VariableBuilderConfig.Type type = VariableBuilderConfig.getType(isTypeInteger(), isArray(), isTypePointer(), isTypeStruct());
          VariableBuilderConfig.Setting setting = config.getSetting(scope, type);
-         if(setting!=null && VariableBuilderConfig.MemoryArea.MEM.equals(setting.memoryArea))
+         if(setting != null && VariableBuilderConfig.MemoryArea.MEM.equals(setting.memoryArea))
             return Variable.MemoryArea.MAIN_MEMORY;
          else
             return Variable.MemoryArea.ZEROPAGE_MEMORY;
@@ -354,11 +355,31 @@ public class VariableBuilder {
    }
 
    /**
+    * Get any memory-address of the variables data
+    *
+    * @return The memory alignment
+    */
+   public Long getAddress() {
+      Directive.Address addressDirective = findDirective(Directive.Address.class, directives);
+      if(addressDirective != null) {
+         if(isArray()) {
+            return addressDirective.address;
+         }
+      }
+      return null;
+   }
+
+   /**
     * Get any hard-coded register allocation.
     *
     * @return Hard-coded register allocation. Null if not hard-coded.
     */
    public Registers.Register getRegister() {
+
+      if(isArray())
+         // Arrays are not put into registers
+         return null;
+
       Directive.Address addressDirective = findDirective(Directive.Address.class, directives);
       if(addressDirective != null) {
          Variable.MemoryArea memoryArea = (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
@@ -394,6 +415,7 @@ public class VariableBuilder {
    private <DirectiveClass extends Directive> boolean hasDirective(Class<DirectiveClass> directiveClass) {
       return findDirective(directiveClass, directives) != null;
    }
+
    /**
     * Examines whether a specific directive is present in the source
     *

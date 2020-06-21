@@ -3,14 +3,13 @@
 #include <string.h>
 
 char* SCREEN = $400;
-char* LOGO = $2000;
-kickasm(resource "logo.png", pc LOGO, bytes 6*40*8) {{
+__address(0x2000) char LOGO[6*40*8]  = kickasm(resource "logo.png") {{
     .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
                 .byte logoPic.getMulticolorByte(x,cp+y*8)
-}}
+}};
 
 const unsigned int XSIN_SIZE = 512;
 

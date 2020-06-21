@@ -21,8 +21,6 @@
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
-  .label LOGO = $2000
-  // kickasm
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // VICII->BORDER_COLOR = WHITE
@@ -108,8 +106,9 @@ memset: {
   !:
     jmp __b2
 }
-.pc = LOGO "LOGO"
-  .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+.pc = $2000 "LOGO"
+LOGO:
+.var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)

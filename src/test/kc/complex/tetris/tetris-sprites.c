@@ -3,23 +3,6 @@
 #include <c64.h>
 #include "tetris-data.c"
 
-kickasm(pc PLAYFIELD_SPRITES, resource "playfield-sprites.png") {{
-	.var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
-	// Put the sprites into memory 
-	.for(var sy=0;sy<10;sy++) {
-	    .var sprite_gfx_y = sy*20
-		.for(var sx=0;sx<3;sx++) {
-	    	.for (var y=0;y<21; y++) {
-	    	    .var gfx_y =  sprite_gfx_y + mod(2100+y-sprite_gfx_y,21)
-		    	.for (var c=0; c<3; c++) {
-	            	.byte sprites.getSinglecolorByte(sx*3+c,gfx_y)
-	            }
-	        }
-	    	.byte 0
-	  	}
-	}
-}}
-
 // Setup the sprites
 void sprites_init() {
     *SPRITES_ENABLE = %00001111;

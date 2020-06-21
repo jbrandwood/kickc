@@ -1,6 +1,8 @@
 // Test inline KickAssembler code with PC location specification
 
-byte* TABLE = $2000;
+__address(0x2000) byte TABLE[] = kickasm {{
+    .byte 1, 2, 3
+}};
 
 void main() {
     byte* BORDER_COLOR = $d020;
@@ -10,6 +12,3 @@ void main() {
     }
 }
 
-kickasm(pc TABLE) {{
-    .byte 1, 2, 3
-}}

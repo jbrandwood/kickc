@@ -453,6 +453,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             for(AsmDirective asmDirective : asmDirectives) {
                if(asmDirective instanceof AsmDirectiveLocation) {
                   statementKickAsm.setLocation(((AsmDirectiveLocation) asmDirective).getAddress());
+                  throw new RuntimeException("KickAsm pc directive no longer supported!");
                } else if(asmDirective instanceof AsmDirectiveBytes) {
                   statementKickAsm.setBytes(((AsmDirectiveBytes) asmDirective).getBytes());
                } else if(asmDirective instanceof AsmDirectiveCycles) {

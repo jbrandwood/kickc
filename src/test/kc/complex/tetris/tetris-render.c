@@ -5,11 +5,6 @@
 #include "tetris-data.c"
 #include "tetris-pieces.c"
 
-kickasm(pc PLAYFIELD_CHARSET, resource "playfield-screen.imap") {{
-    .fill 8,$00 // Place a filled char at the start of the charset
-    .import binary "playfield-screen.imap"
-}}
-
 // Address of the original playscreen chars
 const char PLAYFIELD_SCREEN_ORIGINAL_WIDTH=32;
 const char PLAYFIELD_SCREEN_ORIGINAL[] = kickasm(resource "playfield-screen.iscr", resource "playfield-extended.col" ) {{

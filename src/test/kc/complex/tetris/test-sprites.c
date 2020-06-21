@@ -7,10 +7,9 @@ char SIN[256] = kickasm {{
     }
 }};
 
-char* SIN_SPRITE = 0x2800;
-kickasm(pc SIN_SPRITE) {{
+__address(0x3800) char SIN_SPRITE[0x40] = kickasm {{
     .fill $40, $ff
-}}
+}};
 
 char sin_idx = 0;
 

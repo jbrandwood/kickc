@@ -29,11 +29,8 @@
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
-  .label LOGO = $2000
-  // Remainder after unsigned 16-bit division
-  .label rem16u = $12
-  .label xsin_idx = 2
-  // kickasm
+  .label rem16u = $1d
+  .label xsin_idx = $27
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // asm
@@ -86,9 +83,9 @@ main: {
     rts
 }
 loop: {
-    .label __2 = $18
-    .label __7 = $18
-    .label xpos = $18
+    .label __2 = $16
+    .label __7 = $16
+    .label xpos = $16
     lda #<0
     sta.z xsin_idx
     sta.z xsin_idx+1
@@ -145,13 +142,13 @@ loop: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
-// render_logo(signed word zp($18) xpos)
+// render_logo(signed word zp($16) xpos)
 render_logo: {
-    .label __2 = $1a
-    .label xpos = $18
-    .label x_char = $1c
-    .label logo_idx = 4
-    .label logo_idx_1 = 5
+    .label __2 = $1d
+    .label xpos = $16
+    .label x_char = $18
+    .label logo_idx = 2
+    .label logo_idx_1 = 3
     // (char)xpos&7
     lda.z xpos
     and #7
@@ -318,19 +315,19 @@ render_logo: {
 // Generate signed int sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zp($18) sintab)
+// sin16s_gen2(signed word* zp($14) sintab)
 sin16s_gen2: {
     .const min = -$140
     .const max = $140
     .label ampl = max-min
-    .label __6 = $a
-    .label __8 = $29
-    .label step = $1d
-    .label sintab = $18
+    .label __6 = 8
+    .label __8 = $1d
+    .label step = $19
+    .label sintab = $14
     // u[4.28]
     // Iterate over the table
-    .label x = 6
-    .label i = $16
+    .label x = 4
+    .label i = $27
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
@@ -418,13 +415,13 @@ sin16s_gen2: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($14) a)
+// mul16s(signed word zp($12) a)
 mul16s: {
-    .label __6 = $25
-    .label __11 = $25
-    .label m = $a
-    .label return = $a
-    .label a = $14
+    .label __6 = $23
+    .label __11 = $23
+    .label m = 8
+    .label return = 8
+    .label a = $12
     // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -463,13 +460,13 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($29) a, word zp($12) b)
+// mul16u(word zp($10) a, word zp($1d) b)
 mul16u: {
-    .label mb = $e
-    .label a = $29
-    .label res = $a
-    .label return = $a
-    .label b = $12
+    .label mb = $c
+    .label a = $10
+    .label res = 8
+    .label return = 8
+    .label b = $1d
     // mb = b
     lda.z b
     sta.z mb
@@ -527,20 +524,20 @@ mul16u: {
 // Calculate signed int sinus sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zp($e) x)
+// sin16s(dword zp($c) x)
 sin16s: {
-    .label __4 = $21
-    .label x = $e
-    .label return = $14
-    .label x1 = $25
-    .label x2 = $1a
-    .label x3 = $1a
-    .label x3_6 = $27
-    .label usinx = $14
-    .label x4 = $1a
-    .label x5 = $27
-    .label x5_128 = $27
-    .label sinx = $14
+    .label __4 = $1f
+    .label x = $c
+    .label return = $12
+    .label x1 = $23
+    .label x2 = $16
+    .label x3 = $16
+    .label x3_6 = $25
+    .label usinx = $12
+    .label x4 = $16
+    .label x5 = $25
+    .label x5_128 = $25
+    .label sinx = $12
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -738,14 +735,14 @@ sin16s: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($1a) v1, word zp($12) v2, byte register(X) select)
+// mulu16_sel(word zp($16) v1, word zp($1d) v2, byte register(X) select)
 mulu16_sel: {
-    .label __0 = $a
-    .label __1 = $a
-    .label v1 = $1a
-    .label v2 = $12
-    .label return = $27
-    .label return_1 = $1a
+    .label __0 = 8
+    .label __1 = 8
+    .label v1 = $16
+    .label v2 = $1d
+    .label return = $25
+    .label return_1 = $16
     // mul16u(v1, v2)
     lda.z v1
     sta.z mul16u.a
@@ -775,9 +772,9 @@ mulu16_sel: {
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $27
-    .label quotient_lo = $14
-    .label return = $1d
+    .label quotient_hi = $25
+    .label quotient_lo = $12
+    .label return = $19
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -817,12 +814,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($29) dividend, word zp($12) rem)
+// divr16u(word zp($10) dividend, word zp($1d) rem)
 divr16u: {
-    .label rem = $12
-    .label dividend = $29
-    .label quotient = $14
-    .label return = $14
+    .label rem = $1d
+    .label dividend = $10
+    .label quotient = $12
+    .label return = $12
     ldx #0
     txa
     sta.z quotient
@@ -881,11 +878,11 @@ divr16u: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($16) str, byte register(X) c)
+// memset(void* zp($14) str, byte register(X) c)
 memset: {
-    .label end = $29
-    .label dst = $16
-    .label str = $16
+    .label end = $27
+    .label dst = $14
+    .label str = $14
     // end = (char*)str + num
     lda.z str
     clc
@@ -918,8 +915,9 @@ memset: {
 }
   .align $100
   xsin: .fill 2*XSIN_SIZE, 0
-.pc = LOGO "LOGO"
-  .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+.pc = $2000 "LOGO"
+LOGO:
+.var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)

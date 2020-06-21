@@ -1,12 +1,11 @@
 // Example of inline kickasm resource data
 
-byte* const SPRITE = $0c00;
-kickasm(pc SPRITE, resource "balloon.png") {{
+__address(0x0c00) byte SPRITE[] = kickasm(resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
-}}
+}};
 
 byte* const SCREEN= $400;
 byte* const SPRITES_ENABLE = $d015;

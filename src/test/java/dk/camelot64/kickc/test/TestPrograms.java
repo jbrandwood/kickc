@@ -661,6 +661,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKrillLoad() throws IOException, URISyntaxException {
+      compileAndCompare("examples/krillload/krillload.c");
+   }
+
+   @Test
    public void testConstantWithPrePost() throws IOException, URISyntaxException {
       assertError("constant-prepost.c", "Constant value contains a pre/post-modifier");
    }
@@ -1266,6 +1271,11 @@ public class TestPrograms {
    @Test
    public void testArraysInitKasm0() throws IOException, URISyntaxException {
       compileAndCompare("arrays-init-kasm-0.c");
+   }
+
+   @Test
+   public void testArraysInitKasm1() throws IOException, URISyntaxException {
+      compileAndCompare("arrays-init-kasm-1.c");
    }
 
    @Test

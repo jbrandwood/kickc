@@ -13,13 +13,12 @@ char align(0x100) YSIN[0x100] = kickasm {{
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
 }};
 
-char* SPRITE = $2000;
-kickasm(pc SPRITE, resource "balloon.png") {{
+__address(0x2000) char SPRITE[] = kickasm(resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
-}}
+}};
 
 void main() {
     asm { sei }

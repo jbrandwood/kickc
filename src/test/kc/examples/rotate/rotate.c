@@ -76,10 +76,9 @@ void anim() {
 }
 
 // A single sprite
-char* SPRITE = $3000;
-kickasm(pc SPRITE, resource "balloon.png") {{
+__address(0x3000) char SPRITE[] = kickasm(resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
-}}
+}};

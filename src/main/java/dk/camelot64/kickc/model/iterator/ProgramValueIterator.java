@@ -148,11 +148,11 @@ public class ProgramValueIterator {
          if(location != null) {
             execute(new ProgramValue.ProgramValueKickAsmLocation(statementKickAsm), handler, statement, statementsIt, block);
          }
-         RValue bytes = statementKickAsm.getLocation();
+         RValue bytes = statementKickAsm.getBytes();
          if(bytes != null) {
             execute(new ProgramValue.ProgramValueKickAsmBytes(statementKickAsm), handler, statement, statementsIt, block);
          }
-         RValue cycles = statementKickAsm.getLocation();
+         RValue cycles = statementKickAsm.getCycles();
          if(cycles != null) {
             execute(new ProgramValue.ProgramValueKickAsmCycles(statementKickAsm), handler, statement, statementsIt, block);
          }

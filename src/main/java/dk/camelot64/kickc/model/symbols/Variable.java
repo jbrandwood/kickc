@@ -94,6 +94,9 @@ public class Variable implements Symbol {
    /** Specifies that the variable must be aligned in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
    private Integer memoryAlignment;
 
+   /** Specifies that the variable must be placed at an absolute address in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
+   private Long memoryAddress;
+
    /** The data segment to put the variable into (if it is allocated in memory). [Only variables stored in memory and arrays] */
    private String dataSegment;
 
@@ -193,6 +196,7 @@ public class Variable implements Symbol {
          throw new InternalError("Cannot version non-PHI variable " + phiMaster.toString());
       Variable version = new Variable(phiMaster.getName() + "#" + versionNum, Kind.PHI_VERSION, phiMaster.getType(), phiMaster.getScope(), phiMaster.getMemoryArea(), phiMaster.getDataSegment(), phiMaster.getArraySpec(), null);
       version.setMemoryAlignment(phiMaster.getMemoryAlignment());
+      version.setMemoryAddress(phiMaster.getMemoryAddress());
       version.setOptimize(phiMaster.isOptimize());
       version.setNoModify(phiMaster.isNoModify());
       version.setRegister(phiMaster.getRegister());
@@ -239,6 +243,7 @@ public class Variable implements Symbol {
    public static Variable createConstant(Variable variable, ConstantValue constantValue) {
       Variable constVar = new Variable(variable.getName(), Kind.CONSTANT, variable.getType(), variable.getScope(), MemoryArea.MAIN_MEMORY, variable.getDataSegment(), variable.getArraySpec(), constantValue);
       constVar.setMemoryAlignment(variable.getMemoryAlignment());
+      constVar.setMemoryAddress(variable.getMemoryAddress());
       constVar.setOptimize(variable.isOptimize());
       constVar.setNoModify(variable.isNoModify());
       constVar.setRegister(variable.getRegister());
@@ -261,6 +266,7 @@ public class Variable implements Symbol {
    public static Variable createCopy(String name, Scope scope, Variable original) {
       Variable copy = new Variable(name, original.getKind(), original.getType(), scope, original.getMemoryArea(), original.getDataSegment(), original.getArraySpec(), original.getInitValue());
       copy.setMemoryAlignment(original.getMemoryAlignment());
+      copy.setMemoryAddress(original.getMemoryAddress());
       copy.setOptimize(original.isOptimize());
       copy.setNoModify(original.isNoModify());
       copy.setPermanent(original.isPermanent());
@@ -574,6 +580,14 @@ public class Variable implements Symbol {
 
    public void setMemoryAlignment(Integer memoryAlignment) {
       this.memoryAlignment = memoryAlignment;
+   }
+
+   public Long getMemoryAddress() {
+      return memoryAddress;
+   }
+
+   public void setMemoryAddress(Long memoryAddress) {
+      this.memoryAddress = memoryAddress;
    }
 
    /**

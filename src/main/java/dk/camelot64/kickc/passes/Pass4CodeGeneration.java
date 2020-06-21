@@ -164,6 +164,7 @@ public class Pass4CodeGeneration {
       currentScope = ScopeRef.ROOT;
       asm.startChunk(currentScope, null, "File Data");
       addData(asm, ScopeRef.ROOT);
+      addAbsoluteAddressData(asm, ScopeRef.ROOT);
       // Add all absolutely placed inline KickAsm
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
@@ -310,6 +311,7 @@ public class Pass4CodeGeneration {
          return true;
       } else {
          try {
+            // TODO: Literal calculation should not be necessary anymore.
             ConstantLiteral literal = constantValue.calculateLiteral(getScope());
             if(literal instanceof ConstantString) {
                return true;
@@ -489,12 +491,60 @@ public class Pass4CodeGeneration {
    }
 
    /**
-    * Add constants with data and memory variables with data for a scope.
-    * Added after the the code of the scope.
+    * Add all constants with data that must be placed at an absolute address
+    * Added at the end of the file
     *
     * @param asm The ASM program
     * @param scopeRef The scope
     */
+   private void addAbsoluteAddressData(AsmProgram asm, ScopeRef scopeRef) {
+      Scope scope = program.getScope().getScope(scopeRef);
+      Collection<Variable> scopeConstants = scope.getAllConstants(false);
+      Set<String> added = new LinkedHashSet<>();
+      // Add all constants arrays incl. strings with data
+      for(Variable constantVar : scopeConstants) {
+         if(hasData(constantVar)) {
+            // Skip if already added
+            String asmName = constantVar.getAsmName() == null ? constantVar.getLocalName() : constantVar.getAsmName();
+            if(added.contains(asmName)) {
+               continue;
+            }
+            // Skip if address is not absolute
+            if(constantVar.getMemoryAddress()==null)
+               continue;
+            // Set segment
+            setCurrentSegment(constantVar.getDataSegment(), asm);
+            // Set absolute address
+            asm.addLine(new AsmSetPc(asmName, AsmFormat.getAsmNumber(constantVar.getMemoryAddress())));
+            // Add any comments
+            generateComments(asm, constantVar.getComments());
+            // Add any alignment
+            Integer declaredAlignment = constantVar.getMemoryAlignment();
+            if(declaredAlignment != null) {
+               String alignment = AsmFormat.getAsmNumber(declaredAlignment);
+               asm.addDataAlignment(alignment);
+            }
+            ConstantValue constantValue = constantVar.getInitValue();
+            if(constantValue instanceof ConstantArray || constantValue instanceof ConstantString || constantValue instanceof ConstantStructValue) {
+               AsmDataChunk asmDataChunk = new AsmDataChunk();
+               addChunkData(asmDataChunk, constantValue, constantVar.getType(), constantVar.getArraySpec(), scopeRef);
+               asmDataChunk.addToAsm(AsmFormat.asmFix(asmName), asm);
+            } else {
+               throw new InternalError("Constant Variable not handled " + constantVar.toString(program));
+            }
+            added.add(asmName);
+         }
+      }
+
+   }
+
+      /**
+       * Add constants with data and memory variables with data for a scope.
+       * Added after the the code of the scope.
+       *
+       * @param asm The ASM program
+       * @param scopeRef The scope
+       */
    private void addData(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
       Collection<Variable> scopeConstants = scope.getAllConstants(false);
@@ -507,6 +557,9 @@ public class Pass4CodeGeneration {
             if(added.contains(asmName)) {
                continue;
             }
+            // Skip if address is absolute
+            if(constantVar.getMemoryAddress()!=null)
+               continue;
             // Set segment
             setCurrentSegment(constantVar.getDataSegment(), asm);
             // Add any comments

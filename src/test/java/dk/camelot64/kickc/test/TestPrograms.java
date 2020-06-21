@@ -1184,7 +1184,7 @@ public class TestPrograms {
    }
 
    @Test
-   public void testEuclid2() throws IOException, URISyntaxException {
+   public void testEuclid3() throws IOException, URISyntaxException {
       compileAndCompare("euclid-3.c");
    }
 

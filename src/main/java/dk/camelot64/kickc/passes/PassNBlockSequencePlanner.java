@@ -96,7 +96,8 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       Scope blockScope = getScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
-            todoScope.addTodo(block);
+            // TODO: Fix procedure sequence by using todoScope.addTodo(block);
+            todoScope.pushTodo(block);
             return;
          }
       }

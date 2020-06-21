@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.7.2
+// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.8
 package dk.camelot64.kickc.parser;
 
 
@@ -832,13 +832,6 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAsmDirectiveCycles(KickCParser.AsmDirectiveCyclesContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code asmDirectiveAddress}
-	 * labeled alternative in {@link KickCParser#asmDirective}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAsmDirectiveAddress(KickCParser.AsmDirectiveAddressContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#asmLines}.
 	 * @param ctx the parse tree

@@ -201,7 +201,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          inlinedStatement = inlinedAsm;
       } else if(procStatement instanceof StatementKickAsm) {
          StatementKickAsm procKasm = (StatementKickAsm) procStatement;
-         StatementKickAsm inlinedAsm = new StatementKickAsm(procKasm.getKickAsmCode(), procKasm.getLocation(), procKasm.getBytes(), procKasm.getCycles(), procKasm.getUses(), procKasm.getDeclaredClobber(), procKasm.getSource(), Comment.NO_COMMENTS);
+         StatementKickAsm inlinedAsm = new StatementKickAsm(procKasm.getKickAsmCode(), procKasm.getBytes(), procKasm.getCycles(), procKasm.getUses(), procKasm.getDeclaredClobber(), procKasm.getSource(), Comment.NO_COMMENTS);
          inlinedStatement = inlinedAsm;
       } else if(procStatement instanceof StatementConditionalJump) {
          StatementConditionalJump procConditional = (StatementConditionalJump) procStatement;

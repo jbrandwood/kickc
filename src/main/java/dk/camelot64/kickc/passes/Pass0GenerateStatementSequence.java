@@ -82,7 +82,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /**
     * Add an intermediate variable to the current scope.
-    *
+    * <p>
     * If the current scope is global the variable is added to the _init() scope.
     *
     * @return The new intermediate variable
@@ -451,10 +451,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(ctx.asmDirectives() != null) {
             List<AsmDirective> asmDirectives = this.visitAsmDirectives(ctx.asmDirectives());
             for(AsmDirective asmDirective : asmDirectives) {
-               if(asmDirective instanceof AsmDirectiveLocation) {
-                  statementKickAsm.setLocation(((AsmDirectiveLocation) asmDirective).getAddress());
-                  throw new RuntimeException("KickAsm pc directive no longer supported!");
-               } else if(asmDirective instanceof AsmDirectiveBytes) {
+               if(asmDirective instanceof AsmDirectiveBytes) {
                   statementKickAsm.setBytes(((AsmDirectiveBytes) asmDirective).getBytes());
                } else if(asmDirective instanceof AsmDirectiveCycles) {
                   statementKickAsm.setCycles(((AsmDirectiveCycles) asmDirective).getCycles());
@@ -487,36 +484,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          }
       }
       return asmDirectives;
-   }
-
-   /** KickAssembler directive specifying an absolute address for the generated code/data. */
-   public static class AsmDirectiveLocation implements AsmDirective {
-      /** will contain the address to generate the KickAssembler-code to. */
-      private RValue address;
-
-      AsmDirectiveLocation(RValue address) {
-         this.address = address;
-      }
-
-      public RValue getAddress() {
-         return address;
-      }
-
-      @Override
-      public String toString() {
-         return "pc";
-      }
-   }
-
-   @Override
-   public Object visitAsmDirectiveAddress(KickCParser.AsmDirectiveAddressContext ctx) {
-      if(ctx.expr() != null) {
-         RValue expr = (RValue) visit(ctx.expr());
-         return new AsmDirectiveLocation(expr);
-      } else {
-         // PLace inline
-         return null;
-      }
    }
 
    /** KickAssembler directive specifying the number of bytes for generated code/data. */
@@ -1037,9 +1004,6 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       }
       // Add KickAsm statement
       StatementKickAsm kasm = (StatementKickAsm) this.visit(ctx.declKasm());
-      if(kasm.getLocation() != null) {
-         throw new CompileError("KickAsm initializers does not support 'location' directive.", statementSource);
-      }
       if(kasm.getCycles() != null) {
          throw new CompileError("KickAsm initializers does not support 'cycles' directive.", statementSource);
       }

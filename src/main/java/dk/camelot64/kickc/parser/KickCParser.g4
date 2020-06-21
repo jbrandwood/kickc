@@ -269,7 +269,6 @@ asmDirective
     | CLOBBERS STRING #asmDirectiveClobber
     | BYTES expr #asmDirectiveBytes
     | CYCLES expr #asmDirectiveCycles
-    | PC ( INLINE | expr ) #asmDirectiveAddress
     ;
 
 asmLines

@@ -144,10 +144,6 @@ public class ProgramValueIterator {
          }
       } else if(statement instanceof StatementKickAsm) {
          StatementKickAsm statementKickAsm = (StatementKickAsm) statement;
-         RValue location = statementKickAsm.getLocation();
-         if(location != null) {
-            execute(new ProgramValue.ProgramValueKickAsmLocation(statementKickAsm), handler, statement, statementsIt, block);
-         }
          RValue bytes = statementKickAsm.getBytes();
          if(bytes != null) {
             execute(new ProgramValue.ProgramValueKickAsmBytes(statementKickAsm), handler, statement, statementsIt, block);

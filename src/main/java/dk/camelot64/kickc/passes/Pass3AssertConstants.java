@@ -36,10 +36,6 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
       for(ControlFlowBlock block : getProgram().getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementKickAsm) {
-               RValue location = ((StatementKickAsm) statement).getLocation();
-               if(location != null && !(location instanceof ConstantValue)) {
-                  throw new CompileError("Error! KickAssembler location is not constant " + location.toString(), statement);
-               }
                RValue bytes = ((StatementKickAsm) statement).getBytes();
                if(bytes != null && !(bytes instanceof ConstantValue)) {
                   throw new CompileError("Error! KickAssembler bytes is not constant " + bytes.toString(), statement);

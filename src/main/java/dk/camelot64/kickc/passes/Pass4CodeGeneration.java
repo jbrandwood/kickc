@@ -86,7 +86,8 @@ public class Pass4CodeGeneration {
       linkScriptBody = linkScriptBody.replace("%O", outputFileName);
       linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
       linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
-      String entryName = program.getStartProcedure().getFullName();;
+      String entryName = program.getStartProcedure().getFullName();
+      ;
       linkScriptBody = linkScriptBody.replace("%E", entryName);
       Number programPc = program.getProgramPc();
       if(programPc == null) programPc = 0x080d;
@@ -165,23 +166,6 @@ public class Pass4CodeGeneration {
       asm.startChunk(currentScope, null, "File Data");
       addData(asm, ScopeRef.ROOT);
       addAbsoluteAddressData(asm, ScopeRef.ROOT);
-      // Add all absolutely placed inline KickAsm
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         for(Statement statement : block.getStatements()) {
-            if(statement instanceof StatementKickAsm) {
-               StatementKickAsm statementKasm = (StatementKickAsm) statement;
-               if(statementKasm.getLocation() != null) {
-                  String asmLocation = AsmFormat.getAsmConstant(program, (ConstantValue) statementKasm.getLocation(), 99, ScopeRef.ROOT);
-                  String chunkName = "Inline";
-                  if(asmLocation.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
-                     chunkName = asmLocation;
-                  }
-                  asm.addLine(new AsmSetPc(chunkName, asmLocation));
-                  addKickAsm(asm, statementKasm);
-               }
-            }
-         }
-      }
       program.setAsm(asm);
    }
 
@@ -510,7 +494,7 @@ public class Pass4CodeGeneration {
                continue;
             }
             // Skip if address is not absolute
-            if(constantVar.getMemoryAddress()==null)
+            if(constantVar.getMemoryAddress() == null)
                continue;
             // Set segment
             setCurrentSegment(constantVar.getDataSegment(), asm);
@@ -538,13 +522,13 @@ public class Pass4CodeGeneration {
 
    }
 
-      /**
-       * Add constants with data and memory variables with data for a scope.
-       * Added after the the code of the scope.
-       *
-       * @param asm The ASM program
-       * @param scopeRef The scope
-       */
+   /**
+    * Add constants with data and memory variables with data for a scope.
+    * Added after the the code of the scope.
+    *
+    * @param asm The ASM program
+    * @param scopeRef The scope
+    */
    private void addData(AsmProgram asm, ScopeRef scopeRef) {
       Scope scope = program.getScope().getScope(scopeRef);
       Collection<Variable> scopeConstants = scope.getAllConstants(false);
@@ -558,7 +542,7 @@ public class Pass4CodeGeneration {
                continue;
             }
             // Skip if address is absolute
-            if(constantVar.getMemoryAddress()!=null)
+            if(constantVar.getMemoryAddress() != null)
                continue;
             // Set segment
             setCurrentSegment(constantVar.getDataSegment(), asm);
@@ -941,9 +925,7 @@ public class Pass4CodeGeneration {
             }
          } else if(statement instanceof StatementKickAsm) {
             StatementKickAsm statementKasm = (StatementKickAsm) statement;
-            if(statementKasm.getLocation() == null) {
-               addKickAsm(asm, statementKasm);
-            }
+            addKickAsm(asm, statementKasm);
             if(statementKasm.getDeclaredClobber() != null) {
                asm.getCurrentChunk().setClobberOverwrite(statementKasm.getDeclaredClobber());
             }

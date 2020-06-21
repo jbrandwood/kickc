@@ -692,28 +692,6 @@ public interface ProgramValue {
 
    }
 
-   /** Location inside inline kickasm code. */
-   class ProgramValueKickAsmLocation implements ProgramValue {
-
-      private StatementKickAsm statementKickAsm;
-
-      ProgramValueKickAsmLocation(StatementKickAsm statementKickAsm) {
-         super();
-         this.statementKickAsm = statementKickAsm;
-      }
-
-      @Override
-      public Value get() {
-         return statementKickAsm.getLocation();
-      }
-
-      @Override
-      public void set(Value value) {
-         statementKickAsm.setLocation((RValue) value);
-      }
-
-   }
-
    class ProgramValueListElement implements ProgramValue {
       private ValueList list;
       private int idx;

@@ -258,18 +258,16 @@ public class Pass1GenerateSingleStaticAssignmentForm extends Pass1Base {
       if(symbol instanceof Procedure) {
          Procedure procedure = (Procedure) symbol;
          if(procedure.getInterruptType() != null || Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
+            final ControlFlowBlock startBlock = program.getGraph().getBlock(program.getStartProcedure().getLabelRef());
             // Find all root-level predecessors to the main block
             ControlFlowBlock mainBlock = program.getGraph().getBlock(new LabelRef(SymbolRef.MAIN_PROC_NAME));
             List<ControlFlowBlock> mainPredecessors = program.getGraph().getPredecessors(mainBlock);
             for(ControlFlowBlock mainPredecessor : mainPredecessors) {
                if(mainPredecessor.getScope().equals(ScopeRef.ROOT)) {
                   predecessors.add(mainPredecessor);
+                  throw new RuntimeException("W");
                }
             }
-         }
-         if(procedure.getRef().equals(program.getStartProcedure())) {
-            // TODO: Does this handle main() / _start() correctly?
-            program.getLog().append("Does this handle main() / _start() correctly?");
          }
       }
       return predecessors;

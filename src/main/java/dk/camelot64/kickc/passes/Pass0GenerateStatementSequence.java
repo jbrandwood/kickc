@@ -91,6 +91,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(initProc == null) {
             // Create the _init() procedure
             initProc = new Procedure(SymbolRef.INIT_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+            initProc.setDeclaredInline(true);
             initProc.setParameters(new ArrayList<>());
             program.getScope().add(initProc);
             program.createProcedureCompilation(initProc.getRef());

@@ -89,21 +89,21 @@ _start::@return: scope:[_start]  from _start::@1
   [4] return 
   to:@return
 
-(void()) main()
-main: scope:[main]  from _start::@1
-  [5] *((const nomodify byte*) SCREEN) ← (volatile byte) c1
-  [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2
-  to:main::@return
-main::@return: scope:[main]  from main
+(void()) _init()
+_init: scope:[_init]  from _start
+  [5] (volatile byte) c1 ← (byte) 'o'
+  [6] (volatile byte) c2 ← (byte) 'k'
+  to:_init::@return
+_init::@return: scope:[_init]  from _init
   [7] return 
   to:@return
 
-(void()) _init()
-_init: scope:[_init]  from _start
-  [8] (volatile byte) c1 ← (byte) 'o'
-  [9] (volatile byte) c2 ← (byte) 'k'
-  to:_init::@return
-_init::@return: scope:[_init]  from _init
+(void()) main()
+main: scope:[main]  from _start::@1
+  [8] *((const nomodify byte*) SCREEN) ← (volatile byte) c1
+  [9] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2
+  to:main::@return
+main::@return: scope:[main]  from main
   [10] return 
   to:@return
 
@@ -155,32 +155,32 @@ _start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // [5] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
-    lda.z c1
-    sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
-    lda.z c2
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
   // _init
 _init: {
-    // [8] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
+    // [5] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
     // Initialize a volatile ZP-variable (will be done in the initializer)
     lda #'o'
     sta.z c1
-    // [9] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
+    // [6] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
     // Initialize another volatile ZP-variable (will be done in the initializer)
     lda #'k'
     sta.z c2
     jmp __breturn
     // _init::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    // [8] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
+    lda.z c1
+    sta SCREEN
+    // [9] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
+    lda.z c2
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
   __breturn:
     // [10] return 
     rts
@@ -188,10 +188,10 @@ _init: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 [ c2 ] ( main:3 [ c2 ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [8] (volatile byte) c1 ← (byte) 'o' [ c1 ] ( _init:1 [ c1 ] { }  ) always clobbers reg byte a 
-Statement [9] (volatile byte) c2 ← (byte) 'k' [ c1 c2 ] ( _init:1 [ c1 c2 ] { }  ) always clobbers reg byte a 
+Statement [5] (volatile byte) c1 ← (byte) 'o' [ c1 ] ( _init:1 [ c1 ] { }  ) always clobbers reg byte a 
+Statement [6] (volatile byte) c2 ← (byte) 'k' [ c1 c2 ] ( _init:1 [ c1 c2 ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 [ c2 ] ( main:3 [ c2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ c1 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ c2 ] : zp[1]:3 , 
 
@@ -240,32 +240,32 @@ _start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // [5] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
-    lda.z c1
-    sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
-    lda.z c2
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
   // _init
 _init: {
-    // [8] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
+    // [5] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
     // Initialize a volatile ZP-variable (will be done in the initializer)
     lda #'o'
     sta.z c1
-    // [9] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
+    // [6] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
     // Initialize another volatile ZP-variable (will be done in the initializer)
     lda #'k'
     sta.z c2
     jmp __breturn
     // _init::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    // [8] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
+    lda.z c1
+    sta SCREEN
+    // [9] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
+    lda.z c2
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
   __breturn:
     // [10] return 
     rts
@@ -329,34 +329,34 @@ _start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // SCREEN[0] = c1
-    // [5] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
-    lda.z c1
-    sta SCREEN
-    // SCREEN[1] = c2
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
-    lda.z c2
-    sta SCREEN+1
-    // main::@return
-    // }
-    // [7] return 
-    rts
-}
   // _init
 _init: {
     // c1 = 'o'
-    // [8] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
+    // [5] (volatile byte) c1 ← (byte) 'o' -- vbuz1=vbuc1 
     // Initialize a volatile ZP-variable (will be done in the initializer)
     lda #'o'
     sta.z c1
     // c2 = 'k'
-    // [9] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
+    // [6] (volatile byte) c2 ← (byte) 'k' -- vbuz1=vbuc1 
     // Initialize another volatile ZP-variable (will be done in the initializer)
     lda #'k'
     sta.z c2
     // _init::@return
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    // SCREEN[0] = c1
+    // [8] *((const nomodify byte*) SCREEN) ← (volatile byte) c1 -- _deref_pbuc1=vbuz1 
+    lda.z c1
+    sta SCREEN
+    // SCREEN[1] = c2
+    // [9] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) c2 -- _deref_pbuc1=vbuz1 
+    lda.z c2
+    sta SCREEN+1
+    // main::@return
+    // }
     // [10] return 
     rts
 }

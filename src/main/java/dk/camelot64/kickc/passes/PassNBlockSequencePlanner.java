@@ -82,13 +82,13 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       Scope blockScope = getScope().getSymbol(blockRef).getScope();
       for(ScopeTodo todoScope : todoScopes) {
          if(todoScope.scope.equals(blockScope)) {
-            todoScope.addTodo(block);
+            todoScope.pushTodo(block);
             return;
          }
       }
       ScopeTodo newScopeTodo = new ScopeTodo(blockScope);
       todoScopes.push(newScopeTodo);
-      newScopeTodo.addTodo(block);
+      newScopeTodo.pushTodo(block);
    }
 
    void pushCallTodo(ControlFlowBlock block) {
@@ -105,7 +105,7 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
       if(todoScopes.size() > 0)
          top = todoScopes.pop();
       todoScopes.push(newScopeTodo);
-      newScopeTodo.addTodo(block);
+      newScopeTodo.pushTodo(block);
       if(top != null)
          todoScopes.push(top);
    }
@@ -128,16 +128,21 @@ public class PassNBlockSequencePlanner extends Pass2SsaOptimization {
 
       Scope scope;
 
-      Stack<ControlFlowBlock> todo;
+      Deque<ControlFlowBlock> todo;
 
       public ScopeTodo(Scope scope) {
          this.scope = scope;
-         this.todo = new Stack<>();
+         this.todo = new LinkedList<>();
+      }
+
+      public void pushTodo(ControlFlowBlock block) {
+         todo.addFirst(block);
       }
 
       public void addTodo(ControlFlowBlock block) {
-         todo.push(block);
+         todo.addLast(block);
       }
+
    }
 
 

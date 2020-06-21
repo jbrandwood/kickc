@@ -199,6 +199,10 @@ public class Pass1ProcedureInline extends Pass1Base {
          StatementAsm procAsm = (StatementAsm) procStatement;
          StatementAsm inlinedAsm = new StatementAsm(procAsm.getAsmLines(), new LinkedHashMap<>(procAsm.getReferenced()), procAsm.getDeclaredClobber(), procAsm.getSource(), Comment.NO_COMMENTS);
          inlinedStatement = inlinedAsm;
+      } else if(procStatement instanceof StatementKickAsm) {
+         StatementKickAsm procKasm = (StatementKickAsm) procStatement;
+         StatementKickAsm inlinedAsm = new StatementKickAsm(procKasm.getKickAsmCode(), procKasm.getLocation(), procKasm.getBytes(), procKasm.getCycles(), procKasm.getUses(), procKasm.getDeclaredClobber(), procKasm.getSource(), Comment.NO_COMMENTS);
+         inlinedStatement = inlinedAsm;
       } else if(procStatement instanceof StatementConditionalJump) {
          StatementConditionalJump procConditional = (StatementConditionalJump) procStatement;
          LabelRef procDestinationRef = procConditional.getDestination();

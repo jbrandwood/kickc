@@ -370,7 +370,7 @@ public class Pass4CodeGeneration {
             }
          }
       }
-      Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getSymbolRefConsts(constantVar.getConstantRef());
+      Collection<SymbolVariableRef> symbolRefConsts = program.getVariableReferenceInfos().getConstRefSymbols(constantVar.getConstantRef());
       if(symbolRefConsts != null) {
          for(SymbolVariableRef symbolRefConst : symbolRefConsts) {
             Variable symbolRefVar = (Variable) program.getScope().getSymbol(symbolRefConst);

@@ -69,7 +69,7 @@ public class VariableReferenceInfos {
          this.referencedSymbol = referencedSymbol;
       }
 
-      Integer getStatementIdx() {
+      public Integer getStatementIdx() {
          return statementIdx;
       }
 
@@ -102,7 +102,7 @@ public class VariableReferenceInfos {
          this.referencedSymbol = referencedSymbol;
       }
 
-      SymbolVariableRef getReferencingSymbol() {
+      public SymbolVariableRef getReferencingSymbol() {
          return referencingSymbol;
       }
 
@@ -296,6 +296,41 @@ public class VariableReferenceInfos {
       return stmts;
    }
 
+
+   /**
+    * Get all constants (or symbol definitions) referencing another constant
+    *
+    * @param constRef The constant to look for
+    * @return All constants (or symbol definitions) that reference the constant in their value
+    */
+   public Collection<SymbolVariableRef> getConstRefSymbols(ConstantRef constRef) {
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
+      LinkedHashSet<SymbolVariableRef> constRefs = new LinkedHashSet<>();
+      if(refs != null) {
+         refs.stream()
+               .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
+               .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInSymbol)
+               .forEach(referenceToSymbolVar -> constRefs.add(((ReferenceInSymbol) referenceToSymbolVar).getReferencingSymbol()));
+      }
+      return constRefs;
+   }
+
+   /**
+    * Get all usages of a constant. (only returns places where the constant is used, not where it is defined)
+    * @param constRef The constant to look for
+    * @return All statements or other constants that use the constant
+    */
+   public Collection<ReferenceToSymbolVar> getConstRefAllUses(ConstantRef constRef) {
+      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
+      if(refs != null) {
+         final List<ReferenceToSymbolVar> allUses = refs.stream()
+               .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
+               .collect(Collectors.toList());
+         return allUses;
+      } else
+         return new ArrayList<>();
+   }
+
    /**
     * Get the index of the statement defining a variable. Only returns if there is exactly one defining statement.
     *
@@ -366,22 +401,5 @@ public class VariableReferenceInfos {
    }
 
 
-   /**
-    * Get all constants (or symbol definitions) referencing another constant
-    *
-    * @param constRef The constant to look for
-    * @return All constants (or symbol definitions) that reference the constant in their value
-    */
-   public Collection<SymbolVariableRef> getSymbolRefConsts(ConstantRef constRef) {
-      Collection<ReferenceToSymbolVar> refs = symbolVarReferences.get(constRef);
-      LinkedHashSet<SymbolVariableRef> constRefs = new LinkedHashSet<>();
-      if(refs != null) {
-         refs.stream()
-               .filter(referenceToSymbolVar -> ReferenceToSymbolVar.ReferenceType.USE.equals(referenceToSymbolVar.getReferenceType()))
-               .filter(referenceToSymbolVar -> referenceToSymbolVar instanceof ReferenceInSymbol)
-               .forEach(referenceToSymbolVar -> constRefs.add(((ReferenceInSymbol) referenceToSymbolVar).getReferencingSymbol()));
-      }
-      return constRefs;
-   }
 
 }

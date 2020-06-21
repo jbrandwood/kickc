@@ -23,10 +23,13 @@ public class PassNEliminateEmptyStart extends Pass2SsaOptimization {
       final ProcedureRef startProcRef = new ProcedureRef(SymbolRef.START_PROC_NAME);
       StatementCall singleCall = getSingleCall(startProcRef);
       if(singleCall != null) {
-         // Start only has a single call
-         getProgram().setStartProcedure(singleCall.getProcedure());
-         Pass2EliminateUnusedBlocks.removeProcedure(startProcRef, new HashSet<>(), getProgram());
-         return true;
+         // Are there any constants in the scope that are used elsewhere?
+         if(!PassNEliminateEmptyProcedure.hasExternalUsages(startProcRef, getProgram())) {
+            // Start only has a single call - and no external usages
+            getProgram().setStartProcedure(singleCall.getProcedure());
+            Pass2EliminateUnusedBlocks.removeProcedure(startProcRef, new HashSet<>(), getProgram());
+            return true;
+         }
       }
       return false;
    }
@@ -49,7 +52,7 @@ public class PassNEliminateEmptyStart extends Pass2SsaOptimization {
                   // Another call already encountered
                   return null;
                final StatementCall call = (StatementCall) statement;
-               if(call.getParameters()==null && call.getlValue() == null)
+               if(call.getParameters() == null && call.getlValue() == null)
                   // Call is no-args no-return
                   singleCall = call;
                else

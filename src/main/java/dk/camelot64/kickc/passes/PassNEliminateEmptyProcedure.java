@@ -2,9 +2,15 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.StatementInfos;
+import dk.camelot64.kickc.model.VariableReferenceInfos;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.symbols.Scope;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,14 +30,56 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
       boolean optimized = false;
       for(Procedure procedure : allProcedures) {
          if(hasEmptyBody(procedure.getRef())) {
-            // Remove all calls
-            removeAllCalls(procedure.getRef());
-            // Remove the procedure
-            Pass2EliminateUnusedBlocks.removeProcedure(procedure.getRef(), new HashSet<>(), getProgram());
-            optimized = true;
+            if(!hasExternalUsages(procedure.getRef(), getProgram())) {
+               // Remove all calls
+               removeAllCalls(procedure.getRef());
+               // Remove the procedure
+               Pass2EliminateUnusedBlocks.removeProcedure(procedure.getRef(), new HashSet<>(), getProgram());
+               optimized = true;
+            }
          }
       }
       return optimized;
+   }
+
+   /**
+    * Examines whether there are any constants inside a procedure with external usages
+    *
+    * @param procedureRef
+    * @return
+    */
+   protected static boolean hasExternalUsages(ProcedureRef procedureRef, Program program) {
+      program.clearVariableReferenceInfos();
+      program.clearStatementInfos();
+      new PassNStatementIndices(program).execute();
+      final VariableReferenceInfos variableReferenceInfos = program.getVariableReferenceInfos();
+      final StatementInfos statementInfos = program.getStatementInfos();
+
+      final Procedure startProc = program.getScope().getProcedure(procedureRef);
+      final Collection<Variable> startConsts = startProc.getAllConstants(true);
+      for(Variable startConst : startConsts) {
+         final Collection<VariableReferenceInfos.ReferenceToSymbolVar> uses = variableReferenceInfos.getConstRefAllUses(startConst.getConstantRef());
+         for(VariableReferenceInfos.ReferenceToSymbolVar use : uses) {
+            if(use instanceof VariableReferenceInfos.ReferenceInStatement) {
+               final Integer statementIdx = ((VariableReferenceInfos.ReferenceInStatement) use).getStatementIdx();
+               final ControlFlowBlock block = statementInfos.getBlock(statementIdx);
+               final Procedure useProcedure = block.getProcedure(program);
+               if(!procedureRef.equals(useProcedure.getRef())) {
+                  // Usage in a another procedure
+                  return true;
+               }
+            } else if(use instanceof VariableReferenceInfos.ReferenceInSymbol) {
+               final SymbolVariableRef referencingSymbolRef = ((VariableReferenceInfos.ReferenceInSymbol) use).getReferencingSymbol();
+               final Symbol referencingSymbol = program.getScope().getSymbol(referencingSymbolRef);
+               final Scope referencingScope = referencingSymbol.getScope();
+               if(!procedureRef.equals(referencingScope.getRef())) {
+                  // Usage in a another constant
+                  return true;
+               }
+            }
+         }
+      }
+      return false;
    }
 
    private void removeAllCalls(ProcedureRef ref) {

@@ -2,7 +2,7 @@
 
 char* const TABLE = 0x2000;
 
-kickasm(pc TABLE) {{
+char a[] = kickasm(pc TABLE) {{
     .byte 1, 2, 3
 }};
 

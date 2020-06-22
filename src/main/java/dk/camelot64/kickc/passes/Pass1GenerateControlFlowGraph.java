@@ -31,6 +31,9 @@ public class Pass1GenerateControlFlowGraph extends Pass1Base {
       for(Procedure procedure : allProcedures) {
          final ProcedureCompilation procedureCompilation = getProgram().getProcedureCompilation(procedure.getRef());
          final StatementSequence sequence = procedureCompilation.getStatementSequence();
+         if(sequence.getStatements().size()==0)
+            // Empry procedures should not produce any blocks
+            continue;
          ControlFlowBlock currentBlock = null;
          ControlFlowBlock procBlock = getOrCreateBlock(procedure.getLabel().getRef(), procedure.getRef());
          currentBlock = procBlock;

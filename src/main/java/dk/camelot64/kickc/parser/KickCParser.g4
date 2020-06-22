@@ -34,7 +34,6 @@ decl
     | structDef ';'
     | enumDef ';'
     | declFunction
-    | declKasm
     | globalDirective
     | typeDef ';'
     ;

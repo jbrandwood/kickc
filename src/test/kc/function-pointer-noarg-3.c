@@ -13,16 +13,16 @@ void main() {
         } else {
             f = &fn2;
         }
-        kickasm(uses f) {{
+        kickasm(uses f, uses ff) {{
             jsr ff
         }}
     }
 }
 
-kickasm {{
-ff:
+// Inline KickAsm function
+char ff[] = kickasm {{
     jmp (main.f)
-}}
+}};
 
 void fn1() {
     byte* const BORDER_COLOR = $d020;

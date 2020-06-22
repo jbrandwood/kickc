@@ -3359,6 +3359,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testKasmPcError() throws IOException, URISyntaxException {
+      assertError("test-kasm-pc-error.c", "mismatched input 'pc' expecting");
+   }
+
+   @Test
    public void testKasm() throws IOException, URISyntaxException {
       compileAndCompare("test-kasm.c");
    }

@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import java.util.ArrayList;
 import java.util.List;
 
-/** A sequence of Statements */
+/** A sequence of statements used before pass1*/
 public class StatementSequence {
 
    private ArrayList<Statement> statements;

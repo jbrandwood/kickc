@@ -42,10 +42,15 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   //@Test
-   //public void testStaticInitCode() throws IOException, URISyntaxException {
-   //   compileAndCompare("static-init-code.c", log());
-   //}
+   @Test
+   public void testStrcpy0() throws IOException, URISyntaxException {
+      compileAndCompare("strcpy-0.c");
+   }
+
+   @Test
+   public void testStaticInitCode() throws IOException, URISyntaxException {
+      compileAndCompare("static-init-code.c");
+   }
 
    @Test
    public void testConstParenthesis() throws IOException, URISyntaxException {
@@ -79,7 +84,7 @@ public class TestPrograms {
 
    @Test
    public void testNesDemo() throws IOException, URISyntaxException {
-      compileAndCompare("examples/nes/nes-demo.c");
+      compileAndCompare("examples/nes-demo/nes-demo.c");
    }
 
    @Test
